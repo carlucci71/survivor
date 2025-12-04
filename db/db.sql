@@ -1,5 +1,7 @@
 
 drop table if exists giocatore;
+drop table if exists sport;
+drop table if exists campionati;
 drop table if exists squadra;
 drop table if exists giocata;
 create table giocatore(
@@ -7,9 +9,19 @@ create table giocatore(
 	nome varchar(100),
 	stato char(1)
 );
+create table sport(
+	id serial primary key,
+	nome varchar(100)
+);
+create table campionati(
+	id serial primary key,
+	id_sport integer,
+	nome varchar(100)
+);
 create table squadra(
 	id char(3) primary key,
-	nome varchar(100)
+	nome varchar(100),
+	id_campionato integer
 );
 create table giocata(
 	id serial primary key,
