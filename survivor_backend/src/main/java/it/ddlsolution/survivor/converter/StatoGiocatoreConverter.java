@@ -1,14 +1,14 @@
 package it.ddlsolution.survivor.converter;
 
-import it.ddlsolution.survivor.util.enumeratori;
+import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class StatoGiocatoreConverter implements AttributeConverter<enumeratori.StatoGiocatore, String> {
+public class StatoGiocatoreConverter implements AttributeConverter<Enumeratori.StatoGiocatore, String> {
 
     @Override
-    public String convertToDatabaseColumn(enumeratori.StatoGiocatore attribute) {
+    public String convertToDatabaseColumn(Enumeratori.StatoGiocatore attribute) {
         if (attribute == null) {
             return null;
         }
@@ -16,11 +16,11 @@ public class StatoGiocatoreConverter implements AttributeConverter<enumeratori.S
     }
 
     @Override
-    public enumeratori.StatoGiocatore convertToEntityAttribute(String dbData) {
+    public Enumeratori.StatoGiocatore convertToEntityAttribute(String dbData) {
         if (dbData == null) {
             return null;
         }
-        return enumeratori.StatoGiocatore.fromCodice(dbData);
+        return Enumeratori.StatoGiocatore.fromCodice(dbData);
     }
 }
 

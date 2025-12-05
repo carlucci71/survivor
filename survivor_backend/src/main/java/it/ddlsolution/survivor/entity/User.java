@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.entity;
 
+import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,10 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Enumeratori.Role role = Enumeratori.Role.STANDARD;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -36,6 +41,9 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (role == null) {
+            role = Enumeratori.Role.STANDARD;
+        }
     }
 }
 

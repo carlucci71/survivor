@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.enumeratori;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 
 @Data
@@ -9,6 +9,6 @@ public class GiocataDTO {
     private Integer giornata;
     private Long giocatoreId;
     private String squadraId;
-    private enumeratori.EsitoGiocata esito;
+    private Enumeratori.EsitoGiocata esito;
 }
 

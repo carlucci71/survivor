@@ -1,6 +1,11 @@
 package it.ddlsolution.survivor.util;
 
-public class enumeratori {
+public class Enumeratori {
+
+    public enum Role {
+        STANDARD,
+        ADMIN
+    }
 
     public enum EsitoGiocata{
         OK,KO

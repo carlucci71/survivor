@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.enumeratori;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 public class GiocatoreDTO {
     private Long id;
     private String nome;
-    private enumeratori.StatoGiocatore stato;
+    private Enumeratori.StatoGiocatore stato;
     private List<GiocataDTO> giocate;
 }
 

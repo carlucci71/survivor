@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
-import it.ddlsolution.survivor.util.enumeratori;
+import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -33,7 +33,7 @@ public class Giocatore {
 
     @Column(name = "stato", nullable = false, length = 1)
     @Convert(converter = StatoGiocatoreConverter.class)
-    private enumeratori.StatoGiocatore stato;
+    private Enumeratori.StatoGiocatore stato;
 
     @ManyToMany(mappedBy = "giocatori")
     @JsonBackReference("lega-giocatori")

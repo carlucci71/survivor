@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "Survivor Magic Link API with Roles",
+    "description": "Collection per testare le API di autenticazione con Magic Link e gestione ruoli",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Request Magic Link (Standard User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/request-magic-link",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "request-magic-link"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request Magic Link (Admin User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/request-magic-link",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "request-magic-link"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Magic Link",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify?token={{magic_link_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{magic_link_token}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Protected Endpoints (Standard)",
+      "item": [
+        {
+          "name": "Test Standard Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/first/test",
+              "host": ["{{base_url}}"],
+              "path": ["first", "test"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin Endpoints",
+      "item": [
+        {
+          "name": "Admin Endpoint (Require ADMIN role)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin",
+              "host": ["{{base_url}}"],
+              "path": ["admin"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Endpoint with Standard User (Should Fail)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin",
+              "host": ["{{base_url}}"],
+              "path": ["admin"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "magic_link_token",
+      "value": ""
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "description": "JWT for standard user"
+    },
+    {
+      "key": "jwt_token_admin",
+      "value": "",
+      "description": "JWT for admin user"
+    }
+  ]
+}
+

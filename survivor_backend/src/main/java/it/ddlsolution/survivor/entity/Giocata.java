@@ -2,8 +2,7 @@ package it.ddlsolution.survivor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import it.ddlsolution.survivor.converter.EsitoGiocataConverter;
-import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
-import it.ddlsolution.survivor.util.enumeratori;
+import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -39,6 +38,6 @@ public class Giocata {
 
     @Column(name = "esito", length = 2)
     @Convert(converter = EsitoGiocataConverter.class)
-    private enumeratori.EsitoGiocata esito;
+    private Enumeratori.EsitoGiocata esito;
 
 }
