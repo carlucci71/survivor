@@ -11,7 +11,7 @@
 **Richiesta:**
 ```http
 POST /api/auth/request-magic-link HTTP/1.1
-Host: localhost:8080
+Host: localhost:8389
 Content-Type: application/json
 
 {
@@ -48,7 +48,7 @@ Ciao,
 
 Clicca sul link seguente per accedere a Survivor:
 
-http://localhost:8080/api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56
+http://localhost:8389/api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56
 
 Questo link è valido per 15 minuti.
 
@@ -67,7 +67,7 @@ L'utente clicca sul link oppure fai una richiesta manuale:
 **Richiesta:**
 ```http
 GET /api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56 HTTP/1.1
-Host: localhost:8080
+Host: localhost:8389
 ```
 
 **Risposta di successo:**
@@ -98,7 +98,7 @@ Ora l'utente può usare il JWT per accedere agli endpoint protetti.
 **Richiesta:**
 ```http
 GET /first/test HTTP/1.1
-Host: localhost:8080
+Host: localhost:8389
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJpby5yb3NzaUBleGFtcGxlLmNvbSIsImlhdCI6MTcwMTc3MjgwMCwiZXhwIjoxNzAxODU5MjAwfQ.abc123def456ghi789jkl012mno345pqr678stu901vwx234yz
 ```
 
@@ -112,7 +112,7 @@ Ciao dalla prima API
 **Richiesta:**
 ```http
 GET /first/test HTTP/1.1
-Host: localhost:8080
+Host: localhost:8389
 ```
 
 **Risposta:**
@@ -125,7 +125,7 @@ HTTP/1.1 403 Forbidden
 **Richiesta:**
 ```http
 GET /first/test HTTP/1.1
-Host: localhost:8080
+Host: localhost:8389
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.EXPIRED_TOKEN
 ```
 
@@ -140,7 +140,7 @@ HTTP/1.1 403 Forbidden
 
 ```bash
 # Step 1: Richiedi magic link
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"mario.rossi@example.com"}'
 
@@ -151,7 +151,7 @@ curl -X POST http://localhost:8080/api/auth/request-magic-link \
 # Token esempio: Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56
 
 # Step 3: Verifica il token
-curl "http://localhost:8080/api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56"
+curl "http://localhost:8389/api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op56"
 
 # Output:
 # {
@@ -164,7 +164,7 @@ curl "http://localhost:8080/api/auth/verify?token=Ab12Cd34Ef56Gh78Ij90Kl12Mn34Op
 JWT="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 # Step 5: Usa il JWT per chiamate autenticate
-curl http://localhost:8080/first/test \
+curl http://localhost:8389/first/test \
   -H "Authorization: Bearer $JWT"
 
 # Output:
@@ -180,7 +180,7 @@ curl http://localhost:8080/first/test \
 ```javascript
 // Step 1: Richiedi magic link
 async function requestMagicLink(email) {
-  const response = await fetch('http://localhost:8080/api/auth/request-magic-link', {
+  const response = await fetch('http://localhost:8389/api/auth/request-magic-link', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ async function requestMagicLink(email) {
 
 // Step 2: Verifica magic link (quando utente clicca sul link)
 async function verifyMagicLink(token) {
-  const response = await fetch(`http://localhost:8080/api/auth/verify?token=${token}`);
+  const response = await fetch(`http://localhost:8389/api/auth/verify?token=${token}`);
   const data = await response.json();
   
   if (data.token) {
@@ -212,7 +212,7 @@ async function verifyMagicLink(token) {
 async function callProtectedEndpoint() {
   const jwt = localStorage.getItem('jwt');
   
-  const response = await fetch('http://localhost:8080/first/test', {
+  const response = await fetch('http://localhost:8389/first/test', {
     headers: {
       'Authorization': `Bearer ${jwt}`
     }
@@ -262,7 +262,7 @@ function LoginPage() {
 
   const requestMagicLink = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/request-magic-link', {
+      const response = await fetch('http://localhost:8389/api/auth/request-magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -277,7 +277,7 @@ function LoginPage() {
 
   const verifyToken = async (token) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/verify?token=${token}`);
+      const response = await fetch(`http://localhost:8389/api/auth/verify?token=${token}`);
       const data = await response.json();
       
       if (data.token) {

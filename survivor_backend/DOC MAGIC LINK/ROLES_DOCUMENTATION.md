@@ -69,14 +69,14 @@ SELECT id, email, name, role FROM users;
 
 **Step 1 - Login:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com"}'
 ```
 
 **Step 2 - Verifica token (dall'email):**
 ```bash
-curl "http://localhost:8080/api/auth/verify?token=TOKEN_RICEVUTO"
+curl "http://localhost:8389/api/auth/verify?token=TOKEN_RICEVUTO"
 ```
 
 **Risposta:**
@@ -91,14 +91,14 @@ curl "http://localhost:8080/api/auth/verify?token=TOKEN_RICEVUTO"
 
 **Step 3 - Accesso endpoint normale (✅ OK):**
 ```bash
-curl http://localhost:8080/first/test \
+curl http://localhost:8389/first/test \
   -H "Authorization: Bearer JWT_TOKEN"
 ```
 **Output:** `Ciao dalla prima API`
 
 **Step 4 - Accesso endpoint admin (❌ FORBIDDEN):**
 ```bash
-curl http://localhost:8080/admin \
+curl http://localhost:8389/admin \
   -H "Authorization: Bearer JWT_TOKEN"
 ```
 **Output:** `403 Forbidden`
@@ -114,14 +114,14 @@ UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
 
 **Step 2 - Login come prima:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com"}'
 ```
 
 **Step 3 - Verifica token:**
 ```bash
-curl "http://localhost:8080/api/auth/verify?token=TOKEN_RICEVUTO"
+curl "http://localhost:8389/api/auth/verify?token=TOKEN_RICEVUTO"
 ```
 
 **Risposta:**
@@ -136,14 +136,14 @@ curl "http://localhost:8080/api/auth/verify?token=TOKEN_RICEVUTO"
 
 **Step 4 - Accesso endpoint admin (✅ OK):**
 ```bash
-curl http://localhost:8080/admin \
+curl http://localhost:8389/admin \
   -H "Authorization: Bearer JWT_TOKEN"
 ```
 **Output:** `BRAVO!`
 
 **Step 5 - Accesso endpoint normale (✅ OK):**
 ```bash
-curl http://localhost:8080/first/test \
+curl http://localhost:8389/first/test \
   -H "Authorization: Bearer JWT_TOKEN"
 ```
 **Output:** `Ciao dalla prima API`
@@ -157,7 +157,7 @@ curl http://localhost:8080/first/test \
 ```javascript
 // Salva info utente dopo login
 async function verifyMagicLink(token) {
-  const response = await fetch(`http://localhost:8080/api/auth/verify?token=${token}`);
+  const response = await fetch(`http://localhost:8389/api/auth/verify?token=${token}`);
   const data = await response.json();
   
   if (data.token) {
@@ -197,7 +197,7 @@ async function callAdminEndpoint() {
   const jwt = localStorage.getItem('jwt');
   
   try {
-    const response = await fetch('http://localhost:8080/admin', {
+    const response = await fetch('http://localhost:8389/admin', {
       headers: {
         'Authorization': `Bearer ${jwt}`
       }
@@ -329,12 +329,12 @@ mvn clean install
 mvn spring-boot:run
 
 # 5. Test STANDARD user
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com"}'
 
 # 6. Test ADMIN user
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com"}'
 ```

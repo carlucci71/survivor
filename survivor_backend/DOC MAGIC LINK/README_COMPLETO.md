@@ -95,7 +95,7 @@ JWT_SECRET=UnChiaveMoltoSicuraDiAlmeno256BitPerHS256AlgorithmInProduzione
 ### 4️⃣ Configura URL Base
 
 ```bash
-MAGIC_LINK_BASE_URL=http://localhost:8080
+MAGIC_LINK_BASE_URL=http://localhost:8389
 ```
 
 In produzione, cambia con il tuo dominio: `https://tuodominio.com`
@@ -114,7 +114,7 @@ mvn spring-boot:run
 
 **Step 1 - Richiedi Magic Link:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d "{\"email\":\"tua-email@example.com\"}"
 ```
@@ -123,7 +123,7 @@ curl -X POST http://localhost:8080/api/auth/request-magic-link \
 
 **Step 3 - Verifica il token:**
 ```bash
-curl "http://localhost:8080/api/auth/verify?token=IL_TUO_TOKEN"
+curl "http://localhost:8389/api/auth/verify?token=IL_TUO_TOKEN"
 ```
 
 Riceverai un JSON con il JWT:
@@ -137,14 +137,14 @@ Riceverai un JSON con il JWT:
 
 **Step 4 - Usa il JWT per endpoint protetti:**
 ```bash
-curl http://localhost:8080/first/test \
+curl http://localhost:8389/first/test \
   -H "Authorization: Bearer IL_TUO_JWT"
 ```
 
 ### Metodo 2: Con Postman
 
 1. Importa: `postman_collection.json`
-2. Configura variabile `base_url`: `http://localhost:8080`
+2. Configura variabile `base_url`: `http://localhost:8389`
 3. Esegui "Request Magic Link"
 4. Copia token dall'email
 5. Inserisci in variabile `magic_link_token`

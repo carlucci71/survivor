@@ -27,7 +27,7 @@ public class MagicLinkService {
     @Value("${magic-link.expiration-minutes:15}")
     private int expirationMinutes;
 
-    @Value("${magic-link.base-url:http://localhost:8080}")
+    @Value("${magic-link.base-url:http://localhost:8389}")
     private String baseUrl;
 
     @Transactional

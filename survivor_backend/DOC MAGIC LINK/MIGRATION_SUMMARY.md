@@ -164,7 +164,7 @@ MAIL_FROM=noreply@survivor.com
 JWT_SECRET=yourSecretKeyMustBeAtLeast256BitsLongForHS256AlgorithmToWorkProperly
 
 # Magic Link Configuration (NUOVO)
-MAGIC_LINK_BASE_URL=http://localhost:8080
+MAGIC_LINK_BASE_URL=http://localhost:8389
 ```
 
 ### Note per Gmail
@@ -195,19 +195,19 @@ Importa la collection: `postman_collection.json`
 
 **Richiedi magic link:**
 ```bash
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"your-email@example.com"}'
 ```
 
 **Verifica token:**
 ```bash
-curl "http://localhost:8080/api/auth/verify?token={TOKEN}"
+curl "http://localhost:8389/api/auth/verify?token={TOKEN}"
 ```
 
 **Usa JWT:**
 ```bash
-curl http://localhost:8080/first/test \
+curl http://localhost:8389/first/test \
   -H "Authorization: Bearer {JWT}"
 ```
 

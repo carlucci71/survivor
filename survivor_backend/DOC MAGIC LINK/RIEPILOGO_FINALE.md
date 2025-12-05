@@ -177,20 +177,20 @@ mvn spring-boot:run
 
 ```bash
 # Test STANDARD user
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com"}'
 
 # Test ADMIN user
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com"}'
 
 # Verifica token (dall'email)
-curl "http://localhost:8080/api/auth/verify?token=TOKEN"
+curl "http://localhost:8389/api/auth/verify?token=TOKEN"
 
 # Test endpoint admin
-curl http://localhost:8080/admin \
+curl http://localhost:8389/admin \
   -H "Authorization: Bearer JWT_TOKEN"
 ```
 

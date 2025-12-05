@@ -63,19 +63,19 @@ mvn spring-boot:run
 
 ```bash
 # 1. Richiedi magic link
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com"}'
 
 # 2. Verifica token (usa il token dall'email)
-curl "http://localhost:8080/api/auth/verify?token=TOKEN"
+curl "http://localhost:8389/api/auth/verify?token=TOKEN"
 
 # Risposta includerà: "role": "STANDARD"
 
 # 3. Salva JWT e prova accesso admin
 JWT="il_jwt_ricevuto"
 
-curl http://localhost:8080/admin \
+curl http://localhost:8389/admin \
   -H "Authorization: Bearer $JWT"
 
 # Output: 403 Forbidden ✅
@@ -85,19 +85,19 @@ curl http://localhost:8080/admin \
 
 ```bash
 # 1. Richiedi magic link
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com"}'
 
 # 2. Verifica token
-curl "http://localhost:8080/api/auth/verify?token=TOKEN"
+curl "http://localhost:8389/api/auth/verify?token=TOKEN"
 
 # Risposta includerà: "role": "ADMIN"
 
 # 3. Salva JWT e prova accesso admin
 JWT="il_jwt_ricevuto"
 
-curl http://localhost:8080/admin \
+curl http://localhost:8389/admin \
   -H "Authorization: Bearer $JWT"
 
 # Output: BRAVO! ✅
