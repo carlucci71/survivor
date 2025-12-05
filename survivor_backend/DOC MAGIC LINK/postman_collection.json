@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "Survivor Magic Link API",
+    "description": "Collection per testare le API di autenticazione con Magic Link",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Request Magic Link",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"your-email@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/request-magic-link",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "request-magic-link"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Magic Link",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify?token={{magic_link_token}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{magic_link_token}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Protected Endpoints",
+      "item": [
+        {
+          "name": "Test Protected Endpoint",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/first/test",
+              "host": ["{{base_url}}"],
+              "path": ["first", "test"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "magic_link_token",
+      "value": ""
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    }
+  ]
+}
+
