@@ -8,4 +8,4 @@ set +a
 # Avvia l'applicazione Spring Boot
 cd /home/survivor/github/survivor/survivor_backend
 
-mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"  
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=test"  

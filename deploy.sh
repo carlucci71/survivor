@@ -18,6 +18,9 @@ pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-bac
 
 #echo "🔄 Reload nginx..."
 #sudo nginx -t && sudo systemctl reload nginx
+sudo /usr/sbin/nginx -s reload
+
+
 
 echo "✅ Deploy completato!"
 echo "📊 Status:"
