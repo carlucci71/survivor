@@ -47,6 +47,10 @@ springdoc:
     path: /swagger-ui.html
     enabled: true
 
+swagger:
+  server:
+    url: ${SWAGGER_SERVER_URL:http://localhost:8389}
+
 server:
   port: ${PORT}
   ssl:

@@ -13,3 +13,4 @@ PORT: 8389
 SSL_ENABLED: true
 SSL_KEYSTORE: classpath:survivor-keystore.p12
 SSL_KEYSTORE_PASSWORD: changeit
+SWAGGER_SERVER_URL: https://localhost:8389
