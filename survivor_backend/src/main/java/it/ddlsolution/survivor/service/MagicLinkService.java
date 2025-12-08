@@ -30,6 +30,9 @@ public class MagicLinkService {
     @Value("${magic-link.base-url:http://localhost:8389}")
     private String baseUrl;
 
+    @Value("${magic-link.relative-url-send-mail:/api/auth/verify?token=}")//questo url di default serve per richiamare direttamente il BE
+    private String relativeUrlSendMail;
+
     @Transactional
     public void sendMagicLink(String email) {
         if (email == null || email.trim().isEmpty()) {
@@ -58,7 +61,7 @@ public class MagicLinkService {
         tokenRepository.save(magicLinkToken);
 
         // Invia l'email
-        String magicLink = baseUrl + "/api/auth/verify?token=" + token;
+        String magicLink = baseUrl + relativeUrlSendMail + token;
         emailService.sendMagicLinkEmail(email, magicLink);
 
         log.info("Magic link inviato a: {}", email);

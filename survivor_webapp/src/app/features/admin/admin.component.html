@@ -1,0 +1,52 @@
+<div class="admin-container">
+  <header class="header">
+    <div class="header-content">
+      <h1>Area Admin</h1>
+      <div class="actions">
+        <button (click)="goBack()" class="btn-back">← Torna alla Home</button>
+        <button (click)="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="admin-panel">
+      <h2>Dashboard Amministratore</h2>
+
+      <div *ngIf="isLoading" class="loading">
+        <div class="spinner"></div>
+        <p>Caricamento...</p>
+      </div>
+
+      <div *ngIf="!isLoading" class="message-box">
+        <p>Risposta dal server: <strong>{{ message }}</strong></p>
+      </div>
+
+      <div class="admin-sections">
+        <div class="section-card">
+          <h3>Gestione Leghe</h3>
+          <p>Crea e gestisci le leghe del sistema</p>
+          <button class="btn-primary" disabled>In arrivo</button>
+        </div>
+
+        <div class="section-card">
+          <h3>Gestione Utenti</h3>
+          <p>Visualizza e gestisci gli utenti</p>
+          <button class="btn-primary" disabled>In arrivo</button>
+        </div>
+
+        <div class="section-card">
+          <h3>Gestione Campionati</h3>
+          <p>Configura campionati e squadre</p>
+          <button class="btn-primary" disabled>In arrivo</button>
+        </div>
+
+        <div class="section-card">
+          <h3>Statistiche</h3>
+          <p>Visualizza statistiche del sistema</p>
+          <button class="btn-primary" disabled>In arrivo</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

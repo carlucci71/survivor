@@ -1,0 +1,43 @@
+<div class="home-container">
+  <header class="header">
+    <div class="header-content">
+      <h1>Survivor</h1>
+      <div class="user-info">
+        <span class="welcome">Benvenuto, {{ currentUser?.name }}</span>
+        <span class="role-badge" [class.admin]="isAdmin()">
+          {{ currentUser?.role }}
+        </span>
+        <button (click)="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="actions">
+      <button *ngIf="isAdmin()" (click)="goToAdmin()" class="btn-admin">
+        Area Admin
+      </button>
+    </div>
+
+    <section class="leghe-section">
+      <h2>Le tue Leghe</h2>
+
+      <div *ngIf="isLoading" class="loading">
+        <div class="spinner"></div>
+        <p>Caricamento in corso...</p>
+      </div>
+
+      <div *ngIf="!isLoading && leghe.length === 0" class="no-data">
+        <p>Nessuna lega disponibile al momento</p>
+      </div>
+
+      <div *ngIf="!isLoading && leghe.length > 0" class="leghe-grid">
+        <div *ngFor="let lega of leghe" class="lega-card">
+          <h3>{{ lega.nome }}</h3>
+          <p *ngIf="lega.descrizione">{{ lega.descrizione }}</p>
+          <button class="btn-secondary">Visualizza</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
