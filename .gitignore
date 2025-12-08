@@ -1,4 +1,5 @@
-lancia.sh
 err.log
 log.log
-
+errFE.log
+logFE.log
+nohup.out
