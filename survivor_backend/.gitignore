@@ -32,3 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 ReadmeSECRET.md
+
+### SSL Certificates ###
+*.p12
+*.jks
+*.pfx
