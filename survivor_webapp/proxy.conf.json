@@ -1,6 +1,6 @@
 {
   "/api/survivorBe": {
-    "target": "http://localhost:8389",
+    "target": "https://localhost:8389",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
