@@ -6,8 +6,6 @@ server {
     listen [::]:80;
     server_name liberaleidee.it www.liberaleidee.it;
 
-    # Optional: redirect non-www to www or viceversa (commentare quello che non si vuole)
-    # return 301 https://www.liberaleidee.it$request_uri;
     return 301 https://$host$request_uri;
 }
 
@@ -17,42 +15,62 @@ server {
     listen [::]:443 ssl http2;
     server_name liberaleidee.it www.liberaleidee.it;
 
-    # SSL certificates (Let's Encrypt path - modifica se diverso)
+    # SSL certificates (Let's Encrypt path)
     ssl_certificate /etc/letsencrypt/live/liberaleidee.it/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/liberaleidee.it/privkey.pem;
     include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
-    # Security headers (minimo)
+    # Security headers
     add_header X-Frame-Options SAMEORIGIN;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block";
 
-    # Log files (personalizza se vuoi)
+    # Log files
     access_log /var/log/nginx/liberaleidee.access.log;
     error_log /var/log/nginx/liberaleidee.error.log;
 
-    # Rate limiting (opzionale)
-    # limit_req_zone $binary_remote_addr zone=one:10m rate=20r/s;
-
-    # Serve static assets with long cache
-    location ~* ^/survivor/(.*\.(?:js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf))$ {
-        alias /home/survivor/github/survivor/survivor_webapp/dist/survivor_webapp/browser/$1;
-        access_log off;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
-        add_header X-Content-Type-Options nosniff;
-        try_files $uri =404;
-    }
-
-    # SPA root and fallback
+    # SPA Angular
     location /survivor/ {
         alias /home/survivor/github/survivor/survivor_webapp/dist/survivor_webapp/browser/;
         index index.html;
         try_files $uri $uri/ /survivor/index.html;
     }
 
-    # API proxypass - keep BEFORE other proxy or catch-all rules if needed
+    # Swagger UI - IMPORTANTE: PRIMA di /api/
+    location /swagger-ui/ {
+        proxy_pass http://127.0.0.1:8389/swagger-ui/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # API Docs OpenAPI
+    location /v3/api-docs {
+        proxy_pass http://127.0.0.1:8389/v3/api-docs;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Swagger resources (CSS, JS, etc)
+    location /swagger-ui.html {
+        proxy_pass http://127.0.0.1:8389/swagger-ui.html;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # API proxypass
     location /api/ {
         proxy_pass http://127.0.0.1:8389/;
         proxy_http_version 1.1;
@@ -79,7 +97,7 @@ server {
         proxy_http_version 1.1;
     }
 
-    # Optional: catch-all for root - redirect to /survivor/
+    # Redirect root to /survivor/
     location = / {
         return 302 /survivor/;
     }
@@ -89,3 +107,4 @@ server {
         deny all;
     }
 }
+
