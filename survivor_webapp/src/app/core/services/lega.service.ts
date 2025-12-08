@@ -7,7 +7,7 @@ import { Lega } from '../models/lega.model';
   providedIn: 'root'
 })
 export class LegaService {
-  private apiUrl = '';
+  private apiUrl = '/api/survivorBe';
 
   constructor(private http: HttpClient) {}
 

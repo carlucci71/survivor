@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://85.235.148.177:8389',
-  hostUrl: 'http://85.235.148.177:4200'
+  apiUrl: 'https://liberaleidee.it/api/survivorBe',
+  hostUrl: 'https://liberaleidee.it/survivor'
 };

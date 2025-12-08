@@ -1,17 +1,5 @@
 {
-  "/api": {
-    "target": "http://localhost:8389",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  },
-  "/admin": {
-    "target": "http://localhost:8389",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  },
-  "/first": {
+  "/api/survivorBe": {
     "target": "http://localhost:8389",
     "secure": false,
     "changeOrigin": true,

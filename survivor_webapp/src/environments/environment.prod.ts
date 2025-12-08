@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8389'
+  apiUrl: 'https://liberaleidee.it/api/survivorBe'
 };
