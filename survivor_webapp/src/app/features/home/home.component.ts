@@ -16,6 +16,7 @@ import { Lega } from '../../core/models/lega.model';
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
+  profilo: {} = {};
   isLoading = true;
 
   constructor(
@@ -27,6 +28,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.loadLeghe();
+    this.getProfilo();
   }
 
   loadLeghe(): void {
@@ -41,6 +43,20 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
+  getProfilo(): void {
+    this.legaService.profilo().subscribe({
+      next: (profilo) => {
+        this.profilo = profilo.profilo;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
 
   logout(): void {
     this.authService.logout();

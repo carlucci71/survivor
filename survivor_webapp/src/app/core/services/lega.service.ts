@@ -14,4 +14,8 @@ export class LegaService {
   getLeghe(): Observable<Lega[]> {
     return this.http.get<Lega[]>(`${this.apiUrl}/first`);
   }
+
+  profilo(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/first/profilo`);
+  }
 }
