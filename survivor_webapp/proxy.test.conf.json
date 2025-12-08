@@ -1,19 +1,7 @@
 {
-  "/api": {
-    "target": "http://85.235.148.177:8389",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  },
-  "/admin": {
-    "target": "http://85.235.148.177:8389",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  },
-  "/first": {
-    "target": "http://85.235.148.177:8389",
-    "secure": false,
+  "/api/survivorBe": {
+    "target": "https://liberaleidee.it",
+    "secure": true,
     "changeOrigin": true,
     "logLevel": "debug"
   }

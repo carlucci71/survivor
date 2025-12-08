@@ -26,7 +26,7 @@ export class AdminComponent implements OnInit {
   }
 
   testAdminEndpoint(): void {
-    this.http.get('/admin', { responseType: 'text' })
+    this.http.get('/api/survivorBe/admin', { responseType: 'text' })
       .subscribe({
         next: (response) => {
           this.message = response;
