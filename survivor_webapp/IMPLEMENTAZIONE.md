@@ -106,15 +106,15 @@ survivor_webapp/
 L'app usa un proxy per evitare problemi CORS in sviluppo:
 ```json
 {
-  "/api": { "target": "http://localhost:8080" },
-  "/admin": { "target": "http://localhost:8080" },
-  "/first": { "target": "http://localhost:8080" }
+  "/api": { "target": "http://localhost:8389" },
+  "/admin": { "target": "http://localhost:8389" },
+  "/first": { "target": "http://localhost:8389" }
 }
 ```
 
 ## 🚀 Come Avviare
 
-### 1. Backend (porta 8080)
+### 1. Backend (porta 8389)
 ```bash
 cd survivor_backend
 mvn spring-boot:run
@@ -177,7 +177,7 @@ Apri browser su: **http://localhost:4200**
 Modifica `proxy.conf.json`:
 ```json
 {
-  "/api": { "target": "http://tuo-backend:8080" }
+  "/api": { "target": "http://tuo-backend:8389" }
 }
 ```
 

@@ -69,7 +69,7 @@ src/app/
 
 ## Configurazione Backend
 
-Assicurarsi che il backend Spring Boot sia avviato su `http://localhost:8080`.
+Assicurarsi che il backend Spring Boot sia avviato su `http://localhost:8389`.
 
 Per modificare l'URL del backend, aggiornare le proprietà `apiUrl` nei servizi:
 - `src/app/core/services/auth.service.ts`

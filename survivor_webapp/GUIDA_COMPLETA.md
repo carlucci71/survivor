@@ -75,7 +75,7 @@ src/app/
 ### 1. Prerequisiti
 - Node.js 20.x o superiore
 - npm 10.x o superiore
-- Backend Spring Boot avviato su http://localhost:8080
+- Backend Spring Boot avviato su http://localhost:8389
 
 ### 2. Prima installazione
 
@@ -143,12 +143,12 @@ Le URL delle API sono configurate nei servizi:
 
 **auth.service.ts:**
 ```typescript
-private apiUrl = 'http://localhost:8080/api/auth';
+private apiUrl = 'http://localhost:8389/api/auth';
 ```
 
 **lega.service.ts:**
 ```typescript
-private apiUrl = 'http://localhost:8080';
+private apiUrl = 'http://localhost:8389';
 ```
 
 Per modificare l'URL del backend, aggiorna queste proprietà.
@@ -167,10 +167,10 @@ Prima di testare l'applicazione, assicurati che il backend risponda:
 
 ```bash
 # Test endpoint pubblico
-curl http://localhost:8080/first
+curl http://localhost:8389/first
 
 # Test magic link
-curl -X POST http://localhost:8080/api/auth/request-magic-link \
+curl -X POST http://localhost:8389/api/auth/request-magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com"}'
 ```
