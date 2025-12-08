@@ -57,6 +57,18 @@
               "extractLicenses": false,
               "sourceMap": true
             }
+            ,
+            "test": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
+            }
           },
           "defaultConfiguration": "production"
         },
@@ -67,6 +79,9 @@
               "buildTarget": "survivor_webapp:build:production"
             },
             "development": {
+              "buildTarget": "survivor_webapp:build:development"
+            },
+            "test": {
               "buildTarget": "survivor_webapp:build:development"
             }
           },
