@@ -64,6 +64,9 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
 
   logout(): void {
     this.authService.logout();
@@ -78,7 +81,4 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/lega', id]);
   }
 
-  isAdmin(): boolean {
-    return this.currentUser?.role === 'ADMIN';
-  }
 }

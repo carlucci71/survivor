@@ -14,6 +14,7 @@ public class EsitoGiocataConverter implements AttributeConverter<Enumeratori.Esi
 
     @Override
     public Enumeratori.EsitoGiocata convertToEntityAttribute(String dbData) {
+        if (dbData==null) return null;
         return Enumeratori.EsitoGiocata.valueOf(dbData);
     }
 }

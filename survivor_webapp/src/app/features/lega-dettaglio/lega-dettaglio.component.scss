@@ -1,3 +1,122 @@
+.select-squadra .mat-form-field-wrapper,
+.select-squadra .mat-form-field-flex,
+.select-squadra .mat-form-field-infix {
+	padding: 0 !important;
+	height: auto !important;
+}
+
+.select-squadra .mat-form-field-infix { 
+	height: 44px !important;
+	display: flex;
+	align-items: center;
+}
+
+.select-squadra .mat-select-trigger {
+	height: 44px !important;
+	display: flex;
+	align-items: center;
+}
+
+/* riga più compatta per eliminare spazio sotto */
+.giocatori-table tr {
+	height: 44px;
+}
+
+/* --- Fix allineamento verticale select + icona --- */
+.giocatori-table td.mat-cell {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+}
+
+.select-squadra {
+	min-width: 180px;
+	align-self: flex-start;
+	margin-top: 18px;
+}
+
+.save-icon {
+	margin-left: 12px;
+	margin-top: 0px;
+	font-size: 24px;
+	color: #1976d2;
+	cursor: pointer;
+	transition: color 0.2s;
+	align-self: center;
+	font-family: 'Material Icons', 'Material Icons Outlined', 'Material Icons Round', 'Material Icons Sharp', 'Material Icons Two Tone', sans-serif !important;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	white-space: nowrap;
+	direction: ltr;
+	-webkit-font-feature-settings: 'liga';
+	-webkit-font-smoothing: antialiased;
+}
+.save-icon:hover {
+	color: #125199;
+}
+.giocatori-table th.mat-header-cell {
+	vertical-align: middle;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+}
+.save-icon {
+	margin-left: 12px;
+	font-size: 24px;
+	color: #1976d2;
+	cursor: pointer;
+	transition: color 0.2s;
+	vertical-align: middle;
+	font-family: 'Material Icons', 'Material Icons Outlined', 'Material Icons Round', 'Material Icons Sharp', 'Material Icons Two Tone', sans-serif !important;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	letter-spacing: normal;
+	text-transform: none;
+	display: inline-block;
+	white-space: nowrap;
+	direction: ltr;
+	-webkit-font-feature-settings: 'liga';
+	-webkit-font-smoothing: antialiased;
+}
+.save-icon:hover {
+	color: #125199;
+}
+
+.squadra-select-save {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 8px;
+	height: 100%;
+}
+
+.giocatori-table td.mat-cell {
+	padding-top: 8px;
+	padding-top: 2px;
+	height: 100%;
+	/* Flex per centrare il contenuto verticalmente e orizzontalmente */
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+}
+
+.select-squadra {
+	min-width: 180px;
+	align-self: flex-start;
+	margin-top: 14px;
+}
 .giocatori-table th:first-child, .giocatori-table td:first-child {
 	white-space: normal;
 	word-break: break-word;
@@ -41,7 +160,7 @@
 }
 
 .giocatori-table tr {
-	height: 48px;
+	height: 44px;
 }
 
 .giocatori-table tr.eliminato-row,

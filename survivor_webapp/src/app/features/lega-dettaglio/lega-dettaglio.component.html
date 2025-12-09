@@ -29,25 +29,34 @@
 							<th mat-header-cell *matHeaderCellDef>Stato</th>
 							<td mat-cell *matCellDef="let giocatore">{{ giocatore.stato }}</td>
 						</ng-container>
-						@if (lega.giocatori && lega.giocatori.length > 0 && lega.giocatori[0] && lega.giocatori[0].giocate && lega.giocatori[0].giocate.length > 0) {
-							@for (giocata of lega.giocatori[0].giocate; track $index) {
-								<ng-container [matColumnDef]="'giocata' + $index">
-									<th mat-header-cell *matHeaderCellDef>Giocata {{$index + 1}}</th>
-									<td mat-cell *matCellDef="let giocatore">{{ getSquadraNome(giocatore.giocate?.[$index]?.squadraId) }}</td>
-								</ng-container>
-							}
+						@for (giornata of giornataIndices; track giornata) {
+							<ng-container [matColumnDef]="'giocata' + (giornata - 1)">
+								<th mat-header-cell *matHeaderCellDef>Giocata {{ giornata }}</th>
+								<td mat-cell *matCellDef="let giocatore">
+									<ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as g">
+										{{ getSquadraNome(g.squadraId) }}
+									</ng-container>
+								</td>
+							</ng-container>
 						}
 					<ng-container matColumnDef="squadra">
 						<th mat-header-cell *matHeaderCellDef>Squadra</th>
-						<td mat-cell *matCellDef="let giocatore">
-							@if (giocatore.stato !== 'ELIMINATO') {
-								<mat-form-field appearance="outline" class="select-squadra">
-									<mat-select placeholder="Seleziona">
-										@for (squadra of getSquadreDisponibili(giocatore); track squadra.id) {
-											<mat-option [value]="squadra.id">{{ squadra.nome }}</mat-option>
-										}
-									</mat-select>
-								</mat-form-field>
+						<td mat-cell *matCellDef="let giocatore; let i = $index">
+							@if (giocatore.stato !== 'ELIMINATO' && canEditUserRow(giocatore?.user?.id)) {
+								<div class="squadra-select-save">
+									<mat-form-field appearance="outline" class="select-squadra">
+										<mat-select placeholder="Seleziona"
+															 [(ngModel)]="giocatore.squadraSelezionata"
+															 [ngModelOptions]="{standalone: true}">
+											@for (squadra of getSquadreDisponibili(giocatore); track squadra.id) {
+												<mat-option [value]="squadra.id">{{ squadra.nome }}</mat-option>
+											} 
+										</mat-select>
+									</mat-form-field>
+									@if (giocatore.squadraSelezionata) {
+										<mat-icon class="save-icon" (click)="salvaSquadra(giocatore)">save</mat-icon>
+									}
+								</div>
 							}
 						</td>
 					</ng-container>

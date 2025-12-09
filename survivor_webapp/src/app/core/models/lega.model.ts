@@ -1,3 +1,5 @@
+import { User } from "./auth.model";
+
 export interface Lega {
   id: number;
   nome: string;
@@ -20,6 +22,7 @@ export interface Campionato {
 export interface Squadra {
   id?: number;
   nome: string;
+  giocatori: Giocatore[];
   // Aggiungi altri campi se necessario
 }
 
@@ -27,6 +30,7 @@ export interface Giocatore {
   id?: number;
   nome: string;
   stato?: string;
+  user?: User;
   giocate?: Giocata[]
 }
 

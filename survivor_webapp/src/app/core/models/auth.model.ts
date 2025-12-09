@@ -8,6 +8,7 @@ export interface MagicLinkResponse {
 }
 
 export interface AuthResponse {
+  id: number;
   token: string;
   email: string;
   name: string;
@@ -15,6 +16,7 @@ export interface AuthResponse {
 }
 
 export interface User {
+  id: number;
   email: string;
   name: string;
   role: string;

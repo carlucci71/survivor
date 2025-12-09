@@ -37,18 +37,19 @@ export class AuthService {
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem('token', response.token);
+    localStorage.setItem('tokenSurvivor', response.token);
     const user: User = {
+      id: response.id,
       email: response.email,
       name: response.name,
       role: response.role
     };
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('userSurvivor', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
   private loadUserFromStorage(): void {
-    const userJson = localStorage.getItem('user');
+    const userJson = localStorage.getItem('userSurvivor');
     if (userJson) {
       const user = JSON.parse(userJson);
       this.currentUserSubject.next(user);
@@ -56,20 +57,25 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+    return localStorage.getItem('tokenSurvivor');
   }
 
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
 
+  isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return !!user && user.role === 'ADMIN';
+  }
+
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value;
+  }
+
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem('tokenSurvivor');
+    localStorage.removeItem('userSurvivor');
     this.currentUserSubject.next(null);
   }
 }
