@@ -6,9 +6,12 @@ MAIL_PASSWORD: ${ENV_MAIL_PASSWORD}
 MAIL_FROM: fantasurvivorddl@gmail.com
 ADMIN_PASSWORD: ${ENV_ADMIN_PASSWORD}
 JWT_SECRET: ${ENV_JWT_SECRET}
-MAGIC_LINK_BASE_URL: ${ENV_SERVER:https://liberaleidee.it}/survivor
+MAGIC_LINK_BASE_URL: ${ENV_SERVER}/survivor
 DB_URL: jdbc:postgresql://85.235.148.177:6438/db_survivor
 DB_USER: survivor_user
 PORT: 8389
 SSL_ENABLED: false
-SWAGGER_SERVER_URL: https://liberaleidee.it
+SWAGGER_SERVER_URL: ${ENV_SERVER}
+ALLOWED_SERVERS:
+  - ${ENV_SERVER}
+

@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/survivorBe/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"https://liberaleidee.it", "http://localhost:4200"}, allowCredentials = "true")
+//@CrossOrigin(origins = {"https://liberaleidee.it", "http://localhost:4200"}, allowCredentials = "true")
 public class AuthController {
 
     private final MagicLinkService magicLinkService;

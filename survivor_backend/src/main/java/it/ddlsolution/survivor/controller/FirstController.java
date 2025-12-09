@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@RequestMapping("/api/survivorBe/first")
+@RequestMapping("/first")
 
 @RestController
 public class FirstController {

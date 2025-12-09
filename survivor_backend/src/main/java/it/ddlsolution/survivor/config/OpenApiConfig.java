@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-    @Value("${swagger.server.url:https://liberaleidee.it}")
+    @Value("${swagger.server.url}")
     private String serverUrl;
 
     @Bean
@@ -26,12 +26,12 @@ public class OpenApiConfig {
         prodServer.setUrl(serverUrl);
         prodServer.setDescription("Production Server");
 
-        Server localServer = new Server();
-        localServer.setUrl("http://localhost:8389");
-        localServer.setDescription("Local Server");
+//        Server localServer = new Server();
+//        localServer.setUrl("http://localhost:8389");
+//        localServer.setDescription("Local Server");
 
         return new OpenAPI()
-                .servers(List.of(prodServer, localServer))
+                .servers(List.of(prodServer))//, localServer
                 .info(new Info()
                         .title("Survivor API")
                         .version("1.0")
