@@ -22,16 +22,12 @@ public class OpenApiConfig {
     public OpenAPI apiWithJWTBearerAuth() {
         final String securitySchemeName = "bearerAuth";
 
-        Server prodServer = new Server();
-        prodServer.setUrl(serverUrl);
-        prodServer.setDescription("Production Server");
-
-//        Server localServer = new Server();
-//        localServer.setUrl("http://localhost:8389");
-//        localServer.setDescription("Local Server");
+        Server swaggerServer = new Server();
+        swaggerServer.setUrl(serverUrl);
+        swaggerServer.setDescription("Swagger Server");
 
         return new OpenAPI()
-                .servers(List.of(prodServer))//, localServer
+                .servers(List.of(swaggerServer))
                 .info(new Info()
                         .title("Survivor API")
                         .version("1.0")

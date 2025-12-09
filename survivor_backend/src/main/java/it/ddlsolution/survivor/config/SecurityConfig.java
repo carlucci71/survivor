@@ -23,10 +23,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-/*
-    @Value("${app.api-base}")
-    private String apiBase;
-*/
     @Value("${ALLOWED_SERVERS}")
     private List<String> allowedServers;
 
@@ -40,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers( "/admin/**").hasRole("ADMIN")
-//                        .requestMatchers(apiBase + "/first/**").authenticated()
+//                        .requestMatchers(apiBase + "/first/**").authenticated() RIGA RIDONTANTE LASCIATA PER RICORDARE COME FARE CONFIGURAZIONI PARTICOLARI
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -56,13 +52,6 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(allowedServers);
-        /*
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://liberaleidee.it",
-                "http://localhost:4200",
-                "http://localhost:8389"
-        ));
-*/
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));

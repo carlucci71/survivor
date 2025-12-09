@@ -54,7 +54,6 @@ swagger:
 server:
   servlet:
     context-path: /api/survivorBe
-    #context-path: ${app.api-base}
   port: ${PORT}
   ssl:
     enabled: ${SSL_ENABLED:false}
@@ -62,6 +61,3 @@ server:
     key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
     key-store-type: PKCS12
     key-alias: survivor
-
-#app:
-#  api-base: /api/survivorBe
