@@ -6,11 +6,16 @@ import { LegaService } from '../../core/services/lega.service';
 import { User } from '../../core/models/auth.model';
 import { Lega } from '../../core/models/lega.model';
 import { UtilService } from '../../core/services/util.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

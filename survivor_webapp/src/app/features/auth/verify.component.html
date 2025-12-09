@@ -1,20 +1,20 @@
 <div class="verify-container">
-  <div class="verify-card">
+  <mat-card class="verify-card">
     @if (isLoading) {
-      <div class="loading">
-        <div class="spinner"></div>
+      <mat-card-content class="loading">
+        <mat-spinner></mat-spinner>
         <p>Verifica in corso...</p>
-      </div>
+      </mat-card-content>
     }
 
     @if (!isLoading) {
-      <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
-        <div class="icon">{{ isSuccess ? '✓' : '✗' }}</div>
+      <mat-card-content class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+        <mat-icon class="icon">{{ isSuccess ? 'check_circle' : 'error' }}</mat-icon>
         <p>{{ message }}</p>
         @if (!isSuccess) {
-          <a routerLink="/auth/login" class="btn-link">Torna al login</a>
+          <button mat-raised-button color="primary" routerLink="/auth/login">Torna al login</button>
         }
-      </div>
+      </mat-card-content>
     }
-  </div>
+  </mat-card>
 </div>

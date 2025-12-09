@@ -1,21 +1,21 @@
 <div class="home-container">
-  <header class="header">
+  <mat-toolbar color="primary" class="header">
     <div class="header-content">
       <h1>Survivor</h1>
       <div class="user-info">
         <span class="welcome">Benvenuto, {{ currentUser?.name }}</span>
-        <span class="role-badge" [class.admin]="isAdmin()">
+        <mat-chip [class.admin-chip]="isAdmin()">
           {{ currentUser?.role }}
-        </span>
-        <button (click)="logout()" class="btn-logout">Logout</button>
+        </mat-chip>
+        <button mat-raised-button color="warn" (click)="logout()" class="btn-logout">Logout</button>
       </div>
     </div>
-  </header>
+  </mat-toolbar>
 
   <main class="main-content">
     <div class="actions">
       @if (isAdmin()) {
-        <button (click)="goToAdmin()" class="btn-admin">
+        <button mat-raised-button color="accent" (click)="goToAdmin()" class="btn-admin">
         Area Admin
         </button>
       }
@@ -26,27 +26,33 @@
 
       @if (isLoading) {
         <div class="loading">
-          <div class="spinner"></div>
+          <mat-spinner></mat-spinner>
           <p>Caricamento in corso...</p>
         </div>
       }
 
       @if (!isLoading && leghe.length === 0) {
-        <div class="no-data">
-          <p>Nessuna lega disponibile al momento</p>
-        </div>
+        <mat-card class="no-data">
+          <mat-card-content>
+            <p>Nessuna lega disponibile al momento</p>
+          </mat-card-content>
+        </mat-card>
       }
 
       @if (!isLoading && leghe.length > 0) {
         <div class="leghe-grid">
           @for (lega of leghe; track lega.id) {
-            <div class="lega-card">
-              <h3>{{ lega.nome }}</h3>
-              @if (lega.campionatoId) {
-                <p>{{ lega.campionatoId }}</p>
-              }
-              <button (click)="goToLega(lega.id)" class="btn-secondary">Visualizza</button>
-            </div>
+            <mat-card class="lega-card">
+              <mat-card-header>
+                <mat-card-title>{{ lega.nome }}</mat-card-title>
+                @if (lega.campionatoId) {
+                  <mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
+                }
+              </mat-card-header>
+              <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>
+              </mat-card-actions>
+            </mat-card>
           }
         </div>
       }

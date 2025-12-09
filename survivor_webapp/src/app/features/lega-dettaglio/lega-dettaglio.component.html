@@ -1,32 +1,61 @@
 <div class="lega-dettaglio-container">
 	@if (isLoading) {
 		<div class="loading">
-			<div class="spinner"></div>
+			<mat-spinner></mat-spinner>
 			<p>Caricamento in corso...</p>
 		</div>
 	}
 	@if (error) {
-		<div class="error">{{ error }}</div>
+		<mat-card class="error-card">
+			<mat-card-content>{{ error }}</mat-card-content>
+		</mat-card>
 	}
 	@if (lega) {
-		<div class="lega-card">
-			<h2>{{ lega.nome }}</h2>
-			@if (lega.id) {
-				<p>{{ lega.id }}</p>
-			}
-			@if (lega.campionatoId) {
-				<p>{{ lega.campionatoId }}</p>
-			}
-			@if (lega.giocatori) {
-                @for (giocatore of lega.giocatori; track $index) {
-				<p>{{ giocatore.id }} - {{ giocatore.nome }}</p>
-                    @if (giocatore.giocate) {
-                        @for (giocata of giocatore.giocate; track $index) {
-            				<p>{{ giocata.giornata }} - {{ giocata.squadraId }} - {{ giocata.esito }}</p>
-                        }
-                    }
-                }
-			}
-		</div>
+		<mat-card class="lega-card">
+			<mat-card-header>
+				<mat-card-title>{{ lega.nome }}</mat-card-title>
+				@if (lega.campionatoId) {
+					<mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
+				}
+			</mat-card-header>
+		<mat-card-content>
+			@if (lega.giocatori?.length) {
+				<table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
+					<ng-container matColumnDef="nome">
+							<th mat-header-cell *matHeaderCellDef>Nome</th>
+							<td mat-cell *matCellDef="let giocatore">{{ giocatore.nome }}</td>
+						</ng-container>
+						<ng-container matColumnDef="stato">
+							<th mat-header-cell *matHeaderCellDef>Stato</th>
+							<td mat-cell *matCellDef="let giocatore">{{ giocatore.stato }}</td>
+						</ng-container>
+						@if (lega.giocatori && lega.giocatori.length > 0 && lega.giocatori[0] && lega.giocatori[0].giocate && lega.giocatori[0].giocate.length > 0) {
+							@for (giocata of lega.giocatori[0].giocate; track $index) {
+								<ng-container [matColumnDef]="'giocata' + $index">
+									<th mat-header-cell *matHeaderCellDef>Giocata {{$index + 1}}</th>
+									<td mat-cell *matCellDef="let giocatore">{{ getSquadraNome(giocatore.giocate?.[$index]?.squadraId) }}</td>
+								</ng-container>
+							}
+						}
+					<ng-container matColumnDef="squadra">
+						<th mat-header-cell *matHeaderCellDef>Squadra</th>
+						<td mat-cell *matCellDef="let giocatore">
+							@if (giocatore.stato !== 'ELIMINATO') {
+								<mat-form-field appearance="outline" class="select-squadra">
+									<mat-select placeholder="Seleziona">
+										@for (squadra of getSquadreDisponibili(giocatore); track squadra.id) {
+											<mat-option [value]="squadra.id">{{ squadra.nome }}</mat-option>
+										}
+									</mat-select>
+								</mat-form-field>
+							}
+						</td>
+					</ng-container>
+						<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+						<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.eliminato-row]="row.stato === 'ELIMINATO'"></tr>
+					</table>
+				}
+			</mat-card-content>
+		</mat-card>
 	}
 </div>

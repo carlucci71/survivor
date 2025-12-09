@@ -1,31 +1,37 @@
 <div class="login-container">
-  <div class="login-card">
-    <h1>Survivor - Login</h1>
-    <p class="subtitle">Inserisci la tua email per ricevere il magic link</p>
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>Survivor - Login</mat-card-title>
+      <mat-card-subtitle>Inserisci la tua email per ricevere il magic link</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" class="login-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="la-tua-email@esempio.com"
+            required
+            [disabled]="isLoading"
+          />
+        </mat-form-field>
 
-    <form (ngSubmit)="onSubmit()" class="login-form">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          [(ngModel)]="email"
-          placeholder="la-tua-email@esempio.com"
-          required
-          [disabled]="isLoading"
-        />
-      </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-btn">
+          {{ isLoading ? 'Invio in corso...' : 'Invia Magic Link' }}
+        </button>
+      </form>
 
-      <button type="submit" [disabled]="isLoading" class="btn-primary">
-        {{ isLoading ? 'Invio in corso...' : 'Invia Magic Link' }}
-      </button>
-    </form>
-
-    @if (message) {
-      <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
-        {{ message }}
-      </div>
-    }
-  </div>
+      @if (message) {
+        <mat-card class="message-card" [class.success]="isSuccess" [class.error]="!isSuccess">
+          <mat-card-content>
+            {{ message }}
+          </mat-card-content>
+        </mat-card>
+      }
+    </mat-card-content>
+  </mat-card>
 </div>

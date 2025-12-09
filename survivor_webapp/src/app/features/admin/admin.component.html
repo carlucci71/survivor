@@ -1,13 +1,13 @@
 <div class="admin-container">
-  <header class="header">
+  <mat-toolbar color="primary" class="header">
     <div class="header-content">
       <h1>Area Admin</h1>
       <div class="actions">
-        <button (click)="goBack()" class="btn-back">← Torna alla Home</button>
-        <button (click)="logout()" class="btn-logout">Logout</button>
+        <button mat-button (click)="goBack()" class="btn-back">← Torna alla Home</button>
+        <button mat-raised-button color="warn" (click)="logout()" class="btn-logout">Logout</button>
       </div>
     </div>
-  </header>
+  </mat-toolbar>
 
   <main class="main-content">
     <div class="admin-panel">
@@ -15,41 +15,67 @@
 
       @if (isLoading) {
         <div class="loading">
-          <div class="spinner"></div>
+          <mat-spinner></mat-spinner>
           <p>Caricamento...</p>
         </div>
       }
 
       @if (!isLoading) {
-        <div class="message-box">
-          <p>Risposta dal server: <strong>{{ message }}</strong></p>
-        </div>
+        <mat-card class="message-box">
+          <mat-card-content>
+            <p>Risposta dal server: <strong>{{ message }}</strong></p>
+          </mat-card-content>
+        </mat-card>
       }
 
       <div class="admin-sections">
-        <div class="section-card">
-          <h3>Gestione Leghe</h3>
-          <p>Crea e gestisci le leghe del sistema</p>
-          <button class="btn-primary" disabled>In arrivo</button>
-        </div>
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>Gestione Leghe</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Crea e gestisci le leghe del sistema</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" disabled>In arrivo</button>
+          </mat-card-actions>
+        </mat-card>
 
-        <div class="section-card">
-          <h3>Gestione Utenti</h3>
-          <p>Visualizza e gestisci gli utenti</p>
-          <button class="btn-primary" disabled>In arrivo</button>
-        </div>
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>Gestione Utenti</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Visualizza e gestisci gli utenti</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" disabled>In arrivo</button>
+          </mat-card-actions>
+        </mat-card>
 
-        <div class="section-card">
-          <h3>Gestione Campionati</h3>
-          <p>Configura campionati e squadre</p>
-          <button class="btn-primary" disabled>In arrivo</button>
-        </div>
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>Gestione Campionati</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Configura campionati e squadre</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" disabled>In arrivo</button>
+          </mat-card-actions>
+        </mat-card>
 
-        <div class="section-card">
-          <h3>Statistiche</h3>
-          <p>Visualizza statistiche del sistema</p>
-          <button class="btn-primary" disabled>In arrivo</button>
-        </div>
+        <mat-card class="section-card">
+          <mat-card-header>
+            <mat-card-title>Statistiche</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Visualizza statistiche del sistema</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" disabled>In arrivo</button>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
   </main>
