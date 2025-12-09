@@ -1,8 +1,8 @@
 export interface Lega {
-  id?: number;
+  id: number;
   nome: string;
-  descrizione?: string;
-  // Aggiungi altri campi se necessario
+  campionatoId?: string;
+  giocatori?: Giocatore[];
 }
 
 export interface Sport {
@@ -26,10 +26,13 @@ export interface Squadra {
 export interface Giocatore {
   id?: number;
   nome: string;
-  // Aggiungi altri campi se necessario
+  stato?: string;
+  giocate?: Giocata[]
 }
 
 export interface Giocata {
   id?: number;
-  // Aggiungi campi necessari
+  giornata?: number;
+  squadraId?: string;
+  esito?: string;
 }

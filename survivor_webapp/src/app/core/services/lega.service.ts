@@ -7,15 +7,21 @@ import { Lega } from '../models/lega.model';
   providedIn: 'root'
 })
 export class LegaService {
-  private apiUrl = '/api/survivorBe';
+  private apiUrl = '/api/survivorBe/lega';
 
   constructor(private http: HttpClient) {}
 
-  getLeghe(): Observable<Lega[]> {
-    return this.http.get<Lega[]>(`${this.apiUrl}/first`);
+  mieLeghe(): Observable<Lega[]> {
+    return this.http.get<Lega[]>(`${this.apiUrl}/mieLeghe`);
   }
 
-  profilo(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/first/profilo`);
+
+  getLegaById(id: number): Observable<Lega> {
+    return this.http.get<Lega>(`${this.apiUrl}/${id}`);
   }
+
+  getProva(): Observable<Lega[]> {
+    return this.http.get<Lega[]>(`${this.apiUrl}/prova`);
+  }
+
 }

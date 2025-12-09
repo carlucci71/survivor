@@ -5,6 +5,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { User } from '../../core/models/auth.model';
 import { Lega } from '../../core/models/lega.model';
+import { UtilService } from '../../core/services/util.service';
 
 @Component({
   selector: 'app-home',
@@ -22,6 +23,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private legaService: LegaService,
+    private utilService: UtilService,
     private router: Router
   ) {}
 
@@ -32,7 +34,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadLeghe(): void {
-    this.legaService.getLeghe().subscribe({
+    this.legaService.mieLeghe().subscribe({
       next: (leghe) => {
         this.leghe = leghe;
         this.isLoading = false;
@@ -45,7 +47,7 @@ export class HomeComponent implements OnInit {
   }
 
   getProfilo(): void {
-    this.legaService.profilo().subscribe({
+    this.utilService.profilo().subscribe({
       next: (profilo) => {
         this.profilo = profilo.profilo;
         this.isLoading = false;
@@ -65,6 +67,10 @@ export class HomeComponent implements OnInit {
 
   goToAdmin(): void {
     this.router.navigate(['/admin']);
+  }
+
+  goToLega(id: number): void {
+    this.router.navigate(['/lega', id]);
   }
 
   isAdmin(): boolean {

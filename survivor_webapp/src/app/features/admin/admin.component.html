@@ -13,14 +13,18 @@
     <div class="admin-panel">
       <h2>Dashboard Amministratore</h2>
 
-      <div *ngIf="isLoading" class="loading">
-        <div class="spinner"></div>
-        <p>Caricamento...</p>
-      </div>
+      @if (isLoading) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Caricamento...</p>
+        </div>
+      }
 
-      <div *ngIf="!isLoading" class="message-box">
-        <p>Risposta dal server: <strong>{{ message }}</strong></p>
-      </div>
+      @if (!isLoading) {
+        <div class="message-box">
+          <p>Risposta dal server: <strong>{{ message }}</strong></p>
+        </div>
+      }
 
       <div class="admin-sections">
         <div class="section-card">

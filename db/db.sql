@@ -14,6 +14,7 @@ create table lega(
 create table giocatore(
 	id serial primary key,
 	nome varchar(100) not null,
+    user_id BIGINT NULL,
 	stato char(1) not null
 );
 CREATE TABLE giocatore_lega (
@@ -57,6 +58,9 @@ FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
 ALTER TABLE giocata
 ADD CONSTRAINT fk_giocata_squadra
 FOREIGN KEY (id_squadra) REFERENCES squadra(id);
+ALTER TABLE giocatore
+ADD CONSTRAINT fk_giocatore_user
+FOREIGN KEY (user_id) REFERENCES users(id);
 
 alter TABLE giocatore_lega 
 ADD CONSTRAINT fk_giocatore FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
@@ -88,39 +92,72 @@ insert into squadra(id,nome,id_campionato) values('TOR','Torino','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('UDI','Udinese','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('VER','Verona','SERIE_A');
 insert into lega(id,nome,id_campionato) values(1,'DDL','SERIE_A');
-insert into giocatore(nome,stato) values('ALESSANDRO TOTO','A');
-insert into giocatore(nome,stato) values('ANDREA MOSCHELLA','A');
-insert into giocatore(nome,stato) values('ANGELO MEZZA','E');
-insert into giocatore(nome,stato) values('ANTONIO POSSEMATO','A');
-insert into giocatore(nome,stato) values('ANTONIO POSSEMATO JR','A');
-insert into giocatore(nome,stato) values('ANTONIO TOTO','A');
-insert into giocatore(nome,stato) values('ANTONIO VISCOSI','A');
-insert into giocatore(nome,stato) values('CARMINE ROSIELLO','A');
-insert into giocatore(nome,stato) values('DANIELE CARLUCCI','A');
-insert into giocatore(nome,stato) values('DARIO D''ABBIERO','A');
-insert into giocatore(nome,stato) values('EMILIO CUCCINIELLO','A');
-insert into giocatore(nome,stato) values('FEDERICO CIAUDELLI','A');
-insert into giocatore(nome,stato) values('GAETANO TURCO','A');
-insert into giocatore(nome,stato) values('GEPPY MEZZA','A');
-insert into giocatore(nome,stato) values('GIUSEPPE DELLA VALLE','A');
-insert into giocatore(nome,stato) values('GIUSEPPE RAINONE','A');
-insert into giocatore(nome,stato) values('GIUSEPPE SILVESTRE','A');
-insert into giocatore(nome,stato) values('IGNAZIO GUELI','A');
-insert into giocatore(nome,stato) values('IORIS BENENATI','A');
-insert into giocatore(nome,stato) values('LEONARDO GALIETTA','A');
-insert into giocatore(nome,stato) values('LUIGI CERAVOLO','A');
-insert into giocatore(nome,stato) values('LUIGI MATTEI','A');
-insert into giocatore(nome,stato) values('MARCO BROVERO','A');
-insert into giocatore(nome,stato) values('MARCO MEOLA','E');
-insert into giocatore(nome,stato) values('MARCO SACCONE','E');
-insert into giocatore(nome,stato) values('MICHELE DI LUISE','A');
-insert into giocatore(nome,stato) values('MICHELE GRASSO','E');
-insert into giocatore(nome,stato) values('NARDUCCIO VISCOSI','A');
-insert into giocatore(nome,stato) values('SALVATORE GALIETTA','A');
-insert into giocatore(nome,stato) values('UMBERTO CIROTA','A');
-insert into giocatore(nome,stato) values('VALERIO LEONE','A');
-insert into giocatore(nome,stato) values('VINCENZO D''ABBIERO','A');
-insert into giocatore(nome,stato) values('VINCENZO RUSSO','A');
+insert into giocatore(nome,stato,user_id) values('ALESSANDRO TOTO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANDREA MOSCHELLA','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANGELO MEZZA','E',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANTONIO POSSEMATO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANTONIO POSSEMATO JR','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANTONIO TOTO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('ANTONIO VISCOSI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('CARMINE ROSIELLO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('DANIELE CARLUCCI','A',
+(select id from users where email = 'carlucci.daniele@gmail.com'));
+insert into giocatore(nome,stato,user_id) values('DARIO D''ABBIERO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('EMILIO CUCCINIELLO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('FEDERICO CIAUDELLI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('GAETANO TURCO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('GEPPY MEZZA','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('GIUSEPPE DELLA VALLE','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('GIUSEPPE RAINONE','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('GIUSEPPE SILVESTRE','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('IGNAZIO GUELI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('IORIS BENENATI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('LEONARDO GALIETTA','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('LUIGI CERAVOLO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('LUIGI MATTEI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('MARCO BROVERO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('MARCO MEOLA','E',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('MARCO SACCONE','E',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('MICHELE DI LUISE','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('MICHELE GRASSO','E',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('NARDUCCIO VISCOSI','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('SALVATORE GALIETTA','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('UMBERTO CIROTA','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('VALERIO LEONE','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('VINCENZO D''ABBIERO','A',
+(select id from users where email = ''));
+insert into giocatore(nome,stato,user_id) values('VINCENZO RUSSO','A',
+(select id from users where email = ''));
 insert into giocatore_lega(id_giocatore,id_lega) values (1,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (2,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (3,1);
@@ -187,5 +224,3 @@ insert into giocata(esito,giornata,id_giocatore,id_squadra) values ('OK', 1,30,'
 insert into giocata(esito,giornata,id_giocatore,id_squadra) values ('OK', 1,31,'ATA');
 insert into giocata(esito,giornata,id_giocatore,id_squadra) values ('OK', 1,32,'COM');
 insert into giocata(esito,giornata,id_giocatore,id_squadra) values ('OK', 1,33,'COM');
-
-

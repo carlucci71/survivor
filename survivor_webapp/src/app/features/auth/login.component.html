@@ -22,8 +22,10 @@
       </button>
     </form>
 
-    <div *ngIf="message" class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
-      {{ message }}
-    </div>
+    @if (message) {
+      <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+        {{ message }}
+      </div>
+    }
   </div>
 </div>

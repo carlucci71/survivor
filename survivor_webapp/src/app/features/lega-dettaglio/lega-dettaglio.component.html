@@ -1,0 +1,32 @@
+<div class="lega-dettaglio-container">
+	@if (isLoading) {
+		<div class="loading">
+			<div class="spinner"></div>
+			<p>Caricamento in corso...</p>
+		</div>
+	}
+	@if (error) {
+		<div class="error">{{ error }}</div>
+	}
+	@if (lega) {
+		<div class="lega-card">
+			<h2>{{ lega.nome }}</h2>
+			@if (lega.id) {
+				<p>{{ lega.id }}</p>
+			}
+			@if (lega.campionatoId) {
+				<p>{{ lega.campionatoId }}</p>
+			}
+			@if (lega.giocatori) {
+                @for (giocatore of lega.giocatori; track $index) {
+				<p>{{ giocatore.id }} - {{ giocatore.nome }}</p>
+                    @if (giocatore.giocate) {
+                        @for (giocata of giocatore.giocate; track $index) {
+            				<p>{{ giocata.giornata }} - {{ giocata.squadraId }} - {{ giocata.esito }}</p>
+                        }
+                    }
+                }
+			}
+		</div>
+	}
+</div>

@@ -22,6 +22,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'lega/:id',
+    loadComponent: () => import('./features/lega-dettaglio/lega-dettaglio.component').then(m => m.LegaDettaglioComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'admin',
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent),
     canActivate: [authGuard, adminGuard]

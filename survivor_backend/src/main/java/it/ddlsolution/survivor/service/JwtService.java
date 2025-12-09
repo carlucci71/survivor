@@ -22,7 +22,7 @@ public class JwtService {
     @Value("${jwt.expiration:86400000}") // 24 ore di default
     private long jwtExpiration;
 
-    public String extractEmail(String token) {
+    public String extractId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -35,20 +35,20 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(String email, String role) {
+    public String generateToken(String id, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
-        return createToken(claims, email);
+        return createToken(claims, id);
     }
 
-    public String generateToken(String email) {
-        return generateToken(email, "STANDARD");
+    public String generateToken(String id) {
+        return generateToken(id, "STANDARD");
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String id) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
+                .setSubject(id)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
@@ -68,9 +68,9 @@ public class JwtService {
                 .getBody();
     }
 
-    public boolean isTokenValid(String token, String email) {
-        final String tokenEmail = extractEmail(token);
-        return (tokenEmail.equals(email) && !isTokenExpired(token));
+    public boolean isTokenValid(String token, Long id) {
+        final String tokenId = extractId(token);
+        return (tokenId.equals(id.toString()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

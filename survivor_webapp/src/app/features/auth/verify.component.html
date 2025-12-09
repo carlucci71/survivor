@@ -1,14 +1,20 @@
 <div class="verify-container">
   <div class="verify-card">
-    <div *ngIf="isLoading" class="loading">
-      <div class="spinner"></div>
-      <p>Verifica in corso...</p>
-    </div>
+    @if (isLoading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Verifica in corso...</p>
+      </div>
+    }
 
-    <div *ngIf="!isLoading" class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
-      <div class="icon">{{ isSuccess ? '✓' : '✗' }}</div>
-      <p>{{ message }}</p>
-      <a *ngIf="!isSuccess" routerLink="/auth/login" class="btn-link">Torna al login</a>
-    </div>
+    @if (!isLoading) {
+      <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+        <div class="icon">{{ isSuccess ? '✓' : '✗' }}</div>
+        <p>{{ message }}</p>
+        @if (!isSuccess) {
+          <a routerLink="/auth/login" class="btn-link">Torna al login</a>
+        }
+      </div>
+    }
   </div>
 </div>

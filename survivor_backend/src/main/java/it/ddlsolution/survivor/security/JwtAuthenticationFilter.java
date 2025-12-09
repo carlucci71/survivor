@@ -38,11 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             final String jwt = authHeader.substring(7);
-            final String userEmail = jwtService.extractEmail(jwt);
+            final Long id = Long.parseLong(jwtService.extractId(jwt));
             final String role = jwtService.extractRole(jwt);
 
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if (jwtService.isTokenValid(jwt, userEmail)) {
+            if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                if (jwtService.isTokenValid(jwt, id)) {
                     // Crea le authorities basate sul ruolo
                     var authorities = new ArrayList<org.springframework.security.core.GrantedAuthority>();
                     if (role != null) {
@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userEmail,
+                            id,
                             null,
                             authorities
                     );
