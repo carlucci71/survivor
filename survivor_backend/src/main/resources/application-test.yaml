@@ -11,6 +11,6 @@ DB_URL: jdbc:postgresql://85.235.148.177:6438/db_survivor
 DB_USER: survivor_user
 PORT: 8389
 SSL_ENABLED: false
-SWAGGER_SERVER_URL: ${ENV_SERVER}
+SWAGGER_SERVER_URL: ${ENV_SERVER}/api/survivorBe
 ALLOWED_SERVERS: ${ENV_SERVER}
 
