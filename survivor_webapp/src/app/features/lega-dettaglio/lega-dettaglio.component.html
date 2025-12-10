@@ -1,70 +1,104 @@
 <div class="lega-dettaglio-container">
-	@if (isLoading) {
-		<div class="loading">
-			<mat-spinner></mat-spinner>
-			<p>Caricamento in corso...</p>
-		</div>
-	}
-	@if (error) {
-		<mat-card class="error-card">
-			<mat-card-content>{{ error }}</mat-card-content>
-		</mat-card>
-	}
-	@if (lega) {
-		<mat-card class="lega-card">
-			<mat-card-header>
-				<mat-card-title>{{ lega.nome }}</mat-card-title>
-				@if (lega.campionatoId) {
-					<mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
-				}
-			</mat-card-header>
-		<mat-card-content>
-			@if (lega.giocatori?.length) {
-				<table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
-					<ng-container matColumnDef="nome">
-							<th mat-header-cell *matHeaderCellDef>Nome</th>
-							<td mat-cell *matCellDef="let giocatore">{{ giocatore.nome }}</td>
-						</ng-container>
-						<ng-container matColumnDef="stato">
-							<th mat-header-cell *matHeaderCellDef>Stato</th>
-							<td mat-cell *matCellDef="let giocatore">{{ giocatore.stato }}</td>
-						</ng-container>
-						@for (giornata of giornataIndices; track giornata) {
-							<ng-container [matColumnDef]="'giocata' + (giornata - 1)">
-								<th mat-header-cell *matHeaderCellDef>Giocata {{ giornata }}</th>
-								<td mat-cell *matCellDef="let giocatore">
-									<ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as g">
-										{{ getSquadraNome(g.squadraId) }}
-									</ng-container>
-								</td>
-							</ng-container>
-						}
-					<ng-container matColumnDef="squadra">
-						<th mat-header-cell *matHeaderCellDef>Squadra</th>
-						<td mat-cell *matCellDef="let giocatore; let i = $index">
-							@if (giocatore.stato !== 'ELIMINATO' && canEditUserRow(giocatore?.user?.id)) {
-								<div class="squadra-select-save">
-									<mat-form-field appearance="outline" class="select-squadra">
-										<mat-select placeholder="Seleziona"
-															 [(ngModel)]="giocatore.squadraSelezionata"
-															 [ngModelOptions]="{standalone: true}">
-											@for (squadra of getSquadreDisponibili(giocatore); track squadra.id) {
-												<mat-option [value]="squadra.id">{{ squadra.nome }}</mat-option>
-											} 
-										</mat-select>
-									</mat-form-field>
-									@if (giocatore.squadraSelezionata) {
-										<mat-icon class="save-icon" (click)="salvaSquadra(giocatore)">save</mat-icon>
-									}
-								</div>
-							}
-						</td>
-					</ng-container>
-						<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-						<tr mat-row *matRowDef="let row; columns: displayedColumns;" [class.eliminato-row]="row.stato === 'ELIMINATO'"></tr>
-					</table>
-				}
-			</mat-card-content>
-		</mat-card>
-	}
+  <mat-toolbar color="primary" class="header">
+    <div class="header-content">
+      <h1>Dettaglio lega</h1>
+      <div class="user-info">
+        <button mat-button (click)="goBack()" class="btn-back">
+          ← Torna alla Home
+        </button>
+        <button mat-raised-button color="warn" (click)="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <main class="main-content">
+    <div class="lega-dettaglio-container">
+      @if (isLoading) {
+      <div class="loading">
+        <mat-spinner></mat-spinner>
+        <p>Caricamento in corso...</p>
+      </div>
+      } @if (error) {
+      <mat-card class="error-card">
+        <mat-card-content>{{ error }}</mat-card-content>
+      </mat-card>
+      } @if (lega) {
+      <mat-card class="lega-card">
+        <mat-card-header>
+          <mat-card-title>{{ lega.nome }}</mat-card-title>
+          @if (lega.campionatoId) {
+          <mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
+          }
+        </mat-card-header>
+        <mat-card-content>
+          @if (lega.giocatori?.length) {
+          <table
+            mat-table
+            [dataSource]="lega.giocatori || []"
+            class="giocatori-table"
+          >
+            <ng-container matColumnDef="nome">
+              <th mat-header-cell *matHeaderCellDef>Nome</th>
+              <td mat-cell *matCellDef="let giocatore">{{ giocatore.nome }}</td>
+            </ng-container>
+            <ng-container matColumnDef="stato">
+              <th mat-header-cell *matHeaderCellDef>Stato</th>
+              <td mat-cell *matCellDef="let giocatore">
+                {{ giocatore.stato }}
+              </td>
+            </ng-container>
+            @for (giornata of giornataIndices; track giornata) {
+            <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
+              <th mat-header-cell *matHeaderCellDef>Giocata {{ giornata }}</th>
+              <td mat-cell *matCellDef="let giocatore">
+                <ng-container
+                  *ngIf="getGiocataByGiornata(giocatore, giornata) as g"
+                >
+                  {{ getSquadraNome(g.squadraId) }}
+                </ng-container>
+              </td>
+            </ng-container>
+            }
+            <ng-container matColumnDef="squadra">
+              <th mat-header-cell *matHeaderCellDef>Squadra</th>
+              <td mat-cell *matCellDef="let giocatore; let i = $index">
+                @if (giocatore.stato !== 'ELIMINATO' &&
+                canEditUserRow(giocatore?.user?.id)) {
+                <div class="squadra-select-save">
+                  <mat-form-field appearance="outline" class="select-squadra">
+                    <mat-select
+                      placeholder="Seleziona"
+                      [(ngModel)]="giocatore.squadraSelezionata"
+                      [ngModelOptions]="{ standalone: true }"
+                    >
+                      @for (squadra of getSquadreDisponibili(giocatore); track
+                      squadra.id) {
+                      <mat-option [value]="squadra.id">{{
+                        squadra.nome
+                      }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                  @if (giocatore.squadraSelezionata) {
+                  <mat-icon class="save-icon" (click)="salvaSquadra(giocatore)"
+                    >save</mat-icon
+                  >
+                  }
+                </div>
+                }
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: displayedColumns"
+              [class.eliminato-row]="row.stato === 'ELIMINATO'"
+            ></tr>
+          </table>
+          }
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </main>
 </div>

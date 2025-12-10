@@ -14,4 +14,9 @@ export class UtilService {
   profilo(): Observable<any> {
     return this.http.get(`${this.apiUrl}/profilo`);
   }
+
+  calendario(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/calendario`);
+  }
+
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
 import { Lega } from '../../core/models/lega.model';
 import { SquadraService } from '../../core/services/squadra.service';
@@ -11,13 +11,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
+import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-lega-dettaglio',
-  imports: [CommonModule, MatCardModule, MatTableModule, MatSelectModule, MatProgressSpinnerModule, MatFormFieldModule, MatIconModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, MatCardModule, MatTableModule, MatSelectModule, MatProgressSpinnerModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatChipsModule, RouterModule, FormsModule, ReactiveFormsModule],
   templateUrl: './lega-dettaglio.component.html',
   styleUrl: './lega-dettaglio.component.scss'
 })
@@ -35,6 +39,7 @@ export class LegaDettaglioComponent {
      private legaService: LegaService,
      private authService: AuthService,
      private squadraService: SquadraService,
+    private router: Router,
      private http: HttpClient
     ) {
     this.route.paramMap.subscribe(params => {
@@ -74,6 +79,9 @@ export class LegaDettaglioComponent {
       }
     });
   }
+  goBack(): void {
+    this.router.navigate(['/home']);
+  }
 
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
@@ -98,6 +106,16 @@ export class LegaDettaglioComponent {
     return currentId !== null && currentId === userId;
   }
 
+  getCurrentUser() {
+    return this.authService.getCurrentUser();
+  }
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
+  }
 
   salvaSquadra(giocatore: any): void {
     if (!this.lega) {

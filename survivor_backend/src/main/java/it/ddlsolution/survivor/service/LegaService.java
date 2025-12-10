@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -10,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -48,9 +50,13 @@ public class LegaService {
     }
 
     public LegaDTO getLegaById(Long id) {
-        return legaRepository.findById(id)
+        LegaDTO legaDTO = legaRepository.findById(id)
                 .map(legaMapper::toDTO)
                 .orElse(null);
+        legaDTO.setGiocatori(
+                legaDTO.getGiocatori().stream().sorted(Comparator.comparing(GiocatoreDTO::getId)).toList()
+        );
+        return legaDTO;
     }
 
 }

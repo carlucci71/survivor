@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class UtilController {
 
     private final Environment environment;
+    private final ICalendario calendario;
 
 
     @GetMapping("/profilo")
@@ -24,5 +26,10 @@ public class UtilController {
         String profilo = activeProfiles.length > 0 ? String.join(", ", activeProfiles) : "default";
 
         return ResponseEntity.ok(Map.of("profilo",profilo));
+    }
+
+    @GetMapping("/calendario")
+    public ResponseEntity<Map<String,Object>> calendario(){
+        return ResponseEntity.ok(calendario.calendario("",""));
     }
 }

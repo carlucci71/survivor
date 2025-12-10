@@ -5,7 +5,6 @@ import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { User } from '../../core/models/auth.model';
 import { Lega } from '../../core/models/lega.model';
-import { UtilService } from '../../core/services/util.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -22,20 +21,17 @@ import { MatChipsModule } from '@angular/material/chips';
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  profilo: {} = {};
   isLoading = true;
 
   constructor(
     private authService: AuthService,
     private legaService: LegaService,
-    private utilService: UtilService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.loadLeghe();
-    this.getProfilo();
   }
 
   loadLeghe(): void {
@@ -51,18 +47,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  getProfilo(): void {
-    this.utilService.profilo().subscribe({
-      next: (profilo) => {
-        this.profilo = profilo.profilo;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Errore nel caricamento del profilo:', error);
-        this.isLoading = false;
-      }
-    });
-  }
 
   isAdmin(): boolean {
     return this.authService.isAdmin();

@@ -7,7 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { UtilService } from '../../core/services/util.service';
+ 
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -16,17 +17,22 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './admin.component.scss'
 })
 export class AdminComponent implements OnInit {
+  profilo: {} = {};
+  calendario: {} = {};
   message = '';
   isLoading = true;
 
   constructor(
     private http: HttpClient,
     private authService: AuthService,
+    private utilService: UtilService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.testAdminEndpoint();
+    this.getProfilo();
+    this.getCalendario();
   }
 
   testAdminEndpoint(): void {
@@ -41,6 +47,32 @@ export class AdminComponent implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  getProfilo(): void {
+    this.utilService.profilo().subscribe({
+      next: (profilo) => {
+        this.profilo = profilo.profilo;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo:', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getCalendario(): void {
+    this.utilService.calendario().subscribe({
+      next: (calendario) => {
+        this.calendario = calendario.url;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del calendario:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   goBack(): void {

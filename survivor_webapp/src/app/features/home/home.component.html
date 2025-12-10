@@ -3,7 +3,6 @@
     <div class="header-content">
       <h1>Survivor</h1>
       <div class="user-info">
-        <span class="welcome">Benvenuto, {{ currentUser?.name }}</span>
         <mat-chip [class.admin-chip]="isAdmin()">
           {{ currentUser?.role }}
         </mat-chip>
@@ -22,7 +21,7 @@
     </div>
 
     <section class="leghe-section">
-      <h2>Le tue Leghe ({{profilo}})</h2>
+      <h2>Le tue Leghe</h2>
 
       @if (isLoading) {
         <div class="loading">
