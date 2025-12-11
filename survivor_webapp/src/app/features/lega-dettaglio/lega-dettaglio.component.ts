@@ -18,6 +18,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
+import { UtilService } from '../../core/services/util.service';
+import { AdminService } from '../../core/services/admin.service';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -29,6 +31,7 @@ export class LegaDettaglioComponent {
 
   id: string | null = null;
   lega: Lega | null = null;
+  mappaInfo: any | null = null;
   isLoading = true;
   error: string | null = null;
   squadre: any[] = [];
@@ -37,12 +40,25 @@ export class LegaDettaglioComponent {
 
   constructor(private route: ActivatedRoute,
      private legaService: LegaService,
+     private adminService: AdminService,
      private authService: AuthService,
+     private utilService: UtilService,
      private squadraService: SquadraService,
-    private router: Router,
+     private router: Router,
      private http: HttpClient
     ) {
     this.route.paramMap.subscribe(params => {
+      this.utilService.info().subscribe({
+        next: (mappaInfo: any) => {
+          this.mappaInfo=mappaInfo;
+          },
+          error: (err: any) => {
+            this.error = 'Errore nel caricamento della lega';
+            this.isLoading = false;
+          }
+        });
+    
+
       this.id = params.get('id');
       if (this.id) {
         this.isLoading = true;
@@ -116,7 +132,18 @@ export class LegaDettaglioComponent {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+calcolaGiornata(){
+  this.adminService.calcola(Number(this.id)).subscribe({
+        next: (mappaInfo: Lega) => {
+            console.log(mappaInfo);
+        },
+          error: (err: any) => {
+            this.error = 'Errore nel caricamento della lega';
+            this.isLoading = false;
+          }
+        });
 
+}
   salvaSquadra(giocatore: any): void {
     if (!this.lega) {
       console.error('Nessuna lega caricata');

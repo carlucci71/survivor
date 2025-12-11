@@ -36,6 +36,7 @@ security:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000 # 24 ore in millisecondi
+  #expiration:  120000 #2 minuti in millisecondi
 
 magic-link:
   expiration-minutes: 15
@@ -47,7 +48,9 @@ external-api:
     selected: ${EXTERNAL_API_CALENDARIO_SELECTED}
     implementation:
       API2:
-        url: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=1&competitionId=21&day=1
+        url: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s
+      THE-SPORTS-DB:
+        url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal
 
 springdoc:
   api-docs:

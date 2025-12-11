@@ -1,8 +1,10 @@
 package it.ddlsolution.survivor.service.externalapi;
 
-import java.util.Map;
+import it.ddlsolution.survivor.dto.CalendarioDTO;
+
+import java.util.List;
 
 public interface ICalendario {
 
-    Map<String, Object> calendario(String sport, String campionato);
+    List<CalendarioDTO>  calendario(String sport, String campionato);
 }

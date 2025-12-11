@@ -15,13 +15,9 @@ export class LegaService {
     return this.http.get<Lega[]>(`${this.apiUrl}/mieLeghe`);
   }
 
-
   getLegaById(id: number): Observable<Lega> {
     return this.http.get<Lega>(`${this.apiUrl}/${id}`);
   }
 
-  getProva(): Observable<Lega[]> {
-    return this.http.get<Lega[]>(`${this.apiUrl}/prova`);
-  }
 
 }

@@ -54,7 +54,10 @@ export class HomeComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    // Naviga solo se non già su login
+    if (this.router.url !== '/auth/login') {
+      this.router.navigate(['/auth/login']);
+    }
   }
 
   goToAdmin(): void {

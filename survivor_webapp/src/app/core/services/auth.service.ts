@@ -47,6 +47,11 @@ export class AuthService {
     localStorage.setItem('userSurvivor', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
+  refreshToken(refreshToken: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
+      tap(response => this.handleAuthResponse(response))
+    );
+  }
 
   private loadUserFromStorage(): void {
     const userJson = localStorage.getItem('userSurvivor');

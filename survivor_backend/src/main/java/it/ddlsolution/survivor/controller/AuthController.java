@@ -1,12 +1,16 @@
 package it.ddlsolution.survivor.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import it.ddlsolution.survivor.dto.AuthResponseDTO;
 import it.ddlsolution.survivor.dto.MagicLinkRequestDTO;
 import it.ddlsolution.survivor.dto.MagicLinkResponseDTO;
+import it.ddlsolution.survivor.dto.RefreshTokenRequestDTO;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,5 +61,38 @@ public class AuthController {
             user.getRole().name()
         ));
     }
-}
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO request) {
+        String oldToken = request.getRefreshToken();
+        try {
+            // Verifica la firma anche se il token è scaduto
+            String userId;
+            String role;
+            try {
+                userId = jwtService.extractId(oldToken);
+                role = jwtService.extractRole(oldToken);
+            } catch (ExpiredJwtException eje) {
+                // Token scaduto ma firma valida: estrai claims dal token scaduto
+                userId = eje.getClaims().getSubject();
+                role = (String) eje.getClaims().get("role");
+            }
+            // Se la firma è valida (anche se scaduto), genero un nuovo JWT
+            String newToken = jwtService.generateToken(userId, role);
+            return ResponseEntity.ok(new AuthResponseDTO(
+                newToken,
+                Long.parseLong(userId),
+                null, // nome utente non disponibile dal solo token
+                role
+            ));
+        } catch (ExpiredJwtException eje) {
+            // Non dovrebbe mai entrare qui, ma per sicurezza
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token scaduto e non valido");
+        } catch (JwtException | IllegalArgumentException e) {
+            // Firma non valida, token manomesso o malformato
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token non valido o manomesso");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore durante il refresh del token");
+        }
+    }
+}

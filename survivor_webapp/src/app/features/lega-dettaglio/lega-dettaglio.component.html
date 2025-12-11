@@ -29,8 +29,14 @@
           @if (lega.campionatoId) {
           <mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
           }
+          @if (mappaInfo) {
+          <mat-card-subtitle>{{ mappaInfo.GIORNATA_CORRENTE }}</mat-card-subtitle>
+          }
         </mat-card-header>
         <mat-card-content>
+                  <mat-icon class="save-icon" (click)="calcolaGiornata()"
+                    >save</mat-icon
+                  >
           @if (lega.giocatori?.length) {
           <table
             mat-table

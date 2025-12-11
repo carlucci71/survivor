@@ -10,6 +10,7 @@ export interface MagicLinkResponse {
 export interface AuthResponse {
   id: number;
   token: string;
+  refreshToken?: string;
   email: string;
   name: string;
   role: string;
