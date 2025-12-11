@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT scaduto");
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token JWT non valido");
                     return;
                 }
             }

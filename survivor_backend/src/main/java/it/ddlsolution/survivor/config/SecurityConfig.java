@@ -1,6 +1,5 @@
 package it.ddlsolution.survivor.config;
 
-import it.ddlsolution.survivor.security.CustomAuthenticationEntryPoint;
 import it.ddlsolution.survivor.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Value("${ALLOWED_SERVERS}")
     private List<String> allowedServers;
 
@@ -33,7 +31,6 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         // Permetti auth endpoints
                         .requestMatchers("/auth/**").permitAll()

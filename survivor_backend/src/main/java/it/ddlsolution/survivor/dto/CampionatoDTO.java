@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
+import it.ddlsolution.survivor.entity.Sport;
 import lombok.Data;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 public class CampionatoDTO {
     private String id;
     private String nome;
-    private String sportId;
+    private SportDTO sport;
     private List<LegaDTO> leghe;
     private List<SquadraDTO> squadre;
 }

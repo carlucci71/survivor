@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi;
 
-import it.ddlsolution.survivor.entity.Campionato;
+import it.ddlsolution.survivor.util.Enumeratori;
 
 public class EnumAPI2 {
 
@@ -82,4 +82,22 @@ public class EnumAPI2 {
             return ret;
         }
     }
+
+    enum StatoPartitaAP2 {
+        PreMatch(Enumeratori.StatoPartita.DA_GIOCARE),
+        Postponed(Enumeratori.StatoPartita.DA_GIOCARE),
+        Cancelled(Enumeratori.StatoPartita.DA_GIOCARE),
+        Walkover(Enumeratori.StatoPartita.TERMINATA),
+        FirstHalf(Enumeratori.StatoPartita.IN_CORSO),
+        HalfTime(Enumeratori.StatoPartita.IN_CORSO),
+        SecondHalf(Enumeratori.StatoPartita.IN_CORSO),
+        FullTime(Enumeratori.StatoPartita.TERMINATA);
+
+        Enumeratori.StatoPartita statoPartita;
+
+        StatoPartitaAP2(Enumeratori.StatoPartita statoPartita) {
+            this.statoPartita = statoPartita;
+        }
+    }
+
 }

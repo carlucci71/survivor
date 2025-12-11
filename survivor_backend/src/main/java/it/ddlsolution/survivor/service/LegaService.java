@@ -1,17 +1,21 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.LegaRepository;
+import it.ddlsolution.survivor.service.externalapi.ICalendario;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +27,7 @@ import java.util.stream.StreamSupport;
 public class LegaService {
     private final LegaRepository legaRepository;
     private final LegaMapper legaMapper;
+    private final ICalendario calendario;
 
     public List<LegaDTO> prova() {
         Iterable<Lega> all = legaRepository.findAll();
@@ -64,6 +69,59 @@ public class LegaService {
         return getLegaById(id);
     }
 
+    public LegaDTO salva(LegaDTO legaDTO) {
+        return legaMapper.toDTO(legaRepository.save(legaMapper.toEntity(legaDTO)));
+    }
+
+    public LegaDTO calcola(Long id, int giornata){
+        log.info("CALCOLA");
+        LegaDTO lega = getLegaDTO(id);
+        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornata);
+        long partiteNonTerminate = partite.stream().filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA).count();
+        if (partiteNonTerminate > 0) {
+            throw new RuntimeException("Ci sono ancora " + partiteNonTerminate + " non terminate.");
+        }
+        for (GiocatoreDTO giocatoreDTO : lega.getGiocatori()) {
+            if (giocatoreDTO.getStato()!= Enumeratori.StatoGiocatore.ELIMINATO) {
+                boolean vincente = vincente(giocatoreDTO
+                        .getGiocate()
+                        .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                        .toList()
+                        .getLast().getSquadraId(), partite);
+                if (!vincente) {
+                    giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
+                }
+            }
+        }
+
+        return salva(lega);
+
+    }
+
+
+    private boolean vincente(String squadraId, List<PartitaDTO> partite) {
+        for (PartitaDTO partitaDTO : partite) {
+            String casa = partitaDTO.getCasa();
+            String fuori = partitaDTO.getFuori();
+            Integer golCasa = partitaDTO.getGolCasa();
+            Integer golFuori = partitaDTO.getGolFuori();
+            if (casa.equals(squadraId)) {
+                if (golCasa > golFuori) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            if (fuori.equals(squadraId)) {
+                if (golFuori > golCasa) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        throw new RuntimeException("Squadra non trovata: " + squadraId);
+    }
 
 
 }

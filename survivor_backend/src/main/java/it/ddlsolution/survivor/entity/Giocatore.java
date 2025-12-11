@@ -48,7 +48,7 @@ public class Giocatore {
     private List<Giocata> giocate = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

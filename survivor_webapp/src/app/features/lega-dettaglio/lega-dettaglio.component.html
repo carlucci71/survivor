@@ -6,7 +6,14 @@
         <button mat-button (click)="goBack()" class="btn-back">
           ← Torna alla Home
         </button>
-        <button mat-raised-button color="warn" (click)="logout()" class="btn-logout">Logout</button>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="logout()"
+          class="btn-logout"
+        >
+          Logout
+        </button>
       </div>
     </div>
   </mat-toolbar>
@@ -26,18 +33,27 @@
       <mat-card class="lega-card">
         <mat-card-header>
           <mat-card-title>{{ lega.nome }}</mat-card-title>
-          @if (lega.campionatoId) {
-          <mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
-          }
-          @if (mappaInfo) {
-          <mat-card-subtitle>{{ mappaInfo.GIORNATA_CORRENTE }}</mat-card-subtitle>
+          @if (lega.campionato?.id) {
+          <mat-card-subtitle
+            >{{ lega.campionato?.sport?.id }} -
+            {{ lega.campionato?.id }}</mat-card-subtitle
+          >
+          } @if (mappaInfo) {
+          <mat-card-subtitle
+            >Giornata corrente:
+            {{ mappaInfo.GIORNATA_CORRENTE }}</mat-card-subtitle
+          >
           }
         </mat-card-header>
         <mat-card-content>
-                  <mat-icon class="save-icon" (click)="calcolaGiornata()"
-                    >save</mat-icon
-                  >
-          @if (lega.giocatori?.length) {
+          @if (isAdmin()) {
+          <mat-icon
+            class="calcola-icon"
+            (click)="calcolaGiornata()"
+            matTooltip="Calcola giornata"
+            >handyman</mat-icon
+          >
+          } @if (lega.giocatori?.length) {
           <table
             mat-table
             [dataSource]="lega.giocatori || []"
@@ -66,7 +82,7 @@
             </ng-container>
             }
             <ng-container matColumnDef="squadra">
-              <th mat-header-cell *matHeaderCellDef>Squadra</th>
+              <th mat-header-cell *matHeaderCellDef>Prossima squadra</th>
               <td mat-cell *matCellDef="let giocatore; let i = $index">
                 @if (giocatore.stato !== 'ELIMINATO' &&
                 canEditUserRow(giocatore?.user?.id)) {

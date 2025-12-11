@@ -44,8 +44,8 @@
             <mat-card class="lega-card">
               <mat-card-header>
                 <mat-card-title>{{ lega.nome }}</mat-card-title>
-                @if (lega.campionatoId) {
-                  <mat-card-subtitle>{{ lega.campionatoId }}</mat-card-subtitle>
+                @if (lega.campionato?.id ?? '') {
+                  <mat-card-subtitle>{{ lega.campionato?.sport?.id  }} - {{ lega.campionato?.id ?? '' }}</mat-card-subtitle>
                 }
               </mat-card-header>
               <mat-card-actions>

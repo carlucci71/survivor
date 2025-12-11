@@ -164,12 +164,12 @@
 	max-width: 110px;
 }
 
-/* Select and save icon */
 .squadra-select-save {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .select-squadra {
@@ -186,6 +186,16 @@
 	font-size: 0.97rem;
 }
 
+.calcola-icon{
+	margin-left: 4px;
+	font-size: 20px;
+	color: #1976d2;
+	cursor: pointer;
+	transition: color 0.2s;
+	font-family: 'Material Icons', sans-serif !important;
+
+}
+
 .save-icon {
 	margin-left: 4px;
 	font-size: 20px;
@@ -196,7 +206,12 @@
 }
 .save-icon:hover { color: #125199; }
 
-.eliminato-row { background: #ffecec; }
+
+.eliminato-row th,
+.eliminato-row td {
+	background-color: #fa4d14 !important;
+	color: #222 !important;
+}
 
 .loading { text-align: center; margin-top: 40px; }
 .error-card { margin: 16px auto; max-width: 900px; }

@@ -6,6 +6,6 @@ import lombok.Data;
 public class SquadraDTO {
     private String id;
     private String nome;
-    private String campionatoId;
+    private CampionatoDTO campionato;
 }
 

@@ -11,8 +11,8 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
-  calcola(id: number): Observable<Lega> {
-    return this.http.get<Lega>(`${this.apiUrl}/calcola/${id}`);
+  calcola(id: number, giornata: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}?giornata=${giornata}`, {});
   }
 
 }

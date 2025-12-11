@@ -19,7 +19,6 @@ import { UtilService } from '../../core/services/util.service';
 export class AdminComponent implements OnInit {
   profilo: {} = {};
   calendario: {} = {};
-  message = '';
   isLoading = true;
 
   constructor(
@@ -30,24 +29,10 @@ export class AdminComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.testAdminEndpoint();
     this.getProfilo();
     this.getCalendario();
   }
 
-  testAdminEndpoint(): void {
-    this.http.get('/api/survivorBe/admin', { responseType: 'text' })
-      .subscribe({
-        next: (response) => {
-          this.message = response;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          this.message = 'Accesso negato o errore nel caricamento';
-          this.isLoading = false;
-        }
-      });
-  }
 
   getProfilo(): void {
     this.utilService.profilo().subscribe({

@@ -39,5 +39,8 @@ public class Enumeratori {
         }
 
     }
+    public enum StatoPartita{
+        DA_GIOCARE,TERMINATA,IN_CORSO
+    }
 
 }

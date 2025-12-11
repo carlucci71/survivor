@@ -191,6 +191,7 @@ insert into giocatore_lega(id_giocatore,id_lega) values (30,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (31,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (32,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (33,1);
+
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (1,1,1,'GEN','OK');
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (2,1,2,'INT','OK');
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (3,1,3,'BOL','KO');
@@ -253,3 +254,9 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (90,2,30,
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (91,2,31,'INT',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (92,2,32,'PIS',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (93,2,33,'FIO',NULL);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (94,3,18,'ATA',NULL);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (95,3,19,'TOR',NULL);
+
+
+
+SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));

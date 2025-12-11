@@ -11,10 +11,8 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {CampionatoMapper.class})
 public interface SquadraMapper {
 
-    @Mapping(source = "campionato.id", target = "campionatoId")
     SquadraDTO toDTO(Squadra squadra);
 
-    @Mapping(source = "campionatoId", target = "campionato.id")
     Squadra toEntity(SquadraDTO squadraDTO);
 
     List<SquadraDTO> toDTOList(List<Squadra> squadre);

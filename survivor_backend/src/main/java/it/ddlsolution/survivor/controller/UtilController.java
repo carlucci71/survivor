@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.controller;
 
-import it.ddlsolution.survivor.dto.CalendarioDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -31,12 +31,12 @@ public class UtilController {
     }
 
     @GetMapping("/calendario")
-    public ResponseEntity<List<CalendarioDTO>> calendario(){
-        return ResponseEntity.ok(calendario.calendario("CALCIO","SERIE_A"));
+    public ResponseEntity<List<PartitaDTO>> calendario(){
+        return ResponseEntity.ok(calendario.partite("CALCIO","SERIE_A"));
     }
 
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> info(){
-        return ResponseEntity.ok(Map.of("GIORNATA_CORRENTE",14));
+        return ResponseEntity.ok(Map.of("GIORNATA_CORRENTE",15));
     }
 }

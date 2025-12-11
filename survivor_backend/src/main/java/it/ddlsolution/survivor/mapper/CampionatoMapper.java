@@ -11,12 +11,10 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SportMapper.class, LegaMapper.class, SquadraMapper.class})
 public interface CampionatoMapper {
 
-    @Mapping(source = "sport.id", target = "sportId")
     @Mapping(target = "leghe", ignore = true)
     @Mapping(target = "squadre", ignore = true)
     CampionatoDTO toDTO(Campionato campionato);
 
-    @Mapping(source = "sportId", target = "sport.id")
     @Mapping(target = "leghe", ignore = true)
     @Mapping(target = "squadre", ignore = true)
     Campionato toEntity(CampionatoDTO campionatoDTO);

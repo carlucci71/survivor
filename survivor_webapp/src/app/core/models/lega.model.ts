@@ -3,27 +3,29 @@ import { User } from "./auth.model";
 export interface Lega {
   id: number;
   nome: string;
-  campionatoId?: string;
+  campionato?: Campionato;
   giocatori?: Giocatore[];
 }
 
 export interface Sport {
+  campionati?: Campionato[];
   id?: number;
   nome: string;
   // Aggiungi altri campi se necessario
 }
 
 export interface Campionato {
-  id?: number;
+  id?: string;
   nome: string;
-  // Aggiungi altri campi se necessario
+  sport?: Sport;
+  leghe?: Lega[];
+  squadre?: Squadra[];
 }
 
 export interface Squadra {
   id?: number;
   nome: string;
-  giocatori: Giocatore[];
-  // Aggiungi altri campi se necessario
+  campionato?: Campionato;
 }
 
 export interface Giocatore {
