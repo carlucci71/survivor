@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Lega } from '../models/lega.model';
+import { Lega } from '../models/interfaces.model';
+
 
 @Injectable({
   providedIn: 'root'

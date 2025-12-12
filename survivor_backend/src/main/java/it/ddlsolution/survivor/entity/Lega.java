@@ -30,6 +30,9 @@ public class Lega {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
+    @Column(name = "giornatainiziale", nullable = false)
+    private int giornataIniziale;
+
     @ManyToOne
     @JoinColumn(name = "id_campionato", nullable = false)
     @JsonBackReference("campionato-leghe")

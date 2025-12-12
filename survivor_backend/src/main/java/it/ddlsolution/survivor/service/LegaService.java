@@ -73,27 +73,34 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(legaMapper.toEntity(legaDTO)));
     }
 
-    public LegaDTO calcola(Long id, int giornata){
+    public LegaDTO calcola(Long id, int giornataDaCalcolare){
         log.info("CALCOLA");
         LegaDTO lega = getLegaDTO(id);
-        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornata);
+        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornataDaCalcolare);
         long partiteNonTerminate = partite.stream().filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA).count();
         if (partiteNonTerminate > 0) {
             throw new RuntimeException("Ci sono ancora " + partiteNonTerminate + " non terminate.");
         }
         for (GiocatoreDTO giocatoreDTO : lega.getGiocatori()) {
             if (giocatoreDTO.getStato()!= Enumeratori.StatoGiocatore.ELIMINATO) {
-                boolean vincente = vincente(giocatoreDTO
+                List<GiocataDTO> giocate = giocatoreDTO
                         .getGiocate()
                         .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                        .toList()
-                        .getLast().getSquadraId(), partite);
-                if (!vincente) {
-                    giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
+                        .filter(g -> g.getGiornata() + lega.getGiornataIniziale() == giornataDaCalcolare)
+                        .toList();
+                if (giocate.size() != 1){
+                    throw new RuntimeException("Numero di giocate errato: " + giocate.size());
                 }
+                GiocataDTO giocataDTO = giocate.get(0);
+                if (vincente(giocataDTO.getSquadraId(),partite)){
+                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                } else {
+                    giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
+                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                }
+
             }
         }
-
         return salva(lega);
 
     }

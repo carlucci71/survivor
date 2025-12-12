@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
-import { Lega } from '../../core/models/lega.model';
+import { Lega } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -50,7 +50,21 @@ export class LegaDettaglioComponent {
   error: string | null = null;
   squadre: any[] = [];
   displayedColumns: string[] = [];
+
   giornataIndices: number[] = [];
+
+  get maxGiornata(): number {
+    if (!this.lega || !this.lega.giocatori) return 0;
+    let max = 0;
+    for (const g of this.lega.giocatori) {
+      if (!g.giocate) continue;
+      for (const gg of g.giocate) {
+        const n = Number(gg?.giornata);
+        if (!isNaN(n) && n > max) max = n;
+      }
+    }
+    return max;
+  }
 
   constructor(
     private route: ActivatedRoute,

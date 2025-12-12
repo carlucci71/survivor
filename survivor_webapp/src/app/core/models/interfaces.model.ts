@@ -5,6 +5,7 @@ export interface Lega {
   nome: string;
   campionato?: Campionato;
   giocatori?: Giocatore[];
+  giornataIniziale: number;
 }
 
 export interface Sport {

@@ -8,6 +8,7 @@ drop table if exists sport;
 
 create table lega(
 	id serial primary key,
+	giornataIniziale  integer NOT NULL,
 	nome varchar(100) not null,
 	id_campionato varchar(20) not null
 );
@@ -91,7 +92,7 @@ insert into squadra(id,nome,id_campionato) values('SAS','Sassuolo','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('TOR','Torino','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('UDI','Udinese','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('VER','Verona','SERIE_A');
-insert into lega(id,nome,id_campionato) values(1,'DDL','SERIE_A');
+insert into lega(id,nome,id_campionato,giornataIniziale) values(1,'DDL','SERIE_A',13);
 insert into giocatore(nome,stato,user_id) values('ALESSANDRO TOTO','A',
 (select id from users where email = ''));
 insert into giocatore(nome,stato,user_id) values('ANDREA MOSCHELLA','A',
@@ -192,39 +193,40 @@ insert into giocatore_lega(id_giocatore,id_lega) values (31,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (32,1);
 insert into giocatore_lega(id_giocatore,id_lega) values (33,1);
 
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (1,1,1,'GEN','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (2,1,2,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (3,1,3,'BOL','KO');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (4,1,4,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (5,1,5,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (6,1,6,'MIL','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (7,1,7,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (8,1,8,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (9,1,9,'COM','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (10,1,10,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (11,1,11,'COM','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (12,1,12,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (13,1,13,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (14,1,14,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (15,1,15,'COM','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (16,1,16,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (17,1,17,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (18,1,18,'COM','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (19,1,19,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (20,1,20,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (21,1,21,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (22,1,22,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (23,1,23,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (24,1,24,'BOL','KO');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (25,1,25,'BOL','KO');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (26,1,26,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (27,1,27,'BOL','KO');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (28,1,28,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (29,1,29,'JUV','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (30,1,30,'INT','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (31,1,31,'ATA','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (32,1,32,'COM','OK');
-INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (33,1,33,'COM','OK');
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (1,1,1,'GEN',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (2,1,2,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (3,1,3,'BOL',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (4,1,4,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (5,1,5,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (6,1,6,'MIL',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (7,1,7,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (8,1,8,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (9,1,9,'COM',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (10,1,10,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (11,1,11,'COM',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (12,1,12,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (13,1,13,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (14,1,14,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (15,1,15,'COM',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (16,1,16,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (17,1,17,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (18,1,18,'COM',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (19,1,19,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (20,1,20,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (21,1,21,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (22,1,22,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (23,1,23,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (24,1,24,'BOL',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (25,1,25,'BOL',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (26,1,26,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (27,1,27,'BOL',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (28,1,28,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (29,1,29,'JUV',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (30,1,30,'INT',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (31,1,31,'ATA',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (32,1,32,'COM',null);
+INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (33,1,33,'COM',null);
+
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (65,2,1,'ATA',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (66,2,2,'ATA',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (67,2,4,'ATA',NULL);
@@ -254,6 +256,7 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (90,2,30,
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (91,2,31,'INT',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (92,2,32,'PIS',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (93,2,33,'FIO',NULL);
+
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (94,3,18,'ATA',NULL);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito) VALUES (95,3,19,'TOR',NULL);
 

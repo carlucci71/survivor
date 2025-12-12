@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { User } from '../../core/models/auth.model';
-import { Lega } from '../../core/models/lega.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
+import { Lega } from '../../core/models/interfaces.model';
 
 @Component({
   selector: 'app-home',
