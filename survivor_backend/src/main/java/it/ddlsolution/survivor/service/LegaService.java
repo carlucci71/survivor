@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -73,20 +74,42 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(legaMapper.toEntity(legaDTO)));
     }
 
-    public LegaDTO calcola(Long id, int giornataDaCalcolare){
-        log.info("CALCOLA");
-        LegaDTO lega = getLegaDTO(id);
-        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornataDaCalcolare);
-        long partiteNonTerminate = partite.stream().filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA).count();
-        if (partiteNonTerminate > 0) {
-            throw new RuntimeException("Ci sono ancora " + partiteNonTerminate + " non terminate.");
+    public Enumeratori.StatoPartita stato(Long idLega, int giornata){
+        LegaDTO legaDTO = getLegaDTO(idLega);
+        return stato(legaDTO,giornata);
+    }
+
+    public Enumeratori.StatoPartita stato(LegaDTO lega, int giornata){
+        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornata);
+        return stato(partite);
+    }
+
+    private Enumeratori.StatoPartita stato(List<PartitaDTO> partite){
+        Map<Enumeratori.StatoPartita, List<PartitaDTO>> mappa = partite.stream()
+                .collect(Collectors.groupingBy(PartitaDTO::getStato));
+        if (mappa.get(Enumeratori.StatoPartita.DA_GIOCARE) != null && mappa.get(Enumeratori.StatoPartita.DA_GIOCARE).size()>0){
+            return Enumeratori.StatoPartita.DA_GIOCARE;
+        } else if (mappa.get(Enumeratori.StatoPartita.IN_CORSO) != null && mappa.get(Enumeratori.StatoPartita.IN_CORSO).size()>0){
+            return Enumeratori.StatoPartita.IN_CORSO;
         }
-        for (GiocatoreDTO giocatoreDTO : lega.getGiocatori()) {
+        return Enumeratori.StatoPartita.TERMINATA;
+    }
+
+
+    public LegaDTO calcola(Long idLega, int giornataDaCalcolare){
+        log.info("CALCOLA");
+        LegaDTO legaDTO = getLegaDTO(idLega);
+        List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
+        Enumeratori.StatoPartita stato = stato(partite);
+        if (stato != Enumeratori.StatoPartita.TERMINATA){
+            throw new RuntimeException("Lo stato della giornata è: " + stato);
+        }
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             if (giocatoreDTO.getStato()!= Enumeratori.StatoGiocatore.ELIMINATO) {
                 List<GiocataDTO> giocate = giocatoreDTO
                         .getGiocate()
                         .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                        .filter(g -> g.getGiornata() + lega.getGiornataIniziale() == giornataDaCalcolare)
+                        .filter(g -> g.getGiornata() + legaDTO.getGiornataIniziale() -1 == giornataDaCalcolare)
                         .toList();
                 if (giocate.size() != 1){
                     throw new RuntimeException("Numero di giocate errato: " + giocate.size());
@@ -101,7 +124,8 @@ public class LegaService {
 
             }
         }
-        return salva(lega);
+        legaDTO.setGiornataCalcolata(giornataDaCalcolare);
+        return salva(legaDTO);
 
     }
 

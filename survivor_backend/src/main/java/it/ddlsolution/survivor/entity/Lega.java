@@ -30,8 +30,11 @@ public class Lega {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
-    @Column(name = "giornatainiziale", nullable = false)
+    @Column(name = "giornata_iniziale", nullable = false)
     private int giornataIniziale;
+
+    @Column(name = "giornata_calcolata")
+    private Integer giornataCalcolata;
 
     @ManyToOne
     @JoinColumn(name = "id_campionato", nullable = false)

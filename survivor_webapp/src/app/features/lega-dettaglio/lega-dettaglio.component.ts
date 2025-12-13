@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { LegaService } from '../../core/services/lega.service';
-import { Lega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -43,7 +45,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './lega-dettaglio.component.scss',
 })
 export class LegaDettaglioComponent {
-  id: string | null = null;
+  id: number = -1;
   lega: Lega | null = null;
   mappaInfo: any | null = null;
   isLoading = true;
@@ -77,21 +79,18 @@ export class LegaDettaglioComponent {
     private giocataService: GiocataService
   ) {
     this.route.paramMap.subscribe((params) => {
-      this.utilService.info().subscribe({
-        next: (mappaInfo: any) => {
-          this.mappaInfo = mappaInfo;
-        },
-        error: (err: any) => {
-          this.error = 'Errore nel caricamento della lega';
-          this.isLoading = false;
-        },
-      });
-
-      this.id = params.get('id');
+      this.id = Number(params.get('id'));
       if (this.id) {
         this.isLoading = true;
-        this.legaService.getLegaById(Number(this.id)).subscribe({
-          next: (lega: Lega) => {
+        const lega$ = this.legaService.getLegaById(this.id);
+        // utilService.info may depend on id; ensure we call it with the same id. If it errors, fallback to null
+        const info$ = this.utilService.info(this.id).pipe(catchError(() => of(null)));
+
+        // Wait for both the lega and the mappaInfo so giornataTerminata and other checks
+        // have the correct data available when caricaTabella runs.
+        combineLatest([lega$, info$]).subscribe({
+          next: ([lega, mappaInfo]: [Lega, any]) => {
+            this.mappaInfo = mappaInfo;
             this.caricaTabella(lega);
           },
           error: (err: any) => {
@@ -107,7 +106,7 @@ export class LegaDettaglioComponent {
   }
 
   caricaTabella(lega: Lega) {
-  this.lega = lega;
+    this.lega = lega;
     // Calcolo le colonne della tabella: uso il massimo valore di 'giornata' tra tutte le giocate
     this.displayedColumns = ['nome', 'stato'];
     const maxGiornata = legeMaxGiornata(lega.giocatori || []);
@@ -116,17 +115,21 @@ export class LegaDettaglioComponent {
     }
     // populate giornata indices 1..maxGiornata
     this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
-    this.displayedColumns.push('squadra');
+    if (this.selezionaProssimaGiocata()) {
+      this.displayedColumns.push('prossimaGiocata');
+    }
 
     if (lega.campionato) {
-      this.squadraService.getSquadreByCampionato(lega?.campionato?.id ?? '').subscribe({
-        next: (squadre: any[]) => {
-          this.squadre = squadre;
-        },
-        error: () => {
-          this.squadre = [];
-        },
-      });
+      this.squadraService
+        .getSquadreByCampionato(lega?.campionato?.id ?? '')
+        .subscribe({
+          next: (squadre: any[]) => {
+            this.squadre = squadre;
+          },
+          error: () => {
+            this.squadre = [];
+          },
+        });
     }
     this.isLoading = false;
   }
@@ -154,7 +157,51 @@ export class LegaDettaglioComponent {
     );
   }
 
-  canEditUserRow(userId: number): boolean {
+  selezionaProssimaGiocata(): boolean {
+    return this.giornataTerminata();
+  }
+  giornataTerminata(): boolean {
+    return this.mappaInfo && this.mappaInfo.STATO_GIORNATA == 'TERMINATA';
+  }
+
+  selectGiocatoreVisible(giocatore: Giocatore): boolean {
+    if (giocatore.stato === 'ELIMINATO') {
+      return false;
+    }
+    if (!this.canEditUserRow(giocatore)) {
+      return false;
+    }
+
+    let giocate = 0;
+    if (giocatore.giocate) {
+      giocate += giocatore.giocate.length;
+    }
+    const prossimaGiocata = (this.lega?.giornataIniziale || 0) + giocate ;
+
+    let corrente=0;
+    if (this.mappaInfo && this.mappaInfo.GIORNATA_CORRENTE){
+      corrente = this.mappaInfo.GIORNATA_CORRENTE;
+    }
+
+    if (prossimaGiocata > corrente) {
+      return false;
+    }
+
+    return true;
+  }
+
+  canEditUserRow(giocatore: Giocatore): boolean {
+    if (this.isAdmin()) {
+      return true;
+    }
+    if (
+      giocatore == null ||
+      giocatore.user == null ||
+      giocatore.user.id == null
+    ) {
+      return false;
+    }
+    const userId = giocatore.user.id;
     if (this.authService.isAdmin()) return true;
     const currentId = this.authService.getCurrentUser()?.id;
     return currentId !== null && currentId === userId;
@@ -171,16 +218,18 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/auth/login']);
   }
   calcolaGiornata() {
-        this.isLoading = true;
-    this.adminService.calcola(Number(this.id),this.mappaInfo.GIORNATA_CORRENTE).subscribe({
-      next: (lega: Lega) => {
-            this.caricaTabella(lega);
-      },
-      error: (err: any) => {
-        this.error = 'Errore nel caricamento della lega';
-        this.isLoading = false;
-      },
-    });
+    this.isLoading = true;
+    this.adminService
+      .calcola(Number(this.id), this.mappaInfo.GIORNATA_CORRENTE)
+      .subscribe({
+        next: (lega: Lega) => {
+          this.caricaTabella(lega);
+        },
+        error: (err: any) => {
+          this.error = 'Errore nel caricamento della lega';
+          this.isLoading = false;
+        },
+      });
   }
   salvaSquadra(giocatore: any): void {
     if (!this.lega) {
@@ -222,13 +271,14 @@ export class LegaDettaglioComponent {
           this.displayedColumns = ['nome', 'stato'];
           for (let i = 0; i < maxGiornata; i++)
             this.displayedColumns.push('giocata' + i);
-          this.displayedColumns.push('squadra');
+          if (this.selezionaProssimaGiocata()) {
+            this.displayedColumns.push('prossimaGiocata');
+          }
           this.giornataIndices = Array.from(
             { length: maxGiornata },
             (_, i) => i + 1
           );
         }
-        console.log('Giocata salvata', res);
       },
       error: (err: any) => {
         console.error('Errore nel salvataggio della giocata', err);

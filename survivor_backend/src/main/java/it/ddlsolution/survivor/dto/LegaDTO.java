@@ -8,6 +8,7 @@ import java.util.List;
 public class LegaDTO {
     private Long id;
     private int giornataIniziale;
+    private Integer giornataCalcolata;
     private String nome;
     private CampionatoDTO campionato;
     private List<GiocatoreDTO> giocatori;

@@ -18,8 +18,8 @@ export class UtilService {
     return this.http.get(`${this.apiUrl}/calendario`);
   }
 
-  info(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/info`);
+  info(legaId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/info/${legaId}`);
   }
 
 }

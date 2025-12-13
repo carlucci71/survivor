@@ -34,20 +34,20 @@ public class CalendarioAPI2 implements ICalendario {
     }
     @Override
     public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
-        return calcolaGiornata(sport, campionato, giornata);
+        return getPartite(sport, campionato, giornata);
     }
 
     @Override
     public List<PartitaDTO> partite(String sport, String campionato) {
         List<PartitaDTO> ret = new ArrayList<>();
         for (int giornata = 1; giornata <= EnumAPI2.MAX_GIORNATA; giornata++) {
-            List<PartitaDTO> calendarioGiornata = calcolaGiornata(sport, campionato, giornata);
+            List<PartitaDTO> calendarioGiornata = getPartite(sport, campionato, giornata);
             ret.addAll(calendarioGiornata);
         }
         return ret;
     }
 
-    private List<PartitaDTO> calcolaGiornata(String sport, String campionato, int giornata) {
+    private List<PartitaDTO> getPartite(String sport, String campionato, int giornata) {
         List<PartitaDTO> ret=new ArrayList<>();
         String urlDay = String.format(url, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, giornata);
         ResponseEntity<Map> map = restTemplate.getForEntity(urlDay, Map.class);

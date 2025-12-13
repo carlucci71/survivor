@@ -6,6 +6,7 @@ export interface Lega {
   campionato?: Campionato;
   giocatori?: Giocatore[];
   giornataIniziale: number;
+  giornataCalcolata: number;
 }
 
 export interface Sport {

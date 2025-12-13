@@ -39,14 +39,21 @@
             {{ lega.campionato?.id }}</mat-card-subtitle
           >
           } @if (mappaInfo) {
-          <mat-card-subtitle
-            >Giornata corrente:
-            {{ mappaInfo.GIORNATA_CORRENTE }}</mat-card-subtitle
-          >
+          <mat-card-subtitle>
+            <div>
+            Giornata iniziale:{{ lega.giornataIniziale }}
+            </div>
+            <div>
+            Giornata corrente:{{ mappaInfo ? mappaInfo.GIORNATA_CORRENTE : '' }} - {{ mappaInfo ? mappaInfo.STATO_GIORNATA : '' }}
+            </div>
+            <div>
+            Giornata calcolata:{{ lega.giornataCalcolata }}
+            </div>
+          </mat-card-subtitle>
           }
         </mat-card-header>
         <mat-card-content>
-          @if (isAdmin()) {
+          @if (isAdmin() && giornataTerminata()) {
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
@@ -71,23 +78,48 @@
             </ng-container>
             @for (giornata of giornataIndices; track giornata) {
             <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
-              <th mat-header-cell *matHeaderCellDef [class.corrente-col]="giornata + lega.giornataIniziale === mappaInfo.GIORNATA_CORRENTE">Giocata {{ giornata }} - [{{(giornata + lega.giornataIniziale)}}]</th>
-                <td mat-cell *matCellDef="let giocatore"
-                  [class.corrente-col]="giornata + lega.giornataIniziale === mappaInfo.GIORNATA_CORRENTE && giocatore.stato !== 'ELIMINATO'"
-                  [class.ko-font]="getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'">
-                  <ng-container
-                    *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
-                  >
-                    {{ getSquadraNome(giocata.squadraId) }}
-                  </ng-container>
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                  [class.corrente-col]="
+                  giornata + lega.giornataIniziale -1 ===
+                  (mappaInfo ? mappaInfo.GIORNATA_CORRENTE : null)
+                "
+              >
+              <div>
+                Giocata numero: {{ giornata }}
+               </div>
+               <div>
+                giornata {{giornata + lega.giornataIniziale -1}}
+                </div> 
+              </th>
+              <td
+                mat-cell
+                *matCellDef="let giocatore"
+                [class.corrente-col]="
+                  giornata + lega.giornataIniziale -1 ===
+                    (mappaInfo ? mappaInfo.GIORNATA_CORRENTE : null) &&
+                  giocatore.stato !== 'ELIMINATO'
+                "
+                [class.ko-font]="
+                  getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
+                "
+              >
+                <ng-container
+                  *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
+                >
+                  {{ getSquadraNome(giocata.squadraId) }}
+                </ng-container>
               </td>
             </ng-container>
             }
-            <ng-container matColumnDef="squadra">
-              <th mat-header-cell *matHeaderCellDef>[{{(maxGiornata + lega.giornataIniziale)}}]</th>
+            @if (selezionaProssimaGiocata()) {
+            <ng-container matColumnDef="prossimaGiocata">
+              <th mat-header-cell *matHeaderCellDef>
+                Prossima giocata
+              </th>
               <td mat-cell *matCellDef="let giocatore; let i = $index">
-                @if (giocatore.stato !== 'ELIMINATO' &&
-                canEditUserRow(giocatore?.user?.id)) {
+                @if (selectGiocatoreVisible(giocatore)) {
                 <div class="squadra-select-save">
                   <mat-form-field appearance="outline" class="select-squadra">
                     <mat-select
@@ -112,12 +144,12 @@
                 }
               </td>
             </ng-container>
+            }
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr
               mat-row
               *matRowDef="let row; columns: displayedColumns"
               [class.eliminato-row]="row.stato === 'ELIMINATO'"
-              
             ></tr>
           </table>
           }

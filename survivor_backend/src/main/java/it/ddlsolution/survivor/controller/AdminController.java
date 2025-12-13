@@ -20,11 +20,9 @@ public class AdminController {
 
     private final LegaService legaService;
 
-    @PutMapping("/calcola/{id}")
-    public ResponseEntity<LegaDTO> calcola(@PathVariable Long id, @RequestParam int giornata) {
-        return ResponseEntity.ok(legaService.calcola(id,giornata));
-
-
+    @PutMapping("/calcola/{idLega}")
+    public ResponseEntity<LegaDTO> calcola(@PathVariable Long idLega, @RequestParam int giornata) {
+        return ResponseEntity.ok(legaService.calcola(idLega,giornata));
     }
 
 }
