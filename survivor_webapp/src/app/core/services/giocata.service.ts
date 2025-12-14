@@ -13,10 +13,6 @@ export class GiocataService {
 
     constructor(private http: HttpClient) {}
 
-  getGiocate(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/giocate`);
-  }
-
     salvaGiocata(giornata: number, giocatoreId: number, squadraSelezionata: string, legaId: number): Observable<Giocatore> {
     const body = {
       giornata: giornata,
@@ -25,7 +21,7 @@ export class GiocataService {
       squadraId: squadraSelezionata,
     };
 
-      return this.http.post<any>(`${environment.apiUrl}/api/survivorBe/giocate`, body);
+      return this.http.post<any>(`${this.apiUrl}`, body);
     }
 
 }
