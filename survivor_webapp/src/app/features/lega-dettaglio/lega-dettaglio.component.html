@@ -73,7 +73,7 @@
             <ng-container matColumnDef="stato">
               <th mat-header-cell *matHeaderCellDef>Stato</th>
               <td mat-cell *matCellDef="let giocatore">
-                {{ giocatore.stato }}
+                <span class="stato-pill">{{ giocatore.stato }}</span>
               </td>
             </ng-container>
             @for (giornata of giornataIndices; track giornata) {
@@ -106,7 +106,10 @@
                 <ng-container
                   *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
                 >
-                  {{ getSquadraNome(giocata.squadraId) }} {{ giocata.esito }}
+                  <span class="status-pill" [ngClass]="{'ok': giocata.esito === 'OK', 'ko': giocata.esito === 'KO', 'empty': !giocata.esito}">
+                    <span class="team-name team-name--truncate" [title]="getSquadraNome(giocata.squadraId)">{{ getSquadraNome(giocata.squadraId) | slice:0:14 }}</span>
+                    <span class="esito-label">{{ giocata.esito || '-' }}</span>
+                  </span>
                 </ng-container>
               </td>
             </ng-container>

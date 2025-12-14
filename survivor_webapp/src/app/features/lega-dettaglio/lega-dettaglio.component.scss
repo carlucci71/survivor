@@ -11,6 +11,144 @@
   background-color: #f5f7fa;
 }
 
+.ok-font {
+	display: inline-block;
+	background: #2e7d32; /* green 700 */
+	color: #fff !important;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-weight: 600;
+	font-size: 0.9em;
+	line-height: 1;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.12);
+}
+
+/* If the ok badge appears inside a red cell, invert to keep contrast */
+.ko-font .ok-font,
+.eliminato-row .ok-font {
+	background: #ffffff !important;
+	color: #d32f2f !important;
+	border: 1px solid #d32f2f !important;
+	box-shadow: none !important;
+}
+
+/* KO badge style */
+.ko-badge {
+	display: inline-block;
+	background: #d32f2f; /* red 700 */
+	color: #fff;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-weight: 700;
+	font-size: 0.9em;
+	line-height: 1;
+}
+
+/* Ensure KO badge stays readable even in red/eliminated rows */
+.ko-font .ko-badge,
+.eliminato-row .ko-badge {
+	background: #fff !important;
+	color: #2fa2d3 !important;
+	border: 1px solid #11341e !important;
+}
+
+.empty-badge {
+	display: inline-block;
+	background: #ffffff;
+	color: #222;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-weight: 600;
+	font-size: 0.9em;
+	line-height: 1;
+	border: 1px solid #e0e0e0;
+}
+
+/* If empty badge lands in red background, keep it visible */
+.ko-font .empty-badge,
+.eliminato-row .empty-badge {
+	background: #ffffff !important;
+	color: #222 !important;
+}
+
+/* Stato pill */
+.stato-pill {
+	display: inline-block;
+	background: #e0e0e0;
+	color: #222;
+	padding: 4px 10px;
+	border-radius: 14px;
+	font-weight: 600;
+	font-size: 0.92em;
+}
+
+/* If row is eliminato or ko, keep pill readable */
+.eliminato-row .stato-pill,
+.ko-font .stato-pill {
+	background: rgba(255,255,255,0.95) !important;
+	color: #222 !important;
+}
+
+/* Unified status pill (team + esito) */
+.status-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	background: #ffffff;
+	border: 1px solid #e0e0e0;
+	padding: 4px 6px;
+	border-radius: 14px;
+	font-weight: 600;
+}
+.giocatori-table td .status-pill .team-name,
+.status-pill .team-name {
+	background: #f8fbff !important;
+	padding: 4px 8px !important;
+	border-radius: 8px !important;
+	box-shadow: 0 2px 6px rgba(16,24,40,0.06) !important;
+	max-width: 100px !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	white-space: nowrap !important;
+	display: inline-block !important;
+	font-weight: 700 !important;
+	color: #111 !important;
+	border: 1px solid #e6f0fb !important;
+	margin-right: 6px !important;
+	flex-shrink: 1 !important;
+}
+
+/* Keep card-like look readable in red/eliminated rows */
+.eliminato-row .status-pill .team-name,
+.ko-font .status-pill .team-name {
+	background: rgba(255,255,255,0.95) !important;
+}
+.giocatori-table td .status-pill .esito-label,
+.status-pill .esito-label {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 10px;
+	font-size: 0.78em;
+	font-weight: 700;
+	color: #fff;
+	white-space: nowrap !important;
+	flex-shrink: 0 !important;
+}
+.status-pill.ok .esito-label { background: #2e7d32; }
+.status-pill.ko .esito-label { background: #d32f2f; }
+.status-pill.empty .esito-label { background: #9e9e9e; }
+
+/* Keep pill readable inside red/eliminated rows */
+.eliminato-row .status-pill,
+.ko-font .status-pill {
+	background: rgba(255,255,255,0.98) !important;
+	border: 1px solid #e0e0e0 !important;
+}
+.eliminato-row .status-pill .esito-label,
+.ko-font .status-pill .esito-label {
+	color: inherit !important;
+}
+
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
