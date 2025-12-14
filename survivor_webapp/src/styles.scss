@@ -17,3 +17,22 @@ html, body {
   height: 100%;
 }
 
+
+.multi-line-snackbar,
+.multi-line-snackbar .mat-simple-snackbar,
+.multi-line-snackbar .mat-simple-snackbar-message,
+.mat-snack-bar-container.multi-line-snackbar .mat-simple-snackbar-message {
+  white-space: pre-wrap !important; /* preserve newlines */
+  white-space: pre-line !important;
+  word-break: break-word !important;
+  text-align: left !important;
+  display: block !important;
+  max-width: 800px; 
+}
+
+@media (min-width: 1200px) {
+  .mat-snack-bar-container.multi-line-snackbar {
+    max-width: 900px !important;
+  }
+}
+

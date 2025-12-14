@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,6 @@ public class LegaController {
 
     private final LegaService legaService;
 
-    @GetMapping(value = "/prova")
-    public ResponseEntity<List<LegaDTO>> prova() {
-        List<LegaDTO> dtoList = legaService.prova();
-        return ResponseEntity.ok(dtoList);
-    }
 
     @GetMapping(value = "/mieLeghe")
     public ResponseEntity<List<LegaDTO>> mieLeghe() {

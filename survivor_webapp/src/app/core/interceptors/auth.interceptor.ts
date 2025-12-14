@@ -1,11 +1,14 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
+  const snackBar = inject(MatSnackBar);
 
   let authReq = req;
   if (token) {
@@ -44,6 +47,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
           authService.logout();
         }
+      } else{
+        let fullMessage = '';
+
+        if (!fullMessage) {
+          const msgParts = [] as string[];
+          if (error?.message) { msgParts.push(error.message); } else { msgParts.push('An error occurred'); }
+          if (error?.error?.id) { msgParts.push(String(error.error.id)); }
+          if (error?.error?.message) { msgParts.push(String(error.error.message)); }
+          fullMessage = msgParts.join('\n');
+        }
+
+        snackBar.openFromComponent(SnackMessageComponent, { data: fullMessage, duration: 5000, panelClass: 'multi-line-snackbar' });
       }
       return throwError(() => error);
     })

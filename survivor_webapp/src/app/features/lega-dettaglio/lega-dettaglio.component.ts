@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
 import { LegaService } from '../../core/services/lega.service';
 import { Giocatore, Lega } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
@@ -18,7 +16,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
-import { UtilService } from '../../core/services/util.service';
 import { GiocataService } from '../../core/services/giocata.service';
 import { AdminService } from '../../core/services/admin.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -47,7 +44,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class LegaDettaglioComponent {
   id: number = -1;
   lega: Lega | null = null;
-  mappaInfo: any | null = null;
   isLoading = true;
   error: string | null = null;
   squadre: any[] = [];
@@ -73,7 +69,6 @@ export class LegaDettaglioComponent {
     private legaService: LegaService,
     private adminService: AdminService,
     private authService: AuthService,
-    private utilService: UtilService,
     private squadraService: SquadraService,
     private router: Router,
     private giocataService: GiocataService
@@ -82,19 +77,15 @@ export class LegaDettaglioComponent {
       this.id = Number(params.get('id'));
       if (this.id) {
         this.isLoading = true;
-        const lega$ = this.legaService.getLegaById(this.id);
-        // utilService.info may depend on id; ensure we call it with the same id. If it errors, fallback to null
-        const info$ = this.utilService.info(this.id).pipe(catchError(() => of(null)));
 
-        // Wait for both the lega and the mappaInfo so giornataTerminata and other checks
-        // have the correct data available when caricaTabella runs.
-        combineLatest([lega$, info$]).subscribe({
-          next: ([lega, mappaInfo]: [Lega, any]) => {
-            this.mappaInfo = mappaInfo;
-            this.caricaTabella(lega);
+        this.legaService.getLegaById(this.id).subscribe({
+          next: (lega) => {
+            this.lega=lega;
+            this.caricaTabella();
+            this.isLoading = false;
           },
-          error: (err: any) => {
-            this.error = 'Errore nel caricamento della lega';
+          error: (error) => {
+            console.error('Errore nel caricamento delle leghe:', error);
             this.isLoading = false;
           },
         });
@@ -105,11 +96,10 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/home']);
   }
 
-  caricaTabella(lega: Lega) {
-    this.lega = lega;
+  caricaTabella() {
     // Calcolo le colonne della tabella: uso il massimo valore di 'giornata' tra tutte le giocate
     this.displayedColumns = ['nome', 'stato'];
-    const maxGiornata = legeMaxGiornata(lega.giocatori || []);
+    const maxGiornata = legeMaxGiornata(this.lega?.giocatori || []);
     for (let i = 0; i < maxGiornata; i++) {
       this.displayedColumns.push('giocata' + i);
     }
@@ -119,9 +109,9 @@ export class LegaDettaglioComponent {
       this.displayedColumns.push('prossimaGiocata');
     }
 
-    if (lega.campionato) {
+    if (this.lega?.campionato) {
       this.squadraService
-        .getSquadreByCampionato(lega?.campionato?.id ?? '')
+        .getSquadreByCampionato(this.lega?.campionato?.id ?? '')
         .subscribe({
           next: (squadre: any[]) => {
             this.squadre = squadre;
@@ -161,7 +151,7 @@ export class LegaDettaglioComponent {
     return this.giornataTerminata();
   }
   giornataTerminata(): boolean {
-    return this.mappaInfo && this.mappaInfo.STATO_GIORNATA == 'TERMINATA';
+    return this.lega?.statoGiornataCorrente == 'TERMINATA';
   }
 
   selectGiocatoreVisible(giocatore: Giocatore): boolean {
@@ -176,14 +166,9 @@ export class LegaDettaglioComponent {
     if (giocatore.giocate) {
       giocate += giocatore.giocate.length;
     }
-    const prossimaGiocata = (this.lega?.giornataIniziale || 0) + giocate ;
+    const prossimaGiocata = (this.lega?.giornataIniziale || 0) + giocate;
 
-    let corrente=0;
-    if (this.mappaInfo && this.mappaInfo.GIORNATA_CORRENTE){
-      corrente = this.mappaInfo.GIORNATA_CORRENTE;
-    }
-
-    if (prossimaGiocata > corrente) {
+    if (prossimaGiocata > (this.lega?.giornataCorrente || 0)) {
       return false;
     }
 
@@ -220,10 +205,12 @@ export class LegaDettaglioComponent {
   calcolaGiornata() {
     this.isLoading = true;
     this.adminService
-      .calcola(Number(this.id), this.mappaInfo.GIORNATA_CORRENTE)
+      .calcola(Number(this.id), (this.lega?.giornataCorrente || 0))
       .subscribe({
         next: (lega: Lega) => {
-          this.caricaTabella(lega);
+              this.lega = lega;
+              this.caricaTabella();
+              this.isLoading = false;
         },
         error: (err: any) => {
           this.error = 'Errore nel caricamento della lega';

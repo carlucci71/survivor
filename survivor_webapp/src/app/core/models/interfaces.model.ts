@@ -7,6 +7,8 @@ export interface Lega {
   giocatori?: Giocatore[];
   giornataIniziale: number;
   giornataCalcolata: number;
+  giornataCorrente: number;
+  statoGiornataCorrente: string;
 }
 
 export interface Sport {

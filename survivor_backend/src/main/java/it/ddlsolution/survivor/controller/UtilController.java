@@ -39,12 +39,4 @@ public class UtilController {
     public ResponseEntity<List<PartitaDTO>> calendario() {
         return ResponseEntity.ok(calendario.partite("CALCIO", "SERIE_A"));
     }
-
-    @GetMapping("/info/{idLega}")
-    public ResponseEntity<Map<String, Object>> info(@PathVariable Long idLega) {
-        LegaDTO legaDTO = legaService.getLegaById(idLega);
-        Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
-        int giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata+1);
-        return ResponseEntity.ok(Map.of("GIORNATA_CORRENTE", giornataCorrente, "STATO_GIORNATA", legaService.stato(legaDTO, giornataCorrente)));
-    }
 }
