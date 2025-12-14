@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Lega } from '../models/interfaces.model';
+import { map } from 'rxjs/operators';
+import { mapLegaFromBE } from '../utils/lega-mapper';
 
 
 @Injectable({
@@ -13,7 +15,8 @@ export class AdminService {
   constructor(private http: HttpClient) {}
 
   calcola(id: number, giornata: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}?giornata=${giornata}`, {});
+    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}?giornata=${giornata}`, {})
+      .pipe(map(mapLegaFromBE));
   }
 
 }

@@ -33,6 +33,9 @@ public class Campionato {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
+    @Column(name = "num_giornate", nullable = false, length = 100)
+    private int numGiornate;
+
     @OneToMany(mappedBy = "campionato", cascade = CascadeType.ALL)
     @JsonManagedReference("campionato-leghe")
     private List<Lega> leghe = new ArrayList<>();

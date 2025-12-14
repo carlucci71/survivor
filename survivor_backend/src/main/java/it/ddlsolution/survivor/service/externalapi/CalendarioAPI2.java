@@ -1,6 +1,10 @@
 package it.ddlsolution.survivor.service.externalapi;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.repository.CampionatoRepository;
+import it.ddlsolution.survivor.service.CampionatoCacheableService;
+import it.ddlsolution.survivor.service.CampionatoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,15 +27,21 @@ import static it.ddlsolution.survivor.util.Constant.SSL_DISABLED_RESTTEMPLATE;
 @Profile(CALENDARIO_API2)
 @Slf4j
 public class CalendarioAPI2 implements ICalendario {
+    private final CampionatoRepository campionatoRepository;
 
     private final RestTemplate restTemplate;
+    private final CampionatoService campionatoService;
 
     @Value("${external-api.calendario.implementation.API2.url}")
     String url;
 
-    public CalendarioAPI2(@Qualifier(SSL_DISABLED_RESTTEMPLATE) RestTemplate restTemplate) {
+    public CalendarioAPI2(@Qualifier(SSL_DISABLED_RESTTEMPLATE) RestTemplate restTemplate, CampionatoService campionatoService,
+                          CampionatoRepository campionatoRepository) {
         this.restTemplate = restTemplate;
+        this.campionatoService = campionatoService;
+        this.campionatoRepository = campionatoRepository;
     }
+
     @Override
     public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
         return getPartite(sport, campionato, giornata);
@@ -40,7 +50,8 @@ public class CalendarioAPI2 implements ICalendario {
     @Override
     public List<PartitaDTO> partite(String sport, String campionato) {
         List<PartitaDTO> ret = new ArrayList<>();
-        for (int giornata = 1; giornata <= EnumAPI2.MAX_GIORNATA; giornata++) {
+        CampionatoDTO campionatoDTO = campionatoService.findCampionato(campionato).orElseThrow(() -> new RuntimeException("Campionato non trovato: " + campionato));
+        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
             List<PartitaDTO> calendarioGiornata = getPartite(sport, campionato, giornata);
             ret.addAll(calendarioGiornata);
         }
@@ -48,7 +59,7 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
     private List<PartitaDTO> getPartite(String sport, String campionato, int giornata) {
-        List<PartitaDTO> ret=new ArrayList<>();
+        List<PartitaDTO> ret = new ArrayList<>();
         String urlDay = String.format(url, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, giornata);
         ResponseEntity<Map> map = restTemplate.getForEntity(urlDay, Map.class);
         Map response = map.getBody();
@@ -59,7 +70,7 @@ public class CalendarioAPI2 implements ICalendario {
             for (Map<String, Object> match : matches) {
                 OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
                 LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
-                String status = ((Map)match.get("timing")).get("tag").toString();
+                String status = ((Map) match.get("timing")).get("tag").toString();
                 Map homeTeam = (Map) match.get("homeTeam");
                 Integer homeTeamId = Integer.parseInt(homeTeam.get("teamId").toString());
                 Integer homeTeamScore = (Integer) homeTeam.get("score");

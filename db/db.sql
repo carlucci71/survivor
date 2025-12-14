@@ -31,7 +31,8 @@ create table sport(
 create table campionato(
 	id varchar(20) primary key,
 	id_sport varchar(20) not null,
-	nome varchar(100) not null
+	nome varchar(100) not null,
+	num_giornate integer not null
 );
 create table squadra(
 	id char(3) primary key,
@@ -73,7 +74,7 @@ ADD CONSTRAINT fk_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 
 
 insert into sport(id,nome) values('CALCIO','Calcio');
-insert into campionato(id,id_sport,nome) values('SERIE_A','CALCIO','Serie A');
+insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
 insert into squadra(id,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('BOL','Bologna','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('CAG','Cagliari','SERIE_A');

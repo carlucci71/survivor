@@ -4,8 +4,6 @@ import it.ddlsolution.survivor.util.Enumeratori;
 
 public class EnumAPI2 {
 
-    final static int MAX_GIORNATA=38;
-
     enum Campionato {
         SERIE_A(21);
         int id;
