@@ -1,3 +1,15 @@
+// Icona "gioca" accanto al badge squadra nella colonna corrente
+.gioca-icon {
+	font-size: 20px;
+	color: #1976d2;
+	margin-left: 6px;
+	vertical-align: middle;
+	cursor: pointer;
+	transition: color 0.2s;
+}
+.gioca-icon:hover {
+	color: #388e3c;
+}
 .giocatori-table td.ko-font, .ko-font {
 	color: #ffff00 !important;
 	font-weight: bold !important;

@@ -1,3 +1,6 @@
+import { MatDialog } from '@angular/material/dialog';
+import { SelezionaGiocataComponent } from '../../seleziona-giocata/seleziona-giocata.component';
+// ...existing code...
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -71,7 +74,8 @@ export class LegaDettaglioComponent {
     private authService: AuthService,
     private squadraService: SquadraService,
     private router: Router,
-    private giocataService: GiocataService
+    private giocataService: GiocataService,
+    private dialog: MatDialog
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -80,7 +84,7 @@ export class LegaDettaglioComponent {
 
         this.legaService.getLegaById(this.id).subscribe({
           next: (lega) => {
-            this.lega=lega;
+            this.lega = lega;
             this.caricaTabella();
             this.isLoading = false;
           },
@@ -92,22 +96,58 @@ export class LegaDettaglioComponent {
       }
     });
   }
+  // Gestisce il click sull'icona gioca accanto al badge squadra
+  giocaGiornata(giocatore: Giocatore, giornata: number): void {
+    // Trova la giocata corrente (se esiste)
+    const giocataCorrente = (giocatore.giocate || []).find((g: any) => Number(g?.giornata) === giornata);
+    const squadraCorrenteId = giocataCorrente?.squadraId || null;
+    // Escludi tutte le squadre già giocate, tranne quella corrente
+    const giocateIds = (giocatore.giocate || [])
+      .filter((g: any) => Number(g?.giornata) !== giornata)
+      .map((g: any) => g.squadraId);
+    const squadreDisponibili = this.squadre.filter((s: any) => !giocateIds.includes(s.id) || s.id === squadraCorrenteId);
+    const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
+      data: {
+        giocatore: giocatore,
+        giornata: giornata,
+        squadreDisponibili: squadreDisponibili,
+        squadraCorrenteId: squadraCorrenteId
+      },
+      width: '400px'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.squadraSelezionata) {
+        this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
+      }
+    });
+  }
   goBack(): void {
     this.router.navigate(['/home']);
   }
 
+  visualizzaGiocata(giornata: number, giocatore: Giocatore) {
+    const giornataIniziale = this.lega?.giornataIniziale || 0;
+    const giornataCorrente = this.lega?.giornataCorrente;
+    return (
+      giornata + giornataIniziale - 1 === giornataCorrente &&
+      giocatore.stato !== 'ELIMINATO'
+    );
+  }
+
   caricaTabella() {
-    // Calcolo le colonne della tabella: uso il massimo valore di 'giornata' tra tutte le giocate
+    // Calcolo le colonne della tabella: includo SEMPRE la colonna della giornata corrente
     this.displayedColumns = ['nome'];
-    const maxGiornata = legeMaxGiornata(this.lega?.giocatori || []);
-    for (let i = 0; i < maxGiornata; i++) {
+    const giornataIniziale = this.lega?.giornataIniziale || 0;
+    const maxGiornata = this.lega?.giornataCalcolata
+      ? this.lega?.giornataCalcolata + 1
+      : giornataIniziale;
+    //const giornataCorrente = this.lega?.giornataCorrente || 0;
+    for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
       this.displayedColumns.push('giocata' + i);
     }
     // populate giornata indices 1..maxGiornata
     this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
-    if (this.selezionaProssimaGiocata()) {
-      this.displayedColumns.push('prossimaGiocata');
-    }
+    // La colonna 'prossimaGiocata' non viene più aggiunta perché la selezione avviene solo nella modale
 
     if (this.lega?.campionato) {
       this.squadraService
@@ -156,7 +196,7 @@ export class LegaDettaglioComponent {
   }
 
   giornataDaGiocare(): boolean {
-    if ((this.lega?.giornataCorrente || 0) <= 15) return true;//TODO PER TEST
+    if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return this.lega?.statoGiornataCorrente == 'DA_GIOCARE';
   }
 
@@ -211,12 +251,12 @@ export class LegaDettaglioComponent {
   calcolaGiornata() {
     this.isLoading = true;
     this.adminService
-      .calcola(Number(this.id), (this.lega?.giornataCorrente || 0))
+      .calcola(Number(this.id), this.lega?.giornataCorrente || 0)
       .subscribe({
         next: (lega: Lega) => {
-              this.lega = lega;
-              this.caricaTabella();
-              this.isLoading = false;
+          this.lega = lega;
+          this.caricaTabella();
+          this.isLoading = false;
         },
         error: (err: any) => {
           this.error = 'Errore nel caricamento della lega';
@@ -224,53 +264,17 @@ export class LegaDettaglioComponent {
         },
       });
   }
-  salvaSquadra(giocatore: any): void {
+  salvaSquadra(giocatore: Giocatore, giornata: number, squadraSelezionata: string ): void {
     if (!this.lega) {
       console.error('Nessuna lega caricata');
       return;
     }
-    // Calcola la prossima giornata sequenziale (append in coda)
-    const nextGiornata =
-      (giocatore.giocate && giocatore.giocate.length
-        ? giocatore.giocate.length
-        : 0) + 1;
-    const body = {
-      giornata: nextGiornata,
-      giocatoreId: giocatore.id || 0,
-      squadraId: giocatore.squadraSelezionata,
-    };
-    this.giocataService.salvaGiocata(body).subscribe({
-      next: (res: any) => {
-        // Aggiorna la giocata localmente: aggiunge alla lista giocate del giocatore
-        giocatore.giocate = giocatore.giocate || [];
-        // se l'API restituisce l'oggetto creato, usalo; altrimenti crea un oggetto minimale
-        const nuovaGiocata =
-          res && (res.giornata || res.giornata === 0)
-            ? res
-            : {
-                giornata: nextGiornata,
-                squadraId: giocatore.squadraSelezionata,
-              };
-        // aggiungi in coda per mantenere l'ordine 1,2,3...
-        giocatore.giocate.push(nuovaGiocata);
-        // pulisci selezione
-        delete giocatore.squadraSelezionata;
-        // Aggiorna displayedColumns se necessario (uso il massimo valore di giornata tra tutti i giocatori)
-        const maxGiornata = legeMaxGiornata(this.lega?.giocatori || []);
-        const currentGiocateCols = this.displayedColumns.filter((c) =>
-          c.startsWith('giocata')
-        ).length;
-        if (maxGiornata > currentGiocateCols) {
-          this.displayedColumns = ['nome'];
-          for (let i = 0; i < maxGiornata; i++)
-            this.displayedColumns.push('giocata' + i);
-          if (this.selezionaProssimaGiocata()) {
-            this.displayedColumns.push('prossimaGiocata');
-          }
-          this.giornataIndices = Array.from(
-            { length: maxGiornata },
-            (_, i) => i + 1
-          );
+
+    this.giocataService.salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id).subscribe({
+      next: (res: Giocatore) => {
+        // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
+        if (res && Array.isArray(res.giocate)) {
+          giocatore.giocate = res.giocate;
         }
       },
       error: (err: any) => {
@@ -278,17 +282,4 @@ export class LegaDettaglioComponent {
       },
     });
   }
-}
-
-function legeMaxGiornata(giocatori: any[]): number {
-  if (!giocatori || giocatori.length === 0) return 0;
-  let max = 0;
-  for (const g of giocatori) {
-    if (!g.giocate) continue;
-    for (const gg of g.giocate) {
-      const n = Number(gg?.giornata);
-      if (!isNaN(n) && n > max) max = n;
-    }
-  }
-  return max;
 }

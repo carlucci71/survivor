@@ -38,18 +38,14 @@
             >{{ lega.campionato?.sport?.id }} -
             {{ lega.campionato?.id }}</mat-card-subtitle
           >
-          } 
+          }
           <mat-card-subtitle>
-            <!--
             <div>
-            Giornata corrente:{{ lega.giornataCorrente }} - {{ lega.statoGiornataCorrente }}
+              Giornata corrente:{{ lega.giornataCorrente }} -
+              {{ lega.statoGiornataCorrente }}
             </div>
-            -->
-            <div>
-            Giornata calcolata:{{ lega.giornataCalcolata }}
-            </div>
+            <div>Giornata calcolata:{{ lega.giornataCalcolata }}</div>
           </mat-card-subtitle>
-          
         </mat-card-header>
         <mat-card-content>
           @if (isAdmin() ) {<!--&& giornataTerminata()-->
@@ -78,26 +74,24 @@
               <th
                 mat-header-cell
                 *matHeaderCellDef
-                  [class.corrente-col]="
-                  giornata + lega.giornataIniziale -1 === lega.giornataCorrente
+                [class.corrente-col]="
+                  giornata + lega.giornataIniziale - 1 === lega.giornataCorrente
                 "
               >
-               <div>
-                Giornata
-                </div> 
-               <div>
-                {{giornata + lega.giornataIniziale -1}} 
-                @if (lega.giornataCorrente === (giornata + lega.giornataIniziale -1)){
-                  - {{ lega.statoGiornataCorrente }}
-                }
-                </div> 
+                <div>Giornata</div>
+                <div>
+                  {{ giornata + lega.giornataIniziale - 1 }}
+                  @if (lega.giornataCorrente === (giornata +
+                  lega.giornataIniziale -1)){ - {{ lega.statoGiornataCorrente }}
+                  }
+                </div>
               </th>
               <td
                 mat-cell
                 *matCellDef="let giocatore"
                 [class.corrente-col]="
-                  giornata + lega.giornataIniziale -1 === lega.giornataCorrente &&
-                  giocatore.stato !== 'ELIMINATO'
+                  giornata + lega.giornataIniziale - 1 ===
+                    lega.giornataCorrente && giocatore.stato !== 'ELIMINATO'
                 "
                 [class.ko-font]="
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
@@ -106,40 +100,28 @@
                 <ng-container
                   *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
                 >
-                  <span class="team-name" [ngClass]="{'ok': giocata.esito === 'OK', 'ko': giocata.esito === 'KO', 'empty': !giocata.esito}" [title]="getSquadraNome(giocata.squadraId)">{{ getSquadraNome(giocata.squadraId) | slice:0:14 }}</span>
-                </ng-container>
-              </td>
-            </ng-container>
-            }
-            @if (selezionaProssimaGiocata()) {
-            <ng-container matColumnDef="prossimaGiocata">
-              <th mat-header-cell *matHeaderCellDef>
-                Prossima giocata
-              </th>
-              <td mat-cell *matCellDef="let giocatore; let i = $index">
-                @if (selectGiocatoreVisible(giocatore)) {
-                <div class="squadra-select-save">
-                  <mat-form-field appearance="outline" class="select-squadra">
-                    <mat-select
-                      placeholder="Seleziona"
-                      [(ngModel)]="giocatore.squadraSelezionata"
-                      [ngModelOptions]="{ standalone: true }"
-                    >
-                      @for (squadra of getSquadreDisponibili(giocatore); track
-                      squadra.id) {
-                      <mat-option [value]="squadra.id">{{
-                        squadra.nome
-                      }}</mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                  @if (giocatore.squadraSelezionata) {
-                  <mat-icon class="save-icon" (click)="salvaSquadra(giocatore)"
-                    >save</mat-icon
+                  <span
+                    class="team-name"
+                    [ngClass]="{
+                      ok: giocata.esito === 'OK',
+                      ko: giocata.esito === 'KO',
+                      empty: !giocata.esito
+                    }"
+                    [title]="getSquadraNome(giocata.squadraId)"
+                    >{{
+                      getSquadraNome(giocata.squadraId) | slice : 0 : 14
+                    }}</span
                   >
-                  }
-                </div>
-                }
+                </ng-container>
+                <!-- Icona per giocare solo nella colonna della giornata corrente -->
+                <ng-container *ngIf="visualizzaGiocata(giornata, giocatore)">
+                  <mat-icon
+                    class="gioca-icon"
+                    matTooltip="Gioca ora"
+                    (click)="giocaGiornata(giocatore, giornata)"
+                    >sports_soccer</mat-icon
+                  >
+                </ng-container>
               </td>
             </ng-container>
             }

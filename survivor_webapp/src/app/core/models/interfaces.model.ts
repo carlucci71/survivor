@@ -33,7 +33,7 @@ export interface Squadra {
 }
 
 export interface Giocatore {
-  id?: number;
+  id: number;
   nome: string;
   stato?: string;
   user?: User;

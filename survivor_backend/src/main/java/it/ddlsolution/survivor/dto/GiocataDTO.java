@@ -8,6 +8,7 @@ public class GiocataDTO {
     private Long id;
     private Integer giornata;
     private Long giocatoreId;
+    private Long legaId;
     private String squadraId;
     private Enumeratori.EsitoGiocata esito;
 }

@@ -12,10 +12,12 @@ import java.util.List;
 public interface GiocataMapper {
 
     @Mapping(source = "giocatore.id", target = "giocatoreId")
+    @Mapping(source = "lega.id", target = "legaId")
     @Mapping(source = "squadra.id", target = "squadraId")
     GiocataDTO toDTO(Giocata giocata);
 
     @Mapping(source = "giocatoreId", target = "giocatore.id")
+    @Mapping(source = "legaId", target = "lega.id")
     @Mapping(source = "squadraId", target = "squadra.id")
     Giocata toEntity(GiocataDTO giocataDTO);
 

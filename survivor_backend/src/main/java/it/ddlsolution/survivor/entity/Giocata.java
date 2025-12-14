@@ -33,6 +33,12 @@ public class Giocata {
     private Giocatore giocatore;
 
     @ManyToOne
+    @JoinColumn(name = "id_lega", nullable = false)
+    @JsonBackReference("lega-giocate")
+    @ToString.Exclude
+    private Lega lega;
+
+    @ManyToOne
     @JoinColumn(name = "id_squadra", nullable = false)
     private Squadra squadra;
 

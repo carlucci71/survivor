@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
@@ -50,5 +51,9 @@ public class Lega {
     )
     @JsonManagedReference("lega-giocatori")
     private List<Giocatore> giocatori = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("lega-giocate")
+    private List<Giocata> giocate = new ArrayList<>();
 
 }
