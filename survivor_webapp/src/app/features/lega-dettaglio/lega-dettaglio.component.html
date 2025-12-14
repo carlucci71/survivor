@@ -40,12 +40,11 @@
           >
           } 
           <mat-card-subtitle>
-            <div>
-            Giornata iniziale:{{ lega.giornataIniziale }}
-            </div>
+            <!--
             <div>
             Giornata corrente:{{ lega.giornataCorrente }} - {{ lega.statoGiornataCorrente }}
             </div>
+            -->
             <div>
             Giornata calcolata:{{ lega.giornataCalcolata }}
             </div>
@@ -84,7 +83,13 @@
                 "
               >
                <div>
-                Giornata {{giornata + lega.giornataIniziale -1}}
+                Giornata
+                </div> 
+               <div>
+                {{giornata + lega.giornataIniziale -1}} 
+                @if (lega.giornataCorrente === (giornata + lega.giornataIniziale -1)){
+                  - {{ lega.statoGiornataCorrente }}
+                }
                 </div> 
               </th>
               <td

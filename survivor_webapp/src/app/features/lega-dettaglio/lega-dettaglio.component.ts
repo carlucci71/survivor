@@ -156,7 +156,7 @@ export class LegaDettaglioComponent {
   }
 
   giornataDaGiocare(): boolean {
-    if ((this.lega?.giornataCorrente || 0) < 15) return true;//TODO PER TEST
+    if ((this.lega?.giornataCorrente || 0) <= 15) return true;//TODO PER TEST
     return this.lega?.statoGiornataCorrente == 'DA_GIOCARE';
   }
 
