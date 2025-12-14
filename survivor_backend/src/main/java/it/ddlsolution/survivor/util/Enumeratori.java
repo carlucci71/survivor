@@ -7,19 +7,17 @@ public class Enumeratori {
         ADMIN
     }
 
-    public enum EsitoGiocata{
-        OK,KO
+    public enum EsitoGiocata {
+        OK, KO
     }
 
-    public enum StatoGiocatore{
-        ATTIVO("A")
-        ,ELIMINATO ("E")
-        ,PENDING ("P");
+    public enum StatoGiocatore {
+        ATTIVO("A"), ELIMINATO("E"), PENDING("P");
 
         private final String codice;
 
-        StatoGiocatore(String codice){
-            this.codice=codice;
+        StatoGiocatore(String codice) {
+            this.codice = codice;
         }
 
         public String getCodice() {
@@ -39,8 +37,11 @@ public class Enumeratori {
         }
 
     }
-    public enum StatoPartita{
-        DA_GIOCARE,TERMINATA,IN_CORSO
+
+    public enum StatoPartita {
+        DA_GIOCARE,
+        TERMINATA,
+        IN_CORSO
     }
 
 }

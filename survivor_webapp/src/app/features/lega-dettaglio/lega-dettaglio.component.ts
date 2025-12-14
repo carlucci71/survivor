@@ -98,7 +98,7 @@ export class LegaDettaglioComponent {
 
   caricaTabella() {
     // Calcolo le colonne della tabella: uso il massimo valore di 'giornata' tra tutte le giocate
-    this.displayedColumns = ['nome', 'stato'];
+    this.displayedColumns = ['nome'];
     const maxGiornata = legeMaxGiornata(this.lega?.giocatori || []);
     for (let i = 0; i < maxGiornata; i++) {
       this.displayedColumns.push('giocata' + i);
@@ -148,10 +148,16 @@ export class LegaDettaglioComponent {
   }
 
   selezionaProssimaGiocata(): boolean {
-    return this.giornataTerminata();
+    return this.giornataDaGiocare();
   }
+
   giornataTerminata(): boolean {
     return this.lega?.statoGiornataCorrente == 'TERMINATA';
+  }
+
+  giornataDaGiocare(): boolean {
+    if ((this.lega?.giornataCorrente || 0) < 15) return true;//TODO PER TEST
+    return this.lega?.statoGiornataCorrente == 'DA_GIOCARE';
   }
 
   selectGiocatoreVisible(giocatore: Giocatore): boolean {
@@ -255,7 +261,7 @@ export class LegaDettaglioComponent {
           c.startsWith('giocata')
         ).length;
         if (maxGiornata > currentGiocateCols) {
-          this.displayedColumns = ['nome', 'stato'];
+          this.displayedColumns = ['nome'];
           for (let i = 0; i < maxGiornata; i++)
             this.displayedColumns.push('giocata' + i);
           if (this.selezionaProssimaGiocata()) {

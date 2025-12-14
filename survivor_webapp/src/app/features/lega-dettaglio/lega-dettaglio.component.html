@@ -67,13 +67,11 @@
             class="giocatori-table"
           >
             <ng-container matColumnDef="nome">
-              <th mat-header-cell *matHeaderCellDef>Nome</th>
-              <td mat-cell *matCellDef="let giocatore">{{ giocatore.nome }}</td>
-            </ng-container>
-            <ng-container matColumnDef="stato">
-              <th mat-header-cell *matHeaderCellDef>Stato</th>
+              <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let giocatore">
-                <span class="stato-pill">{{ giocatore.stato }}</span>
+                <span class="nome-giocatore">
+                  {{ giocatore.nome }}
+                </span>
               </td>
             </ng-container>
             @for (giornata of giornataIndices; track giornata) {
@@ -85,11 +83,8 @@
                   giornata + lega.giornataIniziale -1 === lega.giornataCorrente
                 "
               >
-              <div>
-                Giocata numero: {{ giornata }}
-               </div>
                <div>
-                giornata {{giornata + lega.giornataIniziale -1}}
+                Giornata {{giornata + lega.giornataIniziale -1}}
                 </div> 
               </th>
               <td
@@ -106,10 +101,7 @@
                 <ng-container
                   *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
                 >
-                  <span class="status-pill" [ngClass]="{'ok': giocata.esito === 'OK', 'ko': giocata.esito === 'KO', 'empty': !giocata.esito}">
-                    <span class="team-name team-name--truncate" [title]="getSquadraNome(giocata.squadraId)">{{ getSquadraNome(giocata.squadraId) | slice:0:14 }}</span>
-                    <span class="esito-label">{{ giocata.esito || '-' }}</span>
-                  </span>
+                  <span class="team-name" [ngClass]="{'ok': giocata.esito === 'OK', 'ko': giocata.esito === 'KO', 'empty': !giocata.esito}" [title]="getSquadraNome(giocata.squadraId)">{{ getSquadraNome(giocata.squadraId) | slice:0:14 }}</span>
                 </ng-container>
               </td>
             </ng-container>
