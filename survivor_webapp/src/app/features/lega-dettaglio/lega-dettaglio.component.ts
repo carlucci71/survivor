@@ -110,6 +110,7 @@ export class LegaDettaglioComponent {
       data: {
         giocatore: giocatore,
         giornata: giornata,
+        statoGiornataCorrente: this.lega?.statoGiornataCorrente,
         squadreDisponibili: squadreDisponibili,
         squadraCorrenteId: squadraCorrenteId
       },
@@ -126,12 +127,26 @@ export class LegaDettaglioComponent {
   }
 
   visualizzaGiocata(giornata: number, giocatore: Giocatore) {
+    if (giornata <3){
+      console.log();
+    }
     const giornataIniziale = this.lega?.giornataIniziale || 0;
-    const giornataCorrente = this.lega?.giornataCorrente;
-    return (
-      giornata + giornataIniziale - 1 === giornataCorrente &&
-      giocatore.stato !== 'ELIMINATO'
-    );
+    const giornataCorrente = this.lega?.giornataCorrente ?? -1;
+    let ret = true;
+    if (giornata + giornataIniziale - 1 !== giornataCorrente){
+      ret = false;
+    }
+    if (giocatore.stato === 'ELIMINATO'){
+      ret = false;
+    }
+    if (!this.isAdmin() && (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id)){
+      ret = false;
+    }
+    if (!this.isAdmin() && this.lega?.statoGiornataCorrente!=='DA_GIOCARE'){
+      ret = false;
+    }
+
+    return ret;
   }
 
   caricaTabella() {
@@ -176,7 +191,7 @@ export class LegaDettaglioComponent {
     return (
       giocatore.giocate.find((g: any) => Number(g?.giornata) === giornata) ||
       null
-    );
+    ); 
   }
 
   getSquadraNome(squadraId: string): string {
@@ -185,10 +200,6 @@ export class LegaDettaglioComponent {
       squadraId,
       this.lega?.campionato?.id
     );
-  }
-
-  selezionaProssimaGiocata(): boolean {
-    return this.giornataDaGiocare();
   }
 
   giornataTerminata(): boolean {

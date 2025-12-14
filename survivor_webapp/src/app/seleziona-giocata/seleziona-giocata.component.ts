@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { ConfermaAssegnazioneDialogComponent } from '../shared/components/conferma-assegnazione-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,34 +17,33 @@ import { Giocata } from '../core/models/interfaces.model';
 export class SelezionaGiocataComponent {
   squadreDisponibili: any[] = [];
   squadraSelezionata: string | null = null;
+  statoGiornataCorrente!: string;
   giocatore: any;
   constructor(
     public dialogRef: MatDialogRef<SelezionaGiocataComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { giocatore: any, giornata: number, squadreDisponibili: any[], squadraCorrenteId?: string }
+    @Inject(MAT_DIALOG_DATA) public data: { giocatore: any, giornata: number, statoGiornataCorrente: string, squadreDisponibili: any[], squadraCorrenteId?: string },
+    private dialog: MatDialog
   ) {
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
     // Se c'è una squadra già selezionata per questa giornata, selezionala
     this.squadraSelezionata = data.squadraCorrenteId || null;
+    this.statoGiornataCorrente = data.statoGiornataCorrente;
   }
 
   salvaSquadra() {
-    /*
-    // Aggiorna la giocata corrente del giocatore (se esiste), altrimenti la aggiunge
-    if (this.giocatore && this.data.giornata) {
-      let giocata: Giocata = (this.giocatore.giocate || []).find((g: any) => Number(g?.giornata) === this.data.giornata);
-      if (giocata) {
-        giocata.squadraId = this.squadraSelezionata || '';
-      } else {
-        if (!this.giocatore.giocate){
-          this.giocatore.giocate=[];
+    if (this.statoGiornataCorrente !== 'DA_GIOCARE') {
+      this.dialog.open(ConfermaAssegnazioneDialogComponent, {
+        width: '400px',
+        disableClose: true
+      }).afterClosed().subscribe(result => {
+        if (result) {
+          this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
         }
-        giocata = { giornata: this.data.giornata, squadraId: this.squadraSelezionata || '' } as Giocata;
-        this.giocatore.giocate.push(giocata);
-        this.giocatore.squadraSelezionata = this.squadraSelezionata;
-      }
+        // Se annulla, non fa nulla e la modale rimane aperta
+      });
+    } else {
+      this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
     }
-      */
-    this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
   }
 }
