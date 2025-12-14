@@ -40,15 +40,11 @@
           >
           }
           <mat-card-subtitle>
-            <div>
-              Giornata corrente:{{ lega.giornataCorrente }} -
-              {{ lega.statoGiornataCorrente }}
-            </div>
             <div>Giornata calcolata:{{ lega.giornataCalcolata }}</div>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          @if (isAdmin() ) {<!--&& giornataTerminata()-->
+          @if (isAdmin() ) {
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
@@ -82,7 +78,7 @@
                 <div>
                   {{ giornata + lega.giornataIniziale - 1 }}
                   @if (lega.giornataCorrente === (giornata +
-                  lega.giornataIniziale -1)){ - {{ lega.statoGiornataCorrente }}
+                  lega.giornataIniziale -1)){ - {{ lega.statoGiornataCorrente.descrizione }}
                   }
                 </div>
               </th>
@@ -91,7 +87,7 @@
                 *matCellDef="let giocatore"
                 [class.corrente-col]="
                   giornata + lega.giornataIniziale - 1 ===
-                    lega.giornataCorrente && giocatore.stato !== 'ELIMINATO'
+                    lega.giornataCorrente && giocatore.stato !== StatoGiocatore.ELIMINATO.value
                 "
                 [class.ko-font]="
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
@@ -129,7 +125,7 @@
             <tr
               mat-row
               *matRowDef="let row; columns: displayedColumns"
-              [class.eliminato-row]="row.stato === 'ELIMINATO'"
+              [class.eliminato-row]="row.stato === StatoGiocatore.ELIMINATO.value"
             ></tr>
           </table>
           }

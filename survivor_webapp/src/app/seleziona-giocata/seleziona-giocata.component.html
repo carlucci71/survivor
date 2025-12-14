@@ -1,22 +1,22 @@
-<h2>Seleziona giocata</h2>
-<div>
-	<strong>Giocatore:</strong> {{ giocatore.nome }}
-</div>
-<div>
-	<strong>Giornata:</strong> {{ data.giornata }}
-</div>
-<div>
-	<strong>Stato:</strong> {{ data.statoGiornataCorrente }}
-</div>
-<div class="squadra-select-save" style="margin-top: 20px;">
-	<mat-form-field appearance="outline" class="select-squadra">
-		<mat-select
-			placeholder="Seleziona squadra"
-			[(ngModel)]="squadraSelezionata"
-			[ngModelOptions]="{ standalone: true }"
-		>
-			<mat-option *ngFor="let squadra of squadreDisponibili" [value]="squadra.id">{{ squadra.nome }}</mat-option>
-		</mat-select>
-	</mat-form-field>
-	<button mat-raised-button color="primary" (click)="salvaSquadra()" [disabled]="!squadraSelezionata">Salva</button>
+
+<div class="modal-container">
+	<button mat-icon-button class="close-btn" (click)="dialogRef.close()" aria-label="Chiudi">
+		<mat-icon>close</mat-icon>
+	</button>
+	<h2>Seleziona giocata</h2>
+	<div class="info-row"><span class="label">Giocatore:</span> <span class="value">{{ giocatore.nome }}</span></div>
+	<div class="info-row"><span class="label">Giornata:</span> <span class="value">{{ data.giornata }}</span></div>
+	<div class="info-row"><span class="label">Stato:</span> <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span></div>
+	<div class="squadra-select-save">
+		<mat-form-field appearance="outline" class="select-squadra">
+			<mat-select
+				placeholder="Seleziona squadra"
+				[(ngModel)]="squadraSelezionata"
+				[ngModelOptions]="{ standalone: true }"
+			>
+				<mat-option *ngFor="let squadra of squadreDisponibili" [value]="squadra.id">{{ squadra.nome }}</mat-option>
+			</mat-select>
+		</mat-form-field>
+		<button mat-raised-button color="primary" (click)="salvaSquadra()" [disabled]="!squadraSelezionata">Salva</button>
+	</div>
 </div>

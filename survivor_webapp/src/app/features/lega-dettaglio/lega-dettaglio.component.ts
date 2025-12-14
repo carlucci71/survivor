@@ -1,11 +1,10 @@
 import { MatDialog } from '@angular/material/dialog';
 import { SelezionaGiocataComponent } from '../../seleziona-giocata/seleziona-giocata.component';
-// ...existing code...
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
-import { Giocatore, Lega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega, StatoGiocatore, StatoPartita } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -45,6 +44,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './lega-dettaglio.component.scss',
 })
 export class LegaDettaglioComponent {
+    public StatoGiocatore = StatoGiocatore;
   id: number = -1;
   lega: Lega | null = null;
   isLoading = true;
@@ -127,22 +127,19 @@ export class LegaDettaglioComponent {
   }
 
   visualizzaGiocata(giornata: number, giocatore: Giocatore) {
-    if (giornata <3){
-      console.log();
-    }
     const giornataIniziale = this.lega?.giornataIniziale || 0;
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     let ret = true;
     if (giornata + giornataIniziale - 1 !== giornataCorrente){
       ret = false;
     }
-    if (giocatore.stato === 'ELIMINATO'){
+    if (giocatore.stato?.value === StatoGiocatore.ELIMINATO.value){
       ret = false;
     }
     if (!this.isAdmin() && (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id)){
       ret = false;
     }
-    if (!this.isAdmin() && this.lega?.statoGiornataCorrente!=='DA_GIOCARE'){
+    if (!this.isAdmin() && this.lega?.statoGiornataCorrente.value!==StatoPartita.DA_GIOCARE.value){
       ret = false;
     }
 
@@ -203,16 +200,16 @@ export class LegaDettaglioComponent {
   }
 
   giornataTerminata(): boolean {
-    return this.lega?.statoGiornataCorrente == 'TERMINATA';
+    return this.lega?.statoGiornataCorrente.value == StatoPartita.TERMINATA.value;
   }
 
   giornataDaGiocare(): boolean {
     if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
-    return this.lega?.statoGiornataCorrente == 'DA_GIOCARE';
+    return this.lega?.statoGiornataCorrente.value == StatoPartita.DA_GIOCARE.value;
   }
 
   selectGiocatoreVisible(giocatore: Giocatore): boolean {
-    if (giocatore.stato === 'ELIMINATO') {
+    if (giocatore.stato?.value === StatoGiocatore.ELIMINATO.value) {
       return false;
     }
     if (!this.canEditUserRow(giocatore)) {

@@ -1,0 +1,55 @@
+
+.modal-container {
+	position: relative;
+	background: #fff;
+	border-radius: 14px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+	padding: 32px 32px 24px 32px;
+	min-width: 340px;
+	max-width: 420px;
+}
+
+.close-btn {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 2;
+}
+
+h2 {
+	margin-top: 0;
+	margin-bottom: 18px;
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+}
+
+.info-row {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 4px;
+	font-size: 1.08rem;
+}
+.label {
+	font-weight: 600;
+}
+.value {
+	font-weight: 400;
+}
+
+.squadra-select-save {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin-top: 24px;
+}
+
+.select-squadra {
+	min-width: 180px;
+}
+
+button[mat-raised-button] {
+	min-width: 80px;
+	font-weight: 600;
+	font-size: 1rem;
+}

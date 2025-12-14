@@ -1,5 +1,71 @@
 import { User } from "./auth.model";
 
+
+export class StatoGiocatore {
+  static readonly ATTIVO = new StatoGiocatore('ATTIVO', 'Attivo');
+  static readonly ELIMINATO = new StatoGiocatore('ELIMINATO', 'Eliminato');
+  static readonly PENDING = new StatoGiocatore('PENDING', 'In attesa');
+
+  private constructor(
+    public readonly value: string,
+    public readonly descrizione: string
+  ) {}
+
+  static values(): StatoGiocatore[] {
+    return [
+      StatoGiocatore.ATTIVO,
+      StatoGiocatore.ELIMINATO,
+      StatoGiocatore.PENDING
+    ];
+  }
+}
+
+export function statoGiocatoreFromCodice(codice: string): StatoPartita {
+  switch (codice) {
+    case StatoGiocatore.ATTIVO.value:
+      return StatoGiocatore.ATTIVO;
+    case StatoGiocatore.ELIMINATO.value:
+      return StatoGiocatore.ELIMINATO;
+    case StatoGiocatore.PENDING.value:
+      return StatoGiocatore.PENDING;
+    default:
+      throw new Error(`Codice StatoGiocatore sconosciuto: ${codice}`);
+  }
+}
+
+
+export class StatoPartita {
+  static readonly DA_GIOCARE = new StatoPartita('DA_GIOCARE', 'Da giocare');
+  static readonly TERMINATA = new StatoPartita('TERMINATA', 'Terminata');
+  static readonly IN_CORSO = new StatoPartita('IN_CORSO', 'In corso');
+
+  private constructor(
+    public readonly value: string,
+    public readonly descrizione: string
+  ) {}
+
+  static values(): StatoPartita[] {
+    return [
+      StatoPartita.DA_GIOCARE,
+      StatoPartita.TERMINATA,
+      StatoPartita.IN_CORSO
+    ];
+  }
+}
+
+export function statoPartitaFromCodice(codice: string): StatoPartita {
+  switch (codice) {
+    case StatoPartita.DA_GIOCARE.value:
+      return StatoPartita.DA_GIOCARE;
+    case StatoPartita.TERMINATA.value:
+      return StatoPartita.TERMINATA;
+    case StatoPartita.IN_CORSO.value:
+      return StatoPartita.IN_CORSO;
+    default:
+      throw new Error(`Codice StatoPartita sconosciuto: ${codice}`);
+  }
+}
+
 export interface Lega {
   id: number;
   nome: string;
@@ -8,14 +74,14 @@ export interface Lega {
   giornataIniziale: number;
   giornataCalcolata: number;
   giornataCorrente: number;
-  statoGiornataCorrente: string;
+  statoGiornataCorrente: StatoPartita;
 }
+
 
 export interface Sport {
   campionati?: Campionato[];
   id?: number;
   nome: string;
-  // Aggiungi altri campi se necessario
 }
 
 export interface Campionato {
@@ -35,7 +101,7 @@ export interface Squadra {
 export interface Giocatore {
   id: number;
   nome: string;
-  stato?: string;
+  stato?: StatoGiocatore;
   user?: User;
   giocate?: Giocata[]
 }
