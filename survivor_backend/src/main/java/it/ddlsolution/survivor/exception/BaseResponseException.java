@@ -10,10 +10,6 @@ public class BaseResponseException {
     private String errorCode;
     private String message;
     private String nameClassException;
-    private Long id;
-
-    public BaseResponseException(){
-        id=System.currentTimeMillis();
-    }
+    private Integer id;
 
 }
