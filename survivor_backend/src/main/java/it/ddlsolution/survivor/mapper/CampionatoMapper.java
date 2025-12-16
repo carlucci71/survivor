@@ -6,10 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-import java.util.List;
-
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SportMapper.class, LegaMapper.class, SquadraMapper.class})
-public interface CampionatoMapper {
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {SportMapper.class})
+public interface CampionatoMapper  extends DtoMapper<CampionatoDTO, Campionato> {
 
     @Mapping(target = "leghe", ignore = true)
     @Mapping(target = "squadre", ignore = true)
@@ -18,9 +16,5 @@ public interface CampionatoMapper {
     @Mapping(target = "leghe", ignore = true)
     @Mapping(target = "squadre", ignore = true)
     Campionato toEntity(CampionatoDTO campionatoDTO);
-
-    List<CampionatoDTO> toDTOList(List<Campionato> campionati);
-
-    List<Campionato> toEntityList(List<CampionatoDTO> campionatoDTOs);
 }
 

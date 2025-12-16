@@ -129,11 +129,19 @@ export class LegaDettaglioComponent {
   visualizzaGiocata(giornata: number, giocatore: Giocatore) {
     const giornataIniziale = this.lega?.giornataIniziale || 0;
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
+    const giocata = this.getGiocataByGiornata(giocatore, giornata);
+    const esito = giocata == undefined? '' : giocata.esito;
+    if (giornata===3){
+      console.log();
+    }
     let ret = true;
     if (giornata + giornataIniziale - 1 !== giornataCorrente){
       ret = false;
     }
     if (giocatore.stato?.value === StatoGiocatore.ELIMINATO.value){
+      ret = false;
+    }
+    if (esito=='OK' || esito=='KO'){
       ret = false;
     }
     if (!this.isAdmin() && (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id)){

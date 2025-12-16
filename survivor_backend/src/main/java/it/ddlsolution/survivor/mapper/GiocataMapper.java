@@ -2,27 +2,20 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.entity.Giocata;
+import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-import java.util.List;
-
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {GiocatoreMapper.class, SquadraMapper.class})
-public interface GiocataMapper {
+public interface GiocataMapper  extends DtoMapper<GiocataDTO, Giocata> {
 
     @Mapping(source = "giocatore.id", target = "giocatoreId")
     @Mapping(source = "lega.id", target = "legaId")
     @Mapping(source = "squadra.id", target = "squadraId")
     GiocataDTO toDTO(Giocata giocata);
 
-    @Mapping(source = "giocatoreId", target = "giocatore.id")
-    @Mapping(source = "legaId", target = "lega.id")
-    @Mapping(source = "squadraId", target = "squadra.id")
+    @InheritInverseConfiguration
     Giocata toEntity(GiocataDTO giocataDTO);
-
-    List<GiocataDTO> toDTOList(List<Giocata> giocate);
-
-    List<Giocata> toEntityList(List<GiocataDTO> giocataDTOs);
 }
 

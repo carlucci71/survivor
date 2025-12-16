@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.config;
 
 import it.ddlsolution.survivor.security.JwtAuthenticationFilter;
+import it.ddlsolution.survivor.security.ExpiredJwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final ExpiredJwtAuthenticationEntryPoint expiredJwtAuthenticationEntryPoint;
     @Value("${ALLOWED_SERVERS}")
     private List<String> allowedServers;
 
@@ -31,6 +33,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(expiredJwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
                         // Permetti auth endpoints
                         .requestMatchers("/auth/**").permitAll()

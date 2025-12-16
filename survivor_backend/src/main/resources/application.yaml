@@ -36,7 +36,7 @@ security:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000 # 24 ore in millisecondi
-  #expiration:  120000 #2 minuti in millisecondi
+  #expiration:  60000 #1 minuto in millisecondi
 
 magic-link:
   expiration-minutes: 15

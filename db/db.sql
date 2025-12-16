@@ -5,6 +5,8 @@ drop table if exists lega;
 drop table if exists squadra;
 drop table if exists campionato;
 drop table if exists sport;
+DROP TABLE if exists param_log_dispositiva;
+DROP TABLE if exists log_dispositiva;
 
 create table lega(
 	id serial primary key,
@@ -47,6 +49,24 @@ create table giocata(
 	id_squadra char(3) not null,
 	esito char(2)
 );
+CREATE TABLE log_dispositiva (
+	id serial primary key,
+    tipologia VARCHAR(100) NOT NULL,
+    esito VARCHAR(100) NOT null,
+    timestamp timestamp,
+    messaggio varchar(1000),
+    id_errore BIGINT,
+    user_id BIGINT NOT NULL
+);
+
+CREATE TABLE param_log_dispositiva (
+	id serial primary key,
+    nome VARCHAR(100) NOT NULL,
+    valore VARCHAR(100) NOT NULL,
+    class_name VARCHAR(1000) NOT NULL,
+    id_log_dispositiva INTEGER NOT NULL
+);
+
 ALTER TABLE lega
 ADD CONSTRAINT fk_lega_campionato
 FOREIGN KEY (id_campionato) REFERENCES campionato(id);
@@ -72,6 +92,13 @@ ADD CONSTRAINT fk_giocatore FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
 alter TABLE giocatore_lega 
 ADD CONSTRAINT fk_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 
+ALTER TABLE log_dispositiva
+ADD CONSTRAINT fk_log_dispositiva_users
+FOREIGN KEY (user_id) REFERENCES users(id);
+
+ALTER TABLE param_log_dispositiva
+ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
+FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
@@ -270,3 +297,9 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));
+
+
+
+
+
+

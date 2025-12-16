@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.aspect.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
@@ -15,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +103,7 @@ public class LegaService {
     }
 
 
+    @LoggaDispositiva(tipologia = "calcola")
     public LegaDTO calcola(Long idLega, int giornataDaCalcolare) {
         log.info("CALCOLA");
 
@@ -120,18 +121,20 @@ public class LegaService {
                         .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
                         .filter(g -> g.getGiornata() + giornataIniziale - 1 == giornataDaCalcolare)
                         .toList();
-                if (giocate.size() != 1) {
-                    throw new RuntimeException("Numero di giocate errato: " + giocate.size());
-                }
-                GiocataDTO giocataDTO = giocate.get(0);
-                Boolean vincente = vincente(giocataDTO.getSquadraId(), partite);
-                if (vincente != null) {
-                    if (vincente) {
-                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
-                    } else {
-                        giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
-                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                Boolean vincente = null;
+                if (giocate.size() == 1) {
+                    GiocataDTO giocataDTO = giocate.get(0);
+                    vincente = vincente(giocataDTO.getSquadraId(), partite);
+                    if (vincente != null) {
+                        if (vincente) {
+                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                        } else {
+                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                        }
                     }
+                }
+                if (vincente != null && vincente == false) {
+                    giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
                 }
 
             }

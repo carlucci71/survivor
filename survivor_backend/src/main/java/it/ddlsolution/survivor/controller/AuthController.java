@@ -48,7 +48,7 @@ public class AuthController {
 
         if (userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
-                "Token non valido o scaduto", false));
+                "Token non valido", false));
         }
 
         User user = userOpt.get();

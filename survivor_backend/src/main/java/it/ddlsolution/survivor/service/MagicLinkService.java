@@ -73,7 +73,6 @@ public class MagicLinkService {
             .findByTokenAndUsedFalseAndExpiresAtAfter(token, LocalDateTime.now());
 
         if (magicLinkTokenOpt.isEmpty()) {
-            log.warn("Token non valido o scaduto: {}", token);
             return Optional.empty();
         }
 

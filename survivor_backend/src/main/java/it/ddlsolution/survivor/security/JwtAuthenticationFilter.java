@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import it.ddlsolution.survivor.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -70,8 +71,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
             }
-        } catch (io.jsonwebtoken.ExpiredJwtException eje) {
+        } catch (ExpiredJwtException eje) {
             log.error("Token JWT scaduto", eje);
+            request.setAttribute("expiredJwt", true);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token JWT scaduto");
             return;
         } catch (Exception e) {
