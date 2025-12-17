@@ -1,13 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { ConfermaAssegnazioneDialogComponent } from '../shared/components/conferma-assegnazione-dialog.component';
+import { ConfermaAssegnazioneDialogComponent } from '../../shared/components/conferma-assegnazione-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Giocata, StatoGiocatore, StatoPartita } from '../core/models/interfaces.model';
+import { Giocata, StatoGiocatore, StatoPartita } from '../../core/models/interfaces.model';
 
 @Component({
   selector: 'app-seleziona-giocata',

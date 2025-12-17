@@ -1,0 +1,40 @@
+package it.ddlsolution.survivor.service;
+
+import it.ddlsolution.survivor.dto.GiocatoreDTO;
+import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.mapper.GiocatoreMapper;
+import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.UserRepository;
+import it.ddlsolution.survivor.util.Enumeratori;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class GiocatoreService {
+    private final GiocatoreRepository giocatoreRepository;
+    private final UserRepository userRepository;
+    private final GiocatoreMapper giocatoreMapper;
+
+    public GiocatoreDTO me() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return giocatoreMapper.toDTO(giocatoreRepository.findByUser_Id(userId).orElseGet(
+                () -> {
+                    Giocatore giocatore = new Giocatore();
+                    giocatore.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+                    giocatore.setNome("TBD");
+                    giocatore.setUser(userRepository.findById(userId).get());
+                    return giocatoreRepository.save(giocatore);
+                }
+        ));
+    }
+
+    public GiocatoreDTO aggiorna(GiocatoreDTO giocatoreDTO) {
+        Giocatore giocatore = giocatoreRepository.save(giocatoreMapper.toEntity(giocatoreDTO));
+        return giocatoreMapper.toDTO(giocatore);
+    }
+}
+

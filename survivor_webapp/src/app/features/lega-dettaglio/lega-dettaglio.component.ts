@@ -1,5 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import { SelezionaGiocataComponent } from '../../seleziona-giocata/seleziona-giocata.component';
+import { SelezionaGiocataComponent } from '../seleziona-giocata/seleziona-giocata.component';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';

@@ -9,28 +9,38 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Lega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega } from '../../core/models/interfaces.model';
+import { GiocatoreService } from '../../core/services/giocatore.service';
+import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule, MatIcon, MatTooltip],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
+  me: Giocatore | null = null;
   isLoading = true;
 
   constructor(
     private authService: AuthService,
     private legaService: LegaService,
+    private giocatoreService: GiocatoreService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.giocatoreService.me().subscribe(
+      { next: (giocatore)=> {
+        this.me=giocatore;
+      }}
+    );
     this.loadLeghe();
   }
 
@@ -62,6 +72,10 @@ export class HomeComponent implements OnInit {
 
   goToAdmin(): void {
     this.router.navigate(['/admin']);
+  }
+
+  goToMe(): void {
+    this.router.navigate(['/me']);
   }
 
   goToLega(id: number): void {

@@ -32,6 +32,11 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard]
   },
   {
+    path: 'me',
+    loadComponent: () => import('./features/me/me.component').then(m => m.MeComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }

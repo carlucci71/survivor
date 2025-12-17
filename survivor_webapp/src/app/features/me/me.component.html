@@ -1,0 +1,65 @@
+<div class="me-dettaglio-container">
+  <mat-toolbar color="primary" class="header">
+    <div class="header-content">
+      <h1>Personalizza giocatore</h1>
+      <div class="user-info">
+        <button mat-button (click)="goBack()" class="btn-back">
+          ← Torna alla Home
+        </button>
+        <button
+          mat-raised-button
+          color="warn"
+          (click)="logout()"
+          class="btn-logout"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <main class="main-content">
+    <div class="lega-dettaglio-container">
+      <mat-card class="lega-card">
+        <mat-card-header>
+          <!--
+          <mat-card-title>Nome: -</mat-card-title>
+          <mat-card-subtitle>--</mat-card-subtitle>
+            -->
+          <form class="me-form" (ngSubmit)="confermaNome()">
+            <mat-form-field class="me-full-width">
+              <mat-label>Nome</mat-label>
+              <input
+                matInput
+                [(ngModel)]="nome"
+                [ngModelOptions]="{ standalone: true }"
+                (input)="clearFeedback()"
+              />
+            </mat-form-field>
+
+            <div class="me-actions">
+              <button
+                mat-raised-button
+                color="accent"
+                type="submit"
+                [disabled]="!nomeModificato || isSaving"
+              >
+                {{ isSaving ? 'Salvataggio...' : 'Conferma' }}
+              </button>
+
+          @if (feedbackMessage ) {
+              <p
+                class="feedback"
+                [class.success]="feedbackType === 'success'"
+                [class.error]="feedbackType === 'error'"
+              >
+                {{ feedbackMessage }}
+              </p>
+            }
+            </div>
+          </form>
+        </mat-card-header>
+      </mat-card>
+    </div>
+  </main>
+</div>
