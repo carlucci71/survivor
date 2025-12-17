@@ -87,7 +87,7 @@
                 *matCellDef="let giocatore"
                 [class.corrente-col]="
                   giornata + lega.giornataIniziale - 1 ===
-                    lega.giornataCorrente && giocatore.stato !== StatoGiocatore.ELIMINATO.value
+                    lega.giornataCorrente && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value
                 "
                 [class.ko-font]="
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
@@ -125,7 +125,7 @@
             <tr
               mat-row
               *matRowDef="let row; columns: displayedColumns"
-              [class.eliminato-row]="row.stato === StatoGiocatore.ELIMINATO.value"
+              [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
             ></tr>
           </table>
           }

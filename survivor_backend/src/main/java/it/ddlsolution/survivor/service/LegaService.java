@@ -40,7 +40,7 @@ public class LegaService {
     }
 
     public List<LegaDTO> legheUser(Long userId) {
-        List<Lega> leghe = legaRepository.findByGiocatori_User_Id(userId);
+        List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = legaMapper.toDTOList(leghe);
         legheDTO.forEach(l -> addInfoCalcolate(l));
         return legheDTO;
@@ -64,7 +64,48 @@ public class LegaService {
     }
 
     public LegaDTO salva(LegaDTO legaDTO) {
-        return legaMapper.toDTO(legaRepository.save(legaMapper.toEntity(legaDTO)));
+        // Carica l'entità esistente dal database
+        Lega lega = legaRepository.findById(legaDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Lega non trovata: " + legaDTO.getId()));
+
+        // Aggiorna solo i campi modificabili
+        lega.setGiornataCalcolata(legaDTO.getGiornataCalcolata());
+
+        // Aggiorna gli stati dei giocatori e le loro giocate
+        if (legaDTO.getGiocatori() != null) {
+            for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                // Trova la relazione GiocatoreLega esistente
+                lega.getGiocatoreLeghe().stream()
+                    .filter(gl -> gl.getGiocatore().getId().equals(giocatoreDTO.getId()))
+                    .findFirst()
+                    .ifPresent(gl -> {
+                        // Aggiorna lo stato del giocatore nella lega
+                        Enumeratori.StatoGiocatore nuovoStato = giocatoreDTO.getStatiPerLega().get(legaDTO.getId());
+                        if (nuovoStato != null) {
+                            gl.setStato(nuovoStato);
+                        }
+
+                        // Aggiorna le giocate del giocatore (esito OK/KO)
+                        if (giocatoreDTO.getGiocate() != null) {
+                            for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
+                                // Trova la giocata corrispondente nell'entità
+                                gl.getGiocatore().getGiocate().stream()
+                                    .filter(g -> g.getId() != null && g.getId().equals(giocataDTO.getId()))
+                                    .findFirst()
+                                    .ifPresent(giocata -> {
+                                        // Aggiorna l'esito se è cambiato
+                                        if (giocataDTO.getEsito() != null) {
+                                            giocata.setEsito(giocataDTO.getEsito());
+                                        }
+                                    });
+                            }
+                        }
+                    });
+            }
+        }
+
+        // Salva e ritorna
+        return legaMapper.toDTO(legaRepository.save(lega));
     }
 
     public Enumeratori.StatoPartita statoGiornata(Long idLega, int giornata) {
@@ -115,7 +156,8 @@ public class LegaService {
             throw new RuntimeException("Lo stato della giornata è: " + stato);
         }
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
-            if (giocatoreDTO.getStato() != Enumeratori.StatoGiocatore.ELIMINATO) {
+            Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
+            if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
                 List<GiocataDTO> giocate = giocatoreDTO
                         .getGiocate()
                         .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
@@ -134,7 +176,7 @@ public class LegaService {
                     }
                 }
                 if (vincente != null && vincente == false) {
-                    giocatoreDTO.setStato(Enumeratori.StatoGiocatore.ELIMINATO);
+                    giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                 }
 
             }

@@ -18,12 +18,12 @@ create table lega(
 create table giocatore(
 	id serial primary key,
 	nome varchar(100) not null,
-    user_id BIGINT NULL,
-	stato char(1) not null
+    user_id BIGINT NULL
 );
 CREATE TABLE giocatore_lega (
     id_giocatore integer NOT NULL,
     id_lega integer NOT NULL,
+	stato char(1) not null,
     PRIMARY KEY (id_giocatore, id_lega)
 );
 create table sport(
@@ -123,105 +123,105 @@ insert into squadra(id,nome,id_campionato) values('TOR','Torino','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('UDI','Udinese','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('VER','Verona','SERIE_A');
 insert into lega(id,nome,id_campionato,giornata_iniziale) values(1,'DDL','SERIE_A',13);
-insert into giocatore(nome,stato,user_id) values('ALESSANDRO TOTO','A',
+insert into giocatore(nome,user_id) values('ALESSANDRO TOTO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANDREA MOSCHELLA','A',
+insert into giocatore(nome,user_id) values('ANDREA MOSCHELLA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANGELO MEZZA','E',
+insert into giocatore(nome,user_id) values('ANGELO MEZZA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANTONIO POSSEMATO','A',
+insert into giocatore(nome,user_id) values('ANTONIO POSSEMATO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANTONIO POSSEMATO JR','A',
+insert into giocatore(nome,user_id) values('ANTONIO POSSEMATO JR',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANTONIO TOTO','A',
+insert into giocatore(nome,user_id) values('ANTONIO TOTO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('ANTONIO VISCOSI','A',
+insert into giocatore(nome,user_id) values('ANTONIO VISCOSI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('CARMINE ROSIELLO','A',
+insert into giocatore(nome,user_id) values('CARMINE ROSIELLO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('DANIELE CARLUCCI','A',
+insert into giocatore(nome,user_id) values('DANIELE CARLUCCI',
 (select id from users where email = 'carlucci.daniele@gmail.com'));
-insert into giocatore(nome,stato,user_id) values('DARIO D''ABBIERO','A',
+insert into giocatore(nome,user_id) values('DARIO D''ABBIERO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('EMILIO CUCCINIELLO','A',
+insert into giocatore(nome,user_id) values('EMILIO CUCCINIELLO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('FEDERICO CIAUDELLI','A',
+insert into giocatore(nome,user_id) values('FEDERICO CIAUDELLI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('GAETANO TURCO','A',
+insert into giocatore(nome,user_id) values('GAETANO TURCO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('GEPPY MEZZA','A',
+insert into giocatore(nome,user_id) values('GEPPY MEZZA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('GIUSEPPE DELLA VALLE','A',
+insert into giocatore(nome,user_id) values('GIUSEPPE DELLA VALLE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('GIUSEPPE RAINONE','A',
+insert into giocatore(nome,user_id) values('GIUSEPPE RAINONE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('GIUSEPPE SILVESTRE','A',
+insert into giocatore(nome,user_id) values('GIUSEPPE SILVESTRE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('IGNAZIO GUELI','A',
+insert into giocatore(nome,user_id) values('IGNAZIO GUELI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('IORIS BENENATI','A',
+insert into giocatore(nome,user_id) values('IORIS BENENATI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('LEONARDO GALIETTA','A',
+insert into giocatore(nome,user_id) values('LEONARDO GALIETTA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('LUIGI CERAVOLO','A',
+insert into giocatore(nome,user_id) values('LUIGI CERAVOLO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('LUIGI MATTEI','A',
+insert into giocatore(nome,user_id) values('LUIGI MATTEI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('MARCO BROVERO','A',
+insert into giocatore(nome,user_id) values('MARCO BROVERO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('MARCO MEOLA','E',
+insert into giocatore(nome,user_id) values('MARCO MEOLA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('MARCO SACCONE','E',
+insert into giocatore(nome,user_id) values('MARCO SACCONE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('MICHELE DI LUISE','A',
+insert into giocatore(nome,user_id) values('MICHELE DI LUISE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('MICHELE GRASSO','E',
+insert into giocatore(nome,user_id) values('MICHELE GRASSO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('NARDUCCIO VISCOSI','A',
+insert into giocatore(nome,user_id) values('NARDUCCIO VISCOSI',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('SALVATORE GALIETTA','A',
+insert into giocatore(nome,user_id) values('SALVATORE GALIETTA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('UMBERTO CIROTA','A',
+insert into giocatore(nome,user_id) values('UMBERTO CIROTA',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('VALERIO LEONE','A',
+insert into giocatore(nome,user_id) values('VALERIO LEONE',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('VINCENZO D''ABBIERO','A',
+insert into giocatore(nome,user_id) values('VINCENZO D''ABBIERO',
 (select id from users where email = ''));
-insert into giocatore(nome,stato,user_id) values('VINCENZO RUSSO','A',
+insert into giocatore(nome,user_id) values('VINCENZO RUSSO',
 (select id from users where email = ''));
-insert into giocatore_lega(id_giocatore,id_lega) values (1,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (2,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (3,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (4,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (5,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (6,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (7,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (8,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (9,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (10,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (11,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (12,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (13,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (14,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (15,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (16,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (17,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (18,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (19,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (20,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (21,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (22,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (23,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (24,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (25,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (26,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (27,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (28,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (29,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (30,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (31,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (32,1);
-insert into giocatore_lega(id_giocatore,id_lega) values (33,1);
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (1,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (2,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (3,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (4,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (5,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (6,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (7,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (8,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (9,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (10,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (11,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (12,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (13,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (14,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (15,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (16,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (17,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (18,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (19,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (20,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (21,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (22,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (23,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (24,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (25,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (26,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (27,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (28,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (29,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (30,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (31,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (32,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato) values (33,1,'A');
 --GIORNATA 1
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (1,1,1,'GEN',null,1);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (2,1,2,'INT',null,1);

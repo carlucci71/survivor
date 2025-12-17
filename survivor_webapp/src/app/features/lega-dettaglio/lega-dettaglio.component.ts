@@ -136,9 +136,9 @@ export class LegaDettaglioComponent {
     }
     let ret = true;
     if (giornata + giornataIniziale - 1 !== giornataCorrente){
-      ret = false;
+      ret = false; 
     }
-    if (giocatore.stato?.value === StatoGiocatore.ELIMINATO.value){
+    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value){
       ret = false;
     }
     if (esito=='OK' || esito=='KO'){
@@ -217,7 +217,7 @@ export class LegaDettaglioComponent {
   }
 
   selectGiocatoreVisible(giocatore: Giocatore): boolean {
-    if (giocatore.stato?.value === StatoGiocatore.ELIMINATO.value) {
+    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
       return false;
     }
     if (!this.canEditUserRow(giocatore)) {

@@ -5,7 +5,6 @@ import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
-import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,6 @@ public class GiocatoreService {
         return giocatoreMapper.toDTO(giocatoreRepository.findByUser_Id(userId).orElseGet(
                 () -> {
                     Giocatore giocatore = new Giocatore();
-                    giocatore.setStato(Enumeratori.StatoGiocatore.ATTIVO);
                     giocatore.setNome("TBD");
                     giocatore.setUser(userRepository.findById(userId).get());
                     return giocatoreRepository.save(giocatore);

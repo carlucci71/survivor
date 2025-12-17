@@ -8,7 +8,16 @@ export function mapLegaFromBE(lega: Lega): Lega {
       : lega.statoGiornataCorrente,
     giocatori: lega.giocatori?.map(g => ({
       ...g,
-      stato: typeof g.stato === 'string' ? statoGiocatoreFromCodice(g.stato) : g.stato
+      statiPerLega: g.statiPerLega 
+        ? Object.fromEntries(
+            Object.entries(g.statiPerLega).map(([legaId, stato]) => [
+              legaId,
+              typeof stato === 'string'
+                ? statoGiocatoreFromCodice(stato as any)
+                : stato
+            ])
+          )
+        : g.statiPerLega
     }))
   };
 }

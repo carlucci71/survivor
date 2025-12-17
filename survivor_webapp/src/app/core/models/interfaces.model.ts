@@ -101,7 +101,7 @@ export interface Squadra {
 export interface Giocatore {
   id: number;
   nome: string;
-  stato?: StatoGiocatore;
+  statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
   giocate?: Giocata[]
 }
@@ -111,4 +111,9 @@ export interface Giocata {
   giornata?: number;
   squadraId?: string;
   esito?: string;
+}
+
+export interface StatiPerLega {
+  id?: number;
+  statoGiocatore?: StatoGiocatore;
 }

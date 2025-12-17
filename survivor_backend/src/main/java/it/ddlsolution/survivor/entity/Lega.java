@@ -9,8 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -43,14 +41,9 @@ public class Lega {
     @ToString.Exclude
     private Campionato campionato;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "giocatore_lega",
-            joinColumns = @JoinColumn(name = "id_lega"),
-            inverseJoinColumns = @JoinColumn(name = "id_giocatore")
-    )
-    @JsonManagedReference("lega-giocatori")
-    private List<Giocatore> giocatori = new ArrayList<>();
+    @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<GiocatoreLega> giocatoreLeghe = new ArrayList<>();
 
     @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("lega-giocate")
