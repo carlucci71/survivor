@@ -25,6 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // Usa direttamente il token JWT attuale (anche se scaduto) come refresh token
         const expiredToken = authService.getToken();
         if (expiredToken) {
+          console.log("Refresh token: " + error.message);
           return authService.refreshToken(expiredToken).pipe(
             switchMap(() => {
               const newToken = authService.getToken();
@@ -34,17 +35,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                     Authorization: `Bearer ${newToken}`
                   }
                 });
+                console.log("Token refresh ok!!");
                 return next(retryReq);
               }
+              console.log("Forzo logout per authService.getToken() null " + + error.message);
               authService.logout();
               return throwError(() => error);
             }),
             catchError(refreshError => {
+              console.log("Forzo logout per refreshError: " + refreshError + "---" + + error.message);
               authService.logout();
               return throwError(() => refreshError);
             })
           );
         } else {
+          console.log("Forzo logout senza expiredToken: " + error.message)
           authService.logout();
         }
       } else{
