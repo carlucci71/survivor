@@ -5,9 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SquadraRepository extends JpaRepository<Squadra, String> {
     List<Squadra> findByCampionato_Id(String campionatoId);
+
+
+    Optional<Squadra> findByIdAndCampionato_Id(String id, String campionatoId);
+
 }
 

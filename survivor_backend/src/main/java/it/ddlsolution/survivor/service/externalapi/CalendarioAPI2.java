@@ -2,49 +2,64 @@ package it.ddlsolution.survivor.service.externalapi;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.repository.CampionatoRepository;
-import it.ddlsolution.survivor.service.CampionatoCacheableService;
+import it.ddlsolution.survivor.dto.SquadraDTO;
+import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.CampionatoService;
+import it.ddlsolution.survivor.service.SquadraService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
-import static it.ddlsolution.survivor.util.Constant.SSL_DISABLED_RESTTEMPLATE;
 
 @Service
 @Profile(CALENDARIO_API2)
 @Slf4j
 public class CalendarioAPI2 implements ICalendario {
-    private final CampionatoRepository campionatoRepository;
 
-    private final RestTemplate restTemplate;
     private final CampionatoService campionatoService;
+    private final CacheableService campionatoCacheableService;
+    private final SquadraService squadraService;
 
     @Value("${external-api.calendario.implementation.API2.url}")
     String url;
 
-    public CalendarioAPI2(@Qualifier(SSL_DISABLED_RESTTEMPLATE) RestTemplate restTemplate, CampionatoService campionatoService,
-                          CampionatoRepository campionatoRepository) {
-        this.restTemplate = restTemplate;
+    public CalendarioAPI2(CampionatoService campionatoService, CacheableService campionatoCacheableService, SquadraService squadraService) {
         this.campionatoService = campionatoService;
-        this.campionatoRepository = campionatoRepository;
+        this.campionatoCacheableService = campionatoCacheableService;
+        this.squadraService = squadraService;
     }
+
 
     @Override
     public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
         return getPartite(sport, campionato, giornata);
+    }
+
+    @Override
+    public List<PartitaDTO> ultimiRisultati(String sport, String campionato, String squadra, int giornataAttuale) {
+        List<PartitaDTO> partite = new ArrayList<>();
+        for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
+            if (g > 0) {
+                PartitaDTO partita = partite(sport, campionato, g)
+                        .stream()
+                        .filter(p -> p.getCasa().equals(squadra) || p.getFuori().equals(squadra))
+                        .findFirst()
+                        .orElseThrow(()->new RuntimeException("Partita non trovata! " + squadra + " - " + campionato));
+                partite.add(partita);
+            }
+        }
+        return partite;
     }
 
     @Override
@@ -61,9 +76,9 @@ public class CalendarioAPI2 implements ICalendario {
     private List<PartitaDTO> getPartite(String sport, String campionato, int giornata) {
         List<PartitaDTO> ret = new ArrayList<>();
         String urlDay = String.format(url, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, giornata);
-        ResponseEntity<Map> map = restTemplate.getForEntity(urlDay, Map.class);
-        Map response = map.getBody();
+        Map response = campionatoCacheableService.cacheUrl(urlDay, Map.class);
         Map m = (Map) response.get("data");
+
         List<Map<String, Object>> games = (List<Map<String, Object>>) m.get("games");
         for (Map<String, Object> game : games) {
             List<Map<String, Object>> matches = (List<Map<String, Object>>) game.get("matches");

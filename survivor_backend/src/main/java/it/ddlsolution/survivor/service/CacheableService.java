@@ -6,19 +6,33 @@ import it.ddlsolution.survivor.repository.CampionatoRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Data
 @RequiredArgsConstructor
-public class CampionatoCacheableService {
+public class CacheableService {
     private final CampionatoRepository campionatoRepository;
     private final CampionatoMapper campionatoMapper;
+    private final RestTemplate restTemplate;
 
     @Cacheable(value = "campionati")
     public List<CampionatoDTO> allCampionati() {
         return campionatoMapper.toDTOList(campionatoRepository.findAll());
     }
+
+    @Cacheable(cacheNames = "cache-url", key = "#root.args[0]")
+    public <T> T cacheUrl(String url, Class<T> clazz) {
+        ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
+        T response = forEntity.getBody();
+        return response;
+    }
+
+
+
 }

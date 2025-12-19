@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Lega } from '../models/interfaces.model';
+import { Lega, Partita } from '../models/interfaces.model'; 
 import { map } from 'rxjs/operators';
 import { mapLegaFromBE } from '../utils/lega-mapper';
 
@@ -24,6 +24,10 @@ export class LegaService {
     return this.http.get<Lega>(`${this.apiUrl}/${id}`).pipe(
       map(mapLegaFromBE)
     );
+  }
+
+  ultimiRisultati(sportId: string,campionatoId: string, squadraId: string, giornata: number): Observable<Partita[]> {
+      return this.http.get<any>(`${this.apiUrl}/ultimiRisultati/${sportId}/${campionatoId}/${squadraId}/${giornata}`);
   }
 
 }

@@ -101,7 +101,9 @@ ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
 FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
 insert into sport(id,nome) values('CALCIO','Calcio');
+insert into sport(id,nome) values('BASKET','Basket');
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('NBA','BASKET','NBA',38);
 insert into squadra(id,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('BOL','Bologna','SERIE_A');
 insert into squadra(id,nome,id_campionato) values('CAG','Cagliari','SERIE_A');
@@ -297,9 +299,4 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));
-
-
-
-
-
 

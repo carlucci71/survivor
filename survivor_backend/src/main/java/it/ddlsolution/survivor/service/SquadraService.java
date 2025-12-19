@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,11 @@ public class SquadraService {
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId) {
         List<Squadra> squadre = squadraRepository.findByCampionato_Id(campionatoId);
         return squadraMapper.toDTOList(squadre);
+    }
+    public SquadraDTO getSquadraByCampionatoId(String campionatoId, String squadraId) {
+        Squadra squadra = squadraRepository.findByIdAndCampionato_Id(squadraId,campionatoId)
+                .orElseThrow(()->new RuntimeException("Squadra non trovata"));
+        return squadraMapper.toDTO(squadra);
     }
 }
 

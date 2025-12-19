@@ -161,40 +161,39 @@ public class LegaService {
         List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita stato = statoGiornata(partite,giornataDaCalcolare);
-        if (stato == Enumeratori.StatoPartita.DA_GIOCARE) {
-            throw new RuntimeException("Lo stato della giornata è: " + stato);
-        }
-        else if (stato == Enumeratori.StatoPartita.SOSPESA) {
-            legaDTO.setGiornataCalcolata(giornataDaCalcolare);
-        } else {
-            for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
-                Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
-                if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
-                    List<GiocataDTO> giocate = giocatoreDTO
-                            .getGiocate()
-                            .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                            .filter(g -> g.getGiornata() + giornataIniziale - 1 == giornataDaCalcolare)
-                            .toList();
-                    Boolean vincente = null;
-                    if (giocate.size() == 1) {
-                        GiocataDTO giocataDTO = giocate.get(0);
-                        vincente = vincente(giocataDTO.getSquadraId(), partite);
-                        if (vincente != null) {
-                            if (vincente) {
-                                giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
-                            } else {
-                                giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+        if (stato != Enumeratori.StatoPartita.DA_GIOCARE) {
+            if (stato == Enumeratori.StatoPartita.SOSPESA) {
+                legaDTO.setGiornataCalcolata(giornataDaCalcolare);
+            } else {
+                for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                    Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
+                    if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
+                        List<GiocataDTO> giocate = giocatoreDTO
+                                .getGiocate()
+                                .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                                .filter(g -> g.getGiornata() + giornataIniziale - 1 == giornataDaCalcolare)
+                                .toList();
+                        Boolean vincente = null;
+                        if (giocate.size() == 1) {
+                            GiocataDTO giocataDTO = giocate.get(0);
+                            vincente = vincente(giocataDTO.getSquadraId(), partite);
+                            if (vincente != null) {
+                                if (vincente) {
+                                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                } else {
+                                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                }
                             }
                         }
-                    }
-                    if (vincente != null && vincente == false) {
-                        giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
-                    }
+                        if (vincente != null && vincente == false) {
+                            giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                        }
 
+                    }
                 }
-            }
-            if (stato == Enumeratori.StatoPartita.TERMINATA) {
-                legaDTO.setGiornataCalcolata(giornataDaCalcolare);
+                if (stato == Enumeratori.StatoPartita.TERMINATA) {
+                    legaDTO.setGiornataCalcolata(giornataDaCalcolare);
+                }
             }
         }
         salva(legaDTO);

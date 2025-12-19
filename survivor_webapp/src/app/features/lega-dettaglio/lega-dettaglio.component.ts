@@ -114,7 +114,8 @@ export class LegaDettaglioComponent {
         giornata: giornata,
         statoGiornataCorrente: this.lega?.statoGiornataCorrente,
         squadreDisponibili: squadreDisponibili,
-        squadraCorrenteId: squadraCorrenteId
+        squadraCorrenteId: squadraCorrenteId,
+        lega: this.lega
       },
       width: '400px'
     });
@@ -169,7 +170,6 @@ export class LegaDettaglioComponent {
     }
     // populate giornata indices 1..maxGiornata
     this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
-    // La colonna 'prossimaGiocata' non viene più aggiunta perché la selezione avviene solo nella modale
 
     if (this.lega?.campionato) {
       this.squadraService

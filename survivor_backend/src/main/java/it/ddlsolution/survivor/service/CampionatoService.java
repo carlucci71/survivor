@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CampionatoService {
-    private final CampionatoCacheableService campionatoCacheableService;
+    private final CacheableService campionatoCacheableService;
 
     public Optional<CampionatoDTO> findCampionato(String id) {
         return allCampionati()

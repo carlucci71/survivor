@@ -85,8 +85,20 @@ export interface Lega {
 
 export interface Sport {
   campionati?: Campionato[];
-  id?: number;
+  id?: string;
   nome: string;
+}
+
+export interface Partita {
+    sportId: string;
+    campionatoId: string;
+    giornata: number;
+    orario: Date;
+    stato: StatoPartita;
+    casa: string;
+    fuori: string;
+    golCasa: number;
+    golFuori: number;
 }
 
 export interface Campionato {

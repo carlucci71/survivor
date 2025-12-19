@@ -16,11 +16,11 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
-import static it.ddlsolution.survivor.util.Constant.SSL_DISABLED_RESTTEMPLATE;
+import static it.ddlsolution.survivor.util.Constant.RESTTEMPLATE;
 
 @Configuration
 public class ConfigurationApp {
-    @Bean(SSL_DISABLED_RESTTEMPLATE)
+    @Bean(RESTTEMPLATE)
     public RestTemplate sslDisableRestTemplate(RestTemplateBuilder restTemplateBuilder)
             throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
