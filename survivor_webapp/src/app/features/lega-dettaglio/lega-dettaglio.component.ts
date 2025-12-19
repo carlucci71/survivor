@@ -1,5 +1,4 @@
 import { MatDialog } from '@angular/material/dialog';
-import { SelezionaGiocataComponent } from '../seleziona-giocata/seleziona-giocata.component';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -98,7 +97,7 @@ export class LegaDettaglioComponent {
     });
   }
   // Gestisce il click sull'icona gioca accanto al badge squadra
-  giocaGiornata(giocatore: Giocatore, giornata: number): void {
+  async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
     const giocataCorrente = (giocatore.giocate || []).find((g: any) => Number(g?.giornata) === giornata);
     const squadraCorrenteId = giocataCorrente?.squadraId || null;
@@ -107,6 +106,8 @@ export class LegaDettaglioComponent {
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraId);
     const squadreDisponibili = this.squadre.filter((s: any) => !giocateIds.includes(s.id) || s.id === squadraCorrenteId);
+    
+    const { SelezionaGiocataComponent } = await import('../seleziona-giocata/seleziona-giocata.component');
     const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
       data: {
         giocatore: giocatore,

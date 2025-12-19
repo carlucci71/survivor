@@ -40,7 +40,7 @@
           >
           }
           <mat-card-subtitle>
-            <div>Giornata calcolata:{{ lega.giornataCalcolata }} - {{lega.statiGiornate}}</div>
+            <div>Giornata calcolata:{{ lega.giornataCalcolata }}</div>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
@@ -75,15 +75,12 @@
                 "
               >
                 <div>Giornata</div>
-                <div>
-                  {{ giornata + lega.giornataIniziale - 1 }}
-                  @if (lega.giornataCorrente === (giornata +
-                  lega.giornataIniziale -1)){ - {{ lega.statoGiornataCorrente.descrizione }}
-                  }
-                  @if (lega.statoGiornataCorrente.value==StatoPartita.SOSPESA.value){
-                  {{ lega.statoGiornataCorrente.descrizione }}
-                  }
+                <div>{{ giornata + lega.giornataIniziale - 1 }}</div>
+                @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]) {
+                <div class="stato-giornata">
+                  {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
                 </div>
+                }
               </th>
               <td
                 mat-cell
