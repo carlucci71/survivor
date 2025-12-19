@@ -36,6 +36,7 @@ export function statoGiocatoreFromCodice(codice: string): StatoPartita {
 
 export class StatoPartita {
   static readonly DA_GIOCARE = new StatoPartita('DA_GIOCARE', 'Da giocare');
+  static readonly SOSPESA = new StatoPartita('SOSPESA', 'Sospesa');
   static readonly TERMINATA = new StatoPartita('TERMINATA', 'Terminata');
   static readonly IN_CORSO = new StatoPartita('IN_CORSO', 'In corso');
 
@@ -47,6 +48,7 @@ export class StatoPartita {
   static values(): StatoPartita[] {
     return [
       StatoPartita.DA_GIOCARE,
+      StatoPartita.SOSPESA,
       StatoPartita.TERMINATA,
       StatoPartita.IN_CORSO
     ];
@@ -57,6 +59,8 @@ export function statoPartitaFromCodice(codice: string): StatoPartita {
   switch (codice) {
     case StatoPartita.DA_GIOCARE.value:
       return StatoPartita.DA_GIOCARE;
+    case StatoPartita.SOSPESA.value:
+      return StatoPartita.SOSPESA;
     case StatoPartita.TERMINATA.value:
       return StatoPartita.TERMINATA;
     case StatoPartita.IN_CORSO.value:
@@ -75,6 +79,7 @@ export interface Lega {
   giornataCalcolata: number;
   giornataCorrente: number;
   statoGiornataCorrente: StatoPartita;
+  statiGiornate?: Record<number, StatoPartita>;
 }
 
 

@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.entity.Sport;
+import it.ddlsolution.survivor.repository.SportProjection;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,6 +13,9 @@ public interface SportMapper  extends DtoMapper<SportDTO, Sport> {
 
     @Mapping(target = "campionati", ignore = true)
     SportDTO toDTO(Sport sport);
+
+    @Mapping(target = "campionati", ignore = true)
+    SportDTO toDTO(SportProjection sportProjection);
 
     @InheritInverseConfiguration
     Sport toEntity(SportDTO sportDTO);

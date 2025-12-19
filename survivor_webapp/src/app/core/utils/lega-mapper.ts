@@ -6,7 +6,23 @@ export function mapLegaFromBE(lega: Lega): Lega {
     statoGiornataCorrente: typeof lega.statoGiornataCorrente === 'string'
       ? statoPartitaFromCodice(lega.statoGiornataCorrente)
       : lega.statoGiornataCorrente,
-    giocatori: lega.giocatori?.map(g => ({
+
+      
+
+      statiGiornate: lega.statiGiornate 
+        ? Object.fromEntries(
+            Object.entries(lega.statiGiornate).map(([legaId, stato]) => [
+              legaId,
+              typeof stato === 'string'
+                ? statoPartitaFromCodice(stato as any)
+                : stato
+            ])
+          )
+        : lega.statiGiornate,
+
+
+
+      giocatori: lega.giocatori?.map(g => ({
       ...g,
       statiPerLega: g.statiPerLega 
         ? Object.fromEntries(

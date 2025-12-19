@@ -44,7 +44,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './lega-dettaglio.component.scss',
 })
 export class LegaDettaglioComponent {
-    public StatoGiocatore = StatoGiocatore;
+  public StatoGiocatore = StatoGiocatore;
+  public StatoPartita = StatoPartita;
   id: number = -1;
   lega: Lega | null = null;
   isLoading = true;
@@ -131,9 +132,6 @@ export class LegaDettaglioComponent {
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined? '' : giocata.esito;
-    if (giornata===3){
-      console.log();
-    }
     let ret = true;
     if (giornata + giornataIniziale - 1 !== giornataCorrente){
       ret = false; 
@@ -148,6 +146,9 @@ export class LegaDettaglioComponent {
       ret = false;
     }
     if (!this.isAdmin() && this.lega?.statoGiornataCorrente.value!==StatoPartita.DA_GIOCARE.value){
+      ret = false;
+    }
+    if (this.lega?.statoGiornataCorrente.value===StatoPartita.SOSPESA.value){
       ret = false;
     }
 
@@ -205,10 +206,6 @@ export class LegaDettaglioComponent {
       squadraId,
       this.lega?.campionato?.id
     );
-  }
-
-  giornataTerminata(): boolean {
-    return this.lega?.statoGiornataCorrente.value == StatoPartita.TERMINATA.value;
   }
 
   giornataDaGiocare(): boolean {

@@ -31,7 +31,7 @@ public class LegaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LegaDTO> getLegaById(@PathVariable Long id) {
-        LegaDTO legaDTO = legaService.getLegaDTO(id);
+        LegaDTO legaDTO = legaService.getLegaDTO(id,true);
         if (legaDTO == null) {
             return ResponseEntity.notFound().build();
         }

@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadLeghe(): void {
-    this.legaService.mieLeghe().subscribe({
+    this.legaService.mieLeghe().subscribe({ 
       next: (leghe) => {
         this.leghe = leghe;
         this.isLoading = false;

@@ -2,10 +2,8 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.entity.Giocatore;
-import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
-import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.LegaProjection;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,6 +19,11 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @Mapping(target = "giocatori", ignore = true)
     public abstract LegaDTO toDTO(Lega lega);
+
+    @Mapping(target = "giocatori", ignore = true)
+    @Mapping(target = "giornataCorrente", ignore = true)
+    @Mapping(target = "statoGiornataCorrente", ignore = true)
+    public abstract LegaDTO toDTO(LegaProjection legaProjection);
 
     @Mapping(target = "giocatoreLeghe", ignore = true)
     @Mapping(target = "giocate", ignore = true)

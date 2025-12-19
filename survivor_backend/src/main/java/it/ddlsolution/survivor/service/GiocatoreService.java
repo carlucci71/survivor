@@ -20,19 +20,26 @@ public class GiocatoreService {
     public GiocatoreDTO me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        return giocatoreMapper.toDTO(giocatoreRepository.findByUser_Id(userId).orElseGet(
+        return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).orElseGet(
                 () -> {
                     Giocatore giocatore = new Giocatore();
                     giocatore.setNome("TBD");
                     giocatore.setUser(userRepository.findById(userId).get());
-                    return giocatoreRepository.save(giocatore);
+                    giocatoreRepository.save(giocatore);
+                    return giocatoreRepository.findProjectionByUserId(giocatore.getId()).get();
                 }
         ));
     }
 
     public GiocatoreDTO aggiorna(GiocatoreDTO giocatoreDTO) {
-        Giocatore giocatore = giocatoreRepository.save(giocatoreMapper.toEntity(giocatoreDTO));
-        return giocatoreMapper.toDTO(giocatore);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId()).get();
+        // Aggiorna solo i campi della tabella giocatore
+        giocatore.setNome(giocatoreDTO.getNome());
+
+        giocatoreRepository.save(giocatore);
+        return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).get());
     }
 }
 

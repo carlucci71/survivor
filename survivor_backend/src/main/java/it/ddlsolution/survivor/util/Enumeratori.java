@@ -40,6 +40,7 @@ public class Enumeratori {
 
     public enum StatoPartita {
         DA_GIOCARE,
+        SOSPESA,
         TERMINATA,
         IN_CORSO
     }
