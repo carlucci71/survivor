@@ -25,6 +25,7 @@ public class ConfigurationApp {
             throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
         RestTemplate restTemplate = restTemplateBuilder.build();
+        disabilitaControlloCertificati();
         return restTemplate;
 
     }
