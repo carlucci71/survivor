@@ -41,9 +41,6 @@ public class JwtService {
         return createToken(claims, id);
     }
 
-    public String generateToken(String id) {
-        return generateToken(id, "STANDARD");
-    }
 
     private String createToken(Map<String, Object> claims, String id) {
         return Jwts.builder()

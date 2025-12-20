@@ -10,6 +10,7 @@ public class GiocataDTO {
     private Long giocatoreId;
     private Long legaId;
     private String squadraId;
+    private String squadraSigla;
     private Enumeratori.EsitoGiocata esito;
 }
 

@@ -32,7 +32,7 @@ public class GiocataService {
                 .orElseThrow(() -> new IllegalArgumentException("Giocatore non trovato"));
         Lega lega = legaRepository.findById(request.getLegaId())
                 .orElseThrow(() -> new IllegalArgumentException("Lega non trovata"));
-        Squadra squadra = squadraRepository.findById(request.getSquadraId())
+        Squadra squadra = squadraRepository.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
 
 

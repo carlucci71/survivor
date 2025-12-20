@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
+import io.swagger.v3.oas.annotations.Hidden;
 import it.ddlsolution.survivor.dto.AuthResponseDTO;
 import it.ddlsolution.survivor.dto.MagicLinkRequestDTO;
 import it.ddlsolution.survivor.dto.MagicLinkResponseDTO;
@@ -10,6 +11,7 @@ import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final MagicLinkService magicLinkService;
@@ -61,6 +64,14 @@ public class AuthController {
             user.getRole().name()
         ));
     }
+
+    @Hidden
+    @GetMapping("/token")
+    public ResponseEntity<String> token(@RequestParam String role,@RequestParam String id) {
+        String jwtToken = jwtService.generateToken(id, role);
+        return ResponseEntity.ok(jwtToken);
+    }
+
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO request) {

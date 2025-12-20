@@ -111,6 +111,7 @@ export interface Campionato {
 
 export interface Squadra {
   id?: number;
+  sigla: string;
   nome: string;
   campionato?: Campionato;
 }
@@ -126,7 +127,8 @@ export interface Giocatore {
 export interface Giocata {
   id?: number;
   giornata?: number;
-  squadraId?: string;
+  squadraId?: number;
+  squadraSigla?: string;
   esito?: string;
 }
 

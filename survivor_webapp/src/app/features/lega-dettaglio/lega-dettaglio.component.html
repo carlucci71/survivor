@@ -103,9 +103,9 @@
                       ko: giocata.esito === 'KO',
                       empty: !giocata.esito
                     }"
-                    [title]="getSquadraNome(giocata.squadraId)"
+                    [title]="getSquadraNome(giocata.squadraSigla)"
                     >{{
-                      getSquadraNome(giocata.squadraId) | slice : 0 : 14
+                      getSquadraNome(giocata.squadraSigla) | slice : 0 : 14
                     }}</span
                   >
                 </ng-container>

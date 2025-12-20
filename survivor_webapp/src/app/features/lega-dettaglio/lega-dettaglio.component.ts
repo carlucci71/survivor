@@ -100,12 +100,12 @@ export class LegaDettaglioComponent {
   async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
     const giocataCorrente = (giocatore.giocate || []).find((g: any) => Number(g?.giornata) === giornata);
-    const squadraCorrenteId = giocataCorrente?.squadraId || null;
+    const squadraCorrenteId = giocataCorrente?.squadraSigla || null;
     // Escludi tutte le squadre già giocate, tranne quella corrente
     const giocateIds = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
-      .map((g: any) => g.squadraId);
-    const squadreDisponibili = this.squadre.filter((s: any) => !giocateIds.includes(s.id) || s.id === squadraCorrenteId);
+      .map((g: any) => g.squadraSigla);
+    const squadreDisponibili = this.squadre.filter((s: any) => !giocateIds.includes(s.sigla) || s.sigla === squadraCorrenteId);
     
     const { SelezionaGiocataComponent } = await import('../seleziona-giocata/seleziona-giocata.component');
     const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
@@ -189,7 +189,7 @@ export class LegaDettaglioComponent {
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
     const giocateIds = (giocatore.giocate || []).map((g: any) => g.squadraId);
-    return this.squadre.filter((s) => !giocateIds.includes(s.id));
+    return this.squadre.filter((s) => !giocateIds.includes(s.sigla));
   }
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente
@@ -201,10 +201,10 @@ export class LegaDettaglioComponent {
     ); 
   }
 
-  getSquadraNome(squadraId: string): string {
-    if (!this.lega?.campionato?.id) return squadraId;
-    return this.squadraService.getSquadraNomeById(
-      squadraId,
+  getSquadraNome(squadraSigla: string): string {
+    if (!this.lega?.campionato?.id) return squadraSigla;
+    return this.squadraService.getSquadraNomeBySigla(
+      squadraSigla,
       this.lega?.campionato?.id
     );
   }

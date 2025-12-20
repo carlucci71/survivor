@@ -3,6 +3,8 @@ package it.ddlsolution.survivor.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -15,8 +17,11 @@ import lombok.ToString;
 @Data
 public class Squadra {
     @Id
-    @Column(name = "id", length = 3)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "sigla", length = 3)
+    private String sigla;
 
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;

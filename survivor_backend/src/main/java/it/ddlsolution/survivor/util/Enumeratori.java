@@ -12,7 +12,7 @@ public class Enumeratori {
     }
 
     public enum StatoGiocatore {
-        ATTIVO("A"), ELIMINATO("E"), PENDING("P");
+        ATTIVO("A"), PENDING("P"), ELIMINATO("E");
 
         private final String codice;
 

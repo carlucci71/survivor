@@ -18,7 +18,7 @@ export class GiocataService {
       giornata: giornata,
       legaId: legaId,
       giocatoreId: giocatoreId,
-      squadraId: squadraSelezionata,
+      squadraSigla: squadraSelezionata,
     };
 
       return this.http.post<any>(`${this.apiUrl}`, body);

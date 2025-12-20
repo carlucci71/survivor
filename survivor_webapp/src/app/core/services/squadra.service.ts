@@ -16,16 +16,19 @@ export class SquadraService {
       return of(this.cache.get(campionatoId)!);
     }
     return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}`).pipe(
-      tap(squadre => this.cache.set(campionatoId, squadre))
+      tap(squadre => {
+        console.log(squadre);
+        this.cache.set(campionatoId, squadre);
+  })
     );
   }
 
-  getSquadraNomeById(squadraId: string, campionatoId: string): string {
+  getSquadraNomeBySigla(squadraSigla: string, campionatoId: string): string {
     const squadre = this.cache.get(campionatoId);
     if (squadre) {
-      const squadra = squadre.find(s => s.id === squadraId);
-      return squadra ? squadra.nome : squadraId;
+      const squadra = squadre.find(s => s.sigla === squadraSigla);
+      return squadra ? squadra.nome : squadraSigla;
     }
-    return squadraId;
+    return squadraSigla;
   }
 }

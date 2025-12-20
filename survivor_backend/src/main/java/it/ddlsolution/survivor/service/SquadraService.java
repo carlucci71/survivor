@@ -20,10 +20,13 @@ public class SquadraService {
         List<Squadra> squadre = squadraRepository.findByCampionato_Id(campionatoId);
         return squadraMapper.toDTOList(squadre);
     }
-    public SquadraDTO getSquadraByCampionatoId(String campionatoId, String squadraId) {
-        Squadra squadra = squadraRepository.findByIdAndCampionato_Id(squadraId,campionatoId)
+    /*
+    public SquadraDTO getSquadraByCampionatoId(String campionatoId, String squadraSigla) {
+        Squadra squadra = squadraRepository.findBySiglaAndCampionato_Id(squadraSigla,campionatoId)
                 .orElseThrow(()->new RuntimeException("Squadra non trovata"));
         return squadraMapper.toDTO(squadra);
     }
+
+     */
 }
 

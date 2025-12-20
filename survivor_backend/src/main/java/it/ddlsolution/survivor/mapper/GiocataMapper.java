@@ -13,6 +13,7 @@ public interface GiocataMapper  extends DtoMapper<GiocataDTO, Giocata> {
     @Mapping(source = "giocatore.id", target = "giocatoreId")
     @Mapping(source = "lega.id", target = "legaId")
     @Mapping(source = "squadra.id", target = "squadraId")
+    @Mapping(source = "squadra.sigla", target = "squadraSigla")
     GiocataDTO toDTO(Giocata giocata);
 
     @InheritInverseConfiguration

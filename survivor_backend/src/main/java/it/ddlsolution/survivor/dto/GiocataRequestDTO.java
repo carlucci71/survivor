@@ -7,6 +7,6 @@ public class GiocataRequestDTO {
     private Integer giornata;
     private Long giocatoreId;
     private Long legaId;
-    private String squadraId;
+    private String squadraSigla;
 }
 

@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class SquadraDTO {
-    private String id;
+    private Long id;
+    private String sigla;
     private String nome;
     private CampionatoDTO campionato;
 }

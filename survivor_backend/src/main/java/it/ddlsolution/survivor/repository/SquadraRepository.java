@@ -12,7 +12,7 @@ public interface SquadraRepository extends JpaRepository<Squadra, String> {
     List<Squadra> findByCampionato_Id(String campionatoId);
 
 
-    Optional<Squadra> findByIdAndCampionato_Id(String id, String campionatoId);
+    Optional<Squadra> findBySiglaAndCampionato_Id(String sigla, String campionatoId);
 
 }
 
