@@ -55,7 +55,8 @@ public class CalendarioAPI2 implements ICalendario {
                         .stream()
                         .filter(p -> p.getCasa().equals(squadra) || p.getFuori().equals(squadra))
                         .findFirst()
-                        .orElseThrow(()->new RuntimeException("Partita non trovata! " + squadra + " - " + campionato));
+                        //.orElseThrow(()->new RuntimeException("Partita non trovata! " + squadra + " - " + campionato));
+                        .orElseGet(()->PartitaDTO.builder().build());
                 partite.add(partita);
             }
         }

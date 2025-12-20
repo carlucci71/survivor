@@ -5,7 +5,8 @@ import it.ddlsolution.survivor.util.Enumeratori;
 public class EnumAPI2 {
 
     enum Campionato {
-        SERIE_A(21);
+        SERIE_A(21),
+        NBA(3);
         int id;
 
         Campionato(int id) {
@@ -25,7 +26,8 @@ public class EnumAPI2 {
 
 
     enum Sport {
-        CALCIO(1);
+        CALCIO(1),
+        BASKET(3);
         int id;
 
         Sport(int id) {

@@ -33,14 +33,19 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {
         if (lega.getGiocatoreLeghe() != null) {
             legaDTO.setGiocatori(lega.getGiocatoreLeghe().stream()
-                .map(gl -> {
-                    // Usa il GiocatoreMapper per mappare tutti i campi comprese le giocate
-                    GiocatoreDTO dto = giocatoreMapper.toDTO(gl.getGiocatore());
-                    // Aggiungi lo stato specifico per questa lega
-                    dto.getStatiPerLega().put(lega.getId(), gl.getStato());
-                    return dto;
-                })
-                .toList());
+                    .map(gl -> {
+                        // Usa il GiocatoreMapper per mappare tutti i campi comprese le giocate
+                        GiocatoreDTO dto = giocatoreMapper.toDTO(gl.getGiocatore());
+                        //rimuogo le giocate fatte su altre leghe
+                        dto.setGiocate(
+                                dto.getGiocate().stream().filter(g -> g.getLegaId().equals(lega.getId())).toList()
+                        );
+
+                        // Aggiungi lo stato specifico per questa lega
+                        dto.getStatiPerLega().put(lega.getId(), gl.getStato());
+                        return dto;
+                    })
+                    .toList());
         }
     }
 }

@@ -44,7 +44,11 @@ public class GiocataService {
         giocataRepository.save(giocata);
         giocatore = giocatoreRepository.findById(request.getGiocatoreId())
                 .orElseThrow(() -> new IllegalArgumentException("Giocatore non trovato"));
-        return giocatoreMapper.toDTO(giocatore);
+        GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
+        dto.setGiocate(
+                dto.getGiocate().stream().filter(g -> g.getLegaId().equals(lega.getId())).toList()
+        );
+        return dto;
     }
 }
 

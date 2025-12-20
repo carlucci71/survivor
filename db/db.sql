@@ -158,6 +158,7 @@ insert into squadra(sigla,nome,id_campionato) values('NOP','New Orleans Pelicans
 
 
 INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (1,13,16,'DDL','SERIE_A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (2,1,null,'DDL_NBA','NBA');
 
 
 insert into giocatore(nome,user_id) values('ALESSANDRO TOTO',
@@ -259,6 +260,9 @@ insert into giocatore_lega(id_giocatore,id_lega,stato) values (30,1,'A');
 insert into giocatore_lega(id_giocatore,id_lega,stato) values (31,1,'A');
 insert into giocatore_lega(id_giocatore,id_lega,stato) values (32,1,'A');
 insert into giocatore_lega(id_giocatore,id_lega,stato) values (33,1,'A');
+
+insert into giocatore_lega (id_giocatore, id_lega, stato) 
+select  id,2,'A' from giocatore where nome = 'DANIELE CARLUCCI';
 
 --GIORNATA 1
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (1,1,1,(select id from squadra where sigla = 'GEN' and id_campionato = 'SERIE_A'),null,1);
