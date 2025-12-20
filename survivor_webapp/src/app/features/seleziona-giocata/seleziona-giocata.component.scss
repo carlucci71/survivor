@@ -7,6 +7,8 @@
 	padding: 32px 32px 24px 32px;
 	min-width: 340px;
 	max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .close-btn {
@@ -52,4 +54,35 @@ button[mat-raised-button] {
 	min-width: 80px;
 	font-weight: 600;
 	font-size: 1rem;
+}
+
+.ultimi-risultati {
+	margin-top: 18px;
+	max-height: min(40vh, 320px);
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	padding-right: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.risultato-item {
+	padding: 8px 10px;
+	border-radius: 8px;
+	background: #f8f8f8;
+	font-size: 0.95rem;
+}
+
+/* Fallbacks / tweaks for small screens */
+@media (max-width: 420px) {
+	.modal-container {
+		padding: 18px;
+		min-width: auto;
+		width: calc(100% - 32px);
+	}
+
+	.ultimi-risultati {
+		max-height: min(50vh, 280px);
+	}
 }

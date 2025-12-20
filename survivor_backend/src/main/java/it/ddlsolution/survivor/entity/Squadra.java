@@ -20,7 +20,7 @@ public class Squadra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sigla", length = 3)
+    @Column(name = "sigla", length = 10)
     private String sigla;
 
     @Column(name = "nome", nullable = false, length = 100)

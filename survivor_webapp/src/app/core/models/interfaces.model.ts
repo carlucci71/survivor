@@ -97,8 +97,8 @@ export interface Partita {
     stato: StatoPartita;
     casa: string;
     fuori: string;
-    golCasa: number;
-    golFuori: number;
+    scoreCasa: number;
+    scoreFuori: number; 
 }
 
 export interface Campionato {

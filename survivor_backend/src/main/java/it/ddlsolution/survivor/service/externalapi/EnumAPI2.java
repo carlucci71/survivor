@@ -6,7 +6,9 @@ public class EnumAPI2 {
 
     enum Campionato {
         SERIE_A(21),
-        NBA(3);
+        SERIE_B(105),
+        LIGA(23),
+        NBA_RS(3);
         int id;
 
         Campionato(int id) {
@@ -45,44 +47,46 @@ public class EnumAPI2 {
         }
     }
 
-    enum Squadre {
-        BOL(123),
-        INT(127),
-        CRE(2174),
-        COM(1065),
-        FIO(125),
-        ATA(456),
-        VER(126),
-        ROM(121),
-        LAZ(129),
-        PIS(2170),
-        LEC(130),
-        GEN(990),
-        MIL(120),
-        CAG(124),
-        NAP(459),
-        UDI(136),
-        PAR(131),
-        SAS(2182),
-        TOR(135),
-        JUV(128);
-        int id;
+    /*
+        enum Squadre {
+            BOL("BOL"),
+            INT("INT"),
+            CRE("CRE"),
+            COM("COM"),
+            FIO("FIO"),
+            ATA("ATA"),
+            VER("VER"),
+            ROM("ROM"),
+            LAZ("LAZ"),
+            PIS("PIS"),
+            LEC("LEC"),
+            GEN("GEN"),
+            MIL("MIL"),
+            CAG("CAG"),
+            NAP("NAP"),
+            UDI("UDI"),
+            PAR("PAR"),
+            SAS("SAS"),
+            TOR("TOR"),
+            TOR("TOR"),
+            OKC("OKC");
+            String code;
 
-        Squadre(int id) {
-            this.id = id;
-        }
-
-        static Squadre fromId(int id) {
-            Squadre ret = null;
-            for (Squadre squadra : values()) {
-                if (squadra.id == id) {
-                    ret = squadra;
-                }
+            Squadre(String code) {
+                this.code = code;
             }
-            return ret;
-        }
-    }
 
+            static Squadre fromCode(String code) {
+                Squadre ret = null;
+                for (Squadre squadra : values()) {
+                    if (squadra.code.equals(code)) {
+                        ret = squadra;
+                    }
+                }
+                return ret;
+            }
+        }
+    */
     enum StatoPartitaAP2 {
         PreMatch(Enumeratori.StatoPartita.DA_GIOCARE),
         Postponed(Enumeratori.StatoPartita.DA_GIOCARE),
@@ -91,7 +95,10 @@ public class EnumAPI2 {
         FirstHalf(Enumeratori.StatoPartita.IN_CORSO),
         HalfTime(Enumeratori.StatoPartita.IN_CORSO),
         SecondHalf(Enumeratori.StatoPartita.IN_CORSO),
-        FullTime(Enumeratori.StatoPartita.TERMINATA);
+        FullTime(Enumeratori.StatoPartita.TERMINATA),
+        PLAYED(Enumeratori.StatoPartita.TERMINATA),
+        FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE);
+
 
         Enumeratori.StatoPartita statoPartita;
 

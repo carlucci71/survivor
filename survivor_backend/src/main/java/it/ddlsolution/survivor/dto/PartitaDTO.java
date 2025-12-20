@@ -16,6 +16,6 @@ public class PartitaDTO {
     private Enumeratori.StatoPartita stato;
     private String casa;
     private String fuori;
-    private Integer golCasa;
-    private Integer golFuori;
+    private Integer scoreCasa;
+    private Integer scoreFuori;
 }

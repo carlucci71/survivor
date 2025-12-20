@@ -38,7 +38,7 @@ create table campionato(
 );
 create table squadra(
 	id serial primary key,
-	sigla char(3),
+	sigla varchar(10),
 	nome varchar(100) not null,
 	id_campionato varchar(20) not null
 );
@@ -104,7 +104,9 @@ FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
-insert into campionato(id,id_sport,nome, num_giornate) values('NBA','BASKET','NBA',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie A',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into squadra(sigla,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('BOL','Bologna','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('CAG','Cagliari','SERIE_A');
@@ -125,40 +127,82 @@ insert into squadra(sigla,nome,id_campionato) values('SAS','Sassuolo','SERIE_A')
 insert into squadra(sigla,nome,id_campionato) values('TOR','Torino','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('UDI','Udinese','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('VER','Verona','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('DET','Detroit Pistons','NBA');
-insert into squadra(sigla, nome,id_campionato) values('NYK','New York Knicks','NBA');
-insert into squadra(sigla, nome,id_campionato) values('TOR','Toronto Raptors','NBA');
-insert into squadra(sigla, nome,id_campionato) values('BOS','Boston Celtics','NBA');
-insert into squadra(sigla, nome,id_campionato) values('PHI','Philadelphia 76ers','NBA');
-insert into squadra(sigla, nome,id_campionato) values('ORL','Orlando Magic','NBA');
-insert into squadra(sigla, nome,id_campionato) values('MIA','Miami Heat','NBA');
-insert into squadra(sigla, nome,id_campionato) values('CLE','Cleveland Cavaliers','NBA');
-insert into squadra(sigla, nome,id_campionato) values('ATL','Atlanta Hawks','NBA');
-insert into squadra(sigla, nome,id_campionato) values('CHI','Chicago Bulls','NBA');
-insert into squadra(sigla, nome,id_campionato) values('MIL','Milwaukee Bucks','NBA');
-insert into squadra(sigla, nome,id_campionato) values('CHA','Charlotte Hornets','NBA');
-insert into squadra(sigla, nome,id_campionato) values('BKN','Brooklyn Nets','NBA');
-insert into squadra(sigla,nome,id_campionato) values('IND','Indiana Pacers','NBA');
-insert into squadra(sigla,nome,id_campionato) values('WAS','Washington Wizards','NBA');
-insert into squadra(sigla,nome,id_campionato) values('OKC','Oklahoma City Thunder','NBA');
-insert into squadra(sigla,nome,id_campionato) values('DEN','Denver Nuggets','NBA');
-insert into squadra(sigla,nome,id_campionato) values('SAS','San Antonio Spurs','NBA');
-insert into squadra(sigla,nome,id_campionato) values('LAL','Los Angeles Lakers','NBA');
-insert into squadra(sigla,nome,id_campionato) values('HOU','Houston Rockets','NBA');
-insert into squadra(sigla,nome,id_campionato) values('MIN','Minnesota Timberwolves','NBA');
-insert into squadra(sigla,nome,id_campionato) values('PHX','Phoenix Suns','NBA');
-insert into squadra(sigla,nome,id_campionato) values('MEM','Memphis Grizzlies','NBA');
-insert into squadra(sigla,nome,id_campionato) values('GSW','Golden State Warriors','NBA');
-insert into squadra(sigla,nome,id_campionato) values('POR','Portland Trail Blazers','NBA');
-insert into squadra(sigla,nome,id_campionato) values('DAL','Dallas Mavericks','NBA');
-insert into squadra(sigla,nome,id_campionato) values('UTA','Utah Jazz','NBA');
-insert into squadra(sigla,nome,id_campionato) values('LAC','Los Angeles Clippers','NBA');
-insert into squadra(sigla,nome,id_campionato) values('SAC','Sacramento Kings','NBA');
-insert into squadra(sigla,nome,id_campionato) values('NOP','New Orleans Pelicans','NBA');
+insert into squadra(sigla,nome,id_campionato) values('DET','Detroit Pistons','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('NYK','New York Knicks','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('TOR','Toronto Raptors','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('BOS','Boston Celtics','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('PHI','Philadelphia 76ers','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('ORL','Orlando Magic','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('MIA','Miami Heat','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('CLE','Cleveland Cavaliers','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('ATL','Atlanta Hawks','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('CHI','Chicago Bulls','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('MIL','Milwaukee Bucks','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('CHA','Charlotte Hornets','NBA_RS');
+insert into squadra(sigla, nome,id_campionato) values('BKN','Brooklyn Nets','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('IND','Indiana Pacers','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('WAS','Washington Wizards','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('OKC','Oklahoma City Thunder','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('DEN','Denver Nuggets','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('SAS','San Antonio Spurs','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('LAL','Los Angeles Lakers','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('HOU','Houston Rockets','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('MIN','Minnesota Timberwolves','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('PHX','Phoenix Suns','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('MEM','Memphis Grizzlies','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('GSW','Golden State Warriors','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('POR','Portland Trail Blazers','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('DAL','Dallas Mavericks','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('UTA','Utah Jazz','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('LAC','Los Angeles Clippers','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('SAC','Sacramento Kings','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('NOP','New Orleans Pelicans','NBA_RS');
+insert into squadra(sigla,nome,id_campionato) values('CTZ','Catanzaro','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('BAR','Bari','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('JST','Juve Stabia','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('CES','Cesena','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('SPE','Spezia','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('FRO','Frosinone','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('VEN','Venezia','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('MOD','Modena','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('CAR','Carrarese','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('MONZ','Monza','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('SAM','Sampdoria','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('PAD','Padova','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('PAL','Palermo','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('AVE','Avellino','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('REG','Reggiana','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('PES','Pescara','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('STR','Südtirol','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('ENT','Virtus Entella','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('EMP','Empoli','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('MAN','Mantova','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('RAY','Rayo Vallecano','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('GIR','Girona','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('OVI','Real Oviedo','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('VIL','Villarreal','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('BAR','Barcellona','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('MLL','Mallorca','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('LEV','Levante','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('ALA','Alavés','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('RSO','Real Sociedad','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('VAL','Valencia','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('GET','Getafe','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('VIG','Celta Vigo','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('SEV','Siviglia','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('ATH','Athletic Bilbao','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('ATM','Atlético Madrid','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('ESP','Espanyol','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('BET','Real Betis','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('ELC','Elche','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('OSA','Osasuna','LIGA');
+insert into squadra(sigla,nome,id_campionato) values('RMA','Real Madrid','LIGA');
 
 
 INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (1,13,16,'DDL','SERIE_A');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (2,1,null,'DDL_NBA','NBA');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (2,1,null,'DDL NBA RS','NBA_RS');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (3,13,16,'DDL B','SERIE_B');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (4,13,16,'DDL LIGA','LIGA');
 
 
 insert into giocatore(nome,user_id) values('ALESSANDRO TOTO',
@@ -261,8 +305,9 @@ insert into giocatore_lega(id_giocatore,id_lega,stato) values (31,1,'A');
 insert into giocatore_lega(id_giocatore,id_lega,stato) values (32,1,'A');
 insert into giocatore_lega(id_giocatore,id_lega,stato) values (33,1,'A');
 
-insert into giocatore_lega (id_giocatore, id_lega, stato) 
-select  id,2,'A' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,2,'A' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,3,'A' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,4,'A' from giocatore where nome = 'DANIELE CARLUCCI';
 
 --GIORNATA 1
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (1,1,1,(select id from squadra where sigla = 'GEN' and id_campionato = 'SERIE_A'),null,1);

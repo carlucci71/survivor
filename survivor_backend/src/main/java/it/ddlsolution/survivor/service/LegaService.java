@@ -143,9 +143,13 @@ public class LegaService {
         int totalePartite = mappa.values().stream().mapToInt(Long::intValue).sum();
         int daGiocare = 0;
         int terminati = 0;
+        int inCorso = 0;
 
         if (mappa.get(Enumeratori.StatoPartita.DA_GIOCARE) != null && mappa.get(Enumeratori.StatoPartita.DA_GIOCARE) > 0) {
             daGiocare = mappa.get(Enumeratori.StatoPartita.DA_GIOCARE).intValue();
+        }
+        if (mappa.get(Enumeratori.StatoPartita.IN_CORSO) != null && mappa.get(Enumeratori.StatoPartita.IN_CORSO) > 0) {
+            inCorso = mappa.get(Enumeratori.StatoPartita.IN_CORSO).intValue();
         }
         if (mappa.get(Enumeratori.StatoPartita.TERMINATA) != null && mappa.get(Enumeratori.StatoPartita.TERMINATA) > 0) {
             terminati = mappa.get(Enumeratori.StatoPartita.TERMINATA).intValue();
@@ -155,7 +159,7 @@ public class LegaService {
 
         if (giornata == 16) {//TODO mettere sul db
             ret = Enumeratori.StatoPartita.SOSPESA;
-        } else if (daGiocare == totalePartite) {
+        } else if (daGiocare >0 || inCorso>0) {
             ret = Enumeratori.StatoPartita.DA_GIOCARE;
         } else if (terminati == totalePartite) {
             ret = Enumeratori.StatoPartita.TERMINATA;
@@ -224,17 +228,17 @@ public class LegaService {
             }
             String casa = partitaDTO.getCasa();
             String fuori = partitaDTO.getFuori();
-            Integer golCasa = partitaDTO.getGolCasa();
-            Integer golFuori = partitaDTO.getGolFuori();
+            Integer scoreCasa = partitaDTO.getScoreCasa();
+            Integer scoreFuori = partitaDTO.getScoreFuori();
             if (casa.equals(squadraSigla)) {
-                if (golCasa > golFuori) {
+                if (scoreCasa > scoreFuori) {
                     return true;
                 } else {
                     return false;
                 }
             }
             if (fuori.equals(squadraSigla)) {
-                if (golFuori > golCasa) {
+                if (scoreFuori > scoreCasa) {
                     return true;
                 } else {
                     return false;
@@ -248,12 +252,12 @@ public class LegaService {
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         legaDTO.setGiornataCorrente(giornataCorrente);
-        legaDTO.setStatoGiornataCorrente(statoGiornata(legaDTO, giornataCorrente));
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
         for (Integer i = legaDTO.getGiornataIniziale(); i <= giornataCorrente; i++) {
             Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, i);
             statiGiornate.put(i, statoPartita);
         }
+        legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
         legaDTO.setStatiGiornate(statiGiornate);
 
     }
