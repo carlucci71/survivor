@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -12,10 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
-  Giocata,
   Lega,
   Partita,
-  StatoGiocatore,
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { LegaService } from '../../core/services/lega.service';
@@ -33,8 +31,10 @@ import { LegaService } from '../../core/services/lega.service';
     FormsModule,
   ],
 })
-export class SelezionaGiocataComponent {
+export class SelezionaGiocataComponent implements OnInit {
+  public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
+  prossimePartite: Partita[] = [];
   squadreDisponibili: any[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
@@ -64,29 +64,65 @@ export class SelezionaGiocataComponent {
     this.lega = data.lega;
   }
 
-  selezionata() {
+  ngOnInit(): void {
+    if (this.squadraSelezionata) {
+      this.mostraUltimiRisultati();
+      this.mostraProssimePartite();
+    } else{
+      this.isLoading=false;
+    }
+  }
+
+  trackByGiornata(index: number, item: any) {
+    return item && item.giornata ? item.giornata : index;
+  }
+
+  mostraUltimiRisultati() {
     if (
       this.squadraSelezionata &&
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      console.log(
-        this.squadraSelezionata +
-          '-' +
-          this.lega.campionato?.id +
-          '-' +
-          this.lega.campionato?.sport?.id
-      );
+      this.isLoading = true;
       this.legaService
-        .ultimiRisultati(
+        .calendario(
           this.lega.campionato?.sport?.id,
           this.lega.campionato?.id,
           this.squadraSelezionata,
-          this.lega.giornataCorrente 
+          this.lega.giornataCorrente -1,
+          false
         )
         .subscribe({
           next: (ultimiRisultati) => {
             this.ultimiRisultati = ultimiRisultati;
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Errore nel caricamento delle leghe:', error);
+            this.isLoading = false;
+          },
+        });
+    }
+  }
+
+  mostraProssimePartite() {
+    if (
+      this.squadraSelezionata &&
+      this.lega.campionato?.id &&
+      this.lega.campionato?.sport?.id
+    ) {
+      this.isLoading = true;
+      this.legaService
+        .calendario(
+          this.lega.campionato?.sport?.id,
+          this.lega.campionato?.id,
+          this.squadraSelezionata,
+          this.lega.giornataCorrente,
+          true
+        )
+        .subscribe({
+          next: (prossimePartite) => {
+            this.prossimePartite = prossimePartite;
             this.isLoading = false;
           },
           error: (error) => {

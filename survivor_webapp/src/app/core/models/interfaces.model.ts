@@ -95,8 +95,10 @@ export interface Partita {
     giornata: number;
     orario: Date;
     stato: StatoPartita;
-    casa: string;
-    fuori: string;
+    casaSigla: string;
+    fuoriSigla: string;
+    casaNome: string;
+    fuoriNome: string;
     scoreCasa: number;
     scoreFuori: number; 
 }

@@ -2,7 +2,8 @@
 .gioca-icon {
 	font-size: 20px;
 	color: #1976d2;
-	margin-left: 6px;
+	/* spacing handled by container */
+	margin: 0;
 	vertical-align: middle;
 	cursor: pointer;
 	transition: color 0.2s;
@@ -106,6 +107,43 @@
 	padding: 4px 6px;
 	border-radius: 14px;
 	font-weight: 600;
+}
+
+/* Quando la cella è la giornata corrente, rendiamo il contenitore trasparente
+	 e mettiamo l'icona su uno sfondo giallo circolare con bordo arancione */
+.corrente-col .status-pill {
+	background: transparent !important;
+	border: none !important;
+	padding: 4px 8px !important; /* give some breathing room inside the yellow cell */
+	align-items: center;
+}
+.corrente-col .status-pill .team-name {
+	display: inline-flex !important;
+	align-items: center !important;
+	padding: 6px 10px !important;
+	border-radius: 12px !important;
+	height: 28px !important;
+	line-height: 1 !important;
+}
+.corrente-col .gioca-icon {
+	background: #ffe600;
+	border-radius: 50%;
+	padding: 0; /* use fixed width/height */
+	border: 2px solid #ff9800;
+	box-shadow: 0 0 6px 1px #ff980033;
+	color: #111;
+	font-size: 16px;
+	line-height: 1;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+}
+.corrente-col .gioca-icon:hover {
+	transform: translateY(-1px) scale(1.02);
+	box-shadow: 0 2px 8px 2px #ff980044;
 }
 .giocatori-table td .team-name,
 .team-name {

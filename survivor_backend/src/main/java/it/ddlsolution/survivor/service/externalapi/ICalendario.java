@@ -10,5 +10,5 @@ public interface ICalendario {
 
     List<PartitaDTO> partite(String sport, String campionato);
     List<PartitaDTO> partite(String sport, String campionato, int giornata);
-    List<PartitaDTO> ultimiRisultati(String sport, String campionato, String squadra, int giornataAttuale);
+    List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi);
 }

@@ -1,14 +1,14 @@
 package it.ddlsolution.survivor.repository;
 
 import it.ddlsolution.survivor.entity.Lega;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface LegaRepository extends CrudRepository<Lega, Long> {
+public interface LegaRepository extends JpaRepository<Lega, Long> {
     List<Lega> findByGiocatoreLeghe_Giocatore_User_Id(Long id);
 
     @Query("SELECT l.id as id, l.nome as nome, l.giornataIniziale as giornataIniziale, " +

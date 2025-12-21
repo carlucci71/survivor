@@ -26,8 +26,8 @@ export class LegaService {
     );
   }
 
-  ultimiRisultati(sportId: string,campionatoId: string, squadraId: string, giornata: number): Observable<Partita[]> {
-      return this.http.get<any>(`${this.apiUrl}/ultimiRisultati/${sportId}/${campionatoId}/${squadraId}/${giornata}`);
+  calendario(sportId: string,campionatoId: string, squadraId: string, giornata: number, prossimi: boolean): Observable<Partita[]> {
+      return this.http.get<any>(`${this.apiUrl}/calendario/${sportId}/${campionatoId}/${squadraId}/${giornata}?prossimi=${prossimi}`);
   }
 
 }

@@ -8,6 +8,7 @@ public class EnumAPI2 {
         SERIE_A(21),
         SERIE_B(105),
         LIGA(23),
+        TENNIS_AO(10376),
         NBA_RS(3);
         int id;
 
@@ -29,7 +30,8 @@ public class EnumAPI2 {
 
     enum Sport {
         CALCIO(1),
-        BASKET(3);
+        BASKET(3),
+        TENNIS(8);
         int id;
 
         Sport(int id) {
@@ -47,46 +49,6 @@ public class EnumAPI2 {
         }
     }
 
-    /*
-        enum Squadre {
-            BOL("BOL"),
-            INT("INT"),
-            CRE("CRE"),
-            COM("COM"),
-            FIO("FIO"),
-            ATA("ATA"),
-            VER("VER"),
-            ROM("ROM"),
-            LAZ("LAZ"),
-            PIS("PIS"),
-            LEC("LEC"),
-            GEN("GEN"),
-            MIL("MIL"),
-            CAG("CAG"),
-            NAP("NAP"),
-            UDI("UDI"),
-            PAR("PAR"),
-            SAS("SAS"),
-            TOR("TOR"),
-            TOR("TOR"),
-            OKC("OKC");
-            String code;
-
-            Squadre(String code) {
-                this.code = code;
-            }
-
-            static Squadre fromCode(String code) {
-                Squadre ret = null;
-                for (Squadre squadra : values()) {
-                    if (squadra.code.equals(code)) {
-                        ret = squadra;
-                    }
-                }
-                return ret;
-            }
-        }
-    */
     enum StatoPartitaAP2 {
         PreMatch(Enumeratori.StatoPartita.DA_GIOCARE),
         Postponed(Enumeratori.StatoPartita.DA_GIOCARE),
@@ -97,6 +59,9 @@ public class EnumAPI2 {
         SecondHalf(Enumeratori.StatoPartita.IN_CORSO),
         FullTime(Enumeratori.StatoPartita.TERMINATA),
         PLAYED(Enumeratori.StatoPartita.TERMINATA),
+        FINISHED(Enumeratori.StatoPartita.TERMINATA),
+        INPLAY(Enumeratori.StatoPartita.IN_CORSO),
+        RETIRED(Enumeratori.StatoPartita.TERMINATA),
         FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE);
 
 
@@ -104,6 +69,35 @@ public class EnumAPI2 {
 
         StatoPartitaAP2(Enumeratori.StatoPartita statoPartita) {
             this.statoPartita = statoPartita;
+        }
+    }
+
+    enum RoundTennis{
+//        FirstRoundQualifizioni("qualifying-1st-round"),
+//        SecondRoundQualifizioni("qualifying-2nd-round"),
+//        FinaleQualificazioni("qualifying-final"),
+        Centoventottesimo("1-128-final"),
+        Sessantaquattresimo("1-64-final"),
+        Trentaduesimi("1-32-final"),
+        Sedicesimi("1-16-final"),
+        Quarti("quarter-finals"),
+        Semifinale("semi-finals"),
+        Finale("final");
+
+        String des;
+
+        RoundTennis(String des) {
+            this.des = des;
+        }
+
+        static RoundTennis fromDes(String des) {
+            RoundTennis ret = null;
+            for (RoundTennis round : values()) {
+                if (round.des == des) {
+                    ret = round;
+                }
+            }
+            return ret;
         }
     }
 

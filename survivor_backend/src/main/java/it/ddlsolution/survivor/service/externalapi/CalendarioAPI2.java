@@ -1,10 +1,14 @@
 package it.ddlsolution.survivor.service.externalapi;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.CampionatoService;
+import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.util.Enumeratori;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +32,7 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 @Service
 @Profile(CALENDARIO_API2)
 @Slf4j
+@RequiredArgsConstructor
 public class CalendarioAPI2 implements ICalendario {
 
     private final CampionatoService campionatoService;
@@ -39,29 +44,43 @@ public class CalendarioAPI2 implements ICalendario {
     @Value("${external-api.calendario.implementation.API2.url-info}")
     String urlInfo;
 
-    public CalendarioAPI2(CampionatoService campionatoService, CacheableService campionatoCacheableService) {
-        this.campionatoService = campionatoService;
-        this.campionatoCacheableService = campionatoCacheableService;
-    }
-
-
     @Override
     public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
         return getPartite(sport, campionato, giornata);
     }
 
     @Override
-    public List<PartitaDTO> ultimiRisultati(String sport, String campionato, String squadra, int giornataAttuale) {
+    public List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi) {
+        CampionatoDTO campionatoDTO = campionatoCacheableService.allCampionati()
+                .stream()
+                .filter(c -> c.getId().equals(campionato))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Lega non trovata per campionato: " + campionato + " e sport:" + sport));
+
         List<PartitaDTO> partite = new ArrayList<>();
-        for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
-            if (g > 0) {
-                partite.addAll(
-                        partite(sport, campionato, g)
-                                .stream()
-                                .filter(p -> p.getCasa().equals(squadra) || p.getFuori().equals(squadra))
-                                .sorted(Comparator.comparing(PartitaDTO::getOrario))
-                                .toList().reversed()
-                );
+        if (prossimi){
+            for (int g = giornataAttuale; g < giornataAttuale + 20; g++) {
+                if (g < campionatoDTO.getNumGiornate()) {
+                    partite.addAll(
+                            partite(sport, campionato, g)
+                                    .stream()
+                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
+                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                                    .toList()
+                    );
+                }
+            }
+        } else {
+            for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
+                if (g > 0) {
+                    partite.addAll(
+                            partite(sport, campionato, g)
+                                    .stream()
+                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
+                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                                    .toList().reversed()
+                    );
+                }
             }
         }
         return partite;
@@ -88,6 +107,8 @@ public class CalendarioAPI2 implements ICalendario {
             urlGiornata = calcolaGiornataNBA(sport, campionato, giornata, fase);
         } else if (campionato.equals(EnumAPI2.Campionato.SERIE_B.name())) {
             attUrlCalendar = urlCalendar + "&phase=regularSeason";
+        } else if (campionato.equals(EnumAPI2.Campionato.TENNIS_AO.name())) {
+            attUrlCalendar = urlCalendar;
         } else if (campionato.equals(EnumAPI2.Campionato.SERIE_A.name()) || campionato.equals(EnumAPI2.Campionato.LIGA.name())) {
             attUrlCalendar = urlCalendar;
         } else {
@@ -96,7 +117,63 @@ public class CalendarioAPI2 implements ICalendario {
         String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, urlGiornata);
         Map response = campionatoCacheableService.cacheUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
+        if (sport.equals("CALCIO") || sport.equals("BASKET")) {
+            elaboraCalcioBasket(sport, campionato, giornata, m, ret);
+        } else if (sport.equals("TENNIS")) {
+            elaboraTennis(sport, campionato, giornata, m, ret);
+        } else {
+            throw new RuntimeException("Sport non configurato: " + sport);
+        }
+        return ret;
+    }
 
+    private static void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
+        List<Map<String, Object>> cr = (List<Map<String, Object>>) m.get("competitionRounds");
+        final String round = EnumAPI2.RoundTennis.values()[giornata].des;
+        List<Map<String, Object>> matches = cr.stream()
+                .filter(map -> round.equals(map.get("name")))
+                .map(map -> (List<Map<String, Object>>) map.get("match"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Round non trovato: " + round));
+
+        for (Map<String, Object> match : matches) {
+            OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
+            LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+            String status = match.get("status").toString();
+            if (match.get("matchId").toString().equals("386621") || match.get("matchId").toString().equals("386607")) {//TODO GESTIRE FORZATURE
+                status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
+            }
+
+            if (status.equals("INPLAY")) {
+                System.out.println(match.get("matchId").toString());
+                System.out.println();
+            }
+
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+
+            Result resultHome = getResultTennis(match, "first", statoPartita);
+            Result resultAway = getResultTennis(match, "second", statoPartita);
+
+
+            PartitaDTO calendarioDTO = PartitaDTO.builder()
+                    .sportId(sport)
+                    .campionatoId(campionato)
+                    .giornata(giornata)
+                    .orario(romaTime)
+                    .stato(statoPartita)
+                    .casaSigla(resultHome.teamCode())
+                    .fuoriSigla(resultAway.teamCode())
+                    .casaNome(resultHome.team())
+                    .fuoriNome(resultAway.team())
+                    .scoreCasa(resultHome.teamScore())
+                    .scoreFuori(resultAway.teamScore())
+                    .build();
+            log.info("calendarioDTO = " + calendarioDTO);
+            ret.add(calendarioDTO);
+        }
+    }
+
+    private static void elaboraCalcioBasket(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
         List<Map<String, Object>> games = (List<Map<String, Object>>) m.get("games");
         for (Map<String, Object> game : games) {
             List<Map<String, Object>> matches = (List<Map<String, Object>>) game.get("matches");
@@ -121,8 +198,10 @@ public class CalendarioAPI2 implements ICalendario {
                         .giornata(giornata)
                         .orario(romaTime)
                         .stato(statoPartita)
-                        .casa(resultHome.teamCode())
-                        .fuori(resultAway.teamCode())
+                        .casaSigla(resultHome.teamCode())
+                        .fuoriSigla(resultAway.teamCode())
+                        .casaNome(resultHome.team())
+                        .fuoriNome(resultAway.team())
                         .scoreCasa(resultHome.teamScore())
                         .scoreFuori(resultAway.teamScore())
                         .build();
@@ -130,7 +209,6 @@ public class CalendarioAPI2 implements ICalendario {
                 ret.add(calendarioDTO);
             }
         }
-        return ret;
     }
 
     private static @NonNull Result getResult(Map<String, Object> match, String dove, Enumeratori.StatoPartita statoPartita) {
@@ -139,8 +217,14 @@ public class CalendarioAPI2 implements ICalendario {
             team = (Map) match.get("team" + dove.substring(0, 1).toUpperCase() + dove.substring(1).toLowerCase());
         }
         String teamCode = team.get("teamCode").toString();
+        String teamName;
+        if (team.get("teamName") != null) {
+            teamName = team.get("teamName").toString();
+        } else{
+            teamName = team.get("italianName").toString();
+        }
         Integer teamScore;
-        if (statoPartita== Enumeratori.StatoPartita.TERMINATA) {
+        if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
             teamScore = (Integer) team.get("score");
             if (teamScore == null) {
                 teamScore = Integer.parseInt(((Map) team.get("scores")).get("total").toString());
@@ -148,11 +232,31 @@ public class CalendarioAPI2 implements ICalendario {
         } else {
             teamScore = 0;
         }
-        Result result = new Result(teamCode, teamScore);
+        Result result = new Result(teamName, teamCode, teamScore);
         return result;
     }
 
-    private record Result(String teamCode, Integer teamScore) {
+    private static @NonNull Result getResultTennis(Map<String, Object> match, String dove, Enumeratori.StatoPartita statoPartita) {
+        Map team = (Map) match.get(dove.toLowerCase() + "Entry");
+        if (team == null) {
+            team = (Map) match.get("team" + dove.substring(0, 1).toUpperCase() + dove.substring(1).toLowerCase());
+        }
+        String teamCode = ((List<Map<String, Object>>) team.get("players")).get(0).get("playerId").toString();
+        String teamName = ((List<Map<String, Object>>) team.get("players")).get(0).get("displayName").toString();
+        Integer teamScore;
+        if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
+            teamScore = (Integer) team.get("score");
+            if (teamScore == null) {
+                teamScore = Integer.parseInt(((Map) team.get("scores")).get("total").toString());
+            }
+        } else {
+            teamScore = 0;
+        }
+        Result result = new Result(teamName, teamCode, teamScore);
+        return result;
+    }
+
+    private record Result(String team, String teamCode, Integer teamScore) {
     }
 
     private String calcolaGiornataNBA(String sport, String campionato, int giornata, String fase) {
@@ -160,7 +264,7 @@ public class CalendarioAPI2 implements ICalendario {
         Map responseInfo = campionatoCacheableService.cacheUrl(urlResolved, Map.class);
         String startDate = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(fase)).get("startDate").toString();
         LocalDate ldStartDate = OffsetDateTime.parse(startDate).toLocalDate();
-        ldStartDate=ldStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        ldStartDate = ldStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         ldStartDate = ldStartDate.plusDays(7 * (giornata - 1));
         return ldStartDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }

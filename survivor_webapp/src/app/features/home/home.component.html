@@ -52,17 +52,17 @@
       @if (!isLoading && leghe.length > 0) {
         <div class="leghe-grid">
           @for (lega of leghe; track lega.id) {
-            <mat-card class="lega-card">
-              <mat-card-header>
-                <mat-card-title>{{ lega.nome }}</mat-card-title>
-                @if (lega.campionato?.id ?? '') {
-                  <mat-card-subtitle>{{ lega.campionato?.sport?.nome  }} - {{ lega.campionato?.nome ?? '' }}</mat-card-subtitle>
-                }
-              </mat-card-header>
-              <mat-card-actions>
-                <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>
-              </mat-card-actions>
-            </mat-card>
+          <mat-card class="lega-card">
+            <mat-card-header>
+              <mat-card-title>{{ lega.nome }}</mat-card-title>
+              @if (lega.campionato?.id ?? '') {
+                <mat-card-subtitle>{{ lega.campionato?.sport?.nome  }} - {{ lega.campionato?.nome ?? '' }}</mat-card-subtitle>
+              }
+            </mat-card-header>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>
+            </mat-card-actions>
+          </mat-card>
           }
         </div>
       }

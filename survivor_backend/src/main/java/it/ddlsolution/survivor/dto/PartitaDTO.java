@@ -14,8 +14,10 @@ public class PartitaDTO {
     private int giornata;
     private LocalDateTime orario;
     private Enumeratori.StatoPartita stato;
-    private String casa;
-    private String fuori;
+    private String casaNome;
+    private String fuoriNome;
+    private String casaSigla;
+    private String fuoriSigla;
     private Integer scoreCasa;
     private Integer scoreFuori;
 }

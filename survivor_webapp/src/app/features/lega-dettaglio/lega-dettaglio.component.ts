@@ -117,7 +117,8 @@ export class LegaDettaglioComponent {
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega
       },
-      width: '400px'
+      width: '820px',
+      maxWidth: '90vw'
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.squadraSelezionata) {
@@ -199,6 +200,10 @@ export class LegaDettaglioComponent {
       giocatore.giocate.find((g: any) => Number(g?.giornata) === giornata) ||
       null
     ); 
+  }
+
+  track(index: number, item: any) {
+    return index;
   }
 
   getSquadraNome(squadraSigla: string): string {
@@ -295,5 +300,13 @@ export class LegaDettaglioComponent {
         console.error('Errore nel salvataggio della giocata', err);
       },
     });
+  }
+
+  getGiocaIcon(): string {
+    const sportId = this.lega?.campionato?.sport?.id;
+    if (sportId === 'BASKET') return 'sports_basketball';
+    if (sportId === 'CALCIO') return 'sports_soccer';
+    if (sportId === 'TENNIS') return 'sports_tennis';
+    return 'sports_esports';
   }
 }

@@ -49,7 +49,7 @@
             class="calcola-icon"
             (click)="calcolaGiornata()"
             matTooltip="Calcola giornata"
-            >settings_b_roll</mat-icon
+            >sports_esports</mat-icon
           >
           } @if (lega.giocatori?.length) {
           <table
@@ -76,7 +76,8 @@
               >
                 <div>Giornata</div>
                 <div>{{ giornata + lega.giornataIniziale - 1 }}</div>
-                @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]) {
+                @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
+                {
                 <div class="stato-giornata">
                   {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
                 </div>
@@ -93,31 +94,26 @@
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                 "
               >
-                <ng-container
-                  *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata"
-                >
-                  <span
-                    class="team-name"
-                    [ngClass]="{
-                      ok: giocata.esito === 'OK',
-                      ko: giocata.esito === 'KO',
-                      empty: !giocata.esito
-                    }"
-                    [title]="getSquadraNome(giocata.squadraSigla)"
-                    >{{
-                      getSquadraNome(giocata.squadraSigla) | slice : 0 : 14
-                    }}</span
-                  >
-                </ng-container>
-                <!-- Icona per giocare solo nella colonna della giornata corrente -->
-                <ng-container *ngIf="visualizzaGiocata(giornata, giocatore)">
-                  <mat-icon
-                    class="gioca-icon"
-                    matTooltip="Gioca ora"
-                    (click)="giocaGiornata(giocatore, giornata)"
-                    >sports_soccer</mat-icon
-                  >
-                </ng-container>
+                <span class="status-pill">
+                  <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
+                    <span
+                      class="team-name"
+                      [ngClass]="{
+                        ok: giocata.esito === 'OK',
+                        ko: giocata.esito === 'KO',
+                        empty: !giocata.esito
+                      }"
+                      [title]="getSquadraNome(giocata.squadraSigla)"
+                    >{{ getSquadraNome(giocata.squadraSigla) | slice : 0 : 14 }}</span>
+                  </ng-container>
+                  @if (visualizzaGiocata(giornata, giocatore)) {
+                    <mat-icon
+                      class="gioca-icon"
+                      matTooltip="Gioca ora"
+                      (click)="giocaGiornata(giocatore, giornata)"
+                    >{{ getGiocaIcon() }}</mat-icon>
+                  }
+                </span>
               </td>
             </ng-container>
             }

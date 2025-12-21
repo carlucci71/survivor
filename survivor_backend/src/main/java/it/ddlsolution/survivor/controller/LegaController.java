@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,9 +28,9 @@ public class LegaController {
     private final CalendarioAPI2 calendarioAPI2;
 
 
-    @GetMapping(value = "/ultimiRisultati/{sportId}/{campionatoId}/{squadraId}/{giornata}")
-    public ResponseEntity<List<PartitaDTO>> ultimiRisultati(@PathVariable String sportId,@PathVariable String campionatoId,@PathVariable String squadraId,@PathVariable Integer giornata) {
-        List<PartitaDTO> squadraDTOListMap = calendarioAPI2.ultimiRisultati(sportId, campionatoId, squadraId, giornata);
+    @GetMapping(value = "/calendario/{sportId}/{campionatoId}/{squadraId}/{giornata}")
+    public ResponseEntity<List<PartitaDTO>> calendario(@PathVariable String sportId, @PathVariable String campionatoId, @PathVariable String squadraId, @PathVariable Integer giornata, @RequestParam Boolean prossimi) {
+        List<PartitaDTO> squadraDTOListMap = calendarioAPI2.calendario(sportId, campionatoId, squadraId, giornata, prossimi);
         return ResponseEntity.ok(squadraDTOListMap);
     }
 

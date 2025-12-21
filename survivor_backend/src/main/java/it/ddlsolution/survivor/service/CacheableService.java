@@ -1,8 +1,11 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
+import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.CampionatoRepository;
+import it.ddlsolution.survivor.repository.LegaRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -17,8 +20,10 @@ import java.util.Map;
 @Data
 @RequiredArgsConstructor
 public class CacheableService {
+    private final LegaRepository legaRepository;
     private final CampionatoRepository campionatoRepository;
     private final CampionatoMapper campionatoMapper;
+    private final LegaMapper legaMapper;
     private final RestTemplate restTemplate;
 
     @Cacheable(value = "campionati")
@@ -32,7 +37,5 @@ public class CacheableService {
         T response = forEntity.getBody();
         return response;
     }
-
-
 
 }
