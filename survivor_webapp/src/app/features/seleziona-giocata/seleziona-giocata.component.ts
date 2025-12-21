@@ -34,6 +34,7 @@ import { LegaService } from '../../core/services/lega.service';
 export class SelezionaGiocataComponent implements OnInit {
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
+  ultimiRisultatiOpponent: Partita[] = [];
   prossimePartite: Partita[] = [];
   squadreDisponibili: any[] = [];
   squadraSelezionata: string | null = null;
@@ -77,9 +78,10 @@ export class SelezionaGiocataComponent implements OnInit {
     return item && item.giornata ? item.giornata : index;
   }
 
-  mostraUltimiRisultati() {
+  mostraUltimiRisultati(sigla?: string) {
+    const squadra = sigla || this.squadraSelezionata;
     if (
-      this.squadraSelezionata &&
+      squadra &&
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
@@ -88,13 +90,19 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.sport?.id,
           this.lega.campionato?.id,
-          this.squadraSelezionata,
+          squadra,
           this.lega.giornataCorrente -1,
           false
         )
         .subscribe({
           next: (ultimiRisultati) => {
-            this.ultimiRisultati = ultimiRisultati;
+            // Se è stata passata una sigla diversa dalla squadra selezionata,
+            // considerala come risultati dell'avversario, altrimenti popola i risultati della squadra.
+            if (sigla && sigla !== this.squadraSelezionata) {
+              this.ultimiRisultatiOpponent = ultimiRisultati;
+            } else {
+              this.ultimiRisultati = ultimiRisultati;
+            }
             this.isLoading = false;
           },
           error: (error) => {
@@ -102,6 +110,13 @@ export class SelezionaGiocataComponent implements OnInit {
             this.isLoading = false;
           },
         });
+    }
+  }
+
+  mostraUltimiRisultatiOpponent() {
+    const opp = this.getNextOpponentSigla(true);
+    if (opp) {
+      this.mostraUltimiRisultati(opp);
     }
   }
 
@@ -123,6 +138,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .subscribe({
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
+            this.mostraUltimiRisultatiOpponent();
             this.isLoading = false;
           },
           error: (error) => {
@@ -152,5 +168,28 @@ export class SelezionaGiocataComponent implements OnInit {
     } else {
       this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
     }
+  }
+
+  getNextOpponentSigla(sigla: boolean): string | null {
+    if (!this.squadraSelezionata || !this.prossimePartite || this.prossimePartite.length === 0) {
+      return null;
+    }
+    const next = this.prossimePartite[0];
+    if (!next) return null;
+    if (next.casaSigla === this.squadraSelezionata) {
+      if (sigla){
+      return next.fuoriSigla || null;
+      } else {
+      return next.fuoriNome || null;
+      }
+    }
+    if (next.fuoriSigla === this.squadraSelezionata) {
+      if (sigla){
+      return next.casaSigla || null;
+      } else {
+      return next.casaNome || null;
+      }
+    }
+    return null;
   }
 }

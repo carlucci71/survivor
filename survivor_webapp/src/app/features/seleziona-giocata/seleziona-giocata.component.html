@@ -42,6 +42,7 @@
     >
       Salva
     </button>
+    <span class="next-opponent" *ngIf="getNextOpponentSigla(false)">vs {{ getNextOpponentSigla(false) }}</span>
   </div>
 
   <div class="risultati-row">
@@ -108,9 +109,8 @@
             }
           </span>
         </div>
-        @if (risultato.stato && risultato.stato.value !==
-        StatoPartita.TERMINATA.value) {
-        <span>{{ risultato.stato.value }}</span>
+        @if (risultato.stato && risultato.stato.value !== StatoPartita.TERMINATA.value) {
+          <span>{{ risultato.stato.value }}</span>
         }
       </div>
       }
@@ -142,5 +142,61 @@
       </div>
       }
     </div>
-  </div>
-</div>
+
+    <div class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
+      <h3 class="risultati-title">Ultimi Risultati {{getNextOpponentSigla(false)}}</h3>
+      @if (isLoading) {
+      <div>Caricamento...</div>
+      }
+      @if (!isLoading && squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
+      <div>Nessun risultato recente per {{getNextOpponentSigla(false)}}</div>
+      }
+      @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
+      <div class="risultato-item">
+        <div>
+        [{{ risultato.giornata }}] {{ risultato.orario | date : "yyyy/MM/dd" }}
+        </div>
+        <div>
+
+          <span
+            [class.selected-team]="risultato.casaSigla === getNextOpponentSigla(true)"
+            >{{ risultato.casaNome }}</span
+          >
+          -
+          <span
+            [class.selected-team]="risultato.fuoriSigla === getNextOpponentSigla(true)"
+            >{{ risultato.fuoriNome }}</span
+          >
+
+
+        </div>
+        <div>
+        {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
+        <span class="result-badge">
+          @if (getNextOpponentSigla(true) === risultato.casaSigla) {
+            @if (risultato.scoreCasa > risultato.scoreFuori) {
+            <span class="badge badge-v">V</span>
+            }
+            @if (risultato.scoreCasa === risultato.scoreFuori) {
+            <span class="badge badge-n">N</span>
+            }
+            @if (risultato.scoreCasa < risultato.scoreFuori) {
+            <span class="badge badge-p">P</span>
+            }
+          }
+          @if (getNextOpponentSigla(true) === risultato.fuoriSigla) {
+            @if (risultato.scoreFuori > risultato.scoreCasa) {
+            <span class="badge badge-v">V</span>
+            }
+            @if (risultato.scoreFuori === risultato.scoreCasa) {
+            <span class="badge badge-n">N</span>
+            }
+            @if (risultato.scoreFuori < risultato.scoreCasa) {
+            <span class="badge badge-p">P</span>
+            }
+          }
+        </span>
+        </div>
+      </div>
+      }
+    </div>
