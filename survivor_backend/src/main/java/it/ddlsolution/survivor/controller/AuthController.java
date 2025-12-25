@@ -35,6 +35,8 @@ public class AuthController {
     @PostMapping("/request-magic-link")
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
+        log.info("CHIAMATO!!!");
+        log.info(request.getEmail());
         try {
             magicLinkService.sendMagicLink(request.getEmail());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
