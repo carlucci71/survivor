@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(expiredJwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
-                        /*
                         // Permetti auth endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
@@ -46,8 +45,6 @@ public class SecurityConfig {
 //                        .requestMatchers(apiBase + "/lega/**").authenticated() RIGA RIDONTANTE LASCIATA PER RICORDARE COME FARE CONFIGURAZIONI PARTICOLARI
                         .anyRequest().authenticated()
 
-                         */
-                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -64,7 +61,7 @@ public class SecurityConfig {
 //        configuration.setAllowedOrigins(allowedServers);
 
         configuration.setAllowedOriginPatterns(List.of("*"));
-        
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
 
