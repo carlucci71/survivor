@@ -38,12 +38,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(expiredJwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
+                        /*
                         // Permetti auth endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers( "/admin/**").hasRole("ADMIN")
 //                        .requestMatchers(apiBase + "/lega/**").authenticated() RIGA RIDONTANTE LASCIATA PER RICORDARE COME FARE CONFIGURAZIONI PARTICOLARI
                         .anyRequest().authenticated()
+
+                         */
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
