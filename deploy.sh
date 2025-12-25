@@ -14,7 +14,8 @@ npm install
 ng build --configuration test
 
 echo "🔄 Restart backend..."
-pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
+#pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
+pm2 restart survivor-backend
 
 #echo "🔄 Reload nginx..."
 #sudo nginx -t && sudo systemctl reload nginx
