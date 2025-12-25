@@ -1,0 +1,16 @@
+DB_PASSWORD: ${ENV_DB_PASSWORD}
+MAIL_HOST: smtp.gmail.com
+MAIL_PORT: 587
+MAIL_USERNAME: fantasurvivorddl@gmail.com
+MAIL_PASSWORD: ${ENV_MAIL_PASSWORD}
+MAIL_FROM: fantasurvivorddl@gmail.com
+ADMIN_PASSWORD: ${ENV_ADMIN_PASSWORD}
+JWT_SECRET: ${ENV_JWT_SECRET}
+MAGIC_LINK_BASE_URL: ${ENV_SERVER}/survivor
+DB_URL: jdbc:postgresql://85.235.148.177:6438/db_test_survivor
+DB_USER: survivor_user
+PORT: 8390
+SSL_ENABLED: false
+SWAGGER_SERVER_URL: ${ENV_SERVER}/api/survivorBe
+ALLOWED_SERVERS: ${ENV_SERVER}
+
