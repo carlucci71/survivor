@@ -1,7 +1,7 @@
 {
   "/api/survivorBe": {
-    "target": "https://liberaleidee.it",
-    "secure": true,
+    "target": "http://localhost:8390",
+    "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   }
