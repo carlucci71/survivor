@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environment';
 import { LegaService } from '../../core/services/lega.service';
 import { User } from '../../core/models/auth.model';
 import { MatCardModule } from '@angular/material/card';
@@ -26,6 +27,8 @@ export class HomeComponent implements OnInit {
   leghe: Lega[] = [];
   me: Giocatore | null = null;
   isLoading = true;
+  environmentName = environment.ambiente;
+  isProd = environment.production;
 
   constructor(
     private authService: AuthService,
