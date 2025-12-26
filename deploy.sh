@@ -11,7 +11,7 @@ pm2 stop survivor-backend 2>/dev/null || true
 echo "📦 Build frontend..."
 cd /home/survivor/github/survivor/survivor_webapp
 npm install
-ng build --configuration test
+ng build --configuration production
 
 echo "🔄 Restart backend..."
 #pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
