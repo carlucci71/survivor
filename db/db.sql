@@ -1,5 +1,6 @@
 drop table if exists giocata;
 drop table if exists giocatore_lega;
+drop table if exists sospensione_lega;
 drop table if exists giocatore;
 drop table if exists lega;
 drop table if exists squadra;
@@ -25,6 +26,11 @@ CREATE TABLE giocatore_lega (
     id_lega integer NOT NULL,
 	stato char(1) not null,
     PRIMARY KEY (id_giocatore, id_lega)
+);
+CREATE TABLE sospensione_lega (
+    id_lega integer NOT NULL,
+	giornata  integer NOT NULL,
+    PRIMARY KEY (id_lega, giornata)
 );
 create table sport(
 	id varchar(20) primary key,
@@ -92,6 +98,9 @@ ADD CONSTRAINT fk_giocatore FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
 
 alter TABLE giocatore_lega 
 ADD CONSTRAINT fk_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
+
+alter TABLE sospensione_lega 
+ADD CONSTRAINT fk_sospensione_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 
 ALTER TABLE log_dispositiva
 ADD CONSTRAINT fk_log_dispositiva_users
@@ -513,6 +522,7 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (101,3,31,(select id from squadra where sigla = 'MIL' and id_campionato = 'SERIE_A'),NULL,1);
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (102,3,21,(select id from squadra where sigla = 'TOR' and id_campionato = 'SERIE_A'),NULL,1);
 
+insert into sospensione_lega(id_lega,giornata) values (1,16);
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));

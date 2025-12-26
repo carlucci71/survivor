@@ -1,10 +1,9 @@
 server {
-    listen 4201;
-    server_name _;
-
+    listen 80;
+    server_name 85.235.148.177;
     access_log /var/log/nginx/survivor-test.access.log;
     error_log  /var/log/nginx/survivor-test.error.log;
-
+    
     location /survivor/ {
         alias /home/survivor/github/survivor_test/survivor_webapp/dist/survivor_webapp/browser/;
         index index.html;

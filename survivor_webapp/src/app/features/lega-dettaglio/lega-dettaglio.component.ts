@@ -3,7 +3,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
-import { Giocatore, Lega, StatoGiocatore, StatoPartita } from '../../core/models/interfaces.model';
+import {
+  Giocatore,
+  Lega,
+  StatoGiocatore,
+  StatoPartita,
+} from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -99,15 +104,21 @@ export class LegaDettaglioComponent {
   // Gestisce il click sull'icona gioca accanto al badge squadra
   async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
-    const giocataCorrente = (giocatore.giocate || []).find((g: any) => Number(g?.giornata) === giornata);
+    const giocataCorrente = (giocatore.giocate || []).find(
+      (g: any) => Number(g?.giornata) === giornata
+    );
     const squadraCorrenteId = giocataCorrente?.squadraSigla || null;
     // Escludi tutte le squadre già giocate, tranne quella corrente
     const giocateIds = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraSigla);
-    const squadreDisponibili = this.squadre.filter((s: any) => !giocateIds.includes(s.sigla) || s.sigla === squadraCorrenteId);
-    
-    const { SelezionaGiocataComponent } = await import('../seleziona-giocata/seleziona-giocata.component');
+    const squadreDisponibili = this.squadre.filter(
+      (s: any) => !giocateIds.includes(s.sigla) || s.sigla === squadraCorrenteId
+    );
+
+    const { SelezionaGiocataComponent } = await import(
+      '../seleziona-giocata/seleziona-giocata.component'
+    );
     const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
       data: {
         giocatore: giocatore,
@@ -115,12 +126,12 @@ export class LegaDettaglioComponent {
         statoGiornataCorrente: this.lega?.statoGiornataCorrente,
         squadreDisponibili: squadreDisponibili,
         squadraCorrenteId: squadraCorrenteId,
-        lega: this.lega
+        lega: this.lega,
       },
       width: '820px',
-      maxWidth: '90vw'
+      maxWidth: '90vw',
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
         this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
       }
@@ -134,24 +145,34 @@ export class LegaDettaglioComponent {
     const giornataIniziale = this.lega?.giornataIniziale || 0;
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
-    const esito = giocata == undefined? '' : giocata.esito;
+    const esito = giocata == undefined ? '' : giocata.esito;
     let ret = true;
-    if (giornata + giornataIniziale - 1 !== giornataCorrente){
-      ret = false; 
-    }
-    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value){
+    if (giornata + giornataIniziale - 1 !== giornataCorrente) {
       ret = false;
     }
-    if (esito=='OK' || esito=='KO'){
+    if (
+      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
+      StatoGiocatore.ELIMINATO.value
+    ) {
       ret = false;
     }
-    if (!this.isAdmin() && (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id)){
+    if (esito == 'OK' || esito == 'KO') {
       ret = false;
     }
-    if (!this.isAdmin() && this.lega?.statoGiornataCorrente.value!==StatoPartita.DA_GIOCARE.value){
+    if (
+      !this.isAdmin() &&
+      (giocatore.user == null ||
+        giocatore.user.id !== this.authService.getCurrentUser()?.id)
+    ) {
       ret = false;
     }
-    if (this.lega?.statoGiornataCorrente.value===StatoPartita.SOSPESA.value){
+    if (
+      !this.isAdmin() &&
+      this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
+    ) {
+      ret = false;
+    }
+    if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
       ret = false;
     }
 
@@ -199,7 +220,7 @@ export class LegaDettaglioComponent {
     return (
       giocatore.giocate.find((g: any) => Number(g?.giornata) === giornata) ||
       null
-    ); 
+    );
   }
 
   track(index: number, item: any) {
@@ -216,11 +237,16 @@ export class LegaDettaglioComponent {
 
   giornataDaGiocare(): boolean {
     if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
-    return this.lega?.statoGiornataCorrente.value == StatoPartita.DA_GIOCARE.value;
+    return (
+      this.lega?.statoGiornataCorrente.value == StatoPartita.DA_GIOCARE.value
+    );
   }
 
   selectGiocatoreVisible(giocatore: Giocatore): boolean {
-    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
+    if (
+      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
+      StatoGiocatore.ELIMINATO.value
+    ) {
       return false;
     }
     if (!this.canEditUserRow(giocatore)) {
@@ -267,6 +293,22 @@ export class LegaDettaglioComponent {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+  undoCalcolaGiornata() {
+    this.isLoading = true;
+    this.adminService
+      .undoCalcola(Number(this.id))
+      .subscribe({
+        next: (lega: Lega) => {
+          this.lega = lega;
+          this.caricaTabella();
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          this.error = 'Errore nel caricamento della lega';
+          this.isLoading = false;
+        },
+      });
+  }
   calcolaGiornata() {
     this.isLoading = true;
     this.adminService
@@ -283,23 +325,29 @@ export class LegaDettaglioComponent {
         },
       });
   }
-  salvaSquadra(giocatore: Giocatore, giornata: number, squadraSelezionata: string ): void {
+  salvaSquadra(
+    giocatore: Giocatore,
+    giornata: number,
+    squadraSelezionata: string
+  ): void {
     if (!this.lega) {
       console.error('Nessuna lega caricata');
       return;
     }
 
-    this.giocataService.salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id).subscribe({
-      next: (res: Giocatore) => {
-        // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
-        if (res && Array.isArray(res.giocate)) {
-          giocatore.giocate = res.giocate;
-        }
-      },
-      error: (err: any) => {
-        console.error('Errore nel salvataggio della giocata', err);
-      },
-    });
+    this.giocataService
+      .salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id)
+      .subscribe({
+        next: (res: Giocatore) => {
+          // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
+          if (res && Array.isArray(res.giocate)) {
+            giocatore.giocate = res.giocate;
+          }
+        },
+        error: (err: any) => {
+          console.error('Errore nel salvataggio della giocata', err);
+        },
+      });
   }
 
   getGiocaIcon(): string {

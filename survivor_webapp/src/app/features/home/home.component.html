@@ -2,6 +2,9 @@
   <mat-toolbar color="primary" class="header">
     <div class="header-content">
       <h1>Survivor</h1>&nbsp;
+      @if (!isProd) {
+        <span>{{ environmentName }}</span>
+      }
       <div class="user-info">
         <mat-chip>
           {{ me?.nome }}
