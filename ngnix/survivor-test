@@ -1,0 +1,13 @@
+server {
+    listen 4201;
+    server_name _;
+
+    access_log /var/log/nginx/survivor-test.access.log;
+    error_log  /var/log/nginx/survivor-test.error.log;
+
+    location /survivor/ {
+        alias /home/survivor/github/survivor_test/survivor_webapp/dist/survivor_webapp/browser/;
+        index index.html;
+        try_files $uri $uri/ /survivor/index.html;
+    }
+}
