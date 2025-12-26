@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8390'
+  apiUrl: 'http://85.235.148.177:8390/api/survivorBe'
 };
+
