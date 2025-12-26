@@ -39,9 +39,18 @@ body {
   --mdc-protected-button-label-text-color: white !important;
 }
 
-.mat-toolbar.mat-primary {
-  --mdc-elevated-card-container-color: var(--primary-color) !important;
+mat-toolbar[color="primary"],
+.mat-toolbar.mat-primary,
+.mat-mdc-toolbar.mat-primary {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Force header class to use theme colors */
+.header,
+mat-toolbar.header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+  color: white !important;
 }
 
 .mat-mdc-progress-spinner circle {
