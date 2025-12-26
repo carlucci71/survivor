@@ -31,6 +31,7 @@ public class LegaService {
     private final LegaRepository legaRepository;
     private final LegaMapper legaMapper;
     private final ICalendario calendario;
+    private final CacheableService cacheableService;
 
 
     public List<LegaDTO> mieLeghe() {
@@ -128,9 +129,20 @@ public class LegaService {
     }
 
 
-    public Enumeratori.StatoPartita statoGiornata(LegaDTO lega, int giornata) {
-        List<PartitaDTO> partite = calendario.partite(lega.getCampionato().getSport().getId(), lega.getCampionato().getId(), giornata);
-        return statoGiornata(partite, giornata);
+    public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
+        List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
+        return statoGiornata(partite, giornata, legaDTO);
+    }
+
+    private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
+        List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
+        Enumeratori.StatoPartita statoPartita;
+        if (listaSospensioni.contains(giornata)) {
+            statoPartita = Enumeratori.StatoPartita.SOSPESA;
+        } else {
+            statoPartita = statoGiornata(partite, giornata);
+        }
+        return statoPartita;
     }
 
     private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
@@ -154,13 +166,11 @@ public class LegaService {
 
         Enumeratori.StatoPartita ret = null;
 
-        if (giornata == 16) {//TODO mettere sul db
-            ret = Enumeratori.StatoPartita.SOSPESA;
-        } else if (daGiocare == totalePartite) {
+        if (daGiocare == totalePartite) {
             ret = Enumeratori.StatoPartita.DA_GIOCARE;
         } else if (terminati == totalePartite) {
             ret = Enumeratori.StatoPartita.TERMINATA;
-        } else if (terminati >0 || inCorso > 0) {
+        } else if (terminati > 0 || inCorso > 0) {
             ret = Enumeratori.StatoPartita.IN_CORSO;
         }
         if (ret == null) {
@@ -177,7 +187,7 @@ public class LegaService {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
-        Enumeratori.StatoPartita stato = statoGiornata(partite, giornataDaCalcolare);
+        Enumeratori.StatoPartita stato = statoGiornata(partite, giornataDaCalcolare, legaDTO);
         if (stato != Enumeratori.StatoPartita.DA_GIOCARE) {
             if (stato == Enumeratori.StatoPartita.SOSPESA) {
                 legaDTO.setGiornataCalcolata(giornataDaCalcolare);
@@ -257,9 +267,10 @@ public class LegaService {
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         legaDTO.setGiornataCorrente(giornataCorrente);
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
-        for (Integer i = legaDTO.getGiornataIniziale(); i <= giornataCorrente; i++) {
-            Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, i);
-            statiGiornate.put(i, statoPartita);
+        List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
+        for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
+            Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, giornata);
+            statiGiornate.put(giornata, statoPartita);
         }
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
         legaDTO.setStatiGiornate(statiGiornate);
@@ -267,4 +278,28 @@ public class LegaService {
     }
 
 
+    @LoggaDispositiva(tipologia = "undoCalcola")
+    public LegaDTO undoCalcola(Long idLega) {
+        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        int giornataCorrente = legaDTO.getGiornataCorrente();
+        Integer nuovaGiornata = legaDTO.getGiornataCalcolata() - 1;
+        if (nuovaGiornata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
+            nuovaGiornata = null;
+        }
+        legaDTO.setGiornataCalcolata(nuovaGiornata);
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+            for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
+                if (giocataDTO.getGiornata().equals(giornataCorrente - legaDTO.getGiornataIniziale())) {
+                    if (giocataDTO.getEsito() == Enumeratori.EsitoGiocata.KO) {
+                        giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
+                    }
+                    giocataDTO.setEsito(null);
+                }
+            }
+        }
+
+        salva(legaDTO);
+        return getLegaDTO(legaDTO.getId(), true);
+
+    }
 }

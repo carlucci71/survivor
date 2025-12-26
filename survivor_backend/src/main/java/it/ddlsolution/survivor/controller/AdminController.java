@@ -25,4 +25,9 @@ public class AdminController {
         return ResponseEntity.ok(legaService.calcola(idLega,giornata));
     }
 
+    @PutMapping("/undoCalcola/{idLega}")
+    public ResponseEntity<LegaDTO> undoCalcola(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.undoCalcola(idLega));
+    }
+
 }

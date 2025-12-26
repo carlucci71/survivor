@@ -132,6 +132,9 @@ sudo certbot --nginx -d survivor-app.com -d www.survivor-app.com
 
 # Certbot aggiorna automaticamente la configurazione nginx per HTTPS
 # Rinnovo automatico è già configurato
+
+#0 3 * * * /usr/bin/certbot renew --quiet
+
 ```
 
 ---
