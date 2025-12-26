@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    if: github.actor == 'carluci71'
+    if: github.actor == 'carlucci71'
     steps:
       - uses: hmarr/auto-approve-action@v4
         with:
