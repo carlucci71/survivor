@@ -137,7 +137,7 @@ public class LegaService {
     private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
         List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         Enumeratori.StatoPartita statoPartita;
-        if (listaSospensioni.contains(giornata)) { 
+        if (listaSospensioni.contains(giornata)) {  
             statoPartita = Enumeratori.StatoPartita.SOSPESA;
         } else {
             statoPartita = statoGiornata(partite, giornata);
