@@ -6,7 +6,7 @@ MAIL_PASSWORD: ${ENV_MAIL_PASSWORD}
 MAIL_FROM: fantasurvivorddl@gmail.com
 ADMIN_PASSWORD: ${ENV_ADMIN_PASSWORD}
 JWT_SECRET: ${ENV_JWT_SECRET}
-MAGIC_LINK_BASE_URL: ${ENV_BASEURL}:4201/survivor
+MAGIC_LINK_BASE_URL: ${ENV_BASEURL}/survivor
 DB_URL: jdbc:postgresql://85.235.148.177:6438/db_test_survivor
 DB_USER: survivor_user
 PORT: 8390
