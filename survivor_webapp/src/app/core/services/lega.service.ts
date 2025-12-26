@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { Lega, Partita } from '../models/interfaces.model'; 
 import { map } from 'rxjs/operators';
 import { mapLegaFromBE } from '../utils/lega-mapper';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class LegaService {
-  private apiUrl = '/api/survivorBe/lega';
+  private apiUrl = `${environment.apiUrl}/lega`;
 
   constructor(private http: HttpClient) {}
 

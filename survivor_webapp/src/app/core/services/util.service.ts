@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilService {
-  private apiUrl = '/api/survivorBe/util';
+  private apiUrl = `${environment.apiUrl}/util`;
 
   constructor(private http: HttpClient) {}
 

@@ -9,7 +9,7 @@ import { Giocatore } from '../models/interfaces.model';
 })
 export class GiocataService {
 
-  private apiUrl = '/api/survivorBe/giocate';
+  private apiUrl = `${environment.apiUrl}/giocate`;
 
     constructor(private http: HttpClient) {}
 
