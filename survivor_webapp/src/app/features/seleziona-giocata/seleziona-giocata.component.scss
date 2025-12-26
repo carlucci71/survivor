@@ -123,7 +123,7 @@ button[mat-raised-button] {
 	font-size: 0.85rem;
 	margin-left: 4px;
 }
-.badge-v { background: #0da64b; }
+.badge-v { background: var(--primary-color); }
 .badge-n { background: #f5c842; color: #212121; }
 .badge-p { background: #e21b1b; }
 

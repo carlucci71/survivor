@@ -1,7 +1,7 @@
 // Icona "gioca" accanto al badge squadra nella colonna corrente
 .gioca-icon {
 	font-size: 20px;
-	color: #1976d2;
+	color: var(--primary-color);
 	/* spacing handled by container */
 	margin: 0;
 	vertical-align: middle;
@@ -9,7 +9,7 @@
 	transition: color 0.2s;
 }
 .gioca-icon:hover {
-	color: #388e3c;
+	color: var(--primary-dark);
 }
 .giocatori-table td.ko-font, .ko-font {
 	color: #ffff00 !important;
@@ -190,7 +190,7 @@
 }
 
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: white;
   padding: 20px 0;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

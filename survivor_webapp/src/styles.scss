@@ -1,5 +1,9 @@
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+:root {
+  --primary-color: #4CAF50; /* Default green */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +15,37 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f5f7fa;
+}
+
+/* Theme-specific styles */
+.theme-green {
+  --primary-color: #4CAF50;
+  --primary-dark: #388E3C;
+  --primary-light: #81C784;
+}
+
+.theme-blue {
+  --primary-color: #2196F3;
+  --primary-dark: #1976D2;
+  --primary-light: #64B5F6;
+}
+
+/* Override Angular Material primary color with theme variables */
+.mat-mdc-raised-button.mat-primary,
+.mat-mdc-button.mat-primary,
+.mat-mdc-fab.mat-primary,
+.mat-mdc-mini-fab.mat-primary {
+  --mdc-protected-button-container-color: var(--primary-color) !important;
+  --mdc-protected-button-label-text-color: white !important;
+}
+
+.mat-toolbar.mat-primary {
+  --mdc-elevated-card-container-color: var(--primary-color) !important;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+}
+
+.mat-mdc-progress-spinner circle {
+  stroke: var(--primary-color) !important;
 }
 
 html, body {
