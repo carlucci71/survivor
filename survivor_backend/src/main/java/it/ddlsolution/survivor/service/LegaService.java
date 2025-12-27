@@ -114,9 +114,7 @@ public class LegaService {
                                             .findFirst()
                                             .ifPresent(giocata -> {
                                                 // Aggiorna l'esito se è cambiato
-                                                if (giocataDTO.getEsito() != null) {
-                                                    giocata.setEsito(giocataDTO.getEsito());
-                                                }
+                                                giocata.setEsito(giocataDTO.getEsito());
                                             });
                                 }
                             }
@@ -137,7 +135,7 @@ public class LegaService {
     private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
         List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         Enumeratori.StatoPartita statoPartita;
-        if (listaSospensioni.contains(giornata)) {     
+        if (listaSospensioni.contains(giornata)) {
             statoPartita = Enumeratori.StatoPartita.SOSPESA;
         } else {
             statoPartita = statoGiornata(partite, giornata);
@@ -187,9 +185,9 @@ public class LegaService {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
-        Enumeratori.StatoPartita stato = statoGiornata(partite, giornataDaCalcolare, legaDTO);
-        if (stato != Enumeratori.StatoPartita.DA_GIOCARE) {
-            if (stato == Enumeratori.StatoPartita.SOSPESA) {
+        Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, giornataDaCalcolare, legaDTO);
+        if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+            if (statoGiornata == Enumeratori.StatoPartita.SOSPESA) {
                 legaDTO.setGiornataCalcolata(giornataDaCalcolare);
             } else {
                 for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
@@ -220,7 +218,7 @@ public class LegaService {
 
                     }
                 }
-                if (stato == Enumeratori.StatoPartita.TERMINATA) {
+                if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
                     legaDTO.setGiornataCalcolata(giornataDaCalcolare);
                 }
             }
@@ -282,19 +280,27 @@ public class LegaService {
     public LegaDTO undoCalcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         int giornataCorrente = legaDTO.getGiornataCorrente();
-        Integer nuovaGiornata = legaDTO.getGiornataCalcolata() - 1;
-        if (nuovaGiornata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
-            nuovaGiornata = null;
+        Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
+        if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
+            nuovaGiornataCalcolata = null;
         }
-        legaDTO.setGiornataCalcolata(nuovaGiornata);
+        legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
+
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
-                if (giocataDTO.getGiornata().equals(giornataCorrente - legaDTO.getGiornataIniziale())) {
-                    if (giocataDTO.getEsito() == Enumeratori.EsitoGiocata.KO) {
-                        giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
-                    }
+                int prev= giornataCorrente - legaDTO.getGiornataIniziale();
+                if (giocataDTO.getGiornata().equals(prev) || giocataDTO.getGiornata().equals(prev+1)) {
                     giocataDTO.setEsito(null);
                 }
+            }
+            long contaKO = giocatoreDTO.getGiocate().stream()
+                    .filter(g -> g.getGiornata() < giornataCorrente)
+                    .filter(g -> g.getEsito() != null && g.getEsito() == Enumeratori.EsitoGiocata.KO)
+                    .count();
+            if (contaKO == 0) {
+                giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
+            } else {
+                giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ELIMINATO);
             }
         }
 
