@@ -43,6 +43,7 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
                         // Aggiungi lo stato specifico per questa lega
                         dto.getStatiPerLega().put(lega.getId(), gl.getStato());
+                        dto.getRuoliPerLega().put(lega.getId(), gl.getRuolo());
                         return dto;
                     })
                     .toList());

@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.entity;
 
+import it.ddlsolution.survivor.converter.RuoloGiocatoreLegaConverter;
 import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
 import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.*;
@@ -27,7 +28,11 @@ public class GiocatoreLega implements Serializable {
 
     @Column(name = "stato", nullable = false, length = 1)
     @Convert(converter = StatoGiocatoreConverter.class)
-    private Enumeratori.StatoGiocatore stato = Enumeratori.StatoGiocatore.ATTIVO;
+    private Enumeratori.StatoGiocatore stato;
+
+    @Column(name = "ruolo", nullable = false, length = 1)
+    @Convert(converter = RuoloGiocatoreLegaConverter.class)
+    private Enumeratori.RuoloGiocatoreLega ruolo;
 
     @Embeddable
     @Data

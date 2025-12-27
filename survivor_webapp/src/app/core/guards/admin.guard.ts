@@ -1,14 +1,26 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { firstValueFrom } from 'rxjs';
 
-export const adminGuard: CanActivateFn = (route, state) => {
+export const adminGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const currentUser = authService.getCurrentUser();
+  const http = inject(HttpClient);
 
-  if (currentUser && currentUser.role === 'ADMIN') {
-    return true;
+  // Prefer token-based role check (server-signed)
+  if (authService.isAdmin()) return true;
+
+  // Fallback: ask the server for the current user's role
+  try {
+    const me = await firstValueFrom(http.get<any>(`${environment.apiUrl}/auth/me`));
+    if (me && me.role === 'ADMIN') {
+      return true;
+    }
+  } catch (e) {
+    // ignore and redirect
   }
 
   router.navigate(['/home']);
