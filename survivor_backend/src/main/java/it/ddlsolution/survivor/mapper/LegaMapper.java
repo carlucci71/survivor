@@ -11,6 +11,9 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {CampionatoMapper.class, GiocatoreMapper.class})
 public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
@@ -36,21 +39,23 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
                     .map(gl -> {
                         // Usa il GiocatoreMapper per mappare tutti i campi comprese le giocate
                         GiocatoreDTO dto = giocatoreMapper.toDTO(gl.getGiocatore());
-                        //rimuogo le giocate fatte su altre leghe
+                        // rimuogo le info di altre leghe
                         dto.setGiocate(
                                 dto.getGiocate().stream().filter(g -> g.getLegaId().equals(lega.getId())).toList()
                         );
+                        dto.setStatiPerLega(dto.getStatiPerLega().entrySet().stream()
+                                .filter(e -> e.getKey().equals(lega.getId()))
+                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                        );
 
+                        dto.setRuoliPerLega(dto.getRuoliPerLega().entrySet().stream()
+                                .filter(e -> e.getKey().equals(lega.getId()))
+                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                        );
 
-
-
-                        // Aggiungi lo stato specifico per questa lega
-                        //dto.getStatiPerLega().put(lega.getId(), gl.getStato());
-                        //dto.getRuoliPerLega().put(lega.getId(), gl.getRuolo());
                         return dto;
                     })
                     .toList());
         }
     }
 }
-
