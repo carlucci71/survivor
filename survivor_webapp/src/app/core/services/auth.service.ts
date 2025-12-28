@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import { 
@@ -17,8 +17,13 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.loadUserFromStorage();
+  constructor(private injector: Injector) {
+    // Defer loading user until after DI finishes to avoid circular DI (interceptor -> AuthService -> HttpClient)
+    Promise.resolve().then(() => this.loadUserFromBE());
+  }
+
+  private get http(): HttpClient {
+    return this.injector.get(HttpClient);
   }
 
   requestMagicLink(email: string): Observable<MagicLinkResponse> {
@@ -45,21 +50,27 @@ export class AuthService {
       name: response.name,
       role: response.role
     };
-    localStorage.setItem('userSurvivor', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
+
   refreshToken(refreshToken: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
       tap(response => this.handleAuthResponse(response))
     );
   }
 
-  private loadUserFromStorage(): void {
-    const userJson = localStorage.getItem('userSurvivor');
-    if (userJson) {
-      const user = JSON.parse(userJson);
-      this.currentUserSubject.next(user);
-    }
+  private loadUserFromBE(): void {
+    this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {}).subscribe({
+      next: (response: AuthResponse) => {
+        // handle and store token + user via existing helper
+        this.handleAuthResponse(response);
+      },
+      error: (error) => {
+        console.error('Errore :', error);
+        // failed to load user; ensure subject is null
+        this.currentUserSubject.next(null);
+      }
+    });
   }
 
   getToken(): string | null {
@@ -81,7 +92,6 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('tokenSurvivor');
-    localStorage.removeItem('userSurvivor');
     this.currentUserSubject.next(null);
   }
 }

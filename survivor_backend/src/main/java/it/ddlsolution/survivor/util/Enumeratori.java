@@ -37,7 +37,32 @@ public class Enumeratori {
         }
 
     }
+    public enum RuoloGiocatoreLega {
+        LEADER("L"), GIOCATORE("G");
 
+        private final String codice;
+
+        RuoloGiocatoreLega(String codice) {
+            this.codice = codice;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+        public static RuoloGiocatoreLega fromCodice(String codice) {
+            if (codice == null) {
+                return null;
+            }
+            for (RuoloGiocatoreLega stato : RuoloGiocatoreLega.values()) {
+                if (stato.codice.equals(codice)) {
+                    return stato;
+                }
+            }
+            throw new IllegalArgumentException("RuoloGiocatoreLega non valido: " + codice);
+        }
+
+    }
     public enum StatoPartita {
         DA_GIOCARE,
         SOSPESA,

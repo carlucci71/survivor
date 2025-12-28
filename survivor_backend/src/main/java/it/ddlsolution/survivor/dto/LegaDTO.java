@@ -17,6 +17,7 @@ public class LegaDTO {
     private List<GiocatoreDTO> giocatori;
     private int giornataCorrente;
     private Enumeratori.StatoPartita statoGiornataCorrente;
+    private Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega;
     private Map<Integer,Enumeratori.StatoPartita> statiGiornate;
 
 

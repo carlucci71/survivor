@@ -20,6 +20,8 @@ export class StatoGiocatore {
   }
 }
 
+
+
 export function statoGiocatoreFromCodice(codice: string): StatoPartita {
   switch (codice) {
     case StatoGiocatore.ATTIVO.value:
@@ -33,6 +35,33 @@ export function statoGiocatoreFromCodice(codice: string): StatoPartita {
   }
 }
 
+export class RuoloGiocatore {
+  static readonly LEADER = new RuoloGiocatore('LEADER', 'Leader');
+  static readonly GIOCATORE = new RuoloGiocatore('GIOCATORE', 'Giocatore');
+  
+  private constructor(
+    public readonly value: string,
+    public readonly descrizione: string
+  ) {}
+
+  static values(): RuoloGiocatore[] {
+    return [
+      RuoloGiocatore.LEADER,
+      RuoloGiocatore.GIOCATORE
+    ];
+  }
+}
+
+export function ruoloGiocatoreFromCodice(codice: string): RuoloGiocatore {
+  switch (codice) {
+    case RuoloGiocatore.LEADER.value:
+      return RuoloGiocatore.LEADER;
+    case RuoloGiocatore.GIOCATORE.value:
+      return RuoloGiocatore.GIOCATORE;
+    default:
+      throw new Error(`Codice RuoloGiocatore sconosciuto: ${codice}`);
+  }
+}
 
 export class StatoPartita {
   static readonly DA_GIOCARE = new StatoPartita('DA_GIOCARE', 'Da giocare');
@@ -79,6 +108,7 @@ export interface Lega {
   giornataCalcolata: number;
   giornataCorrente: number;
   statoGiornataCorrente: StatoPartita;
+  ruoloGiocatoreLega: RuoloGiocatore;
   statiGiornate?: Record<number, StatoPartita>;
 }
 

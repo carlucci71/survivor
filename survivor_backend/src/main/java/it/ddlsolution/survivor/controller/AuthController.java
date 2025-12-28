@@ -8,6 +8,7 @@ import it.ddlsolution.survivor.dto.MagicLinkRequestDTO;
 import it.ddlsolution.survivor.dto.MagicLinkResponseDTO;
 import it.ddlsolution.survivor.dto.RefreshTokenRequestDTO;
 import it.ddlsolution.survivor.entity.User;
+import it.ddlsolution.survivor.repository.UserRepository;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {
+    private final UserRepository userRepository;
 
     private final MagicLinkService magicLinkService;
     private final JwtService jwtService;
@@ -35,7 +38,6 @@ public class AuthController {
     @PostMapping("/request-magic-link")
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
-        log.info("CHIAMATO!!!");
         log.info(request.getEmail());
         try {
             magicLinkService.sendMagicLink(request.getEmail());
@@ -66,6 +68,30 @@ public class AuthController {
             user.getRole().name()
         ));
     }
+
+    @PostMapping("/myData")
+    public ResponseEntity<?> myData(@RequestHeader("Authorization")String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Authorization non Bearer");
+        }
+
+
+        final String jwt = authHeader.substring(7);
+        final Long id = Long.parseLong(jwtService.extractId(jwt));
+
+
+        User user = userRepository.findById(id).get();
+
+
+        return ResponseEntity.ok(new AuthResponseDTO(
+                jwt,
+                user.getId(),
+                user.getName(),
+                user.getRole().name()
+        ));
+    }
+
 
     @Hidden
     @GetMapping("/token")
