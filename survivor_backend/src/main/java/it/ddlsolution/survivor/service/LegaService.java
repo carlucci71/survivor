@@ -7,6 +7,7 @@ import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.mapper.LegaMapper;
+import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
@@ -29,9 +30,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LegaService {
     private final LegaRepository legaRepository;
+    private final GiocatoreLegaRepository giocatoreLegaRepository;
     private final LegaMapper legaMapper;
     private final ICalendario calendario;
     private final CacheableService cacheableService;
+    private final GiocatoreService giocatoreService;
 
 
     public List<LegaDTO> mieLeghe() {
@@ -60,6 +63,10 @@ public class LegaService {
             legaDTO = legaRepository.findProjectionById(id)
                     .map(legaMapper::toDTO)
                     .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
+
+            GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO);
+            legaDTO.setGiocatori(List.of(giocatoreDTO));
+
         }
 
         addInfoCalcolate(legaDTO);
@@ -265,13 +272,23 @@ public class LegaService {
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         legaDTO.setGiornataCorrente(giornataCorrente);
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
-        List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
             Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, giornata);
             statiGiornate.put(giornata, statoPartita);
         }
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
         legaDTO.setStatiGiornate(statiGiornate);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        Enumeratori.RuoloGiocatoreLega myRoleInLega = legaDTO.getGiocatori().stream()
+                .filter(g -> g.getUser() != null && g.getUser().getId().equals(userId))
+                .map(g -> g.getRuoliPerLega())
+                .findFirst()
+                .map(r -> r.get(legaDTO.getId()))
+                .orElseThrow(() -> new RuntimeException("Ruolo non trovato in lega"));
+
+        legaDTO.setRuoloGiocatoreLega(myRoleInLega);
 
     }
 
@@ -288,8 +305,8 @@ public class LegaService {
 
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
-                int prev= giornataCorrente - legaDTO.getGiornataIniziale();
-                if (giocataDTO.getGiornata().equals(prev) || giocataDTO.getGiornata().equals(prev+1)) {
+                int prev = giornataCorrente - legaDTO.getGiornataIniziale();
+                if (giocataDTO.getGiornata().equals(prev) || giocataDTO.getGiornata().equals(prev + 1)) {
                     giocataDTO.setEsito(null);
                 }
             }

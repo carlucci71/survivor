@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.repository;
 
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -11,5 +12,7 @@ public interface GiocatoreLegaRepository extends JpaRepository<GiocatoreLega, Gi
     List<GiocatoreLega> findByGiocatore_Id(Long giocatoreId);
     List<GiocatoreLega> findByLega_Id(Long legaId);
     Optional<GiocatoreLega> findByGiocatore_IdAndLega_Id(Long giocatoreId, Long legaId);
+
+
 }
 
