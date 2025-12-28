@@ -1,10 +1,8 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
-import it.ddlsolution.survivor.dto.GiocatoreLegaDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
-import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
