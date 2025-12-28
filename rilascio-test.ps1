@@ -18,7 +18,7 @@ $body = @{
     base = "develop"
 } | ConvertTo-Json -Depth 10
 
-Write-Host "✅ Creating PR: $title ($branch → develop)" -ForegroundColor Green
+Write-Host "Creating PR: $title ($branch → develop)" -ForegroundColor Green
 
 $headers = @{
     "Authorization" = "Bearer $env:GITHUB_PAT"
@@ -28,7 +28,7 @@ $headers = @{
 
 try {
     $response = Invoke-RestMethod -Uri "https://api.github.com/repos/carlucci71/survivor/pulls" -Method Post -Body $body -Headers $headers -ContentType "application/json"
-    Write-Host "🎉 PR CREATA: $($response.html_url)" -ForegroundColor Green
+    Write-Host "PR CREATA: $($response.html_url)" -ForegroundColor Green
 } catch {
     if ($_.Exception.Response) {
         $request = $_.Exception.Response
