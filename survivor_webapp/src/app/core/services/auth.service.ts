@@ -59,8 +59,13 @@ export class AuthService {
     );
   }
 
+  getMyData(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {});
+  }
+
+  
   private loadUserFromBE(): void {
-    this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {}).subscribe({
+    this.getMyData().subscribe({
       next: (response: AuthResponse) => {
         // handle and store token + user via existing helper
         this.handleAuthResponse(response);
