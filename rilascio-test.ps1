@@ -2,14 +2,15 @@ param([string]$Title)
 
 $branch = git rev-parse --abbrev-ref HEAD
 
-# CONTROLLA SE CI SONO COMMIT LOCALI
+# CONTROLLA COMMIT LOCALI NON PUSHATI SU QUESTO BRANCH
 $localCommits = git log origin/$branch..HEAD --oneline 2>$null
 if (-not $localCommits) {
-    Write-Host "ERRORE: Nessun commit locale su '$branch'!" -ForegroundColor Red
-    Write-Host "Fai prima: git add . && git commit -m 'tuo messaggio'" -ForegroundColor Yellow
+    Write-Host "❌ ERRORE: Nessun commit nuovo su '$branch'!" -ForegroundColor Red
+    Write-Host "💡 Questo branch non ha differenze da origin/$branch" -ForegroundColor Yellow
+    Write-Host "   - Fai commit: git add . && git commit -m 'tuo messaggio'" -ForegroundColor Yellow
+    Write-Host "   - O pusha prima: git push origin $branch" -ForegroundColor Yellow
     exit 1
 }
-
 
 # LOGICA TITOLO
 if ($Title) {
@@ -26,7 +27,7 @@ $body = @{
     base = "develop"
 } | ConvertTo-Json -Depth 10
 
-Write-Host "✅ Creating PR: $title" -ForegroundColor Green
+Write-Host "✅ Creating PR: $title ($branch → develop)" -ForegroundColor Green
 
 $headers = @{
     "Authorization" = "Bearer $env:GITHUB_PAT"
