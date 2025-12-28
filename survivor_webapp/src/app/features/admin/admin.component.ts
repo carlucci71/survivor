@@ -6,13 +6,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilService } from '../../core/services/util.service';
  
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, HeaderComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })

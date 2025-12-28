@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
@@ -39,6 +40,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
+    HeaderComponent,
     MatChipsModule,
     MatTooltipModule,
     RouterModule,

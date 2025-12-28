@@ -249,6 +249,12 @@
   }
 }
 
+/* Ensure standalone header inside this view spans full width like admin */
+.lega-dettaglio-container > .header {
+	width: 100%;
+	box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
 	.header .header-content {
 		flex-direction: column;
