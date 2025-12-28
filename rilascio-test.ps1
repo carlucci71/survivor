@@ -1,6 +1,7 @@
 param([string]$Title)
 
 $branch = git rev-parse --abbrev-ref HEAD
+$base = "develop"
 
 
 # LOGICA TITOLO
@@ -15,10 +16,10 @@ if ($Title) {
 $body = @{
     title = $title
     head = $branch
-    base = "develop"
+    base = $base
 } | ConvertTo-Json -Depth 10
 
-Write-Host "Creating PR: $title ($branch → develop)" -ForegroundColor Green
+Write-Host "$branch -> $base [$title]" -ForegroundColor Green
 
 $headers = @{
     "Authorization" = "Bearer $env:GITHUB_PAT"
