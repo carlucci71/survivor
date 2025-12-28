@@ -1,0 +1,57 @@
+[
+    {
+        "id": "allinea-test",
+        "execute-command": "/home/survivor/scripts/allinea-test.sh",
+        "command-working-directory": "/home/survivor/scripts",
+        "response-message": "Deploy script lanciato!",
+        "trigger-rule": {
+            "and": [{
+                "match": {
+                    "type": "payload-hmac-sha1",
+                    "secret": "${WEBHOOK_SECRET}",
+                    "parameter": {
+                        "source": "header",
+                        "name": "X-Hub-Signature"
+                    }
+                }
+            }, {
+                "match": {
+                    "type": "value",
+                    "value": "refs/heads/develop",
+                    "parameter": {
+                        "source": "payload",
+                        "name": "ref"
+                    }
+                }
+            }]
+        }
+    },
+    {
+        "id": "allinea-prod",
+        "execute-command": "/home/survivor/scripts/allinea-prod.sh",
+        "command-working-directory": "/home/survivor/scripts",
+        "response-message": "Deploy script lanciato!",
+        "trigger-rule": {
+            "and": [{
+                "match": {
+                    "type": "payload-hmac-sha1",
+                    "secret": "${WEBHOOK_SECRET}",
+                    "parameter": {
+                        "source": "header",
+                        "name": "X-Hub-Signature"
+                    }
+                }
+            }, {
+                "match": {
+                    "type": "value",
+                    "value": "refs/heads/main",
+                    "parameter": {
+                        "source": "payload",
+                        "name": "ref"
+                    }
+                }
+            }]
+        }
+    }
+]
+
