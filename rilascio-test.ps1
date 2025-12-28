@@ -2,15 +2,6 @@ param([string]$Title)
 
 $branch = git rev-parse --abbrev-ref HEAD
 
-# CONTROLLA COMMIT LOCALI NON PUSHATI SU QUESTO BRANCH
-$localCommits = git log origin/$branch..HEAD --oneline 2>$null
-if (-not $localCommits) {
-    Write-Host "❌ ERRORE: Nessun commit nuovo su '$branch'!" -ForegroundColor Red
-    Write-Host "💡 Questo branch non ha differenze da origin/$branch" -ForegroundColor Yellow
-    Write-Host "   - Fai commit: git add . && git commit -m 'tuo messaggio'" -ForegroundColor Yellow
-    Write-Host "   - O pusha prima: git push origin $branch" -ForegroundColor Yellow
-    exit 1
-}
 
 # LOGICA TITOLO
 if ($Title) {
@@ -39,5 +30,25 @@ try {
     $response = Invoke-RestMethod -Uri "https://api.github.com/repos/carlucci71/survivor/pulls" -Method Post -Body $body -Headers $headers -ContentType "application/json"
     Write-Host "🎉 PR CREATA: $($response.html_url)" -ForegroundColor Green
 } catch {
-    Write-Host "❌ Errore API: $($_.Exception.Message)" -ForegroundColor Red
+    if ($_.Exception.Response) {
+        $request = $_.Exception.Response
+        $reader = New-Object System.IO.StreamReader($request.GetResponseStream())
+        $reader.BaseStream.Position = 0
+        $reader.DiscardBufferedData()
+        $responseBody = $reader.ReadToEnd()
+        $reader.Close()
+        
+        try {
+            $errorJson = $responseBody | ConvertFrom-Json
+            if ($errorJson.errors -and $errorJson.errors.Count -gt 0) {
+                Write-Host "$($errorJson.errors[0].message)" -ForegroundColor Red
+            } else {
+                Write-Host "$($errorJson.message)" -ForegroundColor Red
+            }
+        } catch {
+            Write-Host "Errore API: $responseBody" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "$($_.Exception.Message)" -ForegroundColor Red
+    }
 }
