@@ -1,22 +1,5 @@
 <div class="lega-dettaglio-container">
-  <mat-toolbar color="primary" class="header">
-    <div class="header-content">
-      <h1>Dettaglio lega</h1>
-      <div class="user-info">
-        <button mat-button (click)="goBack()" class="btn-back">
-          ← Torna alla Home
-        </button>
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="logout()"
-          class="btn-logout"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </mat-toolbar>
+  <app-header title="Dettaglio lega" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
