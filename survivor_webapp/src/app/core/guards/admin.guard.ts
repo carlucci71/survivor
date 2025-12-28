@@ -8,7 +8,6 @@ import { firstValueFrom } from 'rxjs';
 export const adminGuard: CanActivateFn = async (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const http = inject(HttpClient);
 
   // Prefer token-based role check (server-signed)
   if (authService.isAdmin()) return true;
