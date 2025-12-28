@@ -69,6 +69,27 @@
           }
         </div>
       }
+      </section>
+      <section class="leghe-section">
+      <h2>Nuove leghe</h2>
+        <div class="leghe-grid">
+          <mat-card class="lega-card">
+            <mat-card-header>
+              <mat-card-title>Crea una nuova lega</mat-card-title>
+            </mat-card-header>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="goToCreaLega()">Crea</button>
+            </mat-card-actions>
+          </mat-card>
+          <mat-card class="lega-card">
+            <mat-card-header>
+              <mat-card-title>Unisciti ad una lega esistente</mat-card-title>
+            </mat-card-header>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="goToUniscitiLega()">Unisciti</button>
+            </mat-card-actions>
+          </mat-card>
+      </div>
     </section>
   </main>
 </div>

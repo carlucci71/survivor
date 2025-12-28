@@ -37,6 +37,16 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'creaLega',
+    loadComponent: () => import('./features/lega-nuova/lega-nuova.component').then(m => m.LegaNuovaComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'joinLega',
+    loadComponent: () => import('./features/lega-join/lega-join.component').then(m => m.LegaJoinComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }

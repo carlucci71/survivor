@@ -85,4 +85,12 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/lega', id]);
   }
 
+  goToCreaLega(): void {
+    this.router.navigate(['/creaLega']);
+  }
+
+  goToUniscitiLega(): void {
+    this.router.navigate(['/joinLega']);
+  }
+
 }

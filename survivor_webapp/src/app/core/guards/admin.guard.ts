@@ -15,11 +15,15 @@ export const adminGuard: CanActivateFn = async (route, state) => {
 
   // Fallback: ask the server for the current user's role
   try {
-    const me = await firstValueFrom(http.get<any>(`${environment.apiUrl}/auth/me`));
+    const me = await firstValueFrom(authService.getMyData());
+
+
+
     if (me && me.role === 'ADMIN') {
       return true;
     }
   } catch (e) {
+    console.log('ERRORE: ' + e);
     // ignore and redirect
   }
 
