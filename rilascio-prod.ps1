@@ -6,10 +6,10 @@ $base = "main"
 if ($Title) {
     $title = $Title
 } else {
-    $title = "Allineamento develop -> main"  # No caratteri speciali
+    $title = "Rilascio in main"
 }
 
-Write-Host "Creating PR: $title ($branch -> $base)" -ForegroundColor Green
+Write-Host "$branch -> $base [$title]" -ForegroundColor Green
 
 # Encoding UTF8 forzato per JSON pulito
 $body = @{
@@ -17,8 +17,6 @@ $body = @{
     head = $branch
     base = $base
 } | ConvertTo-Json -Depth 10 -Compress
-
-Write-Host "JSON: $body"  # Debug
 
 $headers = @{
     "Authorization" = "Bearer $env:GITHUB_PAT"
