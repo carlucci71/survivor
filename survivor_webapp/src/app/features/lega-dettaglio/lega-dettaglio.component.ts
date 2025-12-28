@@ -6,6 +6,7 @@ import { LegaService } from '../../core/services/lega.service';
 import {
   Giocatore,
   Lega,
+  RuoloGiocatore,
   StatoGiocatore,
   StatoPartita,
 } from '../../core/models/interfaces.model';
@@ -160,14 +161,14 @@ export class LegaDettaglioComponent {
       ret = false;
     }
     if (
-      !this.isAdmin() &&
+      !this.isAdmin() && !this.isLeaderLega() &&
       (giocatore.user == null ||
         giocatore.user.id !== this.authService.getCurrentUser()?.id)
     ) {
       ret = false;
     }
     if (
-      !this.isAdmin() &&
+      !this.isAdmin() && !this.isLeaderLega() &&
       this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
     ) {
       ret = false;
@@ -242,52 +243,16 @@ export class LegaDettaglioComponent {
     );
   }
 
-  selectGiocatoreVisible(giocatore: Giocatore): boolean {
-    if (
-      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
-      StatoGiocatore.ELIMINATO.value
-    ) {
-      return false;
-    }
-    if (!this.canEditUserRow(giocatore)) {
-      return false;
-    }
-
-    let giocate = 0;
-    if (giocatore.giocate) {
-      giocate += giocatore.giocate.length;
-    }
-    const prossimaGiocata = (this.lega?.giornataIniziale || 0) + giocate;
-
-    if (prossimaGiocata > (this.lega?.giornataCorrente || 0)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  canEditUserRow(giocatore: Giocatore): boolean {
-    if (this.isAdmin()) {
-      return true;
-    }
-    if (
-      giocatore == null ||
-      giocatore.user == null ||
-      giocatore.user.id == null
-    ) {
-      return false;
-    }
-    const userId = giocatore.user.id;
-    if (this.authService.isAdmin()) return true;
-    const currentId = this.authService.getCurrentUser()?.id;
-    return currentId !== null && currentId === userId;
-  }
 
   getCurrentUser() {
     return this.authService.getCurrentUser();
   }
   isAdmin(): boolean {
     return this.authService.isAdmin();
+  }
+  isLeaderLega(): boolean {
+    const ruolo = this.lega?.ruoloGiocatoreLega;
+    return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
   logout() {
     this.authService.logout();

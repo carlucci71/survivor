@@ -1,7 +1,10 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
+import it.ddlsolution.survivor.dto.GiocatoreLegaDTO;
+import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
@@ -41,5 +44,13 @@ public class GiocatoreService {
         giocatoreRepository.save(giocatore);
         return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).get());
     }
+
+    public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElseThrow(()->new RuntimeException("Ruolo non trovato in lega"));
+        return giocatoreMapper.toDTO(giocatore);
+    }
+
 }
 

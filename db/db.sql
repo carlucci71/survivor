@@ -25,6 +25,7 @@ CREATE TABLE giocatore_lega (
     id_giocatore integer NOT NULL,
     id_lega integer NOT NULL,
 	stato char(1) not null,
+	ruolo char(1) not null,
     PRIMARY KEY (id_giocatore, id_lega)
 );
 CREATE TABLE sospensione_lega (
@@ -411,44 +412,44 @@ insert into giocatore(nome,user_id) values('VINCENZO D''ABBIERO',
 (select id from users where email = ''));
 insert into giocatore(nome,user_id) values('VINCENZO RUSSO',
 (select id from users where email = ''));
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (1,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (2,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (3,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (4,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (5,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (6,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (7,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (8,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (9,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (10,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (11,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (12,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (13,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (14,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (15,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (16,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (17,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (18,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (19,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (20,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (21,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (22,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (23,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (24,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (25,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (26,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (27,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (28,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (29,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (30,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (31,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (32,1,'A');
-insert into giocatore_lega(id_giocatore,id_lega,stato) values (33,1,'A');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (1,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (2,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (3,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (4,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (5,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (6,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (7,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (8,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (9,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (10,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (11,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (12,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (13,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (14,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (15,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (16,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (17,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (18,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (19,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (20,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (21,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (22,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (23,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (24,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (25,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (26,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (27,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (28,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (29,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (30,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (31,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (32,1,'A','G');
+insert into giocatore_lega(id_giocatore,id_lega,stato,ruolo) values (33,1,'A','G');
 
-insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,2,'A' from giocatore where nome = 'DANIELE CARLUCCI';
-insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,3,'A' from giocatore where nome = 'DANIELE CARLUCCI';
-insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,4,'A' from giocatore where nome = 'DANIELE CARLUCCI';
-insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,5,'A' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,2,'A','L' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,3,'A','L' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,4,'A','L' from giocatore where nome = 'DANIELE CARLUCCI';
+insert into giocatore_lega (id_giocatore, id_lega, stato) select  id,5,'A','L' from giocatore where nome = 'DANIELE CARLUCCI';
 
 --GIORNATA 1
 INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES (1,1,1,(select id from squadra where sigla = 'GEN' and id_campionato = 'SERIE_A'),null,1);
