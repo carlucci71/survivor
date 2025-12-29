@@ -139,7 +139,7 @@ public class LegaService {
         return statoGiornata(partite, giornata, legaDTO);
     }
 
-    private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
+    public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
         List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         Enumeratori.StatoPartita statoPartita;
         if (listaSospensioni.contains(giornata)) {
@@ -150,7 +150,7 @@ public class LegaService {
         return statoPartita;
     }
 
-    private Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
+    public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
 

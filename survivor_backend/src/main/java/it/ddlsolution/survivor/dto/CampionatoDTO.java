@@ -13,5 +13,6 @@ public class CampionatoDTO {
     private List<LegaDTO> leghe;
     private List<SquadraDTO> squadre;
     private int numGiornate;
+    private int giornataDaGiocare;
 }
 

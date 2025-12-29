@@ -3,13 +3,17 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
+import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.entity.SospensioneLega;
+import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
+import it.ddlsolution.survivor.mapper.SportMapper;
 import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
+import it.ddlsolution.survivor.repository.SportRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,10 +36,18 @@ public class CacheableService {
     private final RestTemplate restTemplate;
     private final SospensioneLegaRepository sospensioneLegaRepository;
     private final SospensioneLegaMapper sospensioneLegaMapper;
+    private final SportRepository sportRepository;
+    private final SportMapper sportMapper;
 
     @Cacheable(value = "campionati")
     public List<CampionatoDTO> allCampionati() {
         return campionatoMapper.toDTOList(campionatoRepository.findAll());
+    }
+
+    @Cacheable(value = "sport")
+    public List<SportDTO> all() {
+        List<Sport> sport = sportRepository.findAll();
+        return sportMapper.toDTOList(sport);
     }
 
     @Cacheable(cacheNames = "cache-url", key = "#root.args[0]")

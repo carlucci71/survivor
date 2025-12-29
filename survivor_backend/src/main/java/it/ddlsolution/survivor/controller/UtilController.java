@@ -24,7 +24,6 @@ public class UtilController {
 
     private final Environment environment;
     private final ICalendario calendario;
-    private final LegaService legaService;
 
 
     @GetMapping("/profilo")

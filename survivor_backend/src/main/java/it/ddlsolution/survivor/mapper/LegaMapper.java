@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.mapper;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Lega;
-import it.ddlsolution.survivor.repository.LegaProjection;
+import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

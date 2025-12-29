@@ -1,5 +1,74 @@
-<app-header title="Nuova Lega" (back)="goBack()" (logout)="logout()"></app-header>
+<app-header
+  title="Nuova Lega"
+  (back)="goBack()"
+  (logout)="logout()"
+></app-header>
 
 <main class="main-content">
-	<p>lega-nuova works!</p>
+  <div class="main-panel">
+    <h2>Censisci una nuova lega</h2>
+
+    <div *ngIf="isLoading" class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Caricamento...</p>
+    </div>
+
+    <mat-card *ngIf="!isLoading" class="message-box">
+      <mat-card-content>
+        <form class="form-vertical">
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome lega</mat-label>
+              <input matInput placeholder="Nome lega" 
+			  name="nome"
+                [(ngModel)]="nome"
+			  />
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Sport</mat-label>
+              <mat-select
+                placeholder="Sport"
+                name="sportSel"
+                [(ngModel)]="sportSel"
+                (selectionChange)="selezionaSport()"
+              >
+                @for (sport of sportDisponibili; track sport.id) {
+                <mat-option [value]="sport.id">{{ sport.nome }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Campionato</mat-label>
+              <mat-select
+                placeholder="Campionato"
+				name="campionatoSel"
+                [(ngModel)]="campionatoSel"
+                (selectionChange)="mostraUltimiRisultati()"
+              >
+                @for (campionato of campionatiDisponibili; track campionato.id) {
+                <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}</mat-label>
+              <input matInput placeholder="Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}" 
+			  name="giornataIniziale"
+                [(ngModel)]="giornataIniziale"
+				type="number"
+			  />
+            </mat-form-field>
+          </div>
+		</form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </main>

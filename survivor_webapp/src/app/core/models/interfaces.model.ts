@@ -139,6 +139,8 @@ export interface Campionato {
   sport?: Sport;
   leghe?: Lega[];
   squadre?: Squadra[];
+  numGiornate?: number;
+  giornataDaGiocare?: number;
 }
 
 export interface Squadra {
