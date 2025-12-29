@@ -140,7 +140,7 @@ export interface Campionato {
   leghe?: Lega[];
   squadre?: Squadra[];
   numGiornate?: number;
-  giornataCorrente?: number;
+  giornataDaGiocare?: number;
 }
 
 export interface Squadra {

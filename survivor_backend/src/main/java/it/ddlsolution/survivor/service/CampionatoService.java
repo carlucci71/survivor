@@ -7,7 +7,6 @@ import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +14,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CampionatoService {
     private final CacheableService cacheableService;
-//    private final LegaService legaService;
-    //private final ICalendario calendario;
+    private final StatoGiornataService statoGiornataService;
+    private final ICalendario calendario;
 
     public Optional<CampionatoDTO> findCampionato(String id) {
         return allCampionati()
@@ -27,19 +26,17 @@ public class CampionatoService {
 
     public List<CampionatoDTO> allCampionati() {
         List<CampionatoDTO> campionatiDTO = cacheableService.allCampionati();
-        /*
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            int giornata = 1;
-            {
-      //          List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
-//                Enumeratori.StatoPartita statoPartita = legaService.statoGiornata(partite, giornata);
+            Enumeratori.StatoPartita statoPartita;
+            int giornata = 0;
+            do  {
                 giornata++;
-            }
-            while (giornata < 38) ;
-
+                List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
+                statoPartita = statoGiornataService.statoGiornata(partite, giornata);
+            }while ( giornata <= campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
+            campionatoDTO.setGiornataDaGiocare(giornata);
         }
 
-         */
         return campionatiDTO;
     }
 
@@ -49,4 +46,3 @@ public class CampionatoService {
                 .toList();
     }
 }
-

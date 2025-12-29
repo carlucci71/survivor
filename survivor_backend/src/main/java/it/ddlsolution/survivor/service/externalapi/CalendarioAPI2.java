@@ -1,13 +1,9 @@
 package it.ddlsolution.survivor.service.externalapi;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
-import it.ddlsolution.survivor.service.CampionatoService;
-import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.util.Enumeratori;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -35,8 +31,7 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 @RequiredArgsConstructor
 public class CalendarioAPI2 implements ICalendario {
 
-    private final CampionatoService campionatoService;
-    private final CacheableService campionatoCacheableService;
+    private final CacheableService cacheableService;
 
     @Value("${external-api.calendario.implementation.API2.url-calendar}")
     String urlCalendar;
@@ -51,7 +46,7 @@ public class CalendarioAPI2 implements ICalendario {
 
     @Override
     public List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi) {
-        CampionatoDTO campionatoDTO = campionatoCacheableService.allCampionati()
+        CampionatoDTO campionatoDTO = cacheableService.allCampionati()
                 .stream()
                 .filter(c -> c.getId().equals(campionato))
                 .findFirst()
@@ -89,7 +84,7 @@ public class CalendarioAPI2 implements ICalendario {
     @Override
     public List<PartitaDTO> partite(String sport, String campionato) {
         List<PartitaDTO> ret = new ArrayList<>();
-        CampionatoDTO campionatoDTO = campionatoService.findCampionato(campionato).orElseThrow(() -> new RuntimeException("Campionato non trovato: " + campionato));
+        CampionatoDTO campionatoDTO = cacheableService.allCampionati().stream().filter(c -> c.getId().equals(campionato)).findFirst().orElseThrow(() -> new RuntimeException("Campionato non trovato: " + campionato));
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
             List<PartitaDTO> calendarioGiornata = getPartite(sport, campionato, giornata);
             ret.addAll(calendarioGiornata);
@@ -115,7 +110,7 @@ public class CalendarioAPI2 implements ICalendario {
             throw new RuntimeException("Campionato da configurare: " + campionato);
         }
         String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, urlGiornata);
-        Map response = campionatoCacheableService.cacheUrl(urlResolved, Map.class);
+        Map response = cacheableService.cacheUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
         if (sport.equals("CALCIO") || sport.equals("BASKET")) {
             elaboraCalcioBasket(sport, campionato, giornata, m, ret);
@@ -261,7 +256,7 @@ public class CalendarioAPI2 implements ICalendario {
 
     private String calcolaGiornataNBA(String sport, String campionato, int giornata, String fase) {
         String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id);
-        Map responseInfo = campionatoCacheableService.cacheUrl(urlResolved, Map.class);
+        Map responseInfo = cacheableService.cacheUrl(urlResolved, Map.class);
         String startDate = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(fase)).get("startDate").toString();
         LocalDate ldStartDate = OffsetDateTime.parse(startDate).toLocalDate();
         ldStartDate = ldStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
