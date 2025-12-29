@@ -2,7 +2,7 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.entity.Campionato;
-import it.ddlsolution.survivor.repository.CampionatoProjection;
+import it.ddlsolution.survivor.entity.projection.CampionatoProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

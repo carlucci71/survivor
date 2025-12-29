@@ -5,6 +5,7 @@ import it.ddlsolution.survivor.dto.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.service.GiocataService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,8 +15,8 @@ public class GiocataController {
     private final GiocataService giocataService;
 
     @PostMapping
-    public GiocatoreDTO inserisciGiocata(@RequestBody GiocataRequestDTO request) {
-        return giocataService.inserisciGiocata(request);
+    public ResponseEntity<GiocatoreDTO> inserisciGiocata(@RequestBody GiocataRequestDTO request) {
+        return ResponseEntity.ok(giocataService.inserisciGiocata(request));
     }
 }
 

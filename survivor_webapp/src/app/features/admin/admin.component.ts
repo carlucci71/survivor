@@ -23,7 +23,6 @@ export class AdminComponent implements OnInit {
   isLoading = true;
 
   constructor(
-    private http: HttpClient,
     private authService: AuthService,
     private utilService: UtilService,
     private router: Router

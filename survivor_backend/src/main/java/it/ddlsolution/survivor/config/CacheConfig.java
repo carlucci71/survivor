@@ -30,9 +30,10 @@ public class CacheConfig {
         CaffeineCache cacheUrl = new CaffeineCache("cache-url", commonCaffeine.build());
         CaffeineCache sospensioni = new CaffeineCache("sospensioni", commonCaffeine.build());
         CaffeineCache campionati = new CaffeineCache("campionati", campionatiCaffeine.build());
+        CaffeineCache sport = new CaffeineCache("sport", campionatiCaffeine.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(cacheUrl, sospensioni, campionati));
+        manager.setCaches(List.of(cacheUrl, sospensioni, campionati,sport));
         return manager;
     }
 }
