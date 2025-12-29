@@ -115,7 +115,7 @@ insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into sport(id,nome) values('TENNIS','Tennis');
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
-insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie A',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie B',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',38);

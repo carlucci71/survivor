@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.service.CacheableService;
+import it.ddlsolution.survivor.service.SportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +15,11 @@ import java.util.List;
 @RequestMapping("/sport")
 @RequiredArgsConstructor
 public class SportController {
-    private final CacheableService cacheableService;
+    private final SportService sportService;
 
     @GetMapping
     public ResponseEntity<List<SportDTO>> inserisciGiocata() {
-        return ResponseEntity.ok(cacheableService.all());
+        return ResponseEntity.ok(sportService.all());
     }
 }
 

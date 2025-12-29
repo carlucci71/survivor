@@ -50,8 +50,8 @@
                 [(ngModel)]="campionatoSel"
                 (selectionChange)="mostraUltimiRisultati()"
               >
-                @for (campionato of campionatiDisponibili; track campionato.sigla) {
-                <mat-option [value]="campionato.sigla">{{ campionato.nome }}</mat-option>
+                @for (campionato of campionatiDisponibili; track campionato.id) {
+                <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -59,8 +59,8 @@
 
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Giornata iniziale</mat-label>
-              <input matInput placeholder="Giornata iniziale" 
+              <mat-label>Giornata iniziale {{campionatoSel?.giornataCorrente}}-{{campionatoSel?.numGiornate}}</mat-label>
+              <input matInput placeholder="Giornata iniziale {{campionatoSel?.giornataCorrente}}-{{campionatoSel?.numGiornate}}" 
 			  name="giornataIniziale"
                 [(ngModel)]="giornataIniziale"
 				type="number"

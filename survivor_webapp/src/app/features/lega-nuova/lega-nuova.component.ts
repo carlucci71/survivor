@@ -10,7 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { SportService } from '../../core/services/sport.service';
-import { Sport } from '../../core/models/interfaces.model';
+import { Campionato, Sport } from '../../core/models/interfaces.model';
+import { CampionatoService } from '../../core/services/campionato.service';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -29,17 +30,19 @@ import { Sport } from '../../core/models/interfaces.model';
   styleUrls: ['./lega-nuova.component.scss'],
 })
 export class LegaNuovaComponent implements OnInit {
-  constructor(private router: Router, 
+  constructor(
+    private router: Router,
     private authService: AuthService,
-    private sportService: SportService
+    private sportService: SportService,
+    private campionatoService: CampionatoService
   ) {}
   isLoading = true;
   sportSel: string | null = null;
-  campionatoSel: string | null = null;
+  campionatoSel: Campionato | null = null;
   nome: string | null = null;
-  giornataIniziale: number = 1;
+  giornataIniziale: number | null = null;
   sportDisponibili: Sport[] = [];
-  campionatiDisponibili: any[] = [];
+  campionatiDisponibili: Campionato[] = [];
   ngOnInit(): void {
     this.caricaSport();
     this.isLoading = false;
@@ -48,7 +51,7 @@ export class LegaNuovaComponent implements OnInit {
     this.router.navigate(['/home']);
   }
   caricaSport(): void {
-        this.isLoading = true;
+    this.isLoading = true;
     this.sportService.getSport().subscribe({
       next: (sport) => {
         this.sportDisponibili = sport;
@@ -57,7 +60,7 @@ export class LegaNuovaComponent implements OnInit {
       error: (error) => {
         console.error('Errore nel caricamento degli sport:', error);
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -67,7 +70,22 @@ export class LegaNuovaComponent implements OnInit {
   }
 
   mostraUltimiRisultati(sigla?: string) {}
-  selezionaSport(){
-    
+
+  selezionaSport() {
+    if (this.sportSel) {
+      this.campionatoService.getCampionatoBySport(this.sportSel).subscribe({
+        next: (campionati) => {
+          this.campionatiDisponibili = campionati;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error(
+            'Errore nel caricamento del campionato: ' + this.sportSel,
+            error
+          );
+          this.isLoading = false;
+        },
+      });
+    }
   }
 }
