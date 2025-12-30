@@ -77,9 +77,9 @@
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                 "
               >
-                <span class="status-pill">
+                <span clasXs="status-pill">
                   <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <span
+                    <div
                       class="team-name"
                       [ngClass]="{
                         ok: giocata.esito === 'OK',
@@ -87,15 +87,18 @@
                         empty: !giocata.esito
                       }"
                       [title]="getSquadraNome(giocata.squadraSigla)"
-                    >{{ getSquadraNome(giocata.squadraSigla) }}</span>
-                  </ng-container>
+                    >{{ getSquadraNome(giocata.squadraSigla) }}</div>
+                    
                   @if (visualizzaGiocata(giornata, giocatore)) {
+                    <div>
                     <mat-icon
                       class="gioca-icon"
                       matTooltip="Gioca ora"
                       (click)="giocaGiornata(giocatore, giornata)"
                     >{{ getGiocaIcon() }}</mat-icon>
+                    </div>
                   }
+                  </ng-container>
                 </span>
               </td>
             </ng-container>

@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.config.cache;
+package it.ddlsolution.survivor.config.scheduled;
 
 import it.ddlsolution.survivor.service.CacheableService;
 import lombok.RequiredArgsConstructor;

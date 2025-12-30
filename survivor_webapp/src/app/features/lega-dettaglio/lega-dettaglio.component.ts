@@ -73,8 +73,8 @@ export class LegaDettaglioComponent {
     private squadraService: SquadraService,
     private router: Router,
     private giocataService: GiocataService,
-    private dialog: MatDialog
-    , private loadingService: LoadingService
+    private dialog: MatDialog,
+    private loadingService: LoadingService
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -94,8 +94,8 @@ export class LegaDettaglioComponent {
   }
 
   getDesGiornata(index: number): string {
-    if (this.desGiornate && this.desGiornate[index]){
-    return this.desGiornate[index];
+    if (this.desGiornate && this.desGiornate[index]) {
+      return this.desGiornate[index];
     } else {
       return 'Giornata ' + index;
     }
@@ -194,22 +194,21 @@ export class LegaDettaglioComponent {
     return ret;
   }
 
-  getDesGiornate(){
-        const idSport = this.lega?.campionato?.sport?.id;
-        if (idSport) {
-          this.campionatoService.getDesGiornate(idSport).subscribe({
-            next: (des) => {
-              this.desGiornate=des;
-            },
-            error: (error) => {
-              console.error('Errore nel caricamento delle leghe:', error);
-              try {
-                this.loadingService.reset();
-              } catch (e) {}
-            },
-          });
-        }
-
+  getDesGiornate() {
+    const idSport = this.lega?.campionato?.sport?.id;
+    if (idSport) {
+      this.campionatoService.getDesGiornate(idSport).subscribe({
+        next: (des) => {
+          this.desGiornate = des;
+        },
+        error: (error) => {
+          console.error('Errore nel caricamento delle leghe:', error);
+          try {
+            this.loadingService.reset();
+          } catch (e) {}
+        },
+      });
+    }
   }
 
   caricaTabella() {
@@ -220,9 +219,9 @@ export class LegaDettaglioComponent {
       ? this.lega?.giornataCalcolata + 1
       : giornataIniziale;
 
-    const numGg=this.lega?.campionato?.numGiornate || 0;
-    if (numGg<maxGiornata){
-      maxGiornata=numGg;
+    const numGg = this.lega?.campionato?.numGiornate || 0;
+    if (numGg < maxGiornata) {
+      maxGiornata = numGg;
     }
 
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
@@ -254,11 +253,10 @@ export class LegaDettaglioComponent {
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente
   getGiocataByGiornata(giocatore: any, giornata: number): any | null {
+
     if (!giocatore || !giocatore.giocate) return null;
-    return (
-      giocatore.giocate.find((g: any) => Number(g?.giornata) === giornata) ||
-      null
-    );
+    const giocata = (giocatore.giocate.find((g: any) => Number(g?.giornata) === giornata) ||null);
+    return giocata;
   }
 
   track(index: number, item: any) {
