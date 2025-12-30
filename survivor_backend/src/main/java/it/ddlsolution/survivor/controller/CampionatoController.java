@@ -23,9 +23,9 @@ public class CampionatoController {
         return ResponseEntity.ok(campionatoService.campionatiBySport(idSport));
     }
 
-    @GetMapping("desGiornate/{idSport}")
-    public ResponseEntity<Map<Integer, String>> desGiornate(@PathVariable("idSport") String idSport ) {
-        return ResponseEntity.ok(campionatoService.desGiornate(idSport));
+    @GetMapping("desGiornate")
+    public ResponseEntity<Map<String,Map<Integer, String>>> desGiornate() {
+        return ResponseEntity.ok(campionatoService.desGiornate());
     }
 
 }

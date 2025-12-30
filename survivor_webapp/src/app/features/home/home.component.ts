@@ -20,7 +20,7 @@ import { MatTooltip } from "@angular/material/tooltip";
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule, MatIcon, MatTooltip],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;

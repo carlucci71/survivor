@@ -11,6 +11,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,8 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     @Mapping(target = "giornataCorrente", ignore = true)
     @Mapping(target = "statoGiornataCorrente", ignore = true)
     public abstract LegaDTO toDTO(LegaProjection legaProjection);
+
+    public abstract List<LegaDTO> toDTOListProjection(List<LegaProjection> legaProjection);
 
     @Mapping(target = "giocatoreLeghe", ignore = true)
     @Mapping(target = "giocate", ignore = true)

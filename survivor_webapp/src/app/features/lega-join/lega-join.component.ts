@@ -8,7 +8,7 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-lega-join',
   imports: [CommonModule, HeaderComponent],
   templateUrl: './lega-join.component.html',
-  styleUrl: './lega-join.component.scss'
+  styleUrls: ['./lega-join.component.scss']
 })
 export class LegaJoinComponent {
   constructor(private router: Router, private authService: AuthService) {}

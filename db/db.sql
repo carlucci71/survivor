@@ -525,6 +525,9 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 
 insert into sospensione_lega(id_lega,giornata) values (1,16);
 
+delete from users where id=0;
+INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));
 

@@ -19,7 +19,7 @@ public class LogDispositivaService {
     private final ParamLogDispositivaRepository paramLogDispositivaRepository;
     private final LogDispositivaMapper logDispositivaMapper;
 
-    @Transactional()
+    @Transactional
     public LogDispositivaDTO salva(LogDispositivaDTO logDispositivaDTO) {
         LogDispositiva logDispositiva = logDispositivaMapper.toEntity(logDispositivaDTO);
         // Assicuro che ogni ParamLogDispositiva referenzi il parent (bidirectional relationship)
@@ -29,7 +29,6 @@ public class LogDispositivaService {
             }
         }
 
-        // Salvo il parent; la cascade = CascadeType.ALL su LogDispositiva provvederà a salvare i figli
         logDispositiva = logDispositivaRepository.save(logDispositiva);
         return logDispositivaMapper.toDTO(logDispositiva);
     }

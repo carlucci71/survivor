@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.aspect.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
@@ -15,6 +16,7 @@ public class GiocataController {
     private final GiocataService giocataService;
 
     @PostMapping
+    @LoggaDispositiva(tipologia = "gioca")
     public ResponseEntity<GiocatoreDTO> inserisciGiocata(@RequestBody GiocataRequestDTO request) {
         return ResponseEntity.ok(giocataService.inserisciGiocata(request));
     }

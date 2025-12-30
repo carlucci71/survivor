@@ -17,6 +17,8 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
            "FROM Lega l LEFT JOIN l.campionato c LEFT JOIN c.sport s WHERE l.id = :id")
     Optional<LegaProjection> findProjectionById(@Param("id") Long id);
 
+    @Query("select l from Lega l")
+    List<LegaProjection> allLeghe();
 
 }
 

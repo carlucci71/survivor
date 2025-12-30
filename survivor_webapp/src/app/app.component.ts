@@ -7,7 +7,7 @@ import { environment } from '../environments/environment';
   selector: 'app-root',
   imports: [RouterOutlet, LoadingOverlayComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   title = 'survivor_webapp';

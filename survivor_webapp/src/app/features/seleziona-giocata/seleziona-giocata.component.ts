@@ -17,11 +17,12 @@ import {
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { LegaService } from '../../core/services/lega.service';
+import { CampionatoService } from '../../core/services/campionato.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
   templateUrl: './seleziona-giocata.component.html',
-  styleUrl: './seleziona-giocata.component.scss',
+  styleUrls: ['./seleziona-giocata.component.scss'],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -44,6 +45,7 @@ export class SelezionaGiocataComponent implements OnInit {
   giocatore: any;
   constructor(
     private legaService: LegaService,
+    private campionatoService: CampionatoService,
     public dialogRef: MatDialogRef<SelezionaGiocataComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
@@ -66,13 +68,20 @@ export class SelezionaGiocataComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.squadraSelezionata) {
-      this.mostraUltimiRisultati();
+      this.mostraUltimiRisultati(); 
       this.mostraProssimePartite();
     }
   }
 
   trackByGiornata(index: number, item: any) {
     return item && item.giornata ? item.giornata : index;
+  }
+
+  getDesGiornata(index: number): string {
+    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
+      return "";
+    }
+    return this.campionatoService.getDesGiornata(this.lega?.campionato?.sport.id,index);
   }
 
   mostraUltimiRisultati(sigla?: string) {

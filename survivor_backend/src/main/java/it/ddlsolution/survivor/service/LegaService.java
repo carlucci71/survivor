@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class LegaService {
     private final GiocatoreService giocatoreService;
 
 
+    @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -45,6 +47,7 @@ public class LegaService {
         return legheDTO;
     }
 
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
@@ -54,6 +57,7 @@ public class LegaService {
         return legheDTO;
     }
 
+    @Transactional(readOnly = true)
     public LegaDTO getLegaDTO(Long id, boolean completo) {
         LegaDTO legaDTO;
         if (completo) {
@@ -91,6 +95,7 @@ public class LegaService {
     }
 
 
+    @Transactional
     public LegaDTO salva(LegaDTO legaDTO) {
         // Carica l'entità esistente dal database
         Lega lega = legaRepository.findById(legaDTO.getId())
@@ -134,12 +139,18 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(lega));
     }
 
+    @Transactional(readOnly = true)
+    public List<LegaDTO> allLeghe(){
+        return legaMapper.toDTOListProjection(legaRepository.allLeghe());
+    }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
         List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
         return statoGiornata(partite, giornata, legaDTO);
     }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
         List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         Enumeratori.StatoPartita statoPartita;
@@ -151,6 +162,7 @@ public class LegaService {
         return statoPartita;
     }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
@@ -187,6 +199,7 @@ public class LegaService {
 
 
     @LoggaDispositiva(tipologia = "calcola")
+    @Transactional
     public LegaDTO calcola(Long idLega, int giornataDaCalcolare) {
         log.info("CALCOLA");
 
@@ -275,11 +288,11 @@ public class LegaService {
     private void addInfoCalcolate(LegaDTO legaDTO) {
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
-        if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente){
-            giornataCorrente=legaDTO.getCampionato().getNumGiornate();
+        if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente) {
+            giornataCorrente = legaDTO.getCampionato().getNumGiornate();
         }
 
-            legaDTO.setGiornataCorrente(giornataCorrente);
+        legaDTO.setGiornataCorrente(giornataCorrente);
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
             Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, giornata);
@@ -295,7 +308,7 @@ public class LegaService {
                 .map(g -> g.getRuoliPerLega())
                 .findFirst()
                 .map(r -> r.get(legaDTO.getId()))
-                .orElseThrow(() -> new RuntimeException("Ruolo non trovato in lega"));
+                .orElseGet(() -> Enumeratori.RuoloGiocatoreLega.GIOCATORE);
 
         legaDTO.setRuoloGiocatoreLega(myRoleInLega);
 
@@ -303,20 +316,36 @@ public class LegaService {
 
 
     @LoggaDispositiva(tipologia = "undoCalcola")
+    @Transactional
     public LegaDTO undoCalcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         int giornataCorrente = legaDTO.getGiornataCorrente();
-        Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
-        if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
-            nuovaGiornataCalcolata = null;
+        //if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA)
+        {
+            Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
+            if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
+                nuovaGiornataCalcolata = null;
+            }
+            legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
         }
-        legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
-
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
-                int prev = giornataCorrente - legaDTO.getGiornataIniziale();
-                if (giocataDTO.getGiornata().equals(prev) || giocataDTO.getGiornata().equals(prev + 1)) {
+                //ANNULLO GIORNATA CORRENTE
+                int currGG = giornataCorrente - legaDTO.getGiornataIniziale() + 1;
+                if (giocataDTO.getGiornata().equals(currGG)) {
                     giocataDTO.setEsito(null);
+                }
+                if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
+                    int prev = currGG - 1;
+                    if (giocataDTO.getGiornata().equals(prev) ) {
+                        giocataDTO.setEsito(null);
+                    }
+                }
+                if (legaDTO.getGiornataCalcolata()==null && legaDTO.getGiornataIniziale() == giornataCorrente - 1){
+                    int prev = currGG - 1;
+                    if (giocataDTO.getGiornata().equals(prev) ) {
+                        giocataDTO.setEsito(null);
+                    }
                 }
             }
             long contaKO = giocatoreDTO.getGiocate().stream()

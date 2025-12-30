@@ -1,6 +1,5 @@
 package it.ddlsolution.survivor.exception;
 
-import it.ddlsolution.survivor.service.ExceptionMapperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
