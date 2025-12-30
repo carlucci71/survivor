@@ -77,24 +77,26 @@ public class EnumAPI2 {
         //        FirstRoundQualifizioni("qualifying-1st-round"),
 //        SecondRoundQualifizioni("qualifying-2nd-round"),
 //        FinaleQualificazioni("qualifying-final"),
-        Sessantaquattresimo("1-128-final"),
-        Trentaduesimi("1-64-final"),
-        Sedicesimi("1-32-final"),
-        Ottavi("1-16-final"),
-        Quarti("quarter-finals"),
-        Semifinale("semi-finals"),
-        Finale("final");
+        Sessantaquattresimi("1-128-final","64-esimi"),
+        Trentaduesimi("1-64-final","32-esimi"),
+        Sedicesimi("1-32-final","16-esimi"),
+        Ottavi("1-16-final","Ottavi"),
+        Quarti("quarter-finals","Quarti"),
+        Semifinali("semi-finals","Semifinali"),
+        Finale("final","Finale");
 
-        String des;
+        String key;
+        String descrizione;
 
-        RoundTennis(String des) {
-            this.des = des;
+        RoundTennis(String key, String descrizione) {
+            this.key = key;
+            this.descrizione=descrizione;
         }
 
-        static RoundTennis fromDes(String des) {
+        static RoundTennis fromkey(String des) {
             RoundTennis ret = null;
             for (RoundTennis round : values()) {
-                if (round.des == des) {
+                if (round.key == des) {
                     ret = round;
                 }
             }

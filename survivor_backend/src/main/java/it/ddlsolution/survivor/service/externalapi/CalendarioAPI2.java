@@ -127,13 +127,13 @@ public class CalendarioAPI2 implements ICalendario {
         Map<Integer, String> ret = new HashMap<>();
         EnumAPI2.RoundTennis[] values = EnumAPI2.RoundTennis.values();
         for (int i=0;i< values.length;i++){
-            ret.put((i+1),values[i].name());
+            ret.put((i+1),values[i].descrizione);
         }
         return ret;
     }
 
     private static void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
-        String round = EnumAPI2.RoundTennis.values()[giornata-1].des;
+        String round = EnumAPI2.RoundTennis.values()[giornata-1].key;
         List<Map<String, Object>> cr = (List<Map<String, Object>>) m.get("competitionRounds");
         List<Map<String, Object>> matches = cr.stream()
                 .filter(map -> round.equals(map.get("name")))
