@@ -16,7 +16,7 @@ import { finalize } from 'rxjs';
   selector: 'app-me',
   imports: [MatToolbar, MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton],
   templateUrl: './me.component.html',
-  styleUrl: './me.component.scss'
+  styleUrls: ['./me.component.scss']
 })
 export class MeComponent {
   me: Giocatore | null = null;

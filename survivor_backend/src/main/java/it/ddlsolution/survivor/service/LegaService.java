@@ -39,6 +39,7 @@ public class LegaService {
     private final GiocatoreService giocatoreService;
 
 
+    @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -46,6 +47,7 @@ public class LegaService {
         return legheDTO;
     }
 
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
@@ -55,6 +57,7 @@ public class LegaService {
         return legheDTO;
     }
 
+    @Transactional(readOnly = true)
     public LegaDTO getLegaDTO(Long id, boolean completo) {
         LegaDTO legaDTO;
         if (completo) {
@@ -92,6 +95,7 @@ public class LegaService {
     }
 
 
+    @Transactional
     public LegaDTO salva(LegaDTO legaDTO) {
         // Carica l'entità esistente dal database
         Lega lega = legaRepository.findById(legaDTO.getId())
@@ -135,15 +139,18 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(lega));
     }
 
+    @Transactional(readOnly = true)
     public List<LegaDTO> allLeghe(){
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
         List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
         return statoGiornata(partite, giornata, legaDTO);
     }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
         List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
         Enumeratori.StatoPartita statoPartita;
@@ -155,6 +162,7 @@ public class LegaService {
         return statoPartita;
     }
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
@@ -191,7 +199,7 @@ public class LegaService {
 
 
     @LoggaDispositiva(tipologia = "calcola")
-    @Transactional //FIXME AGGIUNGERE
+    @Transactional
     public LegaDTO calcola(Long idLega, int giornataDaCalcolare) {
         log.info("CALCOLA");
 
@@ -308,6 +316,7 @@ public class LegaService {
 
 
     @LoggaDispositiva(tipologia = "undoCalcola")
+    @Transactional
     public LegaDTO undoCalcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         int giornataCorrente = legaDTO.getGiornataCorrente();

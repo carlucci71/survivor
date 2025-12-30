@@ -56,7 +56,7 @@ public class CalendarioAPI2 implements ICalendario {
         List<PartitaDTO> partite = new ArrayList<>();
         if (prossimi){
             for (int g = giornataAttuale; g < giornataAttuale + 20; g++) {
-                if (g < campionatoDTO.getNumGiornate()) {
+                if (g <= campionatoDTO.getNumGiornate()) {
                     partite.addAll(
                             partite(sport, campionato, g)
                                     .stream()

@@ -15,7 +15,7 @@ import { UtilService } from '../../core/services/util.service';
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, HeaderComponent],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
   profilo: {} = {};

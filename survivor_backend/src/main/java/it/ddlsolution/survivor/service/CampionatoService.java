@@ -4,6 +4,7 @@ import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,28 +17,23 @@ public class CampionatoService {
     private final CacheableService cacheableService;
     private final ICalendario calendario;
 
-    public Optional<CampionatoDTO> findCampionato(String id) {
-        return allCampionati()
-                .stream()
-                .filter(c -> c.getId().equalsIgnoreCase(id))
-                .findAny();
-    }
-
+    @Transactional(readOnly = true)
     public List<CampionatoDTO> allCampionati() {
         return cacheableService.allCampionati();
     }
 
+    @Transactional(readOnly = true)
     public List<CampionatoDTO> campionatiBySport(String idSport) {
         return allCampionati().stream()
                 .filter(c -> c.getSport().getId().equals(idSport))
                 .toList();
     }
 
-    public Map<Integer, String> desGiornate(String idSport) {
-        Map<Integer, String> ret=new HashMap<>();
-        if (idSport.equals("TENNIS")){
-            ret=calendario.roundTennis();
-        }
+    @Transactional(readOnly = true)
+    public Map<String, Map<Integer, String>> desGiornate() {
+        Map<String, Map<Integer, String>> ret = new HashMap<>();
+        Map<Integer, String> mapSport = calendario.roundTennis();
+        ret.put("TENNIS", mapSport);
         return ret;
     }
 }

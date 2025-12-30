@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
   standalone: true,
   imports: [CommonModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatButtonModule, MatIconModule],
   templateUrl: './verify.component.html',
-  styleUrl: './verify.component.scss'
+  styleUrls: ['./verify.component.scss']
 })
 export class VerifyComponent implements OnInit {
   message = '';

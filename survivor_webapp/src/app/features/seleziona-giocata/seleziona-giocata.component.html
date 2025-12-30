@@ -53,7 +53,7 @@
       } @for (risultato of ultimiRisultati; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ risultato.giornata }}]
+          [{{ getDesGiornata(risultato.giornata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -121,7 +121,7 @@
       } @for (risultato of prossimePartite; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ risultato.giornata }}]
+          [{{ getDesGiornata(risultato.giornata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -147,7 +147,8 @@
       @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-        [{{ risultato.giornata }}] {{ risultato.orario | date : "yyyy/MM/dd" }}
+        [{{ getDesGiornata(risultato.giornata) }}]
+        {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
 

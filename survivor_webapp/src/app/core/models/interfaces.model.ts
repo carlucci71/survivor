@@ -162,7 +162,7 @@ export interface Giocata {
   id?: number;
   giornata?: number;
   squadraId?: number;
-  squadraSigla?: string;
+  squadraSigla: string;
   esito?: string;
 }
 

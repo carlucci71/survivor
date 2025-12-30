@@ -21,6 +21,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class CacheableService {
     public final static String URL="cache-url";
 
     @Cacheable(value = CAMPIONATI)
+    @Transactional(readOnly = true)
     public List<CampionatoDTO> allCampionati() {
         List<CampionatoDTO> campionatiDTO =  campionatoMapper.toDTOList(campionatoRepository.findAll());
 
@@ -77,12 +79,14 @@ public class CacheableService {
         return campionatiDTO;
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = SPORT)
     public List<SportDTO> allSport() {
         List<Sport> sport = sportRepository.findAll();
         return sportMapper.toDTOList(sport);
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = URL, key = "#root.args[0]")
     public <T> T cacheUrl(String url, Class<T> clazz) {
         ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
@@ -90,6 +94,7 @@ public class CacheableService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     @Cacheable(value = SOSPENSIONI)
     public Map<Long, List<Integer>> allSospensioni() {
         List<SospensioneLegaDTO> sospensioniLegaDTO = sospensioneLegaMapper.toDTOList(sospensioneLegaRepository.findAll());

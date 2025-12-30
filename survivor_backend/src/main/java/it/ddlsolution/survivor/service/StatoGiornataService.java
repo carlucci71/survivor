@@ -4,6 +4,7 @@ import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatoGiornataService {
 
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));

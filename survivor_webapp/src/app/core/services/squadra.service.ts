@@ -23,7 +23,7 @@ export class SquadraService {
     );
   }
 
-  getSquadraNomeBySigla(squadraSigla: string, campionatoId: string): string {
+  getSquadraNomeBySigla(squadraSigla: string|null, campionatoId: string): string|null {
     const squadre = this.cache.get(campionatoId);
     if (squadre) {
       const squadra = squadre.find(s => s.sigla === squadraSigla);
