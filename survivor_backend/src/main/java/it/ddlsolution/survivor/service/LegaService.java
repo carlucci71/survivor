@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -237,32 +238,36 @@ public class LegaService {
 
     private Boolean vincente(String squadraSigla, List<PartitaDTO> partite) {
         Boolean ret = null;
-        PartitaDTO partitaDTO = partite
+        Optional<PartitaDTO> optPartitaDTO = partite
                 .stream()
                 .filter(p -> p.getCasaSigla().equals(squadraSigla) || p.getFuoriSigla().equals(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Nessuna partita di " + squadraSigla + " non trovata"));
+                .findFirst();
 
-        if (partitaDTO.getStato() == Enumeratori.StatoPartita.TERMINATA) {
-            String casa = partitaDTO.getCasaSigla();
-            String fuori = partitaDTO.getFuoriSigla();
-            Integer scoreCasa = partitaDTO.getScoreCasa();
-            Integer scoreFuori = partitaDTO.getScoreFuori();
-            if (casa.equals(squadraSigla)) {
-                if (scoreCasa > scoreFuori) {
-                    ret = true;
-                } else {
-                    ret = false;
+        if (optPartitaDTO.isPresent()) {
+            PartitaDTO partitaDTO = optPartitaDTO.get();
+            if (partitaDTO.getStato() == Enumeratori.StatoPartita.TERMINATA) {
+                String casa = partitaDTO.getCasaSigla();
+                String fuori = partitaDTO.getFuoriSigla();
+                Integer scoreCasa = partitaDTO.getScoreCasa();
+                Integer scoreFuori = partitaDTO.getScoreFuori();
+                if (casa.equals(squadraSigla)) {
+                    if (scoreCasa > scoreFuori) {
+                        ret = true;
+                    } else {
+                        ret = false;
+                    }
+                }
+                if (fuori.equals(squadraSigla)) {
+                    if (scoreFuori > scoreCasa) {
+                        ret = true;
+                    } else {
+                        ret = false;
+                    }
                 }
             }
-            if (fuori.equals(squadraSigla)) {
-                if (scoreFuori > scoreCasa) {
-                    ret = true;
-                } else {
-                    ret = false;
-                }
-            }
+        } else {
+            return false;
         }
         return ret;
     }
@@ -270,7 +275,11 @@ public class LegaService {
     private void addInfoCalcolate(LegaDTO legaDTO) {
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
-        legaDTO.setGiornataCorrente(giornataCorrente);
+        if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente){
+            giornataCorrente=legaDTO.getCampionato().getNumGiornate();
+        }
+
+            legaDTO.setGiornataCorrente(giornataCorrente);
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
             Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, giornata);

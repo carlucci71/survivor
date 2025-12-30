@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.entity.Sport;
@@ -12,13 +13,17 @@ import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
+import it.ddlsolution.survivor.service.externalapi.ICalendario;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +42,10 @@ public class CacheableService {
     private final SportRepository sportRepository;
     private final SportMapper sportMapper;
 
+    // Lazy provider e servizio di utilità per calcolo stato giornata
+    private final ObjectProvider<ICalendario> calendarioProvider;
+    private final StatoGiornataService statoGiornataService;
+
     public final static String CAMPIONATI="campionati";
     public final static String SPORT="sport";
     public final static String SOSPENSIONI="sospensioni";
@@ -44,7 +53,28 @@ public class CacheableService {
 
     @Cacheable(value = CAMPIONATI)
     public List<CampionatoDTO> allCampionati() {
-        return campionatoMapper.toDTOList(campionatoRepository.findAll());
+        List<CampionatoDTO> campionatiDTO =  campionatoMapper.toDTOList(campionatoRepository.findAll());
+
+        ICalendario calendario = calendarioProvider.getIfAvailable();
+        if (calendario == null) {
+            throw new RuntimeException("Nessuna implementazione di calendario disponibile");
+        }
+
+        for (CampionatoDTO campionatoDTO : campionatiDTO) {
+            Enumeratori.StatoPartita statoPartita;
+            int giornata = 0;
+            do {
+                giornata++;
+                List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
+                statoPartita = statoGiornataService.statoGiornata(partite, giornata);
+            } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
+            if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
+                giornata = 1; // mantenuto comportamento precedente
+            }
+            campionatoDTO.setGiornataDaGiocare(giornata);
+        }
+
+        return campionatiDTO;
     }
 
     @Cacheable(value = SPORT)

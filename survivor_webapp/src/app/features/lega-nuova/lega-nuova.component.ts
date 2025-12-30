@@ -36,7 +36,6 @@ export class LegaNuovaComponent implements OnInit {
     private sportService: SportService,
     private campionatoService: CampionatoService
   ) {}
-  isLoading = true;
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
   nome: string | null = null;
@@ -45,21 +44,17 @@ export class LegaNuovaComponent implements OnInit {
   campionatiDisponibili: Campionato[] = [];
   ngOnInit(): void {
     this.caricaSport();
-    this.isLoading = false;
   }
   goBack(): void {
     this.router.navigate(['/home']);
   }
   caricaSport(): void {
-    this.isLoading = true;
     this.sportService.getSport().subscribe({
       next: (sport) => {
         this.sportDisponibili = sport;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento degli sport:', error);
-        this.isLoading = false;
       },
     });
   }
@@ -73,18 +68,15 @@ export class LegaNuovaComponent implements OnInit {
 
   selezionaSport() {
     if (this.sportSel) {
-      this.isLoading=true;
       this.campionatoService.getCampionatoBySport(this.sportSel).subscribe({
         next: (campionati) => {
           this.campionatiDisponibili = campionati;
-          this.isLoading = false;
         },
         error: (error) => {
           console.error(
             'Errore nel caricamento del campionato: ' + this.sportSel,
             error
           );
-          this.isLoading = false;
         },
       });
     }

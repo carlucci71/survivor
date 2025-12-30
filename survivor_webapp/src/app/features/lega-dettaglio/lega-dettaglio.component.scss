@@ -151,15 +151,17 @@
 	padding: 4px 8px !important;
 	border-radius: 8px !important;
 	box-shadow: 0 2px 6px rgba(16,24,40,0.06) !important;
-	max-width: 100px !important;
+	/* Keep the full name in the DOM, but visually constrain it with ellipsis */
+	max-width: 200px !important; /* aumentato per ellipsis più lunghi */
 	overflow: hidden !important;
 	text-overflow: ellipsis !important;
 	white-space: nowrap !important;
 	display: inline-block !important;
+	word-break: normal !important;
 	font-weight: 700 !important;
 	color: #111;
 	border: 1px solid #e6f0fb !important;
-	flex-shrink: 1 !important;
+	flex-shrink: 0 !important;
 }
 
 /* Sfondo verde per OK */
@@ -297,7 +299,7 @@
 	border-collapse: separate;
 	border-spacing: 0;
 	margin-top: 16px;
-	table-layout: fixed;
+	table-layout: auto; /* allow first column to size for long names */
 	background: #fff;
 	font-size: 0.97rem;
 }
@@ -337,13 +339,28 @@
 .giocatori-table td:first-child {
 	white-space: normal;
 	word-wrap: break-word;
-	width: 110px;
-	min-width: 95px;
-	max-width: 125px;
+		width: auto !important;
+		min-width: 220px !important; /* larger so names don't get clipped */
+		max-width: 480px !important;
 	font-weight: 600;
 	font-size: 0.92rem;
-	padding: 8px 6px !important;
-	line-height: 1.3;
+	padding: 8px 12px !important;
+	line-height: 1.25;
+	box-sizing: border-box;
+}
+
+/* Ensure the name badge can wrap and isn't clipped by overflow */
+.nome-giocatore {
+	white-space: normal !important;
+	overflow: visible !important;
+	display: block !important;
+}
+
+/* Allow the first cell content to align flex-start so multi-line names look natural */
+.giocatori-table td.mat-cell:first-child {
+	justify-content: center; /* keep centered vertically */
+	padding-left: 14px !important;
+	padding-right: 14px !important;
 }
 
 /* Stile per nome giocatore su più righe */
@@ -385,6 +402,54 @@
 	width: 90px;
 	min-width: 70px;
 	max-width: 110px;
+}
+
+/* Scroll wrapper so table can overflow horizontally */
+.table-wrapper {
+	width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+}
+
+/* Make header sticky and first column sticky so names remain visible */
+.giocatori-table {
+	position: relative;
+}
+
+.giocatori-table thead,
+.giocatori-table th.mat-header-cell {
+	position: sticky;
+	top: 0;
+	z-index: 5;
+	background: #f7f7f7;
+}
+
+/* Sticky first column (player name) */
+.giocatori-table th:first-child,
+.giocatori-table td:first-child {
+	position: sticky;
+	left: 0;
+	z-index: 6; /* above other cells */
+	background: #fff; /* match table background */
+}
+
+/* When header and first cell overlap, keep header above */
+.giocatori-table th:first-child {
+	z-index: 7;
+}
+
+/* Add a subtle divider shadow to indicate scrollable area */
+.giocatori-table td:first-child::after,
+.giocatori-table th:first-child::after {
+	content: '';
+	position: absolute;
+	right: -6px;
+	top: 0;
+	height: 100%;
+	width: 6px;
+	pointer-events: none;
+	background: linear-gradient(to right, rgba(0,0,0,0.02), rgba(0,0,0,0));
 }
 
 .squadra-select-save {
@@ -446,11 +511,15 @@
 }
 
 
-.loading { text-align: center; margin-top: 40px; }
 .error-card { margin: 16px auto; max-width: 900px; }
 
 @media (max-width: 800px) {
 	.select-squadra { min-width: 70px; max-width: 100px; }
 	.lega-card { padding: 10px; }
 	.giocatori-table th, .giocatori-table td { font-size: 0.93rem; padding: 4px 2px; }
+
+	/* On small screens reduce badge width so layout fits */
+	.giocatori-table td .team-name, .team-name {
+		max-width: 120px !important;
+	}
 }

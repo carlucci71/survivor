@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,9 +123,18 @@ public class CalendarioAPI2 implements ICalendario {
         return ret;
     }
 
+    public Map<Integer, String> roundTennis(){
+        Map<Integer, String> ret = new HashMap<>();
+        EnumAPI2.RoundTennis[] values = EnumAPI2.RoundTennis.values();
+        for (int i=0;i< values.length;i++){
+            ret.put((i+1),values[i].descrizione);
+        }
+        return ret;
+    }
+
     private static void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
+        String round = EnumAPI2.RoundTennis.values()[giornata-1].key;
         List<Map<String, Object>> cr = (List<Map<String, Object>>) m.get("competitionRounds");
-        final String round = EnumAPI2.RoundTennis.values()[giornata].des;
         List<Map<String, Object>> matches = cr.stream()
                 .filter(map -> round.equals(map.get("name")))
                 .map(map -> (List<Map<String, Object>>) map.get("match"))
@@ -135,7 +145,15 @@ public class CalendarioAPI2 implements ICalendario {
             OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
             String status = match.get("status").toString();
-            if (match.get("matchId").toString().equals("386621") || match.get("matchId").toString().equals("386607")) {//TODO GESTIRE FORZATURE
+            if (match.get("matchId").toString().equals("386621")
+                    || match.get("matchId").toString().equals("386607")
+                    || match.get("matchId").toString().equals("360665")
+                    || match.get("matchId").toString().equals("360681")
+                    || match.get("matchId").toString().equals("360690")
+                    || match.get("matchId").toString().equals("386620")
+                    || match.get("matchId").toString().equals("386664")
+                    || match.get("matchId").toString().equals("386675")
+            ) {//TODO GESTIRE FORZATURE
                 status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
             }
 

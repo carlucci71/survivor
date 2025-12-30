@@ -18,7 +18,6 @@ export class SquadraService {
     }
     return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}`).pipe(
       tap(squadre => {
-        console.log(squadre);
         this.cache.set(campionatoId, squadre);
   })
     );

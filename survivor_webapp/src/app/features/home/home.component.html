@@ -36,15 +36,7 @@
 
     <section class="leghe-section">
       <h2>Le tue Leghe</h2>
-
-      @if (isLoading) {
-        <div class="loading">
-          <mat-spinner></mat-spinner>
-          <p>Caricamento in corso...</p>
-        </div>
-      }
-
-      @if (!isLoading && leghe.length === 0) {
+      @if (leghe.length === 0) {
         <mat-card class="no-data">
           <mat-card-content>
             <p>Nessuna lega disponibile al momento</p>
@@ -52,7 +44,7 @@
         </mat-card>
       }
 
-      @if (!isLoading && leghe.length > 0) {
+      @if (leghe.length > 0) {
         <div class="leghe-grid">
           @for (lega of leghe; track lega.id) {
           <mat-card class="lega-card">

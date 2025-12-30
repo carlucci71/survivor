@@ -26,7 +26,9 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { AdminService } from '../../core/services/admin.service';
+import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CampionatoService } from '../../core/services/campionato.service';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -54,13 +56,50 @@ export class LegaDettaglioComponent {
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
+  desGiornate: any = null;
   lega: Lega | null = null;
-  isLoading = true;
   error: string | null = null;
   squadre: any[] = [];
   displayedColumns: string[] = [];
 
   giornataIndices: number[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private legaService: LegaService,
+    private campionatoService: CampionatoService,
+    private adminService: AdminService,
+    private authService: AuthService,
+    private squadraService: SquadraService,
+    private router: Router,
+    private giocataService: GiocataService,
+    private dialog: MatDialog
+    , private loadingService: LoadingService
+  ) {
+    this.route.paramMap.subscribe((params) => {
+      this.id = Number(params.get('id'));
+      if (this.id) {
+        this.legaService.getLegaById(this.id).subscribe({
+          next: (lega) => {
+            this.lega = lega;
+            this.caricaTabella();
+            this.getDesGiornate();
+          },
+          error: (error) => {
+            console.error('Errore nel caricamento delle leghe:', error);
+          },
+        });
+      }
+    });
+  }
+
+  getDesGiornata(index: number): string {
+    if (this.desGiornate && this.desGiornate[index]){
+    return this.desGiornate[index];
+    } else {
+      return 'Giornata ' + index;
+    }
+  }
 
   get maxGiornata(): number {
     if (!this.lega || !this.lega.giocatori) return 0;
@@ -75,35 +114,6 @@ export class LegaDettaglioComponent {
     return max;
   }
 
-  constructor(
-    private route: ActivatedRoute,
-    private legaService: LegaService,
-    private adminService: AdminService,
-    private authService: AuthService,
-    private squadraService: SquadraService,
-    private router: Router,
-    private giocataService: GiocataService,
-    private dialog: MatDialog
-  ) {
-    this.route.paramMap.subscribe((params) => {
-      this.id = Number(params.get('id'));
-      if (this.id) {
-        this.isLoading = true;
-
-        this.legaService.getLegaById(this.id).subscribe({
-          next: (lega) => {
-            this.lega = lega;
-            this.caricaTabella();
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Errore nel caricamento delle leghe:', error);
-            this.isLoading = false;
-          },
-        });
-      }
-    });
-  }
   // Gestisce il click sull'icona gioca accanto al badge squadra
   async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
@@ -163,14 +173,16 @@ export class LegaDettaglioComponent {
       ret = false;
     }
     if (
-      !this.isAdmin() && !this.isLeaderLega() &&
+      !this.isAdmin() &&
+      !this.isLeaderLega() &&
       (giocatore.user == null ||
         giocatore.user.id !== this.authService.getCurrentUser()?.id)
     ) {
       ret = false;
     }
     if (
-      !this.isAdmin() && !this.isLeaderLega() &&
+      !this.isAdmin() &&
+      !this.isLeaderLega() &&
       this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
     ) {
       ret = false;
@@ -182,13 +194,37 @@ export class LegaDettaglioComponent {
     return ret;
   }
 
+  getDesGiornate(){
+        const idSport = this.lega?.campionato?.sport?.id;
+        if (idSport) {
+          this.campionatoService.getDesGiornate(idSport).subscribe({
+            next: (des) => {
+              this.desGiornate=des;
+            },
+            error: (error) => {
+              console.error('Errore nel caricamento delle leghe:', error);
+              try {
+                this.loadingService.reset();
+              } catch (e) {}
+            },
+          });
+        }
+
+  }
+
   caricaTabella() {
     // Calcolo le colonne della tabella: includo SEMPRE la colonna della giornata corrente
     this.displayedColumns = ['nome'];
     const giornataIniziale = this.lega?.giornataIniziale || 0;
-    const maxGiornata = this.lega?.giornataCalcolata
+    let maxGiornata = this.lega?.giornataCalcolata
       ? this.lega?.giornataCalcolata + 1
       : giornataIniziale;
+
+    const numGg=this.lega?.campionato?.numGiornate || 0;
+    if (numGg<maxGiornata){
+      maxGiornata=numGg;
+    }
+
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
     for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
       this.displayedColumns.push('giocata' + i);
@@ -208,7 +244,6 @@ export class LegaDettaglioComponent {
           },
         });
     }
-    this.isLoading = false;
   }
 
   getSquadreDisponibili(giocatore: any): any[] {
@@ -245,7 +280,6 @@ export class LegaDettaglioComponent {
     );
   }
 
-
   getCurrentUser() {
     return this.authService.getCurrentUser();
   }
@@ -261,34 +295,26 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/auth/login']);
   }
   undoCalcolaGiornata() {
-    this.isLoading = true;
-    this.adminService
-      .undoCalcola(Number(this.id))
-      .subscribe({
-        next: (lega: Lega) => {
-          this.lega = lega;
-          this.caricaTabella();
-          this.isLoading = false;
-        },
-        error: (err: any) => {
-          this.error = 'Errore nel caricamento della lega';
-          this.isLoading = false;
-        },
-      });
+    this.adminService.undoCalcola(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel caricamento della lega';
+      },
+    });
   }
   calcolaGiornata() {
-    this.isLoading = true;
     this.adminService
       .calcola(Number(this.id), this.lega?.giornataCorrente || 0)
       .subscribe({
         next: (lega: Lega) => {
           this.lega = lega;
           this.caricaTabella();
-          this.isLoading = false;
         },
         error: (err: any) => {
           this.error = 'Errore nel caricamento della lega';
-          this.isLoading = false;
         },
       });
   }

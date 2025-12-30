@@ -70,26 +70,34 @@ public class AuthController {
     }
 
     @PostMapping("/myData")
-    public ResponseEntity<?> myData(@RequestHeader("Authorization")String authHeader) {
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+    public ResponseEntity<?> myData(@RequestHeader(value="Authorization", required = false)String authHeader) {
+        if (authHeader==null){
+            return ResponseEntity.ok(new AuthResponseDTO());
+        }
+        if (!authHeader.startsWith("Bearer ")) {
             throw new RuntimeException("Authorization non Bearer");
         }
 
 
-        final String jwt = authHeader.substring(7);
-        final Long id = Long.parseLong(jwtService.extractId(jwt));
+        String jwt = authHeader.substring(7);
+        if (jwt.equals("null")){
+            jwt=null;
+        }
 
-
-        User user = userRepository.findById(id).get();
-
-
-        return ResponseEntity.ok(new AuthResponseDTO(
-                jwt,
-                user.getId(),
-                user.getName(),
-                user.getRole().name()
-        ));
+        AuthResponseDTO authResponseDTO;
+        if (jwt==null){
+            authResponseDTO=new AuthResponseDTO();
+        } else {
+            final Long id = Long.parseLong(jwtService.extractId(jwt));
+            User user = userRepository.findById(id).get();
+            authResponseDTO = new AuthResponseDTO(
+                    jwt,
+                    user.getId(),
+                    user.getName(),
+                    user.getRole().name()
+            );
+        }
+        return ResponseEntity.ok(authResponseDTO);
     }
 
 

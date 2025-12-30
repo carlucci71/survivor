@@ -20,7 +20,6 @@ import { UtilService } from '../../core/services/util.service';
 export class AdminComponent implements OnInit {
   profilo: {} = {};
   calendario: {} = {};
-  isLoading = true;
 
   constructor(
     private authService: AuthService,
@@ -38,11 +37,9 @@ export class AdminComponent implements OnInit {
     this.utilService.profilo().subscribe({
       next: (profilo) => {
         this.profilo = profilo.profilo;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo:', error);
-        this.isLoading = false;
       }
     });
   }
@@ -51,11 +48,9 @@ export class AdminComponent implements OnInit {
     this.utilService.calendario().subscribe({
       next: (calendario) => {
         this.calendario = calendario.url;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento del calendario:', error);
-        this.isLoading = false;
       }
     });
   }

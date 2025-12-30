@@ -37,6 +37,16 @@ export class LoadingService {
     }
   }
 
+  /**
+   * Force reset of the loading state and internal counter.
+   * Use cautiously for unrecoverable error paths where loading might be left active.
+   */
+  reset(): void {
+    this.counter = 0;
+    this.clearTimeout();
+    this._setLoading(false);
+  }
+
   private _setLoading(value: boolean) {
     this._loading.next(value);
   }
