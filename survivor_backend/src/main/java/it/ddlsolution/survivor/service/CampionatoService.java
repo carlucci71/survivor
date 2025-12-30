@@ -35,7 +35,10 @@ public class CampionatoService {
                 giornata++;
                 List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
                 statoPartita = statoGiornataService.statoGiornata(partite, giornata);
-            }while ( giornata <= campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
+            }while ( giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
+            if (statoPartita== Enumeratori.StatoPartita.TERMINATA){
+                giornata=1;//TODO PER TESTARE MA RILANCIARE ERRORE
+            }
             campionatoDTO.setGiornataDaGiocare(giornata);
         }
 
