@@ -94,9 +94,11 @@ export class LegaDettaglioComponent {
   }
 
   getDesGiornata(index: number): string {
-    if (!this.desGiornate) return '';
-    const key = String(index);
-    return this.desGiornate[key];
+    if (this.desGiornate && this.desGiornate[index]){
+    return this.desGiornate[index];
+    } else {
+      return 'Giornata' + index;
+    }
   }
 
   get maxGiornata(): number {
