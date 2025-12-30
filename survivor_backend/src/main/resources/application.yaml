@@ -50,7 +50,6 @@ external-api:
       API2:
         url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
-        australia: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=8&competitionId=10376
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal
 

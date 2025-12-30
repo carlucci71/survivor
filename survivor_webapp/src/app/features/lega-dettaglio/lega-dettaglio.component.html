@@ -3,12 +3,7 @@
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
-      @if (isLoading) {
-      <div class="loading">
-        <mat-spinner></mat-spinner>
-        <p>Caricamento in corso...</p>
-      </div>
-      } @if (error) {
+      @if (error) {
       <mat-card class="error-card">
         <mat-card-content>{{ error }}</mat-card-content>
       </mat-card>
@@ -66,8 +61,8 @@
                   giornata + lega.giornataIniziale - 1 === lega.giornataCorrente
                 "
               >
-                <div>Giornata</div>
-                <div>{{ giornata + lega.giornataIniziale - 1 }}</div>
+                <div>Giornata {{ giornata + lega.giornataIniziale - 1 }}</div>
+                <div>{{ desGiornate[giornata + lega.giornataIniziale - 1] }}</div>
                 @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
                 {
                 <div class="stato-giornata">

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/campionato")
@@ -21,5 +22,11 @@ public class CampionatoController {
     public ResponseEntity<List<CampionatoDTO>> campionatiBySport(@PathVariable("idSport") String idSport ) {
         return ResponseEntity.ok(campionatoService.campionatiBySport(idSport));
     }
+
+    @GetMapping("desGiornate/{idSport}")
+    public ResponseEntity<Map<Integer, String>> desGiornate(@PathVariable("idSport") String idSport ) {
+        return ResponseEntity.ok(campionatoService.desGiornate(idSport));
+    }
+
 }
 
