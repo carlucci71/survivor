@@ -44,17 +44,20 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 return next(retryReq);
               }
               console.log("Forzo logout per authService.getToken() null " + + error.message);
+              try { loading.reset(); } catch (e) { }
               authService.logout();
               return throwError(() => error);
             }),
             catchError(refreshError => {
               console.log("Forzo logout per refreshError: " + refreshError + "---" + + error.message);
+              try { loading.reset(); } catch (e) { }
               authService.logout();
               return throwError(() => refreshError);
             })
           );
         } else {
           console.log("Forzo logout senza expiredToken: " + error.message)
+          try { loading.reset(); } catch (e) { }
           authService.logout();
         }
       } else{
@@ -70,6 +73,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
         snackBar.openFromComponent(SnackMessageComponent, { data: fullMessage, duration: 5000, panelClass: 'multi-line-snackbar' });
       }
+      try { loading.reset(); } catch (e) { }
       return throwError(() => error);
     }),
     finalize(() => {

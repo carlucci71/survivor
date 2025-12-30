@@ -26,6 +26,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { AdminService } from '../../core/services/admin.service';
+import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampionatoService } from '../../core/services/campionato.service';
 
@@ -55,7 +56,7 @@ export class LegaDettaglioComponent {
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
-  desGiornate!: any[];
+  desGiornate: any = null;
   lega: Lega | null = null;
   error: string | null = null;
   squadre: any[] = [];
@@ -73,6 +74,7 @@ export class LegaDettaglioComponent {
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog
+    , private loadingService: LoadingService
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -89,6 +91,12 @@ export class LegaDettaglioComponent {
         });
       }
     });
+  }
+
+  getDesGiornata(index: number): string {
+    if (!this.desGiornate) return '';
+    const key = String(index);
+    return this.desGiornate[key];
   }
 
   get maxGiornata(): number {
@@ -193,6 +201,9 @@ export class LegaDettaglioComponent {
             },
             error: (error) => {
               console.error('Errore nel caricamento delle leghe:', error);
+              try {
+                this.loadingService.reset();
+              } catch (e) {}
             },
           });
         }

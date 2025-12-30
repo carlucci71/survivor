@@ -62,7 +62,7 @@
                 "
               >
                 <div>Giornata {{ giornata + lega.giornataIniziale - 1 }}</div>
-                <div>{{ desGiornate[giornata + lega.giornataIniziale - 1] }}</div>
+                <div>{{ getDesGiornata(giornata + lega.giornataIniziale - 1) }}</div>
                 @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
                 {
                 <div class="stato-giornata">

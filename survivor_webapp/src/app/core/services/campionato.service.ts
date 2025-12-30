@@ -14,7 +14,7 @@ export class CampionatoService {
     return this.http.get<Campionato[]>(`${this.apiUrl}/${idSport}`);
   }
 
-  getDesGiornate(idSport: String): Observable<any[]> {
+  getDesGiornate(idSport: String): Observable<any> {
     return this.http.get<Campionato[]>(`${this.apiUrl}/desGiornate/${idSport}`);
   }
 
