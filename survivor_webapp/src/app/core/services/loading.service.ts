@@ -16,7 +16,6 @@ export class LoadingService {
 
   show(immediate: boolean = false): void {
     this.counter++;
-    console.debug('[LoadingService] show() called, counter ->', this.counter, 'immediate=', immediate);
     if (this.counter === 1) {
       if (immediate) {
         this._setLoading(true);
@@ -31,7 +30,6 @@ export class LoadingService {
   hide(): void {
     if (this.counter > 0) {
       this.counter--;
-      console.debug('[LoadingService] hide() called, counter ->', this.counter);
     }
     if (this.counter === 0) {
       this.clearTimeout();
@@ -44,7 +42,6 @@ export class LoadingService {
    * Use cautiously for unrecoverable error paths where loading might be left active.
    */
   reset(): void {
-    console.debug('[LoadingService] reset() called, previous counter ->', this.counter);
     this.counter = 0;
     this.clearTimeout();
     this._setLoading(false);

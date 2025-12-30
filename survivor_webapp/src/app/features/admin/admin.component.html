@@ -5,14 +5,7 @@
     <div class="admin-panel">
       <h2>Dashboard Amministratore</h2>
 
-      @if (isLoading) {
-        <div class="loading">
-          <mat-spinner></mat-spinner>
-          <p>Caricamento...</p>
-        </div>
-      }
 
-      @if (!isLoading) {
         <mat-card class="message-box">
           <mat-card-content>
             <p>Profilo: <strong>{{ profilo }}</strong></p>
@@ -20,7 +13,6 @@
 
           </mat-card-content>
         </mat-card>
-      }
 
       <div class="admin-sections">
         <mat-card class="section-card">

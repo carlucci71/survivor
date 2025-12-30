@@ -26,7 +26,6 @@ export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
   me: Giocatore | null = null;
-  isLoading = true;
   environmentName = environment.ambiente;
   isProd = environment.production;
 
@@ -51,11 +50,9 @@ export class HomeComponent implements OnInit {
     this.legaService.mieLeghe().subscribe({ 
       next: (leghe) => {
         this.leghe = leghe;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);
-        this.isLoading = false;
       }
     });
   }

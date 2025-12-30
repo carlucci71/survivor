@@ -127,7 +127,7 @@ public class CalendarioAPI2 implements ICalendario {
         Map<Integer, String> ret = new HashMap<>();
         EnumAPI2.RoundTennis[] values = EnumAPI2.RoundTennis.values();
         for (int i=0;i< values.length;i++){
-            ret.put(i,values[i].name());
+            ret.put((i+1),values[i].name());
         }
         return ret;
     }
@@ -145,7 +145,15 @@ public class CalendarioAPI2 implements ICalendario {
             OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
             String status = match.get("status").toString();
-            if (match.get("matchId").toString().equals("386621") || match.get("matchId").toString().equals("386607")) {//TODO GESTIRE FORZATURE
+            if (match.get("matchId").toString().equals("386621")
+                    || match.get("matchId").toString().equals("386607")
+                    || match.get("matchId").toString().equals("360665")
+                    || match.get("matchId").toString().equals("360681")
+                    || match.get("matchId").toString().equals("360690")
+                    || match.get("matchId").toString().equals("386620")
+                    || match.get("matchId").toString().equals("386664")
+                    || match.get("matchId").toString().equals("386675")
+            ) {//TODO GESTIRE FORZATURE
                 status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
             }
 

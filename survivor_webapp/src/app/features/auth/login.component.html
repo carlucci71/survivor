@@ -16,12 +16,12 @@
             [(ngModel)]="email"
             placeholder="la-tua-email@esempio.com"
             required
-            [disabled]="isLoading"
+            (keydown.enter)="onSubmit()"
           />
         </mat-form-field>
 
-        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="submit-btn">
-          {{ isLoading ? 'Invio in corso...' : 'Invia Magic Link' }}
+        <button mat-raised-button color="primary" type="submit"  class="submit-btn">
+          {{ 'Invia Magic Link' }}
         </button>
       </form>
 

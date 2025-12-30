@@ -47,7 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
 
-            final String jwt = authHeader.substring(7);
+            String jwt = authHeader.substring(7);
+            if (jwt.equals("null")){
+                jwt=null;
+            }
             final Long id = Long.parseLong(jwtService.extractId(jwt));
             final String role = jwtService.extractRole(jwt);
 
@@ -78,6 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         } catch (Exception e) {
             log.error("Errore nella validazione del JWT", e);
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

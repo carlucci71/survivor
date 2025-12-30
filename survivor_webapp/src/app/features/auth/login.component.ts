@@ -20,7 +20,7 @@ export class LoginComponent {
   email = '';
   message = '';
   isSuccess = false;
-  isLoading = false;
+  
 
   constructor(
     private authService: AuthService,
@@ -34,17 +34,14 @@ export class LoginComponent {
       return;
     }
 
-    this.isLoading = true;
-    this.authService.requestMagicLink(this.email).subscribe({
+        this.authService.requestMagicLink(this.email).subscribe({
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;
-        this.isLoading = false;
       },
       error: (error) => {
         this.message = 'Errore durante l\'invio del magic link';
         this.isSuccess = false;
-        this.isLoading = false;
       }
     });
   }

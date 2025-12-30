@@ -39,8 +39,7 @@ export class SelezionaGiocataComponent implements OnInit {
   squadreDisponibili: any[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
-  isLoading = true;
-  lega!: Lega;
+    lega!: Lega;
   giornata: number = 0;
   giocatore: any;
   constructor(
@@ -69,8 +68,6 @@ export class SelezionaGiocataComponent implements OnInit {
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
-    } else{
-      this.isLoading=false;
     }
   }
 
@@ -85,7 +82,6 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.isLoading = true;
       this.legaService
         .calendario(
           this.lega.campionato?.sport?.id,
@@ -103,11 +99,9 @@ export class SelezionaGiocataComponent implements OnInit {
             } else {
               this.ultimiRisultati = ultimiRisultati;
             }
-            this.isLoading = false;
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
-            this.isLoading = false;
           },
         });
     }
@@ -126,7 +120,6 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.isLoading = true;
       this.legaService
         .calendario(
           this.lega.campionato?.sport?.id,
@@ -139,11 +132,9 @@ export class SelezionaGiocataComponent implements OnInit {
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
             this.mostraUltimiRisultatiOpponent();
-            this.isLoading = false;
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
-            this.isLoading = false;
           },
         });
     }

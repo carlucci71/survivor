@@ -97,7 +97,7 @@ export class LegaDettaglioComponent {
     if (this.desGiornate && this.desGiornate[index]){
     return this.desGiornate[index];
     } else {
-      return 'Giornata' + index;
+      return 'Giornata ' + index;
     }
   }
 
@@ -216,9 +216,15 @@ export class LegaDettaglioComponent {
     // Calcolo le colonne della tabella: includo SEMPRE la colonna della giornata corrente
     this.displayedColumns = ['nome'];
     const giornataIniziale = this.lega?.giornataIniziale || 0;
-    const maxGiornata = this.lega?.giornataCalcolata
+    let maxGiornata = this.lega?.giornataCalcolata
       ? this.lega?.giornataCalcolata + 1
       : giornataIniziale;
+
+    const numGg=this.lega?.campionato?.numGiornate || 0;
+    if (numGg<maxGiornata){
+      maxGiornata=numGg;
+    }
+
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
     for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
       this.displayedColumns.push('giocata' + i);
