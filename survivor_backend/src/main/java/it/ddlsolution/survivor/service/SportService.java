@@ -12,7 +12,7 @@ public class SportService {
     private final CacheableService cacheableService;
 
     public List<SportDTO> all() {
-        return cacheableService.all();
+        return cacheableService.allSport();
     }
 }
 

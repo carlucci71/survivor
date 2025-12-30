@@ -3,12 +3,14 @@ import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { AuthService } from '../services/auth.service';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { LoadingService } from '../services/loading.service';
+import { catchError, switchMap, throwError, finalize } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
   const snackBar = inject(MatSnackBar);
+  const loading = inject(LoadingService);
 
   let authReq = req;
   if (token) {
@@ -18,6 +20,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
   }
+
+  // Show loading overlay for every outgoing request
+  try { loading.show(true); } catch (e) { /* noop if injection fails */ }
 
   return next(authReq).pipe(
     catchError((error: any) => {
@@ -66,6 +71,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         snackBar.openFromComponent(SnackMessageComponent, { data: fullMessage, duration: 5000, panelClass: 'multi-line-snackbar' });
       }
       return throwError(() => error);
+    }),
+    finalize(() => {
+      try { loading.hide(); } catch (e) { }
     })
   );
 };

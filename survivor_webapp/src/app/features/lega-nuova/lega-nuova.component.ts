@@ -73,6 +73,7 @@ export class LegaNuovaComponent implements OnInit {
 
   selezionaSport() {
     if (this.sportSel) {
+      this.isLoading=true;
       this.campionatoService.getCampionatoBySport(this.sportSel).subscribe({
         next: (campionati) => {
           this.campionatiDisponibili = campionati;

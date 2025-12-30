@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LoadingOverlayComponent } from './core/components/loading-overlay.component';
 import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, LoadingOverlayComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

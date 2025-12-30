@@ -1,10 +1,8 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
-import it.ddlsolution.survivor.entity.SospensioneLega;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -39,25 +37,30 @@ public class CacheableService {
     private final SportRepository sportRepository;
     private final SportMapper sportMapper;
 
-    @Cacheable(value = "campionati")
+    public final static String CAMPIONATI="campionati";
+    public final static String SPORT="sport";
+    public final static String SOSPENSIONI="sospensioni";
+    public final static String URL="cache-url";
+
+    @Cacheable(value = CAMPIONATI)
     public List<CampionatoDTO> allCampionati() {
         return campionatoMapper.toDTOList(campionatoRepository.findAll());
     }
 
-    @Cacheable(value = "sport")
-    public List<SportDTO> all() {
+    @Cacheable(value = SPORT)
+    public List<SportDTO> allSport() {
         List<Sport> sport = sportRepository.findAll();
         return sportMapper.toDTOList(sport);
     }
 
-    @Cacheable(cacheNames = "cache-url", key = "#root.args[0]")
+    @Cacheable(cacheNames = URL, key = "#root.args[0]")
     public <T> T cacheUrl(String url, Class<T> clazz) {
         ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
         T response = forEntity.getBody();
         return response;
     }
 
-    @Cacheable(value = "sospensioni")
+    @Cacheable(value = SOSPENSIONI)
     public Map<Long, List<Integer>> allSospensioni() {
         List<SospensioneLegaDTO> sospensioniLegaDTO = sospensioneLegaMapper.toDTOList(sospensioneLegaRepository.findAll());
         return sospensioniLegaDTO.stream()
