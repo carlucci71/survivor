@@ -24,7 +24,6 @@ public class CampionatoService {
     }
 
     public List<CampionatoDTO> allCampionati() {
-        // ora deleghiamo al cacheable service che restituisce i campionati già arricchiti con giornataDaGiocare
         return cacheableService.allCampionati();
     }
 

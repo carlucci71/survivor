@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.entity.Sport;
@@ -55,9 +56,8 @@ public class CacheableService {
         List<CampionatoDTO> campionatiDTO =  campionatoMapper.toDTOList(campionatoRepository.findAll());
 
         ICalendario calendario = calendarioProvider.getIfAvailable();
-        // Se non è disponibile un'implementazione di calendario, semplicemente restituiamo i DTO originali
         if (calendario == null) {
-            return campionatiDTO;
+            throw new RuntimeException("Nessuna implementazione di calendario disponibile");
         }
 
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
@@ -65,10 +65,7 @@ public class CacheableService {
             int giornata = 0;
             do {
                 giornata++;
-                List<?> partiteRaw = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
-                // cast sicuro assumendo che ICalendario restituisca List<PartitaDTO>
-                @SuppressWarnings("unchecked")
-                List<it.ddlsolution.survivor.dto.PartitaDTO> partite = (List<it.ddlsolution.survivor.dto.PartitaDTO>) partiteRaw;
+                List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
                 statoPartita = statoGiornataService.statoGiornata(partite, giornata);
             } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
             if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
