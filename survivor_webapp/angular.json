@@ -84,6 +84,8 @@
                   "with": "src/environments/environment.test.ts"
                 }
               ]
+              ,
+              "outputHashing": "all"
             }
           },
           "defaultConfiguration": "production"
