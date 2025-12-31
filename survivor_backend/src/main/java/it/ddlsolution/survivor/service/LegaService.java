@@ -5,6 +5,7 @@ import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
@@ -56,8 +57,8 @@ public class LegaService {
     public List<LegaDTO> legheLibere() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        List<LegaProjection> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE,userId);
-        return legaMapper.toDTOListProjection(legheDaAvviare);
+        List<Lega> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE,userId);
+        return legaMapper.toDTOList(legheDaAvviare);
     }
 
     @Transactional(readOnly = true)
@@ -383,7 +384,6 @@ public class LegaService {
             throw new ManagedException("Nome lega già presente", "CODE_LEGA_PRESENTE");
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
-
         List<GiocatoreLega> giocatoriLega = new ArrayList<>();
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
@@ -393,10 +393,30 @@ public class LegaService {
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
-
         Lega legaSalvata = legaRepository.save(lega);
-
-
         return legaMapper.toDTO(legaSalvata);
+    }
+
+    public LegaDTO join(Long idLega, LegaJoinDTO legaInsertDTO) {
+        Lega lega = legaRepository.findById(idLega).orElseThrow(()->new RuntimeException("Lega non trovata: " + idLega));
+        if (!ObjectUtils.isEmpty(lega.getPwd())){
+            if (!lega.getPwd().equals(legaInsertDTO.getPwd())){
+                throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
+            }
+        }
+        List<GiocatoreLega> giocatoriLega = lega.getGiocatoreLeghe();
+        GiocatoreLega giocatoreLega = new GiocatoreLega();
+        Giocatore giocatore = giocatoreService.findMe();
+        giocatoreLega.setGiocatore(giocatore);
+        giocatoreLega.setLega(lega);
+        giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
+        giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        giocatoriLega.add(giocatoreLega);
+        lega.setGiocatoreLeghe(giocatoriLega);
+        Lega legaSalvata = legaRepository.save(lega);
+        return legaMapper.toDTO(legaSalvata);
+
+
+
     }
 }

@@ -1,5 +1,42 @@
 <app-header title="Entra in Lega" (back)="goBack()" (logout)="logout()"></app-header>
 
+
 <main class="main-content">
-	<p>lega-join works!</p>
+	<section *ngIf="leghe?.length; else noLeghe">
+		<h2>Leghe disponibili</h2>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Nome</th>
+					<th>Sport ID</th>
+					<th>Campionato ID</th>
+					<th>Giornata Iniziale</th>
+					<th>Numero iscritti</th>
+					<th>Password accesso</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let l of leghe">
+					<td data-label="Nome">{{ l.nome }}</td>
+					<td data-label="Sport ID">{{ l.campionato?.sport?.nome }}</td>
+					<td data-label="Campionato ID">{{ l.campionato?.nome || '-' }}</td>
+					<td data-label="Giornata Iniziale">{{ l.giornataIniziale }}</td>
+					<td data-label="Numero iscritti">{{ l.giocatori?.length }}</td>
+					<td data-label="Password accesso">{{ l.withPwd?'SI':'' }}</td>
+					<td>
+										<mat-icon
+											class="gioca-icon"
+											matTooltip="Gioca ora"
+											(click)="seleziona(l)"
+										>{{ getGiocaIcon(l.campionato!.sport!.id) }}</mat-icon>
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<ng-template #noLeghe>
+		<div class="no-data">Nessuna lega libera disponibile.</div>
+	</ng-template>
 </main>

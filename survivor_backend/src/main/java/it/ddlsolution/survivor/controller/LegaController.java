@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.Lega;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +65,12 @@ public class LegaController {
     public ResponseEntity<List<LegaDTO>> legheLibere() {
         List<LegaDTO> dtoList = legaService.legheLibere();
         return ResponseEntity.ok(dtoList);
+    }
+
+    @PutMapping("join/{idLega}")
+    public ResponseEntity<LegaDTO> join(@RequestBody LegaJoinDTO legaInsertDTO, @PathVariable("idLega") Long idLega) {
+        LegaDTO legaDTO = legaService.join(idLega, legaInsertDTO);
+        return ResponseEntity.ok(legaDTO);
     }
 
 }

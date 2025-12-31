@@ -29,7 +29,7 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     @Query("""
             select l from Lega l inner join l.giocatoreLeghe giocatoreLeghe
             where l.stato = ?1 and giocatoreLeghe.giocatore.user.id <> ?2""")
-    List<LegaProjection> findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega stato, Long userId);
+    List<Lega> findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega stato, Long userId);
 
 
 }

@@ -102,6 +102,7 @@ export function statoPartitaFromCodice(codice: string): StatoPartita {
 export interface Lega {
   id: number;
   nome: string;
+  withPwd: string;
   campionato?: Campionato;
   giocatori?: Giocatore[];
   giornataIniziale: number;

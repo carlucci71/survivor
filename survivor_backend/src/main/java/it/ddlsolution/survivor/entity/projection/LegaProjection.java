@@ -8,6 +8,7 @@ import it.ddlsolution.survivor.util.Enumeratori;
 public interface LegaProjection {
     Long getId();
     String getNome();
+    String getPwd();
     Enumeratori.StatoLega getStato();
     int getGiornataIniziale();
     Integer getGiornataCalcolata();

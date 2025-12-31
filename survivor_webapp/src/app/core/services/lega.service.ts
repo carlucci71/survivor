@@ -59,4 +59,9 @@ export class LegaService {
 
     return this.http.post<Lega>(`${this.apiUrl}`, body);
   }
+
+  join(id: number, pwd: string | null): Observable<Lega> {
+    const body = { pwd: pwd };
+    return this.http.put<Lega>(`${this.apiUrl}/join/${id}`, body).pipe(map(mapLegaFromBE));
+  }
 }
