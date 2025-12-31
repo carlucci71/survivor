@@ -9,6 +9,7 @@ import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
+import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -49,6 +50,14 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         List<LegaDTO> legheDTO = legheUser(userId);
         return legheDTO;
+    }
+
+    @Transactional(readOnly = true)
+    public List<LegaDTO> legheLibere() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        List<LegaProjection> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE,userId);
+        return legaMapper.toDTOListProjection(legheDaAvviare);
     }
 
     @Transactional(readOnly = true)

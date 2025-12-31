@@ -20,6 +20,12 @@ export class LegaService {
       .pipe(map((leghe) => leghe.map(mapLegaFromBE)));
   }
 
+  legheLibere(): Observable<Lega[]> {
+    return this.http
+      .get<Lega[]>(`${this.apiUrl}/legheLibere`)
+      .pipe(map((leghe) => leghe.map(mapLegaFromBE)));
+  }
+
   getLegaById(id: number): Observable<Lega> {
     return this.http.get<Lega>(`${this.apiUrl}/${id}`).pipe(map(mapLegaFromBE));
   }

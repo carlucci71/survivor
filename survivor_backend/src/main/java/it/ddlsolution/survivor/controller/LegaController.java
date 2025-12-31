@@ -59,4 +59,10 @@ public class LegaController {
         return ResponseEntity.ok(legaDTO);
     }
 
+    @GetMapping(value = "/legheLibere")
+    public ResponseEntity<List<LegaDTO>> legheLibere() {
+        List<LegaDTO> dtoList = legaService.legheLibere();
+        return ResponseEntity.ok(dtoList);
+    }
+
 }
