@@ -16,6 +16,8 @@ import { CampionatoService } from '../../core/services/campionato.service';
 import { LegaService } from '../../core/services/lega.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -29,6 +31,7 @@ import { SnackMessageComponent } from '../../shared/components/snack-message/sna
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    ErrorDialogComponent,
     FormsModule,
   ],
   templateUrl: './lega-nuova.component.html',
@@ -42,6 +45,8 @@ export class LegaNuovaComponent implements OnInit {
     private sportService: SportService,
     private legaService: LegaService,
     private campionatoService: CampionatoService
+    ,
+    private dialog: MatDialog
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
@@ -139,17 +144,17 @@ export class LegaNuovaComponent implements OnInit {
         },
         error: (err) => {
 
-        if ((err.status = 499)) {
-          let messaggio = '';
-          if (err?.error?.message) {
-            messaggio = String(err.error.message);
-          } else {
-            messaggio = err.message;
+          if (err && err.status === 499) {
+            let messaggio = '';
+            if (err?.error?.message) {
+              messaggio = String(err.error.message);
+            } else {
+              messaggio = err.message;
+            }
+            this.dialog.open(ErrorDialogComponent, {
+              data: { message: messaggio },
+            });
           }
-          alert(messaggio);
-        }
-
-
 
           console.error('Errore creazione lega', err);
         },

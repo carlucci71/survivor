@@ -6,8 +6,11 @@ import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.exception.ManagedException;
+import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
@@ -15,8 +18,6 @@ import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,6 @@ public class LegaService {
     private final ICalendario calendario;
     private final CacheableService cacheableService;
     private final GiocatoreService giocatoreService;
-
 
     @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
@@ -374,6 +374,20 @@ public class LegaService {
             throw new ManagedException("Nome lega già presente", "CODE_GIMMI");
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
-        return legaMapper.toDTO(legaRepository.save(lega));
+
+        List<GiocatoreLega> giocatoriLega = new ArrayList<>();
+        GiocatoreLega giocatoreLega = new GiocatoreLega();
+        Giocatore giocatore = giocatoreService.findMe();
+        giocatoreLega.setGiocatore(giocatore);
+        giocatoreLega.setLega(lega);
+        giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+        giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        giocatoriLega.add(giocatoreLega);
+        lega.setGiocatoreLeghe(giocatoriLega);
+
+        Lega legaSalvata = legaRepository.save(lega);
+
+
+        return legaMapper.toDTO(legaSalvata);
     }
 }
