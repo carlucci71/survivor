@@ -29,7 +29,7 @@ public class EnumAPI2 {
     }
 
 
-    enum Sport {
+    public enum Sport {
         CALCIO(1),
         BASKET(3),
         TENNIS(8);
@@ -63,7 +63,8 @@ public class EnumAPI2 {
         FINISHED(Enumeratori.StatoPartita.TERMINATA),
         INPLAY(Enumeratori.StatoPartita.IN_CORSO),
         RETIRED(Enumeratori.StatoPartita.TERMINATA),
-        FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE);
+        FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE),
+        PLAYING(Enumeratori.StatoPartita.DA_GIOCARE);
 
 
         Enumeratori.StatoPartita statoPartita;

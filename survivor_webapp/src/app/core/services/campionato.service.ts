@@ -10,22 +10,21 @@ export class CampionatoService {
   private apiUrl = `${environment.apiUrl}/campionato`;
   private desGiornate: Record<string, string[]> | null = null;
 
-
-  constructor(private http: HttpClient,private loadingService: LoadingService) {
-    console.debug('CREATO');
+  constructor(
+    private http: HttpClient,
+    private loadingService: LoadingService
+  ) {
     this.getDesGiornate();
   }
-
-
 
   getCampionatoBySport(idSport: String): Observable<Campionato[]> {
     return this.http.get<Campionato[]>(`${this.apiUrl}/${idSport}`);
   }
 
-
-  
   private getDesGiornate() {
-      this.http.get<Record<string, string[]>>(`${this.apiUrl}/desGiornate`).subscribe({
+    this.http
+      .get<Record<string, string[]>>(`${this.apiUrl}/desGiornate`)
+      .subscribe({
         next: (des) => {
           this.desGiornate = des;
         },
@@ -37,14 +36,21 @@ export class CampionatoService {
         },
       });
   }
+  getDesGiornataNoAlias(campionato: string, index: number): string {
+    return this.getDesGiornata(campionato, index, '');
+  }
 
-  getDesGiornata(sport: string, index: number): string {
-    if (this.desGiornate && this.desGiornate[sport] && this.desGiornate[sport][index]) {
-      return this.desGiornate[sport][index];
+  getDesGiornata(campionato: string, index: number, alias: string): string {
+    if (alias) {
+      return alias;
+    } else if (
+      this.desGiornate &&
+      this.desGiornate[campionato] &&
+      this.desGiornate[campionato][index]
+    ) {
+      return this.desGiornate[campionato][index];
     } else {
       return 'Giornata ' + index;
     }
   }
-
-
 }

@@ -77,11 +77,21 @@ export class SelezionaGiocataComponent implements OnInit {
     return item && item.giornata ? item.giornata : index;
   }
 
-  getDesGiornata(index: number): string {
+  getDesGiornataTitle(index: number): string {
     if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
       return "";
     }
-    return this.campionatoService.getDesGiornata(this.lega?.campionato?.sport.id,index);
+    return this.campionatoService.getDesGiornataNoAlias(this.lega?.campionato?.id,index);
+  }
+
+
+  getDesGiornata(partita: Partita, casa: boolean): string {
+    const index= partita.giornata;
+    const alias= casa?partita.aliasGiornataCasa:partita.aliasGiornataFuori;
+    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
+      return "";
+    }
+    return this.campionatoService.getDesGiornata(this.lega?.campionato.id,index, alias);
   }
 
   mostraUltimiRisultati(sigla?: string) {

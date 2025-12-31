@@ -14,7 +14,7 @@
   </div>
   <div class="info-row">
     <span class="label">Giornata:</span>
-    <span class="value">{{ data.giornata }}</span>
+    <span class="value">{{ getDesGiornataTitle(data.giornata) }}</span>
   </div>
   <div class="info-row">
     <span class="label">Stato:</span>
@@ -53,7 +53,7 @@
       } @for (risultato of ultimiRisultati; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ getDesGiornata(risultato.giornata) }}]
+          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -121,7 +121,7 @@
       } @for (risultato of prossimePartite; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ getDesGiornata(risultato.giornata) }}]
+          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -147,7 +147,7 @@
       @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-        [{{ getDesGiornata(risultato.giornata) }}]
+          [{{ getDesGiornata(risultato,risultato.casaSigla === getNextOpponentSigla(true)) }}]
         {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>

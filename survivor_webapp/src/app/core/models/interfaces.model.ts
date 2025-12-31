@@ -115,7 +115,7 @@ export interface Lega {
 
 export interface Sport {
   campionati?: Campionato[];
-  id?: string;
+  id: string;
   nome: string;
 }
 
@@ -131,10 +131,12 @@ export interface Partita {
     fuoriNome: string;
     scoreCasa: number;
     scoreFuori: number; 
+    aliasGiornataCasa: string;
+    aliasGiornataFuori: string;
 }
 
 export interface Campionato {
-  id?: string;
+  id: string;
   nome: string;
   sport?: Sport;
   leghe?: Lega[];
