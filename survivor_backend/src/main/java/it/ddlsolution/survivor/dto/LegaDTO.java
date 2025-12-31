@@ -3,7 +3,6 @@ package it.ddlsolution.survivor.dto;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +12,8 @@ public class LegaDTO {
     private int giornataIniziale;
     private Integer giornataCalcolata;
     private String nome;
+    private boolean withPwd;
+    private Enumeratori.StatoLega stato;
     private CampionatoDTO campionato;
     private List<GiocatoreDTO> giocatori;
     private int giornataCorrente;

@@ -20,4 +20,6 @@ public class PartitaDTO {
     private String fuoriSigla;
     private Integer scoreCasa;
     private Integer scoreFuori;
+    private String aliasGiornataCasa;
+    private String aliasGiornataFuori;
 }

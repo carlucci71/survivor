@@ -13,10 +13,11 @@ public class GlobalExceptionHandler {
 
     private final ExceptionMapperService exceptionMapperService;
 
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<BaseResponseException> genericExceptionHandler(Exception ex) {
+    public ResponseEntity<BaseResponseException> exceptionHandler(Exception ex) {
         BaseResponseException baseResponse = exceptionMapperService.mapToBaseResponse(ex);
-        log.error("Errore generico: " + baseResponse.getId(), ex);
+        log.error("Errore: " + baseResponse.getId(), ex);
         int stato = exceptionMapperService.extractHttpStatus(ex);
         return ResponseEntity.status(stato).body(baseResponse);
     }

@@ -10,15 +10,17 @@
 
     <mat-card class="message-box">
       <mat-card-content>
-        <form class="form-vertical">
+        <form *ngIf="!confirmationMessage" class="form-vertical" (ngSubmit)="onSubmit()">
 
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Nome lega</mat-label>
               <input matInput placeholder="Nome lega" 
-			  name="nome"
+                name="nome"
                 [(ngModel)]="nome"
-			  />
+                (blur)="nomeTouched = true"
+              />
+              <mat-error *ngIf="nomeTouched && !nome">Nome lega obbligatorio</mat-error>
             </mat-form-field>
           </div>
           <div class="form-row">
@@ -28,12 +30,13 @@
                 placeholder="Sport"
                 name="sportSel"
                 [(ngModel)]="sportSel"
-                (selectionChange)="selezionaSport()"
+                (selectionChange)="sportTouched = true; selezionaSport()"
               >
                 @for (sport of sportDisponibili; track sport.id) {
                 <mat-option [value]="sport.id">{{ sport.nome }}</mat-option>
                 }
               </mat-select>
+              <mat-error *ngIf="sportTouched && !sportSel">Sport obbligatorio</mat-error>
             </mat-form-field>
           </div>
           <div class="form-row">
@@ -41,14 +44,15 @@
               <mat-label>Campionato</mat-label>
               <mat-select
                 placeholder="Campionato"
-				name="campionatoSel"
+                name="campionatoSel"
                 [(ngModel)]="campionatoSel"
-                (selectionChange)="mostraUltimiRisultati()"
+                (selectionChange)="campionatoTouched = true; mostraUltimiRisultati()"
               >
                 @for (campionato of campionatiDisponibili; track campionato.id) {
                 <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
                 }
               </mat-select>
+              <mat-error *ngIf="campionatoTouched && !campionatoSel">Campionato obbligatorio</mat-error>
             </mat-form-field>
           </div>
 
@@ -56,13 +60,44 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}</mat-label>
               <input matInput placeholder="Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}" 
-			  name="giornataIniziale"
+                name="giornataIniziale"
                 [(ngModel)]="giornataIniziale"
-				type="number"
-			  />
+                type="number"
+                (blur)="giornataTouched = true"
+                [attr.min]="campionatoSel?.giornataDaGiocare"
+                [attr.max]="campionatoSel?.numGiornate"
+              />
+              <mat-error *ngIf="giornataTouched && (giornataIniziale === null || giornataIniziale === undefined)">Giornata iniziale obbligatoria</mat-error>
+              <mat-error *ngIf="giornataTouched && !isGiornataValid()">Giornata iniziale deve essere compresa tra {{campionatoSel?.giornataDaGiocare}} e {{campionatoSel?.numGiornate}}</mat-error>
             </mat-form-field>
           </div>
-		</form>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password per unirsi</mat-label>
+              <input matInput placeholder="Password per unirsi" 
+                name="pwd"
+                [(ngModel)]="pwd"
+                type="text"
+                (blur)="giornataTouched = true"
+              />
+              <mat-error *ngIf="giornataTouched && (giornataIniziale === null || giornataIniziale === undefined)">Giornata iniziale obbligatoria</mat-error>
+              <mat-error *ngIf="giornataTouched && !isGiornataValid()">Giornata iniziale deve essere compresa tra {{campionatoSel?.giornataDaGiocare}} e {{campionatoSel?.numGiornate}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row actions">
+            <button mat-raised-button color="primary"  [disabled]="!isFormValid()">Crea Lega</button>
+          </div>
+    </form>
+
+    <div class="confirmation" *ngIf="confirmationMessage">
+          <mat-card class="confirmation-card">
+            <mat-card-content>
+              La lega è stata creata con successo <span *ngIf="pwd">, condividi con i tuoi amici con la password {{pwd}}</span>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.LegaInsertDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import org.mapstruct.AfterMapping;
@@ -10,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,13 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     protected GiocatoreMapper giocatoreMapper;
 
     @Mapping(target = "giocatori", ignore = true)
+    @Mapping(target = "withPwd", expression = "java(this.hasPwd(lega))")
     public abstract LegaDTO toDTO(Lega lega);
 
     @Mapping(target = "giocatori", ignore = true)
     @Mapping(target = "giornataCorrente", ignore = true)
     @Mapping(target = "statoGiornataCorrente", ignore = true)
+    @Mapping(target = "withPwd", expression = "java(this.hasPwd(legaProjection))")
     public abstract LegaDTO toDTO(LegaProjection legaProjection);
 
     public abstract List<LegaDTO> toDTOListProjection(List<LegaProjection> legaProjection);
@@ -34,6 +38,20 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     @Mapping(target = "giocatoreLeghe", ignore = true)
     @Mapping(target = "giocate", ignore = true)
     public abstract Lega toEntity(LegaDTO legaDTO);
+
+
+    @Mapping(target = "campionato.id", source = "campionato")
+    @Mapping(target = "campionato.sport.id", source = "sport")
+    @Mapping(target = "stato", expression = "java(it.ddlsolution.survivor.util.Enumeratori.StatoLega.DA_AVVIARE)")
+    public abstract Lega toEntity(LegaInsertDTO legaInsertDTO);
+
+    protected boolean hasPwd(LegaProjection legaProjection) {
+        return !ObjectUtils.isEmpty(legaProjection.getPwd());
+    }
+
+    protected boolean hasPwd(Lega lega) {
+        return !ObjectUtils.isEmpty(lega.getPwd());
+    }
 
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {

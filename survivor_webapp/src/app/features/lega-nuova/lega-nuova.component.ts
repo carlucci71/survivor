@@ -8,10 +8,16 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { SportService } from '../../core/services/sport.service';
 import { Campionato, Sport } from '../../core/models/interfaces.model';
 import { CampionatoService } from '../../core/services/campionato.service';
+import { LegaService } from '../../core/services/lega.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -24,6 +30,8 @@ import { CampionatoService } from '../../core/services/campionato.service';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonModule,
+    ErrorDialogComponent,
     FormsModule,
   ],
   templateUrl: './lega-nuova.component.html',
@@ -32,16 +40,27 @@ import { CampionatoService } from '../../core/services/campionato.service';
 export class LegaNuovaComponent implements OnInit {
   constructor(
     private router: Router,
+    private snackBar: MatSnackBar,
     private authService: AuthService,
     private sportService: SportService,
+    private legaService: LegaService,
     private campionatoService: CampionatoService
+    ,
+    private dialog: MatDialog
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
-  nome: string | null = null;
+  nome!: string;
   giornataIniziale: number | null = null;
+  pwd: string | null = null;
   sportDisponibili: Sport[] = [];
   campionatiDisponibili: Campionato[] = [];
+  // validation touch states
+  nomeTouched = false;
+  sportTouched = false;
+  campionatoTouched = false;
+  giornataTouched = false;
+  confirmationMessage: boolean = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -80,5 +99,76 @@ export class LegaNuovaComponent implements OnInit {
         },
       });
     }
+  }
+
+  isGiornataValid(): boolean {
+    if (this.giornataIniziale === null || this.giornataIniziale === undefined)
+      return false;
+    if (!this.campionatoSel) return false;
+    const min = this.campionatoSel.giornataDaGiocare ?? -Infinity;
+    const max = this.campionatoSel.numGiornate ?? Infinity;
+    return this.giornataIniziale >= min && this.giornataIniziale <= max;
+  }
+
+  isFormValid(): boolean {
+    return (
+      !!this.nome &&
+      !!this.sportSel &&
+      !!this.campionatoSel &&
+      this.isGiornataValid()
+    );
+  }
+
+  resetForm(): void {
+    this.nome = '';
+    this.sportSel = null;
+    this.campionatoSel = null;
+    this.giornataIniziale = null;
+    this.pwd = null;
+    this.nomeTouched = false;
+    this.sportTouched = false;
+    this.campionatoTouched = false;
+    this.giornataTouched = false;
+    this.campionatiDisponibili = [];
+  }
+
+  onSubmit(): void {
+    this.nomeTouched = true;
+    this.sportTouched = true;
+    this.campionatoTouched = true;
+    this.giornataTouched = true;
+
+    if (!this.isFormValid()) {
+      return;
+    }
+    this.legaService
+      .inserisciLega(
+        this.nome!,
+        this.sportSel!,
+        this.campionatoSel!.id,
+        this.giornataIniziale!,
+        this.pwd
+      )
+      .subscribe({
+        next: (lega) => {
+          this.confirmationMessage = true;
+        },
+        error: (err) => {
+
+          if (err && err.status === 499) {
+            let messaggio = '';
+            if (err?.error?.message) {
+              messaggio = String(err.error.message);
+            } else {
+              messaggio = err.message;
+            }
+            this.dialog.open(ErrorDialogComponent, {
+              data: { message: messaggio },
+            });
+          }
+
+          console.error('Errore creazione lega', err);
+        },
+      });
   }
 }

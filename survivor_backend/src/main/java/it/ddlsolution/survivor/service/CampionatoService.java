@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +31,25 @@ public class CampionatoService {
     @Transactional(readOnly = true)
     public Map<String, Map<Integer, String>> desGiornate() {
         Map<String, Map<Integer, String>> ret = new HashMap<>();
-        Map<Integer, String> mapSport = calendario.roundTennis();
-        ret.put("TENNIS", mapSport);
+
+        for (CampionatoDTO campionatoDTO : campionatiBySport(ICalendario.SportDisponibili.TENNIS.name())) {
+            ret.put(campionatoDTO.getId(), calendario.roundTennis());
+        }
+
+        ret.put(ICalendario.CampionatiDisponibili.NBA_RS.name(), desNbaRS());
         return ret;
     }
+
+    private Map<Integer, String> desNbaRS(){
+        CampionatoDTO campionatoDTO = campionatiBySport(ICalendario.SportDisponibili.BASKET.name()).stream()
+                .filter(c->c.getId().equals(ICalendario.CampionatiDisponibili.NBA_RS.name()))
+                .findFirst().get();
+        Map<Integer, String> ret = new HashMap<>();
+        for (int i=1;i<=campionatoDTO.getNumGiornate();i++){
+            ret.put(i,"Settimana " + i);
+        }
+
+        return ret;
+    }
+
 }

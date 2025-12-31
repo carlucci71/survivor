@@ -35,6 +35,14 @@ public class GiocatoreService {
     }
 
     @Transactional
+    public Giocatore findMe() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return giocatoreRepository.findByUser_Id(userId).orElseThrow(()->new RuntimeException("Utente non trovato: " + userId));
+    }
+
+
+    @Transactional
     public GiocatoreDTO aggiorna(GiocatoreDTO giocatoreDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();

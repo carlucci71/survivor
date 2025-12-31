@@ -2,8 +2,12 @@ package it.ddlsolution.survivor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
+import it.ddlsolution.survivor.converter.StatoLegaConverter;
+import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -48,5 +52,13 @@ public class Lega {
     @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("lega-giocate")
     private List<Giocata> giocate = new ArrayList<>();
+
+    @Column(name = "pwd", length = 50)
+    private String pwd;
+
+    @Column(name = "stato", nullable = false, length = 1)
+    @Convert(converter = StatoLegaConverter.class)
+    private Enumeratori.StatoLega stato;
+
 
 }

@@ -30,6 +30,7 @@ import { AdminService } from '../../core/services/admin.service';
 import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampionatoService } from '../../core/services/campionato.service';
+import { UtilService } from '../../core/services/util.service';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -71,6 +72,7 @@ export class LegaDettaglioComponent {
     private adminService: AdminService,
     private authService: AuthService,
     private squadraService: SquadraService,
+    private utilService: UtilService,
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
@@ -92,11 +94,11 @@ export class LegaDettaglioComponent {
     });
   }
 
-  getDesGiornata(index: number): string {
+  getDesGiornataTitle(index: number): string {
     if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
       return "";
     }
-    return this.campionatoService.getDesGiornata(this.lega?.campionato?.sport.id,index);
+    return this.campionatoService.getDesGiornataNoAlias(this.lega?.campionato?.id,index);
   }
 
   get maxGiornata(): number {
@@ -329,10 +331,6 @@ export class LegaDettaglioComponent {
   }
 
   getGiocaIcon(): string {
-    const sportId = this.lega?.campionato?.sport?.id;
-    if (sportId === 'BASKET') return 'sports_basketball';
-    if (sportId === 'CALCIO') return 'sports_soccer';
-    if (sportId === 'TENNIS') return 'sports_tennis';
-    return 'sports_esports';
+    return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
   }
 }

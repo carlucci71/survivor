@@ -4,8 +4,15 @@ import it.ddlsolution.survivor.aspect.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
+import it.ddlsolution.survivor.entity.projection.LegaProjection;
+import it.ddlsolution.survivor.exception.ManagedException;
+import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
@@ -38,13 +45,20 @@ public class LegaService {
     private final CacheableService cacheableService;
     private final GiocatoreService giocatoreService;
 
-
     @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         List<LegaDTO> legheDTO = legheUser(userId);
         return legheDTO;
+    }
+
+    @Transactional(readOnly = true)
+    public List<LegaDTO> legheLibere() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        List<Lega> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE,userId);
+        return legaMapper.toDTOList(legheDaAvviare);
     }
 
     @Transactional(readOnly = true)
@@ -140,7 +154,7 @@ public class LegaService {
     }
 
     @Transactional(readOnly = true)
-    public List<LegaDTO> allLeghe(){
+    public List<LegaDTO> allLeghe() {
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
 
@@ -337,13 +351,13 @@ public class LegaService {
                 }
                 if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
                     int prev = currGG - 1;
-                    if (giocataDTO.getGiornata().equals(prev) ) {
+                    if (giocataDTO.getGiornata().equals(prev)) {
                         giocataDTO.setEsito(null);
                     }
                 }
-                if (legaDTO.getGiornataCalcolata()==null && legaDTO.getGiornataIniziale() == giornataCorrente - 1){
+                if (legaDTO.getGiornataCalcolata() == null && legaDTO.getGiornataIniziale() == giornataCorrente - 1) {
                     int prev = currGG - 1;
-                    if (giocataDTO.getGiornata().equals(prev) ) {
+                    if (giocataDTO.getGiornata().equals(prev)) {
                         giocataDTO.setEsito(null);
                     }
                 }
@@ -361,6 +375,48 @@ public class LegaService {
 
         salva(legaDTO);
         return getLegaDTO(legaDTO.getId(), true);
+
+    }
+
+    @Transactional
+    public LegaDTO inserisciLega(LegaInsertDTO legaInsertDTO) {
+        if (legaRepository.findByNome(legaInsertDTO.getNome()).isPresent()) {
+            throw new ManagedException("Nome lega già presente", "CODE_LEGA_PRESENTE");
+        }
+        Lega lega = legaMapper.toEntity(legaInsertDTO);
+        List<GiocatoreLega> giocatoriLega = new ArrayList<>();
+        GiocatoreLega giocatoreLega = new GiocatoreLega();
+        Giocatore giocatore = giocatoreService.findMe();
+        giocatoreLega.setGiocatore(giocatore);
+        giocatoreLega.setLega(lega);
+        giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+        giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        giocatoriLega.add(giocatoreLega);
+        lega.setGiocatoreLeghe(giocatoriLega);
+        Lega legaSalvata = legaRepository.save(lega);
+        return legaMapper.toDTO(legaSalvata);
+    }
+
+    public LegaDTO join(Long idLega, LegaJoinDTO legaInsertDTO) {
+        Lega lega = legaRepository.findById(idLega).orElseThrow(()->new RuntimeException("Lega non trovata: " + idLega));
+        if (!ObjectUtils.isEmpty(lega.getPwd())){
+            if (!lega.getPwd().equals(legaInsertDTO.getPwd())){
+                throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
+            }
+        }
+        List<GiocatoreLega> giocatoriLega = lega.getGiocatoreLeghe();
+        GiocatoreLega giocatoreLega = new GiocatoreLega();
+        Giocatore giocatore = giocatoreService.findMe();
+        giocatoreLega.setGiocatore(giocatore);
+        giocatoreLega.setLega(lega);
+        giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
+        giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        giocatoriLega.add(giocatoreLega);
+        lega.setGiocatoreLeghe(giocatoriLega);
+        Lega legaSalvata = legaRepository.save(lega);
+        return legaMapper.toDTO(legaSalvata);
+
+
 
     }
 }
