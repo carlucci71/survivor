@@ -1,4 +1,4 @@
-import { Lega, statoPartitaFromCodice, statoGiocatoreFromCodice, ruoloGiocatoreFromCodice } from '../models/interfaces.model';
+import { Lega, statoPartitaFromCodice, statoGiocatoreFromCodice, ruoloGiocatoreFromCodice, statoLegaFromCodice } from '../models/interfaces.model';
 
 export function mapLegaFromBE(lega: Lega): Lega {
   return {
@@ -7,6 +7,10 @@ export function mapLegaFromBE(lega: Lega): Lega {
     statoGiornataCorrente: typeof lega.statoGiornataCorrente === 'string'
       ? statoPartitaFromCodice(lega.statoGiornataCorrente)
       : lega.statoGiornataCorrente,
+
+    stato: typeof lega.stato === 'string'
+      ? statoLegaFromCodice(lega.stato)
+      : lega.stato,
 
     ruoloGiocatoreLega: typeof lega.ruoloGiocatoreLega === 'string'
       ? ruoloGiocatoreFromCodice(lega.ruoloGiocatoreLega)

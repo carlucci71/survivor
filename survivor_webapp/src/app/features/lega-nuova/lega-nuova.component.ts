@@ -52,6 +52,7 @@ export class LegaNuovaComponent implements OnInit {
   campionatoSel: Campionato | null = null;
   nome!: string;
   giornataIniziale: number | null = null;
+  pwd: string | null = null;
   sportDisponibili: Sport[] = [];
   campionatiDisponibili: Campionato[] = [];
   // validation touch states
@@ -59,6 +60,7 @@ export class LegaNuovaComponent implements OnInit {
   sportTouched = false;
   campionatoTouched = false;
   giornataTouched = false;
+  confirmationMessage: boolean = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -117,6 +119,19 @@ export class LegaNuovaComponent implements OnInit {
     );
   }
 
+  resetForm(): void {
+    this.nome = '';
+    this.sportSel = null;
+    this.campionatoSel = null;
+    this.giornataIniziale = null;
+    this.pwd = null;
+    this.nomeTouched = false;
+    this.sportTouched = false;
+    this.campionatoTouched = false;
+    this.giornataTouched = false;
+    this.campionatiDisponibili = [];
+  }
+
   onSubmit(): void {
     this.nomeTouched = true;
     this.sportTouched = true;
@@ -131,16 +146,12 @@ export class LegaNuovaComponent implements OnInit {
         this.nome!,
         this.sportSel!,
         this.campionatoSel!.id,
-        this.giornataIniziale!
+        this.giornataIniziale!,
+        this.pwd
       )
       .subscribe({
         next: (lega) => {
-          this.snackBar.openFromComponent(SnackMessageComponent, {
-            data: 'Lega creata con successo',
-            duration: 5000,
-            panelClass: 'multi-line-snackbar',
-          });
-          this.router.navigate(['/home']);
+          this.confirmationMessage = true;
         },
         error: (err) => {
 

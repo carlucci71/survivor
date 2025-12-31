@@ -10,7 +10,7 @@
 
     <mat-card class="message-box">
       <mat-card-content>
-        <form class="form-vertical" (ngSubmit)="onSubmit()">
+        <form *ngIf="!confirmationMessage" class="form-vertical" (ngSubmit)="onSubmit()">
 
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
@@ -72,10 +72,32 @@
             </mat-form-field>
           </div>
 
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password per unirsi</mat-label>
+              <input matInput placeholder="Password per unirsi" 
+                name="pwd"
+                [(ngModel)]="pwd"
+                type="text"
+                (blur)="giornataTouched = true"
+              />
+              <mat-error *ngIf="giornataTouched && (giornataIniziale === null || giornataIniziale === undefined)">Giornata iniziale obbligatoria</mat-error>
+              <mat-error *ngIf="giornataTouched && !isGiornataValid()">Giornata iniziale deve essere compresa tra {{campionatoSel?.giornataDaGiocare}} e {{campionatoSel?.numGiornate}}</mat-error>
+            </mat-form-field>
+          </div>
+
           <div class="form-row actions">
             <button mat-raised-button color="primary"  [disabled]="!isFormValid()">Crea Lega</button>
           </div>
-		</form>
+    </form>
+
+    <div class="confirmation" *ngIf="confirmationMessage">
+          <mat-card class="confirmation-card">
+            <mat-card-content>
+              La lega è stata creata con successo <span *ngIf="pwd">, condividi con i tuoi amici con la password {{pwd}}</span>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

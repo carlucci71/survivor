@@ -70,4 +70,31 @@ public class Enumeratori {
         IN_CORSO
     }
 
+    public enum StatoLega {
+        DA_AVVIARE("D"), AVVIATA("A"), TERMINATA("T");
+
+        private final String codice;
+
+        StatoLega(String codice) {
+            this.codice = codice;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+        public static StatoLega fromCodice(String codice) {
+            if (codice == null) {
+                return null;
+            }
+            for (StatoLega stato : StatoLega.values()) {
+                if (stato.codice.equals(codice)) {
+                    return stato;
+                }
+            }
+            throw new IllegalArgumentException("StatoLega non valido: " + codice);
+        }
+
+    }
+
 }

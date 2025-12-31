@@ -6,8 +6,6 @@ package it.ddlsolution.survivor.entity.projection;
 public interface CampionatoProjection {
     String getId();
     String getNome();
-
     int getNumGiornate();
-
     SportProjection getSport();
 }

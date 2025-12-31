@@ -14,6 +14,8 @@ create table lega(
 	giornata_iniziale  integer NOT NULL,
 	giornata_calcolata  integer NULL,
 	nome varchar(100) not null,
+	stato char(1) not null,
+	pwd varchar(50) null,
 	id_campionato varchar(20) not null
 );
 create table giocatore(
@@ -341,11 +343,11 @@ insert into squadra(sigla,nome,id_campionato) values('19248','Lucas Pouille','TE
 insert into squadra(sigla,nome,id_campionato) values('28728','Alexander Zverev','TENNIS_AO');
 
 
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (1,13,16,'DDL','SERIE_A');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (2,1,null,'DDL NBA RS','NBA_RS');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (3,13,16,'DDL B','SERIE_B');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (4,13,16,'DDL LIGA','LIGA');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (5,13,16,'DDL AO','TENNIS_AO');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (1,13,16,'DDL','SERIE_A','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (2,1,null,'DDL NBA RS','NBA_RS','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (3,13,16,'DDL B','SERIE_B','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (4,13,16,'DDL LIGA','LIGA','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (5,13,16,'DDL AO','TENNIS_AO','A');
 
 
 insert into giocatore(nome,user_id) values('ALESSANDRO TOTO',

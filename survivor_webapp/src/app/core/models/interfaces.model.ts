@@ -109,6 +109,7 @@ export interface Lega {
   giornataCorrente: number;
   statoGiornataCorrente: StatoPartita;
   ruoloGiocatoreLega: RuoloGiocatore;
+  stato: StatoLega;
   statiGiornate?: Record<number, StatoPartita>;
 }
 
@@ -171,4 +172,37 @@ export interface Giocata {
 export interface StatiPerLega {
   id?: number;
   statoGiocatore?: StatoGiocatore;
+}
+
+
+export class StatoLega {
+  static readonly DA_AVVIARE = new StatoLega('DA_AVVIARE', 'Da Avviare');
+  static readonly AVVIATA = new StatoLega('AVVIATA', 'Avviata');
+  static readonly TERMINATA = new StatoLega('TERMINATA', 'Terminata');
+  
+  private constructor(
+    public readonly value: string,
+    public readonly descrizione: string
+  ) {}
+
+  static values(): StatoLega[] {
+    return [
+      StatoLega.DA_AVVIARE,
+      StatoLega.AVVIATA,
+      StatoLega.TERMINATA
+    ];
+  }
+}
+
+export function statoLegaFromCodice(codice: string): StatoLega {
+  switch (codice) {
+    case StatoLega.DA_AVVIARE.value:
+      return StatoLega.DA_AVVIARE;
+    case StatoLega.AVVIATA.value:
+      return StatoLega.AVVIATA;
+    case StatoLega.TERMINATA.value:
+      return StatoLega.TERMINATA;
+    default:
+      throw new Error(`Codice StatoLega sconosciuto: ${codice}`);
+  }
 }

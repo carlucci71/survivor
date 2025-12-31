@@ -39,7 +39,9 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @Mapping(target = "campionato.id", source = "campionato")
     @Mapping(target = "campionato.sport.id", source = "sport")
+    @Mapping(target = "stato", expression = "java(it.ddlsolution.survivor.util.Enumeratori.StatoLega.DA_AVVIARE)")
     public abstract Lega toEntity(LegaInsertDTO legaInsertDTO);
+
 
 
     @AfterMapping

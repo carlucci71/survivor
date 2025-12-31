@@ -371,7 +371,7 @@ public class LegaService {
     @Transactional
     public LegaDTO inserisciLega(LegaInsertDTO legaInsertDTO) {
         if (legaRepository.findByNome(legaInsertDTO.getNome()).isPresent()) {
-            throw new ManagedException("Nome lega già presente", "CODE_GIMMI");
+            throw new ManagedException("Nome lega già presente", "CODE_LEGA_PRESENTE");
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
 

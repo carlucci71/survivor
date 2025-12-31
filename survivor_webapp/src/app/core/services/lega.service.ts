@@ -40,13 +40,15 @@ export class LegaService {
     nome: string,
     sport: string,
     campionato: string,
-    giornataIniziale: number
+    giornataIniziale: number,
+    pwd: string | null
   ): Observable<Lega> {
     const body = {
       nome: nome,
       sport: sport,
       campionato: campionato,
       giornataIniziale: giornataIniziale,
+      pwd: pwd
     };
 
     return this.http.post<Lega>(`${this.apiUrl}`, body);

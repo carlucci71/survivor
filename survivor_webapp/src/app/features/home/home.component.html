@@ -53,6 +53,7 @@
               @if (lega.campionato?.id ?? '') {
                 <mat-card-subtitle>{{ lega.campionato?.sport?.nome  }} - {{ lega.campionato?.nome ?? '' }}</mat-card-subtitle>
               }
+                <mat-card-subtitle>{{ lega.stato.descrizione }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions>
               <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>

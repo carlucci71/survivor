@@ -12,6 +12,8 @@ public class LegaDTO {
     private int giornataIniziale;
     private Integer giornataCalcolata;
     private String nome;
+    private String pwd;
+    private Enumeratori.StatoLega stato;
     private CampionatoDTO campionato;
     private List<GiocatoreDTO> giocatori;
     private int giornataCorrente;
