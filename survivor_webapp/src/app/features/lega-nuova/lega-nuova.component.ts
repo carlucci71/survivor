@@ -8,10 +8,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { SportService } from '../../core/services/sport.service';
 import { Campionato, Sport } from '../../core/models/interfaces.model';
 import { CampionatoService } from '../../core/services/campionato.service';
+import { LegaService } from '../../core/services/lega.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -24,6 +28,7 @@ import { CampionatoService } from '../../core/services/campionato.service';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatButtonModule,
     FormsModule,
   ],
   templateUrl: './lega-nuova.component.html',
@@ -32,16 +37,23 @@ import { CampionatoService } from '../../core/services/campionato.service';
 export class LegaNuovaComponent implements OnInit {
   constructor(
     private router: Router,
+    private snackBar: MatSnackBar,
     private authService: AuthService,
     private sportService: SportService,
+    private legaService: LegaService,
     private campionatoService: CampionatoService
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
-  nome: string | null = null;
+  nome!: string;
   giornataIniziale: number | null = null;
   sportDisponibili: Sport[] = [];
   campionatiDisponibili: Campionato[] = [];
+  // validation touch states
+  nomeTouched = false;
+  sportTouched = false;
+  campionatoTouched = false;
+  giornataTouched = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -80,5 +92,67 @@ export class LegaNuovaComponent implements OnInit {
         },
       });
     }
+  }
+
+  isGiornataValid(): boolean {
+    if (this.giornataIniziale === null || this.giornataIniziale === undefined)
+      return false;
+    if (!this.campionatoSel) return false;
+    const min = this.campionatoSel.giornataDaGiocare ?? -Infinity;
+    const max = this.campionatoSel.numGiornate ?? Infinity;
+    return this.giornataIniziale >= min && this.giornataIniziale <= max;
+  }
+
+  isFormValid(): boolean {
+    return (
+      !!this.nome &&
+      !!this.sportSel &&
+      !!this.campionatoSel &&
+      this.isGiornataValid()
+    );
+  }
+
+  onSubmit(): void {
+    this.nomeTouched = true;
+    this.sportTouched = true;
+    this.campionatoTouched = true;
+    this.giornataTouched = true;
+
+    if (!this.isFormValid()) {
+      return;
+    }
+    this.legaService
+      .inserisciLega(
+        this.nome!,
+        this.sportSel!,
+        this.campionatoSel!.id,
+        this.giornataIniziale!
+      )
+      .subscribe({
+        next: (lega) => {
+          this.snackBar.openFromComponent(SnackMessageComponent, {
+            data: 'Lega creata con successo',
+            duration: 5000,
+            panelClass: 'multi-line-snackbar',
+          });
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+
+        if ((err.status = 499)) {
+          let messaggio = '';
+          if (err?.error?.message) {
+            messaggio = String(err.error.message);
+          } else {
+            messaggio = err.message;
+          }
+          alert(messaggio);
+        }
+
+
+
+          console.error('Errore creazione lega', err);
+        },
+      });
   }
 }

@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.LegaInsertDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import org.mapstruct.AfterMapping;
@@ -34,6 +35,12 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     @Mapping(target = "giocatoreLeghe", ignore = true)
     @Mapping(target = "giocate", ignore = true)
     public abstract Lega toEntity(LegaDTO legaDTO);
+
+
+    @Mapping(target = "campionato.id", source = "campionato")
+    @Mapping(target = "campionato.sport.id", source = "sport")
+    public abstract Lega toEntity(LegaInsertDTO legaInsertDTO);
+
 
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {

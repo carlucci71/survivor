@@ -4,8 +4,10 @@ import it.ddlsolution.survivor.aspect.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Lega;
+import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
@@ -13,6 +15,8 @@ import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -140,7 +144,7 @@ public class LegaService {
     }
 
     @Transactional(readOnly = true)
-    public List<LegaDTO> allLeghe(){
+    public List<LegaDTO> allLeghe() {
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
 
@@ -337,13 +341,13 @@ public class LegaService {
                 }
                 if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
                     int prev = currGG - 1;
-                    if (giocataDTO.getGiornata().equals(prev) ) {
+                    if (giocataDTO.getGiornata().equals(prev)) {
                         giocataDTO.setEsito(null);
                     }
                 }
-                if (legaDTO.getGiornataCalcolata()==null && legaDTO.getGiornataIniziale() == giornataCorrente - 1){
+                if (legaDTO.getGiornataCalcolata() == null && legaDTO.getGiornataIniziale() == giornataCorrente - 1) {
                     int prev = currGG - 1;
-                    if (giocataDTO.getGiornata().equals(prev) ) {
+                    if (giocataDTO.getGiornata().equals(prev)) {
                         giocataDTO.setEsito(null);
                     }
                 }
@@ -362,5 +366,14 @@ public class LegaService {
         salva(legaDTO);
         return getLegaDTO(legaDTO.getId(), true);
 
+    }
+
+    @Transactional
+    public LegaDTO inserisciLega(LegaInsertDTO legaInsertDTO) {
+        if (legaRepository.findByNome(legaInsertDTO.getNome()).isPresent()) {
+            throw new ManagedException("Nome lega già presente", "CODE_GIMMI");
+        }
+        Lega lega = legaMapper.toEntity(legaInsertDTO);
+        return legaMapper.toDTO(legaRepository.save(lega));
     }
 }

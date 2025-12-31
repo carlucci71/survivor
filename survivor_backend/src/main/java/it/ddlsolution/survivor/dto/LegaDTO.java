@@ -3,7 +3,6 @@ package it.ddlsolution.survivor.dto;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

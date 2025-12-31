@@ -20,5 +20,6 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     @Query("select l from Lega l")
     List<LegaProjection> allLeghe();
 
+    Optional<Lega> findByNome(String nome);
 }
 

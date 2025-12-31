@@ -111,6 +111,8 @@ ALTER TABLE param_log_dispositiva
 ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
 FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
+CREATE UNIQUE INDEX idx_lega_nome_unico ON lega (nome);
+
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into sport(id,nome) values('TENNIS','Tennis');
@@ -530,4 +532,5 @@ INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasu
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));
+SELECT setval('lega_id_seq', (SELECT MAX(id) FROM lega));
 
