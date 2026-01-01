@@ -407,7 +407,7 @@ public class LegaService {
         String tokenOriginal = legaInsertDTO.getTokenOriginal();
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
-            if (tokenOriginal == null && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
+            if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
                 throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
             }
         }
