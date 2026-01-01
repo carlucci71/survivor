@@ -95,6 +95,9 @@ FOREIGN KEY (id_squadra) REFERENCES squadra(id);
 ALTER TABLE giocatore
 ADD CONSTRAINT fk_giocatore_user
 FOREIGN KEY (user_id) REFERENCES users(id);
+ALTER TABLE giocata
+ADD CONSTRAINT fk_giocata_lega
+FOREIGN KEY (id_lega) REFERENCES lega(id);
 
 alter TABLE giocatore_lega 
 ADD CONSTRAINT fk_giocatore FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
@@ -122,7 +125,7 @@ insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO'
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie B',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
-insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',7);
 insert into squadra(sigla,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('BOL','Bologna','SERIE_A');
 insert into squadra(sigla,nome,id_campionato) values('CAG','Cagliari','SERIE_A');
