@@ -18,13 +18,12 @@ export class SquadraService {
     }
     return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}`).pipe(
       tap(squadre => {
-        console.log(squadre);
         this.cache.set(campionatoId, squadre);
   })
     );
   }
 
-  getSquadraNomeBySigla(squadraSigla: string, campionatoId: string): string {
+  getSquadraNomeBySigla(squadraSigla: string|null, campionatoId: string): string|null {
     const squadre = this.cache.get(campionatoId);
     if (squadre) {
       const squadra = squadre.find(s => s.sigla === squadraSigla);

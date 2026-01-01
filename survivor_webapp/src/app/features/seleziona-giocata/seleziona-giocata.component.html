@@ -14,7 +14,7 @@
   </div>
   <div class="info-row">
     <span class="label">Giornata:</span>
-    <span class="value">{{ data.giornata }}</span>
+    <span class="value">{{ getDesGiornataTitle(data.giornata) }}</span>
   </div>
   <div class="info-row">
     <span class="label">Stato:</span>
@@ -48,14 +48,12 @@
   <div class="risultati-row">
     <div class="risultati-col" role="region" aria-label="Ultimi risultati">
       <h3 class="risultati-title">Ultimi Risultati</h3>
-      @if (isLoading) {
-      <div>Caricamento...</div>
-      } @if (!isLoading && squadraSelezionata && ultimiRisultati.length === 0) {
+      @if (squadraSelezionata && ultimiRisultati.length === 0) {
       <div>Nessun risultato recente</div>
       } @for (risultato of ultimiRisultati; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ risultato.giornata }}]
+          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -118,14 +116,12 @@
 
     <div class="risultati-col" role="region" aria-label="Prossime partite">
       <h3 class="risultati-title">Prossime partite</h3>
-      @if (isLoading) {
-      <div>Caricamento...</div>
-      } @if (!isLoading && squadraSelezionata && prossimePartite.length === 0) {
+       @if (squadraSelezionata && prossimePartite.length === 0) {
       <div>Nessuna partita in programma</div>
       } @for (risultato of prossimePartite; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ risultato.giornata }}]
+          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -145,16 +141,14 @@
 
     <div class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
       <h3 class="risultati-title">Ultimi Risultati {{getNextOpponentSigla(false)}}</h3>
-      @if (isLoading) {
-      <div>Caricamento...</div>
-      }
-      @if (!isLoading && squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
+      @if (squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
       <div>Nessun risultato recente per {{getNextOpponentSigla(false)}}</div>
       }
       @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-        [{{ risultato.giornata }}] {{ risultato.orario | date : "yyyy/MM/dd" }}
+          [{{ getDesGiornata(risultato,risultato.casaSigla === getNextOpponentSigla(true)) }}]
+        {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
 

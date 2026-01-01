@@ -1,1 +1,147 @@
-<p>lega-nuova works!</p>
+<app-header
+  title="Nuova Lega"
+  (back)="goBack()"
+  (logout)="logout()"
+></app-header>
+
+<main class="main-content">
+  <div class="main-panel">
+    <h2>Censisci una nuova lega</h2>
+
+    <mat-card class="message-box">
+      <mat-card-content>
+        <form *ngIf="!confirmationMessage" class="form-vertical" (ngSubmit)="onSubmit()">
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nome lega</mat-label>
+              <input matInput placeholder="Nome lega" 
+                name="nome"
+                [(ngModel)]="nome"
+                (blur)="nomeTouched = true"
+              />
+              <mat-error *ngIf="nomeTouched && !nome">Nome lega obbligatorio</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Sport</mat-label>
+              <mat-select
+                placeholder="Sport"
+                name="sportSel"
+                [(ngModel)]="sportSel"
+                (selectionChange)="sportTouched = true; selezionaSport()"
+              >
+                @for (sport of sportDisponibili; track sport.id) {
+                <mat-option [value]="sport.id">{{ sport.nome }}</mat-option>
+                }
+              </mat-select>
+              <mat-error *ngIf="sportTouched && !sportSel">Sport obbligatorio</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Campionato</mat-label>
+              <mat-select
+                placeholder="Campionato"
+                name="campionatoSel"
+                [(ngModel)]="campionatoSel"
+                (selectionChange)="campionatoTouched = true"
+              >
+                @for (campionato of campionatiDisponibili; track campionato.id) {
+                <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
+                }
+              </mat-select>
+              <mat-error *ngIf="campionatoTouched && !campionatoSel">Campionato obbligatorio</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}</mat-label>
+              <input matInput placeholder="Giornata iniziale {{campionatoSel?.giornataDaGiocare}}-{{campionatoSel?.numGiornate}}" 
+                name="giornataIniziale"
+                [(ngModel)]="giornataIniziale"
+                type="number"
+                (blur)="giornataTouched = true"
+                [attr.min]="campionatoSel?.giornataDaGiocare"
+                [attr.max]="campionatoSel?.numGiornate"
+              />
+              <mat-error *ngIf="giornataTouched && (giornataIniziale === null || giornataIniziale === undefined)">Giornata iniziale obbligatoria</mat-error>
+              <mat-error *ngIf="giornataTouched && !isGiornataValid()">Giornata iniziale deve essere compresa tra {{campionatoSel?.giornataDaGiocare}} e {{campionatoSel?.numGiornate}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Password per unirsi</mat-label>
+              <input matInput placeholder="Password per unirsi" 
+                name="pwd"
+                [(ngModel)]="pwd"
+                type="text"
+                (blur)="giornataTouched = true"
+              />
+              <mat-error *ngIf="giornataTouched && (giornataIniziale === null || giornataIniziale === undefined)">Giornata iniziale obbligatoria</mat-error>
+              <mat-error *ngIf="giornataTouched && !isGiornataValid()">Giornata iniziale deve essere compresa tra {{campionatoSel?.giornataDaGiocare}} e {{campionatoSel?.numGiornate}}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row actions">
+            <button mat-raised-button color="primary"  [disabled]="!isFormValid()">Crea Lega</button>
+          </div>
+    </form>
+
+    <div class="confirmation" *ngIf="confirmationMessage">
+          <mat-card class="confirmation-card">
+            <mat-card-content>
+              <p class="success-message">
+                La lega <b>{{nome}}</b> è stata creata con successo.
+              </p>
+              <p>
+                Puoi dire ai tuoi amici di cercare la lega all'url 
+                <a [href]="baseUrl() + '/joinLega'">{{baseUrl()}}/joinLega</a>
+                <span *ngIf="pwd"> ed unirsi con la password <b>{{pwd}}</b></span>
+              </p>
+              
+              <div class="invite-section">
+                <h3>Invita amici via email</h3>
+                
+                <div class="email-input-section">
+                  <mat-form-field appearance="outline" class="email-field">
+                    <mat-label>Indirizzo email</mat-label>
+                    <input 
+                      matInput 
+                      placeholder="email@esempio.com" 
+                      [(ngModel)]="emailInput"
+                      (keyup.enter)="addEmail()"
+                    />
+                  </mat-form-field>
+                  <button mat-raised-button color="accent" (click)="addEmail()" [disabled]="!isValidEmail(emailInput)">
+                    Aggiungi
+                  </button>
+                </div>
+
+                <div class="emails-list" *ngIf="emailsList.length > 0">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
+                      {{email}}
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+
+                <div class="invite-actions" *ngIf="emailsList.length > 0">
+                  <button mat-raised-button color="primary" (click)="invitaUtenti()">
+                    Invia Inviti ({{emailsList.length}})
+                  </button>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</main>

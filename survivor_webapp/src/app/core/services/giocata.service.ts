@@ -21,7 +21,7 @@ export class GiocataService {
       squadraSigla: squadraSelezionata,
     };
 
-      return this.http.post<any>(`${this.apiUrl}`, body);
+      return this.http.post<Giocatore>(`${this.apiUrl}`, body);
     }
 
 }

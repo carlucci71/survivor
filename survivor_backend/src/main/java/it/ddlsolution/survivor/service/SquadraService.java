@@ -6,6 +6,7 @@ import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +18,7 @@ public class SquadraService {
     private final SquadraRepository squadraRepository;
     private final SquadraMapper squadraMapper;
 
+    @Transactional(readOnly = true)
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId) {
         List<Squadra> squadre = squadraRepository.findByCampionato_Id(campionatoId);
         List<SquadraDTO> squadreDTO = squadraMapper.toDTOList(squadre)

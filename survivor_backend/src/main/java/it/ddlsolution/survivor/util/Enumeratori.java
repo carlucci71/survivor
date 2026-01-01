@@ -11,6 +11,21 @@ public class Enumeratori {
         OK, KO
     }
 
+    public enum TipoMagicToken {
+        JOIN("J"), LOG("L");
+        private final String codice;
+
+        TipoMagicToken(String codice) {
+            this.codice = codice;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+
+    }
+
     public enum StatoGiocatore {
         ATTIVO("A"), PENDING("P"), ELIMINATO("E");
 
@@ -37,6 +52,7 @@ public class Enumeratori {
         }
 
     }
+
     public enum RuoloGiocatoreLega {
         LEADER("L"), GIOCATORE("G");
 
@@ -63,11 +79,39 @@ public class Enumeratori {
         }
 
     }
+
     public enum StatoPartita {
         DA_GIOCARE,
         SOSPESA,
         TERMINATA,
         IN_CORSO
+    }
+
+    public enum StatoLega {
+        DA_AVVIARE("D"), AVVIATA("A"), TERMINATA("T");
+
+        private final String codice;
+
+        StatoLega(String codice) {
+            this.codice = codice;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+        public static StatoLega fromCodice(String codice) {
+            if (codice == null) {
+                return null;
+            }
+            for (StatoLega stato : StatoLega.values()) {
+                if (stato.codice.equals(codice)) {
+                    return stato;
+                }
+            }
+            throw new IllegalArgumentException("StatoLega non valido: " + codice);
+        }
+
     }
 
 }

@@ -14,6 +14,8 @@ create table lega(
 	giornata_iniziale  integer NOT NULL,
 	giornata_calcolata  integer NULL,
 	nome varchar(100) not null,
+	stato char(1) not null,
+	pwd varchar(50) null,
 	id_campionato varchar(20) not null
 );
 create table giocatore(
@@ -111,11 +113,13 @@ ALTER TABLE param_log_dispositiva
 ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
 FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
+CREATE UNIQUE INDEX idx_lega_nome_unico ON lega (nome);
+
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into sport(id,nome) values('TENNIS','Tennis');
 insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_A','CALCIO','Serie A',38);
-insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie A',38);
+insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO','Serie B',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',38);
@@ -339,11 +343,11 @@ insert into squadra(sigla,nome,id_campionato) values('19248','Lucas Pouille','TE
 insert into squadra(sigla,nome,id_campionato) values('28728','Alexander Zverev','TENNIS_AO');
 
 
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (1,13,16,'DDL','SERIE_A');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (2,1,null,'DDL NBA RS','NBA_RS');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (3,13,16,'DDL B','SERIE_B');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (4,13,16,'DDL LIGA','LIGA');
-INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato) VALUES (5,13,16,'DDL AO','TENNIS_AO');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (1,13,16,'DDL','SERIE_A','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (2,1,null,'DDL NBA RS','NBA_RS','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (3,13,16,'DDL B','SERIE_B','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (4,13,16,'DDL LIGA','LIGA','A');
+INSERT INTO lega (id,giornata_iniziale,giornata_calcolata,nome,id_campionato,stato) VALUES (5,13,16,'DDL AO','TENNIS_AO','A');
 
 
 insert into giocatore(nome,user_id) values('ALESSANDRO TOTO',
@@ -525,6 +529,10 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 
 insert into sospensione_lega(id_lega,giornata) values (1,16);
 
+delete from users where id=0;
+INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));
+SELECT setval('lega_id_seq', (SELECT MAX(id) FROM lega));
 

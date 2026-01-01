@@ -2,7 +2,7 @@ package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.entity.Sport;
-import it.ddlsolution.survivor.repository.SportProjection;
+import it.ddlsolution.survivor.entity.projection.SportProjection;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

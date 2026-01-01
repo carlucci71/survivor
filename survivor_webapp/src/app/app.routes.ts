@@ -47,6 +47,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'join/:id',
+    loadComponent: () => import('./features/lega-join-magic/lega-join-magic.component').then(m => m.LegaJoinMagicComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }

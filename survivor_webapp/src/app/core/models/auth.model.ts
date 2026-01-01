@@ -14,6 +14,7 @@ export interface AuthResponse {
   email: string;
   name: string;
   role: string;
+  addInfo: string;
 }
 
 export interface User {

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -17,7 +19,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -27,6 +32,7 @@ public class Utility {
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
+
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -113,5 +119,6 @@ public class Utility {
         if (value == null) return BigDecimal.ZERO.stripTrailingZeros();
         return value.setScale(newScale, RoundingMode.HALF_UP);
     }
+
 
 }

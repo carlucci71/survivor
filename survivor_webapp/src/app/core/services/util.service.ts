@@ -19,5 +19,12 @@ export class UtilService {
     return this.http.get(`${this.apiUrl}/calendario`);
   }
 
+  getGiocaIcon(sportId: string): string {
+    if (sportId === 'BASKET') return 'sports_basketball';
+    if (sportId === 'CALCIO') return 'sports_soccer';
+    if (sportId === 'TENNIS') return 'sports_tennis';
+    return 'sports_esports';
+  }
+
 
 }

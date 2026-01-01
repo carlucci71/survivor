@@ -47,9 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
 
-            final String jwt = authHeader.substring(7);
-            final Long id = Long.parseLong(jwtService.extractId(jwt));
-            final String role = jwtService.extractRole(jwt);
+            String jwt = authHeader.substring(7);
+            if (jwt.equals("null")){
+                jwt=null;
+            }
+            Long id=null;
+            String role=null;
+            if (jwt != null) {
+                id = Long.parseLong(jwtService.extractId(jwt));
+                role = jwtService.extractRole(jwt);
+            }
 
 
             if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -78,6 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         } catch (Exception e) {
             log.error("Errore nella validazione del JWT", e);
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.aspect;
 import it.ddlsolution.survivor.dto.LogDispositivaDTO;
 import it.ddlsolution.survivor.dto.ParamLogDispositivaDTO;
 import it.ddlsolution.survivor.exception.BaseResponseException;
-import it.ddlsolution.survivor.service.ExceptionMapperService;
+import it.ddlsolution.survivor.exception.ExceptionMapperService;
 import it.ddlsolution.survivor.service.LogDispositivaService;
 import it.ddlsolution.survivor.service.UserService;
 import it.ddlsolution.survivor.util.Utility;

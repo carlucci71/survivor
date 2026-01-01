@@ -4,6 +4,21 @@ server {
     access_log /var/log/nginx/survivor-test.access.log;
     error_log  /var/log/nginx/survivor-test.error.log;
     
+    # Serve index.html with no-cache so browsers always revalidate
+    location = /survivor/index.html {
+        alias /home/survivor/github/survivor_test/survivor_webapp/dist/survivor_webapp/browser/index.html;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    }
+
+    # Serve hashed assets with long cache (1 year)
+    location ~* ^/survivor/(.*\.(?:css|js|jpg|jpeg|png|gif|svg|ico|woff2?|ttf|eot))$ {
+        alias /home/survivor/github/survivor_test/survivor_webapp/dist/survivor_webapp/browser/$1;
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        access_log off;
+        expires 1y;
+    }
+
+    # Fallback SPA route: serve index.html for app routes
     location /survivor/ {
         alias /home/survivor/github/survivor_test/survivor_webapp/dist/survivor_webapp/browser/;
         index index.html;

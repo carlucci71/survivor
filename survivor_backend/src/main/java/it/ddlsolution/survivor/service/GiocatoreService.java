@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class GiocatoreService {
     private final UserRepository userRepository;
     private final GiocatoreMapper giocatoreMapper;
 
+    @Transactional
     public GiocatoreDTO me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -32,6 +34,15 @@ public class GiocatoreService {
         ));
     }
 
+    @Transactional
+    public Giocatore findMe() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return giocatoreRepository.findByUser_Id(userId).orElseThrow(()->new RuntimeException("Utente non trovato: " + userId));
+    }
+
+
+    @Transactional
     public GiocatoreDTO aggiorna(GiocatoreDTO giocatoreDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -43,10 +54,11 @@ public class GiocatoreService {
         return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).get());
     }
 
+    @Transactional(readOnly = true)
     public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElseThrow(()->new RuntimeException("Ruolo non trovato in lega"));
+        Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElse(new Giocatore());//TODO rilanciare ()->new RuntimeException("Ruolo non trovato in lega")
         return giocatoreMapper.toDTO(giocatore);
     }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,16 +15,17 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.from:noreply@survivor.com}")
+    @Value("${spring.mail.from}")
     private String fromEmail;
 
-    public void sendMagicLinkEmail(String to, String magicLink) {
+    @Transactional
+    public void send(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(to);
-            message.setSubject("Il tuo Magic Link per accedere a Survivor");
-            message.setText(buildEmailContent(magicLink));
+            message.setSubject(subject);
+            message.setText(body);
 
             mailSender.send(message);
             log.info("Email inviata con successo a: {}", to);
@@ -33,21 +35,5 @@ public class EmailService {
         }
     }
 
-    private String buildEmailContent(String magicLink) {
-        return """
-            Ciao,
-            
-            Clicca sul link seguente per accedere a Survivor:
-            
-            %s
-            
-            Questo link è valido per 15 minuti.
-            
-            Se non hai richiesto questo accesso, ignora questa email.
-            
-            Saluti,
-            Il team di Survivor
-            """.formatted(magicLink);
-    }
 }
 

@@ -1,13 +1,5 @@
 <div class="verify-container">
   <mat-card class="verify-card">
-    @if (isLoading) {
-      <mat-card-content class="loading">
-        <mat-spinner></mat-spinner>
-        <p>Verifica in corso...</p>
-      </mat-card-content>
-    }
-
-    @if (!isLoading) {
       <mat-card-content class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
         <mat-icon class="icon">{{ isSuccess ? 'check_circle' : 'error' }}</mat-icon>
         <p>{{ message }}</p>
@@ -15,6 +7,5 @@
           <button mat-raised-button color="primary" routerLink="/auth/login">Torna al login</button>
         }
       </mat-card-content>
-    }
   </mat-card>
 </div>

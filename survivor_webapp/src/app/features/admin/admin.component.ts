@@ -6,23 +6,22 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilService } from '../../core/services/util.service';
  
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, HeaderComponent],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
   profilo: {} = {};
   calendario: {} = {};
-  isLoading = true;
 
   constructor(
-    private http: HttpClient,
     private authService: AuthService,
     private utilService: UtilService,
     private router: Router
@@ -38,11 +37,9 @@ export class AdminComponent implements OnInit {
     this.utilService.profilo().subscribe({
       next: (profilo) => {
         this.profilo = profilo.profilo;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo:', error);
-        this.isLoading = false;
       }
     });
   }
@@ -51,11 +48,9 @@ export class AdminComponent implements OnInit {
     this.utilService.calendario().subscribe({
       next: (calendario) => {
         this.calendario = calendario.url;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento del calendario:', error);
-        this.isLoading = false;
       }
     });
   }

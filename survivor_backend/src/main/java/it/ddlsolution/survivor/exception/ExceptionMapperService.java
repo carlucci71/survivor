@@ -1,6 +1,5 @@
-package it.ddlsolution.survivor.service;
+package it.ddlsolution.survivor.exception;
 
-import it.ddlsolution.survivor.exception.BaseResponseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,13 +10,17 @@ import org.springframework.web.ErrorResponse;
 public class ExceptionMapperService {
 
     /**
-     * Mappa una generica Exception in un oggetto BaseResponseException
-     * per condividere la logica tra GlobalExceptionHandler e LogDispositivaAspect
+     * Mappa una generica Exception in un oggetto BaseResponseException per condividere la logica tra
+     * GlobalExceptionHandler e LogDispositivaAspect
      */
     public BaseResponseException mapToBaseResponse(Exception ex) {
         BaseResponseException baseResponse = new BaseResponseException();
         baseResponse.setId(ex.hashCode());
-        baseResponse.setErrorCode("ERR00");
+        if (ex instanceof ManagedException) {
+            baseResponse.setErrorCode(((ManagedException) ex).getInternalCode());
+        } else {
+            baseResponse.setErrorCode("ERR00");
+        }
         baseResponse.setMessage(ex.getMessage());
         baseResponse.setNameClassException(ex.getClass().getName());
         log.debug("Mappata eccezione {} con id {}", ex.getClass().getName(), baseResponse.getId());
@@ -30,6 +33,9 @@ public class ExceptionMapperService {
     public int extractHttpStatus(Exception ex) {
         if (ex instanceof ErrorResponse) {
             return ((ErrorResponse) ex).getStatusCode().value();
+        }
+        if (ex instanceof ManagedException){
+            return 499;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR.value();
     }

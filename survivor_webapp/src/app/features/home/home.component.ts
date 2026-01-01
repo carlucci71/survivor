@@ -10,23 +10,24 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Giocatore, Lega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
+import { MatDialog } from '@angular/material/dialog';
+import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule, MatIcon, MatTooltip],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
   me: Giocatore | null = null;
-  isLoading = true;
   environmentName = environment.ambiente;
   isProd = environment.production;
 
@@ -34,7 +35,8 @@ export class HomeComponent implements OnInit {
     private authService: AuthService,
     private legaService: LegaService,
     private giocatoreService: GiocatoreService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -47,15 +49,18 @@ export class HomeComponent implements OnInit {
     this.loadLeghe();
   }
 
+  visualizzaInvito(lega: Lega): boolean {
+    return lega.stato.value === StatoLega.DA_AVVIARE.value;
+  }
+
+
   loadLeghe(): void {
     this.legaService.mieLeghe().subscribe({ 
       next: (leghe) => {
         this.leghe = leghe;
-        this.isLoading = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);
-        this.isLoading = false;
       }
     });
   }
@@ -91,6 +96,16 @@ export class HomeComponent implements OnInit {
 
   goToUniscitiLega(): void {
     this.router.navigate(['/joinLega']);
+  }
+
+  openInvitaDialog(lega: Lega): void {
+    this.dialog.open(InvitaUtentiDialogComponent, {
+      data: {
+        legaId: lega.id,
+        legaNome: lega.nome
+      },
+      width: '600px'
+    });
   }
 
 }

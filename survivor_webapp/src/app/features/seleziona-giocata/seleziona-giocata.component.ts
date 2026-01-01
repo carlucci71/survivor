@@ -17,11 +17,12 @@ import {
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { LegaService } from '../../core/services/lega.service';
+import { CampionatoService } from '../../core/services/campionato.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
   templateUrl: './seleziona-giocata.component.html',
-  styleUrl: './seleziona-giocata.component.scss',
+  styleUrls: ['./seleziona-giocata.component.scss'],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -39,12 +40,12 @@ export class SelezionaGiocataComponent implements OnInit {
   squadreDisponibili: any[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
-  isLoading = true;
-  lega!: Lega;
+    lega!: Lega;
   giornata: number = 0;
   giocatore: any;
   constructor(
     private legaService: LegaService,
+    private campionatoService: CampionatoService,
     public dialogRef: MatDialogRef<SelezionaGiocataComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
@@ -67,15 +68,30 @@ export class SelezionaGiocataComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.squadraSelezionata) {
-      this.mostraUltimiRisultati();
+      this.mostraUltimiRisultati(); 
       this.mostraProssimePartite();
-    } else{
-      this.isLoading=false;
     }
   }
 
   trackByGiornata(index: number, item: any) {
     return item && item.giornata ? item.giornata : index;
+  }
+
+  getDesGiornataTitle(index: number): string {
+    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
+      return "";
+    }
+    return this.campionatoService.getDesGiornataNoAlias(this.lega?.campionato?.id,index);
+  }
+
+
+  getDesGiornata(partita: Partita, casa: boolean): string {
+    const index= partita.giornata;
+    const alias= casa?partita.aliasGiornataCasa:partita.aliasGiornataFuori;
+    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
+      return "";
+    }
+    return this.campionatoService.getDesGiornata(this.lega?.campionato.id,index, alias);
   }
 
   mostraUltimiRisultati(sigla?: string) {
@@ -85,7 +101,6 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.isLoading = true;
       this.legaService
         .calendario(
           this.lega.campionato?.sport?.id,
@@ -103,11 +118,9 @@ export class SelezionaGiocataComponent implements OnInit {
             } else {
               this.ultimiRisultati = ultimiRisultati;
             }
-            this.isLoading = false;
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
-            this.isLoading = false;
           },
         });
     }
@@ -126,7 +139,6 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.isLoading = true;
       this.legaService
         .calendario(
           this.lega.campionato?.sport?.id,
@@ -139,11 +151,9 @@ export class SelezionaGiocataComponent implements OnInit {
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
             this.mostraUltimiRisultatiOpponent();
-            this.isLoading = false;
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
-            this.isLoading = false;
           },
         });
     }

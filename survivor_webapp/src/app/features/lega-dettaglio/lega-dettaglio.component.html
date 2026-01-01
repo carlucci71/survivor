@@ -1,31 +1,9 @@
 <div class="lega-dettaglio-container">
-  <mat-toolbar color="primary" class="header">
-    <div class="header-content">
-      <h1>Dettaglio lega</h1>
-      <div class="user-info">
-        <button mat-button (click)="goBack()" class="btn-back">
-          ← Torna alla Home
-        </button>
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="logout()"
-          class="btn-logout"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </mat-toolbar>
+  <app-header title="Dettaglio lega" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
-      @if (isLoading) {
-      <div class="loading">
-        <mat-spinner></mat-spinner>
-        <p>Caricamento in corso...</p>
-      </div>
-      } @if (error) {
+      @if (error) {
       <mat-card class="error-card">
         <mat-card-content>{{ error }}</mat-card-content>
       </mat-card>
@@ -61,11 +39,8 @@
           >
           }
           } @if (lega.giocatori?.length) {
-          <table
-            mat-table
-            [dataSource]="lega.giocatori || []"
-            class="giocatori-table"
-          >
+          <div class="table-wrapper">
+          <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
             <ng-container matColumnDef="nome">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let giocatore">
@@ -83,8 +58,7 @@
                   giornata + lega.giornataIniziale - 1 === lega.giornataCorrente
                 "
               >
-                <div>Giornata</div>
-                <div>{{ giornata + lega.giornataIniziale - 1 }}</div>
+                <div>{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
                 @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
                 {
                 <div class="stato-giornata">
@@ -103,9 +77,9 @@
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                 "
               >
-                <span class="status-pill">
+                <span clasXs="status-pill">
                   <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <span
+                    <div
                       class="team-name"
                       [ngClass]="{
                         ok: giocata.esito === 'OK',
@@ -113,14 +87,17 @@
                         empty: !giocata.esito
                       }"
                       [title]="getSquadraNome(giocata.squadraSigla)"
-                    >{{ getSquadraNome(giocata.squadraSigla) | slice : 0 : 14 }}</span>
+                    >{{ getSquadraNome(giocata.squadraSigla) }}</div>
+                    
                   </ng-container>
                   @if (visualizzaGiocata(giornata, giocatore)) {
+                    <div>
                     <mat-icon
                       class="gioca-icon"
                       matTooltip="Gioca ora"
                       (click)="giocaGiornata(giocatore, giornata)"
                     >{{ getGiocaIcon() }}</mat-icon>
+                    </div>
                   }
                 </span>
               </td>
@@ -133,6 +110,7 @@
               [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
             ></tr>
           </table>
+          </div>
           }
         </mat-card-content>
       </mat-card>

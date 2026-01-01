@@ -8,6 +8,7 @@ public class EnumAPI2 {
         SERIE_A(21),
         SERIE_B(105),
         LIGA(23),
+        TENNIS_WIMBLEDON(11316),
         TENNIS_AO(10376),
         NBA_RS(3);
         int id;
@@ -28,7 +29,7 @@ public class EnumAPI2 {
     }
 
 
-    enum Sport {
+    public enum Sport {
         CALCIO(1),
         BASKET(3),
         TENNIS(8);
@@ -62,7 +63,8 @@ public class EnumAPI2 {
         FINISHED(Enumeratori.StatoPartita.TERMINATA),
         INPLAY(Enumeratori.StatoPartita.IN_CORSO),
         RETIRED(Enumeratori.StatoPartita.TERMINATA),
-        FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE);
+        FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE),
+        PLAYING(Enumeratori.StatoPartita.DA_GIOCARE);
 
 
         Enumeratori.StatoPartita statoPartita;
@@ -72,28 +74,30 @@ public class EnumAPI2 {
         }
     }
 
-    enum RoundTennis{
-//        FirstRoundQualifizioni("qualifying-1st-round"),
+    enum RoundTennis {
+        //        FirstRoundQualifizioni("qualifying-1st-round"),
 //        SecondRoundQualifizioni("qualifying-2nd-round"),
 //        FinaleQualificazioni("qualifying-final"),
-        Centoventottesimo("1-128-final"),
-        Sessantaquattresimo("1-64-final"),
-        Trentaduesimi("1-32-final"),
-        Sedicesimi("1-16-final"),
-        Quarti("quarter-finals"),
-        Semifinale("semi-finals"),
-        Finale("final");
+        Sessantaquattresimi("1-128-final","64-esimi"),
+        Trentaduesimi("1-64-final","32-esimi"),
+        Sedicesimi("1-32-final","16-esimi"),
+        Ottavi("1-16-final","Ottavi"),
+        Quarti("quarter-finals","Quarti"),
+        Semifinali("semi-finals","Semifinali"),
+        Finale("final","Finale");
 
-        String des;
+        String key;
+        String descrizione;
 
-        RoundTennis(String des) {
-            this.des = des;
+        RoundTennis(String key, String descrizione) {
+            this.key = key;
+            this.descrizione=descrizione;
         }
 
-        static RoundTennis fromDes(String des) {
+        static RoundTennis fromkey(String des) {
             RoundTennis ret = null;
             for (RoundTennis round : values()) {
-                if (round.des == des) {
+                if (round.key == des) {
                     ret = round;
                 }
             }

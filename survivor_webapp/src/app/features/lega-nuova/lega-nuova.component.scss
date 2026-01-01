@@ -1,0 +1,231 @@
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  .main-panel {
+    h2 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+
+    .message-box {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      p {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+
+        strong {
+          color: #ffc107;
+        }
+      }
+    }
+    .form-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      /* Constrain width to make fields smaller and align left */
+      max-width: 480px;
+      margin: 0; /* align to the left of the container */
+      padding-left: 8px;
+
+      .form-row {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .full-width {
+        width: 100%;
+        /* Make mat-form-field visually smaller */
+        font-size: 14px;
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
+      }
+    }
+    .main-sections {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+
+      .section-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h3 {
+          margin: 0 0 12px;
+          color: #333;
+        }
+
+        p {
+          color: #666;
+          margin-bottom: 16px;
+          line-height: 1.5;
+        }
+
+        .btn-primary {
+          padding: 10px 20px;
+          background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+          color: #333;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.2s;
+
+          &:hover:not(:disabled) {
+            opacity: 0.9;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .confirmation {
+      .confirmation-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        .success-message {
+          font-size: 18px;
+          color: #4caf50;
+          margin-bottom: 16px;
+        }
+
+        p {
+          margin: 12px 0;
+          line-height: 1.6;
+          
+          a {
+            color: #ffc107;
+            text-decoration: none;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .invite-section {
+          margin-top: 32px;
+          padding-top: 24px;
+          border-top: 1px solid #e0e0e0;
+
+          h3 {
+            margin: 0 0 20px;
+            color: #333;
+            font-size: 20px;
+          }
+
+          .email-input-section {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+
+            .email-field {
+              flex: 1;
+              max-width: 400px;
+            }
+
+            button {
+              margin-top: 8px;
+            }
+          }
+
+          .emails-list {
+            margin-bottom: 20px;
+
+            mat-chip-set {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+            }
+
+            mat-chip {
+              background-color: #e3f2fd;
+              color: #1976d2;
+              
+              button[matChipRemove] {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 8px;
+                
+                mat-icon {
+                  font-size: 18px;
+                  width: 18px;
+                  height: 18px;
+                  color: #1976d2;
+                }
+              }
+            }
+          }
+
+          .invite-actions {
+            margin-bottom: 20px;
+          }
+
+          .invite-success {
+            margin-bottom: 20px;
+
+            .success-card {
+              background-color: #e8f5e9;
+              padding: 12px;
+              
+              mat-card-content {
+                color: #2e7d32;
+                font-weight: 500;
+                padding: 0;
+              }
+            }
+          }
+
+          .invite-error {
+            margin-bottom: 20px;
+
+            .error-card {
+              background-color: #ffebee;
+              padding: 12px;
+              
+              mat-card-content {
+                color: #c62828;
+                font-weight: 500;
+                padding: 0;
+              }
+            }
+          }
+        }
+
+        .final-actions {
+          margin-top: 32px;
+          padding-top: 24px;
+          border-top: 1px solid #e0e0e0;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+

@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.controller;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.service.SquadraService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,8 +15,8 @@ public class SquadraController {
     private final SquadraService squadraService;
 
     @GetMapping("/campionato/{idCampionato}")
-    public List<SquadraDTO> getSquadreByCampionato(@PathVariable String idCampionato) {
-        return squadraService.getSquadreByCampionatoId(idCampionato);
+    public ResponseEntity<List<SquadraDTO>> getSquadreByCampionato(@PathVariable String idCampionato) {
+        return ResponseEntity.ok(squadraService.getSquadreByCampionatoId(idCampionato));
     }
 }
 
