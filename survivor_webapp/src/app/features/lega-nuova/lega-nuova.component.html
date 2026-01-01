@@ -46,7 +46,7 @@
                 placeholder="Campionato"
                 name="campionatoSel"
                 [(ngModel)]="campionatoSel"
-                (selectionChange)="campionatoTouched = true; mostraUltimiRisultati()"
+                (selectionChange)="campionatoTouched = true"
               >
                 @for (campionato of campionatiDisponibili; track campionato.id) {
                 <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
@@ -94,8 +94,12 @@
     <div class="confirmation" *ngIf="confirmationMessage">
           <mat-card class="confirmation-card">
             <mat-card-content>
-              La lega è stata creata con successo <span *ngIf="pwd">, condividi con i tuoi amici con la password {{pwd}}</span>
-              Puoi spedire questo invito <a href="xxx">aa</a>
+              La lega <b>{{nome}}</b> è stata creata con successo.<br>
+              Puoi dire ai tuoi amici di cercare la lega all'url <a href="{{baseUrl()}}/joinLega">{{baseUrl()}}//joinLega</a>
+                            <span *ngIf="pwd"> ed unirsi con la password {{pwd}}</span><br>
+              Puoi invitarli anche inserendo qui i loro indirizzi email.
+
+
             </mat-card-content>
           </mat-card>
         </div>

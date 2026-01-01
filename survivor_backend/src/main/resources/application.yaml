@@ -42,7 +42,6 @@ magic-link:
   expiration-minutes: 20
   base-url: ${MAGIC_LINK_BASE_URL}
   relative-url-send-mail: /auth/verify?token=
-  relative-url-join-mail: /auth/verifyJoin?token=
 
 external-api:
   calendario:

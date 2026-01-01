@@ -14,10 +14,9 @@ import { SportService } from '../../core/services/sport.service';
 import { Campionato, Sport } from '../../core/models/interfaces.model';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { LegaService } from '../../core/services/lega.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -40,12 +39,10 @@ import { ErrorDialogComponent } from '../../shared/components/error-dialog/error
 export class LegaNuovaComponent implements OnInit {
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar,
     private authService: AuthService,
     private sportService: SportService,
     private legaService: LegaService,
-    private campionatoService: CampionatoService
-    ,
+    private campionatoService: CampionatoService,
     private dialog: MatDialog
   ) {}
   sportSel: string | null = null;
@@ -83,7 +80,9 @@ export class LegaNuovaComponent implements OnInit {
     this.router.navigate(['/auth/login']);
   }
 
-  mostraUltimiRisultati(sigla?: string) {}
+  baseUrl() {
+    return environment.baseUrl;
+  }
 
   selezionaSport() {
     if (this.sportSel) {
@@ -154,7 +153,6 @@ export class LegaNuovaComponent implements OnInit {
           this.confirmationMessage = true;
         },
         error: (err) => {
-
           if (err && err.status === 499) {
             let messaggio = '';
             if (err?.error?.message) {

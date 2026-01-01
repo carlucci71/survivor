@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
@@ -73,9 +74,9 @@ public class LegaController {
         return ResponseEntity.ok(legaDTO);
     }
 
-    @PostMapping("/invita")
-    public ResponseEntity<String> invita() {
-        legaService.invita(1L, List.of("carlucci.daniele@gmail.com"));
+    @PostMapping("/invita/{idLega}")
+    public ResponseEntity<String> invita(@RequestBody LegaInvitaDTO legaInvitaDTO, @PathVariable("idLega") Long idLega) {
+        legaService.invita(idLega, legaInvitaDTO.getEmails());
         return ResponseEntity.ok("legaDTO");
     }
 

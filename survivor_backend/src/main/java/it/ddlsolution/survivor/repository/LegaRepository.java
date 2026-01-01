@@ -25,11 +25,26 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     Optional<Lega> findByNome(String nome);
 
     List<LegaProjection> findByStato(Enumeratori.StatoLega stato);
-
+/*
     @Query("""
             select l from Lega l inner join l.giocatoreLeghe giocatoreLeghe
             where l.stato = ?1 and giocatoreLeghe.giocatore.user.id <> ?2""")
     List<Lega> findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega stato, Long userId);
+*/
+    @Query("""
+        SELECT l FROM Lega l
+        WHERE l.stato = :stato
+        AND NOT EXISTS (
+            SELECT 1 FROM GiocatoreLega gl
+            WHERE gl.lega.id = l.id
+            AND gl.giocatore.user.id = :userId
+        )
+        """)
+    List<Lega> findByStatoAndGiocatoreLeghe_Giocatore_UserNot(
+            @Param("stato") Enumeratori.StatoLega stato,
+            @Param("userId") Long userId
+    );
+
 
 
 }

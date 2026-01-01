@@ -51,8 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwt.equals("null")){
                 jwt=null;
             }
-            final Long id = Long.parseLong(jwtService.extractId(jwt));
-            final String role = jwtService.extractRole(jwt);
+            Long id=null;
+            String role=null;
+            if (jwt != null) {
+                id = Long.parseLong(jwtService.extractId(jwt));
+                role = jwtService.extractRole(jwt);
+            }
 
 
             if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {

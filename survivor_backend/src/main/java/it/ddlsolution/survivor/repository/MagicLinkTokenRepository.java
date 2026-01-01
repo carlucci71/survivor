@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface MagicLinkTokenRepository extends JpaRepository<MagicLinkToken, Long> {
     Optional<MagicLinkToken> findByTokenAndUsedFalseAndExpiresAtAfter(String token, LocalDateTime now);
-    Optional<MagicLinkToken> findByTokenAndExpiresAtAfter(String token, LocalDateTime now);
     void deleteByExpiresAtBefore(LocalDateTime now);
     void deleteByUserAndTipo(User user, String tipo);
 

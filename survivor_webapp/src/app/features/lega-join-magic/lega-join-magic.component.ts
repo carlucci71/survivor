@@ -1,43 +1,70 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { Lega } from '../../core/models/interfaces.model';
 import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilService } from '../../core/services/util.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfermaJoinDialogComponent } from '../../shared/components/conferma-join-dialog.component';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
-  selector: 'app-lega-join',
-  imports: [CommonModule, HeaderComponent, MatIcon],
-  templateUrl: './lega-join.component.html',
-  styleUrls: ['./lega-join.component.scss'],
+  selector: 'app-lega-join-magic',
+  imports: [
+    CommonModule,
+    HeaderComponent,
+    MatIcon,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+  ],
+  templateUrl: './lega-join-magic.component.html',
+  styleUrls: ['./lega-join-magic.component.scss'],
 })
-export class LegaJoinComponent implements OnInit {
-  leghe: Lega[] = [];
+export class LegaJoinMagicComponent implements OnInit {
+  lega: Lega | null = null;
+  isLoading = true;
+  error: string | null = null;
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private legaService: LegaService,
-    private utilService: UtilService
-    , private dialog: MatDialog
+    private utilService: UtilService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.loadLegheLibere();
+    const legaId = this.route.snapshot.paramMap.get('id');
+    if (!legaId) {
+      this.error = 'ID lega non valido';
+      this.isLoading = false;
+      return;
+    }
+
+    this.loadLega(Number(legaId));
   }
 
-  private loadLegheLibere(): void {
-    this.legaService.legheLibere().subscribe({
-      next: (leghe) => (this.leghe = leghe),
-      error: (err) => console.error('Errore caricamento leghe libere', err),
+  private loadLega(id: number): void {
+    this.legaService.getLegaById(id).subscribe({
+      next: (lega) => {
+        this.lega = lega;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Errore caricamento lega', err);
+        this.error = 'Impossibile caricare i dati della lega';
+        this.isLoading = false;
+      },
     });
   }
+
   getGiocaIcon(idSport: string): string {
     return this.utilService.getGiocaIcon(idSport);
   }
@@ -45,21 +72,16 @@ export class LegaJoinComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/home']);
   }
-  seleziona(lega: Lega): void {
-    const dialogRef = this.dialog.open(ConfermaJoinDialogComponent, {
-      width: '420px',
-      disableClose: true,
-      data: { lega },
-    });
 
-    dialogRef.afterClosed().subscribe((pwd: string | null) => {
-
-      this.legaService.join(lega.id!, pwd,'').subscribe({
+  confermaJoin(): void {
+    if (!this.lega) return;
+      const tokenOriginal = localStorage.getItem('magicTokenSurvivor') || '';
+      this.legaService.join(this.lega!.id!, '',tokenOriginal).subscribe({
         next: (updated) => {
+          localStorage.removeItem('magicTokenSurvivor');
           this.router.navigate(['/lega', updated.id]);
         },
         error: (err) => {
-
           if (err && err.status === 499) {
             let messaggio = '';
             if (err?.error?.message) {
@@ -75,7 +97,6 @@ export class LegaJoinComponent implements OnInit {
           console.error('Errore join lega', err);
         },
       });
-    });
   }
 
   logout(): void {

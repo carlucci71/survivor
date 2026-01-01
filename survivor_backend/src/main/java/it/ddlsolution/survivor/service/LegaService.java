@@ -48,12 +48,6 @@ public class LegaService {
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
 
-    @Value("${magic-link.base-url}")
-    private String baseUrl;
-
-    @Value("${magic-link.relative-url-join-mail}")
-    private String relativeUrlJoinMail;
-
     @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -408,12 +402,14 @@ public class LegaService {
 
     @Transactional
     public LegaDTO join(Long idLega, LegaJoinDTO legaInsertDTO) {
+        String tokenOriginal = legaInsertDTO.getTokenOriginal();
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
-            if (!lega.getPwd().equals(legaInsertDTO.getPwd())) {
+            if (tokenOriginal == null && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
                 throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
             }
         }
+        magicLinkService.validateToken(tokenOriginal, true, Enumeratori.TipoMagicToken.JOIN.getCodice());
         List<GiocatoreLega> giocatoriLega = lega.getGiocatoreLeghe();
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
@@ -445,14 +441,10 @@ public class LegaService {
             int expirationDays = 3;
             String token = magicLinkService.salvaMagicToken(user, null, expirationDays, Enumeratori.TipoMagicToken.JOIN.getCodice(), Enumeratori.TipoMagicToken.JOIN + ":" + legaDTO.getId().toString());
             String subject = "Invito per giocare a Survivor";
-            String magicLink = getUrlMagicLink(token, idLega);
+            String magicLink = magicLinkService.getUrlMagicLink(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
             emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
             log.info("Magic link inviato a: {}", email);
         }
-    }
-
-    private String getUrlMagicLink(String token, long idLega) {
-        return baseUrl + relativeUrlJoinMail + token;//TODO  + "&lega=" + idLega
     }
 
     private String buildEmailContent(String magicLink, int expirationDays, LegaDTO legaDTO) {

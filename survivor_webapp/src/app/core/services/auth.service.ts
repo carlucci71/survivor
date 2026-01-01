@@ -34,9 +34,9 @@ export class AuthService {
     );
   }
 
-  verifyMagicLink(token: string): Observable<AuthResponse> {
+  verifyMagicLink(token: string,codiceTipoMagicLink :string): Observable<AuthResponse> {
     return this.http.get<AuthResponse>(`${this.apiUrl}/verify`, {
-      params: { token }
+      params: { token,codiceTipoMagicLink }
     }).pipe(
       tap(response => this.handleAuthResponse(response))
     );

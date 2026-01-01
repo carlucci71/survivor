@@ -8,6 +8,8 @@ import it.ddlsolution.survivor.util.SignedTokenGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +51,7 @@ public class MagicLinkService {
         magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
         String token = salvaMagicToken(user, expirationMinutes, null, tipo, "");
         String subject = "Il tuo Magic Link per accedere a Survivor";
-        String magicLink = getUrlMagicLink(token);
+        String magicLink = getUrlMagicLink(token, tipo);
         emailService.send(email, subject, buildEmailContent(magicLink));
 
         log.info("Magic link inviato a: {}", email);
@@ -73,8 +75,8 @@ public class MagicLinkService {
         return token;
     }
 
-    private String getUrlMagicLink(String token) {
-        return baseUrl + relativeUrlSendMail + URLEncoder.encode(token, StandardCharsets.UTF_8);
+    public String getUrlMagicLink(String token, String codiceTipoMagicLink) {
+        return baseUrl + relativeUrlSendMail  + URLEncoder.encode(  token , StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
     }
 
     private String buildEmailContent(String magicLink) {
@@ -95,13 +97,11 @@ public class MagicLinkService {
     }
 
     @Transactional
-    public Optional<User> validateToken(String token) {
-
+    public Optional<User> validateToken(String token, boolean setUsed, String codiceTipoMagicLink) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!signedTokenGenerator.verifyAndExtract(token)) {
             throw new RuntimeException("Token manomesso");
         }
-
-        //Optional<MagicLinkToken> magicLinkTokenOpt = magicLinkTokenRepository.findByTokenAndExpiresAtAfter(token, LocalDateTime.now());
         Optional<MagicLinkToken> magicLinkTokenOpt = magicLinkTokenRepository.findByTokenAndUsedFalseAndExpiresAtAfter(token, LocalDateTime.now());
 
         if (magicLinkTokenOpt.isEmpty()) {
@@ -109,8 +109,13 @@ public class MagicLinkService {
         }
 
         MagicLinkToken magicLinkToken = magicLinkTokenOpt.get();
+        if (setUsed) {
 
-        if (magicLinkToken.getTipo().equals(Enumeratori.TipoMagicToken.LOG.getCodice())) {
+            if (codiceTipoMagicLink.equals(Enumeratori.TipoMagicToken.JOIN.getCodice()) && !magicLinkToken.getUser().getId().equals(authentication.getPrincipal())) {
+                    throw new RuntimeException("User link:" + magicLinkToken.getUser().getId() + " diverso da user loggato: " + authentication.getPrincipal());
+            }
+
+
             magicLinkToken.setUsed(true);
             magicLinkToken.setUsedAt(LocalDateTime.now());
         }

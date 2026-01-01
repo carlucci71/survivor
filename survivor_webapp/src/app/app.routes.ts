@@ -17,10 +17,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },
   {
-    path: 'auth/verifyJoin',
-    loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
-  },
-  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]
@@ -48,6 +44,11 @@ export const routes: Routes = [
   {
     path: 'joinLega',
     loadComponent: () => import('./features/lega-join/lega-join.component').then(m => m.LegaJoinComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'join/:id',
+    loadComponent: () => import('./features/lega-join-magic/lega-join-magic.component').then(m => m.LegaJoinMagicComponent),
     canActivate: [authGuard]
   },
   {

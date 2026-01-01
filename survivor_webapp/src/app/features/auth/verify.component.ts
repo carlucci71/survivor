@@ -33,7 +33,7 @@ export class VerifyComponent implements OnInit {
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
-    const lega = this.route.snapshot.queryParamMap.get('lega');
+    const codiceTipoMagicLink = this.route.snapshot.queryParamMap.get('codiceTipoMagicLink') || '';
 
     if (!token) {
       this.message = 'Token non trovato';
@@ -41,14 +41,25 @@ export class VerifyComponent implements OnInit {
       return;
     }
 
-    this.authService.verifyMagicLink(token).subscribe({
+    this.authService.verifyMagicLink(token,codiceTipoMagicLink).subscribe({
       next: (response) => {
-        this.isSuccess = true;
+        this.isSuccess = true; 
         let destinazione = 'home';
         if (response.addInfo) {
-          destinazione = 'join: ' + response.addInfo;
+          // Check if addInfo contains JOIN:x pattern
+          const joinMatch = response.addInfo.match(/^JOIN:(\d+)$/i);
+          if (joinMatch) {
+            // Extract the league ID and navigate to join page
+            destinazione = `join/${joinMatch[1]}`;
+            localStorage.setItem('magicTokenSurvivor', token);
+            this.message = 'Autenticazione riuscita! Reindirizzamento alla lega...';
+          } else {
+            destinazione = response.addInfo;
+            this.message = 'Autenticazione riuscita! Reindirizzamento...' + destinazione;
+          }
+        } else {
+          this.message = 'Autenticazione riuscita! Reindirizzamento...';
         }
-        this.message = 'Autenticazione riuscita! Reindirizzamento...' + destinazione;
         setTimeout(() => {
           this.router.navigate(['/' + destinazione]);
         }, 2000);
