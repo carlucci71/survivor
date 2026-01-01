@@ -50,6 +50,7 @@ export class AuthService {
       name: response.name,
       role: response.role
     };
+    console.log(response.addInfo);
     this.currentUserSubject.next(user);
   }
 

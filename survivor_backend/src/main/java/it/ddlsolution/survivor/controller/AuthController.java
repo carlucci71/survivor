@@ -13,6 +13,7 @@ import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @RestController
@@ -51,23 +53,38 @@ public class AuthController {
 
     @GetMapping("/verify")
     public ResponseEntity<?> verifyMagicLink(@RequestParam String token) {
+        return verifyUrlLink(token);
+    }
+
+    @GetMapping("/verifyJoin")
+    public ResponseEntity<?> verifyJoin(@RequestParam String token) {
+        return verifyUrlLink(token);
+    }
+
+    private @NonNull ResponseEntity<?> verifyUrlLink(String token) {
+
         Optional<User> userOpt = magicLinkService.validateToken(token);
+
+        String addInfo = magicLinkService.extractAddInfo(token);
+        System.out.println("addInfo = " + addInfo);
 
         if (userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
-                "Token non valido", false));
+                    "Token non valido", false));
         }
 
         User user = userOpt.get();
         String jwtToken = jwtService.generateToken(user.getId().toString(), user.getRole().name());
 
         return ResponseEntity.ok(new AuthResponseDTO(
-            jwtToken,
-            user.getId(),
-            user.getName(),
-            user.getRole().name()
+                jwtToken,
+                user.getId(),
+                user.getName(),
+                user.getRole().name(),
+                addInfo
         ));
     }
+
 
     @PostMapping("/myData")
     public ResponseEntity<?> myData(@RequestHeader(value="Authorization", required = false)String authHeader) {
@@ -94,7 +111,8 @@ public class AuthController {
                     jwt,
                     user.getId(),
                     user.getName(),
-                    user.getRole().name()
+                    user.getRole().name(),
+                    ""
             );
         }
         return ResponseEntity.ok(authResponseDTO);
@@ -130,7 +148,8 @@ public class AuthController {
                 newToken,
                 Long.parseLong(userId),
                 null, // nome utente non disponibile dal solo token
-                role
+                role,
+                ""
             ));
         } catch (ExpiredJwtException eje) {
             // Non dovrebbe mai entrare qui, ma per sicurezza

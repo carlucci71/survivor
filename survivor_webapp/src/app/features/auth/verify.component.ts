@@ -10,9 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-verify',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatCardModule, MatProgressSpinnerModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: './verify.component.html',
-  styleUrls: ['./verify.component.scss']
+  styleUrls: ['./verify.component.scss'],
 })
 export class VerifyComponent implements OnInit {
   message = '';
@@ -26,6 +33,7 @@ export class VerifyComponent implements OnInit {
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
+    const lega = this.route.snapshot.queryParamMap.get('lega');
 
     if (!token) {
       this.message = 'Token non trovato';
@@ -36,16 +44,19 @@ export class VerifyComponent implements OnInit {
     this.authService.verifyMagicLink(token).subscribe({
       next: (response) => {
         this.isSuccess = true;
-        this.message = 'Autenticazione riuscita! Reindirizzamento...';
-        
+        let destinazione = 'home';
+        if (response.addInfo) {
+          destinazione = 'join: ' + response.addInfo;
+        }
+        this.message = 'Autenticazione riuscita! Reindirizzamento...' + destinazione;
         setTimeout(() => {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/' + destinazione]);
         }, 2000);
       },
       error: (error) => {
         this.isSuccess = false;
         this.message = 'Token non valido o scaduto';
-      }
+      },
     });
   }
 }

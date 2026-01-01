@@ -73,4 +73,11 @@ public class LegaController {
         return ResponseEntity.ok(legaDTO);
     }
 
+    @PostMapping("/invita")
+    public ResponseEntity<String> invita() {
+        legaService.invita(1L, List.of("carlucci.daniele@gmail.com"));
+        return ResponseEntity.ok("legaDTO");
+    }
+
+
 }

@@ -17,6 +17,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },
   {
+    path: 'auth/verifyJoin',
+    loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]

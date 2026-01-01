@@ -11,6 +11,21 @@ public class Enumeratori {
         OK, KO
     }
 
+    public enum TipoMagicToken {
+        JOIN("J"), LOG("L");
+        private final String codice;
+
+        TipoMagicToken(String codice) {
+            this.codice = codice;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+
+    }
+
     public enum StatoGiocatore {
         ATTIVO("A"), PENDING("P"), ELIMINATO("E");
 
@@ -37,6 +52,7 @@ public class Enumeratori {
         }
 
     }
+
     public enum RuoloGiocatoreLega {
         LEADER("L"), GIOCATORE("G");
 
@@ -63,6 +79,7 @@ public class Enumeratori {
         }
 
     }
+
     public enum StatoPartita {
         DA_GIOCARE,
         SOSPESA,
