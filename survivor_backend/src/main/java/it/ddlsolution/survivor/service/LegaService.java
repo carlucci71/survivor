@@ -402,6 +402,8 @@ public class LegaService {
 
     @Transactional
     public LegaDTO join(Long idLega, LegaJoinDTO legaInsertDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         String tokenOriginal = legaInsertDTO.getTokenOriginal();
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
@@ -409,8 +411,17 @@ public class LegaService {
                 throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
             }
         }
-        magicLinkService.validateToken(tokenOriginal, true, Enumeratori.TipoMagicToken.JOIN.getCodice());
+        if (!ObjectUtils.isEmpty(tokenOriginal)) {
+            magicLinkService.validateToken(tokenOriginal, true, Enumeratori.TipoMagicToken.JOIN.getCodice());
+        }
         List<GiocatoreLega> giocatoriLega = lega.getGiocatoreLeghe();
+        long count = giocatoriLega.stream()
+                .filter(gl -> gl.getGiocatore().getUser() != null && gl.getGiocatore().getUser().getId() != null && gl.getGiocatore().getUser().getId().equals(userId))
+                .count();
+        if (count > 0) {
+            throw new ManagedException("User già unito alla lega", "ALREADY_JOINED");
+        }
+
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
         giocatoreLega.setGiocatore(giocatore);
@@ -421,47 +432,46 @@ public class LegaService {
         lega.setGiocatoreLeghe(giocatoriLega);
         Lega legaSalvata = legaRepository.save(lega);
         return legaMapper.toDTO(legaSalvata);
-
-
     }
 
-    @Transactional
-    public void invita(long idLega, List<String> emails) {
-        for (String email : emails) {
-            LegaDTO legaDTO = getLegaDTO(idLega, false);
-            if (email == null || email.trim().isEmpty()) {
-                throw new IllegalArgumentException("L'email è obbligatoria");
-            }
-            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                throw new IllegalArgumentException("Formato email non valido");
-            }
 
-            User user = userService.findByEmail(email);
-            // Genera un nuovo token
-            int expirationDays = 3;
-            String token = magicLinkService.salvaMagicToken(user, null, expirationDays, Enumeratori.TipoMagicToken.JOIN.getCodice(), Enumeratori.TipoMagicToken.JOIN + ":" + legaDTO.getId().toString());
-            String subject = "Invito per giocare a Survivor";
-            String magicLink = magicLinkService.getUrlMagicLink(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
-            emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
-            log.info("Magic link inviato a: {}", email);
+@Transactional
+public void invita(long idLega, List<String> emails) {
+    for (String email : emails) {
+        LegaDTO legaDTO = getLegaDTO(idLega, false);
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("L'email è obbligatoria");
         }
-    }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("Formato email non valido");
+        }
 
-    private String buildEmailContent(String magicLink, int expirationDays, LegaDTO legaDTO) {
-        return """
-                Ciao,
-                
-                Sei stato invitato alla lega %s xxxx...... :
-                Clicca sul link seguente per accedere a Survivor:
-                %s
-                
-                Questo link è valido per %d giorni.
-                
-                Se non sei interessato, ignora questa email.
-                
-                Saluti,
-                Il team di Survivor
-                """.formatted(legaDTO.getNome(), magicLink, expirationDays);
+        User user = userService.findByEmail(email);
+        // Genera un nuovo token
+        int expirationDays = 3;
+        String token = magicLinkService.salvaMagicToken(user, null, expirationDays, Enumeratori.TipoMagicToken.JOIN.getCodice(), Enumeratori.TipoMagicToken.JOIN + ":" + legaDTO.getId().toString());
+        String subject = "Invito per giocare a Survivor";
+        String magicLink = magicLinkService.getUrlMagicLink(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
+        emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
+        log.info("Magic link inviato a: {}", email);
     }
+}
+
+private String buildEmailContent(String magicLink, int expirationDays, LegaDTO legaDTO) {
+    return """
+            Ciao,
+            
+            Sei stato invitato alla lega %s xxxx...... :
+            Clicca sul link seguente per accedere a Survivor:
+            %s
+            
+            Questo link è valido per %d giorni.
+            
+            Se non sei interessato, ignora questa email.
+            
+            Saluti,
+            Il team di Survivor
+            """.formatted(legaDTO.getNome(), magicLink, expirationDays);
+}
 
 }

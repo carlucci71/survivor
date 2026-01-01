@@ -64,4 +64,9 @@ export class LegaService {
     const body = { pwd: pwd, tokenOriginal: tokenOriginal };
     return this.http.put<Lega>(`${this.apiUrl}/join/${id}`, body).pipe(map(mapLegaFromBE));
   }
+
+  invitaUtenti(legaId: number, emails: string[]): Observable<any> {
+    const body = { emails: emails };
+    return this.http.post(`${this.apiUrl}/invita/${legaId}`, body);
+  }
 }
