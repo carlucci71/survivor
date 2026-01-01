@@ -18,9 +18,9 @@
 			</thead>
 			<tbody>
 				<tr *ngFor="let l of leghe">
-					<td data-label="Nome">{{ l.nome }}</td>
+					<td data-label="Nome">{{ l.id }} - {{ l.nome }}</td>
 					<td data-label="Sport ID">{{ l.campionato?.sport?.nome }}</td>
-					<td data-label="Campionato ID">{{ l.campionato?.nome || '-' }}</td>
+					<td data-label="Campionato ID">{{ l.campionato!.nome}}</td>
 					<td data-label="Giornata Iniziale">{{ l.giornataIniziale }}</td>
 					<td data-label="Numero iscritti">{{ l.giocatori?.length }}</td>
 					<td data-label="Password accesso">{{ l.withPwd?'SI':'' }}</td>

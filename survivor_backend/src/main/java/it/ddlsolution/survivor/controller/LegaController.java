@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
@@ -72,5 +73,12 @@ public class LegaController {
         LegaDTO legaDTO = legaService.join(idLega, legaInsertDTO);
         return ResponseEntity.ok(legaDTO);
     }
+
+    @PostMapping("/invita/{idLega}")
+    public ResponseEntity<Map<String, String>> invita(@RequestBody LegaInvitaDTO legaInvitaDTO, @PathVariable("idLega") Long idLega) {
+        legaService.invita(idLega, legaInvitaDTO.getEmails());
+        return ResponseEntity.ok(Map.of("ESITO","OK"));
+    }
+
 
 }

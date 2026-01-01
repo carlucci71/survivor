@@ -57,6 +57,9 @@
             </mat-card-header>
             <mat-card-actions>
               <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>
+              @if (visualizzaInvito(lega)){
+              <button mat-raised-button color="accent" (click)="openInvitaDialog(lega)">Invita utenti</button>
+              }
             </mat-card-actions>
           </mat-card>
           }

@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- Tabella token magic link
 CREATE TABLE IF NOT EXISTS magic_link_tokens (
     id BIGSERIAL PRIMARY KEY,
-    token VARCHAR(255) NOT NULL UNIQUE,
+    token VARCHAR(4000) NOT NULL UNIQUE,
+    tipo CHAR(1) NOT NULL DEFAULT 'L',
     user_id BIGINT NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL,

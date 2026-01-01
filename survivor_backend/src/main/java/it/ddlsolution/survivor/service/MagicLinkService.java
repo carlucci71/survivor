@@ -3,16 +3,19 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.entity.MagicLinkToken;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.repository.MagicLinkTokenRepository;
-import it.ddlsolution.survivor.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.SignedTokenGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -20,17 +23,18 @@ import java.util.Optional;
 @Slf4j
 public class MagicLinkService {
 
-    private final UserRepository userRepository;
-    private final MagicLinkTokenRepository tokenRepository;
+    private final UserService userService;
+    private final MagicLinkTokenRepository magicLinkTokenRepository;
     private final EmailService emailService;
+    private final SignedTokenGenerator signedTokenGenerator;
 
-    @Value("${magic-link.expiration-minutes:15}")
+    @Value("${magic-link.expiration-minutes}")
     private int expirationMinutes;
 
-    @Value("${magic-link.base-url:http://localhost:8389}")
+    @Value("${magic-link.base-url}")
     private String baseUrl;
 
-    @Value("${magic-link.relative-url-send-mail:/api/auth/verify?token=}")//questo url di default serve per richiamare direttamente il BE
+    @Value("${magic-link.relative-url-send-mail}")
     private String relativeUrlSendMail;
 
     @Transactional
@@ -38,52 +42,88 @@ public class MagicLinkService {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
-
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new IllegalArgumentException("Formato email non valido");
         }
-
-        User user = userRepository.findByEmail(email)
-            .orElseGet(() -> createNewUser(email));
-
-        // Elimina i token precedenti per questo utente
-        tokenRepository.deleteByUser(user);
-
+        User user = userService.findByEmail(email);
         // Genera un nuovo token
-        String token = generateSecureToken();
-
-        MagicLinkToken magicLinkToken = new MagicLinkToken();
-        magicLinkToken.setToken(token);
-        magicLinkToken.setUser(user);
-        magicLinkToken.setExpiresAt(LocalDateTime.now().plusMinutes(expirationMinutes));
-        magicLinkToken.setUsed(false);
-
-        tokenRepository.save(magicLinkToken);
-
-        // Invia l'email
-        String magicLink = baseUrl + relativeUrlSendMail + token;
-        emailService.sendMagicLinkEmail(email, magicLink);
+        String tipo = Enumeratori.TipoMagicToken.LOG.getCodice();
+        magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
+        String token = salvaMagicToken(user, expirationMinutes, null, tipo, "");
+        String subject = "Il tuo Magic Link per accedere a Survivor";
+        String magicLink = getUrlMagicLink(token, tipo);
+        emailService.send(email, subject, buildEmailContent(magicLink));
 
         log.info("Magic link inviato a: {}", email);
     }
 
     @Transactional
-    public Optional<User> validateToken(String token) {
-        Optional<MagicLinkToken> magicLinkTokenOpt = tokenRepository
-            .findByTokenAndUsedFalseAndExpiresAtAfter(token, LocalDateTime.now());
+    public String salvaMagicToken(User user, Integer minutesExpiration, Integer daysExpiration, String tipo, String addInfo) {
+        String token = generateSecureToken(addInfo);
+        MagicLinkToken magicLinkToken = new MagicLinkToken();
+        magicLinkToken.setToken(token);
+        magicLinkToken.setTipo(tipo);
+        magicLinkToken.setUser(user);
+        if (minutesExpiration != null) {
+            magicLinkToken.setExpiresAt(LocalDateTime.now().plusMinutes(minutesExpiration));
+        }
+        if (daysExpiration != null) {
+            magicLinkToken.setExpiresAt(LocalDateTime.now().plusDays(daysExpiration));
+        }
+        magicLinkToken.setUsed(false);
+        magicLinkTokenRepository.save(magicLinkToken);
+        return token;
+    }
+
+    public String getUrlMagicLink(String token, String codiceTipoMagicLink) {
+        return baseUrl + relativeUrlSendMail  + URLEncoder.encode(  token , StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+    }
+
+    private String buildEmailContent(String magicLink) {
+        return """
+                Ciao,
+                
+                Clicca sul link seguente per accedere a Survivor:
+                
+                %s
+                
+                Questo link è valido per %d minuti.
+                
+                Se non hai richiesto questo accesso, ignora questa email.
+                
+                Saluti,
+                Il team di Survivor
+                """.formatted(magicLink, expirationMinutes);
+    }
+
+    @Transactional
+    public Optional<User> validateToken(String token, boolean setUsed, String codiceTipoMagicLink) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!signedTokenGenerator.verifyAndExtract(token)) {
+            throw new RuntimeException("Token manomesso");
+        }
+        Optional<MagicLinkToken> magicLinkTokenOpt = magicLinkTokenRepository.findByTokenAndUsedFalseAndExpiresAtAfter(token, LocalDateTime.now());
 
         if (magicLinkTokenOpt.isEmpty()) {
             return Optional.empty();
         }
 
         MagicLinkToken magicLinkToken = magicLinkTokenOpt.get();
-        magicLinkToken.setUsed(true);
-        magicLinkToken.setUsedAt(LocalDateTime.now());
-        tokenRepository.save(magicLinkToken);
+        if (setUsed) {
+
+            if (codiceTipoMagicLink.equals(Enumeratori.TipoMagicToken.JOIN.getCodice()) && !magicLinkToken.getUser().getId().equals(authentication.getPrincipal())) {
+                    throw new RuntimeException("User link:" + magicLinkToken.getUser().getId() + " diverso da user loggato: " + authentication.getPrincipal());
+            }
+
+
+            magicLinkToken.setUsed(true);
+            magicLinkToken.setUsedAt(LocalDateTime.now());
+        }
+        magicLinkTokenRepository.save(magicLinkToken);
 
         User user = magicLinkToken.getUser();
         user.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(user);
+        user = userService.salva(user);
 
         log.info("Utente autenticato con successo: {}", user.getEmail());
         return Optional.of(user);
@@ -91,26 +131,19 @@ public class MagicLinkService {
 
     @Transactional
     public void cleanupExpiredTokens() {
-        tokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
+        magicLinkTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
     }
 
-    private User createNewUser(String email) {
-        User user = new User();
-        user.setEmail(email);
-        user.setName(extractNameFromEmail(email));
-        user.setEnabled(true);
-        return userRepository.save(user);
+    private String generateSecureToken(String addInfo) {
+        try {
+            return signedTokenGenerator.generateToken(addInfo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private String extractNameFromEmail(String email) {
-        return email.substring(0, email.indexOf('@'));
-    }
-
-    private String generateSecureToken() {
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[32];
-        random.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    public String extractAddInfo(String token){
+        return signedTokenGenerator.extractAddInfo(token);
     }
 }
 

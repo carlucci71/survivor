@@ -123,6 +123,16 @@
           color: #333;
         }
 
+        mat-card-actions {
+          display: flex;
+          gap: 8px;
+          padding: 16px 0 0;
+          
+          button {
+            flex: 1;
+          }
+        }
+
         p {
           color: #666;
           margin-bottom: 16px;

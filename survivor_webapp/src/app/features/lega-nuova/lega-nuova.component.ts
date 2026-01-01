@@ -10,14 +10,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 import { SportService } from '../../core/services/sport.service';
 import { Campionato, Sport } from '../../core/models/interfaces.model';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { LegaService } from '../../core/services/lega.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -33,6 +34,8 @@ import { ErrorDialogComponent } from '../../shared/components/error-dialog/error
     MatButtonModule,
     ErrorDialogComponent,
     FormsModule,
+    MatChipsModule,
+    MatIconModule,
   ],
   templateUrl: './lega-nuova.component.html',
   styleUrls: ['./lega-nuova.component.scss'],
@@ -40,12 +43,10 @@ import { ErrorDialogComponent } from '../../shared/components/error-dialog/error
 export class LegaNuovaComponent implements OnInit {
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar,
     private authService: AuthService,
     private sportService: SportService,
     private legaService: LegaService,
-    private campionatoService: CampionatoService
-    ,
+    private campionatoService: CampionatoService,
     private dialog: MatDialog
   ) {}
   sportSel: string | null = null;
@@ -61,6 +62,9 @@ export class LegaNuovaComponent implements OnInit {
   campionatoTouched = false;
   giornataTouched = false;
   confirmationMessage: boolean = false;
+  legaCreataId: number | null = null;
+  emailInput: string = '';
+  emailsList: string[] = [];
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -83,7 +87,9 @@ export class LegaNuovaComponent implements OnInit {
     this.router.navigate(['/auth/login']);
   }
 
-  mostraUltimiRisultati(sigla?: string) {}
+  baseUrl() {
+    return environment.baseUrl;
+  }
 
   selezionaSport() {
     if (this.sportSel) {
@@ -152,9 +158,9 @@ export class LegaNuovaComponent implements OnInit {
       .subscribe({
         next: (lega) => {
           this.confirmationMessage = true;
+          this.legaCreataId = lega.id;
         },
         error: (err) => {
-
           if (err && err.status === 499) {
             let messaggio = '';
             if (err?.error?.message) {
@@ -170,5 +176,42 @@ export class LegaNuovaComponent implements OnInit {
           console.error('Errore creazione lega', err);
         },
       });
+  }
+
+  addEmail(): void {
+    if (this.emailInput && this.isValidEmail(this.emailInput)) {
+      if (!this.emailsList.includes(this.emailInput)) {
+        this.emailsList.push(this.emailInput);
+        this.emailInput = '';
+      }
+    }
+  }
+
+  removeEmail(email: string): void {
+    const index = this.emailsList.indexOf(email);
+    if (index >= 0) {
+      this.emailsList.splice(index, 1);
+    }
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  invitaUtenti(): void {
+    if (this.emailsList.length === 0 || !this.legaCreataId) {
+      return;
+    }
+
+
+    this.legaService.invitaUtenti(this.legaCreataId, this.emailsList).subscribe({
+      next: () => {
+        this.emailsList = [];
+      },
+      error: (err) => {
+        console.error('Errore invio inviti:', err);
+      },
+    });
   }
 }

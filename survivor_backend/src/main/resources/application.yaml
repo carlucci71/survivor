@@ -39,7 +39,7 @@ jwt:
   #expiration:  60000 #1 minuto in millisecondi
 
 magic-link:
-  expiration-minutes: 15
+  expiration-minutes: 20
   base-url: ${MAGIC_LINK_BASE_URL}
   relative-url-send-mail: /auth/verify?token=
 

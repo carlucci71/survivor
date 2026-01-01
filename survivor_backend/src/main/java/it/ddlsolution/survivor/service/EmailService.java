@@ -19,13 +19,13 @@ public class EmailService {
     private String fromEmail;
 
     @Transactional
-    public void sendMagicLinkEmail(String to, String magicLink) {
+    public void send(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(to);
-            message.setSubject("Il tuo Magic Link per accedere a Survivor");
-            message.setText(buildEmailContent(magicLink));
+            message.setSubject(subject);
+            message.setText(body);
 
             mailSender.send(message);
             log.info("Email inviata con successo a: {}", to);
@@ -35,21 +35,5 @@ public class EmailService {
         }
     }
 
-    private String buildEmailContent(String magicLink) {
-        return """
-            Ciao,
-            
-            Clicca sul link seguente per accedere a Survivor:
-            
-            %s
-            
-            Questo link è valido per 15 minuti.
-            
-            Se non hai richiesto questo accesso, ignora questa email.
-            
-            Saluti,
-            Il team di Survivor
-            """.formatted(magicLink);
-    }
 }
 

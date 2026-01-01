@@ -46,7 +46,7 @@
                 placeholder="Campionato"
                 name="campionatoSel"
                 [(ngModel)]="campionatoSel"
-                (selectionChange)="campionatoTouched = true; mostraUltimiRisultati()"
+                (selectionChange)="campionatoTouched = true"
               >
                 @for (campionato of campionatiDisponibili; track campionato.id) {
                 <mat-option [value]="campionato">{{ campionato.nome }}</mat-option>
@@ -94,7 +94,50 @@
     <div class="confirmation" *ngIf="confirmationMessage">
           <mat-card class="confirmation-card">
             <mat-card-content>
-              La lega è stata creata con successo <span *ngIf="pwd">, condividi con i tuoi amici con la password {{pwd}}</span>
+              <p class="success-message">
+                La lega <b>{{nome}}</b> è stata creata con successo.
+              </p>
+              <p>
+                Puoi dire ai tuoi amici di cercare la lega all'url 
+                <a [href]="baseUrl() + '/joinLega'">{{baseUrl()}}/joinLega</a>
+                <span *ngIf="pwd"> ed unirsi con la password <b>{{pwd}}</b></span>
+              </p>
+              
+              <div class="invite-section">
+                <h3>Invita amici via email</h3>
+                
+                <div class="email-input-section">
+                  <mat-form-field appearance="outline" class="email-field">
+                    <mat-label>Indirizzo email</mat-label>
+                    <input 
+                      matInput 
+                      placeholder="email@esempio.com" 
+                      [(ngModel)]="emailInput"
+                      (keyup.enter)="addEmail()"
+                    />
+                  </mat-form-field>
+                  <button mat-raised-button color="accent" (click)="addEmail()" [disabled]="!isValidEmail(emailInput)">
+                    Aggiungi
+                  </button>
+                </div>
+
+                <div class="emails-list" *ngIf="emailsList.length > 0">
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
+                      {{email}}
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+
+                <div class="invite-actions" *ngIf="emailsList.length > 0">
+                  <button mat-raised-button color="primary" (click)="invitaUtenti()">
+                    Invia Inviti ({{emailsList.length}})
+                  </button>
+                </div>
+              </div>
             </mat-card-content>
           </mat-card>
         </div>
