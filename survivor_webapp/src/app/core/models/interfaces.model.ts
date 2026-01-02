@@ -151,7 +151,6 @@ export interface Squadra {
   id?: number;
   sigla: string;
   nome: string;
-  campionato?: Campionato;
 }
 
 export interface Giocatore {
