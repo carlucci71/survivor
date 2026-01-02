@@ -114,4 +114,20 @@ public class Enumeratori {
 
     }
 
+    public enum SportDisponibili {
+        CALCIO, BASKET, TENNIS
+    }
+
+    public enum CampionatiDisponibili {
+        SERIE_A,
+        SERIE_B,
+        LIGA,
+        TENNIS_W,
+        TENNIS_AO,
+        NBA_RS;
+    }
+
 }
+
+
+

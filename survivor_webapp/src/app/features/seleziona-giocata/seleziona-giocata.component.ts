@@ -101,9 +101,8 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.legaService
+      this.campionatoService
         .calendario(
-          this.lega.campionato?.sport?.id,
           this.lega.campionato?.id,
           squadra,
           this.lega.giornataCorrente -1,
@@ -139,9 +138,8 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
-      this.legaService
+      this.campionatoService
         .calendario(
-          this.lega.campionato?.sport?.id,
           this.lega.campionato?.id,
           this.squadraSelezionata,
           this.lega.giornataCorrente,

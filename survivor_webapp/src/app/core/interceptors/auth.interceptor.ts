@@ -84,7 +84,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           if (!fullMessage) {
             const msgParts = [] as string[];
             if (error?.message) {
-              msgParts.push(error.url + ' [' + error.status + ']');
+              msgParts.push('Chiamata in errore: ' + error.url + ' [' + error.status + ']');
             } else {
               msgParts.push('An error occurred');
             }
