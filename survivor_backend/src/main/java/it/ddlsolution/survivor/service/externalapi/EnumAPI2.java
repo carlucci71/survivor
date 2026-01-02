@@ -44,7 +44,7 @@ public class EnumAPI2 {
         CRE("CRE"),
         FIO("FIO"),
         GEN("GEN"),
-        MER("INT"),
+        INT("INT"),
         JUV("JUV"),
         LAZ("LAZ"),
         LEC("LEC"),
