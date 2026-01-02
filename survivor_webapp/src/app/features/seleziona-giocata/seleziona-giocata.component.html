@@ -7,14 +7,10 @@
   >
     <mat-icon>close</mat-icon>
   </button>
-  <h2>Seleziona giocata</h2>
+  <h2><span class="value">{{ getDesGiornataTitle(data.giornata + lega.giornataIniziale - 1) }}</span></h2>
   <div class="info-row">
     <span class="label">Giocatore:</span>
     <span class="value">{{ giocatore.nome }}</span>
-  </div>
-  <div class="info-row">
-    <span class="label">Giornata:</span>
-    <span class="value">{{ getDesGiornataTitle(data.giornata) }}</span>
   </div>
   <div class="info-row">
     <span class="label">Stato:</span>
