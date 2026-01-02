@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service.externalapi;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
+import it.ddlsolution.survivor.service.UtilCalendarioService;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 public class CalendarioAPI2 implements ICalendario {
 
     private final CacheableService cacheableService;
+    private final UtilCalendarioService utilCalendarioService;
 
     @Value("${external-api.calendario.implementation.API2.url-calendar}")
     String urlCalendar;
@@ -41,59 +43,7 @@ public class CalendarioAPI2 implements ICalendario {
     String urlInfo;
 
     @Override
-    public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
-        return getPartite(sport, campionato, giornata);
-    }
-
-    @Override
-    public List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi) {
-        CampionatoDTO campionatoDTO = cacheableService.allCampionati()
-                .stream()
-                .filter(c -> c.getId().equals(campionato))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Lega non trovata per campionato: " + campionato + " e sport:" + sport));
-
-        List<PartitaDTO> partite = new ArrayList<>();
-        if (prossimi){
-            for (int g = giornataAttuale; g < giornataAttuale + 20; g++) {
-                if (g <= campionatoDTO.getNumGiornate()) {
-                    partite.addAll(
-                            partite(sport, campionato, g)
-                                    .stream()
-                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
-                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
-                                    .toList()
-                    );
-                }
-            }
-        } else {
-            for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
-                if (g > 0) {
-                    partite.addAll(
-                            partite(sport, campionato, g)
-                                    .stream()
-                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
-                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
-                                    .toList().reversed()
-                    );
-                }
-            }
-        }
-        return partite;
-    }
-
-    @Override
-    public List<PartitaDTO> partite(String sport, String campionato) {
-        List<PartitaDTO> ret = new ArrayList<>();
-        CampionatoDTO campionatoDTO = cacheableService.allCampionati().stream().filter(c -> c.getId().equals(campionato)).findFirst().orElseThrow(() -> new RuntimeException("Campionato non trovato: " + campionato));
-        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-            List<PartitaDTO> calendarioGiornata = getPartite(sport, campionato, giornata);
-            ret.addAll(calendarioGiornata);
-        }
-        return ret;
-    }
-
-    private List<PartitaDTO> getPartite(String sport, String campionato, int giornata) {
+    public List<PartitaDTO> getPartite(String sport, String campionato, int giornata) {
         List<PartitaDTO> ret = new ArrayList<>();
         String urlGiornata = Integer.toString(giornata);
         String attUrlCalendar;

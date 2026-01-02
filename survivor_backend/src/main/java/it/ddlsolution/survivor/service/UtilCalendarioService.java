@@ -1,11 +1,16 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,6 +18,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UtilCalendarioService {
+
+    private final ObjectProvider<ICalendario> calendarioProvider;
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
@@ -48,6 +55,52 @@ public class UtilCalendarioService {
         }
         return ret;
     }
+
+    public List<PartitaDTO> partite(CampionatoDTO campionatoDTO) {
+        ICalendario calendario = calendarioProvider.getIfAvailable();
+
+        List<PartitaDTO> ret = new ArrayList<>();
+        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
+            ret.addAll(calendario.getPartite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata));
+        }
+        return ret;
+    }
+
+    public List<PartitaDTO> partite(String sport, String campionato, int giornata) {
+        ICalendario calendario = calendarioProvider.getIfAvailable();
+        return calendario.getPartite(sport, campionato, giornata);
+    }
+
+    public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi) {
+        List<PartitaDTO> partite = new ArrayList<>();
+        if (prossimi){
+            for (int g = giornataAttuale; g < giornataAttuale + 20; g++) {
+                if (g <= campionatoDTO.getNumGiornate()) {
+                    partite.addAll(
+                            partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), g)
+                                    .stream()
+                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
+                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                                    .toList()
+                    );
+                }
+            }
+        } else {
+            for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
+                if (g > 0) {
+                    partite.addAll(
+                            partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), g)
+                                    .stream()
+                                    .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
+                                    .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                                    .toList().reversed()
+                    );
+                }
+            }
+        }
+        return partite;
+    }
+
 
 
 }

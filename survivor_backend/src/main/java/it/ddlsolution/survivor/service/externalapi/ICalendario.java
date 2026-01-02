@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface ICalendario {
-    List<PartitaDTO> partite(String sport, String campionato);
-    List<PartitaDTO> partite(String sport, String campionato, int giornata);
-    List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi);
+    List<PartitaDTO> getPartite(String sport, String campionato, int giornata);
     Map<Integer, String> roundTennis();
 }

@@ -44,7 +44,7 @@ public class CacheableService {
 
     // Lazy provider e servizio di utilità per calcolo stato giornata
     private final ObjectProvider<ICalendario> calendarioProvider;
-    private final UtilCalendarioService statoGiornataService;
+    private final UtilCalendarioService utilCalendarioService;
 
     public final static String CAMPIONATI="campionati";
     public final static String SPORT="sport";
@@ -66,8 +66,8 @@ public class CacheableService {
             int giornata = 0;
             do {
                 giornata++;
-                List<PartitaDTO> partite = calendario.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
-                statoPartita = statoGiornataService.statoGiornata(partite, giornata);
+                List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
+                statoPartita = utilCalendarioService.statoGiornata(partite, giornata);
             } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
             if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
                 giornata = 1; // mantenuto comportamento precedente

@@ -1,8 +1,12 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.service.CacheableService;
+import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.service.UtilCalendarioService;
 import it.ddlsolution.survivor.service.externalapi.CalendarioAPI2;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
@@ -25,7 +29,9 @@ import java.util.Map;
 public class UtilController {
 
     private final Environment environment;
-    private final ICalendario calendario;
+    private final UtilCalendarioService utilCalendarioService;
+    private final CacheableService cacheableService;
+    private final CampionatoService campionatoService;
 
 
     @GetMapping("/profilo")
@@ -38,6 +44,7 @@ public class UtilController {
 
     @GetMapping("/calendario")
     public ResponseEntity<List<PartitaDTO>> calendario() {
-        return ResponseEntity.ok(calendario.partite(Enumeratori.SportDisponibili.CALCIO.name() , Enumeratori.CampionatiDisponibili.SERIE_A.name()));
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(Enumeratori.CampionatiDisponibili.SERIE_A.name());
+        return ResponseEntity.ok(utilCalendarioService.partite(campionatoDTO));
     }
 }

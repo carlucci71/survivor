@@ -1,14 +1,14 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.LegaJoinDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.dto.SquadraDTO;
-import it.ddlsolution.survivor.entity.Lega;
+import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.LegaService;
-import it.ddlsolution.survivor.service.externalapi.CalendarioAPI2;
+import it.ddlsolution.survivor.service.UtilCalendarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +32,7 @@ import java.util.Map;
 public class LegaController {
 
     private final LegaService legaService;
-    private final CalendarioAPI2 calendarioAPI2;
 
-
-    @GetMapping(value = "/calendario/{sportId}/{campionatoId}/{squadraId}/{giornata}")
-    public ResponseEntity<List<PartitaDTO>> calendario(@PathVariable String sportId, @PathVariable String campionatoId, @PathVariable String squadraId, @PathVariable Integer giornata, @RequestParam Boolean prossimi) {
-        List<PartitaDTO> squadraDTOListMap = calendarioAPI2.calendario(sportId, campionatoId, squadraId, giornata, prossimi);
-        return ResponseEntity.ok(squadraDTOListMap);
-    }
 
     @GetMapping(value = "/mieLeghe")
     public ResponseEntity<List<LegaDTO>> mieLeghe() {

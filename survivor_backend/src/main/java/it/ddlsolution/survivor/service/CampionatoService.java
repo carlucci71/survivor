@@ -15,7 +15,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CampionatoService {
     private final CacheableService cacheableService;
+    private final UtilCalendarioService utilCalendarioService;
     private final ICalendario calendario;
+
+    @Transactional(readOnly = true)
+    public CampionatoDTO getCampionato(String campionatoId) {
+        return cacheableService.allCampionati()
+                .stream()
+                .filter(c -> c.getId().equals(campionatoId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Lega non trovata per campionato: " + campionatoId));
+    }
 
     @Transactional(readOnly = true)
     public List<CampionatoDTO> allCampionati() {

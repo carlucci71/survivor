@@ -30,18 +30,6 @@ export class LegaService {
     return this.http.get<Lega>(`${this.apiUrl}/${id}`).pipe(map(mapLegaFromBE));
   }
 
-  calendario(
-    sportId: string,
-    campionatoId: string,
-    squadraId: string,
-    giornata: number,
-    prossimi: boolean
-  ): Observable<Partita[]> {
-    return this.http.get<any>(
-      `${this.apiUrl}/calendario/${sportId}/${campionatoId}/${squadraId}/${giornata}?prossimi=${prossimi}`
-    );
-  }
-
   inserisciLega(
     nome: string,
     sport: string,

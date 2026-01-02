@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Campionato } from '../models/interfaces.model';
+import { Campionato, Partita } from '../models/interfaces.model';
 import { LoadingService } from './loading.service';
 
 @Injectable({ providedIn: 'root' })
@@ -53,4 +53,16 @@ export class CampionatoService {
       return 'Giornata ' + index;
     }
   }
+
+  calendario(
+    campionatoId: string,
+    squadraId: string,
+    giornata: number,
+    prossimi: boolean
+  ): Observable<Partita[]> {
+    return this.http.get<any>(
+      `${this.apiUrl}/calendario/${campionatoId}/${squadraId}/${giornata}?prossimi=${prossimi}`
+    );
+  }
+
 }

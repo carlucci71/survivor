@@ -41,7 +41,7 @@ public class LegaService {
     private final LegaRepository legaRepository;
     private final GiocatoreLegaRepository giocatoreLegaRepository;
     private final LegaMapper legaMapper;
-    private final ICalendario calendario;
+    private final UtilCalendarioService utilCalendarioService;
     private final CacheableService cacheableService;
     private final GiocatoreService giocatoreService;
     private final UserService userService;
@@ -163,7 +163,7 @@ public class LegaService {
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
-        List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
+        List<PartitaDTO> partite = utilCalendarioService.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
         return statoGiornata(partite, giornata, legaDTO);
     }
 
@@ -221,7 +221,7 @@ public class LegaService {
         log.info("CALCOLA");
 
         LegaDTO legaDTO = getLegaDTO(idLega, true);
-        List<PartitaDTO> partite = calendario.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
+        List<PartitaDTO> partite = utilCalendarioService.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, giornataDaCalcolare, legaDTO);
         if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
