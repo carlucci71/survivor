@@ -54,7 +54,7 @@ public class Enumeratori {
     }
 
     public enum RuoloGiocatoreLega {
-        LEADER("L"), GIOCATORE("G");
+        LEADER("L"), GIOCATORE("G"), NESSUNO("N");
 
         private final String codice;
 
