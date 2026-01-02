@@ -94,6 +94,8 @@ export class LegaDettaglioComponent {
     });
   }
 
+
+  
   getDesGiornataTitle(index: number): string {
     if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
       return "";

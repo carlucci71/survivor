@@ -96,34 +96,6 @@
 	color: #222 !important;
 }
 
-/* Unified status pill (team + esito) */
-.status-pill {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	background: #ffffff;
-	border: 1px solid #e0e0e0;
-	padding: 4px 6px;
-	border-radius: 14px;
-	font-weight: 600;
-}
-
-/* Quando la cella è la giornata corrente, rendiamo il contenitore trasparente
-	 e mettiamo l'icona su uno sfondo giallo circolare con bordo arancione */
-.corrente-col .status-pill {
-	background: transparent !important;
-	border: none !important;
-	padding: 4px 8px !important; /* give some breathing room inside the yellow cell */
-	align-items: center;
-}
-.corrente-col .status-pill .team-name {
-	display: inline-flex !important;
-	align-items: center !important;
-	padding: 6px 10px !important;
-	border-radius: 12px !important;
-	height: 28px !important;
-	line-height: 1 !important;
-}
 .corrente-col .gioca-icon {
 	background: #ffe600;
 	border-radius: 50%;
