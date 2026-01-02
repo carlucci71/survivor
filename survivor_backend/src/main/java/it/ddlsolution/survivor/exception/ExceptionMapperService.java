@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.ErrorResponse;
 
 @Service
@@ -21,7 +22,7 @@ public class ExceptionMapperService {
         } else {
             baseResponse.setErrorCode("ERR00");
         }
-        baseResponse.setMessage(ex.getMessage());
+        baseResponse.setMessage(ObjectUtils.isEmpty(ex.getMessage()) ? ex.toString():ex.getMessage());
         baseResponse.setNameClassException(ex.getClass().getName());
         log.debug("Mappata eccezione {} con id {}", ex.getClass().getName(), baseResponse.getId());
         return baseResponse;

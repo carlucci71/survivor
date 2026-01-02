@@ -66,7 +66,7 @@ public class CacheableService {
             int giornata = 0;
             do {
                 giornata++;
-                List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
+                List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornata);
                 statoPartita = utilCalendarioService.statoGiornata(partite, giornata);
             } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
             if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {

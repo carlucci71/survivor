@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.aspect.LoggaDispositiva;
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
@@ -39,7 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LegaService {
     private final LegaRepository legaRepository;
-    private final GiocatoreLegaRepository giocatoreLegaRepository;
+    private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
     private final UtilCalendarioService utilCalendarioService;
     private final CacheableService cacheableService;
@@ -163,7 +164,8 @@ public class LegaService {
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
-        List<PartitaDTO> partite = utilCalendarioService.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornata);
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
+        List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornata);
         return statoGiornata(partite, giornata, legaDTO);
     }
 
@@ -221,7 +223,8 @@ public class LegaService {
         log.info("CALCOLA");
 
         LegaDTO legaDTO = getLegaDTO(idLega, true);
-        List<PartitaDTO> partite = utilCalendarioService.partite(legaDTO.getCampionato().getSport().getId(), legaDTO.getCampionato().getId(), giornataDaCalcolare);
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
+        List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, giornataDaCalcolare, legaDTO);
         if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
