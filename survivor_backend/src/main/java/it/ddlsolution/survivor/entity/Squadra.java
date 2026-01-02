@@ -20,10 +20,10 @@ public class Squadra {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "sigla", length = 10)
+    @Column(name = "sigla", length = 200)
     private String sigla;
 
-    @Column(name = "nome", nullable = false, length = 100)
+    @Column(name = "nome", nullable = false, length = 200)
     private String nome;
 
     @ManyToOne

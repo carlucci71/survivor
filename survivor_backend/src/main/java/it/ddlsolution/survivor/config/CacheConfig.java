@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.config.cache;
+package it.ddlsolution.survivor.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.RequiredArgsConstructor;

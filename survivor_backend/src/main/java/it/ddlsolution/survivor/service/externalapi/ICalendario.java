@@ -1,31 +1,13 @@
 package it.ddlsolution.survivor.service.externalapi;
 
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.SquadraDTO;
 
 import java.util.List;
 import java.util.Map;
 
 public interface ICalendario {
-
-    List<PartitaDTO> partite(String sport, String campionato);
-
-    List<PartitaDTO> partite(String sport, String campionato, int giornata);
-
-    List<PartitaDTO> calendario(String sport, String campionato, String squadra, int giornataAttuale, boolean prossimi);
-
+    List<PartitaDTO> getPartite(String sport, String campionato, int giornata);
     Map<Integer, String> roundTennis();
-
-    enum SportDisponibili {
-        CALCIO, BASKET, TENNIS
-    }
-
-    enum CampionatiDisponibili {
-        SERIE_A,
-        SERIE_B,
-        LIGA,
-        TENNIS_WIMBLEDON,
-        TENNIS_AO,
-        NBA_RS;
-    }
-
+    Map<String, Map<String, String>> mapForAdapt();
 }

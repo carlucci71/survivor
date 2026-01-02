@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -19,16 +16,12 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class Utility {
     @Autowired
-    private Environment environment;
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
