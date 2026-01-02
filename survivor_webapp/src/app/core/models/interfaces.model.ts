@@ -37,6 +37,7 @@ export function statoGiocatoreFromCodice(codice: string): StatoPartita {
 
 export class RuoloGiocatore {
   static readonly LEADER = new RuoloGiocatore('LEADER', 'Leader');
+  static readonly NESSUNO = new RuoloGiocatore('NESSUNO', 'Nessuno');
   static readonly GIOCATORE = new RuoloGiocatore('GIOCATORE', 'Giocatore');
   
   private constructor(
@@ -47,7 +48,8 @@ export class RuoloGiocatore {
   static values(): RuoloGiocatore[] {
     return [
       RuoloGiocatore.LEADER,
-      RuoloGiocatore.GIOCATORE
+      RuoloGiocatore.GIOCATORE,
+      RuoloGiocatore.NESSUNO
     ];
   }
 }
@@ -56,6 +58,8 @@ export function ruoloGiocatoreFromCodice(codice: string): RuoloGiocatore {
   switch (codice) {
     case RuoloGiocatore.LEADER.value:
       return RuoloGiocatore.LEADER;
+    case RuoloGiocatore.NESSUNO.value:
+      return RuoloGiocatore.NESSUNO;
     case RuoloGiocatore.GIOCATORE.value:
       return RuoloGiocatore.GIOCATORE;
     default:

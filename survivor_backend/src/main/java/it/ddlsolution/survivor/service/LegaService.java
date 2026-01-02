@@ -328,7 +328,7 @@ public class LegaService {
                 .map(g -> g.getRuoliPerLega())
                 .findFirst()
                 .map(r -> r.get(legaDTO.getId()))
-                .orElseGet(() -> Enumeratori.RuoloGiocatoreLega.GIOCATORE);
+                .orElseGet(() -> Enumeratori.RuoloGiocatoreLega.NESSUNO);
 
         legaDTO.setRuoloGiocatoreLega(myRoleInLega);
 
