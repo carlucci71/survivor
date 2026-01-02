@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,7 +44,7 @@ public class CacheableService {
 
     // Lazy provider e servizio di utilità per calcolo stato giornata
     private final ObjectProvider<ICalendario> calendarioProvider;
-    private final StatoGiornataService statoGiornataService;
+    private final UtilCalendarioService statoGiornataService;
 
     public final static String CAMPIONATI="campionati";
     public final static String SPORT="sport";

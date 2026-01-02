@@ -1,7 +1,5 @@
-package it.ddlsolution.survivor.config.scheduled;
+package it.ddlsolution.survivor.scheduled;
 
-import it.ddlsolution.survivor.service.CacheableService;
-import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.LegaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

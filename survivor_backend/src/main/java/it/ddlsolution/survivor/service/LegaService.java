@@ -384,7 +384,7 @@ public class LegaService {
     @Transactional
     public LegaDTO inserisciLega(LegaInsertDTO legaInsertDTO) {
         if (legaRepository.findByNome(legaInsertDTO.getNome()).isPresent()) {
-            throw new ManagedException("Nome lega già presente", "CODE_LEGA_PRESENTE");
+            throw new ManagedException("Nome lega già presente", ManagedException.InternalCode.CODE_LEGA_PRESENTE);
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
         List<GiocatoreLega> giocatoriLega = new ArrayList<>();
@@ -408,7 +408,7 @@ public class LegaService {
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
             if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
-                throw new ManagedException("Password errata", "PWD_LEGA_ERRATA");
+                throw new ManagedException("Password errata", ManagedException.InternalCode.PWD_LEGA_ERRATA);
             }
         }
         if (!ObjectUtils.isEmpty(tokenOriginal)) {
@@ -419,7 +419,7 @@ public class LegaService {
                 .filter(gl -> gl.getGiocatore().getUser() != null && gl.getGiocatore().getUser().getId() != null && gl.getGiocatore().getUser().getId().equals(userId))
                 .count();
         if (count > 0) {
-            throw new ManagedException("User già unito alla lega", "ALREADY_JOINED");
+            throw new ManagedException("User già unito alla lega", ManagedException.InternalCode.ALREADY_JOINED);
         }
 
         GiocatoreLega giocatoreLega = new GiocatoreLega();

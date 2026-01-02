@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.config.scheduled;
+package it.ddlsolution.survivor.scheduled;
 
 import it.ddlsolution.survivor.service.CacheableService;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,7 @@ public class ScheduledCacheRefresher {
         }
     }
 
-    // Esegui anche all'avvio dell'applicazione
-    @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class) //Avvio dell'applicazione
     public void runAtStartup() {
         try {
             autoRefresh();

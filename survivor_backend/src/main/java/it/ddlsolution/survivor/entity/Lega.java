@@ -2,7 +2,6 @@ package it.ddlsolution.survivor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
 import it.ddlsolution.survivor.converter.StatoLegaConverter;
 import it.ddlsolution.survivor.util.Enumeratori;
 import jakarta.persistence.CascadeType;

@@ -5,6 +5,7 @@ import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.service.externalapi.CalendarioAPI2;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
+import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,6 @@ public class UtilController {
 
     @GetMapping("/calendario")
     public ResponseEntity<List<PartitaDTO>> calendario() {
-        return ResponseEntity.ok(calendario.partite(ICalendario.SportDisponibili.CALCIO.name() , ICalendario.CampionatiDisponibili.SERIE_A.name()));
+        return ResponseEntity.ok(calendario.partite(Enumeratori.SportDisponibili.CALCIO.name() , Enumeratori.CampionatiDisponibili.SERIE_A.name()));
     }
 }

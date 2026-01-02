@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StatoGiornataService {
+public class UtilCalendarioService {
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
@@ -48,5 +48,7 @@ public class StatoGiornataService {
         }
         return ret;
     }
+
+
 }
 

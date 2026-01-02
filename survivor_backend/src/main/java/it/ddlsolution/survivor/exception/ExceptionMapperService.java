@@ -17,7 +17,7 @@ public class ExceptionMapperService {
         BaseResponseException baseResponse = new BaseResponseException();
         baseResponse.setId(ex.hashCode());
         if (ex instanceof ManagedException) {
-            baseResponse.setErrorCode(((ManagedException) ex).getInternalCode());
+            baseResponse.setErrorCode(((ManagedException) ex).getInternalCode().name());
         } else {
             baseResponse.setErrorCode("ERR00");
         }
