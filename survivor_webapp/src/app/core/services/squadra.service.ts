@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { Squadra } from '../models/interfaces.model';
 
 @Injectable({ providedIn: 'root' })
 export class SquadraService {
@@ -31,4 +32,10 @@ export class SquadraService {
     }
     return squadraSigla;
   }
+
+  getSquadreByCampionatoAndGiornata(campionatoId: string, giornata: number): Observable<string[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/calendario/${campionatoId}/squadreDisponibili/${giornata}`);
+  }
+
+
 }

@@ -7,7 +7,11 @@
   >
     <mat-icon>close</mat-icon>
   </button>
-  <h2><span class="value">{{ getDesGiornataTitle(data.giornata + lega.giornataIniziale - 1) }}</span></h2>
+  <h2>
+    <span class="value">{{
+      getDesGiornataTitle(data.giornata + lega.giornataIniziale - 1)
+    }}</span>
+  </h2>
   <div class="info-row">
     <span class="label">Giocatore:</span>
     <span class="value">{{ giocatore.nome }}</span>
@@ -17,6 +21,7 @@
     <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
   </div>
 
+  @if(squadreDisponibili.length>0){
   <div class="squadra-select-save">
     <mat-form-field appearance="outline" class="select-squadra">
       <mat-select
@@ -38,9 +43,10 @@
     >
       Salva
     </button>
-    <span class="next-opponent" *ngIf="getNextOpponentSigla(false)">vs {{ getNextOpponentSigla(false) }}</span>
+    <span class="next-opponent" *ngIf="getNextOpponentSigla(false)"
+      >vs {{ getNextOpponentSigla(false) }}</span
+    >
   </div>
-
   <div class="risultati-row">
     <div class="risultati-col" role="region" aria-label="Ultimi risultati">
       <h3 class="risultati-title">Ultimi Risultati</h3>
@@ -49,7 +55,12 @@
       } @for (risultato of ultimiRisultati; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
+          [{{
+            getDesGiornata(
+              risultato,
+              risultato.casaSigla === squadraSelezionata
+            )
+          }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -70,41 +81,26 @@
             {{ risultato.scoreFuori }}
           </span>
           <span class="result-badge">
-            @if (squadraSelezionata === risultato.casaSigla) { 
-              @if (risultato.scoreCasa > risultato.scoreFuori) {
+            @if (squadraSelezionata === risultato.casaSigla) { @if
+            (risultato.scoreCasa > risultato.scoreFuori) {
             <span class="badge badge-v">V</span>
-              } 
-              @if (risultato.scoreCasa === risultato.scoreFuori) {
+            } @if (risultato.scoreCasa === risultato.scoreFuori) {
             <span class="badge badge-n">N</span>
-              } 
-              @if (risultato.scoreCasa < risultato.scoreFuori) {
+            } @if (risultato.scoreCasa < risultato.scoreFuori) {
             <span class="badge badge-p">P</span>
-              } 
-            } 
-            @if (squadraSelezionata === risultato.fuoriSigla) {
-              @if (risultato.scoreFuori > risultato.scoreCasa) {
-            <span
-              class="badge badge-v"
-              >V</span
-            >
-              }
-              @if (risultato.scoreFuori === risultato.scoreCasa) {
-            <span
-              class="badge badge-n"
-              >N</span
-            >
-              }
-              @if (risultato.scoreFuori < risultato.scoreCasa) {
-            <span
-              class="badge badge-p"
-              >P</span
-            >
-              }
-            }
+            } } @if (squadraSelezionata === risultato.fuoriSigla) { @if
+            (risultato.scoreFuori > risultato.scoreCasa) {
+            <span class="badge badge-v">V</span>
+            } @if (risultato.scoreFuori === risultato.scoreCasa) {
+            <span class="badge badge-n">N</span>
+            } @if (risultato.scoreFuori < risultato.scoreCasa) {
+            <span class="badge badge-p">P</span>
+            } }
           </span>
         </div>
-        @if (risultato.stato && risultato.stato.value !== StatoPartita.TERMINATA.value) {
-          <span>{{ risultato.stato.value }}</span>
+        @if (risultato.stato && risultato.stato.value !==
+        StatoPartita.TERMINATA.value) {
+        <span>{{ risultato.stato.value }}</span>
         }
       </div>
       }
@@ -112,12 +108,17 @@
 
     <div class="risultati-col" role="region" aria-label="Prossime partite">
       <h3 class="risultati-title">Prossime partite</h3>
-       @if (squadraSelezionata && prossimePartite.length === 0) {
+      @if (squadraSelezionata && prossimePartite.length === 0) {
       <div>Nessuna partita in programma</div>
       } @for (risultato of prossimePartite; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ getDesGiornata(risultato,risultato.casaSigla === squadraSelezionata) }}]
+          [{{
+            getDesGiornata(
+              risultato,
+              risultato.casaSigla === squadraSelezionata
+            )
+          }}]
           {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
@@ -135,58 +136,69 @@
       }
     </div>
 
-    <div class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
-      <h3 class="risultati-title">Ultimi Risultati {{getNextOpponentSigla(false)}}</h3>
+    <div
+      class="risultati-col"
+      role="region"
+      [attr.aria-label]="
+        'Ultimi risultati ' + (getNextOpponentSigla(false) || '')
+      "
+    >
+      <h3 class="risultati-title">
+        Ultimi Risultati {{ getNextOpponentSigla(false) }}
+      </h3>
       @if (squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
-      <div>Nessun risultato recente per {{getNextOpponentSigla(false)}}</div>
-      }
-      @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
+      <div>Nessun risultato recente per {{ getNextOpponentSigla(false) }}</div>
+      } @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
       <div class="risultato-item">
         <div>
-          [{{ getDesGiornata(risultato,risultato.casaSigla === getNextOpponentSigla(true)) }}]
-        {{ risultato.orario | date : "yyyy/MM/dd" }}
+          [{{
+            getDesGiornata(
+              risultato,
+              risultato.casaSigla === getNextOpponentSigla(true)
+            )
+          }}]
+          {{ risultato.orario | date : "yyyy/MM/dd" }}
         </div>
         <div>
-
           <span
-            [class.selected-team]="risultato.casaSigla === getNextOpponentSigla(true)"
+            [class.selected-team]="
+              risultato.casaSigla === getNextOpponentSigla(true)
+            "
             >{{ risultato.casaNome }}</span
           >
           -
           <span
-            [class.selected-team]="risultato.fuoriSigla === getNextOpponentSigla(true)"
+            [class.selected-team]="
+              risultato.fuoriSigla === getNextOpponentSigla(true)
+            "
             >{{ risultato.fuoriNome }}</span
           >
-
-
         </div>
         <div>
-        {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
-        <span class="result-badge">
-          @if (getNextOpponentSigla(true) === risultato.casaSigla) {
-            @if (risultato.scoreCasa > risultato.scoreFuori) {
+          {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
+          <span class="result-badge">
+            @if (getNextOpponentSigla(true) === risultato.casaSigla) { @if
+            (risultato.scoreCasa > risultato.scoreFuori) {
             <span class="badge badge-v">V</span>
-            }
-            @if (risultato.scoreCasa === risultato.scoreFuori) {
+            } @if (risultato.scoreCasa === risultato.scoreFuori) {
             <span class="badge badge-n">N</span>
-            }
-            @if (risultato.scoreCasa < risultato.scoreFuori) {
+            } @if (risultato.scoreCasa < risultato.scoreFuori) {
             <span class="badge badge-p">P</span>
-            }
-          }
-          @if (getNextOpponentSigla(true) === risultato.fuoriSigla) {
-            @if (risultato.scoreFuori > risultato.scoreCasa) {
+            } } @if (getNextOpponentSigla(true) === risultato.fuoriSigla) { @if
+            (risultato.scoreFuori > risultato.scoreCasa) {
             <span class="badge badge-v">V</span>
-            }
-            @if (risultato.scoreFuori === risultato.scoreCasa) {
+            } @if (risultato.scoreFuori === risultato.scoreCasa) {
             <span class="badge badge-n">N</span>
-            }
-            @if (risultato.scoreFuori < risultato.scoreCasa) {
+            } @if (risultato.scoreFuori < risultato.scoreCasa) {
             <span class="badge badge-p">P</span>
-            }
-          }
-        </span>
+            } }
+          </span>
         </div>
       </div>
       }
     </div>
+  </div>
+  }@else {
+    <h4>Purtroppo non hai giocate disponibili</h4>
+  }
+</div>

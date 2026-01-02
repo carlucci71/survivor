@@ -12,12 +12,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
+  Giocatore,
   Lega,
   Partita,
+  Squadra,
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { LegaService } from '../../core/services/lega.service';
 import { CampionatoService } from '../../core/services/campionato.service';
+import { SquadraService } from '../../core/services/squadra.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
@@ -37,14 +40,13 @@ export class SelezionaGiocataComponent implements OnInit {
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
   prossimePartite: Partita[] = [];
-  squadreDisponibili: any[] = [];
+  squadreDisponibili: Squadra[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
-    lega!: Lega;
-  giornata: number = 0;
-  giocatore: any;
+  lega!: Lega;
+  giocatore: Giocatore;
   constructor(
-    private legaService: LegaService,
+    private squadraService: SquadraService,
     private campionatoService: CampionatoService,
     public dialogRef: MatDialogRef<SelezionaGiocataComponent>,
     @Inject(MAT_DIALOG_DATA)
@@ -67,8 +69,12 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getSquadreByCampionatoAndGiornata(
+      this.lega.campionato!.id,
+      this.data.giornata + this.lega.giornataIniziale - 1
+    );
     if (this.squadraSelezionata) {
-      this.mostraUltimiRisultati(); 
+      this.mostraUltimiRisultati();
       this.mostraProssimePartite();
     }
   }
@@ -78,20 +84,65 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   getDesGiornataTitle(index: number): string {
-    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
-      return "";
+    if (
+      !this.lega ||
+      !this.lega?.campionato ||
+      !this.lega?.campionato.sport ||
+      !this.lega?.campionato.sport.id
+    ) {
+      return '';
     }
-    return this.campionatoService.getDesGiornataNoAlias(this.lega?.campionato?.id,index);
+    return this.campionatoService.getDesGiornataNoAlias(
+      this.lega?.campionato?.id,
+      index
+    );
   }
 
+  getSquadreByCampionatoAndGiornata(
+    idCampionato: string,
+    giornata: number
+  ): void {
+    this.squadraService
+      .getSquadreByCampionatoAndGiornata(idCampionato, giornata)
+      .subscribe({
+        next: (squadre) => {
+          const returnedSigle = new Set<string>();
+          squadre.forEach((squadra: string) => {
+            if (!squadra) return;
+            const v = squadra.trim();
+            if (v) returnedSigle.add(v);
+            return;
+          });
+          this.squadreDisponibili = this.squadreDisponibili.filter((sd) => {
+            const sdSigla = sd.sigla;
+            return sdSigla ? returnedSigle.has(sdSigla) : false;
+          });
+        },
+        error: (error) => {
+          console.error(
+            'Errore nel caricamento delle squadre del campionato:',
+            error
+          );
+        },
+      });
+  }
 
   getDesGiornata(partita: Partita, casa: boolean): string {
-    const index= partita.giornata;
-    const alias= casa?partita.aliasGiornataCasa:partita.aliasGiornataFuori;
-    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
-      return "";
+    const index = partita.giornata;
+    const alias = casa ? partita.aliasGiornataCasa : partita.aliasGiornataFuori;
+    if (
+      !this.lega ||
+      !this.lega?.campionato ||
+      !this.lega?.campionato.sport ||
+      !this.lega?.campionato.sport.id
+    ) {
+      return '';
     }
-    return this.campionatoService.getDesGiornata(this.lega?.campionato.id,index, alias);
+    return this.campionatoService.getDesGiornata(
+      this.lega?.campionato.id,
+      index,
+      alias
+    );
   }
 
   mostraUltimiRisultati(sigla?: string) {
@@ -105,7 +156,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.id,
           squadra,
-          this.lega.giornataCorrente -1,
+          this.lega.giornataCorrente - 1,
           false
         )
         .subscribe({
@@ -179,23 +230,27 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   getNextOpponentSigla(sigla: boolean): string | null {
-    if (!this.squadraSelezionata || !this.prossimePartite || this.prossimePartite.length === 0) {
+    if (
+      !this.squadraSelezionata ||
+      !this.prossimePartite ||
+      this.prossimePartite.length === 0
+    ) {
       return null;
     }
     const next = this.prossimePartite[0];
     if (!next) return null;
     if (next.casaSigla === this.squadraSelezionata) {
-      if (sigla){
-      return next.fuoriSigla || null;
+      if (sigla) {
+        return next.fuoriSigla || null;
       } else {
-      return next.fuoriNome || null;
+        return next.fuoriNome || null;
       }
     }
     if (next.fuoriSigla === this.squadraSelezionata) {
-      if (sigla){
-      return next.casaSigla || null;
+      if (sigla) {
+        return next.casaSigla || null;
       } else {
-      return next.casaNome || null;
+        return next.casaNome || null;
       }
     }
     return null;
