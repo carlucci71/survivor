@@ -242,7 +242,7 @@ public class LegaService {
                             vincente = false;
                             GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
                             giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
-                            giocataRequestDTO.setGiornata(giornataDaCalcolare- legaDTO.getGiornataIniziale()+1);
+                            giocataRequestDTO.setGiornata(giornataDaCalcolare - legaDTO.getGiornataIniziale() + 1);
                             giocataRequestDTO.setLegaId(legaDTO.getId());
                             giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
                             giocataService.inserisciGiocata(giocataRequestDTO);
@@ -346,11 +346,13 @@ public class LegaService {
         int giornataCorrente = legaDTO.getGiornataCorrente();
         //if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA)
         {
-            Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
-            if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
-                nuovaGiornataCalcolata = null;
+            if (!ObjectUtils.isEmpty(legaDTO.getGiornataCalcolata())) {
+                Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
+                if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
+                    nuovaGiornataCalcolata = null;
+                }
+                legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
             }
-            legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
         }
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
@@ -373,13 +375,13 @@ public class LegaService {
                 }
             }
 
-            Enumeratori.StatoGiocatore statoGiocatore= Enumeratori.StatoGiocatore.ATTIVO;
-            for (int gg= 1;gg<giornataCorrente-legaDTO.getGiornataIniziale()+1;gg++){
-                AtomicInteger atomicInteger=new AtomicInteger(gg);
+            Enumeratori.StatoGiocatore statoGiocatore = Enumeratori.StatoGiocatore.ATTIVO;
+            for (int gg = 1; gg < giornataCorrente - legaDTO.getGiornataIniziale() + 1; gg++) {
+                AtomicInteger atomicInteger = new AtomicInteger(gg);
                 Optional<GiocataDTO> lastGiocataCorrente = giocatoreDTO.getGiocate().stream().filter(g -> g.getGiornata().equals(atomicInteger.get())).findFirst();
-                if ((gg != giornataCorrente-legaDTO.getGiornataIniziale() && lastGiocataCorrente.isEmpty() && legaDTO.getStatiGiornate().get(legaDTO.getGiornataIniziale()+gg-1)!= Enumeratori.StatoPartita.SOSPESA)
-                        || (Enumeratori.EsitoGiocata.KO.equals(lastGiocataCorrente.orElseGet(()->new GiocataDTO()).getEsito()))){
-                    statoGiocatore=Enumeratori.StatoGiocatore.ELIMINATO;
+                if ((gg != giornataCorrente - legaDTO.getGiornataIniziale() && lastGiocataCorrente.isEmpty() && legaDTO.getStatiGiornate().get(legaDTO.getGiornataIniziale() + gg - 1) != Enumeratori.StatoPartita.SOSPESA)
+                        || (Enumeratori.EsitoGiocata.KO.equals(lastGiocataCorrente.orElseGet(() -> new GiocataDTO()).getEsito()))) {
+                    statoGiocatore = Enumeratori.StatoGiocatore.ELIMINATO;
                 }
             }
             giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), statoGiocatore);
