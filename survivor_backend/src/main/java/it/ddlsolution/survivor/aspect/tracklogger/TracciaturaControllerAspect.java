@@ -1,5 +1,4 @@
-package it.ddlsolution.survivor.aspect;
-
+package it.ddlsolution.survivor.aspect.tracklogger;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

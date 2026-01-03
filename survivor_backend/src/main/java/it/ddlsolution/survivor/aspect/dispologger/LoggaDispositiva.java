@@ -1,4 +1,5 @@
-package it.ddlsolution.survivor.aspect;
+package it.ddlsolution.survivor.aspect.dispologger;
+
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
