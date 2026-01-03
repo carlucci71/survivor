@@ -141,7 +141,7 @@ public class LegaService {
                                 for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
                                     // Trova la giocata corrispondente nell'entità
                                     gl.getGiocatore().getGiocate().stream()
-                                            .filter(g -> g.getId() != null && g.getId().equals(giocataDTO.getId()))
+                                            .filter(g -> g.getLega().getId().equals(lega.getId()) && g.getId() != null && g.getId().equals(giocataDTO.getId()))
                                             .findFirst()
                                             .ifPresent(giocata -> {
                                                 // Aggiorna l'esito se è cambiato
@@ -219,8 +219,9 @@ public class LegaService {
 
     @LoggaDispositiva(tipologia = "calcola")
     @Transactional
-    public LegaDTO calcola(Long idLega, int giornataDaCalcolare) {
+    public LegaDTO calcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
+        int giornataDaCalcolare=legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale()  : legaDTO.getGiornataCalcolata() + 1;
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
@@ -235,7 +236,7 @@ public class LegaService {
                         List<GiocataDTO> giocate = giocatoreDTO
                                 .getGiocate()
                                 .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                                .filter(g -> g.getGiornata() + giornataIniziale - 1 == giornataDaCalcolare)
+                                .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == giornataDaCalcolare)
                                 .toList();
                         Boolean vincente = null;
                         if (giocate.size() == 0) {
@@ -378,7 +379,9 @@ public class LegaService {
             Enumeratori.StatoGiocatore statoGiocatore = Enumeratori.StatoGiocatore.ATTIVO;
             for (int gg = 1; gg < giornataCorrente - legaDTO.getGiornataIniziale() + 1; gg++) {
                 AtomicInteger atomicInteger = new AtomicInteger(gg);
-                Optional<GiocataDTO> lastGiocataCorrente = giocatoreDTO.getGiocate().stream().filter(g -> g.getGiornata().equals(atomicInteger.get())).findFirst();
+                Optional<GiocataDTO> lastGiocataCorrente = giocatoreDTO.getGiocate().stream()
+                        .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata().equals(atomicInteger.get()))
+                        .findFirst();
                 if ((gg != giornataCorrente - legaDTO.getGiornataIniziale() && lastGiocataCorrente.isEmpty() && legaDTO.getStatiGiornate().get(legaDTO.getGiornataIniziale() + gg - 1) != Enumeratori.StatoPartita.SOSPESA)
                         || (Enumeratori.EsitoGiocata.KO.equals(lastGiocataCorrente.orElseGet(() -> new GiocataDTO()).getEsito()))) {
                     statoGiocatore = Enumeratori.StatoGiocatore.ELIMINATO;

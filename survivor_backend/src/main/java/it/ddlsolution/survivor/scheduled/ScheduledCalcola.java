@@ -23,7 +23,7 @@ public class ScheduledCalcola {
                 l -> {
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0L, null, new ArrayList<>()));
                     try {
-                        legaService.calcola(l.getId(), l.getGiornataCalcolata() == null ? l.getGiornataIniziale() + 1 : l.getGiornataCalcolata() + 1);
+                        legaService.calcola(l.getId());
                     } catch (Exception e) {
                         log.error("Errore in calcolo batch ", e);
                     } finally {

@@ -285,7 +285,7 @@ export class LegaDettaglioComponent {
   }
   calcolaGiornata() {
     this.legaService
-      .calcola(Number(this.id), this.lega?.giornataCorrente || 0)
+      .calcola(Number(this.id))
       .subscribe({
         next: (lega: Lega) => {
           this.lega = lega;

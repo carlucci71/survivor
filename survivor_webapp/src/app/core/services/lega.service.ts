@@ -58,8 +58,8 @@ export class LegaService {
     return this.http.post(`${this.apiUrl}/invita/${legaId}`, body);
   }
 
-  calcola(id: number, giornata: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}?giornata=${giornata}`, {})
+  calcola(id: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}`, {})
       .pipe(map(mapLegaFromBE));
   }
   undoCalcola(id: number): Observable<Lega> {
