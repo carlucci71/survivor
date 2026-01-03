@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.aspect.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocataDTO;
+import it.ddlsolution.survivor.dto.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
@@ -14,13 +15,10 @@ import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
-import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
-import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +44,7 @@ public class LegaService {
     private final UtilCalendarioService utilCalendarioService;
     private final CacheableService cacheableService;
     private final GiocatoreService giocatoreService;
+    private final GiocataService giocataService;
     private final UserService userService;
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
@@ -220,8 +220,6 @@ public class LegaService {
     @LoggaDispositiva(tipologia = "calcola")
     @Transactional
     public LegaDTO calcola(Long idLega, int giornataDaCalcolare) {
-        log.info("CALCOLA");
-
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornataDaCalcolare);
@@ -242,6 +240,12 @@ public class LegaService {
                         Boolean vincente = null;
                         if (giocate.size() == 0) {
                             vincente = false;
+                            GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
+                            giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
+                            giocataRequestDTO.setGiornata(giornataDaCalcolare- legaDTO.getGiornataIniziale()+1);
+                            giocataRequestDTO.setLegaId(legaDTO.getId());
+                            giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
+                            giocataService.inserisciGiocata(giocataRequestDTO);
                         } else if (giocate.size() == 1) {
                             GiocataDTO giocataDTO = giocate.get(0);
                             vincente = vincente(giocataDTO.getSquadraSigla(), partite);
@@ -354,13 +358,13 @@ public class LegaService {
                 int currGG = giornataCorrente - legaDTO.getGiornataIniziale() + 1;
                 if (giocataDTO.getGiornata().equals(currGG)) {
                     giocataDTO.setEsito(null);
-                }
+                }//ANNULLO LA PRECEDENTE SE E' L'ULTIMA
                 if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev)) {
                         giocataDTO.setEsito(null);
                     }
-                }
+                }//ANNULLO LA PRIMA
                 if (legaDTO.getGiornataCalcolata() == null && legaDTO.getGiornataIniziale() == giornataCorrente - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev)) {
@@ -369,25 +373,17 @@ public class LegaService {
                 }
             }
 
-            if (legaDTO.getGiornataIniziale() == giornataCorrente-1){
-                giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
-            } else {
-
-                Optional<GiocataDTO> lastGiocata = giocatoreDTO.getGiocate().stream().filter(g -> g.getGiornata().equals(giornataCorrente-2)).findFirst();
-                if (lastGiocata.isEmpty()) {
-                    giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ELIMINATO);
-                } else {
-                    long contaKO = giocatoreDTO.getGiocate().stream()
-                            .filter(g -> g.getGiornata() < giornataCorrente)
-                            .filter(g -> g.getEsito() != null && g.getEsito() == Enumeratori.EsitoGiocata.KO)
-                            .count();
-                    if (contaKO == 0) {
-                        giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
-                    } else {
-                        giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ELIMINATO);
-                    }
+            Enumeratori.StatoGiocatore statoGiocatore= Enumeratori.StatoGiocatore.ATTIVO;
+            for (int gg= 1;gg<giornataCorrente-legaDTO.getGiornataIniziale()+1;gg++){
+                AtomicInteger atomicInteger=new AtomicInteger(gg);
+                Optional<GiocataDTO> lastGiocataCorrente = giocatoreDTO.getGiocate().stream().filter(g -> g.getGiornata().equals(atomicInteger.get())).findFirst();
+                if ((gg != giornataCorrente-legaDTO.getGiornataIniziale() && lastGiocataCorrente.isEmpty() && legaDTO.getStatiGiornate().get(legaDTO.getGiornataIniziale()+gg-1)!= Enumeratori.StatoPartita.SOSPESA)
+                        || (Enumeratori.EsitoGiocata.KO.equals(lastGiocataCorrente.orElseGet(()->new GiocataDTO()).getEsito()))){
+                    statoGiocatore=Enumeratori.StatoGiocatore.ELIMINATO;
                 }
             }
+            giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), statoGiocatore);
+
         }
 
         salva(legaDTO);

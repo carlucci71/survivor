@@ -79,7 +79,7 @@
               >
                 <span>
                   <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <div
+                    <div *ngIf="giocata.squadraSigla || giocata.esito"
                       class="team-name"
                       [ngClass]="{
                         ok: giocata.esito === 'OK',
@@ -90,6 +90,14 @@
                     >{{ getSquadraNome(giocata.squadraSigla) }}</div>
                     
                   </ng-container>
+                  <!--
+                  <ng-container *ngIf="!getGiocataByGiornata(giocatore, giornata) as giocata">
+                    <div
+                      class="team-name"
+                      [title]=
+                    >-</div>
+                  </ng-container>
+                  -->
                   @if (visualizzaGiocata(giornata, giocatore)) {
                     <div>
                     <mat-icon

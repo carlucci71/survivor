@@ -39,7 +39,7 @@ public class Giocata {
     private Lega lega;
 
     @ManyToOne
-    @JoinColumn(name = "id_squadra", nullable = false)
+    @JoinColumn(name = "id_squadra")
     private Squadra squadra;
 
     @Column(name = "esito", length = 2)
