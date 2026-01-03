@@ -23,21 +23,19 @@
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          @if (isAdmin() ) {
+          @if (isAdmin() || this.isLeaderLega()) {
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
             matTooltip="Calcola giornata"
             >sports_esports</mat-icon
           >
-          @if (true ) {
           <mat-icon
             class="calcola-icon"
             (click)="undoCalcolaGiornata()"
             matTooltip="Annulla calcola giornata"
             >restart_alt</mat-icon
           >
-          }
           } @if (lega.giocatori?.length) {
           <div class="table-wrapper">
           <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">

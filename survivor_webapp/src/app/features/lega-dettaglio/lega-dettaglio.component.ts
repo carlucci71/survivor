@@ -283,19 +283,8 @@ export class LegaDettaglioComponent {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
-  undoCalcolaGiornata() {
-    this.adminService.undoCalcola(Number(this.id)).subscribe({
-      next: (lega: Lega) => {
-        this.lega = lega;
-        this.caricaTabella();
-      },
-      error: (err: any) => {
-        this.error = 'Errore nel caricamento della lega';
-      },
-    });
-  }
   calcolaGiornata() {
-    this.adminService
+    this.legaService
       .calcola(Number(this.id), this.lega?.giornataCorrente || 0)
       .subscribe({
         next: (lega: Lega) => {
@@ -306,6 +295,17 @@ export class LegaDettaglioComponent {
           this.error = 'Errore nel caricamento della lega';
         },
       });
+  }
+  undoCalcolaGiornata() {
+    this.legaService.undoCalcola(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel caricamento della lega';
+      },
+    });
   }
   salvaSquadra(
     giocatore: Giocatore,

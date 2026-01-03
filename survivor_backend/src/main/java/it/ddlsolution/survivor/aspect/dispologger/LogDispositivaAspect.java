@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.aspect;
+package it.ddlsolution.survivor.aspect.dispologger;
 
 import it.ddlsolution.survivor.dto.LogDispositivaDTO;
 import it.ddlsolution.survivor.dto.ParamLogDispositivaDTO;
@@ -36,29 +36,29 @@ public class LogDispositivaAspect {
     private final LogDispositivaService logDispositivaService;
     private final ExceptionMapperService exceptionMapperService;
 
-    @Before("@annotation(logDispositiva)")
-    public void before(JoinPoint joinPoint, LoggaDispositiva logDispositiva) {
-//        logJoinPoint(joinPoint, logDispositiva, "BEFORE");
+    @Before("@annotation(loggaDispositiva)")
+    public void before(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva) {
+//        logJoinPoint(joinPoint, loggaDispositiva, "BEFORE");
     }
 
-    @AfterReturning("@annotation(logDispositiva)")
-    public void onSuccess(JoinPoint joinPoint, LoggaDispositiva logDispositiva) {
-        logJoinPoint(joinPoint, logDispositiva, "SUCCESS");
+    @AfterReturning("@annotation(loggaDispositiva)")
+    public void onSuccess(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva) {
+        logJoinPoint(joinPoint, loggaDispositiva, "SUCCESS");
     }
 
     // Bind the thrown exception with `throwing` and accept it as a method parameter
-    @AfterThrowing(pointcut = "@annotation(logDispositiva)", throwing = "ex")
-    public void onError(JoinPoint joinPoint, LoggaDispositiva logDispositiva, Throwable ex) {
-        logJoinPoint(joinPoint, logDispositiva, "ERROR", ex);
+    @AfterThrowing(pointcut = "@annotation(loggaDispositiva)", throwing = "ex")
+    public void onError(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva, Throwable ex) {
+        logJoinPoint(joinPoint, loggaDispositiva, "ERROR", ex);
     }
 
     // Backwards-compatible: old method delegates to new implementation
-    private void logJoinPoint(JoinPoint joinPoint, LoggaDispositiva logDispositiva, String momento) {
-        logJoinPoint(joinPoint, logDispositiva, momento, null);
+    private void logJoinPoint(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva, String momento) {
+        logJoinPoint(joinPoint, loggaDispositiva, momento, null);
     }
 
     // New implementation that accepts an optional Throwable and logs its message + stacktrace
-    private void logJoinPoint(JoinPoint joinPoint, LoggaDispositiva logDispositiva, String momento, Throwable ex) {
+    private void logJoinPoint(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva, String momento, Throwable ex) {
 
         log.info("*******************************");
         log.info(momento + " method execution: " + joinPoint.getSignature().toShortString());
@@ -92,7 +92,7 @@ public class LogDispositivaAspect {
             logDispositivaDTO.setIdErrore(baseResponse.getId());
         }
 
-        logDispositivaDTO.setTipologia(logDispositiva.tipologia());
+        logDispositivaDTO.setTipologia(loggaDispositiva.tipologia());
         List<ParamLogDispositivaDTO> paramsLogDispositiva = new ArrayList<>();
         logDispositivaDTO.setParamLogDispositive(paramsLogDispositiva);
         if (paramNames != null) {
@@ -116,7 +116,7 @@ public class LogDispositivaAspect {
         }
         log.info("logDispositivaDTO {}", utility.toJson(logDispositivaDTO));
         logDispositivaService.salva(logDispositivaDTO);
-        log.info("tipologia {}", logDispositiva.tipologia());
+        log.info("tipologia {}", loggaDispositiva.tipologia());
         log.info("*******************************");
     }
 

@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.aspect;
+package it.ddlsolution.survivor.aspect.guardlogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -8,6 +8,6 @@ import static java.lang.annotation.ElementType.METHOD;
 
 @Target(METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoggaDispositiva {
-    String tipologia() default "";
+public @interface GuardiaDispositiva {
+    String idLega() default "";
 }

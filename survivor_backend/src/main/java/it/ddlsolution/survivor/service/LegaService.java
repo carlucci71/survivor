@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.service;
 
-import it.ddlsolution.survivor.aspect.LoggaDispositiva;
+import it.ddlsolution.survivor.aspect.dispologger.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocataRequestDTO;
