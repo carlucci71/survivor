@@ -15,6 +15,7 @@ import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +33,11 @@ public class GiocataService {
                 .orElseThrow(() -> new IllegalArgumentException("Giocatore non trovato"));
         Lega lega = legaRepository.findById(request.getLegaId())
                 .orElseThrow(() -> new IllegalArgumentException("Lega non trovata"));
-        Squadra squadra = squadraRepository.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
+        Squadra squadra = null;
+        if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
+            squadra = squadraRepository.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
+        }
 
 
         Giocata giocata = giocataRepository.findByGiornataAndGiocatoreAndLega(request.getGiornata(), giocatore, lega).orElse(new Giocata());
@@ -41,6 +45,7 @@ public class GiocataService {
         giocata.setGiocatore(giocatore);
         giocata.setLega(lega);
         giocata.setSquadra(squadra);
+        giocata.setEsito(request.getEsitoGiocata());
         giocataRepository.save(giocata);
         giocatore = giocatoreRepository.findById(request.getGiocatoreId())
                 .orElseThrow(() -> new IllegalArgumentException("Giocatore non trovato"));
