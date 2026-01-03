@@ -49,7 +49,7 @@ public class LegaService {
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -57,7 +57,7 @@ public class LegaService {
         return legheDTO;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LegaDTO> legheLibere() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -65,7 +65,7 @@ public class LegaService {
         return legaMapper.toDTOList(legheDaAvviare);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
@@ -75,7 +75,7 @@ public class LegaService {
         return legheDTO;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LegaDTO getLegaDTO(Long id, boolean completo) {
         LegaDTO legaDTO;
         if (completo) {
@@ -157,7 +157,7 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(lega));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LegaDTO> allLeghe() {
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
@@ -181,7 +181,7 @@ public class LegaService {
         return statoPartita;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
@@ -221,7 +221,7 @@ public class LegaService {
     @Transactional
     public LegaDTO calcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
-        int giornataDaCalcolare=legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale()  : legaDTO.getGiornataCalcolata() + 1;
+        int giornataDaCalcolare = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornataDaCalcolare);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
@@ -334,9 +334,20 @@ public class LegaService {
                 .findFirst()
                 .map(r -> r.get(legaDTO.getId()))
                 .orElseGet(() -> Enumeratori.RuoloGiocatoreLega.NESSUNO);
-
+        aggiornaStatoLega(legaDTO);
         legaDTO.setRuoloGiocatoreLega(myRoleInLega);
+    }
 
+    @Transactional
+    public void aggiornaStatoLega(LegaDTO legaDTO) {
+        if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
+            legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
+            legaRepository.updateStatoById(legaDTO.getId(),Enumeratori.StatoLega.AVVIATA);
+        }
+        if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA) {
+            legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
+            legaRepository.updateStatoById(legaDTO.getId(),Enumeratori.StatoLega.TERMINATA);
+        }
     }
 
 
@@ -421,6 +432,10 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         String tokenOriginal = legaInsertDTO.getTokenOriginal();
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
+        if (lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE){
+            throw new RuntimeException("Impossibile unirsi, la lega è già avviata");
+        }
+
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
             if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
                 throw new ManagedException("Password errata", ManagedException.InternalCode.PWD_LEGA_ERRATA);
@@ -454,6 +469,9 @@ public class LegaService {
     public void invita(long idLega, List<String> emails) {
         for (String email : emails) {
             LegaDTO legaDTO = getLegaDTO(idLega, false);
+            if (legaDTO.getStato() != Enumeratori.StatoLega.DA_AVVIARE){
+                throw new RuntimeException("Impossibile invitare qualcuno, la lega è già avviata");
+            }
             if (email == null || email.trim().isEmpty()) {
                 throw new IllegalArgumentException("L'email è obbligatoria");
             }

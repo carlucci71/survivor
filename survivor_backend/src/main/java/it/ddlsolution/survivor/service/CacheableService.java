@@ -24,6 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,19 +66,30 @@ public class CacheableService {
         }
 
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            Enumeratori.StatoPartita statoPartita;
+            List<LocalDateTime> iniziGiornate=new ArrayList<>();
+            Enumeratori.StatoPartita statoPartita=null;
             int giornata = 0;
+            int giornataDaGiocare = 0;
             do {
                 giornata++;
-                List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornata);
-                statoPartita = utilCalendarioService.statoGiornata(partite, giornata);
-            } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
+                List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
+                if (partiteDTO.size()>0) {
+                    LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
+                    iniziGiornate.add(inizioGiornata);
+                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                        statoPartita = statoPartitaGiornata;
+                        giornataDaGiocare = giornata;
+                    }
+                }
+            } while (giornata < campionatoDTO.getNumGiornate());
             if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
-                giornata = 1; // mantenuto comportamento precedente
+                giornataDaGiocare = 1; // per testare wimbledon
             }
-            campionatoDTO.setGiornataDaGiocare(giornata);
-        }
+            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+            campionatoDTO.setIniziGiornate(iniziGiornate);
 
+        }
         return campionatiDTO;
     }
 

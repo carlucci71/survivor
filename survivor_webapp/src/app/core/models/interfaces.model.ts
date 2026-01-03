@@ -149,6 +149,7 @@ export interface Campionato {
   squadre?: Squadra[];
   numGiornate?: number;
   giornataDaGiocare?: number;
+  iniziGiornate?: Date[];
 }
 
 export interface Squadra {
