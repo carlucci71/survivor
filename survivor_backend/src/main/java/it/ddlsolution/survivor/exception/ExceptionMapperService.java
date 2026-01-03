@@ -2,6 +2,8 @@ package it.ddlsolution.survivor.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.ErrorResponse;
@@ -34,8 +36,11 @@ public class ExceptionMapperService {
     public int extractHttpStatus(Exception ex) {
         if (ex instanceof ErrorResponse) {
             return ((ErrorResponse) ex).getStatusCode().value();
-        }
-        if (ex instanceof ManagedException){
+        } else if (ex instanceof InsufficientAuthenticationException) {
+            return HttpStatus.UNAUTHORIZED.value(); // 401
+        } else if (ex instanceof AccessDeniedException) {
+            return HttpStatus.FORBIDDEN.value(); // 403
+        } else if (ex instanceof ManagedException) {
             return 499;
         }
         return HttpStatus.INTERNAL_SERVER_ERROR.value();

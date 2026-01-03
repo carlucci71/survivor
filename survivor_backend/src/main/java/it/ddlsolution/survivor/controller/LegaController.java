@@ -1,5 +1,7 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.aspect.guardlogger.GuardiaDispositiva;
+import it.ddlsolution.survivor.aspect.guardlogger.rule.LeaderRule;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.LegaInsertDTO;
@@ -73,5 +75,16 @@ public class LegaController {
         return ResponseEntity.ok(Map.of("ESITO","OK"));
     }
 
+    @PutMapping("/calcola/{idLega}")
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    public ResponseEntity<LegaDTO> calcola(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.calcola(idLega));
+    }
+
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/undoCalcola/{idLega}")
+    public ResponseEntity<LegaDTO> undoCalcola(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.undoCalcola(idLega));
+    }
 
 }
