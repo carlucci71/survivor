@@ -1,5 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
@@ -55,6 +55,8 @@ import { UtilService } from '../../core/services/util.service';
   styleUrls: ['./lega-dettaglio.component.scss'],
 })
 export class LegaDettaglioComponent {
+  @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
+  
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -85,6 +87,7 @@ export class LegaDettaglioComponent {
           next: (lega) => {
             this.lega = lega;
             this.caricaTabella();
+            this.scrollTableToRight();
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
@@ -290,11 +293,21 @@ export class LegaDettaglioComponent {
         next: (lega: Lega) => {
           this.lega = lega;
           this.caricaTabella();
+          this.scrollTableToRight();
         },
         error: (err: any) => {
           this.error = 'Errore nel caricamento della lega';
         },
       });
+  }
+  
+  private scrollTableToRight(): void {
+    setTimeout(() => {
+      if (this.tableWrapper?.nativeElement) {
+        const element = this.tableWrapper.nativeElement;
+        element.scrollLeft = element.scrollWidth;
+      }
+    }, 100);
   }
   undoCalcolaGiornata() {
     this.legaService.undoCalcola(Number(this.id)).subscribe({

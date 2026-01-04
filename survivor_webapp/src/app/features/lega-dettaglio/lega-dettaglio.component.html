@@ -38,7 +38,7 @@
           >
           } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper">
-            <div class="table-wrapper table-scroll-vertical">
+            <div #tableWrapper class="table-wrapper table-scroll-vertical">
               <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
             <ng-container matColumnDef="nome">
               <th mat-header-cell *matHeaderCellDef class="headerRow" ></th>
