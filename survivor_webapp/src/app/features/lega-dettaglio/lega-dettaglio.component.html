@@ -36,6 +36,12 @@
             matTooltip="Annulla calcola giornata"
             >restart_alt</mat-icon
           >
+          <mat-icon
+            class="calcola-icon"
+            (click)="sospensioni()"
+            matTooltip="Sospensioni lega"
+            >spa</mat-icon
+          >
           } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">

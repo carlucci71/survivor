@@ -20,6 +20,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -31,6 +34,8 @@ import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
+import { SospensioniService } from '../../core/services/sospensioni.service';
+import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -47,9 +52,13 @@ import { UtilService } from '../../core/services/util.service';
     HeaderComponent,
     MatChipsModule,
     MatTooltipModule,
+    MatDialogModule,
+    MatListModule,
+    MatInputModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    SospensioniDialogComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -78,6 +87,7 @@ export class LegaDettaglioComponent {
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
+    private sospensioniService: SospensioniService,
     private loadingService: LoadingService
   ) {
     this.route.paramMap.subscribe((params) => {
@@ -285,6 +295,36 @@ export class LegaDettaglioComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+  }
+  sospensioni(){
+    if (!this.lega || !this.lega.id) return;
+    this.sospensioniService.getSospensioniLega(this.lega.id).subscribe({
+      next: (res: any) => {
+        let data = { idLega: this.lega!.id, giornate: [] as number[] };
+        if (Array.isArray(res) && res.length>0) {
+          data.giornate = res[0].giornate || [];
+        }
+        const dialogRef = this.dialog.open(SospensioniDialogComponent, {
+          width: '420px',
+          data: data,
+        });
+        dialogRef.afterClosed().subscribe(() => {
+          this.legaService.getLegaById(this.id).subscribe({
+            next: (lega) => {
+              this.lega = lega;
+              this.caricaTabella();
+              this.scrollTableToRight();
+            },
+            error: (err) => {
+              console.error('Errore nel ricaricamento della lega dopo chiusura modale:', err);
+            }
+          });
+        });
+      },
+      error: (err) => {
+        console.error('Errore caricamento sospensioni', err);
+      }
+    });
   }
   calcolaGiornata() {
     this.legaService
