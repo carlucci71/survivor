@@ -1,7 +1,7 @@
 package it.ddlsolution.survivor.repository;
 
-import it.ddlsolution.survivor.dto.GiocatoreProjection;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.projection.GiocatoreProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

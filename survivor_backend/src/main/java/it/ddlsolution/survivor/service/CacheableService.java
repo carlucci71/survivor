@@ -1,9 +1,10 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -17,13 +18,20 @@ import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,7 +39,9 @@ import java.util.stream.Collectors;
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class CacheableService {
+    private final CacheManager cacheManager;
     private final LegaRepository legaRepository;
     private final CampionatoRepository campionatoRepository;
     private final CampionatoMapper campionatoMapper;
@@ -62,19 +72,25 @@ public class CacheableService {
         }
 
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            Enumeratori.StatoPartita statoPartita;
+            List<LocalDateTime> iniziGiornate=new ArrayList<>();
             int giornata = 0;
+            int giornataDaGiocare = 0;
             do {
                 giornata++;
-                List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornata);
-                statoPartita = utilCalendarioService.statoGiornata(partite, giornata);
-            } while (giornata < campionatoDTO.getNumGiornate() && statoPartita != Enumeratori.StatoPartita.DA_GIOCARE);
-            if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
-                giornata = 1; // mantenuto comportamento precedente
-            }
-            campionatoDTO.setGiornataDaGiocare(giornata);
-        }
+                List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
+                if (partiteDTO.size()>0) {
+                    LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
+                    iniziGiornate.add(inizioGiornata);
+                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                        giornataDaGiocare = giornata;
+                    }
+                }
+            } while (giornata < campionatoDTO.getNumGiornate());
+            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+            campionatoDTO.setIniziGiornate(iniziGiornate);
 
+        }
         return campionatiDTO;
     }
 
@@ -95,12 +111,40 @@ public class CacheableService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = SOSPENSIONI)
-    public Map<Long, List<Integer>> allSospensioni() {
+    public List<SospensioniLegaResponseDTO> allSospensioni() {
         List<SospensioneLegaDTO> sospensioniLegaDTO = sospensioneLegaMapper.toDTOList(sospensioneLegaRepository.findAll());
-        return sospensioniLegaDTO.stream()
-                .collect(Collectors.groupingBy(
-                        SospensioneLegaDTO::getIdLega,
-                        Collectors.mapping(SospensioneLegaDTO::getGiornata, Collectors.toList())
-                ));
+
+        // Raggruppa per idLega e crea la lista di SospensioniLegaResponseDTO
+        Map<Long, List<SospensioneLegaDTO>> grouped = sospensioniLegaDTO.stream()
+                .collect(Collectors.groupingBy(SospensioneLegaDTO::getIdLega));
+
+
+        return grouped.entrySet().stream()
+                .map(entry -> {
+                    SospensioniLegaResponseDTO response = new SospensioniLegaResponseDTO();
+                    response.setIdLega(entry.getKey());
+                    // Estrae la lista delle giornate sospese per la lega
+                    List<Integer> giornate = entry.getValue().stream()
+                        .map(SospensioneLegaDTO::getGiornata)
+                        .collect(Collectors.toList());
+                    response.setGiornate(giornate);
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
+
+
+    /**
+     * Invalida manualmente la cache specificata
+     */
+    public void invalidateCache(String cacheName) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            cache.clear();
+            log.info("Cache '{}' invalidata manualmente.", cacheName);
+        } else {
+            log.warn("Cache '{}' non trovata.", cacheName);
+        }
+    }
+
 }

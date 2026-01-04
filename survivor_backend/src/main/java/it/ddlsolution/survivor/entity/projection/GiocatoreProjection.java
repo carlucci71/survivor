@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.dto;
+package it.ddlsolution.survivor.entity.projection;
 
 import it.ddlsolution.survivor.entity.User;
 

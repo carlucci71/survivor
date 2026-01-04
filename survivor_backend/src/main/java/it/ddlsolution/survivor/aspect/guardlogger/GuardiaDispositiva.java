@@ -13,8 +13,7 @@ import static java.lang.annotation.ElementType.METHOD;
 public @interface GuardiaDispositiva {
     String idLegaParam() default "";
     String giornataParam() default "";
-    String giocatoreParam() default "";
+    String idGiocatoreParam() default "";
     String siglaSquadraParam() default "";
-    String esitoParam() default "";
     Class<? extends GuardRule> rule();
 }

@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi;
 
-import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
 import it.ddlsolution.survivor.util.Enumeratori;
@@ -124,13 +124,15 @@ public class CalendarioAPI2 implements ICalendario {
                     || match.get("matchId").toString().equals("396446")
                     || match.get("matchId").toString().equals("396456")
                     || match.get("matchId").toString().equals("396499")
+                    || match.get("matchId").toString().equals("396552")
+                    || match.get("matchId").toString().equals("396556")
             ) {//TODO GESTIRE FORZATURE
                 status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
             }
 
             if (!status.equals("FINISHED")) {
-                //System.out.println(match.get("matchId").toString());
-                //System.out.println();
+                System.out.println(match.get("matchId").toString());
+                System.out.println();
             }
 
             Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;

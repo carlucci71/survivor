@@ -5,8 +5,10 @@ import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.util.Enumeratori;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +47,10 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
             @Param("userId") Long userId
     );
 
-
+    @Modifying
+    @Transactional
+    @Query("UPDATE Lega l SET l.stato = :stato WHERE l.id = :id")
+    int updateStatoById(@Param("id") Long id, @Param("stato") Enumeratori.StatoLega stato);
 
 }
 

@@ -2,15 +2,11 @@ package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.aspect.guardlogger.GuardiaDispositiva;
 import it.ddlsolution.survivor.aspect.guardlogger.rule.LeaderRule;
-import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.dto.LegaInsertDTO;
-import it.ddlsolution.survivor.dto.LegaInvitaDTO;
-import it.ddlsolution.survivor.dto.LegaJoinDTO;
-import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.service.CacheableService;
+import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.request.LegaInvitaDTO;
+import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
 import it.ddlsolution.survivor.service.LegaService;
-import it.ddlsolution.survivor.service.UtilCalendarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -64,8 +59,8 @@ public class LegaController {
     }
 
     @PutMapping("join/{idLega}")
-    public ResponseEntity<LegaDTO> join(@RequestBody LegaJoinDTO legaInsertDTO, @PathVariable("idLega") Long idLega) {
-        LegaDTO legaDTO = legaService.join(idLega, legaInsertDTO);
+    public ResponseEntity<LegaDTO> join(@RequestBody LegaJoinDTO legaJoinDTO, @PathVariable("idLega") Long idLega) {
+        LegaDTO legaDTO = legaService.join(idLega, legaJoinDTO);
         return ResponseEntity.ok(legaDTO);
     }
 

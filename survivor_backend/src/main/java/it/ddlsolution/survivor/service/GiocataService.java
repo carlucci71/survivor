@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.service;
 
-import it.ddlsolution.survivor.dto.GiocataRequestDTO;
+import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.entity.Giocata;
 import it.ddlsolution.survivor.entity.Giocatore;
