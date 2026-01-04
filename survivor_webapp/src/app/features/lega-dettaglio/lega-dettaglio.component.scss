@@ -355,11 +355,72 @@
 	color: #1a237e !important;
 }
 
-.giocatori-table th:last-child,
-.giocatori-table td:last-child {
-	min-width: 120px;
-	width: 130px;
-	max-width: 150px;
+.giocatori-table th.mat-header-cell:last-child,
+.giocatori-table td.mat-cell:last-child,
+.giocatori-table th:last-child.mat-header-cell,
+.giocatori-table td:last-child.mat-cell,
+.giocatori-table th:last-of-type,
+.giocatori-table td:last-of-type {
+	/* Più specifico e con !important per evitare sovrascritture da Material */
+	min-width: 180px !important; /* era 120px */
+	width: 200px !important; /* era 130px */
+	max-width: 320px !important; /* più spazio massimo per contenuti lunghi */
+}
+
+@media (max-width: 800px) {
+	.giocatori-table th.mat-header-cell:last-child,
+	.giocatori-table td.mat-cell:last-child,
+	.giocatori-table th:last-child.mat-header-cell,
+	.giocatori-table td:last-child.mat-cell,
+	.giocatori-table th:last-of-type,
+	.giocatori-table td:last-of-type {
+		min-width: 140px !important; /* riduci su piccoli schermi */
+		width: 160px !important;
+		max-width: 220px !important;
+	}
+}
+/* Se il td è vincolato, forziamo il contenuto interno a occupare più spazio */
+.giocatori-table th.mat-header-cell:last-child > div,
+.giocatori-table td.mat-cell:last-child > span,
+.giocatori-table th:last-of-type > div,
+.giocatori-table td:last-of-type > span {
+	display: inline-block !important;
+	min-width: 180px !important;
+	max-width: 320px !important;
+	white-space: normal !important;
+}
+
+@media (max-width: 800px) {
+	.giocatori-table th.mat-header-cell:last-child > div,
+	.giocatori-table td.mat-cell:last-child > span,
+	.giocatori-table th:last-of-type > div,
+	.giocatori-table td:last-of-type > span {
+		min-width: 140px !important;
+		max-width: 220px !important;
+	}
+}
+
+/* Target dynamic Mat Table column classes like mat-column-giocata0, mat-column-giocata1 */
+.giocatori-table th[class^="mat-column-giocata"],
+.giocatori-table td[class^="mat-column-giocata"],
+.giocatori-table th[class*="mat-column-giocata"],
+.giocatori-table td[class*="mat-column-giocata"],
+.giocatori-table th[class*="giocata"],
+.giocatori-table td[class*="giocata"] {
+	min-width: 180px !important;
+	width: 200px !important;
+}
+
+/* If those dynamic columns are the last column, ensure they keep the larger width */
+.giocatori-table th[class^="mat-column-giocata"]:last-child,
+.giocatori-table td[class^="mat-column-giocata"]:last-child,
+.giocatori-table th[class*="mat-column-giocata"]:last-child,
+.giocatori-table td[class*="mat-column-giocata"]:last-child,
+.giocatori-table th[class*="giocata"]:last-child,
+.giocatori-table td[class*="giocata"]:last-child {
+	min-width: 220px !important;
+	width: 240px !important;
+	max-width: 360px !important;
 }
 /* Explicit widths for other columns */
 .giocatori-table th.mat-header-cell:nth-child(2),
