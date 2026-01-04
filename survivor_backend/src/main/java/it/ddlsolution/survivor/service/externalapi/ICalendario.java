@@ -1,7 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi;
 
-import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.dto.SquadraDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
 
 import java.util.List;
 import java.util.Map;

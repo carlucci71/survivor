@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi;
 
-import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
 import it.ddlsolution.survivor.util.Enumeratori;

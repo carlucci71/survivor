@@ -14,8 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Map;
 import java.util.Optional;
 
-import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.LEGA;
-import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SQUADRA;
+import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
+import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
 
 @Slf4j
 public class GiocataRule implements GuardRule {
@@ -28,13 +28,13 @@ public class GiocataRule implements GuardRule {
         Long userId = (Long) authentication.getPrincipal();
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
-        LegaDTO legaDTO = (LegaDTO) args.get(LEGA);
+        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
         Long legaDTOId = legaDTO.getId();
-        String squadra = (String) args.get(SQUADRA);
+        String squadra = (String) args.get(SIGLASQUADRA);
         Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega = legaDTO.getRuoloGiocatoreLega();
         Enumeratori.StatoPartita statoGiornataCorrente = legaDTO.getStatoGiornataCorrente();
         Integer giornata = (Integer) args.get(PARAM.GIORNATA);
-        GiocatoreDTO giocatoreDTO= (GiocatoreDTO) args.get(PARAM.GIOCATORE);
+        GiocatoreDTO giocatoreDTO= (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Optional<GiocataDTO> attGiocata = giocatoreDTO.getGiocate().stream()
                 .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(legaDTOId))
                 .findFirst();

@@ -3,10 +3,10 @@ package it.ddlsolution.survivor.controller;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
-import it.ddlsolution.survivor.dto.AuthResponseDTO;
-import it.ddlsolution.survivor.dto.MagicLinkRequestDTO;
-import it.ddlsolution.survivor.dto.MagicLinkResponseDTO;
-import it.ddlsolution.survivor.dto.RefreshTokenRequestDTO;
+import it.ddlsolution.survivor.dto.request.MagicLinkRequestDTO;
+import it.ddlsolution.survivor.dto.request.RefreshTokenRequestDTO;
+import it.ddlsolution.survivor.dto.response.AuthResponseDTO;
+import it.ddlsolution.survivor.dto.response.MagicLinkResponseDTO;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.repository.UserRepository;
 import it.ddlsolution.survivor.service.JwtService;
@@ -14,7 +14,6 @@ import it.ddlsolution.survivor.service.MagicLinkService;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 @RestController

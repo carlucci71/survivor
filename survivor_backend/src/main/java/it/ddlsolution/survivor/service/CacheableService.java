@@ -1,9 +1,10 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -17,7 +18,10 @@ import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,9 @@ import java.util.stream.Collectors;
 @Service
 @Data
 @RequiredArgsConstructor
+@Slf4j
 public class CacheableService {
+    private final CacheManager cacheManager;
     private final LegaRepository legaRepository;
     private final CampionatoRepository campionatoRepository;
     private final CampionatoMapper campionatoMapper;
@@ -67,7 +73,6 @@ public class CacheableService {
 
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
             List<LocalDateTime> iniziGiornate=new ArrayList<>();
-            Enumeratori.StatoPartita statoPartita=null;
             int giornata = 0;
             int giornataDaGiocare = 0;
             do {
@@ -78,14 +83,10 @@ public class CacheableService {
                     iniziGiornate.add(inizioGiornata);
                     Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                     if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
-                        statoPartita = statoPartitaGiornata;
                         giornataDaGiocare = giornata;
                     }
                 }
             } while (giornata < campionatoDTO.getNumGiornate());
-            if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
-                giornataDaGiocare = 1; // per testare wimbledon
-            }
             campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
             campionatoDTO.setIniziGiornate(iniziGiornate);
 
@@ -110,12 +111,40 @@ public class CacheableService {
 
     @Transactional(readOnly = true)
     @Cacheable(value = SOSPENSIONI)
-    public Map<Long, List<Integer>> allSospensioni() {
+    public List<SospensioniLegaResponseDTO> allSospensioni() {
         List<SospensioneLegaDTO> sospensioniLegaDTO = sospensioneLegaMapper.toDTOList(sospensioneLegaRepository.findAll());
-        return sospensioniLegaDTO.stream()
-                .collect(Collectors.groupingBy(
-                        SospensioneLegaDTO::getIdLega,
-                        Collectors.mapping(SospensioneLegaDTO::getGiornata, Collectors.toList())
-                ));
+
+        // Raggruppa per idLega e crea la lista di SospensioniLegaResponseDTO
+        Map<Long, List<SospensioneLegaDTO>> grouped = sospensioniLegaDTO.stream()
+                .collect(Collectors.groupingBy(SospensioneLegaDTO::getIdLega));
+
+
+        return grouped.entrySet().stream()
+                .map(entry -> {
+                    SospensioniLegaResponseDTO response = new SospensioniLegaResponseDTO();
+                    response.setIdLega(entry.getKey());
+                    // Estrae la lista delle giornate sospese per la lega
+                    List<Integer> giornate = entry.getValue().stream()
+                        .map(SospensioneLegaDTO::getGiornata)
+                        .collect(Collectors.toList());
+                    response.setGiornate(giornate);
+                    return response;
+                })
+                .collect(Collectors.toList());
     }
+
+
+    /**
+     * Invalida manualmente la cache specificata
+     */
+    public void invalidateCache(String cacheName) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            cache.clear();
+            log.info("Cache '{}' invalidata manualmente.", cacheName);
+        } else {
+            log.warn("Cache '{}' non trovata.", cacheName);
+        }
+    }
+
 }

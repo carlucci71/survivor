@@ -3,12 +3,12 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.aspect.dispologger.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocataDTO;
-import it.ddlsolution.survivor.dto.GiocataRequestDTO;
+import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.dto.LegaInsertDTO;
-import it.ddlsolution.survivor.dto.LegaJoinDTO;
-import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
+import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
+import it.ddlsolution.survivor.dto.response.PartitaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
@@ -42,7 +42,7 @@ public class LegaService {
     private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
     private final UtilCalendarioService utilCalendarioService;
-    private final CacheableService cacheableService;
+    private final SospensioniLegaService sospensioniLegaService;
     private final GiocatoreService giocatoreService;
     private final GiocataService giocataService;
     private final UserService userService;
@@ -171,7 +171,11 @@ public class LegaService {
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
-        List<Integer> listaSospensioni = cacheableService.allSospensioni().getOrDefault(legaDTO.getId(), new ArrayList<>());
+
+        List<Integer> listaSospensioni = sospensioniLegaService.allSospensioni().stream()
+                .filter(s->s.getIdLega().equals(legaDTO.getId()))
+                .flatMap(s->s.getGiornate().stream())
+                .toList();
         Enumeratori.StatoPartita statoPartita;
         if (listaSospensioni.contains(giornata)) {
             statoPartita = Enumeratori.StatoPartita.SOSPESA;
@@ -427,17 +431,17 @@ public class LegaService {
     }
 
     @Transactional
-    public LegaDTO join(Long idLega, LegaJoinDTO legaInsertDTO) {
+    public LegaDTO join(Long idLega, LegaJoinDTO legaJoinDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        String tokenOriginal = legaInsertDTO.getTokenOriginal();
+        String tokenOriginal = legaJoinDTO.getTokenOriginal();
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE){
             throw new RuntimeException("Impossibile unirsi, la lega è già avviata");
         }
 
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
-            if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaInsertDTO.getPwd())) {
+            if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaJoinDTO.getPwd())) {
                 throw new ManagedException("Password errata", ManagedException.InternalCode.PWD_LEGA_ERRATA);
             }
         }

@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Map;
 
-import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.LEGA;
+import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
 
 @Slf4j
 public class LeaderRule implements GuardRule {
@@ -25,7 +25,7 @@ public class LeaderRule implements GuardRule {
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
 
-        LegaDTO legaDTO = (LegaDTO) args.get(LEGA);
+        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
         log.info("legaDTO.getRuoloGiocatoreLega() = {}", legaDTO.getRuoloGiocatoreLega());
         if (legaDTO.getRuoloGiocatoreLega() != Enumeratori.RuoloGiocatoreLega.LEADER && !isAdmin) {
             throw new AccessDeniedException("Devi essere admin o Leader della lega " + legaDTO.getId());

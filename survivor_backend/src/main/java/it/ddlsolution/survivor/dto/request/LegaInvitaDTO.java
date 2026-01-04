@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.dto;
+package it.ddlsolution.survivor.dto.request;
 
 import jakarta.validation.Valid;
 import lombok.Data;

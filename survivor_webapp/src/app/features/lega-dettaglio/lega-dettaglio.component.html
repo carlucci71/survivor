@@ -49,7 +49,8 @@
             </ng-container>
             @for (giornata of giornataIndices; track giornata) {
             <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
-              <th
+              <!-- Titolo della giornata-->
+              <th 
                 mat-header-cell
                 *matHeaderCellDef
                 [class.corrente-col]="
@@ -57,12 +58,9 @@
                 "
               >
                 <div>{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
-                @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
-                {
                 <div class="stato-giornata">
                   {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
                 </div>
-                }
               </th>
               <td
                 mat-cell
@@ -75,7 +73,7 @@
                   getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                 "
               >
-                <span>
+                <span><!-- Giocata del giocatore/giornata -->
                   <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
                     <div *ngIf="giocata.squadraSigla || giocata.esito"
                       class="team-name"
@@ -88,14 +86,6 @@
                     >{{ getSquadraNome(giocata.squadraSigla) }}</div>
                     
                   </ng-container>
-                  <!--
-                  <ng-container *ngIf="!getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <div
-                      class="team-name"
-                      [title]=
-                    >-</div>
-                  </ng-container>
-                  -->
                   @if (visualizzaGiocata(giornata, giocatore)) {
                     <div>
                     <mat-icon

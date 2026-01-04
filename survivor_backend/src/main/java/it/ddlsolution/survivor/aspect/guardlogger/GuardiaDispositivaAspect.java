@@ -1,10 +1,8 @@
 package it.ddlsolution.survivor.aspect.guardlogger;
 
 import it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule;
-import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.service.GiocatoreService;
 import it.ddlsolution.survivor.service.LegaService;
-import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,10 +12,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -52,10 +46,10 @@ public class GuardiaDispositivaAspect {
 
     private @NonNull Map<GuardRule.PARAM, Object> addParameterInMap(Map<GuardRule.PARAM, Object> parametriRule, String[] paramNames, Object[] args, GuardiaDispositiva guardiaDispositiva, GuardRule.PARAM tipoParam) {
         String param = switch (tipoParam) {
-            case LEGA -> guardiaDispositiva.idLegaParam();
+            case IDLEGA -> guardiaDispositiva.idLegaParam();
             case GIORNATA -> guardiaDispositiva.giornataParam();
-            case GIOCATORE -> guardiaDispositiva.giocatoreParam();
-            case SQUADRA -> guardiaDispositiva.siglaSquadraParam();
+            case IDGIOCATORE -> guardiaDispositiva.idGiocatoreParam();
+            case SIGLASQUADRA -> guardiaDispositiva.siglaSquadraParam();
         };
 
         if (!ObjectUtils.isEmpty(param)) {
@@ -63,7 +57,7 @@ public class GuardiaDispositivaAspect {
             if (!ObjectUtils.isEmpty(splitParam[0])) {
                 Object argsByParameterName = getArgsByParameterName(paramNames, splitParam, args);
                 switch (tipoParam) {
-                    case LEGA -> {
+                    case IDLEGA -> {
                         Long idLega = Long.parseLong(argsByParameterName.toString());
                         if (ObjectUtils.isEmpty(idLega)) {
                             throw new RuntimeException("Lega non presente");
@@ -77,14 +71,14 @@ public class GuardiaDispositivaAspect {
                         }
                         parametriRule.put(tipoParam, giornata);
                     }
-                    case GIOCATORE -> {
+                    case IDGIOCATORE -> {
                         Long idGiocatore = Long.parseLong(argsByParameterName.toString());
                         if (ObjectUtils.isEmpty(idGiocatore)) {
                             throw new RuntimeException("Giocatore non presente");
                         }
                         parametriRule.put(tipoParam, giocatoreService.find(idGiocatore));
                     }
-                    case SQUADRA -> {
+                    case SIGLASQUADRA -> {
                         String siglaSquadra = argsByParameterName.toString();
                         if (ObjectUtils.isEmpty(siglaSquadra)) {
                             throw new RuntimeException("Squadra non presente");

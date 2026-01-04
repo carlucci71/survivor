@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.dto;
+package it.ddlsolution.survivor.dto.response;
 
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Builder;
