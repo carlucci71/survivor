@@ -306,6 +306,7 @@
 	font-size: 0.97rem;
 }
 
+/* COLONNA NOME */
 .giocatori-table th:first-child,
 .giocatori-table td:first-child {
 	white-space: normal;
@@ -401,24 +402,26 @@
 }
 
 /* Target dynamic Mat Table column classes like mat-column-giocata0, mat-column-giocata1 */
+/* colonna giornate */
 .giocatori-table th[class^="mat-column-giocata"],
 .giocatori-table td[class^="mat-column-giocata"],
 .giocatori-table th[class*="mat-column-giocata"],
 .giocatori-table td[class*="mat-column-giocata"],
 .giocatori-table th[class*="giocata"],
 .giocatori-table td[class*="giocata"] {
-	min-width: 180px !important;
+	min-width: 120px !important;
 	width: 200px !important;
 }
 
 /* If those dynamic columns are the last column, ensure they keep the larger width */
+/* colonna giornata corrente */
 .giocatori-table th[class^="mat-column-giocata"]:last-child,
 .giocatori-table td[class^="mat-column-giocata"]:last-child,
 .giocatori-table th[class*="mat-column-giocata"]:last-child,
 .giocatori-table td[class*="mat-column-giocata"]:last-child,
 .giocatori-table th[class*="giocata"]:last-child,
 .giocatori-table td[class*="giocata"]:last-child {
-	min-width: 220px !important;
+	min-width: 120px !important;
 	width: 240px !important;
 	max-width: 360px !important;
 }
@@ -444,45 +447,63 @@
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
 }
 
-/* Make header sticky and first column sticky so names remain visible */
-.giocatori-table {
+/* Fixed header that stays visible */
+.fixed-header-wrapper {
+	width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
 	position: relative;
+	z-index: 10;
+	background: #fff;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.giocatori-table thead,
-.giocatori-table th.mat-header-cell {
-	position: sticky;
-	top: 0;
-	z-index: 5;
+.fixed-header-wrapper .giocatori-table.header-only {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	table-layout: auto;
+	margin: 0;
+}
+
+.fixed-header-wrapper .header-row th {
+	border: 1px solid #e0e0e0;
+	padding: 6px 4px;
+	text-align: center;
+	vertical-align: middle;
 	background: #f7f7f7;
+	font-weight: 700;
+	font-size: 1.05rem;
+	height: 38px;
+	white-space: nowrap;
+	min-width: 100px;
 }
 
-/* Sticky first column (player name) */
-.giocatori-table th:first-child,
-.giocatori-table td:first-child {
-	position: sticky;
-	left: 0;
-	z-index: 6; /* above other cells */
-	background: #fff; /* match table background */
+.fixed-header-wrapper .header-row th.nome-col {
+	min-width: 220px;
+	width: auto;
 }
 
-/* When header and first cell overlap, keep header above */
-.giocatori-table th:first-child {
-	z-index: 7;
+.fixed-header-wrapper .header-row th:last-child {
+	min-width: 180px;
+	width: 200px;
 }
 
-/* Add a subtle divider shadow to indicate scrollable area */
-.giocatori-table td:first-child::after,
-.giocatori-table th:first-child::after {
-	content: '';
-	position: absolute;
-	right: -6px;
-	top: 0;
-	height: 100%;
-	width: 6px;
-	pointer-events: none;
-	background: linear-gradient(to right, rgba(0,0,0,0.02), rgba(0,0,0,0));
+/* Wrapper che abilita scroll verticale sulla tabella */
+.table-scroll-vertical {
+	display: block;
+	max-height: calc(8 * 38px + 8px);
+	overflow-y: auto;
+	overflow-x: auto;
 }
+
+/* Hide the mat-table header since we show it above */
+.table-scroll-vertical .giocatori-table tr.mat-header-row {
+	display: none;
+}
+
+/* keep .table-wrapper position rule (used elsewhere) */
+.table-wrapper { position: relative; }
 
 .squadra-select-save {
   display: flex;

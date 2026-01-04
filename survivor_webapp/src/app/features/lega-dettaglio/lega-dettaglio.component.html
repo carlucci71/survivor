@@ -37,8 +37,9 @@
             >restart_alt</mat-icon
           >
           } @if (lega.giocatori?.length) {
-          <div class="table-wrapper">
-          <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
+          <div class="table-horizontal-wrapper">
+            <div class="table-wrapper table-scroll-vertical">
+              <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
             <ng-container matColumnDef="nome">
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let giocatore">
@@ -106,6 +107,9 @@
               [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
             ></tr>
           </table>
+
+            </div>
+
           </div>
           }
         </mat-card-content>
