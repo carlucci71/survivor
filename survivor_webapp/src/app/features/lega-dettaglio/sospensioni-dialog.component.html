@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>Sospensioni Lega</h2>
+<mat-dialog-content>
+  <div *ngIf="giornate?.length; else empty">
+    <mat-list>
+      <mat-list-item *ngFor="let g of giornate">
+        <span class="mat-line">Giornata {{ g }}</span>
+        <button mat-icon-button color="warn" (click)="remove(g)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <ng-template #empty>
+    <div>Nessuna sospensione definita</div>
+  </ng-template>
+
+  <div class="add-row">
+    <mat-form-field>
+      <input matInput type="number" placeholder="Nuova giornata" [(ngModel)]="newGiornata" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" (click)="add()">Aggiungi</button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Chiudi</button>
+</mat-dialog-actions>
