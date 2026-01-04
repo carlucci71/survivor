@@ -456,20 +456,13 @@
 	overflow-x: auto;
 }
 
-
-
-/*******************************************/
-
-.gimmi{
+/* Header row per le giornate (esclusa la prima colonna) */
+.headerRow{
   position: sticky;
   top: 0;
   background-color: white; /* importante per coprire il contenuto sottostante */
-  z-index: 10;
+  z-index: 15;
 }
-
-/*******************************************/
-
-
 
 /* Sticky first column (player names) */
 .giocatori-table th:first-child,
@@ -478,13 +471,17 @@
 .giocatori-table td.mat-cell:first-child {
 	position: sticky !important;
 	left: 0 !important;
-	z-index: 10 !important;
+	z-index: 5 !important;
 	background: #fff !important;
 }
 
-.giocatori-table th.mat-header-cell:first-child {
+.giocatori-table th.mat-header-cell:first-child,
+.giocatori-table th:first-child.headerRow {
+	position: sticky !important;
+	left: 0 !important;
+	top: 0 !important;
 	background: #f7f7f7 !important;
-	z-index: 20 !important;
+	z-index: 25 !important;
 }
 
 /* Shadow to indicate sticky column */
