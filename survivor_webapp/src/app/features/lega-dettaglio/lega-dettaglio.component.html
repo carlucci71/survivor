@@ -36,11 +36,18 @@
             matTooltip="Annulla calcola giornata"
             >restart_alt</mat-icon
           >
+          <mat-icon
+            class="calcola-icon"
+            (click)="sospensioni()"
+            matTooltip="Sospensioni lega"
+            >spa</mat-icon
+          >
           } @if (lega.giocatori?.length) {
-          <div class="table-wrapper">
-          <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
+          <div class="table-horizontal-wrapper">
+            <div #tableWrapper class="table-wrapper table-scroll-vertical">
+              <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
             <ng-container matColumnDef="nome">
-              <th mat-header-cell *matHeaderCellDef></th>
+              <th mat-header-cell *matHeaderCellDef class="headerRow" ></th>
               <td mat-cell *matCellDef="let giocatore">
                 <span class="nome-giocatore">
                   {{ giocatore.nome }}
@@ -49,7 +56,8 @@
             </ng-container>
             @for (giornata of giornataIndices; track giornata) {
             <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
-              <th
+              <!--D Titolo della giornata-->
+              <th class="headerRow" 
                 mat-header-cell
                 *matHeaderCellDef
                 [class.corrente-col]="
@@ -57,13 +65,11 @@
                 "
               >
                 <div>{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
-                @if (lega.statiGiornate?.[giornata + lega.giornataIniziale - 1])
-                {
                 <div class="stato-giornata">
                   {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
                 </div>
-                }
               </th>
+              <!--D Giocata del giocatore/giornata -->
               <td
                 mat-cell
                 *matCellDef="let giocatore"
@@ -88,14 +94,6 @@
                     >{{ getSquadraNome(giocata.squadraSigla) }}</div>
                     
                   </ng-container>
-                  <!--
-                  <ng-container *ngIf="!getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <div
-                      class="team-name"
-                      [title]=
-                    >-</div>
-                  </ng-container>
-                  -->
                   @if (visualizzaGiocata(giornata, giocatore)) {
                     <div>
                     <mat-icon
@@ -116,6 +114,9 @@
               [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
             ></tr>
           </table>
+
+            </div>
+
           </div>
           }
         </mat-card-content>

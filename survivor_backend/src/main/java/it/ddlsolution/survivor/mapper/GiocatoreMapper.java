@@ -1,9 +1,8 @@
 package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
-import it.ddlsolution.survivor.dto.GiocatoreProjection;
 import it.ddlsolution.survivor.entity.Giocatore;
-import it.ddlsolution.survivor.entity.GiocatoreLega;
+import it.ddlsolution.survivor.entity.projection.GiocatoreProjection;
 import it.ddlsolution.survivor.util.Enumeratori;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.InheritInverseConfiguration;
@@ -11,9 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {GiocataMapper.class, UserMapper.class})
 public abstract class GiocatoreMapper  implements DtoMapper<GiocatoreDTO, Giocatore> {

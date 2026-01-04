@@ -20,7 +20,7 @@ public class CampionatoService {
 
     @Transactional(readOnly = true)
     public CampionatoDTO getCampionato(String campionatoId) {
-        return cacheableService.allCampionati()
+        return allCampionati()
                 .stream()
                 .filter(c -> c.getId().equals(campionatoId))
                 .findFirst()
