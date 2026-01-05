@@ -484,7 +484,7 @@ public class LegaService {
         lega.setEdizione(legaDTO.getEdizione()+1);
         lega.setStato(Enumeratori.StatoLega.DA_AVVIARE);
         List<GiocatoreLega> giocatoriLega = new ArrayList<>();
-        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {//TODO QUANDO E' DA AVVIARE GESTIRE I GIOCATORI DA RIMUOVERE
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             GiocatoreLega giocatoreLega = new GiocatoreLega();
             Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId()).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + giocatoreDTO.getId()));
             giocatoreLega.setGiocatore(giocatore);

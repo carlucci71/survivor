@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.util;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -13,10 +14,9 @@ import java.util.Base64;
 public class SignedTokenGenerator {
     private SecureRandom secureRandom = new SecureRandom();
     private SecretKey secretKey;
-    public static final String MAGIC_LINK_SECRET_TOKEN = "0349dffb83027c2e2ba5b1cdf14bd63c5bdf9f809466c056999cfb754bf4092b";//TODO in yaml
 
-    public SignedTokenGenerator() {
-        this.secretKey = new SecretKeySpec(MAGIC_LINK_SECRET_TOKEN.getBytes(), "HmacSHA256");
+    public SignedTokenGenerator(@Value("${magic-link.secret-token-generated}") String secretTokenGenerated) {
+        this.secretKey = new SecretKeySpec(secretTokenGenerated.getBytes(), "HmacSHA256");
     }
 
     public String generateToken(String addInfo)  {
