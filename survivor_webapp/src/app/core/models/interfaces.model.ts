@@ -107,6 +107,7 @@ export interface Lega {
   id: number;
   name: string;
   edizione: number;
+  edizioni: number[];
   withPwd: string;
   campionato?: Campionato;
   giocatori?: Giocatore[];

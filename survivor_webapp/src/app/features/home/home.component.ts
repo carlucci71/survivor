@@ -12,22 +12,31 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
-import { MatIcon } from "@angular/material/icon";
-import { MatTooltip } from "@angular/material/tooltip";
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, MatChipsModule, MatIcon, MatTooltip],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatProgressSpinnerModule,
+    MatChipsModule,
+    MatIcon,
+    MatTooltip,
+  ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  groupedLeghe: { name: string; edizioni: Lega[] }[] = [];
+  groupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
@@ -42,11 +51,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.giocatoreService.me().subscribe(
-      { next: (giocatore)=> {
-        this.me=giocatore;
-      }}
-    );
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        this.me = giocatore;
+      },
+    });
     this.loadLeghe();
   }
 
@@ -66,42 +75,44 @@ export class HomeComponent implements OnInit {
     if (!this.groupedLeghe || this.groupedLeghe.length === 0) {
       return true;
     }
-    const group = this.groupedLeghe.find(g => g.name === lega.name);
+    const group = this.groupedLeghe.find((g) => g.name === lega.name);
     if (!group || !group.edizioni || group.edizioni.length === 0) {
       return true;
     }
     const currentEd = Number(lega.edizione ?? 0);
     // If any edition in the same group has a greater 'edizione' value, then a next edition exists
-    const hasLater = group.edizioni.some(e => Number(e.edizione ?? 0) > currentEd);
+    const hasLater = group.edizioni.some(
+      (e) => Number(e.edizione ?? 0) > currentEd
+    );
     return !hasLater;
   }
 
   nuovaEdizione(lega: Lega): void {
-    this.legaService.nuovaEdizione(lega.id).subscribe({ 
+    this.legaService.nuovaEdizione(lega.id).subscribe({
       next: (leghe) => {
         this.loadLeghe();
       },
       error: (error) => {
         console.error('Errore in nuova edizione:' + lega.id, error);
-      }
+      },
     });
   }
 
   loadLeghe(): void {
-    this.legaService.mieLeghe().subscribe({ 
+    this.legaService.mieLeghe().subscribe({
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);
-      }
+      },
     });
   }
 
   private groupLegheByName(leghe: Lega[]): void {
     const map = new Map<string, Lega[]>();
-    (leghe || []).forEach(l => {
+    (leghe || []).forEach((l) => {
       const key = l.name || '';
       if (!map.has(key)) {
         map.set(key, []);
@@ -110,10 +121,14 @@ export class HomeComponent implements OnInit {
     });
     this.groupedLeghe = Array.from(map.entries()).map(([name, edizioni]) => ({
       name,
-      edizioni: edizioni.sort((a, b) => (a.edizione || '').toString().localeCompare((b.edizione || '').toString()))
+      des:edizioni[0].campionato?.sport?.nome + ' - ' + edizioni[0].campionato?.nome,
+      edizioni: edizioni.sort((a, b) =>
+        (a.edizione || '')
+          .toString()
+          .localeCompare((b.edizione || '').toString())
+      ),
     }));
   }
-
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
@@ -151,10 +166,9 @@ export class HomeComponent implements OnInit {
     this.dialog.open(InvitaUtentiDialogComponent, {
       data: {
         legaId: lega.id,
-        legaNome: lega.name
+        legaNome: lega.name,
       },
-      width: '600px'
+      width: '600px',
     });
   }
-
 }

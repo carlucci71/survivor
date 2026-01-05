@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
   template: `
     <h2 mat-dialog-title>Conferma iscrizione</h2>
     <mat-dialog-content>
-      <p>Vuoi entrare nella lega <strong>{{data.lega.nome}}</strong>?</p>
+      <p>Ti vuoi unire alla lega <strong>{{data.lega.name}}</strong>?</p>
       <p>Campionato: {{data.lega.campionato?.nome || '-'}}</p>
       <p>Giornata iniziale: {{data.lega.giornataIniziale}}</p>
       <p>Numero iscritti: {{data.lega.giocatori.length}}</p>

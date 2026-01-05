@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Lega, Partita } from '../models/interfaces.model';
+import { Giocatore, Lega, Partita } from '../models/interfaces.model';
 import { map } from 'rxjs/operators';
 import { mapLegaFromBE } from '../utils/lega-mapper';
 import { environment } from '../../../environments/environment';
@@ -53,29 +53,33 @@ export class LegaService {
     return this.http.put<Lega>(`${this.apiUrl}/join/${id}`, body).pipe(map(mapLegaFromBE));
   }
 
-  invitaUtenti(legaId: number, emails: string[]): Observable<any> {
+  invitaUtenti(idLega: number, emails: string[]): Observable<any> {
     const body = { emails: emails };
-    return this.http.post(`${this.apiUrl}/invita/${legaId}`, body);
+    return this.http.post(`${this.apiUrl}/invita/${idLega}`, body);
   }
 
-  calcola(id: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/calcola/${id}`, {})
+  calcola(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/calcola/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
   }
-  undoCalcola(id: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/undoCalcola/${id}`, {})
+  undoCalcola(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/undoCalcola/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
   }
-  termina(id: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/termina/${id}`, {})
+  termina(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/termina/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
   }
-  riapri(id: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/riapri/${id}`, {})
+  riapri(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/riapri/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
   }
-  nuovaEdizione(id: number): Observable<Lega> {
-    return this.http.put<Lega>(`${this.apiUrl}/nuovaEdizione/${id}`, {})
+  nuovaEdizione(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/nuovaEdizione/${idLega}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
+  cancellaGiocatoreDaLega(idLega: number, giocatore: Giocatore): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/cancellaGiocatoreDaLega/${idLega}/${giocatore.id}`, {})
       .pipe(map(mapLegaFromBE));
   }
 

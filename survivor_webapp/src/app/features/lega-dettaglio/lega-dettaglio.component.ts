@@ -30,8 +30,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
-import { AdminService } from '../../core/services/admin.service';
-import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
@@ -81,7 +79,6 @@ export class LegaDettaglioComponent {
     private route: ActivatedRoute,
     private legaService: LegaService,
     private campionatoService: CampionatoService,
-    private adminService: AdminService,
     private authService: AuthService,
     private squadraService: SquadraService,
     private utilService: UtilService,
@@ -89,7 +86,6 @@ export class LegaDettaglioComponent {
     private giocataService: GiocataService,
     private dialog: MatDialog,
     private sospensioniService: SospensioniService,
-    private loadingService: LoadingService
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -229,13 +225,15 @@ export class LegaDettaglioComponent {
     const numGg = this.lega?.campionato?.numGiornate || 0;
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
+    } else if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+      maxGiornata--;
     }
-
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
     for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
       this.displayedColumns.push('giocata' + i);
     }
     // populate giornata indices 1..maxGiornata
+
     this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
 
     if (this.lega?.campionato) {
@@ -300,12 +298,16 @@ export class LegaDettaglioComponent {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
+ isInLega(): boolean {
+    const ruolo = this.lega?.ruoloGiocatoreLega;
+    return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
+  }
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
   isChiudibile(): boolean {
-    let contaAttivi=0;
+    let contaAttivi = 0;
     let giocatori = this.lega!.giocatori;
     if (giocatori && giocatori[0]) {
       for (const giocatore of giocatori) {
@@ -317,11 +319,52 @@ export class LegaDettaglioComponent {
         }
       }
     }
-    return contaAttivi<=3;
+    return contaAttivi <= 3;
   }
 
   termina() {
-        this.legaService.termina(Number(this.id)).subscribe({
+    this.legaService.termina(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel termina della lega';
+      },
+    });
+  }
+  riapri() {
+    this.legaService.riapri(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel riapri della lega';
+      },
+    });
+  }
+
+  isAvviata(): boolean {
+    return this.lega!.stato.value === StatoLega.AVVIATA.value;
+  }
+
+  isDaAvviare(): boolean {
+    return this.lega!.stato.value === StatoLega.DA_AVVIARE.value;
+  }
+
+  isTerminata(): boolean {
+    return this.lega!.stato.value === StatoLega.TERMINATA.value;
+  }
+
+  notExistsNuovaEdizione(): boolean {
+    return (
+      this.lega!.edizione ===
+      this.lega?.edizioni[this.lega?.edizioni.length - 1]
+    );
+  }
+  cancellaGiocatore(giocatore: Giocatore) {
+    this.legaService.cancellaGiocatoreDaLega(Number(this.id), giocatore).subscribe({
       next: (lega: Lega) => {
         this.lega = lega;
         this.caricaTabella();
@@ -331,26 +374,6 @@ export class LegaDettaglioComponent {
       },
     });
 
-  }
-  riapri() {
-        this.legaService.riapri(Number(this.id)).subscribe({
-      next: (lega: Lega) => {
-        this.lega = lega;
-        this.caricaTabella();
-      },
-      error: (err: any) => {
-        this.error = 'Errore nel riapri della lega';
-      },
-    });
-
-  }
-
-  isAvviata(): boolean {
-    return this.lega!.stato.value === StatoLega.AVVIATA.value;
-  }
-
-  isTerminata(): boolean {
-    return this.lega!.stato.value === StatoLega.TERMINATA.value;
   }
 
   sospensioni() {

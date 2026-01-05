@@ -50,16 +50,14 @@
             <mat-card class="lega-group-card">
               <mat-card-header>
                 <mat-card-title>{{ group.name }}</mat-card-title>
+                <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 <div class="edizioni-list">
                   @for (edizione of group.edizioni; track edizione.id) {
                     <mat-card class="lega-card small">
                       <mat-card-header>
-                        <mat-card-title>{{ edizione.name }} - {{ edizione.edizione }}</mat-card-title>
-                        @if (edizione.campionato?.id ?? '') {
-                          <mat-card-subtitle>{{ edizione.campionato?.sport?.nome  }} - {{ edizione.campionato?.nome ?? '' }}</mat-card-subtitle>
-                        }
+                        <mat-card-title>Edizione {{ edizione.edizione }}</mat-card-title>
                         <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>

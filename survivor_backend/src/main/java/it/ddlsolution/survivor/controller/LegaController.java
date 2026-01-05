@@ -99,4 +99,9 @@ public class LegaController {
         return ResponseEntity.ok(legaService.nuovaEdizione(idLega));
     }
 
+    @PutMapping("/cancellaGiocatoreDaLega/{idLega}/{idGiocatore}")
+    public ResponseEntity<LegaDTO> cancellaGiocatoreDaLega(@PathVariable Long idLega,@PathVariable Long idGiocatore) {
+        return ResponseEntity.ok(legaService.cancellaGiocatoreDaLega(idLega, idGiocatore));
+    }
+
 }
