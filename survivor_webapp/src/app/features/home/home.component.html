@@ -68,7 +68,7 @@
                         <button mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">Invita utenti</button>
                         }
                         @if (isTerminata(edizione) && notExistsNuovaEdizione(edizione)){
-                        <button mat-raised-button color="accent" (click)="nuovaEdizione(edizione)">Nuova Edizione</button>
+                        <button mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">Nuova Edizione</button>
                         }
                       </mat-card-actions>
                     </mat-card>
@@ -94,7 +94,7 @@
                     <mat-card-title>Crea una nuova lega</mat-card-title>
                   </mat-card-header>
                   <mat-card-actions>
-                    <button mat-raised-button color="primary" (click)="goToCreaLega()">Crea</button>
+                    <button mat-raised-button color="warn" (click)="goToCreaLega()">Crea</button>
                   </mat-card-actions>
                 </mat-card>
               </div>
@@ -112,7 +112,7 @@
                     <mat-card-title>Unisciti ad una lega esistente</mat-card-title>
                   </mat-card-header>
                   <mat-card-actions>
-                    <button mat-raised-button color="primary" (click)="goToUniscitiLega()">Unisciti</button>
+                    <button mat-raised-button color="warn" (click)="goToUniscitiLega()">Unisciti</button>
                   </mat-card-actions>
                 </mat-card>
               </div>
