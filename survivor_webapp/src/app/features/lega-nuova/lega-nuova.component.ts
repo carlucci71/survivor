@@ -96,6 +96,7 @@ export class LegaNuovaComponent implements OnInit {
       this.campionatoService.getCampionatoBySport(this.sportSel).subscribe({
         next: (campionati) => {
           this.campionatiDisponibili = campionati;
+          this.campionatoSel=null;
         },
         error: (error) => {
           console.error(
