@@ -27,6 +27,7 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
 export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   leghe: Lega[] = [];
+  groupedLeghe: { name: string; edizioni: Lega[] }[] = [];
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
@@ -57,6 +58,24 @@ export class HomeComponent implements OnInit {
     return lega!.stato.value === StatoLega.TERMINATA.value;
   }
 
+  notExistsNuovaEdizione(lega: Lega): boolean {
+    if (!lega) {
+      return true;
+    }
+    // Ensure groups are available
+    if (!this.groupedLeghe || this.groupedLeghe.length === 0) {
+      return true;
+    }
+    const group = this.groupedLeghe.find(g => g.name === lega.name);
+    if (!group || !group.edizioni || group.edizioni.length === 0) {
+      return true;
+    }
+    const currentEd = Number(lega.edizione ?? 0);
+    // If any edition in the same group has a greater 'edizione' value, then a next edition exists
+    const hasLater = group.edizioni.some(e => Number(e.edizione ?? 0) > currentEd);
+    return !hasLater;
+  }
+
   nuovaEdizione(lega: Lega): void {
     this.legaService.nuovaEdizione(lega.id).subscribe({ 
       next: (leghe) => {
@@ -72,11 +91,27 @@ export class HomeComponent implements OnInit {
     this.legaService.mieLeghe().subscribe({ 
       next: (leghe) => {
         this.leghe = leghe;
+        this.groupLegheByName(leghe);
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);
       }
     });
+  }
+
+  private groupLegheByName(leghe: Lega[]): void {
+    const map = new Map<string, Lega[]>();
+    (leghe || []).forEach(l => {
+      const key = l.name || '';
+      if (!map.has(key)) {
+        map.set(key, []);
+      }
+      map.get(key)!.push(l);
+    });
+    this.groupedLeghe = Array.from(map.entries()).map(([name, edizioni]) => ({
+      name,
+      edizioni: edizioni.sort((a, b) => (a.edizione || '').toString().localeCompare((b.edizione || '').toString()))
+    }));
   }
 
 
