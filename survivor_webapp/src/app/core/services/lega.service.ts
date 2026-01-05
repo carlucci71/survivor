@@ -31,14 +31,14 @@ export class LegaService {
   }
 
   inserisciLega(
-    nome: string,
+    name: string,
     sport: string,
     campionato: string,
     giornataIniziale: number,
     pwd: string | null
   ): Observable<Lega> {
     const body = {
-      nome: nome,
+      name: name,
       sport: sport,
       campionato: campionato,
       giornataIniziale: giornataIniziale,
@@ -72,6 +72,10 @@ export class LegaService {
   }
   riapri(id: number): Observable<Lega> {
     return this.http.put<Lega>(`${this.apiUrl}/riapri/${id}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
+  nuovaEdizione(id: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/nuovaEdizione/${id}`, {})
       .pipe(map(mapLegaFromBE));
   }
 

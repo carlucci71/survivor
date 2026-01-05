@@ -14,7 +14,7 @@
       } @if (lega) {
       <mat-card class="lega-card">
         <mat-card-header>
-          <mat-card-title>{{ lega.nome }}</mat-card-title>
+          <mat-card-title>{{ lega.name }} - {{lega.edizione}}</mat-card-title>
           @if (lega.campionato?.id) {
           <mat-card-subtitle
             >{{ lega.campionato?.sport?.id }} -

@@ -53,6 +53,20 @@ export class HomeComponent implements OnInit {
     return lega.stato.value === StatoLega.DA_AVVIARE.value;
   }
 
+  isTerminata(lega: Lega): boolean {
+    return lega!.stato.value === StatoLega.TERMINATA.value;
+  }
+
+  nuovaEdizione(lega: Lega): void {
+    this.legaService.nuovaEdizione(lega.id).subscribe({ 
+      next: (leghe) => {
+        this.loadLeghe();
+      },
+      error: (error) => {
+        console.error('Errore in nuova edizione:' + lega.id, error);
+      }
+    });
+  }
 
   loadLeghe(): void {
     this.legaService.mieLeghe().subscribe({ 
@@ -102,7 +116,7 @@ export class HomeComponent implements OnInit {
     this.dialog.open(InvitaUtentiDialogComponent, {
       data: {
         legaId: lega.id,
-        legaNome: lega.nome
+        legaNome: lega.name
       },
       width: '600px'
     });

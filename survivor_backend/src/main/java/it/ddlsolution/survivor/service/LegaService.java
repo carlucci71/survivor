@@ -14,7 +14,10 @@ import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.exception.ManagedException;
+import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
+import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
+import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class LegaService {
+    private final GiocatoreLegaRepository giocatoreLegaRepository;
     private final LegaRepository legaRepository;
     private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
@@ -45,6 +49,7 @@ public class LegaService {
     private final SospensioniLegaService sospensioniLegaService;
     private final GiocatoreService giocatoreService;
     private final GiocataService giocataService;
+    private final GiocatoreRepository giocatoreRepository;
     private final UserService userService;
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
@@ -433,11 +438,13 @@ public class LegaService {
     }
 
     @Transactional
+    @LoggaDispositiva(tipologia = "inserisciLega")
     public LegaDTO inserisciLega(LegaInsertDTO legaInsertDTO) {
-        if (legaRepository.findByNome(legaInsertDTO.getNome()).isPresent()) {
+        if (legaRepository.findByName(legaInsertDTO.getName()).isPresent()) {
             throw new ManagedException("Nome lega già presente", ManagedException.InternalCode.CODE_LEGA_PRESENTE);
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
+        lega.setEdizione(1);
         List<GiocatoreLega> giocatoriLega = new ArrayList<>();
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
@@ -446,6 +453,34 @@ public class LegaService {
         giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
         giocatoriLega.add(giocatoreLega);
+        lega.setGiocatoreLeghe(giocatoriLega);
+        Lega legaSalvata = legaRepository.save(lega);
+        return legaMapper.toDTO(legaSalvata);
+    }
+
+    @LoggaDispositiva(tipologia = "nuovaEdizione")
+    @Transactional
+    public LegaDTO nuovaEdizione(Long idLega) {
+        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        LegaInsertDTO legaInsertDTO=new LegaInsertDTO();
+        legaInsertDTO.setCampionato(legaDTO.getCampionato().getId());
+        legaInsertDTO.setGiornataIniziale(legaDTO.getGiornataCorrente()+1);
+        legaInsertDTO.setName(legaDTO.getName());
+        legaInsertDTO.setPwd(null);
+        legaInsertDTO.setSport(legaDTO.getCampionato().getSport().getId());
+        Lega lega = legaMapper.toEntity(legaInsertDTO);
+        lega.setEdizione(legaDTO.getEdizione()+1);
+        lega.setStato(Enumeratori.StatoLega.DA_AVVIARE);
+        List<GiocatoreLega> giocatoriLega = new ArrayList<>();
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {//TODO QUANDO E' DA AVVIARE GESTIRE I GIOCATORI DA RIMUOVERE
+            GiocatoreLega giocatoreLega = new GiocatoreLega();
+            Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId()).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + giocatoreDTO.getId()));
+            giocatoreLega.setGiocatore(giocatore);
+            giocatoreLega.setLega(lega);
+            giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+            giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+            giocatoriLega.add(giocatoreLega);
+        }
         lega.setGiocatoreLeghe(giocatoriLega);
         Lega legaSalvata = legaRepository.save(lega);
         return legaMapper.toDTO(legaSalvata);
@@ -529,7 +564,7 @@ public class LegaService {
                 
                 Saluti,
                 Il team di Survivor
-                """.formatted(legaDTO.getNome(), magicLink, expirationDays);
+                """.formatted(legaDTO.getName(), magicLink, expirationDays);
     }
 
 }

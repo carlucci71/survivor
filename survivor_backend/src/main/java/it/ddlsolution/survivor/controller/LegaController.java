@@ -94,4 +94,9 @@ public class LegaController {
         return ResponseEntity.ok(legaService.riapri(idLega));
     }
 
+    @PutMapping("/nuovaEdizione/{idLega}")
+    public ResponseEntity<LegaDTO> nuovaEdizione(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.nuovaEdizione(idLega));
+    }
+
 }
