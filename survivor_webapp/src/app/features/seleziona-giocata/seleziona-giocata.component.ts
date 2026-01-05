@@ -1,4 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -36,15 +37,24 @@ import { SquadraService } from '../../core/services/squadra.service';
   ],
 })
 export class SelezionaGiocataComponent implements OnInit {
+  isMobile = false;
+  private resizeHandler: any;
+  private tabsReservedHeight = 0;
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
   prossimePartite: Partita[] = [];
+  loadingUltimi = false;
+  loadingProssime = false;
   squadreDisponibili: Squadra[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
   lega!: Lega;
   giocatore: Giocatore;
+  @ViewChild('risultatiRow') risultatiRow?: ElementRef<HTMLDivElement>;
+  @ViewChild('teamSelect') teamSelect?: MatSelect;
+  @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
+  activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -69,6 +79,20 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Track viewport size to toggle mobile/desktop layout
+    this.isMobile = window.matchMedia('(max-width: 700px)').matches;
+    this.resizeHandler = () => {
+      const wasMobile = this.isMobile;
+      this.isMobile = window.matchMedia('(max-width: 700px)').matches;
+      if (wasMobile !== this.isMobile) {
+        // when changing breakpoint, ensure layout updates (no further actions needed)
+      }
+      // update sticky top when resizing
+      try { this.updateTabsStickyTop(); } catch (e) {}
+    };
+    window.addEventListener('resize', this.resizeHandler);
+    // ensure tabs top is calculated after view renders; compute reserved height now
+    setTimeout(() => this.updateTabsStickyTop(true), 150);
     this.getSquadreByCampionatoAndGiornata(
       this.lega.campionato!.id,
       this.data.giornata + this.lega.giornataIniziale - 1
@@ -76,6 +100,73 @@ export class SelezionaGiocataComponent implements OnInit {
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
+      // default tab: if prossime already available, show them; otherwise ultimi
+      this.activeTab = 'ultimi';
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+    }
+  }
+
+  setActiveTab(tab: 'ultimi' | 'prossime' | 'opponent') {
+    // If the tab is already active, do nothing to avoid repeated tiny scrolls
+    if (this.activeTab === tab) return;
+    this.activeTab = tab;
+    // small delay to ensure section is visible and then scroll into view
+    // Minimal behavior: only set the active tab and scroll results into view.
+    // Do NOT auto-open the select (avoids keyboard popup on mobile).
+    setTimeout(() => {
+      // If we haven't computed the tabs reserved height yet, recompute it now
+      // so paddingTop is applied before we compute scrolling. This prevents
+      // the first-click push-down of the risultati rows.
+      const recompute = !this.tabsReservedHeight || this.tabsReservedHeight === 0;
+      this.updateTabsStickyTop(recompute);
+      // debug log to inspect what's happening on first click
+      requestAnimationFrame(() => this.scrollResultsIntoView());
+    }, 120);
+  }
+
+  private updateTabsStickyTop(recomputeReserve: boolean = true): void {
+    try {
+      const modal = document.querySelector('.modal-container') as HTMLElement | null;
+      const tabs = document.querySelector('.result-tabs') as HTMLElement | null;
+      if (!modal || !tabs) return;
+      const modalRect = modal.getBoundingClientRect();
+      // prefer the h2 as anchor; fallback to first info-row or 0
+      const header = modal.querySelector('h2') as HTMLElement | null;
+      const infoRow = modal.querySelector('.info-row') as HTMLElement | null;
+      const anchor = header || infoRow;
+      let top = 12;
+      if (anchor) {
+        const anchorRect = anchor.getBoundingClientRect();
+        top = Math.max(6, Math.ceil(anchorRect.bottom - modalRect.top + 8));
+      }
+      // apply as inline style so sticky respects it inside modal
+      tabs.style.top = `${top}px`;
+      tabs.style.zIndex = '10005';
+      // compute reserved height only when requested (init/resize) to avoid jitter on click
+      try {
+        const tabsRect = tabs.getBoundingClientRect();
+        const newReserve = Math.ceil((tabsRect && tabsRect.height) ? tabsRect.height + 8 : 16);
+        if (recomputeReserve || !this.tabsReservedHeight) {
+          this.tabsReservedHeight = newReserve;
+        }
+        // apply reserved padding only if it changed significantly
+        if (this.risultatiRow && this.risultatiRow.nativeElement) {
+          const elem = this.risultatiRow.nativeElement as HTMLElement;
+          const current = parseInt(window.getComputedStyle(elem).paddingTop || '0', 10) || 0;
+          if (Math.abs(current - this.tabsReservedHeight) > 2) {
+            elem.style.paddingTop = this.tabsReservedHeight + 'px';
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      // ignore
     }
   }
 
@@ -152,6 +243,7 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
+      this.loadingUltimi = true;
       this.campionatoService
         .calendario(
           this.lega.campionato?.id,
@@ -165,12 +257,17 @@ export class SelezionaGiocataComponent implements OnInit {
             // considerala come risultati dell'avversario, altrimenti popola i risultati della squadra.
             if (sigla && sigla !== this.squadraSelezionata) {
               this.ultimiRisultatiOpponent = ultimiRisultati;
+              this.loadingUltimi = false;
             } else {
               this.ultimiRisultati = ultimiRisultati;
+              this.loadingUltimi = false;
+              // Ensure results area is visible above the fixed footer
+              setTimeout(() => this.scrollResultsIntoView(), 50);
             }
           },
           error: (error) => {
-            console.error('Errore nel caricamento delle leghe:', error);
+            console.error('mostraUltimiRisultati: errore', error);
+            this.loadingUltimi = false;
           },
         });
     }
@@ -189,6 +286,7 @@ export class SelezionaGiocataComponent implements OnInit {
       this.lega.campionato?.id &&
       this.lega.campionato?.sport?.id
     ) {
+      this.loadingProssime = true;
       this.campionatoService
         .calendario(
           this.lega.campionato?.id,
@@ -200,11 +298,78 @@ export class SelezionaGiocataComponent implements OnInit {
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
             this.mostraUltimiRisultatiOpponent();
+            this.loadingProssime = false;
+            setTimeout(() => this.scrollResultsIntoView(), 200);
           },
           error: (error) => {
-            console.error('Errore nel caricamento delle leghe:', error);
+            console.error('mostraProssimePartite: errore', error);
+            this.loadingProssime = false;
           },
         });
+    }
+  }
+
+  private scrollResultsIntoView() {
+    try {
+      const el = this.risultatiRow?.nativeElement;
+      if (!el) return;
+      // Try scrolling the nearest scrollable ancestor (the modal container)
+      // so the risultati block becomes visible above the fixed footer.
+      // Use scrollIntoView which respects the nearest scrollable ancestor.
+      setTimeout(() => {
+        try {
+          if (this.isMobile) {
+            // On mobile, ensure the tabs/buttons remain visible above the results
+            const modal = document.querySelector('.modal-container') as HTMLElement | null;
+            const tabs = document.querySelector('.result-tabs') as HTMLElement | null;
+            const extraMargin = 8; // small breathing room
+            if (modal) {
+                const modalRect = modal.getBoundingClientRect();
+                const elRect = el.getBoundingClientRect();
+                const tabsRect = tabs ? tabs.getBoundingClientRect() : null;
+              // offset of risultatiRow relative to modal's scrollTop
+              const offset = elRect.top - modalRect.top + modal.scrollTop;
+              // desired top position inside modal: just below tabs
+              const desiredTop = tabsRect
+                ? Math.ceil(tabsRect.bottom - modalRect.top + extraMargin)
+                : extraMargin;
+              // compute scroll target so that risultatiRow sits at desiredTop
+              let target = Math.max(0, offset - desiredTop);
+              // clamp to scrollable range
+              const maxScroll = modal.scrollHeight - modal.clientHeight;
+              if (target > maxScroll) target = maxScroll;
+              // avoid tiny incremental shifts: skip if already close
+              // Round values to integer pixels to avoid fractional reflows
+              const current = Math.round(modal.scrollTop || 0);
+              target = Math.round(target);
+              const delta = Math.abs(target - current);
+              const MIN_DELTA = 48; // pixels, larger threshold to prevent slow cumulative shifts
+              if (delta < MIN_DELTA) {
+                return;
+              }
+              // Use instant scroll to avoid perceivable slow drift from repeated small smooth scrolls
+              modal.scrollTo({ top: target, behavior: 'auto' });
+            } else {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          } else {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        } catch (e) {
+          // fallback: find modal container and adjust its scrollTop
+          let parent: any = el.parentElement;
+          while (parent && parent !== document.body) {
+            const overflowY = window.getComputedStyle(parent).overflowY;
+            if (overflowY === 'auto' || overflowY === 'scroll') {
+              parent.scrollTop = el.offsetTop - 40;
+              break;
+            }
+            parent = parent.parentElement;
+          }
+        }
+      }, 200);
+    } catch (e) {
+      // ignore
     }
   }
 
