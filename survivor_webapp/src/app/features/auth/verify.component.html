@@ -3,9 +3,9 @@
       <mat-card-content class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
         <mat-icon class="icon">{{ isSuccess ? 'check_circle' : 'error' }}</mat-icon>
         <p>{{ message }}</p>
-        @if (!isSuccess) {
+        <ng-container *ngIf="!isSuccess">
           <button mat-raised-button color="primary" routerLink="/auth/login">Torna al login</button>
-        }
+        </ng-container>
       </mat-card-content>
   </mat-card>
 </div>
