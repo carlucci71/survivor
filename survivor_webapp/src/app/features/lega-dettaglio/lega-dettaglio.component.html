@@ -75,7 +75,7 @@
                   <th mat-header-cell *matHeaderCellDef class="headerRow"></th>
                   <!--D Nome del giocatore-->
                   <td mat-cell *matCellDef="let giocatore">
-                    @if(isDaAvviare() && isInLega()){
+                    @if(isDaAvviare() && (isAdmin() || this.isLeaderLega())){
                     <mat-icon
                       class="calcola-icon"
                       (click)="cancellaGiocatore(giocatore)"

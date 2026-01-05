@@ -2,9 +2,11 @@ package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
+import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +15,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class GiocatoreService {
     private final GiocatoreRepository giocatoreRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
     private final GiocatoreMapper giocatoreMapper;
+    private final GiocataRepository giocataRepository;
 
     @Transactional
     public GiocatoreDTO me() {
@@ -41,7 +47,14 @@ public class GiocatoreService {
     public Giocatore findMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        return giocatoreRepository.findByUser_Id(userId).orElseThrow(()->new RuntimeException("Utente non trovato: " + userId));
+        return giocatoreRepository.findByUser_Id(userId).orElseGet(()->{
+            User user = userRepository.findById(userId).get();
+            Giocatore giocatore=new Giocatore();
+            giocatore.setNome(user.getName());
+            giocatore.setUser(user);
+            giocatoreRepository.save(giocatore);
+            return giocatore;
+        });
     }
 
     @Transactional
