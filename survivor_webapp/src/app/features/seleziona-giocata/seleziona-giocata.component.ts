@@ -194,8 +194,6 @@ export class SelezionaGiocataComponent implements OnInit {
             } else {
               this.ultimiRisultati = ultimiRisultati;
               this.loadingUltimi = false;
-              // Ensure results area is visible above the fixed footer
-              setTimeout(() => this.scrollResultsIntoView(), 50);
             }
           },
           error: (error) => {
@@ -232,77 +230,12 @@ export class SelezionaGiocataComponent implements OnInit {
             this.prossimePartite = prossimePartite;
             this.mostraUltimiRisultatiOpponent();
             this.loadingProssime = false;
-            setTimeout(() => this.scrollResultsIntoView(), 200);
           },
           error: (error) => {
             console.error('mostraProssimePartite: errore', error);
             this.loadingProssime = false;
           },
         });
-    }
-  }
-
-  private scrollResultsIntoView() {
-    try {
-      const el = this.risultatiRow?.nativeElement;
-      if (!el) return;
-      // Try scrolling the nearest scrollable ancestor (the modal container)
-      // so the risultati block becomes visible above the fixed footer.
-      // Use scrollIntoView which respects the nearest scrollable ancestor.
-      setTimeout(() => {
-        try {
-          if (this.isMobile) {
-            // On mobile, ensure the tabs/buttons remain visible above the results
-            const modal = document.querySelector('.modal-container') as HTMLElement | null;
-            const tabs = document.querySelector('.result-tabs') as HTMLElement | null;
-            const extraMargin = 8; // small breathing room
-            if (modal) {
-                const modalRect = modal.getBoundingClientRect();
-                const elRect = el.getBoundingClientRect();
-                const tabsRect = tabs ? tabs.getBoundingClientRect() : null;
-              // offset of risultatiRow relative to modal's scrollTop
-              const offset = elRect.top - modalRect.top + modal.scrollTop;
-              // desired top position inside modal: just below tabs
-              const desiredTop = tabsRect
-                ? Math.ceil(tabsRect.bottom - modalRect.top + extraMargin)
-                : extraMargin;
-              // compute scroll target so that risultatiRow sits at desiredTop
-              let target = Math.max(0, offset - desiredTop);
-              // clamp to scrollable range
-              const maxScroll = modal.scrollHeight - modal.clientHeight;
-              if (target > maxScroll) target = maxScroll;
-              // avoid tiny incremental shifts: skip if already close
-              // Round values to integer pixels to avoid fractional reflows
-              const current = Math.round(modal.scrollTop || 0);
-              target = Math.round(target);
-              const delta = Math.abs(target - current);
-              const MIN_DELTA = 48; // pixels, larger threshold to prevent slow cumulative shifts
-              if (delta < MIN_DELTA) {
-                return;
-              }
-              // Use instant scroll to avoid perceivable slow drift from repeated small smooth scrolls
-              modal.scrollTo({ top: target, behavior: 'auto' });
-            } else {
-              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          } else {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        } catch (e) {
-          // fallback: find modal container and adjust its scrollTop
-          let parent: any = el.parentElement;
-          while (parent && parent !== document.body) {
-            const overflowY = window.getComputedStyle(parent).overflowY;
-            if (overflowY === 'auto' || overflowY === 'scroll') {
-              parent.scrollTop = el.offsetTop - 40;
-              break;
-            }
-            parent = parent.parentElement;
-          }
-        }
-      }, 200);
-    } catch (e) {
-      // ignore
     }
   }
 
