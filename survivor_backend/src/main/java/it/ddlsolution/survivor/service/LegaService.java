@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.aspect.dispologger.LoggaDispositiva;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocataDTO;
+import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
@@ -563,10 +564,13 @@ public class LegaService {
     }
 
     private String buildEmailContent(String magicLink, int expirationDays, LegaDTO legaDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        UserDTO userDTO = userService.userById(userId);
         return """
                 Ciao,
                 
-                Sei stato invitato alla lega %s xxxx...... :
+                Sei stato invitato alla lega %s da %s :
                 Clicca sul link seguente per accedere a Survivor:
                 %s
                 
@@ -576,7 +580,7 @@ public class LegaService {
                 
                 Saluti,
                 Il team di Survivor
-                """.formatted(legaDTO.getName(), magicLink, expirationDays);
+                """.formatted(legaDTO.getName(),userDTO.getEmail(), magicLink, expirationDays);
     }
 
 }
