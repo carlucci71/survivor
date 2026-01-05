@@ -326,6 +326,7 @@ public class LegaService {
     }
 
     private void addInfoCalcolate(LegaDTO legaDTO) {
+        legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()));
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);

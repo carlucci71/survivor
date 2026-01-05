@@ -79,20 +79,7 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Track viewport size to toggle mobile/desktop layout
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
-    this.resizeHandler = () => {
-      const wasMobile = this.isMobile;
-      this.isMobile = window.matchMedia('(max-width: 700px)').matches;
-      if (wasMobile !== this.isMobile) {
-        // when changing breakpoint, ensure layout updates (no further actions needed)
-      }
-      // update sticky top when resizing
-      try { this.updateTabsStickyTop(); } catch (e) {}
-    };
-    window.addEventListener('resize', this.resizeHandler);
-    // ensure tabs top is calculated after view renders; compute reserved height now
-    setTimeout(() => this.updateTabsStickyTop(true), 150);
     this.getSquadreByCampionatoAndGiornata(
       this.lega.campionato!.id,
       this.data.giornata + this.lega.giornataIniziale - 1
@@ -100,7 +87,6 @@ export class SelezionaGiocataComponent implements OnInit {
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
-      // default tab: if prossime already available, show them; otherwise ultimi
       this.activeTab = 'ultimi';
     }
   }
@@ -115,59 +101,6 @@ export class SelezionaGiocataComponent implements OnInit {
     // If the tab is already active, do nothing to avoid repeated tiny scrolls
     if (this.activeTab === tab) return;
     this.activeTab = tab;
-    // small delay to ensure section is visible and then scroll into view
-    // Minimal behavior: only set the active tab and scroll results into view.
-    // Do NOT auto-open the select (avoids keyboard popup on mobile).
-    setTimeout(() => {
-      // If we haven't computed the tabs reserved height yet, recompute it now
-      // so paddingTop is applied before we compute scrolling. This prevents
-      // the first-click push-down of the risultati rows.
-      const recompute = !this.tabsReservedHeight || this.tabsReservedHeight === 0;
-      this.updateTabsStickyTop(recompute);
-      // debug log to inspect what's happening on first click
-      requestAnimationFrame(() => this.scrollResultsIntoView());
-    }, 120);
-  }
-
-  private updateTabsStickyTop(recomputeReserve: boolean = true): void {
-    try {
-      const modal = document.querySelector('.modal-container') as HTMLElement | null;
-      const tabs = document.querySelector('.result-tabs') as HTMLElement | null;
-      if (!modal || !tabs) return;
-      const modalRect = modal.getBoundingClientRect();
-      // prefer the h2 as anchor; fallback to first info-row or 0
-      const header = modal.querySelector('h2') as HTMLElement | null;
-      const infoRow = modal.querySelector('.info-row') as HTMLElement | null;
-      const anchor = header || infoRow;
-      let top = 12;
-      if (anchor) {
-        const anchorRect = anchor.getBoundingClientRect();
-        top = Math.max(6, Math.ceil(anchorRect.bottom - modalRect.top + 8));
-      }
-      // apply as inline style so sticky respects it inside modal
-      tabs.style.top = `${top}px`;
-      tabs.style.zIndex = '10005';
-      // compute reserved height only when requested (init/resize) to avoid jitter on click
-      try {
-        const tabsRect = tabs.getBoundingClientRect();
-        const newReserve = Math.ceil((tabsRect && tabsRect.height) ? tabsRect.height + 8 : 16);
-        if (recomputeReserve || !this.tabsReservedHeight) {
-          this.tabsReservedHeight = newReserve;
-        }
-        // apply reserved padding only if it changed significantly
-        if (this.risultatiRow && this.risultatiRow.nativeElement) {
-          const elem = this.risultatiRow.nativeElement as HTMLElement;
-          const current = parseInt(window.getComputedStyle(elem).paddingTop || '0', 10) || 0;
-          if (Math.abs(current - this.tabsReservedHeight) > 2) {
-            elem.style.paddingTop = this.tabsReservedHeight + 'px';
-          }
-        }
-      } catch (e) {
-        // ignore
-      }
-    } catch (e) {
-      // ignore
-    }
   }
 
   trackByGiornata(index: number, item: any) {

@@ -29,14 +29,14 @@ public class GiocataRule implements GuardRule {
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
         LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
-        Long legaDTOId = legaDTO.getId();
+        Long idLega = legaDTO.getId();
         String squadra = (String) args.get(SIGLASQUADRA);
         Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega = legaDTO.getRuoloGiocatoreLega();
         Enumeratori.StatoPartita statoGiornataCorrente = legaDTO.getStatoGiornataCorrente();
         Integer giornata = (Integer) args.get(PARAM.GIORNATA);
         GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Optional<GiocataDTO> attGiocata = giocatoreDTO.getGiocate().stream()
-                .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(legaDTOId))
+                .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega))
                 .findFirst();
 
         log.info("legaDTO.getRuoloGiocatoreLega() = {}", ruoloGiocatoreLega);
@@ -49,7 +49,7 @@ public class GiocataRule implements GuardRule {
         if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
             throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getName() + "-" + legaDTO.getEdizione());
         }
-        if (giocatoreDTO.getStatiPerLega().getOrDefault(legaDTOId, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
+        if (giocatoreDTO.getStatiPerLega().getOrDefault(idLega, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
         }
         if (!userId.equals(giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId()) && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)) {
@@ -68,11 +68,14 @@ public class GiocataRule implements GuardRule {
             throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
         if (giocatoreDTO.getGiocate().stream()
-                .filter(g -> g.getLegaId().equals(legaDTOId) && squadra.equals(g.getSquadraSigla()))
+                .filter(g -> g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
                 .count() > 0) {
             throw new AccessDeniedException("Squadra già usata");
         }
         if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
+            throw new AccessDeniedException("Lega in stato TERMINATA");
+        }
+        if (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente()) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
     }
