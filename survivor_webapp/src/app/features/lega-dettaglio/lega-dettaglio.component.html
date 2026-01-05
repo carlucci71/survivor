@@ -1,5 +1,9 @@
 <div class="lega-dettaglio-container">
-  <app-header title="Dettaglio lega" (back)="goBack()" (logout)="logout()"></app-header>
+  <app-header
+    title="Dettaglio lega"
+    (back)="goBack()"
+    (logout)="logout()"
+  ></app-header>
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
@@ -18,12 +22,14 @@
           >
           }
           <mat-card-subtitle>
-            <div>Giornata calcolata:{{ lega.giornataCalcolata }}</div>
-            <div>Ruolo in Lega:{{ lega.ruoloGiocatoreLega.descrizione }}</div>
+            <div>Giornata calcolata: {{ lega.giornataCalcolata?lega.giornataCalcolata:'N/D' }}</div>
+            <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
+            <div>Stato Lega: {{ lega.stato.descrizione }}</div>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           @if (isAdmin() || this.isLeaderLega()) {
+          @if (isAvviata()){
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
@@ -42,81 +48,115 @@
             matTooltip="Sospensioni lega"
             >spa</mat-icon
           >
+          @if (isChiudibile()){
+          <mat-icon
+            class="calcola-icon"
+            (click)="termina()"
+            matTooltip="Termina lega"
+            >save_alt</mat-icon
+          >
+          }
+          } 
+          @if (isTerminata()){
+          <mat-icon
+            class="calcola-icon"
+            (click)="riapri()"
+            matTooltip="Riapri lega"
+            >health_and_safety</mat-icon
+          >
+          }
           } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
-              <table mat-table [dataSource]="lega.giocatori || []" class="giocatori-table">
-            <ng-container matColumnDef="nome">
-              <th mat-header-cell *matHeaderCellDef class="headerRow" ></th>
-              <td mat-cell *matCellDef="let giocatore">
-                <span class="nome-giocatore">
-                  {{ giocatore.nome }}
-                </span>
-              </td>
-            </ng-container>
-            @for (giornata of giornataIndices; track giornata) {
-            <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
-              <!--D Titolo della giornata-->
-              <th class="headerRow" 
-                mat-header-cell
-                *matHeaderCellDef
-                [class.corrente-col]="
-                  giornata + lega.giornataIniziale - 1 === lega.giornataCorrente
-                "
+              <table
+                mat-table
+                [dataSource]="lega.giocatori || []"
+                class="giocatori-table"
               >
-                <div>{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
-                <div class="stato-giornata">
-                  {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
-                </div>
-              </th>
-              <!--D Giocata del giocatore/giornata -->
-              <td
-                mat-cell
-                *matCellDef="let giocatore"
-                [class.corrente-col]="
+                <ng-container matColumnDef="nome">
+                  <th mat-header-cell *matHeaderCellDef class="headerRow"></th>
+                  <td mat-cell *matCellDef="let giocatore">
+                    <span class="nome-giocatore">
+                      {{ giocatore.nome }}
+                    </span>
+                  </td>
+                </ng-container>
+                @for (giornata of giornataIndices; track giornata) {
+                <ng-container [matColumnDef]="'giocata' + (giornata - 1)">
+                  <!--D Titolo della giornata-->
+                  <th
+                    class="headerRow"
+                    mat-header-cell
+                    *matHeaderCellDef
+                    [class.corrente-col]="
+                      giornata + lega.giornataIniziale - 1 ===
+                      lega.giornataCorrente
+                    "
+                  >
+                    <div>
+                      {{
+                        getDesGiornataTitle(
+                          giornata + lega.giornataIniziale - 1
+                        )
+                      }}
+                    </div>
+                    <div class="stato-giornata">
+                      {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
+                    </div>
+                  </th>
+                  <!--D Giocata del giocatore/giornata -->
+                  <td
+                    mat-cell
+                    *matCellDef="let giocatore"
+                    [class.corrente-col]="
                   giornata + lega.giornataIniziale - 1 ===
                     lega.giornataCorrente && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value
                 "
-                [class.ko-font]="
-                  getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
-                "
-              >
-                <span>
-                  <ng-container *ngIf="getGiocataByGiornata(giocatore, giornata) as giocata">
-                    <div *ngIf="giocata.squadraSigla || giocata.esito"
-                      class="team-name"
-                      [ngClass]="{
-                        ok: giocata.esito === 'OK',
-                        ko: giocata.esito === 'KO',
-                        empty: !giocata.esito
-                      }"
-                      [title]="getSquadraNome(giocata.squadraSigla)"
-                    >{{ getSquadraNome(giocata.squadraSigla) }}</div>
-                    
-                  </ng-container>
-                  @if (visualizzaGiocata(giornata, giocatore)) {
-                    <div>
-                    <mat-icon
-                      class="gioca-icon"
-                      matTooltip="Gioca ora"
-                      (click)="giocaGiornata(giocatore, giornata)"
-                    >{{ getGiocaIcon() }}</mat-icon>
-                    </div>
-                  }
-                </span>
-              </td>
-            </ng-container>
-            }
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr
-              mat-row
-              *matRowDef="let row; columns: displayedColumns"
-              [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
-            ></tr>
-          </table>
-
+                    [class.ko-font]="
+                      getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
+                    "
+                  >
+                    <span>
+                      <ng-container
+                        *ngIf="
+                          getGiocataByGiornata(giocatore, giornata) as giocata
+                        "
+                      >
+                        <div
+                          *ngIf="giocata.squadraSigla || giocata.esito"
+                          class="team-name"
+                          [ngClass]="{
+                            ok: giocata.esito === 'OK',
+                            ko: giocata.esito === 'KO',
+                            empty: !giocata.esito
+                          }"
+                          [title]="getSquadraNome(giocata.squadraSigla)"
+                        >
+                          {{ getSquadraNome(giocata.squadraSigla) }}
+                        </div>
+                      </ng-container>
+                      @if (visualizzaGiocata(giornata, giocatore)) {
+                      <div>
+                        <mat-icon
+                          class="gioca-icon"
+                          matTooltip="Gioca ora"
+                          (click)="giocaGiornata(giocatore, giornata)"
+                          >{{ getGiocaIcon() }}</mat-icon
+                        >
+                      </div>
+                      }
+                    </span>
+                  </td>
+                </ng-container>
+                }
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                  [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
+                ></tr>
+              </table>
             </div>
-
           </div>
           }
         </mat-card-content>

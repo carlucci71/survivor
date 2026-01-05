@@ -152,7 +152,7 @@ public class LegaService {
                         });
             }
         }
-
+        lega.setStato(legaDTO.getStato());
         // Salva e ritorna
         return legaMapper.toDTO(legaRepository.save(lega));
     }
@@ -348,10 +348,31 @@ public class LegaService {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
             legaRepository.updateStatoById(legaDTO.getId(),Enumeratori.StatoLega.AVVIATA);
         }
-        if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA) {
+        if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+                && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
+                && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
+        ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaRepository.updateStatoById(legaDTO.getId(),Enumeratori.StatoLega.TERMINATA);
         }
+    }
+
+    @LoggaDispositiva(tipologia = "termina")
+    @Transactional
+    public LegaDTO termina(Long idLega) {
+        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
+        salva(legaDTO);
+        return getLegaDTO(legaDTO.getId(), true);
+    }
+
+    @LoggaDispositiva(tipologia = "riapri")
+    @Transactional
+    public LegaDTO riapri(Long idLega) {
+        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
+        salva(legaDTO);
+        return getLegaDTO(legaDTO.getId(), true);
     }
 
 
