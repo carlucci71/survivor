@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
@@ -25,11 +26,13 @@ public class GiocatoreService {
         Long userId = (Long) authentication.getPrincipal();
         return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).orElseGet(
                 () -> {
+                    //Se non esiste ancora un giocatore associato allo user, lo creo e glielo associo
                     Giocatore giocatore = new Giocatore();
-                    giocatore.setNome("TBD");
-                    giocatore.setUser(userRepository.findById(userId).get());
+                    User user = userRepository.findById(userId).get();
+                    giocatore.setUser(user);
+                    giocatore.setNome(user.getName());
                     giocatoreRepository.save(giocatore);
-                    return giocatoreRepository.findProjectionByUserId(giocatore.getId()).get();
+                    return giocatoreRepository.findProjectionByUserId(userId).get();
                 }
         ));
     }

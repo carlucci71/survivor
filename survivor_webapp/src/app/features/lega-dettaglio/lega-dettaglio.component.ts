@@ -296,6 +296,13 @@ export class LegaDettaglioComponent {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+  isChiudibile(): boolean{
+    return true;
+  }
+
+  chiusura(){
+  }
+
   sospensioni(){
     if (!this.lega || !this.lega.id) return;
     this.sospensioniService.getSospensioniLega(this.lega.id).subscribe({
