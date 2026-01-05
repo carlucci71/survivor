@@ -20,5 +20,8 @@ public interface GiocatoreRepository extends JpaRepository<Giocatore, Long> {
     Optional<Giocatore> findByGiocatoreLeghe_Lega_IdAndUser_Id(Long legaId, Long userId);
 
     Optional<Giocatore> findByUser_Id(Long id);
+
+
+
 }
 

@@ -570,7 +570,7 @@ public class LegaService {
         return """
                 Ciao,
                 
-                Sei stato invitato alla lega %s da %s :
+                Sei stato invitato alla lega %s da %s
                 Clicca sul link seguente per accedere a Survivor:
                 %s
                 
