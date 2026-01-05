@@ -22,12 +22,14 @@
           >
           }
           <mat-card-subtitle>
-            <div>Giornata calcolata:{{ lega.giornataCalcolata }}</div>
-            <div>Ruolo in Lega:{{ lega.ruoloGiocatoreLega.descrizione }}</div>
+            <div>Giornata calcolata: {{ lega.giornataCalcolata?lega.giornataCalcolata:'N/D' }}</div>
+            <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
+            <div>Stato Lega: {{ lega.stato.descrizione }}</div>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
           @if (isAdmin() || this.isLeaderLega()) {
+          @if (isAvviata()){
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
@@ -49,11 +51,21 @@
           @if (isChiudibile()){
           <mat-icon
             class="calcola-icon"
-            (click)="chiusura()"
+            (click)="termina()"
             matTooltip="Termina lega"
             >save_alt</mat-icon
           >
-          } } @if (lega.giocatori?.length) {
+          }
+          } 
+          @if (isTerminata()){
+          <mat-icon
+            class="calcola-icon"
+            (click)="riapri()"
+            matTooltip="Riapri lega"
+            >health_and_safety</mat-icon
+          >
+          }
+          } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
               <table

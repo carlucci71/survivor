@@ -34,7 +34,7 @@ public class GiocataRule implements GuardRule {
         Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega = legaDTO.getRuoloGiocatoreLega();
         Enumeratori.StatoPartita statoGiornataCorrente = legaDTO.getStatoGiornataCorrente();
         Integer giornata = (Integer) args.get(PARAM.GIORNATA);
-        GiocatoreDTO giocatoreDTO= (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
+        GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Optional<GiocataDTO> attGiocata = giocatoreDTO.getGiocate().stream()
                 .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(legaDTOId))
                 .findFirst();
@@ -49,28 +49,31 @@ public class GiocataRule implements GuardRule {
         if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
             throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getNome());
         }
-        if (giocatoreDTO.getStatiPerLega().getOrDefault(legaDTOId, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO){
+        if (giocatoreDTO.getStatiPerLega().getOrDefault(legaDTOId, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
         }
-        if (!userId.equals(giocatoreDTO.getUser().getId()) && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)){
-            throw new InsufficientAuthenticationException("Solo il leader o admin può giocare per un altro utente");
+        if (!userId.equals(giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId()) && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)) {
+            throw new AccessDeniedException("Solo il leader o admin può giocare per un altro utente");
         }
-        if (legaDTO.getGiornataCorrente() != legaDTO.getGiornataIniziale() + giornata -1){
-            throw new InsufficientAuthenticationException("Non è la giornata corrente");
+        if (legaDTO.getGiornataCorrente() != legaDTO.getGiornataIniziale() + giornata - 1) {
+            throw new AccessDeniedException("Non è la giornata corrente");
         }
-        if (attGiocata.isPresent() && attGiocata.get().getEsito() != null){
-            throw new InsufficientAuthenticationException("Giocata con esito!");
+        if (attGiocata.isPresent() && attGiocata.get().getEsito() != null) {
+            throw new AccessDeniedException("Giocata con esito!");
         }
-        if(statoGiornataCorrente == Enumeratori.StatoPartita.SOSPESA){
-            throw new InsufficientAuthenticationException("La giornata è sospesa");
+        if (statoGiornataCorrente == Enumeratori.StatoPartita.SOSPESA) {
+            throw new AccessDeniedException("La giornata è sospesa");
         }
-        if(statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)){
-            throw new InsufficientAuthenticationException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
+        if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)) {
+            throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
         if (giocatoreDTO.getGiocate().stream()
-                .filter(g->g.getLegaId().equals(legaDTOId) && squadra.equals(g.getSquadraSigla()))
-                .count()>0){
-            throw new InsufficientAuthenticationException("Squadra già usata");
+                .filter(g -> g.getLegaId().equals(legaDTOId) && squadra.equals(g.getSquadraSigla()))
+                .count() > 0) {
+            throw new AccessDeniedException("Squadra già usata");
+        }
+        if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
+            throw new AccessDeniedException("Lega in stato TERMINATA");
         }
     }
 

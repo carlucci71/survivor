@@ -66,5 +66,13 @@ export class LegaService {
     return this.http.put<Lega>(`${this.apiUrl}/undoCalcola/${id}`, {})
       .pipe(map(mapLegaFromBE));
   }
+  termina(id: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/termina/${id}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
+  riapri(id: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/riapri/${id}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
 
 }

@@ -82,4 +82,16 @@ public class LegaController {
         return ResponseEntity.ok(legaService.undoCalcola(idLega));
     }
 
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/termina/{idLega}")
+    public ResponseEntity<LegaDTO> termina(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.termina(idLega));
+    }
+
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/riapri/{idLega}")
+    public ResponseEntity<LegaDTO> riapri(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.riapri(idLega));
+    }
+
 }

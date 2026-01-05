@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.entity.Giocata;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,8 @@ public class GiocataService {
                     .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
         }
 
+        GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
+        List<GiocataDTO> giocate = new ArrayList<>(dto.getGiocate().stream().filter(g -> g.getGiornata() != request.getGiornata()).toList());
 
         Giocata giocata = giocataRepository.findByGiornataAndGiocatoreAndLega(request.getGiornata(), giocatore, lega).orElse(new Giocata());
         giocata.setGiornata(request.getGiornata());
@@ -47,12 +53,10 @@ public class GiocataService {
         giocata.setSquadra(squadra);
         giocata.setEsito(request.getEsitoGiocata());
         giocataRepository.save(giocata);
-        giocatore = giocatoreRepository.findById(request.getGiocatoreId())
-                .orElseThrow(() -> new IllegalArgumentException("Giocatore non trovato"));
-        GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
-        dto.setGiocate(
-                dto.getGiocate().stream().filter(g -> g.getLegaId().equals(lega.getId())).toList()
-        );
+
+        giocate.add(giocataMapper.toDTO(giocata));
+
+        dto.setGiocate(giocate);
         return dto;
     }
 }
