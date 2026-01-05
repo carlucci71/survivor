@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-light, #667eea) 0%, var(--primary-color, #764ba2) 100%);
   padding: 20px;
 }
 
@@ -55,7 +55,7 @@
   .btn-link {
     display: inline-block;
     padding: 12px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-light, #667eea) 0%, var(--primary-color, #764ba2) 100%);
     color: white;
     text-decoration: none;
     border-radius: 8px;
