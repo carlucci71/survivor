@@ -18,7 +18,7 @@
 			</thead>
 			<tbody>
 				<tr *ngFor="let l of leghe">
-					<td data-label="Nome">{{ l.nome }}</td>
+					<td data-label="Nome">{{ l.name }} [ed. {{ l.edizione }}]</td>
 					<td data-label="Sport ID">{{ l.campionato?.sport?.nome }}</td>
 					<td data-label="Campionato ID">{{ l.campionato!.nome}}</td>
 					<td data-label="Giornata Iniziale">{{ l.giornataIniziale }}</td>

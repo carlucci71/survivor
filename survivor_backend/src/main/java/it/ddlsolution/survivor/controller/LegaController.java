@@ -82,4 +82,26 @@ public class LegaController {
         return ResponseEntity.ok(legaService.undoCalcola(idLega));
     }
 
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/termina/{idLega}")
+    public ResponseEntity<LegaDTO> termina(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.termina(idLega));
+    }
+
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/riapri/{idLega}")
+    public ResponseEntity<LegaDTO> riapri(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.riapri(idLega));
+    }
+
+    @PutMapping("/nuovaEdizione/{idLega}")
+    public ResponseEntity<LegaDTO> nuovaEdizione(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.nuovaEdizione(idLega));
+    }
+
+    @PutMapping("/cancellaGiocatoreDaLega/{idLega}/{idGiocatore}")
+    public ResponseEntity<LegaDTO> cancellaGiocatoreDaLega(@PathVariable Long idLega,@PathVariable Long idGiocatore) {
+        return ResponseEntity.ok(legaService.cancellaGiocatoreDaLega(idLega, idGiocatore));
+    }
+
 }

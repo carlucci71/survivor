@@ -83,7 +83,7 @@ public class CacheableService {
                     iniziGiornate.add(inizioGiornata);
                     Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                     if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
-                        giornataDaGiocare = giornata;
+                        giornataDaGiocare = giornata+1;
                     }
                 }
             } while (giornata < campionatoDTO.getNumGiornate());

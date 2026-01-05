@@ -13,7 +13,8 @@ create table lega(
 	id serial primary key,
 	giornata_iniziale  integer NOT NULL,
 	giornata_calcolata  integer NULL,
-	nome varchar(100) not null,
+	name varchar(100) not null,
+	edizione integer NOT NULL DEFAULT 1;
 	stato char(1) not null,
 	pwd varchar(50) null,
 	id_campionato varchar(20) not null
@@ -116,7 +117,7 @@ ALTER TABLE param_log_dispositiva
 ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
 FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
-CREATE UNIQUE INDEX idx_lega_nome_unico ON lega (nome);
+CREATE UNIQUE INDEX idx_lega_name_unico ON lega (name,edizione);
 
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');

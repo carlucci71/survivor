@@ -9,6 +9,7 @@ import {
   Lega,
   RuoloGiocatore,
   StatoGiocatore,
+  StatoLega,
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
@@ -29,8 +30,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
-import { AdminService } from '../../core/services/admin.service';
-import { LoadingService } from '../../core/services/loading.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
@@ -65,7 +64,7 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 })
 export class LegaDettaglioComponent {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
-  
+
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -80,7 +79,6 @@ export class LegaDettaglioComponent {
     private route: ActivatedRoute,
     private legaService: LegaService,
     private campionatoService: CampionatoService,
-    private adminService: AdminService,
     private authService: AuthService,
     private squadraService: SquadraService,
     private utilService: UtilService,
@@ -88,7 +86,6 @@ export class LegaDettaglioComponent {
     private giocataService: GiocataService,
     private dialog: MatDialog,
     private sospensioniService: SospensioniService,
-    private loadingService: LoadingService
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -107,13 +104,19 @@ export class LegaDettaglioComponent {
     });
   }
 
-
-  
   getDesGiornataTitle(index: number): string {
-    if (!this.lega || !this.lega?.campionato || !this.lega?.campionato.sport|| !this.lega?.campionato.sport.id){
-      return "";
+    if (
+      !this.lega ||
+      !this.lega?.campionato ||
+      !this.lega?.campionato.sport ||
+      !this.lega?.campionato.sport.id
+    ) {
+      return '';
     }
-    return this.campionatoService.getDesGiornataNoAlias(this.lega?.campionato?.id,index);
+    return this.campionatoService.getDesGiornataNoAlias(
+      this.lega?.campionato?.id,
+      index
+    );
   }
 
   get maxGiornata(): number {
@@ -205,12 +208,11 @@ export class LegaDettaglioComponent {
     if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
       ret = false;
     }
-    if (giocatore.id===9){
-      //console.log(giocatore.nome + "-" + giocata?.squadraSigla + "-" + giornata+ "-" + ret)
+    if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+      ret = false;
     }
     return ret;
   }
-
 
   caricaTabella() {
     // Calcolo le colonne della tabella: includo SEMPRE la colonna della giornata corrente
@@ -223,13 +225,15 @@ export class LegaDettaglioComponent {
     const numGg = this.lega?.campionato?.numGiornate || 0;
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
+    } else if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+      maxGiornata--;
     }
-
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
     for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
       this.displayedColumns.push('giocata' + i);
     }
     // populate giornata indices 1..maxGiornata
+
     this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
 
     if (this.lega?.campionato) {
@@ -254,20 +258,22 @@ export class LegaDettaglioComponent {
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente
   getGiocataByGiornata(giocatore: Giocatore, giornata: number): Giocata | null {
-
     if (!giocatore || !giocatore.giocate) return null;
-    const giocata = (giocatore.giocate.find((g: Giocata) => Number(g?.giornata) === giornata) ||null);
-    if (giocatore.id===9){
-     // console.log(giocatore.nome + "-" + (giocata?.squadraSigla?giocata?.squadraSigla:'N/D') + "-" + giornata)
-  }
-  return giocata;
+    const giocata =
+      giocatore.giocate.find(
+        (g: Giocata) => Number(g?.giornata) === giornata
+      ) || null;
+    if (giocatore.id === 9) {
+      // console.log(giocatore.nome + "-" + (giocata?.squadraSigla?giocata?.squadraSigla:'N/D') + "-" + giornata)
+    }
+    return giocata;
   }
 
   track(index: number, item: any) {
     return index;
   }
 
-  getSquadraNome(squadraSigla: string|null): string|null {
+  getSquadraNome(squadraSigla: string | null): string | null {
     if (!this.lega?.campionato?.id) return squadraSigla;
     return this.squadraService.getSquadraNomeBySigla(
       squadraSigla,
@@ -292,16 +298,90 @@ export class LegaDettaglioComponent {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
+ isInLega(): boolean {
+    const ruolo = this.lega?.ruoloGiocatoreLega;
+    return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
+  }
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
-  sospensioni(){
+  isChiudibile(): boolean {
+    let contaAttivi = 0;
+    let giocatori = this.lega!.giocatori;
+    if (giocatori && giocatori[0]) {
+      for (const giocatore of giocatori) {
+        if (
+          giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
+          StatoGiocatore.ATTIVO.value
+        ) {
+          contaAttivi++;
+        }
+      }
+    }
+    return contaAttivi <= 3;
+  }
+
+  termina() {
+    this.legaService.termina(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel termina della lega';
+      },
+    });
+  }
+  riapri() {
+    this.legaService.riapri(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel riapri della lega';
+      },
+    });
+  }
+
+  isAvviata(): boolean {
+    return this.lega!.stato.value === StatoLega.AVVIATA.value;
+  }
+
+  isDaAvviare(): boolean {
+    return this.lega!.stato.value === StatoLega.DA_AVVIARE.value;
+  }
+
+  isTerminata(): boolean {
+    return this.lega!.stato.value === StatoLega.TERMINATA.value;
+  }
+
+  notExistsNuovaEdizione(): boolean {
+    return (
+      this.lega!.edizione ===
+      this.lega?.edizioni[this.lega?.edizioni.length - 1]
+    );
+  }
+  cancellaGiocatore(giocatore: Giocatore) {
+    this.legaService.cancellaGiocatoreDaLega(Number(this.id), giocatore).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore nel termina della lega';
+      },
+    });
+
+  }
+
+  sospensioni() {
     if (!this.lega || !this.lega.id) return;
     this.sospensioniService.getSospensioniLega(this.lega.id).subscribe({
       next: (res: any) => {
         let data = { idLega: this.lega!.id, giornate: [] as number[] };
-        if (Array.isArray(res) && res.length>0) {
+        if (Array.isArray(res) && res.length > 0) {
           data.giornate = res[0].giornate || [];
         }
         const dialogRef = this.dialog.open(SospensioniDialogComponent, {
@@ -316,31 +396,32 @@ export class LegaDettaglioComponent {
               this.scrollTableToRight();
             },
             error: (err) => {
-              console.error('Errore nel ricaricamento della lega dopo chiusura modale:', err);
-            }
+              console.error(
+                'Errore nel ricaricamento della lega dopo chiusura modale:',
+                err
+              );
+            },
           });
         });
       },
       error: (err) => {
         console.error('Errore caricamento sospensioni', err);
-      }
+      },
     });
   }
   calcolaGiornata() {
-    this.legaService
-      .calcola(Number(this.id))
-      .subscribe({
-        next: (lega: Lega) => {
-          this.lega = lega;
-          this.caricaTabella();
-          this.scrollTableToRight();
-        },
-        error: (err: any) => {
-          this.error = 'Errore nel caricamento della lega';
-        },
-      });
+    this.legaService.calcola(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+        this.scrollTableToRight();
+      },
+      error: (err: any) => {
+        this.error = 'Errore in calcola della lega';
+      },
+    });
   }
-  
+
   private scrollTableToRight(): void {
     setTimeout(() => {
       if (this.tableWrapper?.nativeElement) {
@@ -356,7 +437,7 @@ export class LegaDettaglioComponent {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel caricamento della lega';
+        this.error = 'Errore in undocalcola della lega';
       },
     });
   }

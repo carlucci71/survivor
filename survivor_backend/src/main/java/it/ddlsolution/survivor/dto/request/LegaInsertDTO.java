@@ -9,7 +9,7 @@ import lombok.Data;
 @Valid
 public class LegaInsertDTO {
     @NotBlank @NotNull
-    private String nome;
+    private String name;
     @NotBlank @NotNull
     private String sport;
     @NotBlank @NotNull

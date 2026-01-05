@@ -44,48 +44,79 @@
         </mat-card>
       }
 
-      @if (leghe.length > 0) {
-        <div class="leghe-grid">
-          @for (lega of leghe; track lega.id) {
-          <mat-card class="lega-card">
-            <mat-card-header>
-              <mat-card-title>{{ lega.nome }}</mat-card-title>
-              @if (lega.campionato?.id ?? '') {
-                <mat-card-subtitle>{{ lega.campionato?.sport?.nome  }} - {{ lega.campionato?.nome ?? '' }}</mat-card-subtitle>
-              }
-                <mat-card-subtitle>{{ lega.stato.descrizione }}</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="primary" (click)="goToLega(lega.id)">Visualizza</button>
-              @if (visualizzaInvito(lega)){
-              <button mat-raised-button color="accent" (click)="openInvitaDialog(lega)">Invita utenti</button>
-              }
-            </mat-card-actions>
-          </mat-card>
+      @if (groupedLeghe.length > 0) {
+        <div class="leghe-groups">
+          @for (group of groupedLeghe; track group.name) {
+            <mat-card class="lega-group-card">
+              <mat-card-header>
+                <mat-card-title>{{ group.name }}</mat-card-title>
+                <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="edizioni-list">
+                  @for (edizione of group.edizioni; track edizione.id) {
+                    <mat-card class="lega-card small">
+                      <mat-card-header>
+                        <mat-card-title>Edizione {{ edizione.edizione }}</mat-card-title>
+                        <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
+                      </mat-card-header>
+                      <mat-card-actions>
+                        <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">Visualizza</button>
+                        @if (visualizzaInvito(edizione)){
+                        <button mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">Invita utenti</button>
+                        }
+                        @if (isTerminata(edizione) && notExistsNuovaEdizione(edizione)){
+                        <button mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">Nuova Edizione</button>
+                        }
+                      </mat-card-actions>
+                    </mat-card>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
           }
         </div>
       }
       </section>
       <section class="leghe-section">
       <h2>Nuove leghe</h2>
-        <div class="leghe-grid">
-          <mat-card class="lega-card">
+        <div class="leghe-groups">
+          <mat-card class="lega-group-card">
             <mat-card-header>
-              <mat-card-title>Crea una nuova lega</mat-card-title>
+              <mat-card-title></mat-card-title>
             </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="primary" (click)="goToCreaLega()">Crea</button>
-            </mat-card-actions>
+            <mat-card-content>
+              <div class="edizioni-list">
+                <mat-card class="lega-card small">
+                  <mat-card-header>
+                    <mat-card-title>Crea una nuova lega</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button mat-raised-button color="warn" (click)="goToCreaLega()">Crea</button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </mat-card-content>
           </mat-card>
-          <mat-card class="lega-card">
+
+          <mat-card class="lega-group-card">
             <mat-card-header>
-              <mat-card-title>Unisciti ad una lega esistente</mat-card-title>
+              <mat-card-title></mat-card-title>
             </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="primary" (click)="goToUniscitiLega()">Unisciti</button>
-            </mat-card-actions>
+            <mat-card-content>
+              <div class="edizioni-list">
+                <mat-card class="lega-card small">
+                  <mat-card-header>
+                    <mat-card-title>Unisciti ad una lega esistente</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button mat-raised-button color="warn" (click)="goToUniscitiLega()">Unisciti</button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </mat-card-content>
           </mat-card>
-      </div>
+        </div>
     </section>
   </main>
 </div>
