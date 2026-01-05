@@ -12,7 +12,7 @@ public interface GiocatoreLegaMapper extends DtoMapper<GiocatoreLegaDTO, Giocato
     @Mapping(source = "id.idGiocatore", target = "idGiocatore")
     @Mapping(source = "id.idLega", target = "idLega")
     @Mapping(source = "giocatore.nome", target = "nomeGiocatore")
-    @Mapping(source = "lega.nome", target = "nomeLega")
+    @Mapping(source = "lega.name", target = "nomeLega")
     GiocatoreLegaDTO toDTO(GiocatoreLega giocatoreLega);
 
     @Mapping(source = "idGiocatore", target = "id.idGiocatore")

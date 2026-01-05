@@ -16,11 +16,11 @@
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Nome lega</mat-label>
               <input matInput placeholder="Nome lega" 
-                name="nome"
-                [(ngModel)]="nome"
-                (blur)="nomeTouched = true"
+                name="name"
+                [(ngModel)]="name"
+                (blur)="nameTouched = true"
               />
-              <mat-error *ngIf="nomeTouched && !nome">Nome lega obbligatorio</mat-error>
+              <mat-error *ngIf="nameTouched && !name">Nome lega obbligatorio</mat-error>
             </mat-form-field>
           </div>
           <div class="form-row">
@@ -95,7 +95,7 @@
           <mat-card class="confirmation-card">
             <mat-card-content>
               <p class="success-message">
-                La lega <b>{{nome}}</b> è stata creata con successo.
+                La lega <b>{{name}}</b> è stata creata con successo.
               </p>
               <p>
                 Puoi dire ai tuoi amici di cercare la lega all'url 

@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface LegaRepository extends JpaRepository<Lega, Long> {
     List<Lega> findByGiocatoreLeghe_Giocatore_User_Id(Long id);
 
-    @Query("SELECT l.id as id, l.nome as nome, l.stato as stato,l.giornataIniziale as giornataIniziale, " +
+    @Query("SELECT l.id as id, l.name as name, l.edizione as edizione, l.stato as stato,l.giornataIniziale as giornataIniziale, " +
            "l.giornataCalcolata as giornataCalcolata, l.campionato as campionato " +
            "FROM Lega l LEFT JOIN l.campionato c LEFT JOIN c.sport s WHERE l.id = :id")
     Optional<LegaProjection> findProjectionById(@Param("id") Long id);
@@ -24,15 +24,11 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     @Query("select l from Lega l")
     List<LegaProjection> allLeghe();
 
-    Optional<Lega> findByNome(String nome);
+    Optional<Lega> findByName(String name);
 
-    List<LegaProjection> findByStato(Enumeratori.StatoLega stato);
-/*
-    @Query("""
-            select l from Lega l inner join l.giocatoreLeghe giocatoreLeghe
-            where l.stato = ?1 and giocatoreLeghe.giocatore.user.id <> ?2""")
-    List<Lega> findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega stato, Long userId);
-*/
+    @Query("SELECT l.edizione FROM Lega l WHERE l.name = :name")
+    List<Integer> findEdizioniByName(@Param("name") String name);
+
     @Query("""
         SELECT l FROM Lega l
         WHERE l.stato = :stato
@@ -48,9 +44,7 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     );
 
     @Modifying
-    @Transactional
-    @Query("UPDATE Lega l SET l.stato = :stato WHERE l.id = :id")
-    int updateStatoById(@Param("id") Long id, @Param("stato") Enumeratori.StatoLega stato);
-
+//    @Transactional
+    @Query("DELETE FROM GiocatoreLega gl WHERE gl.lega.id = :idLega AND gl.giocatore.id = :idGiocatore")
+    int deleteGiocatoreLegaByLegaIdAndGiocatoreId(@Param("idLega") Long idLega, @Param("idGiocatore") Long idGiocatore);
 }
-

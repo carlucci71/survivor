@@ -51,13 +51,13 @@ export class LegaNuovaComponent implements OnInit {
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
-  nome!: string;
+  name!: string;
   giornataIniziale: number | null = null;
   pwd: string | null = null;
   sportDisponibili: Sport[] = [];
   campionatiDisponibili: Campionato[] = [];
   // validation touch states
-  nomeTouched = false;
+  nameTouched = false;
   sportTouched = false;
   campionatoTouched = false;
   giornataTouched = false;
@@ -118,7 +118,7 @@ export class LegaNuovaComponent implements OnInit {
 
   isFormValid(): boolean {
     return (
-      !!this.nome &&
+      !!this.name &&
       !!this.sportSel &&
       !!this.campionatoSel &&
       this.isGiornataValid()
@@ -126,12 +126,12 @@ export class LegaNuovaComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.nome = '';
+    this.name = '';
     this.sportSel = null;
     this.campionatoSel = null;
     this.giornataIniziale = null;
     this.pwd = null;
-    this.nomeTouched = false;
+    this.nameTouched = false;
     this.sportTouched = false;
     this.campionatoTouched = false;
     this.giornataTouched = false;
@@ -139,7 +139,7 @@ export class LegaNuovaComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.nomeTouched = true;
+    this.nameTouched = true;
     this.sportTouched = true;
     this.campionatoTouched = true;
     this.giornataTouched = true;
@@ -149,7 +149,7 @@ export class LegaNuovaComponent implements OnInit {
     }
     this.legaService
       .inserisciLega(
-        this.nome!,
+        this.name!,
         this.sportSel!,
         this.campionatoSel!.id,
         this.giornataIniziale!,

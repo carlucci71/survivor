@@ -14,22 +14,23 @@
       } @if (lega) {
       <mat-card class="lega-card">
         <mat-card-header>
-          <mat-card-title>{{ lega.nome }}</mat-card-title>
-          @if (lega.campionato?.id) {
-          <mat-card-subtitle
-            >{{ lega.campionato?.sport?.id }} -
-            {{ lega.campionato?.nome }}</mat-card-subtitle
+          <mat-card-title
+            >{{ lega.name }} - Edizione {{ lega.edizione }}</mat-card-title
           >
-          }
           <mat-card-subtitle>
-            <div>Giornata calcolata: {{ lega.giornataCalcolata?lega.giornataCalcolata:'N/D' }}</div>
+            <mat-card-subtitle
+              >{{ lega.campionato?.sport?.id }} -
+              {{ lega.campionato?.nome }}</mat-card-subtitle
+            >
+            @if (lega.giornataCalcolata){
+            <div>Giornata calcolata: {{ lega.giornataCalcolata }}</div>
+            }
             <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
             <div>Stato Lega: {{ lega.stato.descrizione }}</div>
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          @if (isAdmin() || this.isLeaderLega()) {
-          @if (isAvviata()){
+          @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
           <mat-icon
             class="calcola-icon"
             (click)="calcolaGiornata()"
@@ -55,17 +56,14 @@
             matTooltip="Termina lega"
             >save_alt</mat-icon
           >
-          }
-          } 
-          @if (isTerminata()){
+          } } @if (isTerminata() && notExistsNuovaEdizione() ){
           <mat-icon
             class="calcola-icon"
             (click)="riapri()"
             matTooltip="Riapri lega"
             >health_and_safety</mat-icon
           >
-          }
-          } @if (lega.giocatori?.length) {
+          } } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
               <table
@@ -75,7 +73,16 @@
               >
                 <ng-container matColumnDef="nome">
                   <th mat-header-cell *matHeaderCellDef class="headerRow"></th>
+                  <!--D Nome del giocatore-->
                   <td mat-cell *matCellDef="let giocatore">
+                    @if(isDaAvviare() && isInLega()){
+                    <mat-icon
+                      class="calcola-icon"
+                      (click)="cancellaGiocatore(giocatore)"
+                      matTooltip="Rimuovi il giocatore"
+                      >delete</mat-icon
+                    >
+                    }
                     <span class="nome-giocatore">
                       {{ giocatore.nome }}
                     </span>

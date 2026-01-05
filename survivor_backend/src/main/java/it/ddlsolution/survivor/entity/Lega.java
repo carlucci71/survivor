@@ -29,8 +29,11 @@ public class Lega {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome", nullable = false, length = 100)
-    private String nome;
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "edizione", nullable = false)
+    private Integer edizione;
 
     @Column(name = "giornata_iniziale", nullable = false)
     private int giornataIniziale;

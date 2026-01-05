@@ -47,7 +47,7 @@ public class GiocataRule implements GuardRule {
         log.info("legaDTO.getGiornataIniziale() = {}", legaDTO.getGiornataIniziale());
 
         if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
-            throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getNome());
+            throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getName() + "-" + legaDTO.getEdizione());
         }
         if (giocatoreDTO.getStatiPerLega().getOrDefault(legaDTOId, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
