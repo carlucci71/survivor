@@ -64,12 +64,12 @@
             >health_and_safety</mat-icon
           >
           } } @if (lega.giocatori?.length) {
-          <div class="table-horizontal-wrapper">
+          <div class="table-horizontal-wrapper desktop-only">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
               <table
-                mat-table
-                [dataSource]="lega.giocatori || []"
-                class="giocatori-table"
+                  mat-table
+                  [dataSource]="lega.giocatori || []"
+                  class="giocatori-table"
               >
                 <ng-container matColumnDef="nome">
                   <th mat-header-cell *matHeaderCellDef class="headerRow"></th>
@@ -163,6 +163,42 @@
                   [class.eliminato-row]="row.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
                 ></tr>
               </table>
+            </div>
+          </div>
+
+          <!-- Mobile stacked view: shown only on small screens via CSS -->
+          <div class="stacked-view mobile-only">
+            <div *ngFor="let giocatore of lega.giocatori" class="player-card">
+              <div class="player-header">
+                <span class="nome-giocatore">{{ giocatore.nome }}</span>
+              </div>
+              <div class="giornate-list">
+                <div *ngFor="let giornata of mobileGiornateIndices()" class="giornata-item">
+                  <div class="giornata-title">
+                    {{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}
+                  </div>
+                  <div class="stato-giornata-mobile">
+                    {{ lega.statiGiornate?.[giornata + lega.giornataIniziale - 1]?.descrizione }}
+                  </div>
+                  <div class="team-pill"
+                    [ngClass]="{
+                      ok: getGiocataByGiornata(giocatore, giornata)?.esito === 'OK',
+                      ko: getGiocataByGiornata(giocatore, giornata)?.esito === 'KO',
+                      empty: !getGiocataByGiornata(giocatore, giornata)?.esito
+                    }"
+                    [title]="getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)">
+                    {{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}
+                  </div>
+                  <div *ngIf="visualizzaGiocata(giornata, giocatore)" class="mobile-gioca">
+                    <mat-icon
+                      class="gioca-icon"
+                      matTooltip="Gioca ora"
+                      (click)="giocaGiornata(giocatore, giornata)"
+                      >{{ getGiocaIcon() }}</mat-icon
+                    >
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           }

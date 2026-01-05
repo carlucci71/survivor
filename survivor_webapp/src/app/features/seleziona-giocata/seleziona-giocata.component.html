@@ -21,10 +21,14 @@
     <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
   </div>
 
+  <!-- Tabs to switch between result sections (mobile-friendly) -->
+  <!-- Tabs moved below the 'vs' next-opponent span per user request -->
+
   @if(squadreDisponibili.length>0){
   <div class="squadra-select-save">
-    <mat-form-field appearance="outline" class="select-squadra">
+    <mat-form-field #selectField appearance="outline" class="select-squadra">
       <mat-select
+        #teamSelect
         placeholder="Seleziona squadra"
         [(ngModel)]="squadraSelezionata"
         (selectionChange)="mostraUltimiRisultati(); mostraProssimePartite()"
@@ -38,6 +42,7 @@
     <button
       mat-raised-button
       color="primary"
+      class="save-small"
       (click)="salvaSquadra()"
       [disabled]="!squadraSelezionata"
     >
@@ -46,10 +51,17 @@
     <span class="next-opponent" *ngIf="getNextOpponentSigla(false)"
       >vs {{ getNextOpponentSigla(false) }}</span
     >
+    <!-- Tabs moved here: under the 'vs' opponent label -->
+    <div class="result-tabs" *ngIf="ultimiRisultati.length || prossimePartite.length || ultimiRisultatiOpponent.length">
+      <button class="tab" [class.active]="activeTab === 'ultimi'" (click)="setActiveTab('ultimi')">Ultimi</button>
+      <button class="tab" [class.active]="activeTab === 'prossime'" (click)="setActiveTab('prossime')">Prossime</button>
+      <button class="tab" [class.active]="activeTab === 'opponent'" (click)="setActiveTab('opponent')">{{getNextOpponentSigla(false)}}</button>
+    </div>
   </div>
-  <div class="risultati-row">
-    <div class="risultati-col" role="region" aria-label="Ultimi risultati">
-      <h3 class="risultati-title">Ultimi Risultati</h3>
+  <div class="risultati-row" #risultatiRow>
+    <!-- On desktop show all three columns side-by-side; on mobile show only the active tab column -->
+    <div *ngIf="!isMobile || activeTab === 'ultimi'" class="risultati-col" role="region" aria-label="Ultimi risultati">
+      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Ultimi Risultati</h3>
       @if (squadraSelezionata && ultimiRisultati.length === 0) {
       <div>Nessun risultato recente</div>
       } @for (risultato of ultimiRisultati; track risultato.giornata) {
@@ -106,8 +118,8 @@
       }
     </div>
 
-    <div class="risultati-col" role="region" aria-label="Prossime partite">
-      <h3 class="risultati-title">Prossime partite</h3>
+    <div *ngIf="!isMobile || activeTab === 'prossime'" class="risultati-col" role="region" aria-label="Prossime partite">
+      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Prossime partite</h3>
       @if (squadraSelezionata && prossimePartite.length === 0) {
       <div>Nessuna partita in programma</div>
       } @for (risultato of prossimePartite; track risultato.giornata) {
@@ -136,16 +148,8 @@
       }
     </div>
 
-    <div
-      class="risultati-col"
-      role="region"
-      [attr.aria-label]="
-        'Ultimi risultati ' + (getNextOpponentSigla(false) || '')
-      "
-    >
-      <h3 class="risultati-title">
-        Ultimi Risultati {{ getNextOpponentSigla(false) }}
-      </h3>
+    <div *ngIf="!isMobile || activeTab === 'opponent'" class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
+      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Ultimi Risultati {{ getNextOpponentSigla(false) }}</h3>
       @if (squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
       <div>Nessun risultato recente per {{ getNextOpponentSigla(false) }}</div>
       } @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {

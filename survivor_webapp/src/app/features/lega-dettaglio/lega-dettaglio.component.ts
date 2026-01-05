@@ -250,6 +250,17 @@ export class LegaDettaglioComponent {
     }
   }
 
+  /**
+   * Returns the subset of giornata indices that are currently displayed
+   * in the desktop table. This ensures mobile stacked view shows the
+   * same set of giornate.
+   */
+  mobileGiornateIndices(): number[] {
+    const numCols = Math.max(0, this.displayedColumns.length - 1); // exclude 'nome'
+    if (!this.giornataIndices || numCols <= 0) return [];
+    return this.giornataIndices.slice(0, numCols);
+  }
+
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
     const giocateIds = (giocatore.giocate || []).map((g: any) => g.squadraId);
@@ -273,10 +284,11 @@ export class LegaDettaglioComponent {
     return index;
   }
 
-  getSquadraNome(squadraSigla: string | null): string | null {
-    if (!this.lega?.campionato?.id) return squadraSigla;
+  getSquadraNome(squadraSigla: string | null | undefined): string | null {
+    const sigla = squadraSigla ?? null;
+    if (!this.lega?.campionato?.id) return sigla;
     return this.squadraService.getSquadraNomeBySigla(
-      squadraSigla,
+      sigla,
       this.lega?.campionato?.id
     );
   }
