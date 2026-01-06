@@ -74,7 +74,7 @@ public class CacheableService {
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
             List<LocalDateTime> iniziGiornate=new ArrayList<>();
             int giornata = 0;
-            int giornataDaGiocare = 0;
+            Integer giornataDaGiocare = null;
             do {
                 giornata++;
                 List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
@@ -82,7 +82,8 @@ public class CacheableService {
                     LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
                     iniziGiornate.add(inizioGiornata);
                     Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                    log.info("La giornata {} è {}",giornata, statoPartitaGiornata);
+                    if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
                         giornataDaGiocare = giornata+1;
                     }
                 }
