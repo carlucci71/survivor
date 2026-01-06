@@ -44,7 +44,9 @@ public class GiocataService {
         }
 
         GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
-        List<GiocataDTO> giocate = new ArrayList<>(dto.getGiocate().stream().filter(g -> g.getGiornata() != request.getGiornata()).toList());
+        List<GiocataDTO> giocate = new ArrayList<>(dto.getGiocate().stream()
+                .filter(g -> g.getLegaId().equals(lega.getId()) && g.getGiornata() != request.getGiornata())
+                .toList());
 
         Giocata giocata = giocataRepository.findByGiornataAndGiocatoreAndLega(request.getGiornata(), giocatore, lega).orElse(new Giocata());
         giocata.setGiornata(request.getGiornata());
