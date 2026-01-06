@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { MatToolbar } from "@angular/material/toolbar";
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle } from "@angular/material/card";
+import { MatCard, MatCardHeader } from "@angular/material/card";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatButton } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -11,10 +10,11 @@ import { FormsModule } from '@angular/forms';
 import { GiocatoreService } from '../../core/services/giocatore.service';
 import { Giocatore } from '../../core/models/interfaces.model';
 import { finalize } from 'rxjs';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-me',
-  imports: [MatToolbar, MatCard, MatCardHeader, MatCardTitle, MatCardSubtitle, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton],
+  imports: [HeaderComponent, MatCard, MatCardHeader, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss']
 })

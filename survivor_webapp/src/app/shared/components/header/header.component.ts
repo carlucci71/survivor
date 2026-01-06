@@ -65,7 +65,6 @@ import { MatLabel } from '@angular/material/form-field';
       .header-content ::ng-deep .config-user {
         margin-left: auto;
       }
-      .header-content ::ng-deep .config-user { margin-left: auto; }
       .actions {
         display: flex;
         gap: 15px;

@@ -32,7 +32,6 @@ import { environment } from '../../../environments/environment';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    ErrorDialogComponent,
     FormsModule,
     MatChipsModule,
     MatIconModule,

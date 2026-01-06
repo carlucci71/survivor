@@ -57,7 +57,6 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    SospensioniDialogComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],

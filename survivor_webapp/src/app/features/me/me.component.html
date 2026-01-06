@@ -1,22 +1,11 @@
 <div class="me-dettaglio-container">
-  <mat-toolbar color="primary" class="header">
-    <div class="header-content">
-      <h1>Personalizza giocatore</h1>
-      <div class="config-user">
-        <button mat-button (click)="goBack()" class="btn-back">
-          ← Torna alla Home
-        </button>
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="logout()"
-          class="btn-logout"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  </mat-toolbar>
+  <app-header
+    title="Giocatore"
+    visHome="S"
+    visLogout="N"
+    (back)="goBack()"
+    (logout)="logout()"
+  ></app-header>
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
