@@ -49,6 +49,12 @@
         }
       }
 
+      /* render newline characters returned by getNome() */
+      .config-user .config-user-name {
+        white-space: pre-line; /* preserve line breaks from the string */
+        line-height: 1.05;
+      }
+
       .btn-logout {
         padding: 6px 12px;
         background-color: rgba(255, 255, 255, 0.14);
@@ -474,4 +480,58 @@ mat-chip.config-user {
     flex: 0 0 auto;
   }
   .lega-card.small mat-card-header { order: 1; }
+}
+
+/* High-specificity override: ensure username renders newlines and is not clipped */
+.header .header-content .config-user .config-user-name {
+  white-space: pre-line !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  max-width: none !important;
+  display: inline-block !important;
+  word-break: break-word !important;
+}
+
+/* Make the config-user chip fully adaptive in width and height */
+.header .header-content .config-user mat-chip.config-user,
+mat-chip.config-user {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 1px !important;
+  padding: 1px 4px !important;
+  box-sizing: border-box !important;
+  flex-wrap: wrap !important; /* allow content to wrap to new lines */
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important; /* don't overflow the container */
+  overflow: visible !important;
+  position: relative !important; /* allow absolute positioning of icon */
+}
+
+.header .header-content .config-user mat-chip.config-user .config-user-name,
+mat-chip.config-user .config-user-name {
+  display: block !important;
+  flex: 0 1 auto !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: none !important;
+  padding-right: 8px !important; /* reserve minimal space for the icon on the right */
+  overflow-wrap: anywhere !important; /* allow breaking inside long words */
+  word-break: break-all !important; /* ensure continuous strings can wrap */
+}
+
+.header .header-content .config-user mat-chip.config-user .calcola-icon,
+mat-chip.config-user .calcola-icon {
+  margin-left: 6px !important;
+  flex: 0 0 auto !important;
+  align-self: center !important;
+  position: absolute !important;
+  right: 4px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 5 !important;
+  font-size: 18px !important;
+  width: 20px !important;
+  height: 20px !important;
 }

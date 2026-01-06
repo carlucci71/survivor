@@ -17,6 +17,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -49,6 +50,8 @@ export class HomeComponent implements OnInit {
     private giocatoreService: GiocatoreService,
     private router: Router,
     private dialog: MatDialog
+    ,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +64,25 @@ export class HomeComponent implements OnInit {
     this.loadLeghe();
   }
 
+  getNome(): string {
+    // return name with newlines between words; safe if me or nome are undefined
+    return (this.me?.nome || '').replaceAll(' ', '\n');
+  }
+
+  getNomeHtml(): SafeHtml {
+    const nome = (this.me?.nome || '');
+    // split into tokens (words) which are rendered on separate lines
+    const tokens = nome.split(' ');
+    const processed = tokens.map((t) => {
+      if (!t) return t;
+      if (t.length > 20) {
+        return t.slice(0, 17) + '...';
+      }
+      return t;
+    });
+    const raw = processed.join('<br/>');
+    return this.sanitizer.bypassSecurityTrustHtml(raw);
+  }
   visualizzaInvito(lega: Lega): boolean {
     return lega.stato.value === StatoLega.DA_AVVIARE.value;
   }
