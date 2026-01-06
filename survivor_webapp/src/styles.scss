@@ -82,3 +82,18 @@ html, body {
 
 /* Clean approach: no overlay manipulation needed */
 
+/* Global override: ensure action buttons in .lega-card have spacing
+   This is global and uses !important to override other component-scoped rules
+   in case those are taking precedence at runtime. */
+.lega-card.small mat-card-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-start !important;
+  align-items: left !important;
+}
+
+/* Also ensure individual buttons don't collapse margins */
+.lega-card.small mat-card-actions button {
+  margin: 0 !important;
+}
+
