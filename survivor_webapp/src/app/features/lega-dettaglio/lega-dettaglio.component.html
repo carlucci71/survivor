@@ -23,7 +23,10 @@
               {{ lega.campionato?.nome }}</mat-card-subtitle
             >
             @if (lega.giornataCalcolata){
-            <div>Giornata calcolata: {{ lega.giornataCalcolata }}</div>
+            <div>Calcolata: {{ getDesGiornataTitle(lega.giornataCalcolata) }}</div>
+            }
+            @if (lega.giornataDaGiocare <= lega.campionato?.numGiornate!!){
+            <div>Prossima di campionato: {{ getDesGiornataTitle(lega.giornataDaGiocare) }}</div>
             }
             <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
             <div>Stato Lega: {{ lega.stato.descrizione }}</div>

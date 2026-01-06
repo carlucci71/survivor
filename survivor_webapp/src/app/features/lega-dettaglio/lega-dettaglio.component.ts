@@ -57,7 +57,6 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    SospensioniDialogComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -209,6 +208,9 @@ export class LegaDettaglioComponent {
       ret = false;
     }
     if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+      ret = false;
+    }
+    if (this.lega!.giornataDaGiocare < this.lega!.giornataCorrente) {
       ret = false;
     }
     return ret;
