@@ -6,7 +6,12 @@
     (logout)="logout()"
   >
     <mat-chip class="config-user" [class.short-name]="(me?.nome?.length || 0) <= 6">
-      <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
+      <ng-container *ngIf="isMobile; else desktopName">
+        <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
+      </ng-container>
+      <ng-template #desktopName>
+        <span class="config-user-name">{{ me?.nome }}</span>
+      </ng-template>
       <mat-icon
         class="calcola-icon"
         (click)="goToMe()"

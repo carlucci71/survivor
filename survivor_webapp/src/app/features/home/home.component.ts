@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -36,7 +36,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  isMobile = false;
+  private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
   groupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
@@ -62,6 +64,19 @@ export class HomeComponent implements OnInit {
       },
     });
     this.loadLeghe();
+    // detect mobile breakpoint
+    this.isMobile = window.innerWidth <= 768;
+    this.resizeHandler = () => {
+      this.isMobile = window.innerWidth <= 768;
+    };
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  ngOnDestroy(): void {
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+      this.resizeHandler = null;
+    }
   }
 
   getNome(): string {
