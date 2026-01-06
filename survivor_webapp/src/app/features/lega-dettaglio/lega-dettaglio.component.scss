@@ -572,6 +572,13 @@
 	.giocatori-table td .team-name, .team-name {
 		max-width: 120px !important;
 	}
+
+	/* Ensure eliminated rows highlight only the player name on small screens */
+	.eliminato-row .nome-giocatore {
+		background: #d32f2f !important;
+		color: #fff !important;
+		border: 1px solid #b71c1c !important;
+	}
 }
 
 /* Extra adjustments for very small/mobile screens to improve readability
@@ -645,6 +652,13 @@
 	.nome-giocatore {
 		font-size: 0.86rem;
 		padding: 4px 6px;
+	}
+
+	/* Reinforce eliminato styling for very small screens (stacked/mobile) - only player name */
+	.eliminato-row .nome-giocatore {
+		background: #d32f2f !important;
+		color: #fff !important;
+		border: 1px solid #b71c1c !important;
 	}
 
 	/* So the visual highlight for current column doesn't produce huge shadows on small screens */
