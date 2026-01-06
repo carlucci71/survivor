@@ -86,16 +86,33 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getNomeHtml(): SafeHtml {
     const nome = (this.me?.nome || '');
-    // split into tokens (words) which are rendered on separate lines
-    const tokens = nome.split(' ');
-    const processed = tokens.map((t) => {
-      if (!t) return t;
-      if (t.length > 20) {
-        return t.slice(0, 17) + '...';
+    // Greedy pack words into lines up to 20 characters.
+    // If a word exceeds 20 chars, truncate to 17 + '...'.
+    const maxChars = 20;
+    const truncateLen = 17;
+    const tokens = nome.split(/\s+/).filter(Boolean);
+    const lines: string[] = [];
+    let cur = '';
+
+    for (let w of tokens) {
+      if (w.length > maxChars) {
+        w = w.slice(0, truncateLen) + '...';
       }
-      return t;
-    });
-    const raw = processed.join('<br/>');
+      if (!cur) {
+        cur = w;
+        continue;
+      }
+      // try to append to current line (with a space)
+      if ((cur.length + 1 + w.length) <= maxChars) {
+        cur = cur + ' ' + w;
+      } else {
+        lines.push(cur);
+        cur = w;
+      }
+    }
+    if (cur) lines.push(cur);
+
+    const raw = lines.join('<br/>');
     return this.sanitizer.bypassSecurityTrustHtml(raw);
   }
   visualizzaInvito(lega: Lega): boolean {
