@@ -1,0 +1,84 @@
+.lega-card.small {
+  background: white;
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(18,18,18,0.04);
+  max-width: 720px; /* keep cards narrow */
+  width: auto;
+  margin: 0 auto; /* center when parent is wide */
+
+  mat-card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111;
+  }
+
+  mat-card-subtitle {
+    color: #7a7a7a;
+    margin-top: 6px;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  mat-card-actions { padding-top: 12px; }
+}
+
+/* Desktop/layout tweaks copied from home styles to ensure consistency */
+@media (min-width: 901px) {
+  .lega-card.small {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 18px 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .lega-card.small {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .lega-card.small mat-card-header {
+    width: 100%;
+    padding: 8px 10px 4px 10px;
+  }
+  .lega-card.small mat-card-title {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+  }
+  .lega-card.small mat-card-subtitle {
+    display: block;
+    margin: 0 0 6px 0;
+    color: #666;
+    font-size: 0.95rem;
+  }
+  .lega-card.small mat-card-actions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    padding: 6px 10px 10px 10px;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    order: 2;
+  }
+  .lega-card.small mat-card-actions button {
+    min-width: 90px;
+    flex: 0 0 auto;
+  }
+  .lega-card.small mat-card-header { order: 1; }
+}

@@ -1,114 +1,54 @@
+/* Reuse home layout styles for consistency */
+.home-container {
+	/* keep minimal overrides here if necessary */
+}
+
 .main-content {
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 32px 20px;
 }
 
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  text-align: center;
-
-  mat-spinner {
-    margin-bottom: 1rem;
-  }
-
-  p {
-    color: #666;
-    margin-top: 1rem;
-  }
+h2 {
+	margin: 0 0 12px 0;
+	font-size: 1.6rem;
+	color: #333;
 }
 
-.error-container {
-  padding: 2rem 0;
+.leghe-groups {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px;
 
-  .error-message {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    color: #d32f2f;
-
-    mat-icon {
-      font-size: 2rem;
-      width: 2rem;
-      height: 2rem;
-    }
-
-    p {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-  }
+	.edizioni-list {
+		display: flex;
+		flex-direction: column;
+		align-items: center; /* center narrow cards */
+		width: 100%;
+	}
 }
 
-.lega-info-container {
-  .lega-card {
-    mat-card-title {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #333;
-    }
-
-    .lega-details {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1rem;
-
-      .detail-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #eee;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .label {
-          font-weight: 500;
-          color: #666;
-        }
-
-        .value {
-          font-weight: 600;
-          color: #333;
-        }
-      }
-    }
-  }
-
-  mat-card-actions {
-    padding: 1rem;
-    gap: 1rem;
-
-    button {
-      mat-icon {
-        margin-right: 0.5rem;
-      }
-    }
-  }
+.edizioni-list {
+	display: grid;
+	gap: 12px;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    padding: 1rem;
-  }
+/* .lega-card.small styles are provided by the shared LegaCardComponent */
 
-  .lega-card {
-    mat-card-title {
-      font-size: 1.25rem;
-    }
+.lega-card .meta {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	color: #666;
+	font-size: 14px;
+}
 
-    .lega-details {
-      .detail-row {
-        flex-direction: column;
-        gap: 0.25rem;
-        align-items: flex-start;
-      }
-    }
-  }
+.no-data {
+	text-align: center;
+	padding: 40px 20px;
+	color: #666;
+}
+
+@media (max-width: 900px) {
+	.leghe-groups { grid-template-columns: 1fr; }
 }

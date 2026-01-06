@@ -53,4 +53,14 @@ public class SospensioniLegaService {
                 .toList();
     }
 
+    @Transactional()
+    public void aggiungi(Long idLega, Integer giornata) {
+        SospensioneLegaRequestDTO sospensioneLegaRequestDTO = new SospensioneLegaRequestDTO();
+        sospensioneLegaRequestDTO.setGiornata(giornata);
+        sospensioneLegaRequestDTO.setIdLega(idLega);
+        sospensioneLegaRequestDTO.setVerso(SospensioneLegaRequestDTO.Verso.ADD);
+        save(sospensioneLegaRequestDTO);
+
+
+    }
 }
