@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
   template: `
     <h2 mat-dialog-title>Errore</h2>
     <mat-dialog-content>
-      <p>{{ data?.message }}</p>
+      <p>{{ data.message }}</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Chiudi</button>

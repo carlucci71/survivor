@@ -395,8 +395,13 @@ public class LegaService {
     @Transactional
     public LegaDTO secondaOccasione(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
-        sospensioniLegaService.aggiungi(idLega, legaDTO.getGiornataCalcolata());
-        legaDTO.getStatiGiornate().put(legaDTO.getGiornataCalcolata(), Enumeratori.StatoPartita.SOSPESA);
+
+        Integer giornataDaSaltare = legaDTO.getGiornataCalcolata();
+        if (legaDTO.getStatoGiornataCorrente()== Enumeratori.StatoPartita.IN_CORSO){
+            giornataDaSaltare++;
+        }
+        sospensioniLegaService.aggiungi(idLega, giornataDaSaltare);
+        legaDTO.getStatiGiornate().put(giornataDaSaltare, Enumeratori.StatoPartita.SOSPESA);
 
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             Enumeratori.StatoGiocatore nuovoStatoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);

@@ -118,19 +118,6 @@ export class LegaDettaglioComponent {
     );
   }
 
-  get maxGiornata(): number {
-    if (!this.lega || !this.lega.giocatori) return 0;
-    let max = 0;
-    for (const g of this.lega.giocatori) {
-      if (!g.giocate) continue;
-      for (const gg of g.giocate) {
-        const n = Number(gg?.giornata);
-        if (!isNaN(n) && n > max) max = n;
-      }
-    }
-    return max;
-  }
-
   // Gestisce il click sull'icona gioca accanto al badge squadra
   async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
@@ -227,7 +214,7 @@ export class LegaDettaglioComponent {
     const numGg = this.lega?.campionato?.numGiornate || 0;
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
-    } else if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+    } else if (this.lega?.stato.value === StatoLega.TERMINATA.value && this.lega.statoGiornataCorrente != StatoPartita.IN_CORSO) {
       maxGiornata--;
     }
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
