@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.ID
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
 
 @Slf4j
+@Component
 public class GiocataRule implements GuardRule {
     @Override
     public void run(Map<GuardRule.PARAM, Object> args) {
@@ -52,7 +54,10 @@ public class GiocataRule implements GuardRule {
         if (giocatoreDTO.getStatiPerLega().getOrDefault(idLega, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
         }
-        if (!userId.equals(giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId()) && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)) {
+        if (!userId.equals(giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId())
+                && !isAdmin
+                && ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER
+        ) {
             throw new AccessDeniedException("Solo il leader o admin può giocare per un altro utente");
         }
         if (legaDTO.getGiornataCorrente() != legaDTO.getGiornataIniziale() + giornata - 1) {
@@ -64,7 +69,10 @@ public class GiocataRule implements GuardRule {
         if (statoGiornataCorrente == Enumeratori.StatoPartita.SOSPESA) {
             throw new AccessDeniedException("La giornata è sospesa");
         }
-        if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE && (isAdmin || ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER)) {
+        if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE
+                && !isAdmin
+                && ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER
+        ) {
             throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
         if (giocatoreDTO.getGiocate().stream()

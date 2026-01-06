@@ -1,5 +1,7 @@
 package it.ddlsolution.survivor.aspect.guardlogger.rule;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 public interface GuardRule {

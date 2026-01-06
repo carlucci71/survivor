@@ -6,9 +6,7 @@
 
 <main class="main-content">
   <div class="main-panel">
-    <h2>Censisci una nuova lega</h2>
-
-    <mat-card class="message-box">
+    <mat-card class="message-box" [class.single-card]="confirmationMessage">
       <mat-card-content>
         <form
           *ngIf="!confirmationMessage"
@@ -152,13 +150,24 @@
               <p class="success-message">
                 La lega <b>{{ name }}</b> è stata creata con successo.
               </p>
-              <p>
-                Puoi dire ai tuoi amici di cercare la lega all'url
-                <a [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
-                <span *ngIf="pwd">
-                  ed unirsi con la password <b>{{ pwd }}</b></span
+              <p>Puoi dire ai tuoi amici di cercare la lega all'url</p>
+
+              <div class="link-row">
+                <a class="share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
+
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="copyLink()"
+                  aria-label="Copia link"
                 >
-              </p>
+                  <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+                </button>
+
+                <span class="copy-feedback" *ngIf="copied">Copiato!</span>
+              </div>
+
+              <span *ngIf="pwd">ed unirsi con la password <b>{{ pwd }}</b></span>
 
               <div class="invite-section">
                 <h3>Invita amici via email</h3>

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,6 +103,12 @@ public class AuthController {
         } else {
             final Long id = Long.parseLong(jwtService.extractId(jwt));
             User user = userRepository.findById(id).get();
+
+            String roleFromToken = jwtService.extractRole(jwt);
+            if (!roleFromToken.equals(user.getRole().name())){
+                throw new InsufficientAuthenticationException("Ruoli obsoleti");
+            }
+
             authResponseDTO = new AuthResponseDTO(
                     jwt,
                     user.getId(),
