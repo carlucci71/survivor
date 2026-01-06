@@ -93,6 +93,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const tokens = nome.split(/\s+/).filter(Boolean);
     const lines: string[] = [];
     let cur = '';
+    let overflow = false;
 
     for (let w of tokens) {
       if (w.length > maxChars) {
@@ -108,9 +109,34 @@ export class HomeComponent implements OnInit, OnDestroy {
       } else {
         lines.push(cur);
         cur = w;
+        if (lines.length >= 2) {
+          // We would be creating a third line -> mark overflow and stop
+          overflow = true;
+          break;
+        }
       }
     }
-    if (cur) lines.push(cur);
+    if (!overflow && cur) lines.push(cur);
+
+    // If overflow occurred, we need to ensure we have two lines and append '...' to the second
+    if (overflow) {
+      // ensure at least two lines exist
+      if (lines.length === 0) {
+        lines.push('');
+      }
+      if (lines.length === 1) {
+        // place current as second line but trimmed if necessary
+        let second = cur;
+        if (second.length > maxChars) second = second.slice(0, truncateLen) + '...';
+        lines.push(second + '...');
+      } else {
+        // we already have two full lines; append ellipsis to the second
+        lines[1] = lines[1].slice(0, Math.max(0, truncateLen)) + '...';
+      }
+    }
+
+    // limit to exactly 2 lines for output
+    if (lines.length > 2) lines.length = 2;
 
     const raw = lines.join('<br/>');
     return this.sanitizer.bypassSecurityTrustHtml(raw);
