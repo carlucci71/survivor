@@ -74,6 +74,10 @@ export class LegaService {
     return this.http.put<Lega>(`${this.apiUrl}/riapri/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
   }
+  secondaOccasione(idLega: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/secondaOccasione/${idLega}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
   nuovaEdizione(idLega: number): Observable<Lega> {
     return this.http.put<Lega>(`${this.apiUrl}/nuovaEdizione/${idLega}`, {})
       .pipe(map(mapLegaFromBE));
