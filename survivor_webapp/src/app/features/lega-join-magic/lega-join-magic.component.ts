@@ -5,23 +5,27 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { Lega } from '../../core/models/interfaces.model';
-import { MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { LegaCardComponent } from '../../shared/components/lega-card/lega-card.component';
 import { UtilService } from '../../core/services/util.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 
 @Component({
   selector: 'app-lega-join-magic',
+  standalone: true,
   imports: [
     CommonModule,
     HeaderComponent,
-    MatIcon,
+    MatIconModule,
     MatButtonModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
+    LegaCardComponent,
   ],
   templateUrl: './lega-join-magic.component.html',
   styleUrls: ['./lega-join-magic.component.scss'],
@@ -73,10 +77,10 @@ export class LegaJoinMagicComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  confermaJoin(): void {
-    if (!this.lega) return;
+  confermaJoin(lega: Lega): void {
+    if (!lega) return;
       const tokenOriginal = localStorage.getItem('magicTokenSurvivor') || '';
-      this.legaService.join(this.lega!.id!, '',tokenOriginal).subscribe({
+      this.legaService.join(lega!.id!, '',tokenOriginal).subscribe({
         next: (updated) => {
           localStorage.removeItem('magicTokenSurvivor');
           this.router.navigate(['/lega', updated.id]);
