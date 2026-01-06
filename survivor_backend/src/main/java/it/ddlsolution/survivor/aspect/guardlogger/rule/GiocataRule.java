@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.ID
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
 
 @Slf4j
+@Component
 public class GiocataRule implements GuardRule {
     @Override
     public void run(Map<GuardRule.PARAM, Object> args) {

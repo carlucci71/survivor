@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -27,6 +28,7 @@ public class GuardiaDispositivaAspect {
 
     private final LegaService legaService;
     private final GiocatoreService giocatoreService;
+    private final ApplicationContext ctx;
 
     @Before("@annotation(guardiaDispositiva)")
     public void before(JoinPoint joinPoint, GuardiaDispositiva guardiaDispositiva) {
@@ -40,8 +42,7 @@ public class GuardiaDispositivaAspect {
         for (GuardRule.PARAM param : GuardRule.PARAM.values()) {
             addParameterInMap(parametriRule, paramNames, args, guardiaDispositiva, param);
         }
-        GuardRule rule = resolveRule(guardiaDispositiva);
-        rule.run(parametriRule);
+        ctx.getBean(guardiaDispositiva.rule()).run(parametriRule);
     }
 
     private @NonNull Map<GuardRule.PARAM, Object> addParameterInMap(Map<GuardRule.PARAM, Object> parametriRule, String[] paramNames, Object[] args, GuardiaDispositiva guardiaDispositiva, GuardRule.PARAM tipoParam) {
@@ -108,17 +109,5 @@ public class GuardiaDispositivaAspect {
             }
         }
         return null;
-    }
-
-    private GuardRule resolveRule(GuardiaDispositiva g) {
-        try {
-            Class<? extends GuardRule> rc = g.rule();
-            if (rc == null) {
-                throw new RuntimeException("NON TROVATA");
-            }
-            return rc.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
