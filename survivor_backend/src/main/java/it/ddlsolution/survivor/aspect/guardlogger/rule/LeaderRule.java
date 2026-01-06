@@ -21,16 +21,12 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.ID
 @RequiredArgsConstructor
 @Component
 public class LeaderRule implements GuardRule {
-    private final UserRepository userRepository;
     @Override
     public void run(Map<GuardRule.PARAM, Object> args) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new InsufficientAuthenticationException("Utente non autenticato");
         }
-        Long userId = (Long) authentication.getPrincipal();
-        User user = userRepository.findById(userId).get();
-        System.out.println("user.getRole() = " + user.getRole());
 
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
