@@ -321,6 +321,9 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/auth/login']);
   }
   isChiudibile(): boolean {
+    return this.contaAttivi() <= 3;
+  }
+  contaAttivi():number{
     let contaAttivi = 0;
     let giocatori = this.lega!.giocatori;
     if (giocatori && giocatori[0]) {
@@ -333,7 +336,7 @@ export class LegaDettaglioComponent {
         }
       }
     }
-    return contaAttivi <= 3;
+    return contaAttivi;
   }
 
   termina() {
@@ -355,6 +358,18 @@ export class LegaDettaglioComponent {
       },
       error: (err: any) => {
         this.error = 'Errore nel riapri della lega';
+      },
+    });
+  }
+
+  secondaOccasione() {
+    this.legaService.secondaOccasione(Number(this.id)).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.caricaTabella();
+      },
+      error: (err: any) => {
+        this.error = 'Errore in seconda occasione della lega';
       },
     });
   }

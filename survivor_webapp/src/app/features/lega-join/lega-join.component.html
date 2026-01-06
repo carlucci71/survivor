@@ -1,42 +1,19 @@
-<app-header title="Entra in Lega" (back)="goBack()" (logout)="logout()"></app-header>
+<div class="home-container">
+	<app-header title="Entra in Lega (unisciti)" (back)="goBack()" (logout)="logout()"></app-header>
 
+	<main class="main-content">
+		<section class="leghe-section" *ngIf="leghe?.length; else noLeghe">
+			<div class="leghe-groups">
+				<div class="edizioni-list">
+					<app-lega-card *ngFor="let l of leghe" [lega]="l" (action)="seleziona($event)"></app-lega-card>
+				</div>
+			</div>
+		</section>
 
-<main class="main-content">
-	<section *ngIf="leghe?.length; else noLeghe">
-		<h2>Leghe disponibili</h2>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Nome</th>
-					<th>Sport ID</th>
-					<th>Campionato ID</th>
-					<th>Giornata Iniziale</th>
-					<th>Numero iscritti</th>
-					<th>Password accesso</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr *ngFor="let l of leghe">
-					<td data-label="Nome">{{ l.name }} [ed. {{ l.edizione }}]</td>
-					<td data-label="Sport ID">{{ l.campionato?.sport?.nome }}</td>
-					<td data-label="Campionato ID">{{ l.campionato!.nome}}</td>
-					<td data-label="Giornata Iniziale">{{ l.giornataIniziale }}</td>
-					<td data-label="Numero iscritti">{{ l.giocatori?.length }}</td>
-					<td data-label="Password accesso">{{ l.withPwd?'SI':'' }}</td>
-					<td>
-										<mat-icon
-											class="gioca-icon"
-											matTooltip="Gioca ora"
-											(click)="seleziona(l)"
-										>{{ getGiocaIcon(l.campionato!.sport!.id) }}</mat-icon>
-
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</section>
-	<ng-template #noLeghe>
-		<div class="no-data">Nessuna lega libera disponibile.</div>
-	</ng-template>
-</main>
+		<ng-template #noLeghe>
+			<mat-card class="no-data">
+				<mat-card-content>Nessuna lega libera disponibile.</mat-card-content>
+			</mat-card>
+		</ng-template>
+	</main>
+</div>

@@ -94,6 +94,12 @@ public class LegaController {
         return ResponseEntity.ok(legaService.riapri(idLega));
     }
 
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/secondaOccasione/{idLega}")
+    public ResponseEntity<LegaDTO> secondaOccasione(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.secondaOccasione(idLega));
+    }
+
     @PutMapping("/nuovaEdizione/{idLega}")
     public ResponseEntity<LegaDTO> nuovaEdizione(@PathVariable Long idLega) {
         return ResponseEntity.ok(legaService.nuovaEdizione(idLega));
