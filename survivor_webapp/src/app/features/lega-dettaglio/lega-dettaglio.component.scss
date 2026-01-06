@@ -181,10 +181,15 @@
       font-size: 28px;
     }
 
-    .user-info {
+		.config-user {
       display: flex;
       align-items: center;
       gap: 15px;
+
+	      /* ensure projected config-user isn't truncated by surrounding component styles */
+	      max-width: none !important;
+	      overflow: visible !important;
+	      white-space: normal !important;
 
       .welcome {
         font-weight: 500;
@@ -234,7 +239,7 @@
 		gap: 15px;
 		text-align: center;
 
-		.user-info {
+        .config-user {
 			flex-wrap: wrap;
 			justify-content: center;
 		}

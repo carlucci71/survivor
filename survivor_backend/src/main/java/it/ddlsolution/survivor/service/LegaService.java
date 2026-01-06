@@ -360,12 +360,17 @@ public class LegaService {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
 
         }
-        if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
                 && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
-
+        } else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        && legaDTO.getGiocatori().stream()
+                .filter(g->g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO )
+                .count()<=1
+        ){
+            legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
         }
     }
 

@@ -16,6 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +25,7 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
     CommonModule,
     MatCardModule,
     MatButtonModule,
+    HeaderComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
