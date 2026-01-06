@@ -92,6 +92,29 @@ public class CacheableService {
             campionatoDTO.setIniziGiornate(iniziGiornate);
 
         }
+        /*
+        for (CampionatoDTO campionatoDTO : campionatiDTO) {
+            List<LocalDateTime> iniziGiornate=new ArrayList<>();
+            int giornata = 0;
+            int giornataDaGiocare = 0;
+            do {
+                giornata++;
+                List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
+                if (partiteDTO.size()>0) {
+                    LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
+                    iniziGiornate.add(inizioGiornata);
+                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                        giornataDaGiocare = giornata+1;
+                    }
+                }
+            } while (giornata < campionatoDTO.getNumGiornate());
+            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+            campionatoDTO.setIniziGiornate(iniziGiornate);
+
+        }
+
+         */
         return campionatiDTO;
     }
 

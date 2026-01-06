@@ -27,7 +27,13 @@
     margin-top: 8px;
   }
 
-  mat-card-actions { padding-top: 12px; }
+  mat-card-actions {
+    padding-top: 12px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    align-items: center;
+  }
 }
 
 /* Desktop/layout tweaks copied from home styles to ensure consistency */
