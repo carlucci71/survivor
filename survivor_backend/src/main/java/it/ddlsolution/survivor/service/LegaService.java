@@ -326,6 +326,7 @@ public class LegaService {
     }
 
     private void addInfoCalcolate(LegaDTO legaDTO) {
+        legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()));
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
@@ -359,12 +360,17 @@ public class LegaService {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
 
         }
-        if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
                 && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
-
+        } else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        && legaDTO.getGiocatori().stream()
+                .filter(g->g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO )
+                .count()<=1
+        ){
+            legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
         }
     }
 

@@ -1,12 +1,9 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.entity.Sport;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class CampionatoDTO {

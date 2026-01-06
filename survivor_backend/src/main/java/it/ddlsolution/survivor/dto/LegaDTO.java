@@ -10,6 +10,7 @@ import java.util.Map;
 public class LegaDTO {
     private Long id;
     private int giornataIniziale;
+    private int giornataDaGiocare;
     private Integer giornataCalcolata;
     private List<Integer> edizioni;
     private String name;

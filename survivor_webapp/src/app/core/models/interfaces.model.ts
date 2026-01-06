@@ -113,6 +113,7 @@ export interface Lega {
   giocatori?: Giocatore[];
   giornataIniziale: number;
   giornataCalcolata: number;
+  giornataDaGiocare: number;
   giornataCorrente: number;
   statoGiornataCorrente: StatoPartita;
   ruoloGiocatoreLega: RuoloGiocatore;

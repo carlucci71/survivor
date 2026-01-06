@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -16,6 +16,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
+import { HeaderComponent } from '../../shared/components/header/header.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -24,6 +26,7 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
     CommonModule,
     MatCardModule,
     MatButtonModule,
+    HeaderComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
@@ -33,7 +36,9 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
+  isMobile = false;
+  private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
   groupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
@@ -47,6 +52,8 @@ export class HomeComponent implements OnInit {
     private giocatoreService: GiocatoreService,
     private router: Router,
     private dialog: MatDialog
+    ,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -57,8 +64,83 @@ export class HomeComponent implements OnInit {
       },
     });
     this.loadLeghe();
+    // detect mobile breakpoint
+    this.isMobile = window.innerWidth <= 768;
+    this.resizeHandler = () => {
+      this.isMobile = window.innerWidth <= 768;
+    };
+    window.addEventListener('resize', this.resizeHandler);
   }
 
+  ngOnDestroy(): void {
+    if (this.resizeHandler) {
+      window.removeEventListener('resize', this.resizeHandler);
+      this.resizeHandler = null;
+    }
+  }
+
+  getNome(): string {
+    // return name with newlines between words; safe if me or nome are undefined
+    return (this.me?.nome || '').replaceAll(' ', '\n');
+  }
+
+  getNomeHtml(): SafeHtml {
+    const nome = (this.me?.nome || '');
+    // Greedy pack words into lines up to 20 characters.
+    // If a word exceeds 20 chars, truncate to 17 + '...'.
+    const maxChars = 20;
+    const truncateLen = 17;
+    const tokens = nome.split(/\s+/).filter(Boolean);
+    const lines: string[] = [];
+    let cur = '';
+    let overflow = false;
+
+    for (let w of tokens) {
+      if (w.length > maxChars) {
+        w = w.slice(0, truncateLen) + '...';
+      }
+      if (!cur) {
+        cur = w;
+        continue;
+      }
+      // try to append to current line (with a space)
+      if ((cur.length + 1 + w.length) <= maxChars) {
+        cur = cur + ' ' + w;
+      } else {
+        lines.push(cur);
+        cur = w;
+        if (lines.length >= 2) {
+          // We would be creating a third line -> mark overflow and stop
+          overflow = true;
+          break;
+        }
+      }
+    }
+    if (!overflow && cur) lines.push(cur);
+
+    // If overflow occurred, we need to ensure we have two lines and append '...' to the second
+    if (overflow) {
+      // ensure at least two lines exist
+      if (lines.length === 0) {
+        lines.push('');
+      }
+      if (lines.length === 1) {
+        // place current as second line but trimmed if necessary
+        let second = cur;
+        if (second.length > maxChars) second = second.slice(0, truncateLen) + '...';
+        lines.push(second + '...');
+      } else {
+        // we already have two full lines; append ellipsis to the second
+        lines[1] = lines[1].slice(0, Math.max(0, truncateLen)) + '...';
+      }
+    }
+
+    // limit to exactly 2 lines for output
+    if (lines.length > 2) lines.length = 2;
+
+    const raw = lines.join('<br/>');
+    return this.sanitizer.bypassSecurityTrustHtml(raw);
+  }
   visualizzaInvito(lega: Lega): boolean {
     return lega.stato.value === StatoLega.DA_AVVIARE.value;
   }
