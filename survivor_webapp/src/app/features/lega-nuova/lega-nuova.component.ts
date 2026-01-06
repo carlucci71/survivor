@@ -64,6 +64,7 @@ export class LegaNuovaComponent implements OnInit {
   legaCreataId: number | null = null;
   emailInput: string = '';
   emailsList: string[] = [];
+  copied = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -213,5 +214,36 @@ export class LegaNuovaComponent implements OnInit {
         console.error('Errore invio inviti:', err);
       },
     });
+  }
+
+  copyLink(): void {
+    const url = this.baseUrl() + '/joinLega';
+    if (!navigator.clipboard) {
+      // fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = url;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        this.showCopiedFeedback();
+      } catch (e) {
+        console.error('Copia fallita', e);
+      }
+      document.body.removeChild(textarea);
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(url)
+      .then(() => this.showCopiedFeedback())
+      .catch((err) => console.error('Copia fallita', err));
+  }
+
+  private showCopiedFeedback(): void {
+    this.copied = true;
+    setTimeout(() => (this.copied = false), 2000);
   }
 }
