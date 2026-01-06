@@ -66,6 +66,13 @@
             matTooltip="Riapri lega"
             >health_and_safety</mat-icon
           >
+          } @if (isTerminata() && notExistsNuovaEdizione() && contaAttivi()==0 ){
+          <mat-icon
+            class="calcola-icon"
+            (click)="secondaOccasione()"
+            matTooltip="Seconda occasione"
+            >flip_camera_android</mat-icon
+          >
           } } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper desktop-only">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
