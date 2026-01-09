@@ -372,6 +372,7 @@ public class EnumAPI2 {
     enum StatoPartitaAP2 {
         PreMatch(Enumeratori.StatoPartita.DA_GIOCARE),
         Postponed(Enumeratori.StatoPartita.DA_GIOCARE),
+        POSTPONED(Enumeratori.StatoPartita.DA_GIOCARE),
         Cancelled(Enumeratori.StatoPartita.DA_GIOCARE),
         Walkover(Enumeratori.StatoPartita.TERMINATA),
         FirstHalf(Enumeratori.StatoPartita.IN_CORSO),
