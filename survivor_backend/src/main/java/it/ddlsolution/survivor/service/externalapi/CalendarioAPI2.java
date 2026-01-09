@@ -74,7 +74,7 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
     @Override
-    public Map<String, Map<String, String>> mapForAdapt(){
+    public Map<String, Map<String, String>> mapForAdapt() {
         Map<String, Map<String, String>> ret = new HashMap<>();
         for (Enumeratori.CampionatiDisponibili campionato : Enumeratori.CampionatiDisponibili.values()) {
             ret.put(
@@ -86,19 +86,17 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
 
-
-
-    public Map<Integer, String> roundTennis(){
+    public Map<Integer, String> roundTennis() {
         Map<Integer, String> ret = new HashMap<>();
         EnumAPI2.RoundTennis[] values = EnumAPI2.RoundTennis.values();
-        for (int i=0;i< values.length;i++){
-            ret.put((i+1),values[i].descrizione);
+        for (int i = 0; i < values.length; i++) {
+            ret.put((i + 1), values[i].descrizione);
         }
         return ret;
     }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
-        String round = EnumAPI2.RoundTennis.values()[giornata-1].key;
+        String round = EnumAPI2.RoundTennis.values()[giornata - 1].key;
         List<Map<String, Object>> cr = (List<Map<String, Object>>) m.get("competitionRounds");
         List<Map<String, Object>> matches = cr.stream()
                 .filter(map -> round.equals(map.get("name")))
@@ -160,7 +158,7 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
     private void elaboraCalcioBasket(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret) {
-        Map<String, Integer> contaPartiteSquadra=new HashMap<>();
+        Map<String, Integer> contaPartiteSquadra = new HashMap<>();
         List<Map<String, Object>> games = (List<Map<String, Object>>) m.get("games");
         for (Map<String, Object> game : games) {
             List<Map<String, Object>> matches = (List<Map<String, Object>>) game.get("matches");
@@ -181,13 +179,13 @@ public class CalendarioAPI2 implements ICalendario {
                 String homeCode = resultHome.teamCode;
                 String awayCode = resultAway.teamCode;
 
-                String aliasCasa="";
-                String aliasFuori="";
-                if (campionato.equals(EnumAPI2.Campionato.NBA_RS.name())){
-                    contaPartiteSquadra.put(homeCode,contaPartiteSquadra.getOrDefault(homeCode, 0)+1);
-                    contaPartiteSquadra.put(awayCode,contaPartiteSquadra.getOrDefault(awayCode, 0)+1);
-                    aliasCasa="Settimana " + giornata + " - Partita "  + contaPartiteSquadra.get(homeCode);
-                    aliasFuori="Settimana " + giornata + " - Partita "  + contaPartiteSquadra.get(awayCode);
+                String aliasCasa = "";
+                String aliasFuori = "";
+                if (campionato.equals(EnumAPI2.Campionato.NBA_RS.name())) {
+                    contaPartiteSquadra.put(homeCode, contaPartiteSquadra.getOrDefault(homeCode, 0) + 1);
+                    contaPartiteSquadra.put(awayCode, contaPartiteSquadra.getOrDefault(awayCode, 0) + 1);
+                    aliasCasa = "Settimana " + giornata + " - Partita " + contaPartiteSquadra.get(homeCode);
+                    aliasFuori = "Settimana " + giornata + " - Partita " + contaPartiteSquadra.get(awayCode);
                 }
 
 
@@ -221,7 +219,7 @@ public class CalendarioAPI2 implements ICalendario {
         String teamName;
         if (team.get("teamName") != null) {
             teamName = team.get("teamName").toString();
-        } else{
+        } else {
             teamName = team.get("italianName").toString();
         }
         Integer teamScore;
