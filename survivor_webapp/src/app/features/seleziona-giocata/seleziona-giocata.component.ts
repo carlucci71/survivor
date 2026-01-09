@@ -87,7 +87,7 @@ export class SelezionaGiocataComponent implements OnInit {
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
-      this.activeTab = 'ultimi';
+      // NON aprire nessun tab di default - l'utente clicca per aprire
     }
   }
 
@@ -285,5 +285,14 @@ export class SelezionaGiocataComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  getGiocaIcon(): string {
+    // Restituisce l'icona appropriata in base allo sport
+    const sportId = this.lega?.campionato?.sport?.id;
+    if (sportId === 'BASKET') return 'sports_basketball';
+    if (sportId === 'CALCIO') return 'sports_soccer';
+    if (sportId === 'TENNIS') return 'sports_tennis';
+    return 'sports_esports';
   }
 }

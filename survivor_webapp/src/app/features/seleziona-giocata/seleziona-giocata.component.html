@@ -18,7 +18,10 @@
   </div>
   <div class="info-row">
     <span class="label">Stato:</span>
-    <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+    <span class="value-with-icon">
+      <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+      <mat-icon class="stato-icon">{{ getGiocaIcon() }}</mat-icon>
+    </span>
   </div>
 
   <!-- Tabs to switch between result sections (mobile-friendly) -->
@@ -51,11 +54,11 @@
     <span class="next-opponent" *ngIf="getNextOpponentSigla(false)"
       >vs {{ getNextOpponentSigla(false) }}</span
     >
-    <!-- Tabs moved here: under the 'vs' opponent label -->
+    <!-- Tabs accordion: chiusi di default, apertura al click -->
     <div class="result-tabs" *ngIf="ultimiRisultati.length || prossimePartite.length || ultimiRisultatiOpponent.length">
-      <button class="tab" [class.active]="activeTab === 'ultimi'" (click)="setActiveTab('ultimi')">Ultimi</button>
-      <button class="tab" [class.active]="activeTab === 'prossime'" (click)="setActiveTab('prossime')">Prossime</button>
-      <button class="tab" [class.active]="activeTab === 'opponent'" (click)="setActiveTab('opponent')">{{getNextOpponentSigla(false)}}</button>
+      <button class="tab" [class.active]="activeTab === 'ultimi'" (click)="setActiveTab('ultimi')">Ultimi Risultati</button>
+      <button class="tab" [class.active]="activeTab === 'prossime'" (click)="setActiveTab('prossime')">Prossimi Incontri</button>
+      <button class="tab" [class.active]="activeTab === 'opponent'" (click)="setActiveTab('opponent')">Risultati {{getNextOpponentSigla(false)}}</button>
     </div>
   </div>
   <div class="risultati-row" #risultatiRow>
@@ -118,7 +121,7 @@
       }
     </div>
 
-    <div *ngIf="!isMobile || activeTab === 'prossime'" class="risultati-col" role="region" aria-label="Prossime partite">
+    <div *ngIf="activeTab === 'prossime'" class="risultati-col active" role="region" aria-label="Prossime partite">
       <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Prossime partite</h3>
       @if (squadraSelezionata && prossimePartite.length === 0) {
       <div>Nessuna partita in programma</div>
@@ -148,7 +151,7 @@
       }
     </div>
 
-    <div *ngIf="!isMobile || activeTab === 'opponent'" class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
+    <div *ngIf="activeTab === 'opponent'" class="risultati-col active" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
       <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Ultimi Risultati {{ getNextOpponentSigla(false) }}</h3>
       @if (squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
       <div>Nessun risultato recente per {{ getNextOpponentSigla(false) }}</div>

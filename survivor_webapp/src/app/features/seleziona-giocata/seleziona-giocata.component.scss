@@ -1,285 +1,606 @@
+/* Popup Selezione Squadra - CORRETTO E RESPONSIVE */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* CONTAINER PRINCIPALE */
 .modal-container {
 	position: relative;
-	background: #fff;
-	border-radius: 14px;
-	box-shadow: 0 4px 24px rgba(0,0,0,0.13);
-	padding: 32px 36px 28px 36px;
-	min-width: 340px;
-	max-height: 90vh;
-	overflow: hidden;
-	z-index: 2;
+	background: #FFFFFF;
+	border-radius: 20px;
+	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
+	padding: 24px 28px;
+	width: 90vw;
+	max-width: 700px;
+	max-height: 85vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	z-index: 10000;
+	font-family: 'Poppins', sans-serif;
+
+	/* Scrollbar personalizzata */
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #F4F6F8;
+		border-radius: 10px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #0A3D91;
+		border-radius: 10px;
+
+		&:hover {
+			background: #4FC3F7;
+		}
+	}
 }
 
-/* Ensure modal appears above overlays and is scrollable on small screens */
-.modal-container { z-index: 10000; }
-
+/* CLOSE BUTTON - X CENTRATA */
 .close-btn {
 	position: absolute;
 	top: 12px;
 	right: 12px;
 	z-index: 10;
-}
-
-h2 {
-	margin-top: 0;
-	margin-bottom: 18px;
-	font-size: 2rem;
-	font-weight: 700;
-	letter-spacing: -1px;
-}
-
-.info-row {
-	display: flex;
-	gap: 8px;
-	margin-bottom: 4px;
-	font-size: 1.08rem;
-}
-.label {
-	font-weight: 600;
-}
-.value {
-	font-weight: 400;
-}
-
-.squadra-select-save {
+	width: 36px;
+	height: 36px;
+	background: rgba(10, 61, 145, 0.08);
+	border-radius: 50%;
+	transition: all 0.2s ease;
 	display: flex;
 	align-items: center;
-	gap: 16px;
-	margin-top: 24px;
+	justify-content: center;
+	padding: 0;
+
+	mat-icon {
+		color: #0A3D91;
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+		line-height: 20px;
+	}
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.15);
+		transform: scale(1.1);
+	}
 }
 
-.next-opponent {
-	margin-left: 8px;
-	font-weight: 600;
-	align-self: center;
+/* TITOLO H2 */
+h2 {
+	margin: 0 0 20px 0;
+	font-size: 1.4rem;
+	font-weight: 800;
+	color: #0A3D91;
+	font-family: 'Poppins', sans-serif;
+	padding-right: 40px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+
+	.value {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
 }
 
-button[mat-raised-button] {
-	min-width: 80px;
-	max-height: 30px;
-	font-weight: 600;
-	font-size: 1rem;
+/* INFO ROWS - ORIZZONTALI SENZA SFONDO CELESTE */
+.info-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 14px;
+	padding: 12px 16px;
+	background: transparent;
+	border-radius: 12px;
+	border: 1px solid rgba(10, 61, 145, 0.08);
+	font-size: 0.95rem;
+
+	.label {
+		font-weight: 700;
+		color: #0A3D91;
+		min-width: 90px;
+	}
+
+	.value {
+		font-weight: 600;
+		color: #6B7280;
+		flex: 1;
+	}
+
+	.value-with-icon {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 1;
+
+		.value {
+			flex: 0 1 auto;
+		}
+
+		.stato-icon {
+			font-size: 22px;
+			width: 22px;
+			height: 22px;
+			color: #0A3D91;
+			flex-shrink: 0;
+		}
+	}
 }
 
-.risultati {
-	margin-top: 18px;
-	max-height: min(40vh, 320px);
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
-	padding-right: 8px;
+/* SQUADRA SELECT + SAVE */
+.squadra-select-save {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 16px;
+	margin: 20px 0;
 }
 
-.risultati-row {
-	display: flex;
-	gap: 20px;
-	margin-top: 18px;
+/* MAT-FORM-FIELD */
+.select-squadra {
+	width: 100%;
 }
 
+::ng-deep {
+	.modal-container {
+		.mat-mdc-form-field {
+			width: 100%;
+
+			.mat-mdc-text-field-wrapper {
+				border-radius: 14px;
+				background: #F4F6F8;
+				border: 2px solid #E0E0E0;
+				transition: all 0.3s ease;
+			}
+
+			&.mat-focused .mat-mdc-text-field-wrapper {
+				border-color: #0A3D91;
+				background: #FFFFFF;
+				box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.08);
+			}
+
+			.mat-mdc-form-field-flex {
+				padding: 12px 16px;
+			}
+
+			.mat-mdc-select-value,
+			.mat-mdc-select-placeholder {
+				font-weight: 600;
+				color: #0A3D91;
+				font-family: 'Poppins', sans-serif;
+				font-size: 0.95rem;
+			}
+		}
+
+		.mat-mdc-select-arrow {
+			color: #0A3D91;
+		}
+	}
+
+	/* DROPDOWN PANEL - VERSO IL BASSO CON SFONDO */
+	.mat-mdc-select-panel {
+		max-height: 280px !important;
+		border-radius: 16px !important;
+		box-shadow: 0 12px 48px rgba(10, 61, 145, 0.3) !important;
+		border: 2px solid #4FC3F7 !important;
+		margin-top: 8px !important;
+		padding: 8px !important;
+		overflow-y: auto !important;
+		overflow-x: hidden !important;
+		background: #FFFFFF !important;
+		/* Forza apertura verso il basso */
+		transform-origin: top center !important;
+
+		.mat-mdc-option {
+			font-family: 'Poppins', sans-serif !important;
+			padding: 12px 16px !important;
+			min-height: 48px !important;
+			font-size: 0.92rem !important;
+			font-weight: 600 !important;
+			border-radius: 12px !important;
+			margin: 2px 0 !important;
+			transition: all 0.2s ease !important;
+			/* Sfondo chiaro per distinguere dal popup bianco */
+			background: #F4F6F8 !important;
+			color: #0A3D91 !important;
+			border: 1px solid transparent !important;
+
+			&:hover {
+				background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.08)) !important;
+				transform: translateX(4px) !important;
+				border-color: #4FC3F7 !important;
+			}
+
+			&.mat-selected {
+				background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+				color: #FFFFFF !important;
+				font-weight: 700 !important;
+				border-left: 4px solid #81D4FA !important;
+				box-shadow: 0 2px 8px rgba(10, 61, 145, 0.2) !important;
+			}
+		}
+	}
+}
+
+/* BOTTONE SALVA - PERFETTAMENTE VISIBILE E CENTRATO */
+.save-small,
+button[mat-raised-button] {
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+	color: #FFFFFF !important;
+	border: none !important;
+	border-radius: 14px !important;
+	padding: 16px 32px !important;
+	font-weight: 700 !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-size: 1rem !important;
+	text-transform: uppercase !important;
+	letter-spacing: 1px !important;
+	box-shadow: 0 6px 24px rgba(10, 61, 145, 0.2) !important;
+	transition: all 0.2s ease !important;
+	width: 100%;
+	min-height: 52px !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	text-align: center !important;
+	margin: 0 auto;
+	cursor: pointer;
+
+	/* Forza centramento perfetto del testo */
+	.mdc-button__label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+	}
+
+	&:hover:not(:disabled) {
+		transform: translateY(-3px);
+		box-shadow: 0 10px 36px rgba(10, 61, 145, 0.3) !important;
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(-1px);
+	}
+
+	&:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+		background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+		color: #9E9E9E !important;
+	}
+}
+
+/* NEXT OPPONENT - SENZA BACKGROUND */
+.next-opponent {
+	font-weight: 700;
+	color: #0A3D91;
+	font-size: 1.05rem;
+	padding: 12px 16px;
+	background: transparent;
+	border-radius: 12px;
+	border: 1px solid rgba(10, 61, 145, 0.08);
+	text-align: center;
+	display: block;
+	width: 100%;
+}
+
+/* TABS RISULTATI */
 .result-tabs {
 	display: flex;
 	gap: 8px;
 	margin-top: 10px;
-}
-.result-tabs .tab {
-	flex: 1 1 auto;
-	padding: 8px 10px;
-	border-radius: 8px;
-	background: #f5f7fb;
-	border: 1px solid #e0e6f0;
-	font-weight: 700;
-}
-.result-tabs .tab.active {
-	background: var(--primary-color);
-	color: #fff;
-	border-color: var(--primary-dark);
+
+	.tab {
+		flex: 1;
+		padding: 10px 16px;
+		background: #F4F6F8;
+		color: #6B7280;
+		border: 2px solid #E0E0E0;
+		border-radius: 10px;
+		font-weight: 600;
+		font-family: 'Inter', sans-serif;
+		cursor: pointer;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: #FFFFFF;
+			border-color: #4FC3F7;
+			color: #0A3D91;
+		}
+
+		&.active {
+			background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+			color: #FFFFFF;
+			border-color: transparent;
+			box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2);
+		}
+	}
 }
 
-.save-small { padding: 8px 12px; height: 40px; min-width: 64px; }
-.hidden-when-tabs { display: none; }
-.result-tabs { display: none; } /* hide tabs by default (desktop) */
-.result-tabs + .squadra-select-save { margin-top: 12px; }
-.risultati-col {
-	/* each column takes one third on larger screens */
-	flex: 0 0 33%;
-	min-width: 240px;
-	max-height: min(48vh, 420px);
-	/* use overlay scrollbars inside each column so they sit flush to the column edge */
-	overflow-y: overlay;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
+/* RISULTATI ROW */
+.risultati-row {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	margin-top: 20px;
 }
-.risultati-title {
-	margin: 0 0 8px 0;
-	font-size: 1.05rem;
-	font-weight: 700;
+
+.risultati-col {
+	background: #F4F6F8;
+	border-radius: 14px;
+	padding: 16px;
+
+	.risultati-title {
+		margin: 0 0 14px 0;
+		font-size: 0.95rem;
+		font-weight: 800;
+		color: #0A3D91;
+		font-family: 'Poppins', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+
+		&.hidden-when-tabs {
+			display: none;
+		}
+	}
 }
 
 .risultato-item {
-	padding: 8px 10px;
-	border-radius: 8px;
-	background: #f8f8f8;
-	font-size: 0.95rem;
+	background: #FFFFFF;
+	padding: 12px;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	box-shadow: 0 2px 8px rgba(10, 61, 145, 0.06);
+	font-size: 0.88rem;
+	line-height: 1.4;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	div {
+		margin-bottom: 6px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	.selected-team {
+		font-weight: 700;
+		color: #0A3D91;
+	}
 }
 
-.selected-team {
-  font-weight: 700;
-}
-
+/* BADGE RISULTATI - VERDE/ROSSO/GIALLO GRADEVOLI */
 .result-badge {
-	display: inline-flex;
-	align-items: center;
 	margin-left: 8px;
 }
+
 .badge {
 	display: inline-block;
-	width: 22px;
-	height: 18px;
-	line-height: 18px;
-	text-align: center;
-	border-radius: 4px;
+	padding: 5px 10px;
+	border-radius: 8px;
 	font-weight: 700;
-	color: #fff;
-	font-size: 0.85rem;
-	margin-left: 4px;
-}
-.badge-v { background: var(--primary-color); }
-.badge-n { background: #f5c842; color: #212121; }
-.badge-p { background: #e21b1b; }
+	font-size: 0.8rem;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	transition: all 0.2s ease;
 
-/* Fallbacks / tweaks for small screens */
-@media (max-width: 700px) {
-	/* On small screens show the tabs */
-	.result-tabs { display: flex !important; }
-	/* hide desktop column headers/titles when tabs are present */
-	.hidden-when-tabs { display: none !important; }
-	/* Make dialog full-screen and ensure only one visible container */
-	:host ::ng-deep .cdk-overlay-backdrop {
-		z-index: 10000 !important;
-		position: fixed !important;
-		inset: 0 !important;
-		height: 100vh !important;
-		background: rgba(0,0,0,0.28) !important;
-	}
-	:host ::ng-deep .mat-dialog-container {
-		padding: 0 !important;
-		max-width: 100vw !important;
-		width: 100vw !important;
-		height: 100vh !important;
-		margin: 0 !important;
-		display: block !important;
-		background: transparent !important;
-		box-shadow: none !important;
-		position: fixed !important;
-		top: 0 !important;
-		left: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		z-index: 10002 !important;
+	&.badge-v {
+		/* Verde tenue per Vittoria */
+		background: linear-gradient(135deg, #10B981, #34D399);
+		color: #FFFFFF;
+
+		&:hover {
+			transform: scale(1.05);
+			box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+		}
 	}
 
-/* prevent background page scrolling when overlay is active */
-:host ::ng-deep .cdk-global-scrollblock {
-  height: 100% !important;
-  overflow: hidden !important;
+	&.badge-n {
+		/* Giallo tenue per Pareggio */
+		background: linear-gradient(135deg, #FBBF24, #FCD34D);
+		color: #92400E;
+		font-weight: 700;
+
+		&:hover {
+			transform: scale(1.05);
+			box-shadow: 0 3px 10px rgba(251, 191, 36, 0.3);
+		}
+	}
+
+	&.badge-p {
+		/* Rosso tenue per Perdita */
+		background: linear-gradient(135deg, #EF4444, #F87171);
+		color: #FFFFFF;
+
+		&:hover {
+			transform: scale(1.05);
+			box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+		}
+	}
 }
 
-	/* Force the actual content container to fill the viewport and remove floating box visuals */
+/* NESSUNA GIOCATA */
+h4 {
+	text-align: center;
+	color: #6B7280;
+	font-family: 'Poppins', sans-serif;
+	padding: 40px 20px;
+	margin: 0;
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
 	.modal-container {
-		position: fixed !important;
-		top: 0 !important;
-		left: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		width: 100% !important;
-		height: 100vh !important;
-		min-height: 100vh !important;
-		padding: 18px 16px 24px 16px !important; /* reduce space reserved for footer */
-		margin: 0 !important;
-		border-radius: 0 !important;
-		box-shadow: none !important;
-		background: #fff !important;
-		overflow-y: auto !important;
-		z-index: 10001 !important;
+		width: 95vw;
+		max-width: 95vw;
+		padding: 24px 20px;
+		max-height: 90vh;
 	}
 
-	.risultati {
-		max-height: min(50vh, 320px);
-		overflow: visible;
+	h2 {
+		font-size: 1.3rem;
+		margin-bottom: 18px;
+	}
+
+	.close-btn {
+		width: 34px;
+		height: 34px;
+
+		mat-icon {
+			font-size: 20px;
+		}
+	}
+
+	.info-row {
+		flex-direction: column;
+		gap: 6px;
+		padding: 12px 16px;
+		margin-bottom: 12px;
+
+		.label {
+			min-width: auto;
+			font-size: 0.9rem;
+		}
+
+		.value {
+			font-size: 0.95rem;
+		}
+	}
+
+	.squadra-select-save {
+		gap: 18px;
+		margin: 20px 0;
+	}
+
+	::ng-deep {
+		.modal-container {
+			.mat-mdc-form-field {
+				.mat-mdc-form-field-flex {
+					padding: 12px 14px;
+				}
+
+				.mat-mdc-select-value,
+				.mat-mdc-select-placeholder {
+					font-size: 0.9rem;
+				}
+			}
+		}
+	}
+
+	button[mat-raised-button] {
+		padding: 14px 24px !important;
+		font-size: 0.95rem !important;
+		min-height: 48px !important;
+	}
+
+	.result-tabs .tab {
+		padding: 10px 12px;
+		font-size: 0.85rem;
 	}
 
 	.risultati-row {
-		flex-direction: column;
+		grid-template-columns: 1fr;
 		gap: 12px;
 	}
 
 	.risultati-col {
-		flex: 1 1 0;
-		min-width: auto;
-		max-height: 35vh;
-		overflow-y: auto;
+		padding: 14px;
+
+		.risultati-title {
+			font-size: 0.95rem;
+			margin-bottom: 12px;
+		}
 	}
 
-	/* Hide column titles on mobile, tabs are sufficient */
-	.risultati-title { display: none !important; }
-
-	/* Make the tabs sticky at the top of the modal so they remain visible while scrolling results */
-	.result-tabs {
-		position: sticky;
-		top: 12px; /* a little below the dialog header */
-		z-index: 10005;
-		background: #fff;
-		padding: 6px 6px 8px 6px;
-		border-radius: 8px;
-		box-shadow: 0 6px 18px rgba(16,24,40,0.08);
+	.risultato-item {
+		padding: 12px;
+		font-size: 0.85rem;
 	}
-	.result-tabs .tab { min-height: 36px; height: 36px; padding: 6px 8px; }
-
-	/* Ensure the risultati-row has space on top so sticky tabs don't overlap content */
-	.risultati-row { padding-top: 12px; }
 }
 
-/* Additional tweaks to make controls stack and be tappable on phones */
-@media (max-width: 700px) {
-  :host ::ng-deep .mat-dialog-container { padding: 0 !important; display: flex; align-items: flex-start; justify-content: center; }
+@media (max-width: 480px) {
+	.modal-container {
+		width: 90vw;
+		max-width: 450px;
+		padding: 24px 20px;
+	}
 
-  .squadra-select-save { flex-direction: column; align-items: stretch; gap: 10px; }
-  .select-squadra { width: 100% !important; min-width: auto !important; }
-  button[mat-raised-button] { width: 100%; }
-  .next-opponent { margin-left: 0; }
-  .close-btn { top: 8px; right: 8px; }
-}
+	h2 {
+		font-size: 1.1rem;
+		padding-right: 42px;
+	}
 
-/* Mobile footer becomes part of the flow (not fixed) to avoid keyboard pushing content */
-@media (max-width: 700px) {
+	.close-btn {
+		width: 34px;
+		height: 34px;
+		top: 14px;
+		right: 14px;
+
+		mat-icon {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	.info-row {
+		padding: 11px 14px;
+		font-size: 0.88rem;
+		margin-bottom: 11px;
+	}
+
 	.squadra-select-save {
-		position: relative;
-		left: auto;
-		right: auto;
-		bottom: auto;
-		padding: 12px 8px;
-		background: transparent;
-		box-shadow: none;
-		z-index: auto;
-		display: flex;
-		gap: 8px;
-		align-items: center;
-		justify-content: center;
-		margin-top: 12px;
+		gap: 18px;
+		margin: 20px 0;
 	}
-	.squadra-select-save .select-squadra { flex: 1 1 auto; max-width: none; }
-	.squadra-select-save button[mat-raised-button] { flex: 0 0 72px; width: 72px; height: 36px; padding: 6px 8px; border-radius: 6px; }
-	/* ensure content isn't hidden behind footer */
-	.modal-container { padding-bottom: 24px !important; }
-	.risultati-row { padding-bottom: 8px; }
 
-	/* ensure scrollIntoView doesn't hide content behind footer */
-	.risultati-row { scroll-margin-bottom: 60px; }
+	::ng-deep {
+		.modal-container {
+			.mat-mdc-form-field {
+				.mat-mdc-text-field-wrapper {
+					padding: 5px;
+				}
 
-	/* On mobile, show all results inline (no inner scroll) so items are visible */
-	.risultati-col { max-height: none !important; overflow: visible !important; }
+				.mat-mdc-form-field-flex {
+					padding: 13px 14px;
+				}
+
+				.mat-mdc-select-value,
+				.mat-mdc-select-placeholder {
+					font-size: 0.9rem;
+				}
+			}
+		}
+	}
+
+	button[mat-raised-button] {
+		padding: 14px 24px !important;
+		font-size: 0.92rem !important;
+		min-height: 48px !important;
+		letter-spacing: 0.8px !important;
+		border-radius: 12px !important;
+	}
+
+	.next-opponent {
+		font-size: 0.95rem;
+		padding: 10px 12px;
+	}
+
+	.result-tabs .tab {
+		padding: 10px 10px;
+		font-size: 0.8rem;
+	}
+
+	::ng-deep {
+		.mat-mdc-select-panel .mat-mdc-option {
+			padding: 10px 12px !important;
+			min-height: 44px !important;
+			font-size: 0.85rem !important;
+		}
+	}
 }
+

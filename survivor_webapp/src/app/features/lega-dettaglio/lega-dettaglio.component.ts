@@ -485,4 +485,34 @@ export class LegaDettaglioComponent {
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
   }
+
+  hasGiocataDisponibile(giocatore: Giocatore): boolean {
+    // Verifica se esiste almeno una giornata giocabile per questo giocatore
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return false;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  giocaGiornataDisponibile(giocatore: Giocatore): void {
+    // Trova la prima giornata disponibile e apri il popup
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        this.giocaGiornata(giocatore, giornataAssoluta);
+        return;
+      }
+    }
+  }
 }

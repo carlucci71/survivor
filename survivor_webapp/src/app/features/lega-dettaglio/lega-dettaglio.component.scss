@@ -1,14 +1,93 @@
+/* ICONA GIOCA - MINIMAL SENZA SFONDO */
 .gioca-icon {
-	font-size: 20px;
-	color: var(--primary-color);
-	/* spacing handled by container */
+	font-size: 22px;
+	color: #0A3D91;
 	margin: 0;
 	vertical-align: middle;
 	cursor: pointer;
-	transition: color 0.2s;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: transparent;
+	border: none;
+
+	&:hover {
+		color: #4FC3F7;
+		transform: scale(1.15);
+	}
+
+	&:active {
+		transform: scale(1);
+	}
 }
-.gioca-icon:hover {
-	color: var(--primary-dark);
+
+/* ICONA GIOCA ACCANTO AL NOME - SENZA SFONDO AZZURRO */
+.gioca-icon-nome {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	color: #0A3D91 !important;
+	font-size: 20px !important;
+	line-height: 1 !important;
+	transition: all 0.2s ease !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 24px !important;
+	height: 24px !important;
+	margin-left: 8px !important;
+	cursor: pointer !important;
+	vertical-align: middle !important;
+
+	&:hover {
+		color: #4FC3F7 !important;
+		transform: scale(1.2) !important;
+	}
+
+	&:active {
+		transform: scale(1) !important;
+	}
+}
+
+@media (max-width: 768px) {
+	.gioca-icon {
+		width: 28px;
+		height: 28px;
+		font-size: 20px;
+	}
+
+	.gioca-icon-nome {
+		width: 20px;
+		height: 20px;
+		font-size: 18px;
+		margin-left: 6px;
+	}
+}
+
+/* TOOLTIP MODERNI E COERENTI */
+::ng-deep {
+	.mat-mdc-tooltip,
+	.mat-tooltip {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+		color: #FFFFFF !important;
+		font-family: 'Poppins', sans-serif !important;
+		font-size: 0.9rem !important;
+		font-weight: 600 !important;
+		padding: 10px 16px !important;
+		border-radius: 12px !important;
+		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3) !important;
+		letter-spacing: 0.01em !important;
+	}
+
+	.mat-mdc-tooltip .mdc-tooltip__surface,
+	.mat-tooltip-panel {
+		background: transparent !important;
+		color: inherit !important;
+	}
 }
 .giocatori-table td.ko-font, .ko-font {
 	color: #ffff00 !important;
@@ -97,24 +176,26 @@
 }
 
 .corrente-col .gioca-icon {
-	background: #ffe600;
+	/* Stile pulito senza background - come l'icona generale */
+	background: transparent;
 	border-radius: 50%;
-	padding: 0; /* use fixed width/height */
-	border: 2px solid #ff9800;
-	box-shadow: 0 0 6px 1px #ff980033;
-	color: #111;
-	font-size: 16px;
+	padding: 0;
+	border: none;
+	box-shadow: none;
+	color: #0A3D91;
+	font-size: 22px;
 	line-height: 1;
-	transition: transform 0.12s ease, box-shadow 0.12s ease;
+	transition: all 0.2s ease;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
+	width: 32px;
+	height: 32px;
 }
+
 .corrente-col .gioca-icon:hover {
-	transform: translateY(-1px) scale(1.02);
-	box-shadow: 0 2px 8px 2px #ff980044;
+	color: #4FC3F7;
+	transform: scale(1.15);
 }
 .giocatori-table td .team-name,
 .team-name {
@@ -283,14 +364,19 @@
 .giocatori-table th,
 .giocatori-table td {
 	width: 100px;
-	border: 1px solid #e0e0e0;
-	padding: 6px 4px;
+	border: 1px solid var(--color-gray-border);
+	padding: 10px 8px;
 	text-align: center;
 	vertical-align: middle;
-	font-size: 0.97rem;
+	font-size: 0.95rem;
 	overflow-wrap: break-word;
 	word-break: break-word;
-	background: #fff;
+	background: var(--color-white);
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.02);
+	}
 }
 
 .giocatori-table th.mat-header-cell {
@@ -682,32 +768,117 @@
 	.stacked-view { display: flex; flex-direction: column; gap: 12px; padding: 8px 4px; }
 
 	.player-card {
-		background: #fff;
-		border-radius: 10px;
-		box-shadow: 0 2px 8px rgba(16,24,40,0.06);
-		padding: 10px;
-		border: 1px solid #eef3fb;
+		background: var(--color-white);
+		border-radius: 16px;
+		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.08);
+		padding: 16px;
+		border: 1px solid var(--color-gray-border);
+		transition: all 0.2s ease;
+
+		&:hover {
+			box-shadow: 0 6px 24px rgba(10, 61, 145, 0.12);
+			transform: translateY(-2px);
+		}
 	}
 
-	.player-header { margin-bottom: 8px; }
+	.player-header {
+		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+
+		.nome-giocatore {
+			font-weight: 700;
+			color: #0A3D91;
+			font-size: 1rem;
+			flex: 1;
+		}
+
+		/* BOTTONE GIOCA MOBILE - STILE COERENTE CON APP */
+		.gioca-btn-mobile {
+			background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+			color: #FFFFFF !important;
+			border: none !important;
+			border-radius: 12px !important;
+			padding: 8px 16px !important;
+			font-weight: 700 !important;
+			font-family: 'Poppins', sans-serif !important;
+			font-size: 0.85rem !important;
+			box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15) !important;
+			transition: all 0.2s ease !important;
+			text-transform: none !important;
+			letter-spacing: 0.3px !important;
+			min-height: 36px !important;
+			display: flex !important;
+			align-items: center !important;
+			gap: 6px !important;
+			flex-shrink: 0 !important;
+
+			mat-icon {
+				color: #FFFFFF !important;
+				font-size: 18px !important;
+				width: 18px !important;
+				height: 18px !important;
+				margin: 0 !important;
+			}
+
+			.btn-text {
+				font-size: 0.85rem !important;
+				font-weight: 700 !important;
+				white-space: nowrap !important;
+			}
+
+			&:hover:not(:disabled) {
+				transform: translateY(-2px) !important;
+				box-shadow: 0 6px 24px rgba(10, 61, 145, 0.25) !important;
+			}
+
+			&:active {
+				transform: translateY(0) !important;
+			}
+
+			&:disabled {
+				opacity: 0.5 !important;
+				cursor: not-allowed !important;
+				background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+				color: #6B7280 !important;
+			}
+		}
+	}
 
 	.giornate-list { display: flex; flex-wrap: wrap; gap: 6px; }
 
 	.giornata-item { width: 48%; display: flex; flex-direction: column; gap: 4px; }
 
-	/* make pill take full width inside giornata-item and center text */
 	.giornata-item .team-pill { display: block; width: 100%; box-sizing: border-box; }
 
-	/* On very small phones stack giornata items full width */
 	@media (max-width: 360px) {
 		.giornata-item { width: 100%; }
 		.player-card { padding: 8px; }
 		.team-pill { padding: 6px 10px; font-size: 0.82rem; }
+
+		/* Bottone più compatto su schermi molto piccoli */
+		.player-header .gioca-btn-mobile {
+			padding: 6px 12px !important;
+			font-size: 0.75rem !important;
+			min-height: 32px !important;
+
+			mat-icon {
+				font-size: 16px !important;
+				width: 16px !important;
+				height: 16px !important;
+			}
+
+			.btn-text {
+				font-size: 0.75rem !important;
+			}
+		}
 	}
 
-	.giornata-title { font-size: 0.78rem; color: #555; font-weight: 600; }
+	.giornata-title { font-size: 0.78rem; color: var(--color-gray-text); font-weight: 600; }
 
-	.stato-giornata-mobile { font-size: 0.72rem; color: #777; margin-top: 2px; }
+	.stato-giornata-mobile { font-size: 0.72rem; color: var(--color-gray-text); margin-top: 2px; }
 
 	.team-pill {
 		display: inline-block;
@@ -716,19 +887,20 @@
 		font-weight: 700;
 		font-size: 0.86rem;
 		text-align: center;
-		background: #f0f7fb;
-		color: #0b2540;
-		border: 1px solid #e6f0fb;
+		background: #F4F6F8; /* Grigio chiaro */
+		color: #0A3D91; /* Blu principale */
+		border: 1px solid #4FC3F7; /* Celeste */
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.team-pill.ok { background: #2e7d32; color: #fff; border-color: #1b5e20; }
-	.team-pill.ko { background: #d32f2f; color: #fff; border-color: #b71c1c; }
-	.team-pill.empty { background: #9e9e9e; color: #fff; border-color: #757575; }
-	.mobile-gioca { margin-top: 6px; display: flex; justify-content: flex-end; }
-	.mobile-gioca .gioca-icon { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ffe600; color: #111; border: 1px solid #ff9800; }
+	.team-pill.ok { background: #2E7D32; color: #FFFFFF; border-color: #2E7D32; }
+	.team-pill.ko { background: #D32F2F; color: #FFFFFF; border-color: #D32F2F; }
+	.team-pill.empty { background: #F4F6F8; color: #6B7280; border-color: #6B7280; }
+
+	/* Mobile-gioca rimosso - l'icona è ora nell'header */
+	.mobile-gioca { display: none; }
 }
 
 /* Fallback: also explicitly hide table elements inside desktop-only up to 800px */
@@ -736,4 +908,21 @@
 	.desktop-only .table-horizontal-wrapper,
 	.desktop-only .table-wrapper,
 	.desktop-only .giocatori-table { display: none !important; }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-primary: #0A3D91;
+  --color-accent: #4FC3F7;
+  --color-white: #FFFFFF;
+  --color-gray-bg: #F4F6F8;
+  --color-gray-border: #E0E0E0;
+  --color-gray-text: #6B7280;
+
+  --font-main: 'Inter', sans-serif;
+}
+
+body, button, input, select, textarea, table {
+  font-family: var(--font-main) !important;
 }

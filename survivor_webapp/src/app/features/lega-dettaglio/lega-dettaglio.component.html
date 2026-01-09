@@ -154,12 +154,7 @@
                       </ng-container>
                       @if (visualizzaGiocata(giornata, giocatore)) {
                       <div>
-                        <mat-icon
-                          class="gioca-icon"
-                          matTooltip="Gioca ora"
-                          (click)="giocaGiornata(giocatore, giornata)"
-                          >{{ getGiocaIcon() }}</mat-icon
-                        >
+                        <!-- Icona spostata accanto al nome -->
                       </div>
                       }
                     </span>
@@ -182,6 +177,15 @@
                 [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
               <div class="player-header">
                 <span class="nome-giocatore">{{ giocatore.nome }}</span>
+                <button
+                  *ngIf="lega.giornataCorrente !== undefined && visualizzaGiocata(lega.giornataCorrente - lega.giornataIniziale + 1, giocatore)"
+                  mat-raised-button
+                  class="gioca-btn-mobile"
+                  (click)="giocaGiornata(giocatore, lega.giornataCorrente)"
+                >
+                  <mat-icon>{{ getGiocaIcon() }}</mat-icon>
+                  <span class="btn-text">Gioca</span>
+                </button>
               </div>
               <div class="giornate-list">
                 <div *ngFor="let giornata of mobileGiornateIndices()" class="giornata-item">
@@ -199,14 +203,6 @@
                     }"
                     [title]="getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)">
                     {{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}
-                  </div>
-                  <div *ngIf="visualizzaGiocata(giornata, giocatore)" class="mobile-gioca">
-                    <mat-icon
-                      class="gioca-icon"
-                      matTooltip="Gioca ora"
-                      (click)="giocaGiornata(giocatore, giornata)"
-                      >{{ getGiocaIcon() }}</mat-icon
-                    >
                   </div>
                 </div>
               </div>

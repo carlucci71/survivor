@@ -1,60 +1,68 @@
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+/* Tema Celeste Moderno - FONT SPORTIVO POPPINS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --primary-color: #4CAF50; /* Default green */
+  --primary-color: #4FC3F7; /* Celeste principale */
+  --primary-dark: #0A3D91; /* Blu scuro */
+  --primary-light: #81D4FA; /* Celeste chiaro */
+  --accent-color: #4FC3F7;
+  --font-family: 'Poppins', sans-serif;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: var(--font-family);
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-family);
   margin: 0;
   padding: 0;
-  background-color: #f5f7fa;
+  background-color: #F4F6F8;
 }
 
-/* Theme-specific styles */
-.theme-green {
-  --primary-color: #4CAF50;
-  --primary-dark: #388E3C;
-  --primary-light: #81C784;
+/* Titoli globali - grassetto e maiuscolo */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* Theme celeste */
+.theme-green,
 .theme-blue {
-  --primary-color: #2196F3;
-  --primary-dark: #1976D2;
-  --primary-light: #64B5F6;
+  --primary-color: #4FC3F7; /* Celeste */
+  --primary-dark: #0A3D91; /* Blu scuro */
+  --primary-light: #81D4FA; /* Celeste chiaro */
 }
 
-/* Override Angular Material primary color with theme variables */
+/* Override Angular Material - CELESTE invece di viola */
 .mat-mdc-raised-button.mat-primary,
 .mat-mdc-button.mat-primary,
 .mat-mdc-fab.mat-primary,
 .mat-mdc-mini-fab.mat-primary {
-  --mdc-protected-button-container-color: var(--primary-color) !important;
+  --mdc-protected-button-container-color: #4FC3F7 !important;
   --mdc-protected-button-label-text-color: white !important;
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
 }
 
 mat-toolbar[color="primary"],
 .mat-toolbar.mat-primary,
 .mat-mdc-toolbar.mat-primary {
-  background: var(--primary-color) !important;
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
   color: white !important;
 }
 
-/* Force header class to use theme colors */
 .header,
 mat-toolbar.header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
   color: white !important;
 }
 
 .mat-mdc-progress-spinner circle {
-  stroke: var(--primary-color) !important;
+  stroke: #4FC3F7 !important;
 }
 
 html, body {
@@ -71,7 +79,7 @@ html, body {
   word-break: break-word !important;
   text-align: left !important;
   display: block !important;
-  max-width: 800px; 
+  max-width: 800px;
 }
 
 @media (min-width: 1200px) {
@@ -97,3 +105,79 @@ html, body {
   margin: 0 !important;
 }
 
+/* ============================================
+   STILI GLOBALI PER TUTTI I BOTTONI MATERIAL
+   ============================================ */
+
+/* Bottoni Primary (Conferma, Crea Lega, etc.) */
+button[mat-raised-button][color="primary"],
+button[mat-raised-button].mat-primary,
+.mat-mdc-raised-button.mat-primary {
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-weight: 700 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.95rem !important;
+  box-shadow: 0 4px 20px rgba(10, 61, 145, 0.15) !important;
+  transition: all 0.2s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+  min-height: 44px !important;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 32px rgba(10, 61, 145, 0.25) !important;
+  }
+
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+    color: #6B7280 !important;
+  }
+
+  mat-icon {
+    color: #FFFFFF !important;
+  }
+}
+
+/* Bottoni Secondary/Default (Annulla, etc.) */
+button[mat-button],
+button[mat-stroked-button],
+.mat-mdc-button,
+.mat-mdc-outlined-button {
+  background: #FFFFFF !important;
+  color: #0A3D91 !important;
+  border: 2px solid #E0E0E0 !important;
+  border-radius: 12px !important;
+  padding: 10px 24px !important;
+  font-weight: 600 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.95rem !important;
+  transition: all 0.2s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+  min-height: 44px !important;
+
+  &:hover:not(:disabled) {
+    background: #F8F9FA !important;
+    border-color: #4FC3F7 !important;
+    color: #0A3D91 !important;
+  }
+
+  &:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+  }
+}
+
+/* Dialog actions - allineamento */
+mat-dialog-actions {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+  padding: 16px 24px !important;
+}

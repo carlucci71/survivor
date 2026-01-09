@@ -29,7 +29,7 @@
             <div class="me-actions">
               <button
                 mat-raised-button
-                color="accent"
+                class="btn-conferma"
                 type="submit"
                 [disabled]="!nomeModificato || isSaving"
               >
@@ -37,13 +37,14 @@
               </button>
 
           @if (feedbackMessage ) {
-              <p
-                class="feedback"
+              <div
+                class="feedback-badge"
                 [class.success]="feedbackType === 'success'"
                 [class.error]="feedbackType === 'error'"
               >
-                {{ feedbackMessage }}
-              </p>
+                <mat-icon>{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+                <span>{{ feedbackMessage }}</span>
+              </div>
             }
             </div>
           </form>
