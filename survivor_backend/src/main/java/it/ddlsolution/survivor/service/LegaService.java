@@ -76,7 +76,7 @@ public class LegaService {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
         for (Lega lega : leghe) {
-            legheDTO.add(getLegaDTO(lega.getId(), false));
+                legheDTO.add(getLegaDTO(lega.getId(), false));
         }
         return legheDTO;
     }
@@ -97,23 +97,26 @@ public class LegaService {
             legaDTO.setGiocatori(List.of(giocatoreDTO));
 
         }
-
-        addInfoCalcolate(legaDTO);
-        List<GiocatoreDTO> giocatori = legaDTO.getGiocatori();
-        if (!ObjectUtils.isEmpty(giocatori)) {
-            giocatori = giocatori.stream().sorted((g1, g2) ->
-            {
-                Enumeratori.StatoGiocatore statoGiocatore1 = g1.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
-                Enumeratori.StatoGiocatore statoGiocatore2 = g2.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
-                if (statoGiocatore1 == statoGiocatore2) {
-                    if (g1.getGiocate().size() == g2.getGiocate().size()) {
-                        return g1.getNome().compareTo(g2.getNome());
+        try {
+            addInfoCalcolate(legaDTO);
+            List<GiocatoreDTO> giocatori = legaDTO.getGiocatori();
+            if (!ObjectUtils.isEmpty(giocatori)) {
+                giocatori = giocatori.stream().sorted((g1, g2) ->
+                {
+                    Enumeratori.StatoGiocatore statoGiocatore1 = g1.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
+                    Enumeratori.StatoGiocatore statoGiocatore2 = g2.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
+                    if (statoGiocatore1 == statoGiocatore2) {
+                        if (g1.getGiocate().size() == g2.getGiocate().size()) {
+                            return g1.getNome().compareTo(g2.getNome());
+                        }
+                        return g2.getGiocate().size() - g1.getGiocate().size();
                     }
-                    return g2.getGiocate().size() - g1.getGiocate().size();
-                }
-                return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
-            }).toList();
-            legaDTO.setGiocatori(giocatori);
+                    return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
+                }).toList();
+                legaDTO.setGiocatori(giocatori);
+            }
+        } catch (Exception e){
+            legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
         return legaDTO;
     }
