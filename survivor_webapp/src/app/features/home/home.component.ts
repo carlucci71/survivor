@@ -250,7 +250,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         legaId: lega.id,
         legaNome: lega.name,
       },
-      width: '600px',
+      width: '90vw',
+      maxWidth: '600px',
+      maxHeight: '85vh',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false
     });
   }
 }

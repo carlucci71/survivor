@@ -86,20 +86,23 @@
           font-size: 0.95rem !important;
           box-shadow: 0 4px 20px rgba(10, 61, 145, 0.15) !important;
           transition: all 0.2s ease !important;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          min-height: 48px;
+          text-transform: uppercase !important;
+          letter-spacing: 0.5px !important;
+          min-height: 48px !important;
+          cursor: pointer !important;
 
           &:hover:not(:disabled) {
-            transform: translateY(-2px);
+            transform: translateY(-2px) !important;
             box-shadow: 0 8px 32px rgba(10, 61, 145, 0.25) !important;
           }
 
           &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
             background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
             color: #6B7280 !important;
+            transform: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
           }
         }
       }
@@ -180,10 +183,12 @@
       border-radius: 12px !important;
     }
 
-    /* Form field infix */
+    /* Form field infix - PIÙ SPAZIO INTERNO */
     .mat-mdc-form-field-infix {
-      padding-top: 20px !important;
-      padding-bottom: 8px !important;
+      padding-top: 22px !important;
+      padding-bottom: 10px !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
       min-height: 56px !important;
     }
 
@@ -192,6 +197,13 @@
       color: rgba(0, 0, 0, 0.6) !important;
       font-family: 'Poppins', sans-serif !important;
       font-weight: 500 !important;
+      left: 16px !important;  /* DISTACCO DAL BORDO SINISTRO */
+    }
+
+    /* Floating label quando è in alto */
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      left: 16px !important;
+      top: 8px !important;
     }
 
     /* Notched outline - bordi arrotondati */
@@ -235,18 +247,18 @@
       }
     }
 
-    /* Input fields - CENTRATO VERTICALMENTE CON PIÙ SPAZIO */
+    /* Input fields - CENTRATO VERTICALMENTE CON PIÙ SPAZIO DAI BORDI */
     input.mat-mdc-input-element {
       color: #0A3D91 !important;
       font-family: 'Poppins', sans-serif !important;
       font-weight: 600 !important;
       font-size: 1rem !important;
       line-height: 1.6 !important;
-      padding: 6px 0 !important;
+      padding: 8px 16px 8px 0 !important;  /* PADDING ORIZZONTALE */
       margin: 0 !important;
     }
 
-    /* Select - sfondo bianco e testo blu */
+    /* Select - sfondo bianco e testo blu CON SPAZIO DAI BORDI */
     .mat-mdc-select {
       font-family: 'Poppins', sans-serif !important;
 
@@ -254,6 +266,8 @@
         color: #0A3D91 !important;
         font-weight: 600 !important;
         font-size: 1rem !important;
+        padding: 8px 0 8px 0 !important;  /* PADDING VERTICALE */
+        margin: 0 !important;
       }
 
       .mat-mdc-select-value-text {
@@ -265,21 +279,25 @@
         color: rgba(0, 0, 0, 0.42) !important;
       }
 
-      /* Freccia select - VISIBILE */
+      /* Freccia select - MIGLIORATA E MEGLIO POSIZIONATA */
       .mat-mdc-select-arrow-wrapper {
         display: flex !important;
         align-items: center !important;
+        position: absolute !important;
+        right: 16px !important;  /* DISTACCO DAL BORDO DESTRO */
+        top: 50% !important;
+        transform: translateY(-50%) !important;
 
         .mat-mdc-select-arrow {
           color: #0A3D91 !important;
           display: block !important;
           width: 0 !important;
           height: 0 !important;
-          border-left: 5px solid transparent !important;
-          border-right: 5px solid transparent !important;
-          border-top: 5px solid #0A3D91 !important;
+          border-left: 6px solid transparent !important;  /* PIÙ GRANDE */
+          border-right: 6px solid transparent !important;
+          border-top: 6px solid #0A3D91 !important;
           border-bottom: 0 !important;
-          margin: 0 4px !important;
+          margin: 0 !important;
         }
 
         .mat-mdc-select-arrow svg {
@@ -288,10 +306,11 @@
       }
     }
 
-    /* Select trigger */
+    /* Select trigger - CON PADDING CORRETTO */
     .mat-mdc-select-trigger {
       display: flex !important;
       align-items: center !important;
+      padding: 0 40px 0 0 !important;  /* SPAZIO PER LA FRECCIA A DESTRA */
     }
   }
 }
@@ -468,3 +487,130 @@
     }
   }
 }
+
+/* RESPONSIVE TABLET E MOBILE - LEGA NUOVA */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px 16px;
+
+    .main-panel {
+      .message-box {
+        padding: 24px 20px;
+
+        .form-vertical {
+          gap: 24px;
+
+          .form-row.actions {
+            margin-top: 16px;
+
+            button[mat-raised-button] {
+              width: 100%;
+              justify-content: center;
+              padding: 16px 24px !important;
+              font-size: 1rem !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* FORM FIELDS RESPONSIVE */
+  ::ng-deep {
+    .lega-nuova-component,
+    app-lega-nuova {
+      .mat-mdc-form-field-infix {
+        padding-top: 20px !important;
+        padding-bottom: 8px !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        min-height: 52px !important;
+      }
+
+      .mat-mdc-floating-label {
+        left: 14px !important;
+      }
+
+      .mat-mdc-floating-label.mdc-floating-label--float-above {
+        left: 14px !important;
+        top: 6px !important;
+      }
+
+      .mat-mdc-select-arrow-wrapper {
+        right: 14px !important;
+
+        .mat-mdc-select-arrow {
+          border-left: 5px solid transparent !important;
+          border-right: 5px solid transparent !important;
+          border-top: 5px solid #0A3D91 !important;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 16px 12px;
+
+    .main-panel {
+      .message-box {
+        padding: 20px 16px;
+        border-radius: 12px;
+
+        .form-vertical {
+          gap: 20px;
+
+          .form-row.actions {
+            button[mat-raised-button] {
+              padding: 14px 20px !important;
+              font-size: 0.9rem !important;
+              min-height: 44px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* FORM FIELDS MOBILE */
+  ::ng-deep {
+    .lega-nuova-component,
+    app-lega-nuova {
+      .mat-mdc-form-field-infix {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+        min-height: 48px !important;
+      }
+
+      .mat-mdc-floating-label {
+        left: 12px !important;
+        font-size: 0.9rem !important;
+      }
+
+      .mat-mdc-floating-label.mdc-floating-label--float-above {
+        left: 12px !important;
+      }
+
+      input.mat-mdc-input-element {
+        font-size: 0.9rem !important;
+        padding: 6px 12px 6px 0 !important;
+      }
+
+      .mat-mdc-select {
+        .mat-mdc-select-value {
+          font-size: 0.9rem !important;
+        }
+      }
+
+      .mat-mdc-select-arrow-wrapper {
+        right: 12px !important;
+      }
+
+      .mat-mdc-select-trigger {
+        padding: 0 36px 0 0 !important;
+      }
+    }
+  }
+}
+
