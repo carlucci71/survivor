@@ -330,7 +330,9 @@ public class LegaService {
 
     private void addInfoCalcolate(LegaDTO legaDTO) {
         legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
-        legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()));
+        List<Integer> edizioni = legaRepository.findEdizioniByName(legaDTO.getName()).stream().sorted().toList();
+        legaDTO.setEdizioni(edizioni);
+
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente) {
@@ -516,6 +518,8 @@ public class LegaService {
     @LoggaDispositiva(tipologia = "nuovaEdizione")
     @Transactional
     public LegaDTO nuovaEdizione(Long idLega) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true);
         LegaInsertDTO legaInsertDTO = new LegaInsertDTO();
         legaInsertDTO.setCampionato(legaDTO.getCampionato().getId());
@@ -532,7 +536,11 @@ public class LegaService {
             Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId()).orElseThrow(() -> new RuntimeException("Giocatore non trovato: " + giocatoreDTO.getId()));
             giocatoreLega.setGiocatore(giocatore);
             giocatoreLega.setLega(lega);
-            giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+            if (giocatore.getUser() != null && giocatore.getUser().getId() != null && giocatore.getUser().getId().equals(userId)) {
+                giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+            } else {
+                giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
+            }
             giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
             giocatoriLega.add(giocatoreLega);
         }
