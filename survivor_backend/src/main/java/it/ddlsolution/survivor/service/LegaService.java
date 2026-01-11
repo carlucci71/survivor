@@ -23,6 +23,7 @@ import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -76,7 +77,7 @@ public class LegaService {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
         for (Lega lega : leghe) {
-                legheDTO.add(getLegaDTO(lega.getId(), false));
+            legheDTO.add(getLegaDTO(lega.getId(), false));
         }
         return legheDTO;
     }
@@ -99,26 +100,57 @@ public class LegaService {
         }
         try {
             addInfoCalcolate(legaDTO);
-            List<GiocatoreDTO> giocatori = legaDTO.getGiocatori();
-            if (!ObjectUtils.isEmpty(giocatori)) {
-                giocatori = giocatori.stream().sorted((g1, g2) ->
-                {
-                    Enumeratori.StatoGiocatore statoGiocatore1 = g1.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
-                    Enumeratori.StatoGiocatore statoGiocatore2 = g2.getStatiPerLega().entrySet().stream().filter(e -> e.getKey().equals(legaDTO.getId())).findFirst().get().getValue();
-                    if (statoGiocatore1 == statoGiocatore2) {
-                        if (g1.getGiocate().size() == g2.getGiocate().size()) {
-                            return g1.getNome().compareTo(g2.getNome());
-                        }
-                        return g2.getGiocate().size() - g1.getGiocate().size();
-                    }
-                    return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
-                }).toList();
-                legaDTO.setGiocatori(giocatori);
-            }
-        } catch (Exception e){
+            legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
+        } catch (Exception e) {
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
+        if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
+            offuscaUltimaGiocata(legaDTO);
+        }
         return legaDTO;
+    }
+
+    private List<GiocatoreDTO> getGiocatoriOrdinati(List<GiocatoreDTO> giocatori, Long idLega) {
+        if (!ObjectUtils.isEmpty(giocatori)) {
+            giocatori = giocatori.stream().sorted((g1, g2) ->
+            {
+                Enumeratori.StatoGiocatore statoGiocatore1 = g1.getStatiPerLega().entrySet().stream()
+                        .filter(e -> e.getKey().equals(idLega))
+                        .findFirst()
+                        .get()
+                        .getValue();
+                Enumeratori.StatoGiocatore statoGiocatore2 = g2.getStatiPerLega().entrySet().stream()
+                        .filter(e -> e.getKey().equals(idLega))
+                        .findFirst()
+                        .get()
+                        .getValue();
+                if (statoGiocatore1 == statoGiocatore2) {
+                    if (g1.getGiocate().size() == g2.getGiocate().size()) {
+                        return g1.getNome().compareTo(g2.getNome());
+                    }
+                    return g2.getGiocate().size() - g1.getGiocate().size();
+                }
+                return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
+            }).toList();
+        }
+        return giocatori;
+    }
+
+    private void offuscaUltimaGiocata(LegaDTO legaDTO) {
+        List<GiocatoreDTO> giocatori=legaDTO.getGiocatori();
+        Long idLega=legaDTO.getId();
+        Integer giornata=legaDTO.getGiornataCorrente()-legaDTO.getGiornataIniziale()+1;
+        if (!ObjectUtils.isEmpty(giocatori)) {
+            for (GiocatoreDTO giocatoreDTO : giocatori) {
+                List<GiocataDTO> giocate = giocatoreDTO.getGiocate();
+                for (GiocataDTO giocataDTO : giocate) {
+                    if (!ObjectUtils.isEmpty(giocataDTO.getSquadraId()) && giocataDTO.getGiornata().equals(giornata) && giocataDTO.getLegaId().equals(idLega)) {
+                        giocataDTO.setSquadraId("--");
+                        giocataDTO.setSquadraSigla("--");
+                    }
+                }
+            }
+        }
     }
 
 
@@ -402,15 +434,19 @@ public class LegaService {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
 
         Integer giornataDaSaltare = legaDTO.getGiornataCalcolata();
-        if (legaDTO.getStatoGiornataCorrente()== Enumeratori.StatoPartita.IN_CORSO){
-            giornataDaSaltare++;
+        if (giornataDaSaltare == null) {
+            giornataDaSaltare = 1;
+        } else {
+            if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.IN_CORSO) {
+                giornataDaSaltare++;
+            }
         }
         sospensioniLegaService.aggiungi(idLega, giornataDaSaltare);
         legaDTO.getStatiGiornate().put(giornataDaSaltare, Enumeratori.StatoPartita.SOSPESA);
 
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             Enumeratori.StatoGiocatore nuovoStatoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);
-            giocatoreDTO.getStatiPerLega().put(idLega,nuovoStatoGiocatore);
+            giocatoreDTO.getStatiPerLega().put(idLega, nuovoStatoGiocatore);
 //            giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
         }
         legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
