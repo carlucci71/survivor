@@ -184,6 +184,7 @@ export interface StatiPerLega {
 
 
 export class StatoLega {
+  static readonly ERRORE = new StatoLega('ERRORE', 'In errore');
   static readonly DA_AVVIARE = new StatoLega('DA_AVVIARE', 'Da Avviare');
   static readonly AVVIATA = new StatoLega('AVVIATA', 'Avviata');
   static readonly TERMINATA = new StatoLega('TERMINATA', 'Terminata');
@@ -195,6 +196,7 @@ export class StatoLega {
 
   static values(): StatoLega[] {
     return [
+      StatoLega.ERRORE,
       StatoLega.DA_AVVIARE,
       StatoLega.AVVIATA,
       StatoLega.TERMINATA
@@ -204,6 +206,8 @@ export class StatoLega {
 
 export function statoLegaFromCodice(codice: string): StatoLega {
   switch (codice) {
+    case StatoLega.ERRORE.value:
+      return StatoLega.ERRORE;
     case StatoLega.DA_AVVIARE.value:
       return StatoLega.DA_AVVIARE;
     case StatoLega.AVVIATA.value:
