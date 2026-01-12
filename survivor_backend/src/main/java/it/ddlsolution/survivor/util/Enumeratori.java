@@ -88,7 +88,7 @@ public class Enumeratori {
     }
 
     public enum StatoLega {
-        DA_AVVIARE("D"), AVVIATA("A"), TERMINATA("T");
+        DA_AVVIARE("D"), AVVIATA("A"), TERMINATA("T"), ERRORE("E");
 
         private final String codice;
 

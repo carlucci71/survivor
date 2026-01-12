@@ -72,25 +72,29 @@ public class CacheableService {
         }
 
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            List<LocalDateTime> iniziGiornate=new ArrayList<>();
-            int giornata = 0;
-            Integer giornataDaGiocare = null;
-            do {
-                giornata++;
-                List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
-                if (partiteDTO.size()>0) {
-                    LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
-                    iniziGiornate.add(inizioGiornata);
-                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    log.info("La giornata {} è {}",giornata, statoPartitaGiornata);
-                    if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
-                        giornataDaGiocare = giornata+1;
+            try {
+                List<LocalDateTime> iniziGiornate = new ArrayList<>();
+                int giornata = 0;
+                Integer giornataDaGiocare = null;
+                do {
+                    giornata++;
+                    List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
+                    if (partiteDTO.size() > 0) {
+                        LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
+                        iniziGiornate.add(inizioGiornata);
+                        Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                        log.info("La giornata {} è {}", giornata, statoPartitaGiornata);
+                        if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                            giornataDaGiocare = giornata + 1;
+                        }
                     }
-                }
-            } while (giornata < campionatoDTO.getNumGiornate());
-            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-            campionatoDTO.setIniziGiornate(iniziGiornate);
-
+                } while (giornata < campionatoDTO.getNumGiornate());
+                campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+                campionatoDTO.setIniziGiornate(iniziGiornate);
+            }
+            catch (Exception e){
+                log.info("Errore nel recupero del campionato: " + campionatoDTO.getNome(),e);
+            }
         }
         /*
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
