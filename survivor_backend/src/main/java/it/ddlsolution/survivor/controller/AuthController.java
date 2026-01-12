@@ -11,7 +11,7 @@ import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.repository.UserRepository;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

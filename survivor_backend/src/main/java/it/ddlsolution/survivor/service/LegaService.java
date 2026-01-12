@@ -9,7 +9,7 @@ import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
-import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
@@ -19,11 +19,10 @@ import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -102,6 +101,7 @@ public class LegaService {
             addInfoCalcolate(legaDTO);
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
         } catch (Exception e) {
+            log.error("Errore in info calcolate",e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
         if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
@@ -145,8 +145,8 @@ public class LegaService {
                 List<GiocataDTO> giocate = giocatoreDTO.getGiocate();
                 for (GiocataDTO giocataDTO : giocate) {
                     if (!ObjectUtils.isEmpty(giocataDTO.getSquadraId()) && giocataDTO.getGiornata().equals(giornata) && giocataDTO.getLegaId().equals(idLega)) {
-                        giocataDTO.setSquadraId("--");
-                        giocataDTO.setSquadraSigla("--");
+                        giocataDTO.setSquadraId("***");
+                        giocataDTO.setSquadraSigla("***");
                     }
                 }
             }

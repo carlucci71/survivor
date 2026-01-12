@@ -4,7 +4,7 @@ package it.ddlsolution.survivor.aspect.guardlogger.rule;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -69,7 +69,7 @@ public class GiocataRule implements GuardRule {
             throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
         if (giocatoreDTO.getGiocate().stream()
-                .filter(g -> g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
+                .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
                 .count() > 0) {
             throw new AccessDeniedException("Squadra già usata");
         }

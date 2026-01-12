@@ -1,8 +1,7 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.service.externalapi.ICalendario;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +14,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CampionatoService {
     private final CacheableService cacheableService;
-    private final UtilCalendarioService utilCalendarioService;
-    private final ICalendario calendario;
 
     @Transactional(readOnly = true)
     public CampionatoDTO getCampionato(String campionatoId) {
@@ -39,12 +36,20 @@ public class CampionatoService {
                 .toList();
     }
 
+    private Map<Integer, String> roundTennis() {
+        Map<Integer, String> ret = new HashMap<>();
+        Enumeratori.DesRoundTennis[] values = Enumeratori.DesRoundTennis.values();
+        for (int i = 0; i < values.length; i++) {
+            ret.put((i + 1), values[i].getDescrizione());
+        }
+        return ret;
+    }
     @Transactional(readOnly = true)
     public Map<String, Map<Integer, String>> desGiornate() {
         Map<String, Map<Integer, String>> ret = new HashMap<>();
 
         for (CampionatoDTO campionatoDTO : campionatiBySport(Enumeratori.SportDisponibili.TENNIS.name())) {
-            ret.put(campionatoDTO.getId(), calendario.roundTennis());
+            ret.put(campionatoDTO.getId(), roundTennis());
         }
 
         ret.put(Enumeratori.CampionatiDisponibili.NBA_RS.name(), desNbaRS());

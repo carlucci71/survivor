@@ -1,11 +1,11 @@
 package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,6 @@ public class UtilController {
 
     private final Environment environment;
     private final UtilCalendarioService utilCalendarioService;
-    private final CacheableService cacheableService;
     private final CampionatoService campionatoService;
 
 

@@ -2,9 +2,7 @@ package it.ddlsolution.survivor.aspect.guardlogger.rule;
 
 
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.entity.User;
-import it.ddlsolution.survivor.repository.UserRepository;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

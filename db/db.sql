@@ -6,8 +6,9 @@ drop table if exists lega;
 drop table if exists squadra;
 drop table if exists campionato;
 drop table if exists sport;
-DROP TABLE if exists param_log_dispositiva;
-DROP TABLE if exists log_dispositiva;
+drop table if exists partita;
+drop TABLE if exists param_log_dispositiva;
+drop TABLE if exists log_dispositiva;
 
 create table lega(
 	id serial primary key,
@@ -48,8 +49,8 @@ create table campionato(
 );
 create table squadra(
 	id serial primary key,
-	sigla varchar(10),
-	nome varchar(100) not null,
+	sigla varchar(200),
+	nome varchar(200) not null,
 	id_campionato varchar(20) not null
 );
 create table giocata(
@@ -68,6 +69,22 @@ CREATE TABLE log_dispositiva (
     messaggio varchar(1000),
     id_errore BIGINT,
     user_id BIGINT NOT NULL
+);
+
+create table partita(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+    giornata integer NOT NULL,
+    orario timestamp NOT NULL,
+    stato varchar(20) NOT NULL,
+    casa_nome varchar(200) NOT NULL,
+    fuori_nome varchar(200) NOT NULL,
+    casa_sigla varchar(200),
+    fuori_sigla varchar(200),
+    score_casa integer,
+    score_fuori integer,
+    alias_giornata_casa varchar(200),
+    alias_giornata_fuori varchar(200)
 );
 
 CREATE TABLE param_log_dispositiva (
@@ -108,6 +125,10 @@ ADD CONSTRAINT fk_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 
 alter TABLE sospensione_lega 
 ADD CONSTRAINT fk_sospensione_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
+
+ALTER TABLE partita
+ADD CONSTRAINT fk_partita_campionato
+FOREIGN KEY (id_campionato) REFERENCES campionato(id);
 
 ALTER TABLE log_dispositiva
 ADD CONSTRAINT fk_log_dispositiva_users

@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.entity.projection;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 
 /**
  * Projection for {@link it.ddlsolution.survivor.entity.Lega}

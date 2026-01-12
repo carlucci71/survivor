@@ -1,7 +1,7 @@
 package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
 import lombok.RequiredArgsConstructor;

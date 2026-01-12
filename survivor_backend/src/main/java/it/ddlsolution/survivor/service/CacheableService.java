@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
-import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
@@ -15,7 +15,7 @@ import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +60,7 @@ public class CacheableService {
     public final static String URL="cache-url";
 
     @Cacheable(value = CAMPIONATI)
-    @Transactional(readOnly = true)
+    @Transactional
     public List<CampionatoDTO> allCampionati() {
         List<CampionatoDTO> campionatiDTO =  campionatoMapper.toDTOList(campionatoRepository.findAll());
 
@@ -78,7 +76,7 @@ public class CacheableService {
                 Integer giornataDaGiocare = null;
                 do {
                     giornata++;
-                    List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
+                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteFromWeb(campionatoDTO, giornata);
                     if (partiteDTO.size() > 0) {
                         LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
                         iniziGiornate.add(inizioGiornata);
@@ -96,29 +94,6 @@ public class CacheableService {
                 log.info("Errore nel recupero del campionato: " + campionatoDTO.getNome(),e);
             }
         }
-        /*
-        for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            List<LocalDateTime> iniziGiornate=new ArrayList<>();
-            int giornata = 0;
-            int giornataDaGiocare = 0;
-            do {
-                giornata++;
-                List<PartitaDTO> partiteDTO = utilCalendarioService.partite(campionatoDTO, giornata);
-                if (partiteDTO.size()>0) {
-                    LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
-                    iniziGiornate.add(inizioGiornata);
-                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
-                        giornataDaGiocare = giornata+1;
-                    }
-                }
-            } while (giornata < campionatoDTO.getNumGiornate());
-            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-            campionatoDTO.setIniziGiornate(iniziGiornate);
-
-        }
-
-         */
         return campionatiDTO;
     }
 

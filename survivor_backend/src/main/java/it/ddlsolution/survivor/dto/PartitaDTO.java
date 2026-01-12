@@ -1,6 +1,6 @@
-package it.ddlsolution.survivor.dto.response;
+package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Builder;
 import lombok.Data;
 
