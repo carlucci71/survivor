@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 
 @Component({
   selector: 'app-footer',
@@ -21,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
           <!-- LINK NAVIGAZIONE -->
           <nav class="footer-nav">
             <a href="#" class="footer-link">Chi siamo</a>
-            <a href="#" class="footer-link">FAQ</a>
+            <a href="#" class="footer-link" (click)="openFaq($event)">FAQ</a>
             <a href="#" class="footer-link">Privacy</a>
           </nav>
 
@@ -215,5 +217,16 @@ import { MatIconModule } from '@angular/material/icon';
   `]
 })
 export class FooterComponent {
-  constructor() {}
+  constructor(private dialog: MatDialog) {}
+
+  openFaq(event: Event) {
+    event.preventDefault();
+    this.dialog.open(FaqDialogComponent, {
+      width: '90vw',
+      maxWidth: '800px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
+    });
+  }
 }
+

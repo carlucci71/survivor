@@ -181,3 +181,74 @@ mat-dialog-actions {
   justify-content: flex-end !important;
   padding: 16px 24px !important;
 }
+
+/* CORREZIONE DIALOG ANGULAR MATERIAL - ELIMINAZIONE SPAZI BIANCHI */
+.cdk-overlay-pane {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+
+  .mat-mdc-dialog-container,
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+}
+
+/* Classe per dialog custom puliti */
+.custom-dialog-container {
+  .mat-mdc-dialog-container,
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+
+    .mat-mdc-dialog-surface,
+    .mat-dialog-surface {
+      padding: 0 !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      margin: 0 !important;
+    }
+  }
+}
+
+/* REGOLE AGGRESSIVE PER ELIMINARE SPAZI BIANCHI NEI DIALOG */
+.mat-mdc-dialog-container *,
+.mat-dialog-container * {
+  &::before,
+  &::after {
+    display: none !important;
+  }
+}
+
+/* Override per tutti i dialog */
+.cdk-overlay-container {
+  .mat-mdc-dialog-container,
+  .mat-dialog-container {
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    .mat-mdc-dialog-surface,
+    .mat-dialog-surface {
+      &::before,
+      &::after {
+        display: none !important;
+      }
+    }
+  }
+}
+

@@ -102,8 +102,8 @@ import { MatCardModule } from '@angular/material/card';
       max-height: 90vh;
       overflow: hidden;
       background: #FFFFFF;
-      border-radius: 20px;
-      box-shadow: 0 24px 80px rgba(10, 61, 145, 0.3);
+      border-radius: 16px;
+      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.2);
       font-family: 'Poppins', sans-serif;
       position: relative;
     }
@@ -113,40 +113,43 @@ import { MatCardModule } from '@angular/material/card';
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 24px 28px;
+      padding: 20px 60px 20px 24px; /* Più spazio a destra per la X */
       border-bottom: none;
       background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-      border-radius: 20px 20px 0 0;
+      border-radius: 16px 16px 0 0;
       position: relative;
+      min-height: 70px;
 
       .dialog-title {
         margin: 0;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #FFFFFF;
         text-transform: uppercase;
-        letter-spacing: 0.6px;
+        letter-spacing: 0.5px;
         text-align: center;
         line-height: 1.3;
-        max-width: calc(100% - 80px);
+        width: 100%;
         word-wrap: break-word;
         hyphens: auto;
       }
 
       .close-btn {
         position: absolute;
-        right: 24px;
+        right: 20px;
         top: 50%;
         transform: translateY(-50%);
         background: rgba(255, 255, 255, 0.15);
         color: #FFFFFF;
+        border: none;
         border-radius: 50%;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
 
         &:hover {
           background: rgba(255, 255, 255, 0.25);
@@ -154,10 +157,10 @@ import { MatCardModule } from '@angular/material/card';
         }
 
         mat-icon {
-          font-size: 22px;
-          width: 22px;
-          height: 22px;
-          line-height: 22px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          line-height: 20px;
         }
       }
     }
@@ -193,16 +196,16 @@ import { MatCardModule } from '@angular/material/card';
       }
 
       .instructions {
-        margin: 0 0 28px 0;
-        color: #4B5563;
+        margin: 0 0 24px 0;
+        color: #6B7280;
         font-weight: 500;
-        font-size: 1rem;
+        font-size: 0.9rem;
         line-height: 1.5;
         text-align: center;
-        padding: 16px 24px;
-        background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+        padding: 16px 20px;
+        background: rgba(248, 250, 252, 0.5);
         border-radius: 12px;
-        border-left: 4px solid #4FC3F7;
+        border: none;
       }
 
       /* SEZIONE INPUT EMAIL - COMPLETAMENTE RIDISEGNATA */
@@ -218,22 +221,22 @@ import { MatCardModule } from '@angular/material/card';
           min-width: 280px;
 
           ::ng-deep .mat-mdc-text-field-wrapper {
-            border-radius: 16px;
+            border-radius: 12px;
             background: #FFFFFF;
-            border: 2px solid #E2E8F0;
+            border: 1px solid #E5E7EB;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(10, 61, 145, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
             &:focus-within {
               border-color: #0A3D91;
               background: #FFFFFF;
-              box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
-              transform: translateY(-2px);
+              box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15);
+              transform: translateY(-1px);
             }
 
             &:hover:not(:focus-within) {
               border-color: #4FC3F7;
-              box-shadow: 0 6px 16px rgba(10, 61, 145, 0.08);
+              box-shadow: 0 3px 12px rgba(10, 61, 145, 0.08);
             }
           }
 
@@ -320,13 +323,13 @@ import { MatCardModule } from '@angular/material/card';
         }
       }
 
-      /* LISTA EMAIL AGGIUNTE - DESIGN DELICATO */
+      /* LISTA EMAIL AGGIUNTE - DESIGN PULITO */
       .emails-list {
         margin-bottom: 24px;
-        padding: 12px;
-        background: rgba(248, 250, 252, 0.5);
-        border-radius: 8px;
-        border: 1px solid rgba(229, 231, 235, 0.5);
+        padding: 16px;
+        background: rgba(248, 250, 252, 0.3);
+        border-radius: 12px;
+        border: none;
 
         ::ng-deep mat-chip-set {
           display: flex;
@@ -337,30 +340,29 @@ import { MatCardModule } from '@angular/material/card';
           mat-chip {
             background: #FFFFFF !important;
             color: #374151 !important;
-            border: 1px solid #E5E7EB !important;
-            border-radius: 12px !important;
-            font-weight: 400 !important;
+            border: none !important;
+            border-radius: 16px !important;
+            font-weight: 500 !important;
             font-family: 'Poppins', sans-serif !important;
-            padding: 4px 8px !important;
-            font-size: 0.75rem !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+            padding: 8px 12px !important;
+            font-size: 0.8rem !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
             transition: all 0.2s ease !important;
 
             &:hover {
               transform: translateY(-1px);
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-              border-color: #D1D5DB !important;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
             }
 
             button[matChipRemove] {
-              background: rgba(220, 38, 38, 0.15) !important;
-              border: 1px solid rgba(220, 38, 38, 0.25) !important;
+              background: rgba(220, 38, 38, 0.1) !important;
+              border: none !important;
               border-radius: 50% !important;
               cursor: pointer !important;
-              padding: 1px !important;
-              margin-left: 6px !important;
-              width: 14px !important;
-              height: 14px !important;
+              padding: 2px !important;
+              margin-left: 8px !important;
+              width: 16px !important;
+              height: 16px !important;
               display: flex !important;
               align-items: center !important;
               justify-content: center !important;
@@ -375,8 +377,7 @@ import { MatCardModule } from '@angular/material/card';
               }
 
               &:hover {
-                background: rgba(220, 38, 38, 0.25) !important;
-                border-color: rgba(220, 38, 38, 0.4) !important;
+                background: rgba(220, 38, 38, 0.2) !important;
                 transform: scale(1.1) !important;
 
                 mat-icon {
@@ -437,7 +438,7 @@ import { MatCardModule } from '@angular/material/card';
       padding: 24px 28px;
       border-top: none;
       background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
-      border-radius: 0 0 20px 20px;
+      border-radius: 0 0 16px 16px;
 
       .cancel-btn {
         background: #FFFFFF !important;

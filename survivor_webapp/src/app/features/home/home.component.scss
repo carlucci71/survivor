@@ -535,3 +535,12 @@ button[mat-raised-button][color="primary"] {
 		justify-content: center;
 	}
 }
+
+/* Divisorio tra sezioni */
+.section-divider {
+	height: 2px;
+	background: linear-gradient(90deg, transparent 0%, #E0E0E0 20%, #E0E0E0 80%, transparent 100%);
+	margin: 40px auto;
+	max-width: 300px;
+	border-radius: 1px;
+}
