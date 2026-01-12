@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="footer-contact">
             <a href="mailto:info@survivor-oneshot.com" class="footer-link">
               <mat-icon>email</mat-icon>
-              <span>info&#64;survivor-oneshot.com</span>
+              <span>fantasurvivorddl&#64;gmail.com</span>
             </a>
           </div>
 

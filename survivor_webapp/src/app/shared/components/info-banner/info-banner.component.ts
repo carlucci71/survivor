@@ -96,17 +96,18 @@ import { FormsModule } from '@angular/forms';
   styles: [`
     .regolamento-dialog {
       width: 90vw;
-      max-width: 750px;
-      max-height: 85vh;
+      max-width: 100vw;
+      max-height: 90vh;
       background: #FFFFFF;
-      border-radius: 16px;
+      border-radius: 0;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
       font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
-      margin: 0 auto;
+      margin: 0;
       position: relative;
       overflow: hidden;
+      box-sizing: border-box;
     }
 
     .dialog-header {
@@ -166,9 +167,15 @@ import { FormsModule } from '@angular/forms';
       padding: 20px;
       overflow-y: auto;
       overflow-x: hidden;
-      line-height: 1.5;
+      line-height: 1.6;
       box-sizing: border-box;
       width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
+      text-align: left;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
 
       /* Scrollbar */
       &::-webkit-scrollbar {
@@ -193,9 +200,10 @@ import { FormsModule } from '@angular/forms';
       scrollbar-color: #C1C9D2 #F8F9FA;
 
       .regola {
-        margin: 0 auto 20px auto;
-        padding-bottom: 16px;
+        margin: 0 0 24px 0;
+        padding-bottom: 20px;
         border-bottom: 1px solid #E5E7EB;
+        width: 100%;
         max-width: 100%;
         box-sizing: border-box;
 
@@ -207,52 +215,57 @@ import { FormsModule } from '@angular/forms';
         h3 {
           color: #0A3D91;
           font-weight: 600;
-          font-size: 1.1rem;
-          margin: 0 0 10px 0;
-          line-height: 1.3;
+          font-size: 1rem;
+          margin: 0 0 12px 0;
+          line-height: 1.4;
           text-align: left;
           word-break: break-word;
+          overflow-wrap: anywhere;
           hyphens: auto;
         }
 
         h4 {
           color: #4FC3F7;
           font-weight: 600;
-          font-size: 1rem;
-          margin: 12px 0 8px 0;
-          line-height: 1.3;
+          font-size: 0.9rem;
+          margin: 16px 0 10px 0;
+          line-height: 1.4;
           text-align: left;
           word-break: break-word;
+          overflow-wrap: anywhere;
           hyphens: auto;
         }
 
         p {
           color: #6B7280;
-          font-size: 0.9rem;
-          margin: 0 0 10px 0;
-          line-height: 1.5;
+          font-size: 0.85rem;
+          margin: 0 0 12px 0;
+          line-height: 1.6;
           text-align: justify;
           word-break: break-word;
-          overflow-wrap: break-word;
+          overflow-wrap: anywhere;
           hyphens: auto;
+          max-width: 100%;
         }
 
         ul {
-          margin: 8px 0 10px 0;
+          margin: 10px 0 12px 0;
           padding-left: 20px;
           padding-right: 0;
           color: #6B7280;
+          width: 100%;
           max-width: 100%;
           box-sizing: border-box;
 
           li {
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            line-height: 1.5;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            line-height: 1.6;
             text-align: justify;
             word-break: break-word;
-            overflow-wrap: break-word;
+            overflow-wrap: anywhere;
             hyphens: auto;
+            max-width: 100%;
           }
         }
 
@@ -260,6 +273,7 @@ import { FormsModule } from '@angular/forms';
           color: #0A3D91;
           font-weight: 600;
           word-break: break-word;
+          overflow-wrap: anywhere;
         }
       }
     }
@@ -267,15 +281,21 @@ import { FormsModule } from '@angular/forms';
     /* RESPONSIVE TABLET */
     @media (max-width: 768px) {
       .regolamento-dialog {
-        width: 95vw;
-        max-width: 95vw;
+        width: 90vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        box-sizing: border-box;
       }
 
       .dialog-header {
-        padding: 14px;
+        padding: 16px 20px;
+        box-sizing: border-box;
 
         .dialog-title {
-          font-size: 1.1rem;
+          font-size: 1rem;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
 
         .close-btn {
@@ -291,33 +311,41 @@ import { FormsModule } from '@angular/forms';
       }
 
       .dialog-content {
-        padding: 16px;
+        padding: 16px 20px;
+        box-sizing: border-box;
+        overflow-x: hidden;
 
         .regola {
-          margin-bottom: 16px;
-          padding-bottom: 12px;
+          margin-bottom: 20px;
+          padding-bottom: 16px;
 
           h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           h4 {
-            font-size: 0.9rem;
-            margin: 10px 0 6px 0;
+            font-size: 0.85rem;
+            margin: 12px 0 8px 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           p, li {
-            font-size: 0.85rem;
-            line-height: 1.4;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           ul {
-            padding-left: 16px;
-            margin: 6px 0 8px 0;
+            padding-left: 18px;
+            margin: 8px 0 10px 0;
 
             li {
-              margin-bottom: 4px;
+              margin-bottom: 6px;
             }
           }
         }
@@ -327,17 +355,23 @@ import { FormsModule } from '@angular/forms';
     /* RESPONSIVE MOBILE */
     @media (max-width: 480px) {
       .regolamento-dialog {
-        width: 98vw;
-        max-width: 98vw;
-        max-height: 95vh;
+        width: 90vw;
+        max-width: 100vw;
+        max-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+        box-sizing: border-box;
       }
 
       .dialog-header {
-        padding: 12px;
+        padding: 12px 16px;
+        box-sizing: border-box;
 
         .dialog-title {
-          font-size: 1rem;
-          letter-spacing: 0.2px;
+          font-size: 0.95rem;
+          letter-spacing: 0.1px;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
 
         .close-btn {
@@ -354,33 +388,41 @@ import { FormsModule } from '@angular/forms';
       }
 
       .dialog-content {
-        padding: 12px;
+        padding: 12px 16px;
+        box-sizing: border-box;
+        overflow-x: hidden;
 
         .regola {
-          margin-bottom: 14px;
-          padding-bottom: 10px;
+          margin-bottom: 16px;
+          padding-bottom: 12px;
 
           h3 {
-            font-size: 0.95rem;
-            margin-bottom: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           h4 {
-            font-size: 0.85rem;
-            margin: 8px 0 4px 0;
+            font-size: 0.8rem;
+            margin: 10px 0 6px 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           p, li {
-            font-size: 0.8rem;
-            line-height: 1.4;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            word-break: break-word;
+            overflow-wrap: anywhere;
           }
 
           ul {
-            padding-left: 14px;
-            margin: 4px 0 6px 0;
+            padding-left: 16px;
+            margin: 6px 0 8px 0;
 
             li {
-              margin-bottom: 3px;
+              margin-bottom: 5px;
             }
           }
         }
@@ -689,7 +731,7 @@ export class RegolamentoBannerDialogComponent {
     /* RESPONSIVE TABLET */
     @media (max-width: 768px) {
       .albo-oro-dialog {
-        width: 95vw;
+        width: 90vw;
         max-width: 95vw;
       }
 
@@ -775,7 +817,7 @@ export class RegolamentoBannerDialogComponent {
     /* RESPONSIVE MOBILE */
     @media (max-width: 480px) {
       .albo-oro-dialog {
-        width: 98vw;
+        width: 90vw;
         max-width: 98vw;
         max-height: 95vh;
       }
@@ -889,26 +931,6 @@ export class AlboOroDialogComponent {
         <span class="value">Il Tuo Profilo</span>
       </h2>
 
-      <!-- AVATAR SECTION -->
-      <div class="info-row">
-        <div class="label">Avatar:</div>
-        <div class="avatar-section">
-          <div class="avatar-preview">
-            <mat-icon class="avatar-icon">{{ selectedAvatar || 'account_circle' }}</mat-icon>
-          </div>
-          <div class="avatar-selector">
-            <div class="avatar-grid">
-              <button type="button"
-                *ngFor="let avatar of avatars"
-                class="avatar-option"
-                [class.selected]="selectedAvatar === avatar.icon"
-                (click)="selectAvatar(avatar.icon)">
-                <mat-icon>{{ avatar.icon }}</mat-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- FORM FIELDS -->
       <div class="form-section">
@@ -1089,13 +1111,13 @@ export class AlboOroDialogComponent {
       }
     }
 
-    /* INFO ROWS - STILE UGUALE AL MODAL GIOCA ORA */
+    /* INFO ROWS - OTTIMIZZATE PER LAYOUT VERTICALE SENZA SCROLL ORIZZONTALE */
     .info-row {
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
+      flex-direction: column;
+      gap: 8px;
       margin-bottom: 16px;
-      padding: 12px;
+      padding: 16px;
       background: transparent;
       border-radius: 12px;
       border: 1px solid rgba(10, 61, 145, 0.08);
@@ -1106,88 +1128,15 @@ export class AlboOroDialogComponent {
       .label {
         font-weight: 600;
         color: #0A3D91;
-        min-width: 80px;
-        flex-shrink: 0;
         font-size: 0.9rem;
+        margin-bottom: 4px;
       }
 
       .value {
         font-weight: 500;
         color: #6B7280;
-        flex: 1;
         width: 100%;
-        min-width: 0;
-      }
-    }
-
-    /* SEZIONE AVATAR */
-    .avatar-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      width: 100%;
-
-      .avatar-preview {
-        .avatar-icon {
-          font-size: 2.2rem;
-          width: 2.2rem;
-          height: 2.2rem;
-          color: #4FC3F7;
-          padding: 8px;
-          background: rgba(79, 195, 247, 0.1);
-          border-radius: 50%;
-          border: 2px solid #4FC3F7;
-        }
-      }
-
-      .avatar-selector {
-        width: 100%;
-        max-width: 280px;
-
-        .avatar-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
-          width: 100%;
-          margin: 0 auto;
-
-          .avatar-option {
-            width: 100%;
-            aspect-ratio: 1;
-            max-width: 45px;
-            border-radius: 50%;
-            border: 2px solid #E0E0E0;
-            background: #F8F9FA;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 0;
-
-            &:hover {
-              border-color: #4FC3F7;
-              background: rgba(79, 195, 247, 0.1);
-            }
-
-            &.selected {
-              border-color: #0A3D91;
-              background: rgba(10, 61, 145, 0.1);
-
-              mat-icon {
-                color: #0A3D91;
-              }
-            }
-
-            mat-icon {
-              font-size: 18px;
-              width: 18px;
-              height: 18px;
-              color: #6B7280;
-            }
-          }
-        }
+        box-sizing: border-box;
       }
     }
 
@@ -1291,9 +1240,10 @@ export class AlboOroDialogComponent {
     /* RESPONSIVE TABLET */
     @media (max-width: 768px) {
       .modal-container {
-        width: 90vw;
-        max-width: 90vw;
-        padding: 18px 16px;
+        width: 95vw;
+        max-width: 95vw;
+        padding: 16px;
+        box-sizing: border-box;
       }
 
       h2 {
@@ -1307,14 +1257,10 @@ export class AlboOroDialogComponent {
       }
 
       .info-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
-        padding: 10px;
+        padding: 12px;
+        margin-bottom: 14px;
 
         .label {
-          min-width: auto;
-          width: 100%;
           font-size: 0.85rem;
         }
 
@@ -1323,28 +1269,15 @@ export class AlboOroDialogComponent {
         }
       }
 
-      .avatar-section {
-        .avatar-preview .avatar-icon {
-          font-size: 2rem;
-          width: 2rem;
-          height: 2rem;
-        }
+      .custom-input,
+      .custom-select {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
 
-        .avatar-selector {
-          max-width: 240px;
-
-          .avatar-grid {
-            .avatar-option {
-              max-width: 40px;
-
-              mat-icon {
-                font-size: 16px;
-                width: 16px;
-                height: 16px;
-              }
-            }
-          }
-        }
+      .custom-select {
+        background-size: 14px;
+        padding-right: 35px;
       }
 
       .actions-section {
@@ -1361,9 +1294,12 @@ export class AlboOroDialogComponent {
     /* RESPONSIVE MOBILE */
     @media (max-width: 480px) {
       .modal-container {
-        width: 95vw;
-        max-width: 95vw;
-        padding: 16px 12px;
+        width: 90vw;
+        max-width: 100vw;
+        padding: 16px;
+        margin: 0;
+        border-radius: 0;
+        box-sizing: border-box;
       }
 
       h2 {
@@ -1391,7 +1327,7 @@ export class AlboOroDialogComponent {
       }
 
       .info-row {
-        padding: 8px;
+        padding: 10px;
         margin-bottom: 12px;
 
         .label {
@@ -1401,40 +1337,13 @@ export class AlboOroDialogComponent {
 
       .custom-input,
       .custom-select {
-        padding: 8px 10px;
-        font-size: 0.85rem;
+        padding: 10px;
+        font-size: 0.8rem;
       }
 
       .custom-select {
         background-size: 14px;
         padding-right: 35px;
-      }
-
-      .avatar-section {
-        .avatar-preview .avatar-icon {
-          font-size: 1.8rem;
-          width: 1.8rem;
-          height: 1.8rem;
-        }
-
-        .avatar-selector {
-          max-width: 200px;
-
-          .avatar-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-
-            .avatar-option {
-              max-width: 35px;
-
-              mat-icon {
-                font-size: 14px;
-                width: 14px;
-                height: 14px;
-              }
-            }
-          }
-        }
       }
 
       .actions-section {
@@ -1448,6 +1357,41 @@ export class AlboOroDialogComponent {
         }
       }
     }
+
+    @media (max-width: 360px) {
+      .modal-container {
+        padding: 12px;
+      }
+
+      h2 {
+        font-size: 1rem;
+      }
+
+      .info-row {
+        padding: 8px;
+        margin-bottom: 10px;
+
+        .label {
+          font-size: 0.75rem;
+        }
+      }
+
+      .custom-input,
+      .custom-select {
+        padding: 8px;
+        font-size: 0.75rem;
+      }
+
+      .actions-section {
+        gap: 8px;
+
+        .btn-primary,
+        .btn-secondary {
+          padding: 8px 12px;
+          font-size: 0.8rem;
+        }
+      }
+    }
   `]
 })
 export class ProfiloDialogComponent {
@@ -1456,22 +1400,8 @@ export class ProfiloDialogComponent {
     cognome: '',
     eta: null as number | null,
     citta: '',
-    squadraPreferita: '',
-    avatar: ''
+    squadraPreferita: ''
   };
-
-  selectedAvatar = 'account_circle';
-
-  avatars = [
-    { icon: 'account_circle', name: 'Default' },
-    { icon: 'sports_soccer', name: 'Calcio' },
-    { icon: 'emoji_events', name: 'Trofeo' },
-    { icon: 'star', name: 'Stella' },
-    { icon: 'favorite', name: 'Cuore' },
-    { icon: 'flash_on', name: 'Fulmine' },
-    { icon: 'local_fire_department', name: 'Fuoco' },
-    { icon: 'shield', name: 'Scudo' }
-  ];
 
   squadreSerieA = [
     'Atalanta', 'Bologna', 'Cagliari', 'Como', 'Empoli', 'Fiorentina',
@@ -1481,10 +1411,6 @@ export class ProfiloDialogComponent {
 
   constructor(private dialog: MatDialog) {}
 
-  selectAvatar(icon: string) {
-    this.selectedAvatar = icon;
-    this.userProfile.avatar = icon;
-  }
 
   isFormValid(): boolean {
     return !!(this.userProfile.nome && this.userProfile.cognome);
@@ -1511,20 +1437,20 @@ export class ProfiloDialogComponent {
   template: `
     <div class="info-banner">
       <div class="banner-container">
-        <div class="banner-item" (click)="openRegolamento()">
+        <button class="banner-item" (click)="openRegolamento()">
           <mat-icon class="banner-icon">article</mat-icon>
-          <span class="banner-text">Regolamento</span>
-        </div>
+          <span class="banner-text">REGOLE</span>
+        </button>
 
-        <div class="banner-item" (click)="openAlboOro()">
+        <button class="banner-item" (click)="openAlboOro()">
           <mat-icon class="banner-icon trophy">emoji_events</mat-icon>
-          <span class="banner-text">Albo d'Oro</span>
-        </div>
+          <span class="banner-text">ALBO D'ORO</span>
+        </button>
 
-        <div class="banner-item" (click)="openProfilo()">
+        <button class="banner-item" (click)="openProfilo()">
           <mat-icon class="banner-icon">person</mat-icon>
-          <span class="banner-text">Il Tuo Profilo</span>
-        </div>
+          <span class="banner-text">PROFILO</span>
+        </button>
       </div>
     </div>
   `,
@@ -1542,22 +1468,27 @@ export class ProfiloDialogComponent {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 24px;
+      gap: 20px;
+      flex-wrap: nowrap;
+      width: 100%;
     }
 
     .banner-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
+      padding: 10px 20px;
       background: #FFFFFF;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 0 2px 6px rgba(10, 61, 145, 0.08);
       border: 1px solid #E0E0E0;
       cursor: pointer;
       transition: all 0.3s ease;
-      min-width: auto;
-      height: 40px;
+      height: 44px;
+      flex: 1;
+      justify-content: center;
+      min-width: 0;
+      font: inherit;
 
       &:hover {
         transform: translateY(-1px);
@@ -1596,9 +1527,12 @@ export class ProfiloDialogComponent {
         font-weight: 500;
         font-size: 0.8rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
         transition: all 0.3s ease;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
       }
     }
 
@@ -1609,12 +1543,12 @@ export class ProfiloDialogComponent {
 
       .banner-container {
         gap: 16px;
-        flex-wrap: wrap;
+        justify-content: space-between;
       }
 
       .banner-item {
-        padding: 6px 12px;
-        height: 36px;
+        padding: 8px 10px;
+        height: 38px;
 
         .banner-icon {
           font-size: 1.1rem;
@@ -1623,23 +1557,58 @@ export class ProfiloDialogComponent {
         }
 
         .banner-text {
-          font-size: 0.75rem;
+          font-size: 0.7rem;
+          letter-spacing: 0.2px;
         }
       }
     }
 
     @media (max-width: 480px) {
       .banner-container {
-        justify-content: space-around;
         gap: 12px;
+        padding: 0 8px;
       }
 
       .banner-item {
-        padding: 6px 10px;
-        min-width: 90px;
+        padding: 6px 8px;
+        flex: 1;
+        justify-content: center;
 
         .banner-text {
-          font-size: 0.7rem;
+          font-size: 0.6rem;
+          letter-spacing: 0.2px;
+        }
+
+        .banner-icon {
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
+      }
+    }
+
+    @media (max-width: 360px) {
+      .info-banner {
+        padding: 8px 12px;
+      }
+
+      .banner-container {
+        gap: 8px;
+      }
+
+      .banner-item {
+        padding: 5px 6px;
+        gap: 4px;
+
+        .banner-text {
+          font-size: 0.55rem;
+          letter-spacing: 0.1px;
+        }
+
+        .banner-icon {
+          font-size: 0.9rem;
+          width: 0.9rem;
+          height: 0.9rem;
         }
       }
     }
