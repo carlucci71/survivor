@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoadingOverlayComponent } from './core/components/loading-overlay.component';
+import { FooterComponent } from './shared/components/footer/footer.component';
 import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, LoadingOverlayComponent],
+  imports: [RouterOutlet, LoadingOverlayComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
