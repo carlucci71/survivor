@@ -206,7 +206,7 @@ public class LegaService {
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
-        List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, giornata);
+        List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, giornata);
         return statoGiornata(partite, giornata, legaDTO);
     }
 
@@ -271,7 +271,7 @@ public class LegaService {
             nuovaGiornataCalcolata = legaDTO.getCampionato().getNumGiornate();
         }
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
-        List<PartitaDTO> partite = utilCalendarioService.partite(campionatoDTO, nuovaGiornataCalcolata);
+        List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, nuovaGiornataCalcolata);
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
         if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {

@@ -11,7 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -75,3 +74,11 @@ server:
     key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
     key-store-type: PKCS12
     key-alias: survivor
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: ${SHOW_SQL:INFO}
+        orm:
+          jdbc:
+            bind: ${SHOW_SQL_PARAMETER:INFO}

@@ -74,9 +74,10 @@ public class CacheableService {
                 List<LocalDateTime> iniziGiornate = new ArrayList<>();
                 int giornata = 0;
                 Integer giornataDaGiocare = null;
+                List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO);
                 do {
                     giornata++;
-                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteFromWeb(campionatoDTO, giornata);
+                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteWithRefreshFromWeb(campionatoDTO, giornata, partite);
                     if (partiteDTO.size() > 0) {
                         LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
                         iniziGiornate.add(inizioGiornata);

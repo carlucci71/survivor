@@ -14,6 +14,7 @@ public interface PartitaRepository extends JpaRepository<Partita, Integer> {
             String campionatoId, int giornata, String implementationExternalApi, String casaSigla, String fuoriSigla);
 
     List<Partita> findByCampionato_IdAndGiornataAndImplementationExternalApi(String campionatoId, int giornata, String implementationExternalApi);
+    List<Partita> findByCampionato_IdAndImplementationExternalApi(String campionatoId, String implementationExternalApi);
 
 
 }

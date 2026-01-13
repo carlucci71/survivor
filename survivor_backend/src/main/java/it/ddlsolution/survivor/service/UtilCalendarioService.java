@@ -10,9 +10,9 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,16 +63,25 @@ public class UtilCalendarioService {
     public List<PartitaDTO> partite(CampionatoDTO campionatoDTO) {
         List<PartitaDTO> ret = new ArrayList<>();
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-            ret.addAll(partite(campionatoDTO, giornata));
+            ret.addAll(getPartiteFromDb(campionatoDTO, giornata));
         }
         return ret;
     }
 
-    public List<PartitaDTO> partiteFromWeb(CampionatoDTO campionatoDTO, int giornata) {
-        List<PartitaDTO> partite = partite(campionatoDTO, giornata);
-        long partiteNotTerminate = partite.stream().filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA).count();
-        //Se almeno una partita non è terminata richiamo le API
+    public List<PartitaDTO> partiteWithRefreshFromWeb(CampionatoDTO campionatoDTO, int giornata, List<PartitaDTO> partiteDiCampionato) {
+        List<PartitaDTO> partite = partiteDiCampionato
+                .stream()
+                .filter(p->p.getGiornata()==giornata)
+                .toList();
+        long partiteNotTerminate = partite
+                .stream()
+                //Se almeno una partita non è terminata richiamo le API
+                .filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)
+                //Se almeno una partita si gioca nei prossimi 10 giorni
+                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(10))<0)
+                .count();
         if (partiteNotTerminate>0) {
+            log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getId());
             List<PartitaDTO> partiteFromWeb = getPartiteAdapted(campionatoDTO, giornata);
             partite=new ArrayList<>();
             for (PartitaDTO partitaDTO : partiteFromWeb) {
@@ -81,8 +90,12 @@ public class UtilCalendarioService {
         }
         return partite;
     }
-    public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, int giornata) {
+    public List<PartitaDTO> getPartiteFromDb(CampionatoDTO campionatoDTO, int giornata) {
         return partitaService.getPartiteFromDb(campionatoDTO.getId(),giornata);
+    }
+
+    public List<PartitaDTO> getPartiteFromDb(CampionatoDTO campionatoDTO) {
+        return partitaService.getPartiteFromDb(campionatoDTO.getId());
     }
 
     private List<PartitaDTO> getPartiteAdapted(CampionatoDTO campionatoDTO, int giornata) {
@@ -109,7 +122,7 @@ public class UtilCalendarioService {
     }
 
     private List<PartitaDTO> addPartiteDellaGiornata(CampionatoDTO campionatoDTO, String squadra, int giornata) {
-        return partite(campionatoDTO, giornata)
+        return getPartiteFromDb(campionatoDTO, giornata)
                 .stream()
                 .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))

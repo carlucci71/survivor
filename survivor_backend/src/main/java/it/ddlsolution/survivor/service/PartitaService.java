@@ -52,6 +52,12 @@ public class PartitaService {
     }
 
     @Transactional(readOnly = true)
+    public List<PartitaDTO> getPartiteFromDb(String idCampionato){
+        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApi(idCampionato, getImplementationExternalApi());
+        return partitaMapper.toDTOList(partite);
+    }
+
+    @Transactional(readOnly = true)
     public List<PartitaDTO> getPartiteFromDb(String idCampionato, int giornata){
         List<Partita> partite = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApi(idCampionato, giornata, getImplementationExternalApi());
         return partitaMapper.toDTOList(partite);
