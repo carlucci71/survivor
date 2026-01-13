@@ -29,7 +29,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 
           <!-- CONTATTI -->
           <div class="footer-contact">
-            <a href="mailto:info@survivor-oneshot.com" class="footer-link">
+            <a href="mailto:fantasurvivorddl&#64;gmail.com" class="footer-link">
               <mat-icon>email</mat-icon>
               <span>fantasurvivorddl&#64;gmail.com</span>
             </a>
