@@ -45,7 +45,7 @@ public class CalendarioMOCK implements ICalendario {
     }
 
     @Override
-    public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre) {
+    public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
         return List.of(
                 generaGiornata(sport, campionato, giornata, SquadreSerieA.ATA.name(), SquadreSerieA.BOL.name(),0,1,squadre)
         );

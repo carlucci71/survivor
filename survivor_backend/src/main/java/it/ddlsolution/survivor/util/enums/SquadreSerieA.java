@@ -20,5 +20,8 @@ public enum SquadreSerieA{
         SAS,
         TOR,
         UDI,
-        VER
+        VER,
+        MONZ,
+        EMP,
+        VEN
 }

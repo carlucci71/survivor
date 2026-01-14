@@ -57,11 +57,12 @@ export class CampionatoService {
   calendario(
     campionatoId: string,
     squadraId: string,
+    anno: number,
     giornata: number,
     prossimi: boolean
   ): Observable<Partita[]> {
     return this.http.get<any>(
-      `${this.apiUrl}/calendario/${campionatoId}/${squadraId}/${giornata}?prossimi=${prossimi}`
+      `${this.apiUrl}/calendario/${campionatoId}/${anno}/${squadraId}/${giornata}?prossimi=${prossimi}`
     );
   }
 

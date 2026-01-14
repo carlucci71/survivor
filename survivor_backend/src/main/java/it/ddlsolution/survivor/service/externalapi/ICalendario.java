@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public interface ICalendario {
     //LISTA DELLE PARTITE DI UNA GIORNATA
-    List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre);
+    List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno);
     //SQUADRE DI UN CAMPIONATO (SIGLA E NOME)
     IEnumSquadre[] getSquadre(String idCampionato);
 

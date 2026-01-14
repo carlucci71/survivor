@@ -43,12 +43,13 @@ magic-link:
   relative-url-send-mail: /auth/verify?token=
   secret-token-generated: ${JWT_SECRET_TOKEN_MAGICLINK}
 
+anno-default: 2025
 external-api:
   calendario:
     selected: ${EXTERNAL_API_CALENDARIO_SELECTED}
     implementation:
       API2:
-        url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s
+        url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s&seasonId=%s
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal

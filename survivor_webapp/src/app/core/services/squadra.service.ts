@@ -13,11 +13,11 @@ export class SquadraService {
 
   constructor(private http: HttpClient) {}
 
-  getSquadreByCampionato(campionatoId: string): Observable<any[]> {
+  getSquadreByCampionatoAndAnno(campionatoId: string, anno: number): Observable<any[]> {
     if (this.cache.has(campionatoId)) {
       return of(this.cache.get(campionatoId)!);
     }
-    return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}/${anno}`).pipe(
       tap(squadre => {
         this.cache.set(campionatoId, squadre);
   })
@@ -33,8 +33,8 @@ export class SquadraService {
     return squadraSigla;
   }
 
-  getSquadreByCampionatoAndGiornata(campionatoId: string, giornata: number): Observable<string[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/calendario/${campionatoId}/squadreDisponibili/${giornata}`);
+  getSquadreByCampionatoAndGiornata(campionatoId: string, anno: number, giornata: number): Observable<string[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/calendario/${campionatoId}/squadreDisponibili/${anno}/${giornata}`);
   }
 
 

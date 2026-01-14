@@ -82,6 +82,7 @@ export class SelezionaGiocataComponent implements OnInit {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
     this.getSquadreByCampionatoAndGiornata(
       this.lega.campionato!.id,
+      this.lega.anno,
       this.data.giornata + this.lega.giornataIniziale - 1
     );
     if (this.squadraSelezionata) {
@@ -124,10 +125,11 @@ export class SelezionaGiocataComponent implements OnInit {
 
   getSquadreByCampionatoAndGiornata(
     idCampionato: string,
+    anno: number,
     giornata: number
   ): void {
     this.squadraService
-      .getSquadreByCampionatoAndGiornata(idCampionato, giornata)
+      .getSquadreByCampionatoAndGiornata(idCampionato, anno, giornata)
       .subscribe({
         next: (squadre) => {
           const returnedSigle = new Set<string>();
@@ -181,6 +183,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.id,
           squadra,
+          this.lega.anno,
           this.lega.giornataCorrente - 1,
           false
         )
@@ -222,6 +225,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.id,
           this.squadraSelezionata,
+          this.lega.anno,
           this.lega.giornataCorrente,
           true
         )

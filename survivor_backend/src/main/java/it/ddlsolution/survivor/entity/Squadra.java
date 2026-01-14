@@ -32,4 +32,7 @@ public class Squadra {
     @ToString.Exclude
     private Campionato campionato;
 
+    @Column(name = "anno")
+    private short anno;
+
 }

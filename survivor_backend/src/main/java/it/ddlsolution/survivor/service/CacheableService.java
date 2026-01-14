@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
@@ -59,6 +60,10 @@ public class CacheableService {
     public final static String SOSPENSIONI="sospensioni";
     public final static String URL="cache-url";
 
+    @Value("${anno-default}")
+    short annoDefault;
+
+
     @Cacheable(value = CAMPIONATI)
     @Transactional
     public List<CampionatoDTO> allCampionati() {
@@ -74,10 +79,10 @@ public class CacheableService {
                 List<LocalDateTime> iniziGiornate = new ArrayList<>();
                 int giornata = 0;
                 Integer giornataDaGiocare = null;
-                List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO);
+                List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, annoDefault);
                 do {
                     giornata++;
-                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteWithRefreshFromWeb(campionatoDTO, giornata, partite);
+                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteWithRefreshFromWeb(campionatoDTO, giornata, partite, annoDefault);
                     if (partiteDTO.size() > 0) {
                         LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
                         iniziGiornate.add(inizioGiornata);

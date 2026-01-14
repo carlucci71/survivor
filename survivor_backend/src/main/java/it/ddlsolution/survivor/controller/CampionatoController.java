@@ -31,10 +31,10 @@ public class CampionatoController {
     public ResponseEntity<Map<String,Map<Integer, String>>> desGiornate() {
         return ResponseEntity.ok(campionatoService.desGiornate());
     }
-    @GetMapping(value = "/calendario/{campionatoId}/{squadraId}/{giornata}")
-    public ResponseEntity<List<PartitaDTO>> calendario(@PathVariable String campionatoId, @PathVariable String squadraId, @PathVariable Integer giornata, @RequestParam Boolean prossimi) {
+    @GetMapping(value = "/calendario/{campionatoId}/{anno}/{squadraId}/{giornata}")
+    public ResponseEntity<List<PartitaDTO>> calendario(@PathVariable String campionatoId,@PathVariable Short anno, @PathVariable String squadraId, @PathVariable Integer giornata, @RequestParam Boolean prossimi) {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
-        List<PartitaDTO> squadraDTOListMap = utilCalendarioService.calendario(campionatoDTO, squadraId, giornata, prossimi);
+        List<PartitaDTO> squadraDTOListMap = utilCalendarioService.calendario(campionatoDTO, squadraId, giornata, prossimi, anno);
         return ResponseEntity.ok(squadraDTOListMap);
     }
 

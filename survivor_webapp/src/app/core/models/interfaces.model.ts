@@ -118,6 +118,7 @@ export interface Lega {
   statoGiornataCorrente: StatoPartita;
   ruoloGiocatoreLega: RuoloGiocatore;
   stato: StatoLega;
+  anno: number;
   statiGiornate?: Record<number, StatoPartita>;
 }
 
@@ -131,6 +132,7 @@ export interface Sport {
 export interface Partita {
     sportId: string;
     campionatoId: string;
+    anno: number;
     giornata: number;
     orario: Date;
     stato: StatoPartita;
@@ -157,6 +159,7 @@ export interface Campionato {
 
 export interface Squadra {
   id?: number;
+  anno: number;
   sigla: string;
   nome: string;
 }

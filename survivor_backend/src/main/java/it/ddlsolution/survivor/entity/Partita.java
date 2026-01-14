@@ -68,4 +68,7 @@ public class Partita {
     @Column(name = "implementation_external_api", length = 200)
     private String implementationExternalApi;
 
+    @Column(name = "anno")
+    private short anno;
+
 }

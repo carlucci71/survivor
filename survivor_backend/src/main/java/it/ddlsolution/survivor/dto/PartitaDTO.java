@@ -22,4 +22,5 @@ public class PartitaDTO {
     private Integer scoreFuori;
     private String aliasGiornataCasa;
     private String aliasGiornataFuori;
+    private short anno;
 }

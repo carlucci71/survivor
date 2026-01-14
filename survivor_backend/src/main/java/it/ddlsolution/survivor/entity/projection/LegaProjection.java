@@ -8,6 +8,7 @@ import it.ddlsolution.survivor.util.enums.Enumeratori;
  */
 public interface LegaProjection {
     Long getId();
+    short getAnno();
     String getName();
     Integer getEdizione();
     String getPwd();

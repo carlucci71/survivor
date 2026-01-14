@@ -62,5 +62,6 @@ public class Lega {
     @Convert(converter = StatoLegaConverter.class)
     private Enumeratori.StatoLega stato;
 
-
+    @Column(name = "anno")
+    private short anno;
 }

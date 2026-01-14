@@ -31,9 +31,9 @@ public class PartitaService {
         partita.setImplementationExternalApi(getImplementationExternalApi());
 
         // Verifica se esiste già una partita con gli stessi criteri
-        Optional<Partita> partitaEsistente = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndCasaSiglaAndFuoriSigla(
+        Optional<Partita> partitaEsistente = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndCasaSiglaAndFuoriSiglaAndAnno(
                 partitaDTO.getCampionatoId(), partitaDTO.getGiornata(), CALENDARIO_API2,
-                partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla());
+                partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partita.getAnno());
 
         if (partitaEsistente.isPresent()) {
             Partita esistente = partitaEsistente.get();
@@ -52,14 +52,14 @@ public class PartitaService {
     }
 
     @Transactional(readOnly = true)
-    public List<PartitaDTO> getPartiteFromDb(String idCampionato){
-        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApi(idCampionato, getImplementationExternalApi());
+    public List<PartitaDTO> getPartiteFromDb(String idCampionato, short anno){
+        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, getImplementationExternalApi(),anno);
         return partitaMapper.toDTOList(partite);
     }
 
     @Transactional(readOnly = true)
-    public List<PartitaDTO> getPartiteFromDb(String idCampionato, int giornata){
-        List<Partita> partite = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApi(idCampionato, giornata, getImplementationExternalApi());
+    public List<PartitaDTO> getPartiteFromDb(String idCampionato, int giornata, short anno){
+        List<Partita> partite = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndAnno(idCampionato, giornata, getImplementationExternalApi(),anno);
         return partitaMapper.toDTOList(partite);
     }
 

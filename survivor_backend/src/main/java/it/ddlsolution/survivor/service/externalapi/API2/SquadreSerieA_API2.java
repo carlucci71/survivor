@@ -23,6 +23,9 @@ enum SquadreSerieA_API2 implements IEnumSquadre {
         SAS(SquadreSerieA.SAS.name()),
         TOR(SquadreSerieA.TOR.name()),
         UDI(SquadreSerieA.UDI.name()),
+        MONZ(SquadreSerieA.MONZ.name()),
+        EMP(SquadreSerieA.EMP.name()),
+        VEN(SquadreSerieA.VEN.name()),
         VER(SquadreSerieA.VER.name());
         final String sigla;
 

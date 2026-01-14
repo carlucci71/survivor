@@ -18,6 +18,7 @@ create table lega(
 	edizione integer NOT NULL DEFAULT 1;
 	stato char(1) not null,
 	pwd varchar(50) null,
+	anno smallint not null default 2025,
 	id_campionato varchar(20) not null
 );
 create table giocatore(
@@ -51,6 +52,7 @@ create table squadra(
 	id serial primary key,
 	sigla varchar(200),
 	nome varchar(200) not null,
+	anno smallint not null default 2025,
 	id_campionato varchar(20) not null
 );
 create table giocata(
@@ -84,6 +86,7 @@ create table partita(
     score_casa integer,
     score_fuori integer,
     alias_giornata_casa varchar(200),
+	anno smallint not null default 2025,
     alias_giornata_fuori varchar(200)
 );
 
@@ -148,27 +151,50 @@ insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO'
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',7);
-insert into squadra(sigla,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('BOL','Bologna','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('CAG','Cagliari','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('COM','Como','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('CRE','Cremonese','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('FIO','Fiorentina','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('GEN','Genoa','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('INT','Inter','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('JUV','Juventus','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('LAZ','Lazio','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('LEC','Lecce','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('MIL','Milan','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('NAP','Napoli','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('PAR','Parma','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('PIS','Pisa','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('ROM','Roma','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('SAS','Sassuolo','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('TOR','Torino','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('UDI','Udinese','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('VER','Verona','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('DET','Detroit Pistons','NBA_RS');
+insert into squadra(sigla,nome,id_campionato,anno) values('ATA','Atalanta','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('BOL','Bologna','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('CAG','Cagliari','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('COM','Como','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('CRE','Cremonese','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('FIO','Fiorentina','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('GEN','Genoa','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('INT','Inter','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('JUV','Juventus','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('LAZ','Lazio','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('LEC','Lecce','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('MIL','Milan','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('NAP','Napoli','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('PAR','Parma','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('PIS','Pisa','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('ROM','Roma','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('SAS','Sassuolo','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('TOR','Torino','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('UDI','Udinese','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('VER','Verona','SERIE_A',2025);
+
+insert into squadra(sigla,nome,id_campionato,anno) values('ATA','Atalanta','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('BOL','Bologna','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('CAG','Cagliari','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('COM','Como','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('VEN','Venezia','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('FIO','Fiorentina','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('GEN','Genoa','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('INT','Inter','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('JUV','Juventus','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('LAZ','Lazio','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('LEC','Lecce','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('MIL','Milan','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('NAP','Napoli','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('PAR','Parma','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('MONZ','Monza','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('ROM','Roma','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('EMP','Empoli','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('TOR','Torino','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('UDI','Udinese','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('VER','Verona','SERIE_A',2024);
+
+
+insert into squadra(sigla,nome,id_campionato,anno) values('DET','Detroit Pistons','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('NYK','New York Knicks','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('TOR','Toronto Raptors','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('BOS','Boston Celtics','NBA_RS');

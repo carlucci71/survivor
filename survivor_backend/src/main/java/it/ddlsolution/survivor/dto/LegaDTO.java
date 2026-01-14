@@ -23,7 +23,6 @@ public class LegaDTO {
     private Enumeratori.StatoPartita statoGiornataCorrente;
     private Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega;
     private Map<Integer,Enumeratori.StatoPartita> statiGiornate;
-
-
+    private short anno;
 }
 
