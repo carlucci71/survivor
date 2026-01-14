@@ -1,8 +1,9 @@
 package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
-import it.ddlsolution.survivor.util.enums.SquadreSerieB;
 
+//NEL NAME VA IL NOME DB E IN SIGLAESTERNA QUELLO DELL'API.
+//CENSIRE TUTTE LE SQUADRE CHE HANNO GIOCATO IN SERIE_B
 enum SquadreSerieB_API2 implements IEnumSquadre {
         CTZ("CTZ"),
         BAR("BAR"),
@@ -24,14 +25,14 @@ enum SquadreSerieB_API2 implements IEnumSquadre {
         ENT("ENT"),
         EMP("EMP"),
         MAN("MAN");
-        final String sigla;
+        final String siglaEsterna;
 
-        SquadreSerieB_API2(String sigla) {
-            this.sigla = sigla;
+        SquadreSerieB_API2(String siglaEsterna) {
+            this.siglaEsterna = siglaEsterna;
         }
 
         @Override
-        public String getSigla() {
-            return sigla;
+        public String getSiglaEsterna() {
+            return siglaEsterna;
         }
     }

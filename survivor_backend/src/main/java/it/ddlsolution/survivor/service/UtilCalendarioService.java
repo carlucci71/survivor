@@ -77,8 +77,8 @@ public class UtilCalendarioService {
                 .stream()
                 //Se almeno una partita non è terminata richiamo le API
                 .filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)
-                //Se almeno una partita si gioca nei prossimi 10 giorni
-                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(10))<0)
+                //Se almeno una partita si gioca nei prossimi x giorni
+                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(2))<0)
                 .count();
         if (partite.size()==0 || partiteNotTerminate>0) {
             log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getId());

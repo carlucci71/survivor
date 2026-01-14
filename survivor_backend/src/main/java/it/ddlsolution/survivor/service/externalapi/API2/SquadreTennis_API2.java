@@ -1,10 +1,11 @@
 package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
-import it.ddlsolution.survivor.util.enums.SquadreTennis;
 
+//NEL NAME VA IL NOME DB E IN SIGLA QUELLO DELL'API.
+//CENSIRE TUTTE LE SQUADRE CHE HANNO GIOCATO IN TENNIS
 enum SquadreTennis_API2 implements IEnumSquadre {
-//33848 è mio
+//JANNIK_SINNER è DB
 //[{"playerId":"33848","displayName":"Jannik Sinner","firstName":"Jannik","lastName":"Sinner","nationality":"ITA","initials":""}]
         JANNIK_SINNER("33848"),
         NICOLAS_JARRY("29837"),
@@ -173,15 +174,15 @@ enum SquadreTennis_API2 implements IEnumSquadre {
         AUGUST_HOLMGREN ("34887"),
         ALEXANDER_ZVEREV("28728");
 ;
-        final String sigla;
+        final String siglaEsterna;
 
-        SquadreTennis_API2(String sigla) {
-            this.sigla = sigla;
+        SquadreTennis_API2(String siglaEsterna) {
+            this.siglaEsterna = siglaEsterna;
         }
 
         @Override
-        public String getSigla() {
-            return sigla;
+        public String getSiglaEsterna() {
+            return siglaEsterna;
         }
     }
 

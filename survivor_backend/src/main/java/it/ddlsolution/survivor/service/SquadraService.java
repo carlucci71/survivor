@@ -29,5 +29,16 @@ public class SquadraService {
         return squadreDTO;
     }
 
+    @Transactional(readOnly = true)
+    public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId) {
+        List<Squadra> squadre = squadraRepository.findByCampionato_Id(campionatoId);
+        List<SquadraDTO> squadreDTO = squadraMapper.toDTOList(squadre)
+                .stream()
+                .sorted(Comparator.comparing(SquadraDTO::getNome))
+                .toList();
+
+        return squadreDTO;
+    }
+
 }
 

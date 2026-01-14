@@ -1,47 +1,48 @@
 package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
-import it.ddlsolution.survivor.util.enums.SquadreNBA;
 
+//NEL NAME VA IL NOME DB E IN SIGLAESTERNA QUELLO DELL'API.
+//CENSIRE TUTTE LE SQUADRE CHE HANNO GIOCATO IN NBA
 public enum SquadreNBA_API2 implements IEnumSquadre {
-        DET(SquadreNBA.DEN.name()),
-        NYK(SquadreNBA.NYK.name()),
-        TOR(SquadreNBA.TOR.name()),
-        BOS(SquadreNBA.BOS.name()),
-        PHI(SquadreNBA.PHI.name()),
-        ORL(SquadreNBA.ORL.name()),
-        MIA(SquadreNBA.MIA.name()),
-        CLE(SquadreNBA.CLE.name()),
-        ATL(SquadreNBA.ATL.name()),
-        CHI(SquadreNBA.CHI.name()),
-        MIL(SquadreNBA.MIL.name()),
-        CHA(SquadreNBA.CHA.name()),
-        BKN(SquadreNBA.BKN.name()),
-        IND(SquadreNBA.IND.name()),
-        WAS(SquadreNBA.WAS.name()),
-        OKC(SquadreNBA.OKC.name()),
-        DEN(SquadreNBA.DEN.name()),
-        SAS(SquadreNBA.SAS.name()),
-        LAL(SquadreNBA.LAL.name()),
-        HOU(SquadreNBA.HOU.name()),
-        MIN(SquadreNBA.MIN.name()),
-        PHX(SquadreNBA.PHX.name()),
-        MEM(SquadreNBA.MEM.name()),
-        GSW(SquadreNBA.GSW.name()),
-        POR(SquadreNBA.POR.name()),
-        DAL(SquadreNBA.DAL.name()),
-        UTA(SquadreNBA.UTA.name()),
-        LAC(SquadreNBA.LAC.name()),
-        SAC(SquadreNBA.SAC.name()),
-        NOP(SquadreNBA.NOP.name());
-        final String sigla;
+        DET("DET"),
+        NYK("NYK"),
+        TOR("TOR"),
+        BOS("BOS"),
+        PHI("PHI"),
+        ORL("ORL"),
+        MIA("MIA"),
+        CLE("CLE"),
+        ATL("ATL"),
+        CHI("CHI"),
+        MIL("MIL"),
+        CHA("CHA"),
+        BKN("BKN"),
+        IND("IND"),
+        WAS("WAS"),
+        OKC("OKC"),
+        DEN("DEN"),
+        SAS("SAS"),
+        LAL("LAL"),
+        HOU("HOU"),
+        MIN("MIN"),
+        PHX("PHX"),
+        MEM("MEM"),
+        GSW("GSW"),
+        POR("POR"),
+        DAL("DAL"),
+        UTA("UTA"),
+        LAC("LAC"),
+        SAC("SAC"),
+        NOP("NOP");
+        final String siglaEsterna;
 
-        SquadreNBA_API2(String sigla) {
-            this.sigla = sigla;
+        SquadreNBA_API2(String siglaEsterna) {
+            this.siglaEsterna = siglaEsterna;
         }
 
         @Override
-        public String getSigla() {
-            return sigla;
+        public String getSiglaEsterna() {
+            return siglaEsterna;
         }
     }

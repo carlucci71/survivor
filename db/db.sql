@@ -186,7 +186,7 @@ insert into squadra(sigla,nome,id_campionato,anno) values('LEC','Lecce','SERIE_A
 insert into squadra(sigla,nome,id_campionato,anno) values('MIL','Milan','SERIE_A',2024);
 insert into squadra(sigla,nome,id_campionato,anno) values('NAP','Napoli','SERIE_A',2024);
 insert into squadra(sigla,nome,id_campionato,anno) values('PAR','Parma','SERIE_A',2024);
-insert into squadra(sigla,nome,id_campionato,anno) values('MONZ','Monza','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('MON','Monza','SERIE_A',2024);
 insert into squadra(sigla,nome,id_campionato,anno) values('ROM','Roma','SERIE_A',2024);
 insert into squadra(sigla,nome,id_campionato,anno) values('EMP','Empoli','SERIE_A',2024);
 insert into squadra(sigla,nome,id_campionato,anno) values('TOR','Torino','SERIE_A',2024);
@@ -233,7 +233,7 @@ insert into squadra(sigla,nome,id_campionato) values('FRO','Frosinone','SERIE_B'
 insert into squadra(sigla,nome,id_campionato) values('VEN','Venezia','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('MOD','Modena','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('CAR','Carrarese','SERIE_B');
-insert into squadra(sigla,nome,id_campionato) values('MONZ','Monza','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('MON','Monza','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('SAM','Sampdoria','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('PAD','Padova','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('PAL','Palermo','SERIE_B');

@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface SquadraRepository extends JpaRepository<Squadra, String> {
     List<Squadra> findByCampionato_IdAndAnno(String campionatoId, short anno);
+    List<Squadra> findByCampionato_Id(String campionatoId);
 
 
     Optional<Squadra> findBySiglaAndCampionato_IdAndAnno(String sigla, String campionatoId, short anno);

@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class CalendarioAPI2 implements ICalendario {
             throw new RuntimeException("Campionato da configurare: " + campionato);
         }
         String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, urlGiornata, anno);
-        urlResolved=urlResolved.replaceAll("&seasonId="+annoDefault,"");
+        urlResolved = urlResolved.replaceAll("&seasonId=" + annoDefault, "");
         Map response = cacheableService.cacheUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
         if (sport.equals(EnumAPI2.Sport.CALCIO.name()) || sport.equals(EnumAPI2.Sport.BASKET.name())) {
@@ -78,8 +79,38 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
     @Override
-    public IEnumSquadre[] getSquadre(String idCampionato) {
+    public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO, short anno) {
+        /*
+        List<IEnumSquadre> squadreNonSovrascritte = new ArrayList<>(
+                squadreDTO
+                        .stream()
+                        .filter(s -> s.getAnno() == anno)
+                        .filter(s -> isPresent(EnumAPI2.Campionato.valueOf(idCampionato).getSquadre(), s.getNome()))
+                        .map(m -> new IEnumSquadre() {
+                            @Override
+                            public String getSiglaEsterna() {
+                                return (m.getSigla());
+                            }
+
+                            @Override
+                            public String name() {
+                                return m.getNome();
+                            }
+                        })
+                        .toList()
+        );
+        Arrays.stream(EnumAPI2.Campionato.valueOf(idCampionato).getSquadre())
+                .forEach(e -> squadreNonSovrascritte.add(e));
+
+        return squadreNonSovrascritte.toArray(IEnumSquadre[]::new);
+
+         */
         return EnumAPI2.Campionato.valueOf(idCampionato).getSquadre();
+    }
+
+    private boolean isPresent(IEnumSquadre[] squadre, String nome) {
+        return true;
+
     }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
@@ -133,11 +164,11 @@ public class CalendarioAPI2 implements ICalendario {
                     .orario(romaTime)
                     .stato(statoPartita)
                     //.casaSigla(resultHome.teamCode())
-                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla())
-                    .casaNome(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getNome())
+                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato, anno).getSigla())
+                    .casaNome(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato, anno).getNome())
 //                    .fuoriSigla(resultAway.teamCode())
-                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
-                    .fuoriNome(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getNome())
+                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato, anno).getSigla())
+                    .fuoriNome(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato, anno).getNome())
                     .casaNome(resultHome.team())
                     .fuoriNome(resultAway.team())
                     .scoreCasa(resultHome.teamScore())
@@ -190,11 +221,11 @@ public class CalendarioAPI2 implements ICalendario {
                         .orario(romaTime)
                         .stato(statoPartita)
 //                        .casaSigla(homeCode)
-                        .casaSigla(getSquadraDTO(homeCode, campionato, squadreCampionato).getSigla())
-                        .casaNome(getSquadraDTO(homeCode, campionato, squadreCampionato).getNome())
+                        .casaSigla(getSquadraDTO(homeCode, campionato, squadreCampionato, anno).getSigla())
+                        .casaNome(getSquadraDTO(homeCode, campionato, squadreCampionato, anno).getNome())
 //                        .fuoriSigla(awayCode)
-                        .fuoriSigla(getSquadraDTO(awayCode, campionato, squadreCampionato).getSigla())
-                        .fuoriNome(getSquadraDTO(awayCode, campionato, squadreCampionato).getNome())
+                        .fuoriSigla(getSquadraDTO(awayCode, campionato, squadreCampionato, anno).getSigla())
+                        .fuoriNome(getSquadraDTO(awayCode, campionato, squadreCampionato, anno).getNome())
                         .casaNome(resultHome.team())
                         .fuoriNome(resultAway.team())
                         .scoreCasa(resultHome.teamScore())

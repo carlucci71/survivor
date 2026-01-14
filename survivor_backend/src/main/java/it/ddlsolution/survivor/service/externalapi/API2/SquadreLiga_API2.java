@@ -1,38 +1,39 @@
 package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
-import it.ddlsolution.survivor.util.enums.SquadreLiga;
 
+//NEL NAME VA IL NOME DB E IN SIGLAESTERNA QUELLO DELL'API.
+//CENSIRE TUTTE LE SQUADRE CHE HANNO GIOCATO IN LIGA
 enum SquadreLiga_API2 implements IEnumSquadre {
-        RAY(SquadreLiga.RAY.name()),
-        GIR(SquadreLiga.GIR.name()),
-        OVI(SquadreLiga.OVI.name()),
-        VIL(SquadreLiga.VIL.name()),
-        BAR(SquadreLiga.BAR.name()),
-        MLL(SquadreLiga.MLL.name()),
-        LEV(SquadreLiga.LEV.name()),
-        ALA(SquadreLiga.ALA.name()),
-        RSO(SquadreLiga.RSO.name()),
-        VAL(SquadreLiga.VAL.name()),
-        GET(SquadreLiga.GET.name()),
-        VIG(SquadreLiga.VIG.name()),
-        SEV(SquadreLiga.SEV.name()),
-        ATH(SquadreLiga.ATH.name()),
-        ATM(SquadreLiga.ATM.name()),
-        ESP(SquadreLiga.ESP.name()),
-        BET(SquadreLiga.BET.name()),
-        ELC(SquadreLiga.ELC.name()),
-        OSA(SquadreLiga.OSA.name()),
-        RMA(SquadreLiga.RMA.name());
-        final String sigla;
+        RAY("RAY"),
+        GIR("GIR"),
+        OVI("OVI"),
+        VIL("VIL"),
+        BAR("BAR"),
+        MLL("MLL"),
+        LEV("LEV"),
+        ALA("ALA"),
+        RSO("RSO"),
+        VAL("VAL"),
+        GET("GET"),
+        VIG("VIG"),
+        SEV("SEV"),
+        ATH("ATH"),
+        ATM("ATM"),
+        ESP("ESP"),
+        BET("BET"),
+        ELC("ELC"),
+        OSA("OSA"),
+        RMA("RMA");
+        final String siglaEsterna;
 
-        SquadreLiga_API2(String sigla) {
-            this.sigla = sigla;
+        SquadreLiga_API2(String siglaEsterna) {
+            this.siglaEsterna = siglaEsterna;
         }
 
         @Override
-        public String getSigla() {
-            return sigla;
+        public String getSiglaEsterna() {
+            return siglaEsterna;
         }
     }
 
