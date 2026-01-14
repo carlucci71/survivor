@@ -1,11 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { 
-  MagicLinkRequest, 
-  MagicLinkResponse, 
-  AuthResponse, 
-  User 
+import {
+  MagicLinkRequest,
+  MagicLinkResponse,
+  AuthResponse,
+  User
 } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 
@@ -29,7 +29,7 @@ export class AuthService {
   requestMagicLink(email: string): Observable<MagicLinkResponse> {
     const request: MagicLinkRequest = { email };
     return this.http.post<MagicLinkResponse>(
-      `${this.apiUrl}/request-magic-link`, 
+      `${this.apiUrl}/request-magic-link`,
       request
     );
   }
@@ -50,7 +50,6 @@ export class AuthService {
       name: response.name,
       role: response.role
     };
-    console.log(response.addInfo);
     this.currentUserSubject.next(user);
   }
 
@@ -64,7 +63,7 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {});
   }
 
-  
+
   private loadUserFromBE(): void {
     this.getMyData().subscribe({
       next: (response: AuthResponse) => {

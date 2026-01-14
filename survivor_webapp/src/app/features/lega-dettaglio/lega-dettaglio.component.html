@@ -34,45 +34,40 @@
         </mat-card-header>
         <mat-card-content>
           @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
-          <mat-icon
-            class="calcola-icon"
-            (click)="calcolaGiornata()"
-            matTooltip="Calcola giornata"
-            >sports_esports</mat-icon
-          >
-          <mat-icon
-            class="calcola-icon"
-            (click)="undoCalcolaGiornata()"
-            matTooltip="Annulla calcola giornata"
-            >restart_alt</mat-icon
-          >
-          <mat-icon
-            class="calcola-icon"
-            (click)="sospensioni()"
-            matTooltip="Sospensioni lega"
-            >spa</mat-icon
-          >
-          @if (isChiudibile()){
-          <mat-icon
-            class="calcola-icon"
-            (click)="termina()"
-            matTooltip="Termina lega"
-            >save_alt</mat-icon
-          >
-          } } @if (isTerminata() && notExistsNuovaEdizione() ){
-          <mat-icon
-            class="calcola-icon"
-            (click)="riapri()"
-            matTooltip="Riapri lega"
-            >health_and_safety</mat-icon
-          >
+          <div class="admin-actions">
+            <div class="admin-action-item" (click)="calcolaGiornata()">
+              <mat-icon class="calcola-icon">calculate</mat-icon>
+              <span class="action-label">Calcola</span>
+            </div>
+            <div class="admin-action-item" (click)="undoCalcolaGiornata()">
+              <mat-icon class="calcola-icon">undo</mat-icon>
+              <span class="action-label">Annulla</span>
+            </div>
+            <div class="admin-action-item" (click)="sospensioni()">
+              <mat-icon class="calcola-icon">pause_circle</mat-icon>
+              <span class="action-label">Sospensioni</span>
+            </div>
+            @if (isChiudibile()){
+            <div class="admin-action-item" (click)="termina()">
+              <mat-icon class="calcola-icon">lock</mat-icon>
+              <span class="action-label">Chiudi</span>
+            </div>
+            }
+          </div>
+          } @if (isTerminata() && notExistsNuovaEdizione() ){
+          <div class="admin-actions">
+            <div class="admin-action-item" (click)="riapri()">
+              <mat-icon class="calcola-icon">lock_open</mat-icon>
+              <span class="action-label">Riapri</span>
+            </div>
+          </div>
           } @if (isTerminata() && notExistsNuovaEdizione() && contaAttivi()==0 ){
-          <mat-icon
-            class="calcola-icon"
-            (click)="secondaOccasione()"
-            matTooltip="Seconda occasione"
-            >flip_camera_android</mat-icon
-          >
+          <div class="admin-actions">
+            <div class="admin-action-item" (click)="secondaOccasione()">
+              <mat-icon class="calcola-icon">replay</mat-icon>
+              <span class="action-label">2° Occasione</span>
+            </div>
+          </div>
           } } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper desktop-only">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">

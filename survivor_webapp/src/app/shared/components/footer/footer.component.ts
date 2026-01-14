@@ -37,7 +37,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 
           <!-- COPYRIGHT -->
           <div class="footer-copyright">
-            <span>© 2025 Survivor One Shot</span>
+            <span>© 2026 Survivor One Shot</span>
           </div>
         </div>
       </div>

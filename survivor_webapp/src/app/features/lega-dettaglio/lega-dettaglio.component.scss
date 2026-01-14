@@ -610,14 +610,128 @@
 	font-size: 0.97rem;
 }
 
-.calcola-icon{
-	margin-left: 4px;
-	font-size: 20px;
-	color: #1976d2;
-	cursor: pointer;
-	transition: color 0.2s;
-	font-family: 'Material Icons', sans-serif !important;
+/* AZIONI ADMIN - SULLA STESSA RIGA ORIZZONTALE E CENTRATE */
+.admin-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 10px;
+  margin: 0 auto 20px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.03));
+  border-radius: 12px;
+  border: 1px solid rgba(79, 195, 247, 0.2);
+  justify-content: center;
+  align-items: center;
+  width: max-content;
+  max-width: 95%;
 
+  @media (max-width: 768px) {
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+}
+
+.admin-action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 2px solid #E0E0E0;
+  transition: all 0.3s ease;
+  width: 75px;
+  min-width: 75px;
+  max-width: 75px;
+  height: 68px;
+  min-height: 68px;
+  max-height: 68px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.05));
+    border-color: #4FC3F7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15);
+
+    .calcola-icon {
+      color: #4FC3F7;
+      transform: scale(1.15);
+    }
+
+    .action-label {
+      color: #0A3D91;
+      font-weight: 700;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px;
+    width: 68px;
+    min-width: 68px;
+    max-width: 68px;
+    height: 62px;
+    min-height: 62px;
+    max-height: 62px;
+    gap: 3px;
+  }
+}
+
+.action-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-align: center;
+  letter-spacing: 0.1px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  white-space: normal;
+  line-height: 1.1;
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  @media (max-width: 768px) {
+    font-size: 0.55rem;
+    line-height: 1;
+  }
+}
+
+.calcola-icon {
+  margin: 0;
+  padding: 0;
+  font-size: 24px;
+  color: #0A3D91;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Material Icons', sans-serif !important;
+  vertical-align: middle;
+  line-height: 1;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .save-icon {
