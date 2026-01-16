@@ -77,6 +77,7 @@ class EnumAPI2 {
         RETIRED(Enumeratori.StatoPartita.TERMINATA),
         FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE),
         PLAYING(Enumeratori.StatoPartita.DA_GIOCARE),
+        NOTSTARTED(Enumeratori.StatoPartita.DA_GIOCARE),
         SUSPENDED(Enumeratori.StatoPartita.DA_GIOCARE);
 
 

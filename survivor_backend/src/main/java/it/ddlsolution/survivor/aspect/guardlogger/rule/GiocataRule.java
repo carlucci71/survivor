@@ -11,6 +11,7 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class GiocataRule implements GuardRule {
         if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
-        if (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente()) {
+        if (legaDTO.getGiornataDaGiocare() > 0 && (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente())) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
     }

@@ -120,7 +120,7 @@ public class CalendarioAPI2 implements ICalendario {
                 .filter(map -> round.equals(map.get("name")))
                 .map(map -> (List<Map<String, Object>>) map.get("match"))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Round non trovato: " + round));
+                .orElseGet(() -> new ArrayList<>());
 
         for (Map<String, Object> match : matches) {
             OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
