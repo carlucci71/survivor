@@ -23,6 +23,10 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SI
 public class GiocataRule implements GuardRule {
     @Override
     public void run(Map<GuardRule.PARAM, Object> args) {
+        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
+        String squadra = (String) args.get(SIGLASQUADRA);
+        Integer giornata = (Integer) args.get(PARAM.GIORNATA);
+        GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new InsufficientAuthenticationException("Utente non autenticato");
@@ -30,23 +34,12 @@ public class GiocataRule implements GuardRule {
         Long userId = (Long) authentication.getPrincipal();
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
-        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
         Long idLega = legaDTO.getId();
-        String squadra = (String) args.get(SIGLASQUADRA);
         Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega = legaDTO.getRuoloGiocatoreLega();
         Enumeratori.StatoPartita statoGiornataCorrente = legaDTO.getStatoGiornataCorrente();
-        Integer giornata = (Integer) args.get(PARAM.GIORNATA);
-        GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Optional<GiocataDTO> attGiocata = giocatoreDTO.getGiocate().stream()
                 .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega))
                 .findFirst();
-
-        log.info("legaDTO.getRuoloGiocatoreLega() = {}", ruoloGiocatoreLega);
-        log.info("legaDTO.getStatoGiornataCorrente() = {}", statoGiornataCorrente);
-        log.info("legaDTO.getGiornataCorrente() = {}", legaDTO.getGiornataCorrente());
-        log.info("giornata {}", giornata);
-        log.info("giocatore {}", giocatoreDTO);
-        log.info("legaDTO.getGiornataIniziale() = {}", legaDTO.getGiornataIniziale());
 
         if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
             throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getName() + "-" + legaDTO.getEdizione());
