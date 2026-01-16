@@ -197,7 +197,7 @@ export class LegaDettaglioComponent {
     if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
       ret = false;
     }
-    if (this.lega!.giornataDaGiocare < this.lega!.giornataCorrente) {
+    if (this.lega?.giornataDaGiocare ||  this.lega!.giornataCorrente < this.lega!.giornataCorrente) {
       ret = false;
     }
     return ret;

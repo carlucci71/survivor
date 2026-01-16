@@ -83,9 +83,12 @@ public class GiocataRule implements GuardRule {
         if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
+        /* FIXME
         if (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente()) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
+
+         */
     }
 
 }
