@@ -51,6 +51,8 @@ export class SelezionaGiocataComponent implements OnInit {
   statoGiornataCorrente!: StatoPartita;
   lega!: Lega;
   giocatore: Giocatore;
+  showDettagli = false;
+  squadreConPartite: any[] = [];
   @ViewChild('risultatiRow') risultatiRow?: ElementRef<HTMLDivElement>;
   @ViewChild('teamSelect') teamSelect?: MatSelect;
   @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
@@ -87,8 +89,9 @@ export class SelezionaGiocataComponent implements OnInit {
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
-      // NON aprire nessun tab di default - l'utente clicca per aprire
     }
+    // Carica le partite per tutte le squadre disponibili
+    this.caricaPartitePerTutteSquadre();
   }
 
   ngOnDestroy(): void {
@@ -294,5 +297,106 @@ export class SelezionaGiocataComponent implements OnInit {
     if (sportId === 'CALCIO') return 'sports_soccer';
     if (sportId === 'TENNIS') return 'sports_tennis';
     return 'sports_esports';
+  }
+
+  getSquadraInitials(nomeSquadra: string): string {
+    if (!nomeSquadra) return '?';
+
+    // Rimuovi parole comuni
+    const parole = nomeSquadra
+      .replace(/^(FC|AC|US|AS|SS|UC)\s+/i, '')
+      .trim()
+      .split(' ');
+
+    if (parole.length === 1) {
+      // Se è una parola sola, prendi le prime 2 lettere
+      return parole[0].substring(0, 2).toUpperCase();
+    }
+
+    // Altrimenti prendi la prima lettera di ogni parola (max 2)
+    return parole
+      .slice(0, 2)
+      .map(p => p[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  getAvversarioNome(partita: Partita, siglaMiaSquadra: string): string {
+    if (!partita) return '-';
+
+    if (partita.casaSigla === siglaMiaSquadra) {
+      return partita.fuoriNome || '-';
+    } else {
+      return partita.casaNome || '-';
+    }
+  }
+
+  toggleDettagli(): void {
+    this.showDettagli = !this.showDettagli;
+  }
+
+  selezionaSquadra(sigla: string): void {
+    this.squadraSelezionata = sigla;
+    this.mostraUltimiRisultati();
+    this.mostraProssimePartite();
+  }
+
+  caricaPartitePerTutteSquadre(): void {
+    if (!this.lega.campionato?.id) return;
+
+    // Attendi che le squadre siano caricate
+    setTimeout(() => {
+      this.squadreConPartite = this.squadreDisponibili.map(squadra => {
+        const squadraConPartite = {
+          ...squadra,
+          prossimaPartita: null as Partita | null,
+          ultimiRisultati: [] as any[]
+        };
+
+        // Carica prossima partita
+        this.campionatoService
+          .calendario(
+            this.lega.campionato!.id,
+            squadra.sigla!,
+            this.lega.giornataCorrente,
+            true
+          )
+          .subscribe({
+            next: (partite) => {
+              if (partite && partite.length > 0) {
+                squadraConPartite.prossimaPartita = partite[0];
+              }
+            },
+            error: (error) => console.error('Errore caricamento prossima partita:', error)
+          });
+
+        // Carica ultimi risultati
+        this.campionatoService
+          .calendario(
+            this.lega.campionato!.id,
+            squadra.sigla!,
+            this.lega.giornataCorrente - 1,
+            false
+          )
+          .subscribe({
+            next: (risultati) => {
+              squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
+                let esito = 'N';
+                if (r.casaSigla === squadra.sigla) {
+                  if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
+                  else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
+                } else if (r.fuoriSigla === squadra.sigla) {
+                  if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
+                  else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
+                }
+                return { ...r, esito };
+              });
+            },
+            error: (error) => console.error('Errore caricamento ultimi risultati:', error)
+          });
+
+        return squadraConPartite;
+      });
+    }, 500);
   }
 }

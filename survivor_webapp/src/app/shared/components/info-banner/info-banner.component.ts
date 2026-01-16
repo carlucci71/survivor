@@ -448,7 +448,7 @@ export class RegolamentoBannerDialogComponent {
       <div class="dialog-header">
         <div class="header-content">
           <mat-icon class="trophy-icon">emoji_events</mat-icon>
-          <h2 class="dialog-title">Albo d'Oro Survivor</h2>
+          <h2 class="dialog-title">I MIEI TROFEI</h2>
         </div>
         <button mat-icon-button class="close-btn" (click)="closeDialog()">
           <mat-icon>close</mat-icon>
@@ -456,62 +456,46 @@ export class RegolamentoBannerDialogComponent {
       </div>
 
       <div class="dialog-content">
-        <div class="winner-card">
+        <!-- Messaggio se non ci sono trofei -->
+        <div class="empty-state" *ngIf="!hasTrofei">
+          <mat-icon class="empty-icon">emoji_events</mat-icon>
+          <p class="empty-message">Non hai ancora vinto nessun torneo</p>
+          <p class="empty-subtitle">Continua a giocare per conquistare il tuo primo trofeo!</p>
+        </div>
+
+        <!-- Lista trofei personali -->
+        <div class="winner-card" *ngIf="hasTrofei">
           <div class="season">
             <h3>🏆 Stagione 2024-2025</h3>
             <div class="winner-info">
-              <div class="winner-name">Marco Rossi</div>
+              <div class="winner-name">1° Classificato</div>
               <div class="winner-details">
                 <span class="detail">Giornate Sopravvissute: 8</span>
                 <span class="detail">Squadra Finale: Napoli</span>
-                <span class="detail">Premio: €500</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="winner-card">
-          <div class="season">
-            <h3>🥈 Stagione 2023-2024</h3>
-            <div class="winner-info">
-              <div class="winner-name">Giuseppe Verdi</div>
-              <div class="winner-details">
-                <span class="detail">Giornate Sopravvissute: 10</span>
-                <span class="detail">Squadra Finale: Inter</span>
-                <span class="detail">Premio: €750</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="winner-card">
-          <div class="season">
-            <h3>🥉 Stagione 2022-2023</h3>
-            <div class="winner-info">
-              <div class="winner-name">Luca Bianchi</div>
-              <div class="winner-details">
-                <span class="detail">Giornate Sopravvissute: 7</span>
-                <span class="detail">Squadra Finale: Milan</span>
-                <span class="detail">Premio: €350</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <!-- Statistiche personali -->
         <div class="stats-section">
-          <h3>📊 Statistiche Generali</h3>
+          <h3>📊 LE TUE STATISTICHE</h3>
           <div class="stats-grid">
             <div class="stat-item">
-              <span class="stat-number">3</span>
-              <span class="stat-label">Tornei Completati</span>
+              <span class="stat-number">5</span>
+              <span class="stat-label">Tornei Giocati</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">156</span>
-              <span class="stat-label">Giocatori Totali</span>
+              <span class="stat-number">2</span>
+              <span class="stat-label">Vittorie</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">€1.600</span>
-              <span class="stat-label">Premi Distribuiti</span>
+              <span class="stat-number">35</span>
+              <span class="stat-label">Giornate Totali</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">78%</span>
+              <span class="stat-label">% Successo</span>
             </div>
           </div>
         </div>
@@ -626,6 +610,37 @@ export class RegolamentoBannerDialogComponent {
 
       scrollbar-width: thin;
       scrollbar-color: #C1C9D2 #F8F9FA;
+
+      /* Stato vuoto - nessun trofeo */
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+
+        .empty-icon {
+          font-size: 4rem;
+          width: 4rem;
+          height: 4rem;
+          color: #E0E0E0;
+          margin-bottom: 16px;
+        }
+
+        .empty-message {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #6B7280;
+          margin: 0 0 8px 0;
+        }
+
+        .empty-subtitle {
+          font-size: 0.9rem;
+          color: #9CA3AF;
+          margin: 0;
+        }
+      }
 
       .winner-card {
         background: #F8F9FA;
@@ -906,6 +921,9 @@ export class RegolamentoBannerDialogComponent {
   `]
 })
 export class AlboOroDialogComponent {
+  // TODO: Collegare ai dati reali dell'utente dal backend
+  hasTrofei = true; // Imposta a false se l'utente non ha trofei
+
   constructor(private dialog: MatDialog) {}
 
   closeDialog() {
@@ -935,24 +953,12 @@ export class AlboOroDialogComponent {
       <!-- FORM FIELDS -->
       <div class="form-section">
         <div class="info-row">
-          <div class="label">Nome:</div>
+          <div class="label">Nickname:</div>
           <div class="value">
             <input type="text"
-              placeholder="Il tuo nome"
-              [(ngModel)]="userProfile.nome"
-              name="nome"
-              class="custom-input"
-              required>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="label">Cognome:</div>
-          <div class="value">
-            <input type="text"
-              placeholder="Il tuo cognome"
-              [(ngModel)]="userProfile.cognome"
-              name="cognome"
+              placeholder="Il tuo nickname"
+              [(ngModel)]="userProfile.nickname"
+              name="nickname"
               class="custom-input"
               required>
           </div>
@@ -1396,8 +1402,7 @@ export class AlboOroDialogComponent {
 })
 export class ProfiloDialogComponent {
   userProfile = {
-    nome: '',
-    cognome: '',
+    nickname: '',
     eta: null as number | null,
     citta: '',
     squadraPreferita: ''
@@ -1413,7 +1418,7 @@ export class ProfiloDialogComponent {
 
 
   isFormValid(): boolean {
-    return !!(this.userProfile.nome && this.userProfile.cognome);
+    return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0);
   }
 
   onSubmit() {
@@ -1444,7 +1449,7 @@ export class ProfiloDialogComponent {
 
         <button class="banner-item" (click)="openAlboOro()">
           <mat-icon class="banner-icon trophy">emoji_events</mat-icon>
-          <span class="banner-text">ALBO D'ORO</span>
+          <span class="banner-text">TROFEI</span>
         </button>
 
         <button class="banner-item" (click)="openProfilo()">

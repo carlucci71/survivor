@@ -1,4 +1,4 @@
-/* Popup Selezione Squadra - CORRETTO E RESPONSIVE */
+/* Popup Selezione Squadra - CALENDARIO INTERATTIVO */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 /* CONTAINER PRINCIPALE */
@@ -7,14 +7,15 @@
 	background: #FFFFFF;
 	border-radius: 20px;
 	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-	padding: 24px 28px;
-	width: 90vw;
-	max-width: 700px;
-	max-height: 85vh;
+	padding: 24px 20px;
+	width: 92vw;
+	max-width: 900px;
+	max-height: 90vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 	z-index: 10000;
 	font-family: 'Poppins', sans-serif;
+	box-sizing: border-box;
 
 	/* Scrollbar personalizzata */
 	&::-webkit-scrollbar {
@@ -36,7 +37,7 @@
 	}
 }
 
-/* CLOSE BUTTON - X CENTRATA */
+/* CLOSE BUTTON */
 .close-btn {
 	position: absolute;
 	top: 12px;
@@ -51,6 +52,8 @@
 	align-items: center;
 	justify-content: center;
 	padding: 0;
+	border: none;
+	cursor: pointer;
 
 	mat-icon {
 		color: #0A3D91;
@@ -58,6 +61,9 @@
 		width: 20px;
 		height: 20px;
 		line-height: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	&:hover {
@@ -85,7 +91,7 @@ h2 {
 	}
 }
 
-/* INFO ROWS - ORIZZONTALI SENZA SFONDO CELESTE */
+/* INFO ROWS */
 .info-row {
 	display: flex;
 	align-items: center;
@@ -129,183 +135,358 @@ h2 {
 	}
 }
 
-/* SQUADRA SELECT + SAVE */
-.squadra-select-save {
+/* CALENDARIO CONTAINER */
+.calendario-container {
+	margin: 20px 0;
+
+	.calendario-title {
+		font-size: 1rem;
+		font-weight: 700;
+		color: #0A3D91;
+		margin: 0 0 12px 0;
+		text-transform: uppercase;
+		letter-spacing: 0.3px;
+		text-align: center;
+	}
+}
+
+/* GRID SQUADRE - LAYOUT ORIZZONTALE SCROLL */
+.squadre-grid {
+	display: flex;
+	gap: 12px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 12px 4px;
+	margin-bottom: 16px;
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+
+	/* Scrollbar personalizzata orizzontale */
+	&::-webkit-scrollbar {
+		height: 6px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #F4F6F8;
+		border-radius: 10px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: #0A3D91;
+		border-radius: 10px;
+
+		&:hover {
+			background: #4FC3F7;
+		}
+	}
+}
+
+/* CARD SQUADRA - COMPATTA VERTICALE */
+.squadra-card {
+	flex: 0 0 auto;
+	width: 110px;
+	background: #F4F6F8;
+	border: 3px solid #E0E0E0;
+	border-radius: 16px;
+	padding: 10px 6px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
-	margin: 20px 0;
-}
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+	scroll-snap-align: start;
+	height: 185px;
+	box-sizing: border-box;
 
-/* MAT-FORM-FIELD */
-.select-squadra {
-	width: 100%;
-}
-
-::ng-deep {
-	.modal-container {
-		.mat-mdc-form-field {
-			width: 100%;
-
-			.mat-mdc-text-field-wrapper {
-				border-radius: 14px;
-				background: #F4F6F8;
-				border: 2px solid #E0E0E0;
-				transition: all 0.3s ease;
-			}
-
-			&.mat-focused .mat-mdc-text-field-wrapper {
-				border-color: #0A3D91;
-				background: #FFFFFF;
-				box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.08);
-			}
-
-			.mat-mdc-form-field-flex {
-				padding: 12px 16px;
-			}
-
-			.mat-mdc-select-value,
-			.mat-mdc-select-placeholder {
-				font-weight: 600;
-				color: #0A3D91;
-				font-family: 'Poppins', sans-serif;
-				font-size: 0.95rem;
-			}
-		}
-
-		.mat-mdc-select-arrow {
-			color: #0A3D91;
-		}
+	&:hover {
+		border-color: #4FC3F7;
+		transform: translateY(-4px);
+		box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
 	}
 
-	/* DROPDOWN PANEL - VERSO IL BASSO CON SFONDO */
-	.mat-mdc-select-panel {
-		max-height: 280px !important;
-		border-radius: 16px !important;
-		box-shadow: 0 12px 48px rgba(10, 61, 145, 0.3) !important;
-		border: 2px solid #4FC3F7 !important;
-		margin-top: 8px !important;
-		padding: 8px !important;
-		overflow-y: auto !important;
-		overflow-x: hidden !important;
-		background: #FFFFFF !important;
-		/* Forza apertura verso il basso */
-		transform-origin: top center !important;
+	&.selected {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+		border-color: #0A3D91;
+		box-shadow: 0 8px 32px rgba(10, 61, 145, 0.3);
 
-		.mat-mdc-option {
-			font-family: 'Poppins', sans-serif !important;
-			padding: 12px 16px !important;
-			min-height: 48px !important;
-			font-size: 0.92rem !important;
-			font-weight: 600 !important;
-			border-radius: 12px !important;
-			margin: 2px 0 !important;
-			transition: all 0.2s ease !important;
-			/* Sfondo chiaro per distinguere dal popup bianco */
-			background: #F4F6F8 !important;
-			color: #0A3D91 !important;
-			border: 1px solid transparent !important;
+		.squadra-nome {
+			color: #FFFFFF !important;
+			font-weight: 800;
+		}
 
-			&:hover {
-				background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.08)) !important;
-				transform: translateX(4px) !important;
-				border-color: #4FC3F7 !important;
-			}
+		.vs-avversario {
+			color: #FFFFFF !important;
+			opacity: 0.9;
 
-			&.mat-selected {
-				background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+			.avversario-nome {
 				color: #FFFFFF !important;
-				font-weight: 700 !important;
-				border-left: 4px solid #81D4FA !important;
-				box-shadow: 0 2px 8px rgba(10, 61, 145, 0.2) !important;
+			}
+		}
+
+		.squadra-icon {
+			background: #FFFFFF;
+			color: #0A3D91;
+			box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+		}
+
+		.check-icon {
+			display: block;
+		}
+
+		.ultimi-risultati-mini {
+			.badge-mini {
+				border: 2px solid #FFFFFF;
 			}
 		}
 	}
 }
 
-/* BOTTONE SALVA - PERFETTAMENTE VISIBILE E CENTRATO */
-.save-small,
-button[mat-raised-button] {
-	background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
-	color: #FFFFFF !important;
-	border: none !important;
-	border-radius: 14px !important;
-	padding: 16px 32px !important;
-	font-weight: 700 !important;
-	font-family: 'Poppins', sans-serif !important;
-	font-size: 1rem !important;
-	text-transform: uppercase !important;
-	letter-spacing: 1px !important;
-	box-shadow: 0 6px 24px rgba(10, 61, 145, 0.2) !important;
-	transition: all 0.2s ease !important;
+/* HEADER SQUADRA - CENTRATO */
+.squadra-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	width: 100%;
-	min-height: 52px !important;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	text-align: center !important;
-	margin: 0 auto;
-	cursor: pointer;
+	gap: 8px;
+	position: relative;
 
-	/* Forza centramento perfetto del testo */
-	.mdc-button__label {
+	.squadra-icon {
+		width: 48px;
+		height: 48px;
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		color: #FFFFFF;
+		font-weight: 700;
+		font-size: 1.2rem;
+		transition: all 0.3s ease;
+		box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2);
+	}
+
+	.squadra-nome {
+		font-size: 0.7rem;
+		font-weight: 700;
+		color: #0A3D91;
+		margin: 0;
+		text-align: center;
+		line-height: 1.1;
 		width: 100%;
+		height: 16px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		display: block;
+	}
+
+	.check-icon {
+		display: none;
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		color: #FFFFFF;
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+		background: #10B981;
+		border-radius: 50%;
+		animation: checkBounce 0.4s ease;
+		box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+	}
+}
+
+@keyframes checkBounce {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+}
+
+/* ULTIMI RISULTATI MINI - PIÙ COMPATTI */
+.ultimi-risultati-mini {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+
+	.risultati-badges {
+		display: flex;
+		gap: 3px;
+	}
+
+	.badge-mini {
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 0.65rem;
+		color: #FFFFFF;
+
+		&.badge-v {
+			background: linear-gradient(135deg, #10B981, #34D399);
+		}
+
+		&.badge-n {
+			background: linear-gradient(135deg, #F59E0B, #FBBF24);
+		}
+
+		&.badge-p {
+			background: linear-gradient(135deg, #EF4444, #F87171);
+		}
+	}
+}
+
+/* VS AVVERSARIO */
+.vs-avversario {
+	font-size: 0.65rem;
+	font-weight: 600;
+	color: #6B7280;
+	text-align: center;
+	width: 100%;
+	line-height: 1.2;
+	margin-top: 4px;
+
+	.vs-label {
+		font-size: 0.6rem;
+		color: #9CA3AF;
+		font-weight: 500;
+		display: block;
+		margin-bottom: 2px;
+	}
+
+	.avversario-nome {
+		font-weight: 700;
+		color: #0A3D91;
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 100%;
+	}
+}
+
+/* PARTITA INFO - NASCOSTA (info visibili solo nei dettagli) */
+.partita-info {
+	display: none;
+}
+
+/* BOTTONE SALVA */
+.save-container {
+	margin: 24px 0;
+}
+
+.save-button {
+	width: 100%;
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+	color: #FFFFFF !important;
+	border: none !important;
+	border-radius: 16px !important;
+	padding: 18px 32px !important;
+	font-weight: 700 !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-size: 1.05rem !important;
+	text-transform: uppercase !important;
+	letter-spacing: 1px !important;
+	box-shadow: 0 8px 32px rgba(10, 61, 145, 0.25) !important;
+	transition: all 0.3s ease !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 10px !important;
+
+	mat-icon {
+		font-size: 24px;
+		width: 24px;
+		height: 24px;
 	}
 
 	&:hover:not(:disabled) {
-		transform: translateY(-3px);
-		box-shadow: 0 10px 36px rgba(10, 61, 145, 0.3) !important;
+		transform: translateY(-4px);
+		box-shadow: 0 12px 48px rgba(10, 61, 145, 0.35) !important;
 	}
 
 	&:active:not(:disabled) {
-		transform: translateY(-1px);
+		transform: translateY(-2px);
 	}
 
 	&:disabled {
-		opacity: 0.6;
+		opacity: 0.5;
 		cursor: not-allowed;
 		background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
-		color: #9E9E9E !important;
+		color: #9CA3AF !important;
+		transform: none !important;
 	}
 }
 
-/* NEXT OPPONENT - SENZA BACKGROUND */
-.next-opponent {
-	font-weight: 700;
-	color: #0A3D91;
-	font-size: 1.05rem;
-	padding: 12px 16px;
-	background: transparent;
-	border-radius: 12px;
-	border: 1px solid rgba(10, 61, 145, 0.08);
-	text-align: center;
-	display: block;
-	width: 100%;
+/* DETTAGLI SQUADRA SELEZIONATA */
+.dettagli-squadra {
+	background: #F4F6F8;
+	border-radius: 16px;
+	padding: 16px;
+	margin-top: 20px;
 }
 
-/* TABS RISULTATI */
-.result-tabs {
+.toggle-dettagli {
+	width: 100%;
+	background: #FFFFFF;
+	border: 2px solid #E0E0E0;
+	border-radius: 12px;
+	padding: 14px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-weight: 600;
+	color: #0A3D91;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: #4FC3F7;
+		background: rgba(79, 195, 247, 0.05);
+	}
+
+	mat-icon {
+		color: #0A3D91;
+		font-size: 24px;
+		width: 24px;
+		height: 24px;
+	}
+}
+
+/* TABS DETTAGLI */
+.tabs-dettagli {
 	display: flex;
 	gap: 8px;
-	margin-top: 10px;
+	margin: 16px 0;
+	flex-wrap: wrap;
 
-	.tab {
+	.tab-dettaglio {
 		flex: 1;
+		min-width: 120px;
 		padding: 10px 16px;
-		background: #F4F6F8;
+		background: #FFFFFF;
 		color: #6B7280;
 		border: 2px solid #E0E0E0;
 		border-radius: 10px;
 		font-weight: 600;
-		font-family: 'Inter', sans-serif;
+		font-family: 'Poppins', sans-serif;
+		font-size: 0.85rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
 
 		&:hover {
-			background: #FFFFFF;
 			border-color: #4FC3F7;
 			color: #0A3D91;
 		}
@@ -314,231 +495,294 @@ button[mat-raised-button] {
 			background: linear-gradient(135deg, #0A3D91, #4FC3F7);
 			color: #FFFFFF;
 			border-color: transparent;
-			box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2);
+			box-shadow: 0 4px 16px rgba(10, 61, 145, 0.2);
 		}
 	}
 }
 
-/* RISULTATI ROW */
-.risultati-row {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 16px;
-	margin-top: 20px;
-}
-
-.risultati-col {
-	background: #F4F6F8;
-	border-radius: 14px;
-	padding: 16px;
-
-	.risultati-title {
-		margin: 0 0 14px 0;
-		font-size: 0.95rem;
-		font-weight: 800;
-		color: #0A3D91;
-		font-family: 'Poppins', sans-serif;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-
-		&.hidden-when-tabs {
-			display: none;
-		}
-	}
-}
-
-.risultato-item {
+/* TAB CONTENT */
+.tab-content {
 	background: #FFFFFF;
-	padding: 12px;
-	border-radius: 10px;
-	margin-bottom: 10px;
-	box-shadow: 0 2px 8px rgba(10, 61, 145, 0.06);
-	font-size: 0.88rem;
-	line-height: 1.4;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-
-	div {
-		margin-bottom: 6px;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	.selected-team {
-		font-weight: 700;
-		color: #0A3D91;
-	}
+	border-radius: 12px;
+	padding: 16px;
+	min-height: 200px;
 }
 
-/* BADGE RISULTATI - VERDE/ROSSO/GIALLO GRADEVOLI */
-.result-badge {
-	margin-left: 8px;
+.risultati-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
-.badge {
-	display: inline-block;
-	padding: 5px 10px;
-	border-radius: 8px;
-	font-weight: 700;
-	font-size: 0.8rem;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+.risultato-item-detail {
+	background: #F4F6F8;
+	border-radius: 12px;
+	padding: 12px 16px;
+	border-left: 4px solid #4FC3F7;
 	transition: all 0.2s ease;
 
-	&.badge-v {
-		/* Verde tenue per Vittoria */
-		background: linear-gradient(135deg, #10B981, #34D399);
-		color: #FFFFFF;
+	&:hover {
+		transform: translateX(4px);
+		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.1);
+	}
 
-		&:hover {
-			transform: scale(1.05);
-			box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+	.risultato-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 8px;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		.giornata-label {
+			font-size: 0.8rem;
+			font-weight: 600;
+			color: #6B7280;
 		}
+
+		.data-label {
+			font-size: 0.8rem;
+			color: #9CA3AF;
+		}
+	}
+
+	.risultato-match {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: #0A3D91;
+		flex-wrap: wrap;
+
+		.team-selected {
+			font-weight: 800;
+			color: #0A3D91;
+		}
+
+		.score {
+			font-weight: 700;
+			color: #0A3D91;
+			background: #FFFFFF;
+			padding: 4px 12px;
+			border-radius: 8px;
+		}
+
+		.vs {
+			color: #9CA3AF;
+			font-weight: 500;
+			font-size: 0.8rem;
+		}
+	}
+
+	.risultato-badge {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 8px;
+	}
+}
+
+/* BADGE RISULTATI */
+.badge {
+	padding: 6px 12px;
+	border-radius: 8px;
+	font-weight: 700;
+	font-size: 0.75rem;
+	color: #FFFFFF;
+	display: inline-block;
+
+	&.badge-v {
+		background: linear-gradient(135deg, #10B981, #34D399);
+		box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 	}
 
 	&.badge-n {
-		/* Giallo tenue per Pareggio */
-		background: linear-gradient(135deg, #FBBF24, #FCD34D);
-		color: #92400E;
-		font-weight: 700;
-
-		&:hover {
-			transform: scale(1.05);
-			box-shadow: 0 3px 10px rgba(251, 191, 36, 0.3);
-		}
+		background: linear-gradient(135deg, #F59E0B, #FBBF24);
+		box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 	}
 
 	&.badge-p {
-		/* Rosso tenue per Perdita */
 		background: linear-gradient(135deg, #EF4444, #F87171);
-		color: #FFFFFF;
-
-		&:hover {
-			transform: scale(1.05);
-			box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
-		}
+		box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 	}
 }
 
-/* NESSUNA GIOCATA */
-h4 {
+.no-data {
 	text-align: center;
-	color: #6B7280;
-	font-family: 'Poppins', sans-serif;
+	color: #9CA3AF;
+	font-style: italic;
 	padding: 40px 20px;
-	margin: 0;
+	font-size: 0.95rem;
 }
 
 /* RESPONSIVE MOBILE */
 @media (max-width: 768px) {
 	.modal-container {
-		width: 95vw;
-		max-width: 95vw;
-		padding: 24px 20px;
-		max-height: 90vh;
+		width: 96vw;
+		max-width: 96vw;
+		padding: 20px 12px;
+		box-sizing: border-box;
 	}
 
 	h2 {
-		font-size: 1.3rem;
-		margin-bottom: 18px;
+		font-size: 1.2rem;
+		padding-right: 35px;
 	}
 
-	.close-btn {
-		width: 34px;
-		height: 34px;
+	.calendario-title {
+		font-size: 0.95rem;
+	}
 
-		mat-icon {
-			font-size: 20px;
+	.squadre-grid {
+		padding: 12px 2px;
+		gap: 10px;
+	}
+
+	.squadra-card {
+		width: 105px;
+		height: 185px;
+		padding: 10px 6px;
+
+		.squadra-header {
+			.squadra-icon {
+				width: 44px;
+				height: 44px;
+				font-size: 1.1rem;
+			}
+
+			.squadra-nome {
+				font-size: 0.68rem;
+				height: 16px;
+			}
 		}
-	}
 
-	.info-row {
-		flex-direction: column;
-		gap: 6px;
-		padding: 12px 16px;
-		margin-bottom: 12px;
-
-		.label {
-			min-width: auto;
-			font-size: 0.9rem;
+		.ultimi-risultati-mini {
+			.badge-mini {
+				width: 20px;
+				height: 20px;
+				font-size: 0.6rem;
+			}
 		}
 
-		.value {
-			font-size: 0.95rem;
-		}
-	}
+		.vs-avversario {
+			font-size: 0.63rem;
 
-	.squadra-select-save {
-		gap: 18px;
-		margin: 20px 0;
-	}
-
-	::ng-deep {
-		.modal-container {
-			.mat-mdc-form-field {
-				.mat-mdc-form-field-flex {
-					padding: 12px 14px;
-				}
-
-				.mat-mdc-select-value,
-				.mat-mdc-select-placeholder {
-					font-size: 0.9rem;
-				}
+			.vs-label {
+				font-size: 0.58rem;
 			}
 		}
 	}
 
-	button[mat-raised-button] {
-		padding: 14px 24px !important;
+	.save-button {
+		padding: 16px 24px !important;
 		font-size: 0.95rem !important;
-		min-height: 48px !important;
 	}
 
-	.result-tabs .tab {
+	.tabs-dettagli .tab-dettaglio {
+		font-size: 0.8rem;
+		padding: 8px 12px;
+	}
+
+	.risultato-item-detail {
 		padding: 10px 12px;
-		font-size: 0.85rem;
-	}
 
-	.risultati-row {
-		grid-template-columns: 1fr;
-		gap: 12px;
-	}
-
-	.risultati-col {
-		padding: 14px;
-
-		.risultati-title {
-			font-size: 0.95rem;
-			margin-bottom: 12px;
+		.risultato-match {
+			font-size: 0.85rem;
 		}
-	}
-
-	.risultato-item {
-		padding: 12px;
-		font-size: 0.85rem;
 	}
 }
 
 @media (max-width: 480px) {
 	.modal-container {
+		padding: 16px 10px;
 		width: 90vw;
-		max-width: 450px;
-		padding: 24px 20px;
+		max-width: 98vw;
 	}
 
 	h2 {
 		font-size: 1.1rem;
-		padding-right: 42px;
+		padding-right: 40px;
 	}
 
-	.close-btn {
-		width: 34px;
-		height: 34px;
-		top: 14px;
-		right: 14px;
+	.info-row {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 10px 12px;
+		gap: 6px;
+
+		.label {
+			min-width: auto;
+			font-size: 0.85rem;
+		}
+
+		.value {
+			font-size: 0.85rem;
+		}
+	}
+
+	.calendario-title {
+		font-size: 0.9rem;
+	}
+
+	.squadre-grid {
+		padding: 10px 2px;
+		gap: 8px;
+	}
+
+	.squadra-card {
+		width: 100px;
+		height: 180px;
+		padding: 9px 5px;
+
+		.squadra-header {
+			gap: 6px;
+
+			.squadra-icon {
+				width: 42px;
+				height: 42px;
+				font-size: 1rem;
+			}
+
+			.squadra-nome {
+				font-size: 0.65rem;
+				height: 15px;
+			}
+
+			.check-icon {
+				font-size: 18px;
+				width: 18px;
+				height: 18px;
+				top: -3px;
+				right: -3px;
+			}
+		}
+
+		.ultimi-risultati-mini {
+			.risultati-badges {
+				gap: 2px;
+			}
+
+			.badge-mini {
+				width: 19px;
+				height: 19px;
+				font-size: 0.58rem;
+			}
+		}
+
+		.vs-avversario {
+			font-size: 0.6rem;
+			margin-top: 2px;
+
+			.vs-label {
+				font-size: 0.55rem;
+				margin-bottom: 1px;
+			}
+		}
+	}
+
+	.save-button {
+		padding: 14px 20px !important;
+		font-size: 0.9rem !important;
 
 		mat-icon {
 			font-size: 20px;
@@ -547,59 +791,53 @@ h4 {
 		}
 	}
 
-	.info-row {
-		padding: 11px 14px;
-		font-size: 0.88rem;
-		margin-bottom: 11px;
-	}
+	.toggle-dettagli {
+		padding: 12px 16px;
+		font-size: 0.85rem;
 
-	.squadra-select-save {
-		gap: 18px;
-		margin: 20px 0;
-	}
-
-	::ng-deep {
-		.modal-container {
-			.mat-mdc-form-field {
-				.mat-mdc-text-field-wrapper {
-					padding: 5px;
-				}
-
-				.mat-mdc-form-field-flex {
-					padding: 13px 14px;
-				}
-
-				.mat-mdc-select-value,
-				.mat-mdc-select-placeholder {
-					font-size: 0.9rem;
-				}
-			}
+		mat-icon {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
 		}
 	}
 
-	button[mat-raised-button] {
-		padding: 14px 24px !important;
-		font-size: 0.92rem !important;
-		min-height: 48px !important;
-		letter-spacing: 0.8px !important;
-		border-radius: 12px !important;
+	.tabs-dettagli {
+		gap: 6px;
+
+		.tab-dettaglio {
+			min-width: 100px;
+			padding: 8px 10px;
+			font-size: 0.75rem;
+		}
 	}
 
-	.next-opponent {
-		font-size: 0.95rem;
-		padding: 10px 12px;
+	.tab-content {
+		padding: 12px;
 	}
 
-	.result-tabs .tab {
-		padding: 10px 10px;
-		font-size: 0.8rem;
-	}
+	.risultato-item-detail {
+		padding: 10px;
 
-	::ng-deep {
-		.mat-mdc-select-panel .mat-mdc-option {
-			padding: 10px 12px !important;
-			min-height: 44px !important;
-			font-size: 0.85rem !important;
+		.risultato-header {
+			.giornata-label,
+			.data-label {
+				font-size: 0.75rem;
+			}
+		}
+
+		.risultato-match {
+			font-size: 0.8rem;
+
+			.score {
+				padding: 3px 10px;
+				font-size: 0.8rem;
+			}
+		}
+
+		.badge {
+			padding: 5px 10px;
+			font-size: 0.7rem;
 		}
 	}
 }
