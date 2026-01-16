@@ -4,7 +4,7 @@
         font-family="Arial Black, sans-serif"
         font-size="80"
         font-weight="900"
-        fill="#0A3D91"
+        fill="#ffffff"
         text-anchor="middle"
         letter-spacing="-1">SURVIVOR</text>
 
@@ -13,8 +13,8 @@
         font-family="Arial, sans-serif"
         font-size="32"
         font-weight="300"
-        fill="#4FC3F7"
+        fill="#c0c0c0"
         text-anchor="middle"
-        letter-spacing="8">ONE SHOT</text>
+        letter-spacing="8">WIN OR GO HOME</text>
 </svg>
 

@@ -5,14 +5,14 @@
         font-family: 'Poppins', 'Arial Black', sans-serif;
         font-weight: 800;
         font-size: 120px;
-        fill: #0A3D91;
+        fill: #ffffff;
         letter-spacing: -2px;
       }
       .oneshot-text {
         font-family: 'Poppins', 'Arial', sans-serif;
         font-weight: 300;
         font-size: 48px;
-        fill: #4FC3F7;
+        fill: #c0c0c0;
         letter-spacing: 12px;
       }
     </style>
@@ -22,6 +22,6 @@
   <text x="50%" y="130" text-anchor="middle" class="survivor-text">SURVIVOR</text>
 
   <!-- ONE SHOT -->
-  <text x="50%" y="200" text-anchor="middle" class="oneshot-text">ONE SHOT</text>
+  <text x="50%" y="200" text-anchor="middle" class="oneshot-text">WIN OR GO HOME</text>
 </svg>
 

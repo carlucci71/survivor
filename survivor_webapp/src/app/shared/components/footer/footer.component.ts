@@ -16,7 +16,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
           <div class="footer-brand">
             <div class="footer-logo">
               <span class="logo-text">SURVIVOR</span>
-              <span class="subtitle">ONE SHOT</span>
+              <span class="subtitle">WIN OR GO HOME</span>
             </div>
           </div>
 
@@ -37,7 +37,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 
           <!-- COPYRIGHT -->
           <div class="footer-copyright">
-            <span>© 2026 Survivor One Shot</span>
+            <span>© 2026 Survivor DDL</span>
           </div>
         </div>
       </div>
