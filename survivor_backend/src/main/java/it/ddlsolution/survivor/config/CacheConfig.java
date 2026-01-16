@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static it.ddlsolution.survivor.service.CacheableService.CAMPIONATI;
+import static it.ddlsolution.survivor.service.CacheableService.PARTITE;
 import static it.ddlsolution.survivor.service.CacheableService.SOSPENSIONI;
 import static it.ddlsolution.survivor.service.CacheableService.SPORT;
 import static it.ddlsolution.survivor.service.CacheableService.URL;
@@ -26,6 +27,7 @@ public class CacheConfig {
                 .expireAfterWrite(1, TimeUnit.HOURS)
                 .maximumSize(1000);
         CaffeineCache cacheUrl = new CaffeineCache(URL, oneHourCache.build());
+        CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneHourCache.build());
         CaffeineCache sospensioni = new CaffeineCache(SOSPENSIONI, oneHourCache.build());
         CaffeineCache sport = new CaffeineCache(SPORT, oneHourCache.build());
 
@@ -35,7 +37,7 @@ public class CacheConfig {
         CaffeineCache campionati = new CaffeineCache(CAMPIONATI, tenMinutesCache.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(cacheUrl, sospensioni, campionati,sport));
+        manager.setCaches(List.of(cacheUrl,cachePartite, sospensioni, campionati,sport));
         return manager;
     }
 

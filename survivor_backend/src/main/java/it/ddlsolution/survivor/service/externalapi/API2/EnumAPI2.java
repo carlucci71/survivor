@@ -10,7 +10,7 @@ class EnumAPI2 {
         SERIE_B(105, SquadreSerieB_API2.values()),
         LIGA(23, SquadreLiga_API2.values()),
         TENNIS_W(11316, SquadreTennis_API2.values()),
-        TENNIS_AO(10376, SquadreTennis_API2.values()),
+        TENNIS_AO(12389, SquadreTennis_API2.values()),
         NBA_RS(3, SquadreNBA_API2.values());
 
         final int id;

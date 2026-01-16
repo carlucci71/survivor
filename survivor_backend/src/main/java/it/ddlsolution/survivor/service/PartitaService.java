@@ -4,6 +4,7 @@ import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.entity.Partita;
 import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.repository.PartitaRepository;
+import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -22,13 +23,13 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 public class PartitaService {
     private final PartitaRepository partitaRepository;
     private final PartitaMapper partitaMapper;
-    private final Environment environment;
+    private final Utility utility;
 
 
     @Transactional
     public PartitaDTO salvaSeNonTerminata(PartitaDTO partitaDTO) {
         Partita partita = partitaMapper.toEntity(partitaDTO);
-        partita.setImplementationExternalApi(getImplementationExternalApi());
+        partita.setImplementationExternalApi(utility.getImplementationExternalApi());
 
         // Verifica se esiste già una partita con gli stessi criteri
         Optional<Partita> partitaEsistente = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndCasaSiglaAndFuoriSiglaAndAnno(
@@ -50,10 +51,10 @@ public class PartitaService {
             return partitaMapper.toDTO(partita);
         }
     }
-
+/*
     @Transactional(readOnly = true)
     public List<PartitaDTO> getPartiteFromDb(String idCampionato, short anno){
-        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, getImplementationExternalApi(),anno);
+        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(),anno);
         return partitaMapper.toDTOList(partite);
     }
 
@@ -64,15 +65,7 @@ public class PartitaService {
                 .filter(p->p.getGiornata()==giornata)
                 .toList();
     }
-
-    private String getImplementationExternalApi() {
-        String[] activeProfiles = environment.getActiveProfiles();
-        String implementationExternalApi = Arrays.stream(activeProfiles)
-                .filter(p -> p.equals(CALENDARIO_MOCK) || p.equals(CALENDARIO_API2))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Implementazione Api External non trovata"));
-        return implementationExternalApi;
-    }
+*/
 
 }
 

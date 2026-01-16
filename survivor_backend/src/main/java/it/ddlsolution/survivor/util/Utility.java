@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -16,13 +17,19 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Component
 @Slf4j
 public class Utility {
     @Autowired
+    Environment environment;
+
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
@@ -121,6 +128,15 @@ public class Utility {
     public static BigDecimal roundBigDecimal(BigDecimal value, int newScale) {
         if (value == null) return BigDecimal.ZERO.stripTrailingZeros();
         return value.setScale(newScale, RoundingMode.HALF_UP);
+    }
+
+    public String getImplementationExternalApi() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        String implementationExternalApi = Arrays.stream(activeProfiles)
+                .filter(p -> p.equals(CALENDARIO_MOCK) || p.equals(CALENDARIO_API2))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Implementazione Api External non trovata"));
+        return implementationExternalApi;
     }
 
 

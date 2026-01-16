@@ -1,20 +1,25 @@
 package it.ddlsolution.survivor.service;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
+import it.ddlsolution.survivor.entity.Partita;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
+import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
 import it.ddlsolution.survivor.mapper.SportMapper;
 import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
+import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
+import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,6 +56,10 @@ public class CacheableService {
     private final SospensioneLegaMapper sospensioneLegaMapper;
     private final SportRepository sportRepository;
     private final SportMapper sportMapper;
+    private final PartitaRepository partitaRepository;
+    private final PartitaMapper partitaMapper;
+    private final Utility utility;
+
 
     // Lazy provider e servizio di utilità per calcolo stato giornata
     private final ObjectProvider<ICalendario> calendarioProvider;
@@ -58,6 +68,7 @@ public class CacheableService {
     public final static String CAMPIONATI="campionati";
     public final static String SPORT="sport";
     public final static String SOSPENSIONI="sospensioni";
+    public final static String PARTITE="partite";
     public final static String URL="cache-url";
 
     @Value("${anno-default}")
@@ -79,7 +90,7 @@ public class CacheableService {
                 List<LocalDateTime> iniziGiornate = new ArrayList<>();
                 int giornata = 0;
                 Integer giornataDaGiocare = null;
-                List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, annoDefault);
+                List<PartitaDTO> partite = getPartiteFromDb(campionatoDTO.getId(), annoDefault, giornata);
                 do {
                     giornata++;
                     List<PartitaDTO> partiteDTO = utilCalendarioService.partiteWithRefreshFromWeb(campionatoDTO, giornata, partite, annoDefault);
@@ -142,7 +153,21 @@ public class CacheableService {
                 .collect(Collectors.toList());
     }
 
-
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1] + '_' + #root.args[2]")
+    public List<PartitaDTO> getPartiteFromDb(String idCampionato, short anno, int giornata){
+        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(),anno);
+        return partitaMapper.toDTOList(partite);
+    }
+/*
+    public void invalidaPartiteFromDb(String idCampionato, short anno){
+        invalidateCacheEntry(PARTITE, idCampionato + "_" + anno);
+    }
+*/
+    @CacheEvict(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1] + '_' + #root.args[2]")
+    public void invalidaPartiteFromDb(String idCampionato, short anno, int giornata){
+        //System.out.println();
+    }
     /**
      * Invalida manualmente la cache specificata
      */
@@ -153,6 +178,16 @@ public class CacheableService {
             log.info("Cache '{}' invalidata manualmente.", cacheName);
         } else {
             log.warn("Cache '{}' non trovata.", cacheName);
+        }
+    }
+
+    private void invalidateCacheEntry(String cacheName, Object key) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            cache.evict(key);
+            log.info("Entry '{}' della cache '{}' invalidata manualmente.", key, cacheName);
+        } else {
+            log.warn("Cache '{}' non trovata. Impossibile invalidare la key '{}'.", cacheName, key);
         }
     }
 

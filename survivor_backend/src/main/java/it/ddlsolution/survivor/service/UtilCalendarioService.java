@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class UtilCalendarioService {
 
     private final ObjectProvider<ICalendario> calendarioProvider;
+    private final ObjectProvider<CacheableService> cacheableProvider;
     private final PartitaService partitaService;
 
     @Transactional(readOnly = true)
@@ -78,9 +79,11 @@ public class UtilCalendarioService {
                 //Se almeno una partita non è terminata richiamo le API
                 .filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)
                 //Se almeno una partita si gioca nei prossimi x giorni
-                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(2))<0)
+                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(20))<0)//TODO
                 .count();
         if (partite.size()==0 || partiteNotTerminate>0) {
+            CacheableService cacheableService = cacheableProvider.getIfAvailable();
+            cacheableService.invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getId());
             List<PartitaDTO> partiteFromWeb = getPartiteAdapted(campionatoDTO, giornata,anno);
             partite=new ArrayList<>();
@@ -90,17 +93,21 @@ public class UtilCalendarioService {
         }
         return partite;
     }
+
     public List<PartitaDTO> getPartiteFromDb(CampionatoDTO campionatoDTO, int giornata, short anno) {
-        List<PartitaDTO> partiteFromDb = partitaService.getPartiteFromDb(campionatoDTO.getId(), giornata, anno);
+        CacheableService cacheableService = cacheableProvider.getIfAvailable();
+        List<PartitaDTO> partiteFromDb = cacheableService.getPartiteFromDb(campionatoDTO.getId(), anno,giornata);
+        partiteFromDb = partiteFromDb
+                .stream()
+                .filter(p->p.getGiornata()==giornata)
+                .toList();
+
         if (partiteFromDb.size()==0){
             partiteFromDb=partiteWithRefreshFromWeb(campionatoDTO,giornata,new ArrayList<>(),anno);
         }
         return partiteFromDb;
     }
 
-    public List<PartitaDTO> getPartiteFromDb(CampionatoDTO campionatoDTO, short anno) {
-        return partitaService.getPartiteFromDb(campionatoDTO.getId(),anno);
-    }
 
     private List<PartitaDTO> getPartiteAdapted(CampionatoDTO campionatoDTO, int giornata, short anno) {
         ICalendario calendario = calendarioProvider.getIfAvailable();
