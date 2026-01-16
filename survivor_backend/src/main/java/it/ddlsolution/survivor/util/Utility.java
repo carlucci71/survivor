@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,6 +27,15 @@ public class Utility {
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
 
+    public StopWatch startStopWatch(String nome){
+        StopWatch stopWatch = new StopWatch(nome);
+        stopWatch.start();
+        return stopWatch;
+    }
+    public void stopStopWatch(StopWatch stopWatch){
+        stopWatch.stop();
+        log.info("process {} executed in {} ms",stopWatch.getId() , stopWatch.getTotalTimeMillis());
+    }
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
