@@ -1,5 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import {
   MagicLinkRequest,
@@ -24,6 +25,10 @@ export class AuthService {
 
   private get http(): HttpClient {
     return this.injector.get(HttpClient);
+  }
+
+  private get router(): Router {
+    return this.injector.get(Router);
   }
 
   requestMagicLink(email: string): Observable<MagicLinkResponse> {
@@ -67,13 +72,20 @@ export class AuthService {
   private loadUserFromBE(): void {
     this.getMyData().subscribe({
       next: (response: AuthResponse) => {
+        if (!response) {
+          // myData returned null, redirect to login
+          this.currentUserSubject.next(null);
+          this.router.navigate(['/login']);
+          return;
+        }
         // handle and store token + user via existing helper
         this.handleAuthResponse(response);
       },
       error: (error) => {
         console.error('Errore :', error);
-        // failed to load user; ensure subject is null
+        // failed to load user; ensure subject is null and redirect to login
         this.currentUserSubject.next(null);
+        this.router.navigate(['/login']);
       }
     });
   }
