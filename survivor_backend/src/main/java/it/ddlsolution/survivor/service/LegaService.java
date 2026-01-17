@@ -389,8 +389,8 @@ public class LegaService {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
             List<PartitaDTO> partiteDellaGiornata = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, giornata, legaDTO.getAnno());
-            Enumeratori.StatoPartita statoPartita = statoGiornata(partiteDellaGiornata, giornata);
-            statiGiornate.put(giornata, statoPartita);
+            Enumeratori.StatoPartita statoGiornata = statoGiornata(partiteDellaGiornata, giornata);
+            statiGiornate.put(giornata, statoGiornata);
         }
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
         legaDTO.setStatiGiornate(statiGiornate);

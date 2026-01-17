@@ -11,8 +11,8 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 @Slf4j
 @RequiredArgsConstructor
 public class TracciaturaControllerAspect {

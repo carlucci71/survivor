@@ -78,10 +78,10 @@ public class CacheableService {
     @Value("${anno-default}")
     short annoDefault;
 
-    @Value("${cache.allcampionati.threads:10}")
+    @Value("${cache.allcampionati.threads:1}")
     private int allCampionatiThreads;
 
-    @Value("${cache.allcampionati.timeout-seconds:60}")
+    @Value("${cache.allcampionati.timeout-seconds:120}")
     private long allCampionatiTimeoutSeconds;
 
     private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
@@ -157,6 +157,7 @@ public class CacheableService {
 
     public void elaboraCampionato(final CampionatoDTO campionatoDTO, short anno, CompletableFuture<CampionatoDTO> futureInput) {
         String lockKey = campionatoDTO.getId() + "_" + anno;
+        log.info("elaboracampionato {}", lockKey);
 
         // Verifica se c'è già un'elaborazione in corso per gli stessi parametri
         CompletableFuture<CampionatoDTO> existingFuture = elaborazioniInCorso.putIfAbsent(lockKey, futureInput);

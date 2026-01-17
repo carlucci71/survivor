@@ -58,8 +58,13 @@ public class Utility {
 
     public <T> T callUrl(String url, Class<T> clazz) {
         log.info("++++++++++++++++++++++++++++++ {}",url);
-        ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
-        return forEntity.getBody();
+        try {
+            ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
+            return forEntity.getBody();
+        } catch (Exception e){
+            log.error("Errore in {} {}", url,e);
+            throw e;
+        }
     }
 
     private ObjectMapper getMapper() {
