@@ -13,6 +13,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -46,6 +48,8 @@ public class GuardiaDispositivaAspect {
     }
 
     private @NonNull Map<GuardRule.PARAM, Object> addParameterInMap(Map<GuardRule.PARAM, Object> parametriRule, String[] paramNames, Object[] args, GuardiaDispositiva guardiaDispositiva, GuardRule.PARAM tipoParam) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         String param = switch (tipoParam) {
             case IDLEGA -> guardiaDispositiva.idLegaParam();
             case GIORNATA -> guardiaDispositiva.giornataParam();
@@ -63,7 +67,7 @@ public class GuardiaDispositivaAspect {
                         if (ObjectUtils.isEmpty(idLega)) {
                             throw new RuntimeException("Lega non presente");
                         }
-                        parametriRule.put(tipoParam, legaService.getLegaDTO(idLega, false));
+                        parametriRule.put(tipoParam, legaService.getLegaDTO(idLega, false, userId));
                     }
                     case GIORNATA -> {
                         Integer giornata = Integer.parseInt(argsByParameterName.toString());

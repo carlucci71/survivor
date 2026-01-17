@@ -28,7 +28,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -58,7 +60,7 @@ public class LegaService {
     private final Utility utility;
     private final CacheableService cacheableService;
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -74,19 +76,21 @@ public class LegaService {
         return legaMapper.toDTOList(legheDaAvviare);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
-        List<LegaDTO> legheDTO = new ArrayList<>();
-        for (Lega lega : leghe) {
-            legheDTO.add(getLegaDTO(lega.getId(), false));
-        }
-        return legheDTO;
+        return leghe
+                .parallelStream()
+                .map(lega -> getLegaDTO(lega.getId(), false, userId))
+                .toList();
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
+    public LegaDTO getLegaDTO(Long id, boolean completo, Long userId) {
+        return doGetLegaDTO(id, completo, userId);
+    }
 
-    @Transactional(readOnly = true)
-    public LegaDTO getLegaDTO(Long id, boolean completo) {
+    private LegaDTO doGetLegaDTO(Long id, boolean completo, Long userId) {
         LegaDTO legaDTO = new LegaDTO();
         try {
             if (completo) {
@@ -99,14 +103,14 @@ public class LegaService {
                         .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
                 Long idLega = legaDTO.getId();
 
-                GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO);
+                GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO, userId);
                 giocatoreDTO.setGiocate(null);
                 giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
                 giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
                 legaDTO.setGiocatori(List.of(giocatoreDTO));
 
             }
-            addInfoCalcolate(legaDTO);
+            addInfoCalcolate(legaDTO,userId);
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
             if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
                 offuscaUltimaGiocata(legaDTO);
@@ -272,7 +276,9 @@ public class LegaService {
     @LoggaDispositiva(tipologia = "calcola")
     @Transactional
     public LegaDTO calcola(Long idLega) {
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         CampionatoDTO campionatoDTO = refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
         legaDTO.setCampionato(campionatoDTO);
         int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
@@ -328,7 +334,7 @@ public class LegaService {
         }
         aggiornaStatoLega(legaDTO);
         salva(legaDTO);
-        return getLegaDTO(legaDTO.getId(), true);
+        return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
 
@@ -368,7 +374,7 @@ public class LegaService {
         return ret;
     }
 
-    private void addInfoCalcolate(LegaDTO legaDTO) {
+    private void addInfoCalcolate(LegaDTO legaDTO, Long userId) {
         legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()).stream().sorted().toList());
 
@@ -389,8 +395,6 @@ public class LegaService {
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
         legaDTO.setStatiGiornate(statiGiornate);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
         Enumeratori.RuoloGiocatoreLega myRoleInLega = legaDTO.getGiocatori().stream()
                 .filter(g -> g.getUser() != null && g.getUser().getId().equals(userId))
                 .map(g -> g.getRuoliPerLega())
@@ -423,25 +427,31 @@ public class LegaService {
     @LoggaDispositiva(tipologia = "termina")
     @Transactional
     public LegaDTO termina(Long idLega) {
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
         salva(legaDTO);
-        return getLegaDTO(legaDTO.getId(), true);
+        return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
     @LoggaDispositiva(tipologia = "riapri")
     @Transactional
     public LegaDTO riapri(Long idLega) {
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
         salva(legaDTO);
-        return getLegaDTO(legaDTO.getId(), true);
+        return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
     @LoggaDispositiva(tipologia = "secondaOccasione")
     @Transactional
     public LegaDTO secondaOccasione(Long idLega) {
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
 
         Integer giornataDaSaltare = legaDTO.getGiornataCalcolata();
         if (giornataDaSaltare == null) {
@@ -461,14 +471,16 @@ public class LegaService {
         }
         legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
         salva(legaDTO);
-        return getLegaDTO(legaDTO.getId(), true);
+        return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
 
     @LoggaDispositiva(tipologia = "undoCalcola")
     @Transactional
     public LegaDTO undoCalcola(Long idLega) {
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         int giornataCorrente = legaDTO.getGiornataCorrente();
         if (!ObjectUtils.isEmpty(legaDTO.getGiornataCalcolata())) {
             Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
@@ -504,7 +516,7 @@ public class LegaService {
         }
 
         salva(legaDTO);
-        return getLegaDTO(legaDTO.getId(), true);
+        return getLegaDTO(legaDTO.getId(), true, userId);
 
     }
 
@@ -557,8 +569,10 @@ public class LegaService {
     @LoggaDispositiva(tipologia = "cancellaGiocatoreDaLega")
     @Transactional
     public LegaDTO cancellaGiocatoreDaLega(Long idLega, Long idGiocatore) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         legaRepository.deleteGiocatoreLegaByLegaIdAndGiocatoreId(idLega, idGiocatore);
-        return getLegaDTO(idLega, true);
+        return getLegaDTO(idLega, true, userId);
     }
 
     @LoggaDispositiva(tipologia = "nuovaEdizione")
@@ -566,7 +580,7 @@ public class LegaService {
     public LegaDTO nuovaEdizione(Long idLega) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        LegaDTO legaDTO = getLegaDTO(idLega, true);
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         LegaInsertDTO legaInsertDTO = new LegaInsertDTO();
         legaInsertDTO.setCampionato(legaDTO.getCampionato().getId());
         legaInsertDTO.setGiornataIniziale(legaDTO.getGiornataCorrente() + 1);
@@ -636,8 +650,10 @@ public class LegaService {
 
     @Transactional
     public void invita(long idLega, List<String> emails) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
         for (String email : emails) {
-            LegaDTO legaDTO = getLegaDTO(idLega, false);
+            LegaDTO legaDTO = getLegaDTO(idLega, false, userId);
             if (legaDTO.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
                 throw new RuntimeException("Impossibile invitare qualcuno, la lega è già avviata");
             }

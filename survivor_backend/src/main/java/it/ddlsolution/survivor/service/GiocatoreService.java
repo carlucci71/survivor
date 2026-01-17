@@ -76,9 +76,7 @@ public class GiocatoreService {
     }
 
     @Transactional(readOnly = true)
-    public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO,Long userId) {
         Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElseThrow(()->new RuntimeException("Ruolo non trovato in lega"));
         return giocatoreMapper.toDTO(giocatore);
     }

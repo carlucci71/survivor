@@ -11,6 +11,8 @@ import it.ddlsolution.survivor.util.Utility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +44,9 @@ public class LegaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LegaDTO> getLegaById(@PathVariable Long id) {
-        LegaDTO legaDTO = legaService.getLegaDTO(id,true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = legaService.getLegaDTO(id,true,userId);
         if (legaDTO == null) {
             return ResponseEntity.notFound().build();
         }
