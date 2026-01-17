@@ -436,59 +436,57 @@ export class SelezionaGiocataComponent implements OnInit {
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
 
-    // Attendi che le squadre siano caricate
-    setTimeout(() => {
-      this.squadreConPartite = this.squadreDisponibili.map(squadra => {
-        const squadraConPartite = {
-          ...squadra,
-          prossimaPartita: null as Partita | null,
-          ultimiRisultati: [] as any[]
-        };
+    // Inizializza subito le squadre con i dati base
+    this.squadreConPartite = this.squadreDisponibili.map(squadra => {
+      const squadraConPartite = {
+        ...squadra,
+        prossimaPartita: null as Partita | null,
+        ultimiRisultati: [] as any[]
+      };
 
-        // Carica prossima partita
-        this.campionatoService
-          .calendario(
-            this.lega.campionato!.id,
-            squadra.sigla!,
-            this.lega.giornataCorrente,
-            true
-          )
-          .subscribe({
-            next: (partite) => {
-              if (partite && partite.length > 0) {
-                squadraConPartite.prossimaPartita = partite[0];
+      // Carica prossima partita
+      this.campionatoService
+        .calendario(
+          this.lega.campionato!.id,
+          squadra.sigla!,
+          this.lega.giornataCorrente,
+          true
+        )
+        .subscribe({
+          next: (partite) => {
+            if (partite && partite.length > 0) {
+              squadraConPartite.prossimaPartita = partite[0];
+            }
+          },
+          error: (error) => console.error('Errore caricamento prossima partita:', error)
+        });
+
+      // Carica ultimi risultati
+      this.campionatoService
+        .calendario(
+          this.lega.campionato!.id,
+          squadra.sigla!,
+          this.lega.giornataCorrente - 1,
+          false
+        )
+        .subscribe({
+          next: (risultati) => {
+            squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
+              let esito = 'N';
+              if (r.casaSigla === squadra.sigla) {
+                if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
+                else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
+              } else if (r.fuoriSigla === squadra.sigla) {
+                if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
+                else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
               }
-            },
-            error: (error) => console.error('Errore caricamento prossima partita:', error)
-          });
+              return { ...r, esito };
+            });
+          },
+          error: (error) => console.error('Errore caricamento ultimi risultati:', error)
+        });
 
-        // Carica ultimi risultati
-        this.campionatoService
-          .calendario(
-            this.lega.campionato!.id,
-            squadra.sigla!,
-            this.lega.giornataCorrente - 1,
-            false
-          )
-          .subscribe({
-            next: (risultati) => {
-              squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
-                let esito = 'N';
-                if (r.casaSigla === squadra.sigla) {
-                  if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
-                  else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
-                } else if (r.fuoriSigla === squadra.sigla) {
-                  if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
-                  else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
-                }
-                return { ...r, esito };
-              });
-            },
-            error: (error) => console.error('Errore caricamento ultimi risultati:', error)
-          });
-
-        return squadraConPartite;
-      });
-    }, 500);
+      return squadraConPartite;
+    });
   }
 }
