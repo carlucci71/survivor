@@ -7,6 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
@@ -1078,40 +1080,27 @@ export class AlboOroDialogComponent {
         </div>
 
         <div class="info-row">
-          <div class="label">Età:</div>
-          <div class="value">
-            <input type="number"
-              placeholder="La tua età"
-              [(ngModel)]="userProfile.eta"
-              name="eta"
-              class="custom-input"
-              min="16"
-              max="100">
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="label">Città:</div>
-          <div class="value">
-            <input type="text"
-              placeholder="La tua città"
-              [(ngModel)]="userProfile.citta"
-              name="citta"
-              class="custom-input">
-          </div>
-        </div>
-
-        <div class="info-row">
           <div class="label">Squadra del cuore:</div>
-          <div class="value">
-            <select [(ngModel)]="userProfile.squadraPreferita"
-              name="squadra"
-              class="custom-select">
-              <option value="">Seleziona squadra</option>
-              <option *ngFor="let squadra of squadreSerieA" [value]="squadra">
+          <div class="value autocomplete-container">
+            <input type="text"
+              placeholder="Cerca la tua squadra..."
+              [(ngModel)]="searchQuery"
+              (input)="onSearchInput()"
+              (focus)="showSuggestions = true"
+              (blur)="onBlur()"
+              class="custom-input"
+              autocomplete="off">
+            <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
+              <div class="suggestion-item"
+                *ngFor="let squadra of filteredSquadre"
+                (mousedown)="selectSquadra(squadra)">
                 {{ squadra }}
-              </option>
-            </select>
+              </div>
+            </div>
+            <div class="selected-badge" *ngIf="userProfile.squadraPreferita && !showSuggestions">
+              <span>{{ userProfile.squadraPreferita }}</span>
+              <button type="button" class="clear-btn" (click)="clearSquadra()">×</button>
+            </div>
           </div>
         </div>
       </div>
@@ -1128,6 +1117,14 @@ export class AlboOroDialogComponent {
           [disabled]="!isFormValid()"
           (click)="onSubmit()">
           Salva Profilo
+        </button>
+      </div>
+
+      <!-- DANGER ZONE -->
+      <div class="danger-zone">
+        <button type="button" class="btn-danger" (click)="openDeleteAccountDialog()">
+          <mat-icon>delete_forever</mat-icon>
+          Elimina Account
         </button>
       </div>
     </div>
@@ -1297,6 +1294,93 @@ export class AlboOroDialogComponent {
       padding-right: 40px;
     }
 
+    /* AUTOCOMPLETE CONTAINER */
+    .autocomplete-container {
+      position: relative;
+    }
+
+    .suggestions-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border: 2px solid #0A3D91;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #F4F6F8;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #0A3D91;
+        border-radius: 3px;
+      }
+    }
+
+    .suggestion-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #0A3D91;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #F4F6F8;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.08));
+        padding-left: 20px;
+      }
+    }
+
+    .selected-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+      border-radius: 20px;
+      color: #FFFFFF;
+      font-weight: 600;
+      font-size: 0.85rem;
+      width: fit-content;
+
+      .clear-btn {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        color: #FFFFFF;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        line-height: 1;
+        padding: 0;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+
     /* ACTIONS SECTION */
     .actions-section {
       display: flex;
@@ -1328,31 +1412,74 @@ export class AlboOroDialogComponent {
       background: transparent;
       color: #6B7280;
       border-color: #E0E0E0;
+    }
 
-      &:hover {
-        background: #F8F9FA;
-        border-color: #4FC3F7;
-        color: #4FC3F7;
-        transform: translateY(-1px);
-      }
+    .btn-secondary:hover {
+      background: #F8F9FA;
+      border-color: #4FC3F7;
+      color: #4FC3F7;
+      transform: translateY(-1px);
     }
 
     .btn-primary {
       background: linear-gradient(135deg, #0A3D91, #4FC3F7);
       color: #FFFFFF;
       border-color: transparent;
+    }
 
-      &:hover:not(:disabled) {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(10, 61, 145, 0.25);
-      }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(10, 61, 145, 0.25);
+    }
 
-      &:disabled {
-        opacity: 0.5;
-        background: #E0E0E0;
-        color: #9CA3AF;
-        cursor: not-allowed;
-        transform: none;
+    .btn-primary:disabled {
+      opacity: 0.5;
+      background: #E0E0E0;
+      color: #9CA3AF;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* DANGER ZONE */
+    .danger-zone {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px dashed rgba(220, 38, 38, 0.3);
+      text-align: center;
+    }
+
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(220, 38, 38, 0.3);
+      background: transparent;
+      color: #DC2626;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .btn-danger:hover {
+      background: rgba(220, 38, 38, 0.08);
+      border-color: #DC2626;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      .modal-container {
+        padding: 16px;
+        width: 95vw;
       }
     }
 
@@ -1516,19 +1643,81 @@ export class AlboOroDialogComponent {
 export class ProfiloDialogComponent {
   userProfile = {
     nickname: '',
-    eta: null as number | null,
-    citta: '',
     squadraPreferita: ''
   };
 
-  squadreSerieA = [
+  searchQuery = '';
+  showSuggestions = false;
+  filteredSquadre: string[] = [];
+
+  // Lista completa squadre italiane (Serie A, B, C, D)
+  tutteLeSquadre = [
+    // Serie A
     'Atalanta', 'Bologna', 'Cagliari', 'Como', 'Empoli', 'Fiorentina',
     'Genoa', 'Hellas Verona', 'Inter', 'Juventus', 'Lazio', 'Lecce',
-    'Milan', 'Monza', 'Napoli', 'Parma', 'Roma', 'Torino', 'Udinese', 'Venezia'
-  ];
+    'Milan', 'Monza', 'Napoli', 'Parma', 'Roma', 'Torino', 'Udinese', 'Venezia',
+    // Serie B
+    'Bari', 'Brescia', 'Catanzaro', 'Cesena', 'Cittadella', 'Cosenza',
+    'Cremonese', 'Frosinone', 'Juve Stabia', 'Mantova', 'Modena', 'Palermo',
+    'Pisa', 'Reggiana', 'Salernitana', 'Sampdoria', 'Sassuolo', 'Spezia',
+    'Südtirol', 'Carrarese',
+    // Serie C - Gruppo A
+    'Albinoleffe', 'Alessandria', 'Arzignano', 'Atalanta U23', 'Feralpisalò',
+    'Juventus Next Gen', 'Lecco', 'Lumezzane', 'Novara', 'Padova', 'Pergolettese',
+    'Pro Patria', 'Pro Vercelli', 'Renate', 'Trento', 'Triestina', 'Vicenza', 'Virtus Verona',
+    // Serie C - Gruppo B
+    'Arezzo', 'Ascoli', 'Campobasso', 'Carpi', 'Entella', 'Gubbio',
+    'Lucchese', 'Milan Futuro', 'Perugia', 'Pescara', 'Pianese', 'Pineto',
+    'Pontedera', 'Rimini', 'SPAL', 'Ternana', 'Torres', 'Vis Pesaro',
+    // Serie C - Gruppo C
+    'ACR Messina', 'Altamura', 'Audace Cerignola', 'Avellino', 'Benevento',
+    'Casertana', 'Catania', 'Cavese', 'Crotone', 'Foggia', 'Giugliano',
+    'Latina', 'Monopoli', 'Picerno', 'Potenza', 'Sorrento', 'Taranto', 'Trapani', 'Turris',
+    // Altre squadre storiche/Serie D
+    'Ancona', 'Barletta', 'Brindisi', 'Casale', 'Fano', 'Fermana',
+    'Francavilla', 'Gela', 'Grosseto', 'Imolese', 'L\'Aquila', 'Legnago',
+    'Maceratese', 'Matera', 'Messina', 'Nocerina', 'Piacenza', 'Prato',
+    'Pro Piacenza', 'Ravenna', 'Reggina', 'Rieti', 'Siena', 'Siracusa',
+    'Terni', 'Vibonese', 'Vigor Lamezia', 'Viterbese'
+  ].sort();
 
-  constructor(private dialog: MatDialog) {}
 
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  onSearchInput() {
+    if (this.searchQuery.length >= 2) {
+      const query = this.searchQuery.toLowerCase();
+      this.filteredSquadre = this.tutteLeSquadre
+        .filter(s => s.toLowerCase().includes(query))
+        .slice(0, 10);
+      this.showSuggestions = true;
+    } else {
+      this.filteredSquadre = [];
+      this.showSuggestions = false;
+    }
+  }
+
+  selectSquadra(squadra: string) {
+    this.userProfile.squadraPreferita = squadra;
+    this.searchQuery = '';
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+  }
+
+  clearSquadra() {
+    this.userProfile.squadraPreferita = '';
+    this.searchQuery = '';
+  }
+
+  onBlur() {
+    setTimeout(() => {
+      this.showSuggestions = false;
+    }, 200);
+  }
 
   isFormValid(): boolean {
     return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0);
@@ -1544,6 +1733,229 @@ export class ProfiloDialogComponent {
 
   closeDialog() {
     this.dialog.closeAll();
+  }
+
+  openDeleteAccountDialog() {
+    // Chiudi il dialog profilo e apri quello di conferma eliminazione
+    this.dialog.closeAll();
+    this.dialog.open(DeleteAccountDialogComponent, {
+      width: '90vw',
+      maxWidth: '450px',
+      panelClass: 'custom-dialog-container'
+    });
+  }
+}
+
+// DIALOG ELIMINAZIONE ACCOUNT
+@Component({
+  selector: 'app-delete-account-dialog',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  template: `
+    <div class="modal-container">
+      <button class="close-btn" (click)="closeDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <div class="warning-header">
+        <mat-icon class="warning-icon">warning</mat-icon>
+        <h2>Elimina Account</h2>
+      </div>
+
+      <p class="warning-message">
+        Se elimini il tuo account, tutti i tuoi dati personali e il tuo profilo saranno cancellati in modo <strong>permanente</strong>.
+      </p>
+
+      <p class="warning-sub">Sei sicuro di voler procedere?</p>
+
+      <div class="actions">
+        <button class="btn-cancel" (click)="closeDialog()">
+          Annulla
+        </button>
+        <button class="btn-delete" (click)="confirmDelete()" [disabled]="isDeleting">
+          {{ isDeleting ? 'Eliminazione...' : 'Sì, elimina il mio account' }}
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .modal-container {
+      position: relative;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
+      padding: 28px;
+      width: 85vw;
+      max-width: 450px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      background: rgba(10, 61, 145, 0.08);
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .close-btn mat-icon {
+      color: #0A3D91;
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    .close-btn:hover {
+      background: rgba(10, 61, 145, 0.15);
+      transform: scale(1.1);
+    }
+
+    .warning-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .warning-header .warning-icon {
+      color: #EF4444;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .warning-header h2 {
+      margin: 0;
+      color: #EF4444;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .warning-message {
+      color: #6B7280;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin: 0 0 12px 0;
+    }
+
+    .warning-message strong {
+      color: #EF4444;
+    }
+
+    .warning-sub {
+      color: #374151;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 28px 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      padding: 12px 24px;
+      background: #F4F6F8;
+      color: #6B7280;
+      border: 1px solid #E0E0E0;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-cancel:hover {
+      background: #E0E0E0;
+      color: #333;
+    }
+
+    .btn-delete {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn-delete:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-delete:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    @media (max-width: 480px) {
+      .modal-container {
+        padding: 20px;
+      }
+
+      .warning-header h2 {
+        font-size: 1.2rem;
+      }
+
+      .warning-message {
+        font-size: 0.9rem;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .actions .btn-cancel,
+      .actions .btn-delete {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  `]
+})
+export class DeleteAccountDialogComponent {
+  isDeleting = false;
+
+  constructor(
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  closeDialog() {
+    this.dialog.closeAll();
+  }
+
+  confirmDelete() {
+    this.isDeleting = true;
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.closeDialog();
+        this.router.navigate(['/auth/login']);
+      },
+      error: (error) => {
+        this.isDeleting = false;
+        console.error('Errore durante l\'eliminazione dell\'account:', error);
+      }
+    });
   }
 }
 

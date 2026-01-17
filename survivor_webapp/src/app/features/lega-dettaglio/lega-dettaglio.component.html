@@ -68,7 +68,10 @@
               <span class="action-label">2° Occasione</span>
             </div>
           </div>
-          } } @if (lega.giocatori?.length) {
+          }
+
+
+          } @if (lega.giocatori?.length) {
           <div class="table-horizontal-wrapper desktop-only">
             <div #tableWrapper class="table-wrapper table-scroll-vertical">
               <table
@@ -204,6 +207,40 @@
             </div>
           </div>
           }
+
+          <!-- ELIMINA LEGA - In fondo, discreto -->
+          @if (isDaAvviare() && isLeaderLega()) {
+          <div class="delete-lega-footer">
+            <span class="delete-link" (click)="toggleDeleteConfirm()">
+              <mat-icon>delete_outline</mat-icon>
+              Elimina questa lega
+            </span>
+          </div>
+          }
+
+          <!-- DIALOG CONFERMA ELIMINAZIONE -->
+          @if (showDeleteConfirm) {
+          <div class="delete-confirm-overlay" (click)="toggleDeleteConfirm()">
+            <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+              <div class="delete-confirm-header">
+                <mat-icon class="warning-icon">warning</mat-icon>
+                <h3>Elimina Lega</h3>
+              </div>
+              <p class="delete-confirm-message">
+                Sei sicuro di voler eliminare la lega <strong>{{ lega.name }}</strong>?
+                <br><br>
+                Questa azione è <strong>irreversibile</strong> e tutti i dati della lega verranno cancellati definitivamente.
+              </p>
+              <div class="delete-confirm-actions">
+                <button class="btn-cancel" (click)="toggleDeleteConfirm()">Annulla</button>
+                <button class="btn-delete" (click)="confirmEliminaLega()" [disabled]="isDeleting">
+                  {{ isDeleting ? 'Eliminazione...' : 'Sì, elimina' }}
+                </button>
+              </div>
+            </div>
+          </div>
+          }
+
         </mat-card-content>
       </mat-card>
       }

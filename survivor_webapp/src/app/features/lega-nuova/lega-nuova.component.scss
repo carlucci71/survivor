@@ -312,6 +312,21 @@
       align-items: center !important;
       padding: 0 40px 0 0 !important;  /* SPAZIO PER LA FRECCIA A DESTRA */
     }
+
+    /* EMAIL FIELD - Usa placeholder nativo invece di floating label */
+    .email-field {
+      /* Placeholder styling */
+      input::placeholder {
+        color: rgba(0, 0, 0, 0.5) !important;
+        font-weight: 500 !important;
+      }
+
+      /* Assicurati che non ci sia spazio extra per la label */
+      .mat-mdc-form-field-infix {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+      }
+    }
   }
 }
 

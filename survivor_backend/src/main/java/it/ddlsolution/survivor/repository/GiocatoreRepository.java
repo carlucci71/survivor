@@ -21,6 +21,8 @@ public interface GiocatoreRepository extends JpaRepository<Giocatore, Long> {
 
     Optional<Giocatore> findByUser_Id(Long id);
 
+    void deleteByUser_Id(Long userId);
+
 
 
 }

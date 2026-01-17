@@ -111,4 +111,13 @@ export class AuthService {
     localStorage.removeItem('tokenSurvivor');
     this.currentUserSubject.next(null);
   }
+
+  deleteAccount(): Observable<{ success: boolean; message: string }> {
+    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/delete-account`).pipe(
+      tap(() => {
+        // Dopo la cancellazione, effettua il logout
+        this.logout();
+      })
+    );
+  }
 }

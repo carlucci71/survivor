@@ -27,7 +27,21 @@
         />
       </div>
 
-      <button type="submit" class="btn-primary">
+      <!-- Checkbox Termini e Condizioni -->
+      <div class="terms-checkbox">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="termsAccepted" name="terms">
+          <span class="checkmark"></span>
+          <span class="checkbox-text">
+            Dichiaro di aver letto e accettato i
+            <a href="#" (click)="openTermini($event)">Termini e Condizioni</a>
+            e la
+            <a href="#" (click)="openPrivacy($event)">Privacy Policy</a>.
+          </span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
         Invia Magic Link
       </button>
     </form>

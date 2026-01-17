@@ -12,6 +12,7 @@ public interface GiocatoreLegaRepository extends JpaRepository<GiocatoreLega, Gi
     List<GiocatoreLega> findByGiocatore_Id(Long giocatoreId);
     List<GiocatoreLega> findByLega_Id(Long legaId);
     Optional<GiocatoreLega> findByGiocatore_IdAndLega_Id(Long giocatoreId, Long legaId);
+    Optional<GiocatoreLega> findByLega_IdAndGiocatore_User_Id(Long legaId, Long userId);
 
 
 }

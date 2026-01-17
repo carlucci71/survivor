@@ -208,6 +208,110 @@
       font-size: 15px;
     }
   }
+
+  /* Checkbox Termini e Condizioni */
+  .terms-checkbox {
+    margin-bottom: 24px;
+
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      padding-left: 32px;
+      min-height: 24px;
+
+      input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+
+      .checkmark {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        height: 22px;
+        width: 22px;
+        background-color: #FFFFFF;
+        border: 2px solid #E0E0E0;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+
+        &:after {
+          content: "";
+          position: absolute;
+          display: none;
+          left: 6px;
+          top: 2px;
+          width: 6px;
+          height: 12px;
+          border: solid white;
+          border-width: 0 2.5px 2.5px 0;
+          transform: rotate(45deg);
+        }
+      }
+
+      input:checked ~ .checkmark {
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        border-color: #0A3D91;
+
+        &:after {
+          display: block;
+        }
+      }
+
+      input:focus ~ .checkmark {
+        box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
+      }
+
+      &:hover .checkmark {
+        border-color: #4FC3F7;
+      }
+
+      .checkbox-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        color: #6B7280;
+        line-height: 1.5;
+
+        a {
+          color: #0A3D91;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: #4FC3F7;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 600px) {
+      .checkbox-container {
+        .checkbox-text {
+          font-size: 12px;
+        }
+
+        .checkmark {
+          height: 20px;
+          width: 20px;
+
+          &:after {
+            left: 5px;
+            top: 1px;
+            width: 5px;
+            height: 10px;
+          }
+        }
+      }
+    }
+  }
 }
 
 /* Messaggi */

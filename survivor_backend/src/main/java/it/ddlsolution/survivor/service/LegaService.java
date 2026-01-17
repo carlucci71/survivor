@@ -669,4 +669,24 @@ public class LegaService {
                 """.formatted(legaDTO.getName(), userDTO.getEmail(), magicLink, expirationDays);
     }
 
+    @Transactional
+    @LoggaDispositiva
+    public void eliminaLega(Long idLega) {
+        Lega lega = legaRepository.findById(idLega)
+                .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
+
+        // Verifica che l'utente corrente sia il leader della lega
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        Optional<GiocatoreLega> giocatoreLega = giocatoreLegaRepository.findByLega_IdAndGiocatore_User_Id(idLega, userId);
+        if (giocatoreLega.isEmpty() || giocatoreLega.get().getRuolo() != Enumeratori.RuoloGiocatoreLega.LEADER) {
+            throw new ManagedException("Solo il leader della lega può eliminarla", ManagedException.InternalCode.NOT_LEADER);
+        }
+
+        // Elimina la lega (cascade eliminerà giocatoreLeghe e giocate)
+        legaRepository.delete(lega);
+        log.info("Lega {} eliminata con successo dall'utente {}", idLega, userId);
+    }
+
 }

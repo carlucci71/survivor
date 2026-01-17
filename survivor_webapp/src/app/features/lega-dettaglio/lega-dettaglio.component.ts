@@ -74,6 +74,10 @@ export class LegaDettaglioComponent {
 
   giornataIndices: number[] = [];
 
+  // Elimina lega
+  showDeleteConfirm = false;
+  isDeleting = false;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -514,5 +518,32 @@ export class LegaDettaglioComponent {
         return;
       }
     }
+  }
+
+  // Mostra/nascondi conferma eliminazione
+  toggleDeleteConfirm(): void {
+    this.showDeleteConfirm = !this.showDeleteConfirm;
+  }
+
+  // Elimina la lega
+  confirmEliminaLega(): void {
+    if (!this.lega) return;
+
+    console.log('Eliminazione lega in corso...', this.lega.id);
+    this.isDeleting = true;
+    this.showDeleteConfirm = false; // Chiudi il dialog subito
+
+    this.legaService.eliminaLega(this.lega.id).subscribe({
+      next: (response) => {
+        console.log('Lega eliminata con successo:', response);
+        this.isDeleting = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Errore durante l\'eliminazione della lega:', err);
+        this.isDeleting = false;
+        this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
+      }
+    });
   }
 }
