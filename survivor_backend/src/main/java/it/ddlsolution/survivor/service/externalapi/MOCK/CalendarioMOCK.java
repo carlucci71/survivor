@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,13 +27,13 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 @Slf4j
 public class CalendarioMOCK implements ICalendario {
     private final SquadraService squadraService;
-    private  static Map<Enumeratori.CampionatiDisponibili, List<SquadraDTO>> squadreDisponibili;
+    private static Map<Enumeratori.CampionatiDisponibili, List<SquadraDTO>> squadreDisponibili = new HashMap<>();
 
     public CalendarioMOCK(SquadraService squadraService) {
         this.squadraService = squadraService;
-        squadreDisponibili=Map.of(
-                Enumeratori.CampionatiDisponibili.SERIE_A,squadraService.getSquadreByCampionatoId(Enumeratori.CampionatiDisponibili.SERIE_A.name())
-        );
+        Arrays.stream(Enumeratori.CampionatiDisponibili.values())
+                .parallel()
+                .forEach(e -> squadreDisponibili.put(e, squadraService.getSquadreByCampionatoId(e.name())));
     }
 
 
@@ -59,21 +61,22 @@ public class CalendarioMOCK implements ICalendario {
                 .map(SquadraDTO::getNome)
                 .toArray();
     }
+
     @Override
     public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
-         return getPartiteCampionato(sport, campionato,giornata,squadre,anno);
+        return getPartiteCampionato(sport, campionato, giornata, squadre, anno);
     }
 
 
     private List<PartitaDTO> getPartiteCampionato(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
         return List.of(
                 generaGiornata(sport, campionato, giornata
-                        , squadre.get(0).getSigla(), squadre.get(1).getSigla(),0,1,squadre, anno)
+                        , squadre.get(0).getSigla(), squadre.get(1).getSigla(), 0, 1, squadre, anno)
         );
     }
 
-    private PartitaDTO generaGiornata(String sport, String campionato, int giornata, String casa, String fuori, int golCasa, int golFuori,List<SquadraDTO> squadreCampionato, short anno) {
-        LocalDateTime dataProgrammata =LocalDate.of(2025, 9, 1)
+    private PartitaDTO generaGiornata(String sport, String campionato, int giornata, String casa, String fuori, int golCasa, int golFuori, List<SquadraDTO> squadreCampionato, short anno) {
+        LocalDateTime dataProgrammata = LocalDate.of(2025, 9, 1)
                 .atStartOfDay()
                 .plusWeeks(giornata);
         Enumeratori.StatoPartita statoPartita;
@@ -89,10 +92,10 @@ public class CalendarioMOCK implements ICalendario {
                 .orario(dataProgrammata)
                 .stato(statoPartita)
                 .anno(anno)
-                .casaSigla(getSquadraDTO(casa,campionato,squadreCampionato, anno).getSigla())
-                .casaNome(getSquadraDTO(casa,campionato,squadreCampionato, anno).getNome())
-                .fuoriSigla(getSquadraDTO(fuori,campionato,squadreCampionato, anno).getSigla())
-                .fuoriNome(getSquadraDTO(fuori,campionato,squadreCampionato, anno).getNome())
+                .casaSigla(getSquadraDTO(casa, campionato, squadreCampionato, anno).getSigla())
+                .casaNome(getSquadraDTO(casa, campionato, squadreCampionato, anno).getNome())
+                .fuoriSigla(getSquadraDTO(fuori, campionato, squadreCampionato, anno).getSigla())
+                .fuoriNome(getSquadraDTO(fuori, campionato, squadreCampionato, anno).getNome())
                 .scoreCasa(golCasa)
                 .scoreFuori(golFuori)
                 .build();
@@ -107,13 +110,13 @@ public class CalendarioMOCK implements ICalendario {
                         .filter(s -> s.getAnno() == anno)
                         .map(m -> new IEnumSquadre() {
                             @Override
-                            public String getSiglaEsterna() {
-                                return (m.getSigla());
+                            public String name() {
+                                return m.getSigla();
                             }
 
                             @Override
-                            public String name() {
-                                return m.getSigla();
+                            public String getSiglaEsterna() {
+                                return (m.getSigla());
                             }
                         })
                         .toList()

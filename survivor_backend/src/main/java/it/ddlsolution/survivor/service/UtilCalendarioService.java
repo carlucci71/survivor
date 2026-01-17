@@ -96,7 +96,11 @@ public class UtilCalendarioService {
         if (partiteDiCampionatoDellaGiornata.size() == 0 || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             partiteDiCampionatoDellaGiornata = new ArrayList<>();
-            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata, campionatoDTO.getSquadre(), anno);
+            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(campionatoDTO.getSport().getId()
+                    , campionatoDTO.getId()
+                    , giornata
+                    , campionatoDTO.getSquadre()
+                    , anno);
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
                 for (PartitaDTO partitaDTO : partiteFromWeb) {

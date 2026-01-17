@@ -79,7 +79,7 @@ public class CacheableService {
     @Value("${anno-default}")
     short annoDefault;
 
-    @Value("${cache.allcampionati.threads:10}")
+    @Value("${cache.allcampionati.threads:1}")
     private int allCampionatiThreads;
 
     @Value("${cache.allcampionati.timeout-seconds:60}")
