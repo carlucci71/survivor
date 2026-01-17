@@ -34,13 +34,20 @@
       <div
         class="squadra-card"
         [class.selected]="squadraSelezionata === squadra.sigla"
+        [style.background]="squadraSelezionata === squadra.sigla
+          ? 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + ', ' + getTeamColors(squadra.sigla).secondary + ')'
+          : 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + '15, ' + getTeamColors(squadra.sigla).secondary + '20)'"
+        [style.borderColor]="getTeamColors(squadra.sigla).primary"
         (click)="selezionaSquadra(squadra.sigla)"
       >
         <div class="squadra-header">
-          <div class="squadra-icon">
+          <div class="squadra-icon"
+               [style.background]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).primary"
+               [style.borderColor]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).secondary"
+               [style.color]="squadraSelezionata === squadra.sigla ? getTeamColors(squadra.sigla).primary : '#FFFFFF'">
             {{ getSquadraInitials(squadra.nome) }}
           </div>
-          <h4 class="squadra-nome">{{ squadra.nome }}</h4>
+          <h4 class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ squadra.nome }}</h4>
           <mat-icon class="check-icon">check_circle</mat-icon>
         </div>
 

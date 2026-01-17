@@ -5,6 +5,7 @@ import {
   MatDialogRef,
   MatDialog,
 } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfermaAssegnazioneDialogComponent } from '../../shared/components/conferma-assegnazione-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,6 +35,7 @@ import { SquadraService } from '../../core/services/squadra.service';
     MatButtonModule,
     MatIconModule,
     FormsModule,
+    MatSnackBarModule,
   ],
 })
 export class SelezionaGiocataComponent implements OnInit {
@@ -57,6 +59,82 @@ export class SelezionaGiocataComponent implements OnInit {
   @ViewChild('teamSelect') teamSelect?: MatSelect;
   @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
   activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
+
+  // Messaggi simpatici di incoraggiamento dopo la selezione
+  private encouragementMessages = [
+    { emoji: '🔥', message: 'Grande scelta! Questa squadra è on fire!' },
+    { emoji: '💪', message: 'Ottima decisione! Hai le idee chiare!' },
+    { emoji: '🎯', message: 'Centro! Hai puntato sulla squadra giusta!' },
+    { emoji: '🏆', message: 'Scelta da campione! La vittoria ti aspetta!' },
+    { emoji: '⚡', message: 'Che grinta! Questa selezione è elettrizzante!' },
+    { emoji: '🚀', message: 'Stai volando alto! Selezione spaziale!' },
+    { emoji: '👏', message: 'Applausi! Una scelta davvero intelligente!' },
+    { emoji: '🎲', message: 'I dadi sono lanciati! Che vinca il migliore!' },
+    { emoji: '🦁', message: 'Ruggisci come un leone! Scelta coraggiosa!' },
+    { emoji: '⭐', message: 'Sei una stella! Selezione da 10 e lode!' },
+    { emoji: '🧠', message: 'Cervello in azione! Mossa strategica!' },
+    { emoji: '🎪', message: 'Benvenuto allo show! Hai scelto i protagonisti!' },
+    { emoji: '🍀', message: 'In bocca al lupo! Che la fortuna sia con te!' },
+    { emoji: '🌟', message: 'Brillante! Questa scelta ti porterà lontano!' },
+    { emoji: '🏅', message: 'Medaglia d\'oro per questa selezione!' },
+    { emoji: '🎸', message: 'Rock\'n\'roll! Scelta che spacca!' },
+    { emoji: '🦅', message: 'Occhio d\'aquila! Hai visto giusto!' },
+    { emoji: '💎', message: 'Hai trovato la gemma! Selezione preziosa!' },
+    { emoji: '🌈', message: 'Dopo la pioggia esce l\'arcobaleno! Vai così!' },
+    { emoji: '🎬', message: 'Ciak, si gira! Sei il regista della vittoria!' }
+  ];
+
+  // Mappa colori sociali delle squadre
+  private readonly teamColors: { [key: string]: { primary: string; secondary: string } } = {
+    // Serie A
+    'JUV': { primary: '#000000', secondary: '#FFFFFF' },
+    'INT': { primary: '#0068A8', secondary: '#000000' },
+    'MIL': { primary: '#AC1F2D', secondary: '#000000' },
+    'NAP': { primary: '#12A0D7', secondary: '#FFFFFF' },
+    'ROM': { primary: '#8E1F2F', secondary: '#F0BC42' },
+    'LAZ': { primary: '#87D8F7', secondary: '#FFFFFF' },
+    'ATA': { primary: '#1E71B8', secondary: '#000000' },
+    'FIO': { primary: '#482E92', secondary: '#FFFFFF' },
+    'TOR': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'BOL': { primary: '#1A2F48', secondary: '#A41E22' },
+    'UDI': { primary: '#000000', secondary: '#FFFFFF' },
+    'EMP': { primary: '#005BA9', secondary: '#FFFFFF' },
+    'SAS': { primary: '#00A850', secondary: '#000000' },
+    'SAL': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'LEC': { primary: '#FFCC00', secondary: '#E3242B' },
+    'VER': { primary: '#FFCC00', secondary: '#003DA5' },
+    'MON': { primary: '#ED1C24', secondary: '#FFFFFF' },
+    'SPE': { primary: '#FFFFFF', secondary: '#000000' },
+    'CRE': { primary: '#D71920', secondary: '#808080' },
+    'FRO': { primary: '#FFCC00', secondary: '#003DA5' },
+    'GEN': { primary: '#A41E22', secondary: '#003DA5' },
+    'CAG': { primary: '#A41E22', secondary: '#003DA5' },
+    'PAR': { primary: '#FFCC00', secondary: '#003DA5' },
+    'VEN': { primary: '#FF6600', secondary: '#007A33' },
+    'COM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'SAM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'BRE': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'PIS': { primary: '#003DA5', secondary: '#000000' },
+    // Tennis - colori generici per nazione
+    'ITA': { primary: '#009246', secondary: '#CE2B37' },
+    'ESP': { primary: '#AA151B', secondary: '#F1BF00' },
+    'SRB': { primary: '#C6363C', secondary: '#0C4076' },
+    'USA': { primary: '#3C3B6E', secondary: '#B22234' },
+    'GER': { primary: '#000000', secondary: '#DD0000' },
+    'FRA': { primary: '#002395', secondary: '#ED2939' },
+    'GBR': { primary: '#012169', secondary: '#C8102E' },
+    'AUS': { primary: '#00008B', secondary: '#FFCD00' },
+    'RUS': { primary: '#FFFFFF', secondary: '#0039A6' },
+    'SUI': { primary: '#FF0000', secondary: '#FFFFFF' },
+    // Default
+    'DEFAULT': { primary: '#0A3D91', secondary: '#4FC3F7' }
+  };
+
+  // Metodo per ottenere i colori sociali di una squadra
+  getTeamColors(sigla: string): { primary: string; secondary: string } {
+    return this.teamColors[sigla] || this.teamColors['DEFAULT'];
+  }
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -70,7 +148,8 @@ export class SelezionaGiocataComponent implements OnInit {
       squadraCorrenteId?: string;
       lega: Lega;
     },
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
@@ -252,6 +331,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .afterClosed()
         .subscribe((result) => {
           if (result) {
+            this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
             });
@@ -259,8 +339,20 @@ export class SelezionaGiocataComponent implements OnInit {
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
+      this.showEncouragementMessage();
       this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
     }
+  }
+
+  private showEncouragementMessage(): void {
+    const randomIndex = Math.floor(Math.random() * this.encouragementMessages.length);
+    const selected = this.encouragementMessages[randomIndex];
+    this.snackBar.open(`${selected.emoji} ${selected.message}`, '✕', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['encouragement-snackbar']
+    });
   }
 
   getNextOpponentSigla(sigla: boolean): string | null {
