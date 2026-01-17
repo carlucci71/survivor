@@ -79,9 +79,9 @@ public class CacheableService {
     public List<CampionatoDTO> allCampionati() {
         List<CampionatoDTO> campionatiDTO = campionatoMapper.toDTOList(campionatoRepository.findAll());
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            //CompletableFuture.runAsync(() ->
-                    elaboraCapionato(campionatoDTO);
-            //);
+            CompletableFuture.runAsync(() ->
+                    elaboraCapionato(campionatoDTO)
+            );
         }
         return campionatiDTO;
     }
