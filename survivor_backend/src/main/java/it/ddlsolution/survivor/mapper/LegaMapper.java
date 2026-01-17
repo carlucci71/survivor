@@ -102,5 +102,16 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
         return it.ddlsolution.survivor.util.enums.Enumeratori.StatoLega.DA_AVVIARE;
     }
 
+    @AfterMapping
+    protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, LegaProjection lega) {
+
+        CampionatoDTO campionatoDTO = campionatoService.allCampionati()
+                .stream()
+                .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                .findFirst()
+                .get();
+        legaDTO.setCampionato(campionatoDTO);
+    }
+
 
 }

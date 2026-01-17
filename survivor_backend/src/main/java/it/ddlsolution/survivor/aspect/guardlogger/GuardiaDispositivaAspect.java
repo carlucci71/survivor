@@ -1,8 +1,11 @@
 package it.ddlsolution.survivor.aspect.guardlogger;
 
 import it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule;
+import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.service.GiocatoreService;
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.service.UtilCalendarioService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +35,7 @@ public class GuardiaDispositivaAspect {
     private final LegaService legaService;
     private final GiocatoreService giocatoreService;
     private final ApplicationContext ctx;
+    private final UtilCalendarioService utilCalendarioService;
 
     @Before("@annotation(guardiaDispositiva)")
     public void before(JoinPoint joinPoint, GuardiaDispositiva guardiaDispositiva) {
@@ -67,7 +72,17 @@ public class GuardiaDispositivaAspect {
                         if (ObjectUtils.isEmpty(idLega)) {
                             throw new RuntimeException("Lega non presente");
                         }
-                        parametriRule.put(tipoParam, legaService.getLegaDTO(idLega, false, userId));
+                        LegaDTO legaDTO = legaService.getLegaDTO(idLega, false, userId);
+
+                        LocalDateTime now = LocalDateTime.now();
+                        long diffMinutes = java.time.Duration.between(now, legaDTO.getInizioProssimaGiornata()).toMinutes();
+
+                        if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE &&  diffMinutes<3){
+                            legaService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
+                            legaDTO = legaService.getLegaDTO(idLega, false, userId);
+                        }
+                        parametriRule.put(tipoParam, legaDTO);
+
                     }
                     case GIORNATA -> {
                         Integer giornata = Integer.parseInt(argsByParameterName.toString());

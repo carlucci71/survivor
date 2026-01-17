@@ -61,6 +61,11 @@ public class UtilCalendarioService {
         return ret;
     }
 
+    public void refreshPartite( CampionatoDTO campionatoDTO, short anno) {
+        cacheableProvider.getIfAvailable().clearCachePartite(campionatoDTO.getId(), anno);
+        cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(campionatoDTO.getId(), anno);
+    }
+
 
     public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, short anno) {
         List<PartitaDTO> ret = new ArrayList<>();
@@ -93,9 +98,9 @@ public class UtilCalendarioService {
                 .stream()
                 .filter(p -> partitaDaRefreshare(p))
                 .count();
-        boolean isFirstLoading=false;
-        if (partiteDiCampionatoDellaGiornata.size() == 0){
-            isFirstLoading=true;
+        boolean isFirstLoading = false;
+        if (partiteDiCampionatoDellaGiornata.size() == 0) {
+            isFirstLoading = true;
         }
         if (isFirstLoading || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
@@ -108,7 +113,8 @@ public class UtilCalendarioService {
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
                 for (PartitaDTO partitaDTO : partiteFromWeb) {
-                    if (isFirstLoading || partitaDaRefreshare(partitaDTO)) {
+                    //if (isFirstLoading || partitaDaRefreshare(partitaDTO)) {//FIXME
+                    if (true) {
                         log.info("Aggiorno partita {} {} in stato {} in calendario {}", partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partitaDTO.getStato(), partitaDTO.getOrario());
                         partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaDTO));
                     } else {

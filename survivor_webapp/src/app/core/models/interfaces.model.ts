@@ -120,6 +120,7 @@ export interface Lega {
   stato: StatoLega;
   anno: number;
   statiGiornate?: Record<number, StatoPartita>;
+  inizioProssimaGiornata: Date;
 }
 
 

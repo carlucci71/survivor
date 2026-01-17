@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.dto;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ public class LegaDTO {
     private Enumeratori.StatoPartita statoGiornataCorrente;
     private Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega;
     private Map<Integer,Enumeratori.StatoPartita> statiGiornate;
+    private LocalDateTime inizioProssimaGiornata;
     private short anno;
 }
 

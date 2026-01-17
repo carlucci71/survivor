@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,8 @@ public class CalendarioMOCK implements ICalendario {
                                     .giornata(giornata)
                                     .orario(p.getOrario())
                                     .anno(anno)
-                                    .stato(getStatoFromOrario(p.getOrario().toLocalDate()))
+                                    .orario(p.getOrario() == null ? LocalDateTime.now() : p.getOrario())
+                                    .stato(getStatoFromOrario(p.getOrario()))
                                     .casaSigla(squadraCasa.getSigla())
                                     .casaNome(squadraCasa.getNome())
                                     .fuoriSigla(squadraFuori.getSigla())
@@ -53,15 +55,19 @@ public class CalendarioMOCK implements ICalendario {
 
     }
 
-    private Enumeratori.StatoPartita getStatoFromOrario(LocalDate orario) {
+    private Enumeratori.StatoPartita getStatoFromOrario(LocalDateTime orario) {
         if (orario == null) {
             return Enumeratori.StatoPartita.SOSPESA;
-        } else if (orario.equals(LocalDate.now())) {
-            return Enumeratori.StatoPartita.IN_CORSO;
-        } else if (orario.compareTo(LocalDate.now()) > 0) {
-            return Enumeratori.StatoPartita.DA_GIOCARE;
-        } else {
+        }
+        LocalDateTime now = LocalDateTime.now();
+        long diffMinutes = java.time.Duration.between(now, orario).toMinutes();
+
+        if (diffMinutes < -120) {
             return Enumeratori.StatoPartita.TERMINATA;
+        } else if (diffMinutes < 0) {
+            return Enumeratori.StatoPartita.IN_CORSO;
+        } else {
+            return Enumeratori.StatoPartita.DA_GIOCARE;
         }
     }
 

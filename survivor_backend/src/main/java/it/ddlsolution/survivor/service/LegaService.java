@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -267,7 +268,7 @@ public class LegaService {
         return ret;
     }
 
-    public CampionatoDTO refreshCampionato(final CampionatoDTO campionatoDTO, short anno) {
+    public CampionatoDTO refreshCampionato(CampionatoDTO campionatoDTO, short anno) {
         cacheableService.clearCachePartite(campionatoDTO.getId(), anno);
         return cacheableService.elaboraCampionato(campionatoDTO, anno);
     }
@@ -377,7 +378,7 @@ public class LegaService {
     private void addInfoCalcolate(LegaDTO legaDTO, Long userId) {
         legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()).stream().sorted().toList());
-
+        legaDTO.setInizioProssimaGiornata(legaDTO.getCampionato().getIniziGiornate().get(legaDTO.getGiornataDaGiocare()-1));
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente) {

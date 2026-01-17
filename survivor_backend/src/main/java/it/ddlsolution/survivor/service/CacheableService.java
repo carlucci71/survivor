@@ -78,7 +78,7 @@ public class CacheableService {
     @Value("${anno-default}")
     short annoDefault;
 
-    @Value("${cache.allcampionati.threads:1}")
+    @Value("${cache.allcampionati.threads:11}")
     private int allCampionatiThreads;
 
     @Value("${cache.allcampionati.timeout-seconds:120}")
@@ -87,8 +87,7 @@ public class CacheableService {
     private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
 
 
-
-    @Cacheable(value = CAMPIONATI)
+    @Cacheable(value = CAMPIONATI, sync = true)
     @Transactional
     public List<CampionatoDTO> allCampionati() {
 
@@ -97,7 +96,7 @@ public class CacheableService {
 
         ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
         try {
-            // Crea i future e li passa a elaboraCapionato per la gestione della sincronizzazione
+            // Crea i future e li passa a elaboraCampionato per la gestione della sincronizzazione
             List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
                     .map(campionatoDTO -> {
                         CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
@@ -116,6 +115,7 @@ public class CacheableService {
                 Thread.currentThread().interrupt();
                 log.warn("Thread interrotto mentre si attendeva il completamento di allCampionati", ie);
             } catch (ExecutionException ee) {
+                // Log già gestito nei singoli future
             }
 
             for (CompletableFuture<CampionatoDTO> f : futures) {
@@ -184,7 +184,7 @@ public class CacheableService {
 
         try {
             List<LocalDateTime> iniziGiornate = new ArrayList<>();
-            int giornataDaGiocare = 1;
+            Integer giornataDaGiocare = null;
             for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
                 List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
 
@@ -197,20 +197,21 @@ public class CacheableService {
                             .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
                     iniziGiornate.add(first);
 
-                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
-                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                    Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);
+                    if (giornataDaGiocare == null && (statoGiornata != Enumeratori.StatoPartita.TERMINATA)) {
                         giornataDaGiocare = giornata;
                     }
                 }
             }
+            if (giornataDaGiocare==null){
+                giornataDaGiocare=campionatoDTO.getNumGiornate();
+            }
             campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
             campionatoDTO.setIniziGiornate(iniziGiornate);
 
-            log.debug("Thread {} ha completato l'elaborazione per campionato: {} anno: {}",
-                Thread.currentThread().getName(), campionatoDTO.getId(), anno);
-
-            // Completa il future con il risultato
+            utilCalendarioService.refreshPartite(campionatoDTO, anno);
+            log.debug("Thread {} ha completato l'elaborazione per campionato: {} anno: {}", Thread.currentThread().getName(), campionatoDTO.getId(), anno);
             futureInput.complete(campionatoDTO);
 
         } catch (Exception e) {
