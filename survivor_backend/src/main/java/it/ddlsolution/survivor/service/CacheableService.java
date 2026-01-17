@@ -1,12 +1,10 @@
 package it.ddlsolution.survivor.service;
 
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
-import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
-import it.ddlsolution.survivor.entity.Partita;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
@@ -28,7 +26,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,6 +36,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,11 +64,11 @@ public class CacheableService {
     private final ObjectProvider<ICalendario> calendarioProvider;
     private final UtilCalendarioService utilCalendarioService;
 
-    public final static String CAMPIONATI="campionati";
-    public final static String SPORT="sport";
-    public final static String SOSPENSIONI="sospensioni";
-    public final static String PARTITE="partite";
-    public final static String URL="cache-url";
+    public final static String CAMPIONATI = "campionati";
+    public final static String SPORT = "sport";
+    public final static String SOSPENSIONI = "sospensioni";
+    public final static String PARTITE = "partite";
+    public final static String URL = "cache-url";
 
     @Value("${anno-default}")
     short annoDefault;
@@ -78,41 +77,48 @@ public class CacheableService {
     @Cacheable(value = CAMPIONATI)
     @Transactional
     public List<CampionatoDTO> allCampionati() {
-        List<CampionatoDTO> campionatiDTO =  campionatoMapper.toDTOList(campionatoRepository.findAll());
-
-        ICalendario calendario = calendarioProvider.getIfAvailable();
-        if (calendario == null) {
-            throw new RuntimeException("Nessuna implementazione di calendario disponibile");
-        }
-
+        List<CampionatoDTO> campionatiDTO = campionatoMapper.toDTOList(campionatoRepository.findAll());
         for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            try {
-                List<LocalDateTime> iniziGiornate = new ArrayList<>();
-                int giornata = 0;
-                Integer giornataDaGiocare = null;
-                List<PartitaDTO> partite = getPartiteFromDb(campionatoDTO.getId(), annoDefault, giornata);
-                do {
-                    giornata++;
-                    List<PartitaDTO> partiteDTO = utilCalendarioService.partiteWithRefreshFromWeb(campionatoDTO, giornata, partite, annoDefault);
-                    if (partiteDTO.size() > 0) {
-                        LocalDateTime inizioGiornata = partiteDTO.stream().map(f -> f.getOrario()).sorted().findFirst().get();
-                        iniziGiornate.add(inizioGiornata);
-                        Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                        log.info("La giornata {} è {}", giornata, statoPartitaGiornata);
-                        if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
-                            giornataDaGiocare = giornata + 1;
-                        }
-                    }
-                } while (giornata < campionatoDTO.getNumGiornate());
-                campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-                campionatoDTO.setIniziGiornate(iniziGiornate);
-            }
-            catch (Exception e){
-                log.info("Errore nel recupero del campionato: " + campionatoDTO.getNome(),e);
-            }
+            //CompletableFuture.runAsync(() ->
+                    elaboraCapionato(campionatoDTO);
+            //);
         }
         return campionatiDTO;
     }
+
+    private void elaboraCapionato(CampionatoDTO campionatoDTO) {
+        try {
+            List<LocalDateTime> iniziGiornate = new ArrayList<>();
+            Integer giornataDaGiocare = 1;
+            for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
+                List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault);
+
+                if (partiteDTO.size() > 0) {
+                    Optional<LocalDateTime> first = partiteDTO
+                            .stream()
+                            .map(f -> f.getOrario())
+                            .sorted()
+                            .findFirst();
+                    if (first.isPresent()) {
+                        iniziGiornate.add(first.get());
+                    } else {
+                        throw new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + giornata);
+                    }
+
+                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
+                    if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                        giornataDaGiocare = giornata;
+                    }
+                }
+            }
+            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+            campionatoDTO.setIniziGiornate(iniziGiornate);
+        } catch (Exception e) {
+            log.info("Errore nel recupero del campionato: " + campionatoDTO.getNome(), e);
+        }
+    }
+
 
     @Transactional(readOnly = true)
     @Cacheable(value = SPORT)
@@ -145,8 +151,8 @@ public class CacheableService {
                     response.setIdLega(entry.getKey());
                     // Estrae la lista delle giornate sospese per la lega
                     List<Integer> giornate = entry.getValue().stream()
-                        .map(SospensioneLegaDTO::getGiornata)
-                        .collect(Collectors.toList());
+                            .map(SospensioneLegaDTO::getGiornata)
+                            .collect(Collectors.toList());
                     response.setGiornate(giornate);
                     return response;
                 })
@@ -154,20 +160,13 @@ public class CacheableService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1] + '_' + #root.args[2]")
-    public List<PartitaDTO> getPartiteFromDb(String idCampionato, short anno, int giornata){
-        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(),anno);
-        return partitaMapper.toDTOList(partite);
+    @Cacheable(cacheNames = PARTITE,
+            key = "#idCampionato + '_' + #anno + '_' + T(String).valueOf(@utility.getImplementationExternalApi())"
+    )
+    public List<PartitaDTO> getPartiteCampionatoAnno(String idCampionato, short anno) {
+        return partitaMapper.toDTOList(partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(), anno));
     }
-/*
-    public void invalidaPartiteFromDb(String idCampionato, short anno){
-        invalidateCacheEntry(PARTITE, idCampionato + "_" + anno);
-    }
-*/
-    @CacheEvict(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1] + '_' + #root.args[2]")
-    public void invalidaPartiteFromDb(String idCampionato, short anno, int giornata){
-        //System.out.println();
-    }
+
     /**
      * Invalida manualmente la cache specificata
      */

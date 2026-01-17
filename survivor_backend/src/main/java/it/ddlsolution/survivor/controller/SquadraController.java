@@ -32,7 +32,7 @@ public class SquadraController {
     @GetMapping(value = "/calendario/{campionatoId}/squadreDisponibili/{anno}/{giornata}")
     public ResponseEntity<List<String>> squadreDisponibili(@PathVariable String campionatoId, @PathVariable Short anno, @PathVariable Integer giornata) {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
-        List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, giornata, anno);
+        List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, giornata, anno);
         List<String> nomiSquadre = new ArrayList<>(partite.stream().map(PartitaDTO::getCasaSigla).toList());
         nomiSquadre.addAll(partite.stream().map(PartitaDTO::getFuoriSigla).toList());
         return ResponseEntity.ok(nomiSquadre);

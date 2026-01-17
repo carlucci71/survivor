@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -99,8 +100,8 @@ public class LegaService {
 
             GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO);
             giocatoreDTO.setGiocate(null);
-            giocatoreDTO.setStatiPerLega(Map.of(idLega,giocatoreDTO.getStatiPerLega().get(idLega)));
-            giocatoreDTO.setRuoliPerLega(Map.of(idLega,giocatoreDTO.getRuoliPerLega().get(idLega)));
+            giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
+            giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
             legaDTO.setGiocatori(List.of(giocatoreDTO));
 
         }
@@ -108,10 +109,10 @@ public class LegaService {
             addInfoCalcolate(legaDTO);
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
         } catch (Exception e) {
-            log.error("Errore in info calcolate",e);
+            log.error("Errore in info calcolate", e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
-        if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
+        if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
             offuscaUltimaGiocata(legaDTO);
         }
         return legaDTO;
@@ -144,9 +145,9 @@ public class LegaService {
     }
 
     private void offuscaUltimaGiocata(LegaDTO legaDTO) {
-        List<GiocatoreDTO> giocatori=legaDTO.getGiocatori();
-        Long idLega=legaDTO.getId();
-        Integer giornata=legaDTO.getGiornataCorrente()-legaDTO.getGiornataIniziale()+1;
+        List<GiocatoreDTO> giocatori = legaDTO.getGiocatori();
+        Long idLega = legaDTO.getId();
+        Integer giornata = legaDTO.getGiornataCorrente() - legaDTO.getGiornataIniziale() + 1;
         if (!ObjectUtils.isEmpty(giocatori)) {
             for (GiocatoreDTO giocatoreDTO : giocatori) {
                 List<GiocataDTO> giocate = giocatoreDTO.getGiocate();
@@ -210,12 +211,6 @@ public class LegaService {
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
 
-    @Transactional(readOnly = true)
-    public Enumeratori.StatoPartita statoGiornata(LegaDTO legaDTO, int giornata) {
-        CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
-        List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, giornata, legaDTO.getAnno());
-        return statoGiornata(partite, giornata, legaDTO);
-    }
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata, LegaDTO legaDTO) {
@@ -278,7 +273,7 @@ public class LegaService {
             nuovaGiornataCalcolata = legaDTO.getCampionato().getNumGiornate();
         }
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
-        List<PartitaDTO> partite = utilCalendarioService.getPartiteFromDb(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
+        List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
         if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
@@ -379,8 +374,10 @@ public class LegaService {
 
         legaDTO.setGiornataCorrente(giornataCorrente);
         Map<Integer, Enumeratori.StatoPartita> statiGiornate = new HashMap<>();
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
-            Enumeratori.StatoPartita statoPartita = statoGiornata(legaDTO, giornata);//FIXME
+            List<PartitaDTO> partiteDellaGiornata = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, giornata, legaDTO.getAnno());
+            Enumeratori.StatoPartita statoPartita = statoGiornata(partiteDellaGiornata, giornata);//FIXME
             statiGiornate.put(giornata, statoPartita);
         }
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));
@@ -397,6 +394,7 @@ public class LegaService {
 
         legaDTO.setRuoloGiocatoreLega(myRoleInLega);
     }
+
 
     private void aggiornaStatoLega(LegaDTO legaDTO) {
         if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {

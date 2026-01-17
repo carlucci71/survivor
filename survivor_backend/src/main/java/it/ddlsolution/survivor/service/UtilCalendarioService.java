@@ -61,57 +61,60 @@ public class UtilCalendarioService {
         return ret;
     }
 
+
     public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, short anno) {
         List<PartitaDTO> ret = new ArrayList<>();
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-            ret.addAll(getPartiteFromDb(campionatoDTO, giornata, anno));
+            ret.addAll(getPartiteDellaGiornata(campionatoDTO, giornata, anno));
         }
         return ret;
     }
 
-    public List<PartitaDTO> partiteWithRefreshFromWeb(CampionatoDTO campionatoDTO, int giornata, List<PartitaDTO> partiteDiCampionato, short anno) {
-        List<PartitaDTO> partite = partiteDiCampionato
+    public List<PartitaDTO> getPartiteDellaGiornata(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        return getPartiteCampionatoGiornataAnno(campionatoDTO.getId(), giornata, anno);
+    }
+
+    public List<PartitaDTO> getPartiteCampionatoGiornataAnno(String idCampionato, int giornata, short anno) {
+        List<PartitaDTO> partite = cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(idCampionato, anno);
+        return partite
                 .stream()
-                .filter(p->p.getGiornata()==giornata)
+                .filter(p -> p.getGiornata() == giornata)
                 .toList();
-        long partiteNotTerminate = partite
+    }
+
+
+    public List<PartitaDTO> partiteCampionatoDellaGiornataWithRefreshFromWeb(
+            CampionatoDTO campionatoDTO
+            , int giornata
+            ,  short anno) {
+        List<PartitaDTO> partiteDiCampionatoDellaGiornata = getPartiteCampionatoGiornataAnno(campionatoDTO.getId(), giornata, anno);
+
+        long partiteNotTerminate = partiteDiCampionatoDellaGiornata
                 .stream()
                 //Se almeno una partita non è terminata richiamo le API
-                .filter(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)
+                .filter(p -> partitaDaRefreshare(p))
                 //Se almeno una partita si gioca nei prossimi x giorni
-                .filter(p->p.getOrario().compareTo(LocalDateTime.now().plusDays(20))<0)//TODO
                 .count();
-        if (partite.size()==0 || partiteNotTerminate>0) {
-            CacheableService cacheableService = cacheableProvider.getIfAvailable();
-            cacheableService.invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
-            log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getId());
-            List<PartitaDTO> partiteFromWeb = getPartiteAdapted(campionatoDTO, giornata,anno);
-            partite=new ArrayList<>();
-            for (PartitaDTO partitaDTO : partiteFromWeb) {
-                partite.add(partitaService.salvaSeNonTerminata(partitaDTO));
+        if (partiteDiCampionatoDellaGiornata.size() == 0 || partiteNotTerminate > 0) {
+            //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
+            partiteDiCampionatoDellaGiornata = new ArrayList<>();
+            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata, campionatoDTO.getSquadre(), anno);
+            if (partiteFromWeb.size() > 0) {
+                log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
+                for (PartitaDTO partitaDTO : partiteFromWeb) {
+                    if (partitaDaRefreshare(partitaDTO)) {
+                        partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaDTO));
+                    } else {
+                        partiteDiCampionatoDellaGiornata.add(partitaDTO);
+                    }
+                }
             }
         }
-        return partite;
+        return partiteDiCampionatoDellaGiornata;
     }
 
-    public List<PartitaDTO> getPartiteFromDb(CampionatoDTO campionatoDTO, int giornata, short anno) {
-        CacheableService cacheableService = cacheableProvider.getIfAvailable();
-        List<PartitaDTO> partiteFromDb = cacheableService.getPartiteFromDb(campionatoDTO.getId(), anno,giornata);
-        partiteFromDb = partiteFromDb
-                .stream()
-                .filter(p->p.getGiornata()==giornata)
-                .toList();
-
-        if (partiteFromDb.size()==0){
-            partiteFromDb=partiteWithRefreshFromWeb(campionatoDTO,giornata,new ArrayList<>(),anno);
-        }
-        return partiteFromDb;
-    }
-
-
-    private List<PartitaDTO> getPartiteAdapted(CampionatoDTO campionatoDTO, int giornata, short anno) {
-        ICalendario calendario = calendarioProvider.getIfAvailable();
-        return calendario.getPartite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata, campionatoDTO.getSquadre(), anno);
+    private boolean partitaDaRefreshare(PartitaDTO partitaDTO){
+        return partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0;
     }
 
     public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi, short anno) {
@@ -133,7 +136,7 @@ public class UtilCalendarioService {
     }
 
     private List<PartitaDTO> addPartiteDellaGiornata(CampionatoDTO campionatoDTO, String squadra, int giornata, short anno) {
-        return getPartiteFromDb(campionatoDTO, giornata, anno)
+        return getPartiteDellaGiornata(campionatoDTO, giornata, anno)
                 .stream()
                 .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))

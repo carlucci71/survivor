@@ -12,6 +12,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
 import static it.ddlsolution.survivor.service.CacheableService.CAMPIONATI;
+import static it.ddlsolution.survivor.service.CacheableService.PARTITE;
 import static it.ddlsolution.survivor.service.CacheableService.SOSPENSIONI;
 import static it.ddlsolution.survivor.service.CacheableService.SPORT;
 
@@ -34,6 +35,11 @@ public class ScheduledCacheRefresher {
         if (isCacheEmpty(SPORT)) {
             cacheableService.allSport();
         }
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?") // OGNI 5 MINUTI
+    public void invalidaCachePartite(){
+        cacheableService.invalidateCache(PARTITE);
     }
 
     @EventListener(ApplicationReadyEvent.class) //Avvio dell'applicazione

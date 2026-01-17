@@ -7,16 +7,12 @@ import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
-import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +23,7 @@ public class PartitaService {
 
 
     @Transactional
-    public PartitaDTO salvaSeNonTerminata(PartitaDTO partitaDTO) {
+    public PartitaDTO aggiornaPartitaSuDB(PartitaDTO partitaDTO) {
         Partita partita = partitaMapper.toEntity(partitaDTO);
         partita.setImplementationExternalApi(utility.getImplementationExternalApi());
 

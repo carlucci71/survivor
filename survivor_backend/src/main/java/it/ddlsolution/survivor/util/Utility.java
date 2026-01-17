@@ -34,14 +34,21 @@ public class Utility {
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
 
-    public StopWatch startStopWatch(String nome){
+    public StopWatch startStopWatch(String nome) {
         StopWatch stopWatch = new StopWatch(nome);
         stopWatch.start();
         return stopWatch;
     }
-    public void stopStopWatch(StopWatch stopWatch){
+
+    public void stopStopWatch(StopWatch stopWatch) {
+        stopStopWatch(stopWatch, true);
+    }
+
+    public void stopStopWatch(StopWatch stopWatch, boolean logga) {
         stopWatch.stop();
-        log.info("process {} executed in {} ms",stopWatch.getId() , stopWatch.getTotalTimeMillis());
+        if (logga) {
+            log.info("process {} executed in {} ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
+        }
     }
 
     private ObjectMapper getMapper() {
