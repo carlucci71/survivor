@@ -152,7 +152,7 @@
                           {{ getSquadraNome(giocata.squadraSigla) }}
                         </div>
                       </ng-container>
-                      @if (visualizzaGiocata(giornata, giocatore)) {
+                      @if (!visualizzaGiocata(giornata, giocatore)) {
                       <div>
                         <mat-icon
                           class="gioca-icon"
@@ -161,7 +161,7 @@
                           >{{ getGiocaIcon() }}</mat-icon
                         >
                       </div>
-                      }
+                      }{{visualizzaGiocata(giornata, giocatore)}}
                     </span>
                   </td>
                 </ng-container>

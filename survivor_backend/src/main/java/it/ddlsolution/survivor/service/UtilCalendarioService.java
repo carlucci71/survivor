@@ -91,9 +91,7 @@ public class UtilCalendarioService {
 
         long partiteNotTerminate = partiteDiCampionatoDellaGiornata
                 .stream()
-                //Se almeno una partita non è terminata richiamo le API
                 .filter(p -> partitaDaRefreshare(p))
-                //Se almeno una partita si gioca nei prossimi x giorni
                 .count();
         if (partiteDiCampionatoDellaGiornata.size() == 0 || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
@@ -113,6 +111,7 @@ public class UtilCalendarioService {
         return partiteDiCampionatoDellaGiornata;
     }
 
+    //se almeno una partita non è terminata  o se almeno una partita si gioca nei prossimi x giorni
     private boolean partitaDaRefreshare(PartitaDTO partitaDTO){
         return partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0;
     }

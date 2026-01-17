@@ -15,7 +15,6 @@ import static it.ddlsolution.survivor.service.CacheableService.CAMPIONATI;
 import static it.ddlsolution.survivor.service.CacheableService.PARTITE;
 import static it.ddlsolution.survivor.service.CacheableService.SOSPENSIONI;
 import static it.ddlsolution.survivor.service.CacheableService.SPORT;
-import static it.ddlsolution.survivor.service.CacheableService.URL;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,11 +33,10 @@ public class CacheConfig {
         CaffeineCache sospensioni = new CaffeineCache(SOSPENSIONI, oneDayCache.build());
         CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneDayCache.build());
 
-        CaffeineCache cacheUrl = new CaffeineCache(URL, tenMinutesCache.build());
         CaffeineCache campionati = new CaffeineCache(CAMPIONATI, tenMinutesCache.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(cacheUrl,cachePartite, sospensioni, campionati,sport));
+        manager.setCaches(List.of(cachePartite, sospensioni, campionati,sport));//cacheUrl
         return manager;
     }
 

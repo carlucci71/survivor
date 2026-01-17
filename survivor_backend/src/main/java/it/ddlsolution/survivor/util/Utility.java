@@ -7,8 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,6 +32,9 @@ public class Utility {
     @Autowired
     Environment environment;
 
+    @Autowired
+    RestTemplate restTemplate;
+
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
@@ -49,6 +54,12 @@ public class Utility {
         if (logga) {
             log.info("process {} executed in {} ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
         }
+    }
+
+    public <T> T callUrl(String url, Class<T> clazz) {
+        log.info("++++++++++++++++++++++++++++++ {}",url);
+        ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
+        return forEntity.getBody();
     }
 
     private ObjectMapper getMapper() {

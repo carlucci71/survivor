@@ -1,17 +1,20 @@
 package it.ddlsolution.survivor.service.externalapi.API2;
 
-import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
+import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -35,7 +38,7 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 @RequiredArgsConstructor
 public class CalendarioAPI2 implements ICalendario {
 
-    private final CacheableService cacheableService;
+    private final Utility utility;
 
     @Value("${external-api.calendario.implementation.API2.url-calendar}")
     String urlCalendar;
@@ -76,7 +79,7 @@ public class CalendarioAPI2 implements ICalendario {
         }
         String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, enumCampionato.id, urlGiornata, anno);
         urlResolved = urlResolved.replaceAll("&seasonId=" + annoDefault, "");
-        Map response = cacheableService.cacheUrl(urlResolved, Map.class);
+        Map response = utility.callUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
         if (sport.equals(EnumAPI2.Sport.CALCIO.name()) || sport.equals(EnumAPI2.Sport.BASKET.name())) {
             elaboraCalcioBasket(sport, campionato, giornata, m, ret, squadre, anno);
@@ -90,38 +93,11 @@ public class CalendarioAPI2 implements ICalendario {
 
     @Override
     public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO, short anno) {
-        /*
-        List<IEnumSquadre> squadreNonSovrascritte = new ArrayList<>(
-                squadreDTO
-                        .stream()
-                        .filter(s -> s.getAnno() == anno)
-                        .filter(s -> isPresent(EnumAPI2.Campionato.valueOf(idCampionato).getSquadre(), s.getNome()))
-                        .map(m -> new IEnumSquadre() {
-                            @Override
-                            public String getSiglaEsterna() {
-                                return (m.getSigla());
-                            }
-
-                            @Override
-                            public String name() {
-                                return m.getNome();
-                            }
-                        })
-                        .toList()
-        );
-        Arrays.stream(EnumAPI2.Campionato.valueOf(idCampionato).getSquadre())
-                .forEach(e -> squadreNonSovrascritte.add(e));
-
-        return squadreNonSovrascritte.toArray(IEnumSquadre[]::new);
-
-         */
         return EnumAPI2.Campionato.valueOf(idCampionato).getSquadre();
     }
 
-    private boolean isPresent(IEnumSquadre[] squadre, String nome) {
-        return true;
 
-    }
+
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
         String round = EnumAPI2.RoundTennis.values()[giornata - 1].key;
@@ -315,7 +291,7 @@ public class CalendarioAPI2 implements ICalendario {
                     .computeIfAbsent(campionato, c ->
                             CompletableFuture.supplyAsync(() -> {
                                 String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(Enumeratori.SportDisponibili.BASKET.name()).id, c.id);
-                                Map responseInfo = cacheableService.cacheUrl(urlResolved, Map.class);
+                                Map responseInfo = utility.callUrl(urlResolved, Map.class);
                                 String startDateFase = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(fromCampionato(c))).get("startDate").toString();
                                 return OffsetDateTime.parse(startDateFase).toLocalDate();
                             })

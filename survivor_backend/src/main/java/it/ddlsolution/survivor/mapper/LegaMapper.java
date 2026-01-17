@@ -1,10 +1,12 @@
 package it.ddlsolution.survivor.mapper;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
+import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -12,6 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
@@ -24,6 +27,8 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @Autowired
     protected GiocatoreMapper giocatoreMapper;
+    @Autowired
+    private ObjectProvider<CacheableService> cacheableProvider;
 
     @Mapping(target = "giocatori", ignore = true)
     @Mapping(target = "withPwd", source = ".", qualifiedByName = "hasPwdLega")
@@ -59,6 +64,15 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {
+
+        CampionatoDTO campionatoDTO = cacheableProvider.getIfAvailable().allCampionati()
+                .stream()
+                .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                .findFirst()
+                .get();
+        legaDTO.setCampionato(campionatoDTO);
+
+
         if (lega.getGiocatoreLeghe() != null) {
             legaDTO.setGiocatori(lega.getGiocatoreLeghe().stream()
                     .map(gl -> {
@@ -85,8 +99,9 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     }
 
     @Named("valorizzaStatoDaAvviare")
-    Enumeratori.StatoLega valorizzaStatoDaAvviare(){
+    Enumeratori.StatoLega valorizzaStatoDaAvviare() {
         return it.ddlsolution.survivor.util.enums.Enumeratori.StatoLega.DA_AVVIARE;
     }
+
 
 }

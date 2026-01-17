@@ -75,7 +75,6 @@ public class CacheableService {
     public final static String SPORT = "sport";
     public final static String SOSPENSIONI = "sospensioni";
     public final static String PARTITE = "partite";
-    public final static String URL = "cache-url";
 
     @Value("${anno-default}")
     short annoDefault;
@@ -160,7 +159,7 @@ public class CacheableService {
 
                 Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                 log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
-                if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
                     giornataDaGiocare = giornata;
                 }
             }
@@ -179,13 +178,6 @@ public class CacheableService {
     public List<SportDTO> allSport() {
         List<Sport> sport = sportRepository.findAll();
         return sportMapper.toDTOList(sport);
-    }
-
-    @Transactional(readOnly = true)
-    @Cacheable(cacheNames = URL, key = "#root.args[0]")
-    public <T> T cacheUrl(String url, Class<T> clazz) {
-        ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
-        return forEntity.getBody();
     }
 
     @Transactional(readOnly = true)

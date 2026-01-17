@@ -158,23 +158,23 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/home']);
   }
 
-  visualizzaGiocata(giornata: number, giocatore: Giocatore) {
+  visualizzaGiocata(giornata: number, giocatore: Giocatore): string {
     const giornataIniziale = this.lega?.giornataIniziale || 0;
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined ? '' : giocata.esito;
-    let ret = true;
+    let ret = '';
     if (giornata + giornataIniziale - 1 !== giornataCorrente) {
-      ret = false;
+      ret = 'Non visualizzo perchè non è la giornata corrente';
     }
     if (
       giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
       StatoGiocatore.ELIMINATO.value
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè il giocaotore è eliminato';
     }
     if (esito == 'OK' || esito == 'KO') {
-      ret = false;
+      ret = 'Non visualizzo perchè è presente un esito';
     }
     if (
       !this.isAdmin() &&
@@ -182,23 +182,23 @@ export class LegaDettaglioComponent {
       (giocatore.user == null ||
         giocatore.user.id !== this.authService.getCurrentUser()?.id)
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè non sei leader e non sei tu';
     }
     if (
       !this.isAdmin() &&
       !this.isLeaderLega() &&
       this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
     }
     if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
-      ret = false;
+      ret = 'Non visualizzo perchè la giornata è sospesa';
     }
     if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
-      ret = false;
+      ret = 'Non visualizzo perchè la lega è terminata';
     }
-    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega!.giornataCorrente)) {
-      ret = false;
+    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
+      ret = 'Non visualizzo perchè la giornata da giocare ' + this.lega.giornataDaGiocare + ' è inferiore alla corrente ' + this.lega.giornataCorrente;
     }
     return ret;
   }

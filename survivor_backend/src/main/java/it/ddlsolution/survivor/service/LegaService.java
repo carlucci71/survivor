@@ -101,6 +101,8 @@ public class LegaService {
                 legaDTO = legaRepository.findProjectionById(id)
                         .map(legaMapper::toDTO)
                         .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
+
+
                 Long idLega = legaDTO.getId();
 
                 GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO, userId);
