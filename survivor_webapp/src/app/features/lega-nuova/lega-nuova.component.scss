@@ -315,71 +315,33 @@
   }
 }
 
-/* SELECT PANEL - IDENTICO A PASTED_IMAGE_10 (Como Dropdown) */
+/* SELECT PANEL - Stile uniforme all'app */
 ::ng-deep .mat-mdc-select-panel {
   background: #FFFFFF !important;
   border-radius: 12px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
-  border: 2px solid #0A3D91 !important; /* BLU SCURO come nell'immagine */
-  max-height: 400px !important;
+  box-shadow: 0 4px 20px rgba(10, 61, 145, 0.15) !important;
+  border: 1px solid #E0E0E0 !important;
+  max-height: 300px !important;
   margin-top: 4px !important;
-  padding: 0 !important; /* NO padding interno */
+  padding: 4px 0 !important;
 
   .mat-mdc-option {
     font-family: 'Poppins', sans-serif !important;
-    font-size: 1rem !important;
-    padding: 16px 20px !important;
-    min-height: 56px !important;
-    color: #0A3D91 !important;
+    font-size: 0.95rem !important;
+    padding: 12px 16px !important;
+    min-height: 44px !important;
+    color: #333 !important;
     transition: all 0.2s ease !important;
-    border-radius: 0 !important; /* NO border-radius sulle opzioni */
-    margin-bottom: 0 !important;
-    border: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-
-    /* Sfondo alternato grigio chiaro come nell'immagine */
-    &:nth-child(odd) {
-      background: #F8F9FA !important;
-    }
-
-    &:nth-child(even) {
-      background: #FFFFFF !important;
-    }
 
     &:hover {
-      background: #E8EFF5 !important;
+      background: #F4F6F8 !important;
     }
 
-    /* Opzione selezionata - SFONDO BIANCO CON CHECKMARK CELESTE */
-    &.mat-selected {
-      background: #FFFFFF !important;
+    &.mdc-list-item--selected,
+    &.mat-mdc-option-active {
+      background: #E8F4FD !important;
       color: #0A3D91 !important;
-      font-weight: 700 !important;
-      position: relative !important;
-
-      &::after {
-        content: '✓' !important;
-        position: absolute !important;
-        right: 20px !important;
-        font-size: 1.5rem !important;
-        color: #4FC3F7 !important; /* CELESTE */
-        font-weight: 700 !important;
-      }
-
-      &:hover {
-        background: #F8F9FA !important;
-      }
-    }
-
-    /* Prima e ultima opzione arrotondate */
-    &:first-child {
-      border-radius: 10px 10px 0 0 !important;
-    }
-
-    &:last-child {
-      border-radius: 0 0 10px 10px !important;
+      font-weight: 600 !important;
     }
 
     /* Nascondi pseudo-checkbox */

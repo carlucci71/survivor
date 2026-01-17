@@ -456,11 +456,11 @@ export class RegolamentoBannerDialogComponent {
       </div>
 
       <div class="dialog-content">
-        <!-- Messaggio se non ci sono trofei -->
+        <!-- Messaggio simpatico se non ci sono trofei -->
         <div class="empty-state" *ngIf="!hasTrofei">
-          <mat-icon class="empty-icon">emoji_events</mat-icon>
-          <p class="empty-message">Non hai ancora vinto nessun torneo</p>
-          <p class="empty-subtitle">Continua a giocare per conquistare il tuo primo trofeo!</p>
+          <div class="empty-emoji">{{ currentEmoji }}</div>
+          <p class="empty-message">{{ currentMessage }}</p>
+          <p class="empty-subtitle">{{ currentSubtitle }}</p>
         </div>
 
         <!-- Lista trofei personali -->
@@ -477,8 +477,8 @@ export class RegolamentoBannerDialogComponent {
           </div>
         </div>
 
-        <!-- Statistiche personali -->
-        <div class="stats-section">
+        <!-- Statistiche personali - solo se ci sono dati -->
+        <div class="stats-section" *ngIf="hasTrofei">
           <h3>📊 LE TUE STATISTICHE</h3>
           <div class="stats-grid">
             <div class="stat-item">
@@ -611,7 +611,7 @@ export class RegolamentoBannerDialogComponent {
       scrollbar-width: thin;
       scrollbar-color: #C1C9D2 #F8F9FA;
 
-      /* Stato vuoto - nessun trofeo */
+      /* Stato vuoto - nessun trofeo con messaggi simpatici */
       .empty-state {
         display: flex;
         flex-direction: column;
@@ -620,25 +620,30 @@ export class RegolamentoBannerDialogComponent {
         padding: 40px 20px;
         text-align: center;
 
-        .empty-icon {
+        .empty-emoji {
           font-size: 4rem;
-          width: 4rem;
-          height: 4rem;
-          color: #E0E0E0;
           margin-bottom: 16px;
+          animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
 
         .empty-message {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #6B7280;
-          margin: 0 0 8px 0;
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0A3D91;
+          margin: 0 0 12px 0;
+          line-height: 1.4;
         }
 
         .empty-subtitle {
-          font-size: 0.9rem;
-          color: #9CA3AF;
+          font-size: 0.95rem;
+          color: #6B7280;
           margin: 0;
+          font-style: italic;
         }
       }
 
@@ -922,9 +927,117 @@ export class RegolamentoBannerDialogComponent {
 })
 export class AlboOroDialogComponent {
   // TODO: Collegare ai dati reali dell'utente dal backend
-  hasTrofei = true; // Imposta a false se l'utente non ha trofei
+  hasTrofei = false; // Imposta a true quando ci sono dati dal DB
 
-  constructor(private dialog: MatDialog) {}
+  // Messaggi simpatici per quando non ci sono trofei
+  private funnyMessages = [
+    {
+      emoji: '😅',
+      message: 'Sei proprio scarso! Non sei sopravvissuto neanche una volta!',
+      subtitle: 'Ma tranquillo, anche i campioni hanno iniziato così... o forse no.'
+    },
+    {
+      emoji: '🤦',
+      message: 'Houston, abbiamo un problema: zero vittorie!',
+      subtitle: 'Il tuo palmares è più vuoto del frigorifero di uno studente.'
+    },
+    {
+      emoji: '😭',
+      message: 'La bacheca dei trofei piange dalla solitudine!',
+      subtitle: 'Polvere e ragnatele sono gli unici inquilini qui.'
+    },
+    {
+      emoji: '🦗',
+      message: 'Cri cri cri... senti i grilli?',
+      subtitle: 'È il suono della tua bacheca trofei completamente vuota.'
+    },
+    {
+      emoji: '🎰',
+      message: 'Forse dovresti provare a giocare al lotto!',
+      subtitle: 'Con la fortuna che hai nel Survivor, magari lì va meglio.'
+    },
+    {
+      emoji: '🐢',
+      message: 'Piano piano si arriva... ma tu sei ancora fermo!',
+      subtitle: 'Anche la tartaruga ti sta battendo in questo momento.'
+    },
+    {
+      emoji: '📭',
+      message: 'La tua casella trofei dice: "Destinatario sconosciuto"',
+      subtitle: 'Nessuna vittoria è mai arrivata a questo indirizzo.'
+    },
+    {
+      emoji: '🌵',
+      message: 'Qui è più secco del deserto del Sahara!',
+      subtitle: 'Neanche una goccia di vittoria in vista.'
+    },
+    {
+      emoji: '👻',
+      message: 'I tuoi trofei sono come i fantasmi: nessuno li ha mai visti!',
+      subtitle: 'Leggenda narra che un giorno arriveranno... leggenda.'
+    },
+    {
+      emoji: '🥶',
+      message: 'Qui fa più freddo che in Siberia!',
+      subtitle: 'La tua bacheca è congelata dal gelo delle zero vittorie.'
+    },
+    {
+      emoji: '🔍',
+      message: 'Cercasi trofei disperatamente!',
+      subtitle: 'Ricompensa: la tua dignità di giocatore.'
+    },
+    {
+      emoji: '🪦',
+      message: 'R.I.P. alle tue speranze di vittoria!',
+      subtitle: 'Qui giace chi pensava di vincere almeno una volta.'
+    },
+    {
+      emoji: '🤡',
+      message: 'Il pagliaccio del torneo sei tu!',
+      subtitle: 'Ma almeno fai ridere gli altri partecipanti.'
+    },
+    {
+      emoji: '🧹',
+      message: 'Hai fatto piazza pulita... di te stesso!',
+      subtitle: 'Eliminato sempre, vincitore mai. Che record!'
+    },
+    {
+      emoji: '🐌',
+      message: 'Anche una lumaca sarebbe arrivata prima di te!',
+      subtitle: 'E probabilmente avrebbe anche vinto qualcosa.'
+    },
+    {
+      emoji: '🎪',
+      message: 'Benvenuto al circo delle eliminazioni!',
+      subtitle: 'Tu sei l\'attrazione principale: sempre fuori al primo colpo!'
+    },
+    {
+      emoji: '🧊',
+      message: 'Le tue vittorie sono in freezer... dal 1800!',
+      subtitle: 'Surgelate così bene che non le troverà mai nessuno.'
+    },
+    {
+      emoji: '🦴',
+      message: 'Neanche un osso di vittoria da rosicchiare!',
+      subtitle: 'Il tuo cane avrebbe più fortuna di te.'
+    }
+  ];
+
+  currentEmoji = '';
+  currentMessage = '';
+  currentSubtitle = '';
+
+  constructor(private dialog: MatDialog) {
+    this.pickRandomMessage();
+  }
+
+  private pickRandomMessage() {
+    const randomIndex = Math.floor(Math.random() * this.funnyMessages.length);
+    const selected = this.funnyMessages[randomIndex];
+    this.currentEmoji = selected.emoji;
+    this.currentMessage = selected.message;
+    this.currentSubtitle = selected.subtitle;
+  }
 
   closeDialog() {
     this.dialog.closeAll();
