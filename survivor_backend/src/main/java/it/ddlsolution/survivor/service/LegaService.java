@@ -269,7 +269,7 @@ public class LegaService {
 
     public CampionatoDTO refreshCampionato(final CampionatoDTO campionatoDTO, short anno) {
         cacheableService.clearCachePartite(campionatoDTO.getId(), anno);
-        return cacheableService.elaboraCapionato(campionatoDTO, anno);
+        return cacheableService.elaboraCampionato(campionatoDTO, anno);
     }
 
 

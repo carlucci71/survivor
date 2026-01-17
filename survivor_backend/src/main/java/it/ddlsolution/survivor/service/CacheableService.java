@@ -28,7 +28,6 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -39,12 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,23 +84,27 @@ public class CacheableService {
     @Value("${cache.allcampionati.timeout-seconds:60}")
     private long allCampionatiTimeoutSeconds;
 
+    private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
+
+
 
     @Cacheable(value = CAMPIONATI)
     @Transactional
     public List<CampionatoDTO> allCampionati() {
 
         List<CampionatoDTO> campionatiDTO = new ArrayList<>();
-        // Crea la lista di supplier (ognuno ritorna il CampionatoDTO elaborato)
-        List<Supplier<CampionatoDTO>> suppliers = campionatoMapper.toDTOList(campionatoRepository.findAll()).stream()
-                .map(campionatoDTO -> (Supplier<CampionatoDTO>) () -> elaboraCapionato(campionatoDTO,
-                        campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault))
-                .toList();
-
+        List<CampionatoDTO> campionatiDaElaborare = campionatoMapper.toDTOList(campionatoRepository.findAll());
 
         ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
         try {
-            List<CompletableFuture<CampionatoDTO>> futures = suppliers.stream()
-                    .map(s -> CompletableFuture.supplyAsync(s, executor))
+            // Crea i future e li passa a elaboraCapionato per la gestione della sincronizzazione
+            List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
+                    .map(campionatoDTO -> {
+                        CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
+                        short anno = campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault;
+                        executor.submit(() -> elaboraCampionato(campionatoDTO, anno, future));
+                        return future;
+                    })
                     .toList();
 
             CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
@@ -142,31 +145,81 @@ public class CacheableService {
         return campionatiDTO;
     }
 
-    public CampionatoDTO elaboraCapionato(final CampionatoDTO campionatoDTO, short anno) {
-        List<LocalDateTime> iniziGiornate = new ArrayList<>();
-        int giornataDaGiocare = 1;
-        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-            List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
+    /**
+     * Overload per compatibilità con chiamate dirette (es. da LegaService).
+     * Crea un CompletableFuture internamente e attende il risultato.
+     */
+    public CampionatoDTO elaboraCampionato(final CampionatoDTO campionatoDTO, short anno) {
+        CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
+        elaboraCampionato(campionatoDTO, anno, future);
+        return future.join();
+    }
 
-            if (!partiteDTO.isEmpty()) {
-                final int currentGiornata = giornata;
-                LocalDateTime first = partiteDTO.stream()
-                        .map(PartitaDTO::getOrario)
-                        .sorted()
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
-                iniziGiornate.add(first);
+    public void elaboraCampionato(final CampionatoDTO campionatoDTO, short anno, CompletableFuture<CampionatoDTO> futureInput) {
+        String lockKey = campionatoDTO.getId() + "_" + anno;
 
-                Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
-                if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
-                    giornataDaGiocare = giornata;
+        // Verifica se c'è già un'elaborazione in corso per gli stessi parametri
+        CompletableFuture<CampionatoDTO> existingFuture = elaborazioniInCorso.putIfAbsent(lockKey, futureInput);
+
+        if (existingFuture != null) {
+            // Un altro thread sta già elaborando questo campionato
+            // Aspetta il risultato e poi completa il future ricevuto con lo stesso valore
+            log.debug("Thread {} attende il risultato dall'elaborazione già in corso per campionato: {} anno: {}",
+                Thread.currentThread().getName(), campionatoDTO.getId(), anno);
+
+            existingFuture.whenComplete((result, error) -> {
+                if (error != null) {
+                    futureInput.completeExceptionally(error);
+                } else {
+                    futureInput.complete(result);
+                }
+            });
+            return;
+        }
+
+        // Questo thread è il primo ad elaborare questo campionato
+        log.debug("Thread {} avvia nuova elaborazione per campionato: {} anno: {}",
+            Thread.currentThread().getName(), campionatoDTO.getId(), anno);
+
+        try {
+            List<LocalDateTime> iniziGiornate = new ArrayList<>();
+            int giornataDaGiocare = 1;
+            for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
+                List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
+
+                if (!partiteDTO.isEmpty()) {
+                    final int currentGiornata = giornata;
+                    LocalDateTime first = partiteDTO.stream()
+                            .map(PartitaDTO::getOrario)
+                            .sorted()
+                            .findFirst()
+                            .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
+                    iniziGiornate.add(first);
+
+                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
+                    if (statoPartitaGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                        giornataDaGiocare = giornata;
+                    }
                 }
             }
+            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+            campionatoDTO.setIniziGiornate(iniziGiornate);
+
+            log.debug("Thread {} ha completato l'elaborazione per campionato: {} anno: {}",
+                Thread.currentThread().getName(), campionatoDTO.getId(), anno);
+
+            // Completa il future con il risultato
+            futureInput.complete(campionatoDTO);
+
+        } catch (Exception e) {
+            // In caso di errore, completa il future con l'eccezione
+            log.error("Errore durante l'elaborazione del campionato {} anno {}", campionatoDTO.getId(), anno, e);
+            futureInput.completeExceptionally(e);
+        } finally {
+            // Rimuove il future dalla mappa una volta completato
+            elaborazioniInCorso.remove(lockKey);
         }
-        campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-        campionatoDTO.setIniziGiornate(iniziGiornate);
-        return campionatoDTO;
     }
 
 
