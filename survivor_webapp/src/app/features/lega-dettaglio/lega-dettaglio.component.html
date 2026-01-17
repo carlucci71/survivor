@@ -55,17 +55,36 @@
             }
           </div>
           } @if (isTerminata() && notExistsNuovaEdizione() ){
-          <div class="admin-actions">
-            <div class="admin-action-item" (click)="riapri()">
+          <div class="admin-actions admin-actions-small">
+            <div class="admin-action-item small" (click)="riapri()">
               <mat-icon class="calcola-icon">lock_open</mat-icon>
               <span class="action-label">Riapri</span>
             </div>
-          </div>
-          } @if (isTerminata() && notExistsNuovaEdizione() && contaAttivi()==0 ){
-          <div class="admin-actions">
-            <div class="admin-action-item" (click)="secondaOccasione()">
+            @if (contaAttivi()==0) {
+            <div class="admin-action-item small" (click)="secondaOccasione()">
               <mat-icon class="calcola-icon">replay</mat-icon>
-              <span class="action-label">2° Occasione</span>
+              <span class="action-label">2° Chance</span>
+            </div>
+            }
+          </div>
+          }
+
+          <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
+          @if (isCurrentUserEliminato()) {
+          <div class="eliminato-banner">
+            <div class="eliminato-emoji">💀</div>
+            <div class="eliminato-content">
+              <div class="eliminato-title">Sei stato eliminato!</div>
+              @if (getSquadraEliminazione()) {
+              <div class="eliminato-squadra">
+                <span class="eliminato-label">Ti ha tradito:</span>
+                <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
+                <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
+              </div>
+              }
+              <div class="eliminato-message">
+                La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀
+              </div>
             </div>
           </div>
           }

@@ -626,6 +626,13 @@
   width: max-content;
   max-width: 95%;
 
+  /* Versione piccola per Riapri e 2° Chance */
+  &.admin-actions-small {
+    padding: 8px 12px;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
   @media (max-width: 768px) {
     gap: 8px;
     padding: 10px 12px;
@@ -653,6 +660,28 @@
   max-height: 68px;
   flex-shrink: 0;
   box-sizing: border-box;
+
+  /* Versione piccola */
+  &.small {
+    width: 60px;
+    min-width: 60px;
+    max-width: 60px;
+    height: 52px;
+    min-height: 52px;
+    max-height: 52px;
+    padding: 6px;
+    gap: 2px;
+
+    .calcola-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .action-label {
+      font-size: 0.55rem;
+    }
+  }
 
   &:hover {
     background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.05));
@@ -687,8 +716,111 @@
   }
 }
 
+
+/* BANNER ELIMINATO - Simpatico e colorato */
+.eliminato-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+  border: 2px solid #FECACA;
+  border-radius: 16px;
+  max-width: 500px;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+  animation: shakeHead 0.5s ease-in-out;
+
+  @keyframes shakeHead {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .eliminato-emoji {
+    font-size: 3rem;
+    animation: bounce 1s ease infinite;
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+  }
+
+  .eliminato-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .eliminato-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #DC2626;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .eliminato-squadra {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .eliminato-label {
+      font-size: 0.75rem;
+      color: #6B7280;
+    }
+
+    .eliminato-team {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0A3D91;
+      background: #FFFFFF;
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .eliminato-giornata {
+      font-size: 0.7rem;
+      color: #9CA3AF;
+      font-style: italic;
+    }
+  }
+
+  .eliminato-message {
+    font-size: 0.75rem;
+    color: #6B7280;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    text-align: center;
+    padding: 14px 16px;
+    gap: 10px;
+
+    .eliminato-emoji {
+      font-size: 2.5rem;
+    }
+
+    .eliminato-title {
+      font-size: 1rem;
+    }
+
+    .eliminato-squadra {
+      justify-content: center;
+    }
+  }
+}
+
 .action-label {
-  font-family: 'Poppins', sans-serif;
   font-size: 0.58rem;
   font-weight: 600;
   color: #6B7280;

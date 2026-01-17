@@ -56,7 +56,7 @@ public class LegaService {
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -64,7 +64,7 @@ public class LegaService {
         return legheDTO;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheLibere() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -72,7 +72,7 @@ public class LegaService {
         return legaMapper.toDTOList(legheDaAvviare);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
@@ -82,7 +82,7 @@ public class LegaService {
         return legheDTO;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public LegaDTO getLegaDTO(Long id, boolean completo) {
         LegaDTO legaDTO;
         if (completo) {

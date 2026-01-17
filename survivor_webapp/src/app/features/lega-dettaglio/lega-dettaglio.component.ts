@@ -296,6 +296,60 @@ export class LegaDettaglioComponent {
   getCurrentUser() {
     return this.authService.getCurrentUser();
   }
+
+  // Verifica se il giocatore corrente (utente loggato) è eliminato in questa lega
+  isCurrentUserEliminato(): boolean {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return false;
+
+    const giocatore = this.lega.giocatori.find(g => g.user?.id === currentUserId);
+    if (!giocatore) return false;
+
+    return giocatore.statiPerLega?.[this.lega.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value;
+  }
+
+  // Ottiene il giocatore corrente (utente loggato)
+  getCurrentGiocatore(): any | null {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return null;
+    return this.lega.giocatori.find(g => g.user?.id === currentUserId) || null;
+  }
+
+  // Ottiene la squadra che ha fatto perdere il giocatore corrente
+  getSquadraEliminazione(): { sigla: string; nome: string; giornata: number } | null {
+    const giocatore = this.getCurrentGiocatore();
+    if (!giocatore || !giocatore.giocate) return null;
+
+    // Trova la giocata con esito KO
+    const giocataKO = giocatore.giocate.find((g: any) => g.esito === 'KO');
+    if (!giocataKO) return null;
+
+    return {
+      sigla: giocataKO.squadraSigla,
+      nome: this.getSquadraNome(giocataKO.squadraSigla) || giocataKO.squadraSigla,
+      giornata: giocataKO.giornata
+    };
+  }
+
+  // Messaggi simpatici per l'eliminazione
+  private eliminationMessages = [
+    { emoji: '💀', message: 'Sei stato eliminato!' },
+    { emoji: '☠️', message: 'Game Over, amico!' },
+    { emoji: '😵', message: 'K.O. tecnico!' },
+    { emoji: '🪦', message: 'R.I.P. alla tua avventura!' },
+    { emoji: '💔', message: 'Il tuo cuore è spezzato!' },
+    { emoji: '🎭', message: 'Tragedia greca!' },
+    { emoji: '🌧️', message: 'Piove sul bagnato!' },
+    { emoji: '🔥', message: 'Bruciato vivo!' },
+    { emoji: '⚰️', message: 'Seppellito dalla sfortuna!' },
+    { emoji: '🎲', message: 'I dadi non ti hanno favorito!' }
+  ];
+
+  getEliminationMessage(): { emoji: string; message: string } {
+    const index = Math.floor(Math.random() * this.eliminationMessages.length);
+    return this.eliminationMessages[index];
+  }
+
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
