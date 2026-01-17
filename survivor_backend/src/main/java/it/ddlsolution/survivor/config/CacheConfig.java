@@ -23,17 +23,18 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        Caffeine<Object, Object> oneHourCache = Caffeine.newBuilder()
-                .expireAfterWrite(1, TimeUnit.HOURS)
+        Caffeine<Object, Object> oneDayCache = Caffeine.newBuilder()
+                .expireAfterWrite(1, TimeUnit.DAYS)
                 .maximumSize(1000);
-        CaffeineCache cacheUrl = new CaffeineCache(URL, oneHourCache.build());
-        CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneHourCache.build());
-        CaffeineCache sospensioni = new CaffeineCache(SOSPENSIONI, oneHourCache.build());
-        CaffeineCache sport = new CaffeineCache(SPORT, oneHourCache.build());
-
         Caffeine<Object, Object> tenMinutesCache = Caffeine.newBuilder()
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(1000);
+
+        CaffeineCache sport = new CaffeineCache(SPORT, oneDayCache.build());
+        CaffeineCache sospensioni = new CaffeineCache(SOSPENSIONI, oneDayCache.build());
+        CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneDayCache.build());
+
+        CaffeineCache cacheUrl = new CaffeineCache(URL, tenMinutesCache.build());
         CaffeineCache campionati = new CaffeineCache(CAMPIONATI, tenMinutesCache.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();

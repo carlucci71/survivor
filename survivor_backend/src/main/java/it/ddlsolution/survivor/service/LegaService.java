@@ -29,7 +29,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -57,8 +56,9 @@ public class LegaService {
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
     private final Utility utility;
+    private final CacheableService cacheableService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -74,7 +74,7 @@ public class LegaService {
         return legaMapper.toDTOList(legheDaAvviare);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         List<LegaDTO> legheDTO = new ArrayList<>();
@@ -85,35 +85,35 @@ public class LegaService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public LegaDTO getLegaDTO(Long id, boolean completo) {
-        LegaDTO legaDTO;
-        if (completo) {
-            legaDTO = legaRepository.findById(id)
-                    .map(legaMapper::toDTO)
-                    .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
-        } else {
-            legaDTO = legaRepository.findProjectionById(id)
-                    .map(legaMapper::toDTO)
-                    .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
-            Long idLega = legaDTO.getId();
-
-            GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO);
-            giocatoreDTO.setGiocate(null);
-            giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
-            giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
-            legaDTO.setGiocatori(List.of(giocatoreDTO));
-
-        }
+        LegaDTO legaDTO = new LegaDTO();
         try {
+            if (completo) {
+                legaDTO = legaRepository.findById(id)
+                        .map(legaMapper::toDTO)
+                        .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
+            } else {
+                legaDTO = legaRepository.findProjectionById(id)
+                        .map(legaMapper::toDTO)
+                        .orElseThrow(() -> new RuntimeException("Lega non trovata: " + id));
+                Long idLega = legaDTO.getId();
+
+                GiocatoreDTO giocatoreDTO = giocatoreService.getMyInfoInLega(legaDTO);
+                giocatoreDTO.setGiocate(null);
+                giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
+                giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
+                legaDTO.setGiocatori(List.of(giocatoreDTO));
+
+            }
             addInfoCalcolate(legaDTO);
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
+            if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
+                offuscaUltimaGiocata(legaDTO);
+            }
         } catch (Exception e) {
             log.error("Errore in info calcolate", e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
-        }
-        if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
-            offuscaUltimaGiocata(legaDTO);
         }
         return legaDTO;
     }
@@ -263,16 +263,22 @@ public class LegaService {
         return ret;
     }
 
+    public CampionatoDTO refreshCampionato(final CampionatoDTO campionatoDTO, short anno) {
+        cacheableService.clearCachePartite(campionatoDTO.getId(), anno);
+        return cacheableService.elaboraCapionato(campionatoDTO, anno);
+    }
+
 
     @LoggaDispositiva(tipologia = "calcola")
     @Transactional
     public LegaDTO calcola(Long idLega) {
         LegaDTO legaDTO = getLegaDTO(idLega, true);
+        CampionatoDTO campionatoDTO = refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
+        legaDTO.setCampionato(campionatoDTO);
         int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
-        if (nuovaGiornataCalcolata > legaDTO.getCampionato().getNumGiornate()) {
-            nuovaGiornataCalcolata = legaDTO.getCampionato().getNumGiornate();
+        if (nuovaGiornataCalcolata > campionatoDTO.getNumGiornate()) {
+            nuovaGiornataCalcolata = campionatoDTO.getNumGiornate();
         }
-        CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
         final int giornataIniziale = legaDTO.getGiornataIniziale();
         Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);

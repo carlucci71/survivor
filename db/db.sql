@@ -143,6 +143,8 @@ FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
 CREATE UNIQUE INDEX idx_lega_name_unico ON lega (name,edizione);
 
+CREATE UNIQUE INDEX idx_giocatore_name_unico ON giocatore (nome);
+
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into sport(id,nome) values('TENNIS','Tennis');

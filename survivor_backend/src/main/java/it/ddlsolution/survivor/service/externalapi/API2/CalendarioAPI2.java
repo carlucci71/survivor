@@ -12,7 +12,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -22,10 +21,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 
@@ -46,17 +46,27 @@ public class CalendarioAPI2 implements ICalendario {
     @Value("${anno-default}")
     short annoDefault;
 
+    private String fromCampionato(EnumAPI2.Campionato campionato) {
+        String fase = null;
+        if (campionato == EnumAPI2.Campionato.NBA_RS) {
+            fase = "regularSeason";
+        } else if (campionato == EnumAPI2.Campionato.SERIE_B) {
+            fase = "regularSeason";
+        }
+        return fase;
+    }
+
     @Override
     public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
         List<PartitaDTO> ret = new ArrayList<>();
+        EnumAPI2.Campionato enumCampionato = EnumAPI2.Campionato.valueOf(campionato);
         String urlGiornata = Integer.toString(giornata);
         String attUrlCalendar;
         if (campionato.equals(EnumAPI2.Campionato.NBA_RS.name())) {
-            String fase = "regularSeason";
-            attUrlCalendar = urlCalendar + "&phase=" + fase;
-            urlGiornata = calcolaGiornataNBA(sport, campionato, giornata, fase);
+            attUrlCalendar = urlCalendar + "&phase=" + fromCampionato(enumCampionato);
+            urlGiornata = calcolaGiornataNBA(enumCampionato, giornata);
         } else if (campionato.equals(EnumAPI2.Campionato.SERIE_B.name())) {
-            attUrlCalendar = urlCalendar + "&phase=regularSeason";
+            attUrlCalendar = urlCalendar + "&phase=" + fromCampionato(enumCampionato);
         } else if (campionato.equals(EnumAPI2.Campionato.TENNIS_AO.name()) || campionato.equals(EnumAPI2.Campionato.TENNIS_W.name())) {
             attUrlCalendar = urlCalendar;
         } else if (campionato.equals(EnumAPI2.Campionato.SERIE_A.name()) || campionato.equals(EnumAPI2.Campionato.LIGA.name())) {
@@ -64,7 +74,7 @@ public class CalendarioAPI2 implements ICalendario {
         } else {
             throw new RuntimeException("Campionato da configurare: " + campionato);
         }
-        String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id, urlGiornata, anno);
+        String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, enumCampionato.id, urlGiornata, anno);
         urlResolved = urlResolved.replaceAll("&seasonId=" + annoDefault, "");
         Map response = cacheableService.cacheUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
@@ -288,14 +298,31 @@ public class CalendarioAPI2 implements ICalendario {
     private record Result(String team, String teamCode, Integer teamScore) {
     }
 
-    private String calcolaGiornataNBA(String sport, String campionato, int giornata, String fase) {
-        String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(sport).id, EnumAPI2.Campionato.valueOf(campionato).id);
-        Map responseInfo = cacheableService.cacheUrl(urlResolved, Map.class);
-        String startDate = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(fase)).get("startDate").toString();
-        LocalDate ldStartDate = OffsetDateTime.parse(startDate).toLocalDate();
+
+    private String calcolaGiornataNBA(EnumAPI2.Campionato campionato, int giornata) {
+        LocalDate ldStartDate = startDateFase(campionato);
         ldStartDate = ldStartDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         ldStartDate = ldStartDate.plusDays(7 * (giornata - 1));
         return ldStartDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+    private final ConcurrentHashMap<EnumAPI2.Campionato, CompletableFuture<LocalDate>> startDateFutures = new ConcurrentHashMap<>();
+
+
+    private LocalDate startDateFase(EnumAPI2.Campionato campionato) {
+        try {
+            return startDateFutures
+                    .computeIfAbsent(campionato, c ->
+                            CompletableFuture.supplyAsync(() -> {
+                                String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(Enumeratori.SportDisponibili.BASKET.name()).id, c.id);
+                                Map responseInfo = cacheableService.cacheUrl(urlResolved, Map.class);
+                                String startDateFase = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(fromCampionato(c))).get("startDate").toString();
+                                return OffsetDateTime.parse(startDateFase).toLocalDate();
+                            })
+                    ).get();
+        } catch (Exception e) {
+            startDateFutures.remove(campionato); // pulizia su errore
+            throw new RuntimeException(e);
+        }
+    }
 }

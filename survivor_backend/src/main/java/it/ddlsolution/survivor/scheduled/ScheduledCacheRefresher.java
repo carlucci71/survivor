@@ -37,11 +37,6 @@ public class ScheduledCacheRefresher {
         }
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?") // OGNI 5 MINUTI
-    public void invalidaCachePartite(){
-        cacheableService.invalidateCache(PARTITE);
-    }
-
     @EventListener(ApplicationReadyEvent.class) //Avvio dell'applicazione
     public void runAtStartup() {
         try {

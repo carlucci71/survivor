@@ -26,6 +26,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -36,8 +37,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,50 +80,97 @@ public class CacheableService {
     @Value("${anno-default}")
     short annoDefault;
 
+    @Value("${cache.allcampionati.threads:10}")
+    private int allCampionatiThreads;
+
+    @Value("${cache.allcampionati.timeout-seconds:60}")
+    private long allCampionatiTimeoutSeconds;
+
 
     @Cacheable(value = CAMPIONATI)
     @Transactional
     public List<CampionatoDTO> allCampionati() {
-        List<CampionatoDTO> campionatiDTO = campionatoMapper.toDTOList(campionatoRepository.findAll());
-        for (CampionatoDTO campionatoDTO : campionatiDTO) {
-            CompletableFuture.runAsync(() ->
-                    elaboraCapionato(campionatoDTO)
-            );
+
+        List<CampionatoDTO> campionatiDTO = new ArrayList<>();
+        // Crea la lista di supplier (ognuno ritorna il CampionatoDTO elaborato)
+        List<Supplier<CampionatoDTO>> suppliers = campionatoMapper.toDTOList(campionatoRepository.findAll()).stream()
+                .map(campionatoDTO -> (Supplier<CampionatoDTO>) () -> elaboraCapionato(campionatoDTO,
+                        campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault))
+                .toList();
+
+
+        ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
+        try {
+            List<CompletableFuture<CampionatoDTO>> futures = suppliers.stream()
+                    .map(s -> CompletableFuture.supplyAsync(s, executor))
+                    .toList();
+
+            CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+            try {
+                all.get(allCampionatiTimeoutSeconds, TimeUnit.SECONDS);
+            } catch (TimeoutException te) {
+                futures.forEach(f -> f.cancel(true));
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.warn("Thread interrotto mentre si attendeva il completamento di allCampionati", ie);
+            } catch (ExecutionException ee) {
+            }
+
+            for (CompletableFuture<CampionatoDTO> f : futures) {
+                try {
+                    CampionatoDTO result = f.join(); // rilancia CompletionException se il task ha fallito
+                    if (result != null) {
+                        campionatiDTO.add(result);
+                    }
+                } catch (CompletionException ex) {
+                    log.error("Errore durante l'elaborazione di un campionato (parallelo)", ex.getCause());
+                }
+            }
+            log.info("Elaborati {} campionati con successo su {}.", campionatiDTO.size(), futures.size());
+
+        } finally {
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
         }
+
         return campionatiDTO;
     }
 
-    private void elaboraCapionato(CampionatoDTO campionatoDTO) {
-        try {
-            List<LocalDateTime> iniziGiornate = new ArrayList<>();
-            Integer giornataDaGiocare = 1;
-            for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-                List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault);
+    public CampionatoDTO elaboraCapionato(final CampionatoDTO campionatoDTO, short anno) {
+        List<LocalDateTime> iniziGiornate = new ArrayList<>();
+        int giornataDaGiocare = 1;
+        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
+            List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
 
-                if (partiteDTO.size() > 0) {
-                    Optional<LocalDateTime> first = partiteDTO
-                            .stream()
-                            .map(f -> f.getOrario())
-                            .sorted()
-                            .findFirst();
-                    if (first.isPresent()) {
-                        iniziGiornate.add(first.get());
-                    } else {
-                        throw new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + giornata);
-                    }
+            if (!partiteDTO.isEmpty()) {
+                final int currentGiornata = giornata; // rende il valore effettivamente finale per la lambda
+                LocalDateTime first = partiteDTO.stream()
+                        .map(PartitaDTO::getOrario)
+                        .sorted()
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
+                iniziGiornate.add(first);
 
-                    Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
-                    if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
-                        giornataDaGiocare = giornata;
-                    }
+                Enumeratori.StatoPartita statoPartitaGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoPartitaGiornata);
+                if (statoPartitaGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                    giornataDaGiocare = giornata;
                 }
             }
-            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-            campionatoDTO.setIniziGiornate(iniziGiornate);
-        } catch (Exception e) {
-            log.info("Errore nel recupero del campionato: " + campionatoDTO.getNome(), e);
         }
+        campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+        campionatoDTO.setIniziGiornate(iniziGiornate);
+        if (campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.LIGA.name())){
+            throw new RuntimeException("La liga non va");
+        }
+        return campionatoDTO;
     }
 
 
@@ -131,8 +185,7 @@ public class CacheableService {
     @Cacheable(cacheNames = URL, key = "#root.args[0]")
     public <T> T cacheUrl(String url, Class<T> clazz) {
         ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
-        T response = forEntity.getBody();
-        return response;
+        return forEntity.getBody();
     }
 
     @Transactional(readOnly = true)
@@ -160,11 +213,13 @@ public class CacheableService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = PARTITE,
-            key = "#idCampionato + '_' + #anno + '_' + T(String).valueOf(@utility.getImplementationExternalApi())"
-    )
+    @Cacheable(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1]")
     public List<PartitaDTO> getPartiteCampionatoAnno(String idCampionato, short anno) {
         return partitaMapper.toDTOList(partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(), anno));
+    }
+
+    @CacheEvict(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1]")
+    public void clearCachePartite(String idCampionato, short anno) {
     }
 
     /**

@@ -21,7 +21,7 @@ public class CampionatoService {
                 .stream()
                 .filter(c -> c.getId().equals(campionatoId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Lega non trovata per campionato: " + campionatoId));
+                .orElseThrow(() -> new RuntimeException("Campionato non trovato: " + campionatoId));
     }
 
     @Transactional(readOnly = true)
