@@ -86,14 +86,18 @@ public class UtilCalendarioService {
     public List<PartitaDTO> partiteCampionatoDellaGiornataWithRefreshFromWeb(
             CampionatoDTO campionatoDTO
             , int giornata
-            ,  short anno) {
+            , short anno) {
         List<PartitaDTO> partiteDiCampionatoDellaGiornata = getPartiteCampionatoGiornataAnno(campionatoDTO.getId(), giornata, anno);
 
         long partiteNotTerminate = partiteDiCampionatoDellaGiornata
                 .stream()
                 .filter(p -> partitaDaRefreshare(p))
                 .count();
-        if (partiteDiCampionatoDellaGiornata.size() == 0 || partiteNotTerminate > 0) {
+        boolean isFirstLoading=false;
+        if (partiteDiCampionatoDellaGiornata.size() == 0){
+            isFirstLoading=true;
+        }
+        if (isFirstLoading || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             partiteDiCampionatoDellaGiornata = new ArrayList<>();
             List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(campionatoDTO.getSport().getId()
@@ -104,7 +108,8 @@ public class UtilCalendarioService {
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
                 for (PartitaDTO partitaDTO : partiteFromWeb) {
-                    if (partitaDaRefreshare(partitaDTO)) {
+                    if (isFirstLoading || partitaDaRefreshare(partitaDTO)) {
+                        log.info("Aggiorno partita {} {} in stato {} in calendario {}", partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partitaDTO.getStato(), partitaDTO.getOrario());
                         partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaDTO));
                     } else {
                         partiteDiCampionatoDellaGiornata.add(partitaDTO);
@@ -116,7 +121,7 @@ public class UtilCalendarioService {
     }
 
     //se almeno una partita non è terminata  o se almeno una partita si gioca nei prossimi x giorni
-    private boolean partitaDaRefreshare(PartitaDTO partitaDTO){
+    private boolean partitaDaRefreshare(PartitaDTO partitaDTO) {
         return partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0;
     }
 

@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CampionatoService {
-    private final CacheableService cacheableService;
+//    private final CacheableService cacheableService;
+    private final ObjectProvider<CacheableService> cacheableProvider;
 
     @Transactional(readOnly = true)
     public CampionatoDTO getCampionato(String campionatoId) {
@@ -26,7 +28,7 @@ public class CampionatoService {
 
     @Transactional(readOnly = true)
     public List<CampionatoDTO> allCampionati() {
-        return cacheableService.allCampionati();
+        return cacheableProvider.getIfAvailable().allCampionati();
     }
 
     @Transactional(readOnly = true)

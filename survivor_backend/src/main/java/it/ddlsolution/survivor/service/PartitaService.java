@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
-
 @Service
 @RequiredArgsConstructor
 public class PartitaService {
@@ -29,7 +27,7 @@ public class PartitaService {
 
         // Verifica se esiste già una partita con gli stessi criteri
         Optional<Partita> partitaEsistente = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndCasaSiglaAndFuoriSiglaAndAnno(
-                partitaDTO.getCampionatoId(), partitaDTO.getGiornata(), CALENDARIO_API2,
+                partitaDTO.getCampionatoId(), partitaDTO.getGiornata(), utility.getImplementationExternalApi(),
                 partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partita.getAnno());
 
         if (partitaEsistente.isPresent()) {

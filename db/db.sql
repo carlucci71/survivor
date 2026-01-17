@@ -90,6 +90,18 @@ create table partita(
     alias_giornata_fuori varchar(200)
 );
 
+create table partita_mock(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+    giornata integer NOT NULL,
+    orario timestamp NULL,
+    casa_sigla varchar(200),
+    fuori_sigla varchar(200),
+    score_casa integer,
+    score_fuori integer,
+	anno smallint not null
+);
+
 CREATE TABLE param_log_dispositiva (
 	id serial primary key,
     nome VARCHAR(100) NOT NULL,
@@ -584,6 +596,10 @@ insert into sospensione_lega(id_lega,giornata) values (1,16);
 
 delete from users where id=0;
 INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+
+insert into partita_mock(id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno)
+SELECT id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno FROM partita
+where implementation_external_api = 'CALENDARIO_API2';
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));

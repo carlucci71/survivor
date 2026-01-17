@@ -79,7 +79,7 @@ public class CacheableService {
     @Value("${anno-default}")
     short annoDefault;
 
-    @Value("${cache.allcampionati.threads:1}")
+    @Value("${cache.allcampionati.threads:10}")
     private int allCampionatiThreads;
 
     @Value("${cache.allcampionati.timeout-seconds:60}")
@@ -149,7 +149,7 @@ public class CacheableService {
             List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
 
             if (!partiteDTO.isEmpty()) {
-                final int currentGiornata = giornata; // rende il valore effettivamente finale per la lambda
+                final int currentGiornata = giornata;
                 LocalDateTime first = partiteDTO.stream()
                         .map(PartitaDTO::getOrario)
                         .sorted()
@@ -166,9 +166,6 @@ public class CacheableService {
         }
         campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
         campionatoDTO.setIniziGiornate(iniziGiornate);
-        if (campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.LIGA.name())){
-            throw new RuntimeException("La liga non va");
-        }
         return campionatoDTO;
     }
 

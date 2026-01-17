@@ -171,7 +171,7 @@ export class LegaDettaglioComponent {
       giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
       StatoGiocatore.ELIMINATO.value
     ) {
-      ret = 'Non visualizzo perchè il giocaotore è eliminato';
+      ret = 'Non visualizzo perchè il giocatore è eliminato';
     }
     if (esito == 'OK' || esito == 'KO') {
       ret = 'Non visualizzo perchè è presente un esito';

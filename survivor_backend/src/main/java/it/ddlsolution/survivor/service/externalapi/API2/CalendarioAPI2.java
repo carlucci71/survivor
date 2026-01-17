@@ -2,7 +2,6 @@ package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
-import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 import it.ddlsolution.survivor.util.Utility;
@@ -12,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

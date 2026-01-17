@@ -1,9 +1,9 @@
 package it.ddlsolution.survivor.service.externalapi.MOCK;
 
-import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
-import it.ddlsolution.survivor.service.SquadraService;
+import it.ddlsolution.survivor.entity.PartitaMock;
+import it.ddlsolution.survivor.repository.PartitaMockRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -13,93 +13,56 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Service
 @Profile(CALENDARIO_MOCK)
 @Slf4j
+@RequiredArgsConstructor
 public class CalendarioMOCK implements ICalendario {
-    private final SquadraService squadraService;
-    private static Map<Enumeratori.CampionatiDisponibili, List<SquadraDTO>> squadreDisponibili = new HashMap<>();
 
-    public CalendarioMOCK(SquadraService squadraService) {
-        this.squadraService = squadraService;
-        Arrays.stream(Enumeratori.CampionatiDisponibili.values())
-                .parallel()
-                .forEach(e -> squadreDisponibili.put(e, squadraService.getSquadreByCampionatoId(e.name())));
-    }
-
-
-    enum Campionato {
-        SERIE_A(squadre(Enumeratori.CampionatiDisponibili.SERIE_A)),
-        SERIE_B(squadre(Enumeratori.CampionatiDisponibili.SERIE_B)),
-        LIGA(squadre(Enumeratori.CampionatiDisponibili.LIGA)),
-        TENNIS_W(squadre(Enumeratori.CampionatiDisponibili.TENNIS_W)),
-        TENNIS_AO(squadre(Enumeratori.CampionatiDisponibili.TENNIS_AO)),
-        NBA_RS(squadre(Enumeratori.CampionatiDisponibili.NBA_RS));
-
-        final Object[] squadre;
-
-        Campionato(Object[] squadre) {
-            this.squadre = squadre;
-        }
-    }
-
-    private static Object[] squadre(Enumeratori.CampionatiDisponibili campionato) {
-        List<SquadraDTO> squadraDTOS = squadreDisponibili.get(campionato);
-        if (squadraDTOS == null || squadraDTOS.isEmpty()) {
-            return new Object[0];
-        }
-        return squadraDTOS.stream()
-                .map(SquadraDTO::getNome)
-                .toArray();
-    }
+    private final PartitaMockRepository partitaMockRepository;
 
     @Override
     public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
-        return getPartiteCampionato(sport, campionato, giornata, squadre, anno);
+        List<PartitaMock> partiteMock = partitaMockRepository.findByCampionato_IdAndGiornataAndAnno(campionato, giornata, anno);
+
+        return partiteMock.stream()
+                .map(p -> {
+                            SquadraDTO squadraCasa = getSquadraDTO(p.getCasaSigla(), campionato, squadre, anno);
+                            SquadraDTO squadraFuori = getSquadraDTO(p.getFuoriSigla(), campionato, squadre, anno);
+                            return PartitaDTO.builder()
+                                    .sportId(sport)
+                                    .campionatoId(campionato)
+                                    .giornata(giornata)
+                                    .orario(p.getOrario())
+                                    .anno(anno)
+                                    .stato(getStatoFromOrario(p.getOrario().toLocalDate()))
+                                    .casaSigla(squadraCasa.getSigla())
+                                    .casaNome(squadraCasa.getNome())
+                                    .fuoriSigla(squadraFuori.getSigla())
+                                    .fuoriNome(squadraFuori.getNome())
+                                    .scoreCasa(p.getScoreCasa())
+                                    .scoreFuori(p.getScoreFuori())
+                                    .build();
+                        }
+                ).toList();
+
     }
 
-
-    private List<PartitaDTO> getPartiteCampionato(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
-        return List.of(
-                generaGiornata(sport, campionato, giornata
-                        , squadre.get(0).getSigla(), squadre.get(1).getSigla(), 0, 1, squadre, anno)
-        );
-    }
-
-    private PartitaDTO generaGiornata(String sport, String campionato, int giornata, String casa, String fuori, int golCasa, int golFuori, List<SquadraDTO> squadreCampionato, short anno) {
-        LocalDateTime dataProgrammata = LocalDate.of(2025, 9, 1)
-                .atStartOfDay()
-                .plusWeeks(giornata);
-        Enumeratori.StatoPartita statoPartita;
-        if (dataProgrammata.compareTo(LocalDateTime.now()) < 0) {
-            statoPartita = Enumeratori.StatoPartita.TERMINATA;
+    private Enumeratori.StatoPartita getStatoFromOrario(LocalDate orario) {
+        if (orario == null) {
+            return Enumeratori.StatoPartita.SOSPESA;
+        } else if (orario.equals(LocalDate.now())) {
+            return Enumeratori.StatoPartita.IN_CORSO;
+        } else if (orario.compareTo(LocalDate.now()) > 0) {
+            return Enumeratori.StatoPartita.DA_GIOCARE;
         } else {
-            statoPartita = Enumeratori.StatoPartita.DA_GIOCARE;
+            return Enumeratori.StatoPartita.TERMINATA;
         }
-        return PartitaDTO.builder()
-                .sportId(sport)
-                .campionatoId(campionato)
-                .giornata(giornata)
-                .orario(dataProgrammata)
-                .stato(statoPartita)
-                .anno(anno)
-                .casaSigla(getSquadraDTO(casa, campionato, squadreCampionato, anno).getSigla())
-                .casaNome(getSquadraDTO(casa, campionato, squadreCampionato, anno).getNome())
-                .fuoriSigla(getSquadraDTO(fuori, campionato, squadreCampionato, anno).getSigla())
-                .fuoriNome(getSquadraDTO(fuori, campionato, squadreCampionato, anno).getNome())
-                .scoreCasa(golCasa)
-                .scoreFuori(golFuori)
-                .build();
-
     }
 
     @Override
