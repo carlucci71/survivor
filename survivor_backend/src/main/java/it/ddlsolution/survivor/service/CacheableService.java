@@ -89,6 +89,9 @@ public class CacheableService {
                         }
                     }
                 } while (giornata < campionatoDTO.getNumGiornate());
+                if (giornataDaGiocare == null || giornataDaGiocare.equals(0)){
+                    giornataDaGiocare=1;
+                }
                 campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
                 campionatoDTO.setIniziGiornate(iniziGiornate);
             }
