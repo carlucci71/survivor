@@ -1,4 +1,4 @@
-/* Popup Selezione Squadra - CALENDARIO INTERATTIVO */
+/* Popup Selezione Squadra - DESIGN COMPATTO */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 /* CONTAINER PRINCIPALE */
@@ -7,9 +7,9 @@
 	background: #FFFFFF;
 	border-radius: 20px;
 	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-	padding: 24px 20px;
-	width: 92vw;
-	max-width: 900px;
+	padding: 20px 16px;
+	width: 94vw;
+	max-width: 500px;
 	max-height: 90vh;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -17,34 +17,28 @@
 	font-family: 'Poppins', sans-serif;
 	box-sizing: border-box;
 
-	/* Scrollbar personalizzata */
 	&::-webkit-scrollbar {
-		width: 8px;
+		width: 4px;
 	}
 
 	&::-webkit-scrollbar-track {
-		background: #F4F6F8;
-		border-radius: 10px;
+		background: transparent;
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: #0A3D91;
+		background: rgba(10, 61, 145, 0.2);
 		border-radius: 10px;
-
-		&:hover {
-			background: #4FC3F7;
-		}
 	}
 }
 
 /* CLOSE BUTTON */
 .close-btn {
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	top: 10px;
+	right: 10px;
 	z-index: 10;
-	width: 36px;
-	height: 36px;
+	width: 32px;
+	height: 32px;
 	background: rgba(10, 61, 145, 0.08);
 	border-radius: 50%;
 	transition: all 0.2s ease;
@@ -57,13 +51,9 @@
 
 	mat-icon {
 		color: #0A3D91;
-		font-size: 20px;
-		width: 20px;
-		height: 20px;
-		line-height: 20px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
 	}
 
 	&:hover {
@@ -74,14 +64,15 @@
 
 /* TITOLO H2 */
 h2 {
-	margin: 0 0 20px 0;
-	font-size: 1.4rem;
+	margin: 0 0 12px 0;
+	font-size: 1.2rem;
 	font-weight: 800;
 	color: #0A3D91;
 	font-family: 'Poppins', sans-serif;
 	padding-right: 40px;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
+	text-align: center;
 
 	.value {
 		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
@@ -91,195 +82,155 @@ h2 {
 	}
 }
 
-/* INFO ROWS */
-.info-row {
+/* INFO COMPATTA - STILE CARD ELEGANTE */
+.info-compact {
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	margin-bottom: 14px;
-	padding: 12px 16px;
-	background: transparent;
-	border-radius: 12px;
-	border: 1px solid rgba(10, 61, 145, 0.08);
-	font-size: 0.95rem;
+	justify-content: center;
+	gap: 16px;
+	margin-bottom: 16px;
+	padding: 12px 20px;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08));
+	border-radius: 16px;
+	border: 1px solid rgba(10, 61, 145, 0.1);
 
-	.label {
-		font-weight: 700;
-		color: #0A3D91;
-		min-width: 90px;
-	}
-
-	.value {
-		font-weight: 600;
-		color: #6B7280;
-		flex: 1;
-	}
-
-	.value-with-icon {
+	.info-item {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		flex: 1;
+
+		.label {
+			font-size: 1.1rem;
+		}
 
 		.value {
-			flex: 0 1 auto;
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #0A3D91;
+			background: rgba(255, 255, 255, 0.8);
+			padding: 4px 12px;
+			border-radius: 20px;
+			box-shadow: 0 2px 8px rgba(10, 61, 145, 0.1);
 		}
 
 		.stato-icon {
-			font-size: 22px;
-			width: 22px;
-			height: 22px;
-			color: #0A3D91;
-			flex-shrink: 0;
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+			color: #4FC3F7;
 		}
+	}
+
+	.info-separator {
+		color: rgba(10, 61, 145, 0.3);
+		font-size: 1.2rem;
 	}
 }
 
 /* CALENDARIO CONTAINER */
 .calendario-container {
-	margin: 20px 0;
+	margin: 12px 0;
 
 	.calendario-title {
-		font-size: 1rem;
+		font-size: 0.85rem;
 		font-weight: 700;
 		color: #0A3D91;
-		margin: 0 0 12px 0;
+		margin: 0 0 10px 0;
 		text-transform: uppercase;
 		letter-spacing: 0.3px;
 		text-align: center;
 	}
 }
 
-/* GRID SQUADRE - LAYOUT ORIZZONTALE SCROLL */
+/* GRID SQUADRE - GRIGLIA COMPATTA CENTRATA */
 .squadre-grid {
 	display: flex;
-	gap: 12px;
-	overflow-x: auto;
-	overflow-y: hidden;
-	padding: 12px 4px;
-	margin-bottom: 16px;
-	scroll-snap-type: x mandatory;
-	-webkit-overflow-scrolling: touch;
-
-	/* Scrollbar personalizzata orizzontale */
-	&::-webkit-scrollbar {
-		height: 6px;
-	}
-
-	&::-webkit-scrollbar-track {
-		background: #F4F6F8;
-		border-radius: 10px;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background: #0A3D91;
-		border-radius: 10px;
-
-		&:hover {
-			background: #4FC3F7;
-		}
-	}
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 8px 0;
+	justify-content: center;
+	align-items: flex-start;
 }
 
-/* CARD SQUADRA - COMPATTA VERTICALE */
+/* CARD SQUADRA - MINI CHIP */
 .squadra-card {
-	flex: 0 0 auto;
-	width: 110px;
-	border: 3px solid;
-	border-radius: 16px;
-	padding: 10px 6px;
+	border: 2px solid;
+	border-radius: 12px;
+	padding: 6px 10px;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	position: relative;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
-	justify-content: space-between;
-	gap: 6px;
-	scroll-snap-align: start;
-	height: 185px;
+	gap: 8px;
+	min-width: 105px;
+	max-width: 140px;
 	box-sizing: border-box;
 
 	&:hover {
-		transform: translateY(-4px);
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+		transform: scale(1.04);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+		z-index: 2;
 	}
 
 	&.selected {
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+		transform: scale(1.06);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+		z-index: 3;
 
 		.squadra-nome {
 			font-weight: 800;
 		}
 
-		.vs-avversario {
-			color: #FFFFFF !important;
-			opacity: 0.9;
-
-			.vs-label {
-				color: rgba(255, 255, 255, 0.8) !important;
-			}
-
-			.avversario-nome {
-				color: #FFFFFF !important;
-			}
-		}
-
-		.squadra-icon {
-			box-shadow: 0 4px 12px rgba(255, 255, 255, 0.4);
-		}
-
 		.check-icon {
-			display: block;
-		}
-
-		.ultimi-risultati-mini {
-			.badge-mini {
-				border: 2px solid #FFFFFF;
-			}
+			display: flex;
 		}
 	}
-}
-
-/* HEADER SQUADRA - CENTRATO */
-.squadra-header {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	gap: 8px;
-	position: relative;
 
 	.squadra-icon {
-		width: 48px;
-		height: 48px;
+		width: 28px;
+		height: 28px;
+		min-width: 28px;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		color: #FFFFFF;
 		font-weight: 700;
-		font-size: 1.2rem;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-		border: 3px solid;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+		font-size: 0.6rem;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+		border: 2px solid;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	}
+
+	.squadra-info {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.squadra-nome {
-		font-size: 0.7rem;
+		font-size: 0.65rem;
 		font-weight: 700;
 		color: #0A3D91;
 		margin: 0;
-		text-align: center;
-		line-height: 1.1;
-		width: 100%;
-		height: 16px;
+		line-height: 1.2;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		display: block;
+	}
+
+	.vs-text {
+		font-size: 0.5rem;
+		font-weight: 500;
+		color: #9CA3AF;
+		line-height: 1.1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.check-icon {
@@ -288,99 +239,33 @@ h2 {
 		top: -4px;
 		right: -4px;
 		color: #FFFFFF;
-		font-size: 20px;
-		width: 20px;
-		height: 20px;
+		font-size: 14px;
+		width: 14px;
+		height: 14px;
 		background: #10B981;
 		border-radius: 50%;
-		animation: checkBounce 0.4s ease;
-		box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
-	}
-}
-
-@keyframes checkBounce {
-	0%, 100% {
-		transform: scale(1);
-	}
-	50% {
-		transform: scale(1.2);
-	}
-}
-
-/* ULTIMI RISULTATI MINI - PIÙ COMPATTI */
-.ultimi-risultati-mini {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 100%;
-
-	.risultati-badges {
-		display: flex;
-		gap: 3px;
-	}
-
-	.badge-mini {
-		width: 22px;
-		height: 22px;
-		border-radius: 50%;
-		display: flex;
+		animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
 		align-items: center;
 		justify-content: center;
-		font-weight: 700;
-		font-size: 0.65rem;
-		color: #FFFFFF;
-
-		&.badge-v {
-			background: linear-gradient(135deg, #10B981, #34D399);
-		}
-
-		&.badge-n {
-			background: linear-gradient(135deg, #F59E0B, #FBBF24);
-		}
-
-		&.badge-p {
-			background: linear-gradient(135deg, #EF4444, #F87171);
-		}
 	}
 }
 
-/* VS AVVERSARIO */
-.vs-avversario {
-	font-size: 0.65rem;
-	font-weight: 600;
-	color: #6B7280;
-	text-align: center;
-	width: 100%;
-	line-height: 1.2;
-	margin-top: 4px;
-
-	.vs-label {
-		font-size: 0.6rem;
-		color: #9CA3AF;
-		font-weight: 500;
-		display: block;
-		margin-bottom: 2px;
-	}
-
-	.avversario-nome {
-		font-weight: 700;
-		color: #0A3D91;
-		display: block;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		width: 100%;
-	}
+@keyframes checkPop {
+	0% { transform: scale(0); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
 }
 
-/* PARTITA INFO - NASCOSTA (info visibili solo nei dettagli) */
-.partita-info {
-	display: none;
+/* CONTAINER AZIONI */
+.actions-container {
+	display: flex;
+	gap: 10px;
+	margin-top: 16px;
 }
 
 /* BOTTONE SALVA */
 .save-container {
-	margin: 24px 0;
+	flex: 1;
 }
 
 .save-button {
@@ -388,455 +273,376 @@ h2 {
 	background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
 	color: #FFFFFF !important;
 	border: none !important;
-	border-radius: 16px !important;
-	padding: 18px 32px !important;
+	border-radius: 14px !important;
+	padding: 14px 24px !important;
 	font-weight: 700 !important;
 	font-family: 'Poppins', sans-serif !important;
-	font-size: 1.05rem !important;
+	font-size: 0.9rem !important;
 	text-transform: uppercase !important;
-	letter-spacing: 1px !important;
-	box-shadow: 0 8px 32px rgba(10, 61, 145, 0.25) !important;
+	letter-spacing: 0.5px !important;
+	box-shadow: 0 6px 24px rgba(10, 61, 145, 0.25) !important;
 	transition: all 0.3s ease !important;
 	display: flex !important;
 	align-items: center !important;
 	justify-content: center !important;
-	gap: 10px !important;
+	gap: 8px !important;
 
 	mat-icon {
-		font-size: 24px;
-		width: 24px;
-		height: 24px;
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
 	}
 
 	&:hover:not(:disabled) {
-		transform: translateY(-4px);
-		box-shadow: 0 12px 48px rgba(10, 61, 145, 0.35) !important;
-	}
-
-	&:active:not(:disabled) {
-		transform: translateY(-2px);
+		transform: translateY(-3px);
+		box-shadow: 0 10px 36px rgba(10, 61, 145, 0.35) !important;
 	}
 
 	&:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
-		background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+		background: #E0E0E0 !important;
 		color: #9CA3AF !important;
 		transform: none !important;
+		box-shadow: none !important;
 	}
 }
 
-/* DETTAGLI SQUADRA SELEZIONATA */
-.dettagli-squadra {
-	background: #F4F6F8;
-	border-radius: 16px;
-	padding: 16px;
-	margin-top: 20px;
+/* BOTTONE DETTAGLI */
+.details-button {
+	background: transparent !important;
+	border: 2px solid !important;
+	border-radius: 14px !important;
+	padding: 14px 20px !important;
+	font-weight: 600 !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-size: 0.8rem !important;
+	transition: all 0.3s ease !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 6px !important;
+	white-space: nowrap;
+
+	mat-icon {
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+	}
 }
 
-.toggle-dettagli {
-	width: 100%;
-	background: #FFFFFF;
-	border: 2px solid #E0E0E0;
-	border-radius: 12px;
-	padding: 14px 20px;
+/* DETTAGLI SQUADRA - CARD CON COLORI SQUADRA */
+.dettagli-squadra {
+	border-radius: 16px;
+	padding: 16px;
+	margin-top: 16px;
+	animation: slideIn 0.3s ease;
+	border: 2px solid;
+}
+
+@keyframes slideIn {
+	from { opacity: 0; transform: translateY(-10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.dettagli-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	font-weight: 600;
-	color: #0A3D91;
-	font-family: 'Poppins', sans-serif;
-	font-size: 0.95rem;
-	cursor: pointer;
-	transition: all 0.2s ease;
+	margin-bottom: 14px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 
-	&:hover {
-		border-color: #4FC3F7;
-		background: rgba(79, 195, 247, 0.05);
+	.dettagli-title {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 1rem;
+		font-weight: 700;
+
+		.squadra-badge {
+			padding: 6px 14px;
+			background: rgba(255, 255, 255, 0.95);
+			border-radius: 20px;
+			font-size: 0.85rem;
+			font-weight: 800;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		}
 	}
 
-	mat-icon {
-		color: #0A3D91;
-		font-size: 24px;
-		width: 24px;
-		height: 24px;
+	.close-dettagli {
+		background: rgba(255, 255, 255, 0.2);
+		border: none;
+		cursor: pointer;
+		padding: 6px;
+		border-radius: 50%;
+		transition: all 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.4);
+			transform: scale(1.1);
+		}
+
+		mat-icon {
+			font-size: 18px;
+			width: 18px;
+			height: 18px;
+		}
 	}
 }
 
-/* TABS DETTAGLI */
+/* TABS COMPATTI */
 .tabs-dettagli {
 	display: flex;
-	gap: 8px;
-	margin: 16px 0;
-	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 12px;
 
 	.tab-dettaglio {
 		flex: 1;
-		min-width: 120px;
-		padding: 10px 16px;
-		background: #FFFFFF;
-		color: #6B7280;
-		border: 2px solid #E0E0E0;
+		padding: 8px 10px;
+		background: rgba(255, 255, 255, 0.9);
+		color: #374151;
+		border: none;
 		border-radius: 10px;
 		font-weight: 600;
 		font-family: 'Poppins', sans-serif;
-		font-size: 0.85rem;
+		font-size: 0.7rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
+		text-align: center;
 
 		&:hover {
-			border-color: #4FC3F7;
-			color: #0A3D91;
+			background: #FFFFFF;
+			transform: translateY(-1px);
 		}
 
 		&.active {
-			background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-			color: #FFFFFF;
-			border-color: transparent;
-			box-shadow: 0 4px 16px rgba(10, 61, 145, 0.2);
+			background: #FFFFFF;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			font-weight: 700;
 		}
 	}
 }
 
-/* TAB CONTENT */
+/* CONTENUTO TAB */
 .tab-content {
-	background: #FFFFFF;
+	background: rgba(255, 255, 255, 0.95);
 	border-radius: 12px;
-	padding: 16px;
-	min-height: 200px;
+	padding: 12px;
+	max-height: 200px;
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+	}
 }
 
 .risultati-list {
 	display: flex;
 	flex-direction: column;
-	gap: 12px;
+	gap: 8px;
 }
 
 .risultato-item-detail {
-	background: #F4F6F8;
-	border-radius: 12px;
-	padding: 12px 16px;
-	border-left: 4px solid #4FC3F7;
-	transition: all 0.2s ease;
-
-	&:hover {
-		transform: translateX(4px);
-		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.1);
-	}
+	background: #F8FAFC;
+	border-radius: 8px;
+	padding: 6px 10px;
+	border-left: 3px solid;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
 
 	.risultato-header {
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 8px;
-		flex-wrap: wrap;
-		gap: 8px;
+		gap: 6px;
+		min-width: auto;
 
 		.giornata-label {
-			font-size: 0.8rem;
-			font-weight: 600;
-			color: #6B7280;
+			font-size: 0.55rem;
+			font-weight: 700;
+			color: #374151;
+			white-space: nowrap;
 		}
 
 		.data-label {
-			font-size: 0.8rem;
+			font-size: 0.5rem;
 			color: #9CA3AF;
+			white-space: nowrap;
 		}
 	}
 
 	.risultato-match {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		font-size: 0.9rem;
+		gap: 4px;
+		font-size: 0.6rem;
 		font-weight: 600;
 		color: #0A3D91;
-		flex-wrap: wrap;
+		flex: 1;
+		justify-content: center;
+		white-space: nowrap;
 
 		.team-selected {
 			font-weight: 800;
-			color: #0A3D91;
 		}
 
 		.score {
 			font-weight: 700;
-			color: #0A3D91;
 			background: #FFFFFF;
-			padding: 4px 12px;
-			border-radius: 8px;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-size: 0.6rem;
+			border: 1px solid #E5E7EB;
 		}
 
 		.vs {
 			color: #9CA3AF;
-			font-weight: 500;
-			font-size: 0.8rem;
+			font-size: 0.5rem;
 		}
 	}
 
 	.risultato-badge {
-		display: flex;
-		justify-content: flex-end;
-		margin-top: 8px;
+		.badge {
+			padding: 2px 6px;
+			font-size: 0.5rem;
+			border-radius: 4px;
+		}
 	}
 }
 
 /* BADGE RISULTATI */
 .badge {
-	padding: 6px 12px;
+	padding: 5px 12px;
 	border-radius: 8px;
 	font-weight: 700;
-	font-size: 0.75rem;
+	font-size: 0.7rem;
 	color: #FFFFFF;
 	display: inline-block;
 
 	&.badge-v {
 		background: linear-gradient(135deg, #10B981, #34D399);
-		box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 	}
 
 	&.badge-n {
 		background: linear-gradient(135deg, #F59E0B, #FBBF24);
-		box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
 	}
 
 	&.badge-p {
 		background: linear-gradient(135deg, #EF4444, #F87171);
-		box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 	}
 }
 
 .no-data {
 	text-align: center;
-	color: #9CA3AF;
+	color: #6B7280;
 	font-style: italic;
-	padding: 40px 20px;
-	font-size: 0.95rem;
+	padding: 24px;
+	font-size: 0.8rem;
 }
 
-/* RESPONSIVE MOBILE */
-@media (max-width: 768px) {
-	.modal-container {
-		width: 96vw;
-		max-width: 96vw;
-		padding: 20px 12px;
-		box-sizing: border-box;
-	}
-
-	h2 {
-		font-size: 1.2rem;
-		padding-right: 35px;
-	}
-
-	.calendario-title {
-		font-size: 0.95rem;
-	}
-
-	.squadre-grid {
-		padding: 12px 2px;
-		gap: 10px;
-	}
-
-	.squadra-card {
-		width: 105px;
-		height: 185px;
-		padding: 10px 6px;
-
-		.squadra-header {
-			.squadra-icon {
-				width: 44px;
-				height: 44px;
-				font-size: 1.1rem;
-			}
-
-			.squadra-nome {
-				font-size: 0.68rem;
-				height: 16px;
-			}
-		}
-
-		.ultimi-risultati-mini {
-			.badge-mini {
-				width: 20px;
-				height: 20px;
-				font-size: 0.6rem;
-			}
-		}
-
-		.vs-avversario {
-			font-size: 0.63rem;
-
-			.vs-label {
-				font-size: 0.58rem;
-			}
-		}
-	}
-
-	.save-button {
-		padding: 16px 24px !important;
-		font-size: 0.95rem !important;
-	}
-
-	.tabs-dettagli .tab-dettaglio {
-		font-size: 0.8rem;
-		padding: 8px 12px;
-	}
-
-	.risultato-item-detail {
-		padding: 10px 12px;
-
-		.risultato-match {
-			font-size: 0.85rem;
-		}
-	}
-}
-
+/* RESPONSIVE */
 @media (max-width: 480px) {
 	.modal-container {
-		padding: 16px 10px;
+		padding: 16px 12px;
 		width: 90vw;
 		max-width: 98vw;
 	}
 
 	h2 {
-		font-size: 1.1rem;
-		padding-right: 40px;
+		font-size: 1rem;
+		margin-bottom: 10px;
 	}
 
-	.info-row {
-		flex-direction: column;
-		align-items: flex-start;
-		padding: 10px 12px;
-		gap: 6px;
+	.info-compact {
+		padding: 10px 14px;
+		gap: 12px;
+		flex-wrap: wrap;
 
-		.label {
-			min-width: auto;
-			font-size: 0.85rem;
+		.info-item .value {
+			font-size: 0.8rem;
+			padding: 3px 10px;
 		}
-
-		.value {
-			font-size: 0.85rem;
-		}
-	}
-
-	.calendario-title {
-		font-size: 0.9rem;
 	}
 
 	.squadre-grid {
-		padding: 10px 2px;
-		gap: 8px;
+		gap: 5px;
 	}
 
 	.squadra-card {
-		width: 100px;
-		height: 180px;
-		padding: 9px 5px;
+		min-width: 95px;
+		max-width: 125px;
+		padding: 5px 8px;
+		gap: 6px;
 
-		.squadra-header {
-			gap: 6px;
-
-			.squadra-icon {
-				width: 42px;
-				height: 42px;
-				font-size: 1rem;
-			}
-
-			.squadra-nome {
-				font-size: 0.65rem;
-				height: 15px;
-			}
-
-			.check-icon {
-				font-size: 18px;
-				width: 18px;
-				height: 18px;
-				top: -3px;
-				right: -3px;
-			}
+		.squadra-icon {
+			width: 24px;
+			height: 24px;
+			min-width: 24px;
+			font-size: 0.55rem;
 		}
 
-		.ultimi-risultati-mini {
-			.risultati-badges {
-				gap: 2px;
-			}
-
-			.badge-mini {
-				width: 19px;
-				height: 19px;
-				font-size: 0.58rem;
-			}
-		}
-
-		.vs-avversario {
+		.squadra-nome {
 			font-size: 0.6rem;
-			margin-top: 2px;
-
-			.vs-label {
-				font-size: 0.55rem;
-				margin-bottom: 1px;
-			}
 		}
+
+		.vs-text {
+			font-size: 0.45rem;
+		}
+	}
+
+	.actions-container {
+		flex-direction: column;
+		gap: 8px;
 	}
 
 	.save-button {
-		padding: 14px 20px !important;
-		font-size: 0.9rem !important;
-
-		mat-icon {
-			font-size: 20px;
-			width: 20px;
-			height: 20px;
-		}
+		padding: 12px 20px !important;
+		font-size: 0.85rem !important;
 	}
 
-	.toggle-dettagli {
-		padding: 12px 16px;
-		font-size: 0.85rem;
-
-		mat-icon {
-			font-size: 20px;
-			width: 20px;
-			height: 20px;
-		}
+	.details-button {
+		padding: 10px 16px !important;
+		font-size: 0.75rem !important;
 	}
 
-	.tabs-dettagli {
-		gap: 6px;
-
-		.tab-dettaglio {
-			min-width: 100px;
-			padding: 8px 10px;
-			font-size: 0.75rem;
-		}
-	}
-
-	.tab-content {
+	.dettagli-squadra {
 		padding: 12px;
 	}
 
-	.risultato-item-detail {
-		padding: 10px;
+	.tabs-dettagli .tab-dettaglio {
+		padding: 6px 8px;
+		font-size: 0.65rem;
+	}
 
-		.risultato-header {
-			.giornata-label,
-			.data-label {
-				font-size: 0.75rem;
-			}
-		}
+	.tab-content {
+		max-height: 160px;
+		padding: 10px;
+	}
+
+	.risultato-item-detail {
+		padding: 8px 10px;
+		flex-wrap: wrap;
 
 		.risultato-match {
-			font-size: 0.8rem;
-
-			.score {
-				padding: 3px 10px;
-				font-size: 0.8rem;
-			}
-		}
-
-		.badge {
-			padding: 5px 10px;
-			font-size: 0.7rem;
+			font-size: 0.65rem;
+			order: -1;
+			width: 100%;
+			margin-bottom: 6px;
 		}
 	}
 }
-

@@ -275,3 +275,25 @@ mat-dialog-actions {
     }
   }
 }
+
+/* Dialog Dettagli Squadra */
+.dettagli-squadra-dialog-panel {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    background: transparent !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3) !important;
+    border-radius: 16px !important;
+  }
+}
+
+.dettagli-dialog-backdrop {
+  background: rgba(10, 61, 145, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+}
+

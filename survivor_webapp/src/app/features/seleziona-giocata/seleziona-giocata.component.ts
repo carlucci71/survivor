@@ -424,7 +424,28 @@ export class SelezionaGiocataComponent implements OnInit {
   }
 
   toggleDettagli(): void {
-    this.showDettagli = !this.showDettagli;
+    if (!this.squadraSelezionata) return;
+
+    const squadraSelezionata = this.squadraSelezionata; // Per evitare problemi di null check
+
+    // Apri il dialog dei dettagli
+    import('./dettagli-squadra-dialog.component').then(m => {
+      const squadra = this.squadreConPartite.find(s => s.sigla === squadraSelezionata);
+      this.dialog.open(m.DettagliSquadraDialogComponent, {
+        data: {
+          squadraSelezionata: squadraSelezionata,
+          squadraNome: squadra?.nome || squadraSelezionata,
+          ultimiRisultati: this.ultimiRisultati,
+          prossimePartite: this.prossimePartite,
+          ultimiRisultatiOpponent: this.ultimiRisultatiOpponent,
+          opponentSigla: this.getNextOpponentSigla(true),
+          teamColors: this.getTeamColors(squadraSelezionata),
+          getDesGiornata: this.getDesGiornata.bind(this)
+        },
+        panelClass: 'dettagli-squadra-dialog-panel',
+        backdropClass: 'dettagli-dialog-backdrop'
+      });
+    });
   }
 
   selezionaSquadra(sigla: string): void {

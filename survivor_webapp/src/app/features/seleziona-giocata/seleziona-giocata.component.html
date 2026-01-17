@@ -8,24 +8,24 @@
     <mat-icon>close</mat-icon>
   </button>
   <h2>
-    <span class="value">{{
-      getDesGiornataTitle(data.giornata + lega.giornataIniziale - 1)
-    }}</span>
+    <span class="value">{{ getDesGiornataTitle(data.giornata) }}</span>
   </h2>
-  <div class="info-row">
-    <span class="label">Giocatore:</span>
-    <span class="value">{{ giocatore.nome }}</span>
-  </div>
-  <div class="info-row">
-    <span class="label">Stato:</span>
-    <span class="value-with-icon">
-      <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+
+  <!-- INFO COMPATTA ELEGANTE -->
+  <div class="info-compact">
+    <span class="info-item">
+      <span class="label">👤</span>
+      <span class="value">{{ giocatore.nome }}</span>
+    </span>
+    <span class="info-separator">|</span>
+    <span class="info-item">
       <mat-icon class="stato-icon">{{ getGiocaIcon() }}</mat-icon>
+      <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
     </span>
   </div>
 
-  @if(squadreDisponibili.length>0){
-  <!-- CALENDARIO SQUADRE - SELEZIONE DIRETTA -->
+  @if(squadreDisponibili.length > 0) {
+  <!-- SELEZIONE SQUADRE -->
   <div class="calendario-container">
     <h3 class="calendario-title">Seleziona squadra</h3>
 
@@ -36,236 +36,56 @@
         [class.selected]="squadraSelezionata === squadra.sigla"
         [style.background]="squadraSelezionata === squadra.sigla
           ? 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + ', ' + getTeamColors(squadra.sigla).secondary + ')'
-          : 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + '15, ' + getTeamColors(squadra.sigla).secondary + '20)'"
+          : 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + '08, ' + getTeamColors(squadra.sigla).secondary + '12)'"
         [style.borderColor]="getTeamColors(squadra.sigla).primary"
         (click)="selezionaSquadra(squadra.sigla)"
       >
-        <div class="squadra-header">
-          <div class="squadra-icon"
-               [style.background]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).primary"
-               [style.borderColor]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).secondary"
-               [style.color]="squadraSelezionata === squadra.sigla ? getTeamColors(squadra.sigla).primary : '#FFFFFF'">
-            {{ getSquadraInitials(squadra.nome) }}
-          </div>
-          <h4 class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ squadra.nome }}</h4>
-          <mat-icon class="check-icon">check_circle</mat-icon>
+        <div class="squadra-icon"
+             [style.background]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).primary"
+             [style.borderColor]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).secondary"
+             [style.color]="squadraSelezionata === squadra.sigla ? getTeamColors(squadra.sigla).primary : '#FFFFFF'">
+          {{ getSquadraInitials(squadra.nome) }}
         </div>
-
-        <!-- Ultimi 3 risultati compatti -->
-        @if(squadra.ultimiRisultati && squadra.ultimiRisultati.length > 0) {
-        <div class="ultimi-risultati-mini">
-          <div class="risultati-badges">
-            @for (risultato of squadra.ultimiRisultati.slice(0, 3); track risultato.giornata) {
-            <span class="badge-mini" [class.badge-v]="risultato.esito === 'V'"
-                                     [class.badge-n]="risultato.esito === 'N'"
-                                     [class.badge-p]="risultato.esito === 'P'">
-              {{ risultato.esito }}
-            </span>
-            }
-          </div>
+        <div class="squadra-info">
+          <span class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ squadra.nome }}</span>
+          @if(squadra.prossimaPartita) {
+          <span class="vs-text" [style.color]="squadraSelezionata === squadra.sigla ? 'rgba(255,255,255,0.85)' : '#9CA3AF'">vs {{ getAvversarioNome(squadra.prossimaPartita, squadra.sigla) }}</span>
+          }
         </div>
-        }
-
-        <!-- VS Avversario -->
-        @if(squadra.prossimaPartita) {
-        <div class="vs-avversario">
-          <span class="vs-label">vs</span>
-          <span class="avversario-nome">{{ getAvversarioNome(squadra.prossimaPartita, squadra.sigla) }}</span>
-        </div>
-        }
+        <mat-icon class="check-icon">check</mat-icon>
       </div>
       }
     </div>
   </div>
 
-  <!-- BOTTONE SALVA -->
-  <div class="save-container">
+  <!-- AZIONI: CONFERMA + DETTAGLI -->
+  <div class="actions-container">
+    <div class="save-container">
+      <button
+        mat-raised-button
+        class="save-button"
+        (click)="salvaSquadra()"
+        [disabled]="!squadraSelezionata"
+      >
+        <mat-icon>check</mat-icon>
+        <span>Conferma</span>
+      </button>
+    </div>
+
+    @if(squadraSelezionata) {
     <button
-      mat-raised-button
-      color="primary"
-      class="save-button"
-      (click)="salvaSquadra()"
-      [disabled]="!squadraSelezionata"
+      class="details-button"
+      [style.borderColor]="getTeamColors(squadraSelezionata).primary"
+      [style.color]="getTeamColors(squadraSelezionata).primary"
+      (click)="toggleDettagli()"
     >
-      <mat-icon>check</mat-icon>
-      <span>Conferma Scelta</span>
+      <mat-icon>analytics</mat-icon>
+      <span>Dettagli</span>
     </button>
-  </div>
-
-  <!-- DETTAGLI SQUADRA SELEZIONATA (ESPANDIBILE) -->
-  @if(squadraSelezionata) {
-  <div class="dettagli-squadra" #risultatiRow>
-    <button class="toggle-dettagli" (click)="toggleDettagli()">
-      <span>{{ showDettagli ? 'Nascondi' : 'Mostra' }} dettagli completi</span>
-      <mat-icon>{{ showDettagli ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </button>
-
-    @if(showDettagli) {
-    <div class="tabs-dettagli">
-      <button class="tab-dettaglio" [class.active]="activeTab === 'ultimi'" (click)="setActiveTab('ultimi')">
-        Ultimi Risultati
-      </button>
-      <button class="tab-dettaglio" [class.active]="activeTab === 'prossime'" (click)="setActiveTab('prossime')">
-        Prossimi Incontri
-      </button>
-      @if(getNextOpponentSigla(false)) {
-      <button class="tab-dettaglio" [class.active]="activeTab === 'opponent'" (click)="setActiveTab('opponent')">
-        {{getNextOpponentSigla(false)}}
-      </button>
-      }
-    </div>
-
-    <div class="tab-content">
-      <!-- Ultimi Risultati -->
-      @if(activeTab === 'ultimi') {
-      <div class="risultati-list">
-        @if (ultimiRisultati.length === 0) {
-        <div class="no-data">Nessun risultato recente</div>
-        } @else {
-        @for (risultato of ultimiRisultati; track risultato.giornata) {
-        <div class="risultato-item-detail">
-          <div class="risultato-header">
-            <span class="giornata-label">
-              [{{ getDesGiornata(risultato, risultato.casaSigla === squadraSelezionata) }}]
-            </span>
-            <span class="data-label">
-              {{ risultato.orario | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
-          <div class="risultato-match">
-            <span [class.team-selected]="risultato.casaSigla === squadraSelezionata">
-              {{ risultato.casaNome }}
-            </span>
-            <span class="score">
-              {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
-            </span>
-            <span [class.team-selected]="risultato.fuoriSigla === squadraSelezionata">
-              {{ risultato.fuoriNome }}
-            </span>
-          </div>
-          <div class="risultato-badge">
-            @if (squadraSelezionata === risultato.casaSigla) {
-              @if (risultato.scoreCasa > risultato.scoreFuori) {
-                <span class="badge badge-v">V</span>
-              }
-              @if (risultato.scoreCasa === risultato.scoreFuori) {
-                <span class="badge badge-n">N</span>
-              }
-              @if (risultato.scoreCasa < risultato.scoreFuori) {
-                <span class="badge badge-p">P</span>
-              }
-            }
-            @if (squadraSelezionata === risultato.fuoriSigla) {
-              @if (risultato.scoreFuori > risultato.scoreCasa) {
-                <span class="badge badge-v">V</span>
-              }
-              @if (risultato.scoreFuori === risultato.scoreCasa) {
-                <span class="badge badge-n">N</span>
-              }
-              @if (risultato.scoreFuori < risultato.scoreCasa) {
-                <span class="badge badge-p">P</span>
-              }
-            }
-          </div>
-        </div>
-        }
-        }
-      </div>
-      }
-
-      <!-- Prossime Partite -->
-      @if(activeTab === 'prossime') {
-      <div class="risultati-list">
-        @if (prossimePartite.length === 0) {
-        <div class="no-data">Nessuna partita in programma</div>
-        } @else {
-        @for (risultato of prossimePartite; track risultato.giornata) {
-        <div class="risultato-item-detail">
-          <div class="risultato-header">
-            <span class="giornata-label">
-              [{{ getDesGiornata(risultato, risultato.casaSigla === squadraSelezionata) }}]
-            </span>
-            <span class="data-label">
-              {{ risultato.orario | date: 'dd/MM/yyyy HH:mm' }}
-            </span>
-          </div>
-          <div class="risultato-match">
-            <span [class.team-selected]="risultato.casaSigla === squadraSelezionata">
-              {{ risultato.casaNome }}
-            </span>
-            <span class="vs">vs</span>
-            <span [class.team-selected]="risultato.fuoriSigla === squadraSelezionata">
-              {{ risultato.fuoriNome }}
-            </span>
-          </div>
-        </div>
-        }
-        }
-      </div>
-      }
-
-      <!-- Risultati Avversario -->
-      @if(activeTab === 'opponent') {
-      <div class="risultati-list">
-        @if (ultimiRisultatiOpponent.length === 0) {
-        <div class="no-data">Nessun risultato per {{ getNextOpponentSigla(false) }}</div>
-        } @else {
-        @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
-        <div class="risultato-item-detail">
-          <div class="risultato-header">
-            <span class="giornata-label">
-              [{{ getDesGiornata(risultato, risultato.casaSigla === getNextOpponentSigla(true)) }}]
-            </span>
-            <span class="data-label">
-              {{ risultato.orario | date: 'dd/MM/yyyy' }}
-            </span>
-          </div>
-          <div class="risultato-match">
-            <span [class.team-selected]="risultato.casaSigla === getNextOpponentSigla(true)">
-              {{ risultato.casaNome }}
-            </span>
-            <span class="score">
-              {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
-            </span>
-            <span [class.team-selected]="risultato.fuoriSigla === getNextOpponentSigla(true)">
-              {{ risultato.fuoriNome }}
-            </span>
-          </div>
-          <div class="risultato-badge">
-            @if (getNextOpponentSigla(true) === risultato.casaSigla) {
-              @if (risultato.scoreCasa > risultato.scoreFuori) {
-                <span class="badge badge-v">V</span>
-              }
-              @if (risultato.scoreCasa === risultato.scoreFuori) {
-                <span class="badge badge-n">N</span>
-              }
-              @if (risultato.scoreCasa < risultato.scoreFuori) {
-                <span class="badge badge-p">P</span>
-              }
-            }
-            @if (getNextOpponentSigla(true) === risultato.fuoriSigla) {
-              @if (risultato.scoreFuori > risultato.scoreCasa) {
-                <span class="badge badge-v">V</span>
-              }
-              @if (risultato.scoreFuori === risultato.scoreCasa) {
-                <span class="badge badge-n">N</span>
-              }
-              @if (risultato.scoreFuori < risultato.scoreCasa) {
-                <span class="badge badge-p">P</span>
-              }
-            }
-          </div>
-        </div>
-        }
-        }
-      </div>
-      }
-    </div>
     }
   </div>
-  }
 
-  }@else {
-    <h4>Purtroppo non hai giocate disponibili</h4>
+  } @else {
+    <h4 style="text-align: center; color: #6B7280;">Purtroppo non hai giocate disponibili</h4>
   }
 </div>
