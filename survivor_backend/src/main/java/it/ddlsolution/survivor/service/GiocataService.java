@@ -4,11 +4,10 @@ import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.entity.Giocata;
+import it.ddlsolution.survivor.entity.GiocataSnapshot;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.Lega;
-import it.ddlsolution.survivor.entity.RevInfo;
 import it.ddlsolution.survivor.entity.Squadra;
-import it.ddlsolution.survivor.entity.GiocataSnapshot;
 import it.ddlsolution.survivor.mapper.GiocataMapper;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
@@ -20,13 +19,15 @@ import it.ddlsolution.survivor.repository.GiocataRevisionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
+import org.springframework.data.history.Revisions;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -60,7 +61,7 @@ public class GiocataService {
 
         GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
         List<GiocataDTO> giocate = new ArrayList<>(dto.getGiocate().stream()
-                .filter(g -> !Objects.equals(g.getLegaId(), lega.getId()) || !Objects.equals(g.getGiornata(), request.getGiornata()))
+                .filter(g -> Objects.equals(g.getLegaId(), lega.getId()) && !Objects.equals(g.getGiornata(), request.getGiornata()))
                 .toList());
 
         Giocata giocata = giocataRepository.findByGiornataAndGiocatoreAndLega(request.getGiornata(), giocatore, lega).orElse(new Giocata());
@@ -80,50 +81,54 @@ public class GiocataService {
         }
 
         Giocata saved = giocataRepository.save(giocata);
+        if (false) {
+            Long revNumber = getRevNumberOfGiocata(saved);
+            // Prepare snapshot rows to persist
+            List<GiocataSnapshot> snapshots = new ArrayList<>();
 
-        // Ensure Envers has registered the revision by flushing before querying revisions
-        giocataRepository.flush();
+            String giocatoreNome = saved.getGiocatore() != null ? saved.getGiocatore().getNome() : null;
+            if (giocatoreNome != null) {
+                GiocataSnapshot s = new GiocataSnapshot();
+                s.setGiocataId(saved.getId());
+                s.setRevisionNumber(revNumber);
+                s.setColumnName("snapshot_giocatore_nome");
+                s.setColumnValue(giocatoreNome);
+                snapshots.add(s);
+            }
 
-        // Try to obtain the latest revision number for this giocata
+            String squadraNome = saved.getSquadra() != null ? saved.getSquadra().getNome() : null;
+            if (squadraNome != null) {
+                GiocataSnapshot s = new GiocataSnapshot();
+                s.setGiocataId(saved.getId());
+                s.setRevisionNumber(revNumber);
+                s.setColumnName("snapshot_squadra_nome");
+                s.setColumnValue(squadraNome);
+                snapshots.add(s);
+            }
+
+            // Add other snapshot fields here if needed, e.g. squadra name, lega name...
+
+            if (!snapshots.isEmpty()) {
+                giocataSnapshotRepository.saveAll(snapshots);
+            }
+        }
+        giocate.add(giocataMapper.toDTO(saved));
+
+        dto.setGiocate(giocate);
+        return dto;
+    }
+
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED, propagation = Propagation.NOT_SUPPORTED, readOnly = true)
+    public Long getRevNumberOfGiocata(Giocata saved){
+        Revisions<Long, Giocata> revisions = giocataRevisionRepository.findRevisions(saved.getId());
+        System.out.println("revisions = " + revisions);
         Optional<Revision<Long, Giocata>> lastRevOpt = giocataRevisionRepository.findLastChangeRevision(saved.getId());
         Long revNumber = 1L;
         if (lastRevOpt.isPresent()) {
             revNumber = lastRevOpt.get().getRequiredRevisionNumber() + 1;
         }
+        return revNumber;
 
-        // Prepare snapshot rows to persist
-        List<GiocataSnapshot> snapshots = new ArrayList<>();
-
-        String giocatoreNome = saved.getGiocatore() != null ? saved.getGiocatore().getNome() : null;
-        if (giocatoreNome != null) {
-            GiocataSnapshot s = new GiocataSnapshot();
-            s.setGiocataId(saved.getId());
-            s.setRevisionNumber(revNumber);
-            s.setColumnName("snapshot_giocatore_nome");
-            s.setColumnValue(giocatoreNome);
-            snapshots.add(s);
-        }
-
-        String squadraNome = saved.getSquadra() != null ? saved.getSquadra().getNome() : null;
-        if (squadraNome != null) {
-            GiocataSnapshot s = new GiocataSnapshot();
-            s.setGiocataId(saved.getId());
-            s.setRevisionNumber(revNumber);
-            s.setColumnName("snapshot_squadra_nome");
-            s.setColumnValue(squadraNome);
-            snapshots.add(s);
-        }
-
-        // Add other snapshot fields here if needed, e.g. squadra name, lega name...
-
-        if (!snapshots.isEmpty()) {
-            giocataSnapshotRepository.saveAll(snapshots);
-        }
-
-        giocate.add(giocataMapper.toDTO(saved));
-
-        dto.setGiocate(giocate);
-        return dto;
     }
 
 }
