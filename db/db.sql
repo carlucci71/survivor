@@ -61,6 +61,7 @@ create table giocata(
 	id_giocatore integer not null,
 	id_lega integer not null,
 	id_squadra integer not null,
+	forzatura varchar(1000),
 	esito char(2)
 );
 CREATE TABLE log_dispositiva (

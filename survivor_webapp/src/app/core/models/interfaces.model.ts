@@ -179,6 +179,7 @@ export interface Giocata {
   squadraId?: number;
   squadraSigla: string;
   esito?: string;
+  forzatura?: string;
 }
 
 export interface StatiPerLega {

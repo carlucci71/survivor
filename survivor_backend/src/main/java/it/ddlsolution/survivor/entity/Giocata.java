@@ -46,4 +46,7 @@ public class Giocata {
     @Convert(converter = EsitoGiocataConverter.class)
     private Enumeratori.EsitoGiocata esito;
 
+    @Column(name = "forzatura", length = 1000)
+    private String forzatura;
+
 }

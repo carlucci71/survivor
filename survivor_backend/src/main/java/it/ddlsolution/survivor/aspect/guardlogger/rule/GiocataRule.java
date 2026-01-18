@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,7 +24,8 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SI
 @Component
 public class GiocataRule implements GuardRule {
     @Override
-    public void run(Map<GuardRule.PARAM, Object> args) {
+    public Map<String, Object> run(Map<GuardRule.PARAM, Object> args) {
+        Map<String, Object> ret=new HashMap<>();
         LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
         String squadra = (String) args.get(SIGLASQUADRA);
         Integer giornata = (Integer) args.get(PARAM.GIORNATA);
@@ -69,6 +71,10 @@ public class GiocataRule implements GuardRule {
         ) {
             throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
+        if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE
+        ) {
+            ret.put("WARNING", "GIMMI");
+        }
         if (giocatoreDTO.getGiocate().stream()
                 .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
                 .count() > 0) {
@@ -80,6 +86,7 @@ public class GiocataRule implements GuardRule {
         if (legaDTO.getGiornataDaGiocare() > 0 && (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente())) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
+        return ret;
     }
 
 }

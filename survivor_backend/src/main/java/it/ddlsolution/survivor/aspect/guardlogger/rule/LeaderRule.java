@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
@@ -20,7 +21,8 @@ import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.ID
 @Component
 public class LeaderRule implements GuardRule {
     @Override
-    public void run(Map<GuardRule.PARAM, Object> args) {
+    public Map<String, Object> run(Map<GuardRule.PARAM, Object> args) {
+        Map<String, Object> ret=new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new InsufficientAuthenticationException("Utente non autenticato");
@@ -34,5 +36,6 @@ public class LeaderRule implements GuardRule {
         if (legaDTO.getRuoloGiocatoreLega() != Enumeratori.RuoloGiocatoreLega.LEADER && !isAdmin) {
             throw new AccessDeniedException("Devi essere admin o Leader della lega " + legaDTO.getId());
         }
+        return ret;
     }
 }

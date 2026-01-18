@@ -49,7 +49,8 @@ public class GuardiaDispositivaAspect {
         for (GuardRule.PARAM param : GuardRule.PARAM.values()) {
             addParameterInMap(parametriRule, paramNames, args, guardiaDispositiva, param);
         }
-        ctx.getBean(guardiaDispositiva.rule()).run(parametriRule);
+        Map<String, Object> guardReturn = ctx.getBean(guardiaDispositiva.rule()).run(parametriRule);
+
     }
 
     private @NonNull Map<GuardRule.PARAM, Object> addParameterInMap(Map<GuardRule.PARAM, Object> parametriRule, String[] paramNames, Object[] args, GuardiaDispositiva guardiaDispositiva, GuardRule.PARAM tipoParam) {

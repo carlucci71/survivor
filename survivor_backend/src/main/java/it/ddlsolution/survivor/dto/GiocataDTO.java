@@ -12,5 +12,6 @@ public class GiocataDTO {
     private String squadraId;
     private String squadraSigla;
     private Enumeratori.EsitoGiocata esito;
+    private String forzatura;
 }
 
