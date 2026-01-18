@@ -2,11 +2,9 @@ package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
-import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class GiocatoreService {
     private final GiocatoreRepository giocatoreRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final GiocatoreMapper giocatoreMapper;
-    private final GiocataRepository giocataRepository;
 
     @Transactional
     public GiocatoreDTO me() {
@@ -63,8 +57,13 @@ public class GiocatoreService {
     }
 
     @Transactional
-    public GiocatoreDTO find(Long id) {
-        return giocatoreMapper.toDTO(giocatoreRepository.findById(id).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + id)));
+    public GiocatoreDTO findById(Long id) {
+        return giocatoreMapper.toDTO(findByIdEntity(id));
+    }
+
+    @Transactional
+    public Giocatore findByIdEntity(Long id) {
+        return giocatoreRepository.findById(id).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + id));
     }
 
 
@@ -85,6 +84,8 @@ public class GiocatoreService {
         Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElseThrow(()->new RuntimeException("Ruolo non trovato in lega"));
         return giocatoreMapper.toDTO(giocatore);
     }
+
+
 
 }
 

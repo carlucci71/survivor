@@ -100,7 +100,7 @@ public class GuardiaDispositivaAspect {
                         if (ObjectUtils.isEmpty(idGiocatore)) {
                             throw new RuntimeException("Giocatore non presente");
                         }
-                        parametriRule.put(tipoParam, giocatoreService.find(idGiocatore));
+                        parametriRule.put(tipoParam, giocatoreService.findById(idGiocatore));
                     }
                     case SIGLASQUADRA -> {
                         String siglaSquadra = argsByParameterName.toString();

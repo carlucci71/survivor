@@ -4,11 +4,12 @@ import it.ddlsolution.survivor.aspect.dispologger.LoggaDispositiva;
 import it.ddlsolution.survivor.aspect.guardlogger.GuardContextHolder;
 import it.ddlsolution.survivor.aspect.guardlogger.GuardiaDispositiva;
 import it.ddlsolution.survivor.aspect.guardlogger.rule.GiocataRule;
-import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
-import it.ddlsolution.survivor.service.GiocataService;
+import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
+import it.ddlsolution.survivor.service.InserisciGiocataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/giocate")
 @RequiredArgsConstructor
 public class GiocataController {
-    private final GiocataService giocataService;
+    private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
 
     @PostMapping
     @LoggaDispositiva(tipologia = "gioca")
@@ -37,7 +38,7 @@ public class GiocataController {
             request.setGuardReturn(guardReturn);
         }
 
-        GiocatoreDTO result = giocataService.inserisciGiocata(request);
+        GiocatoreDTO result = inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(request);
         return ResponseEntity.ok(result);
     }
 }

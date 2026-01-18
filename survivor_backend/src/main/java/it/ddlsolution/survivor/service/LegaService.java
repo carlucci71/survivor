@@ -16,7 +16,6 @@ import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
-import it.ddlsolution.survivor.repository.GiocatoreLegaRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.util.Utility;
@@ -24,6 +23,7 @@ import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -43,20 +43,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class LegaService {
-    private final GiocatoreLegaRepository giocatoreLegaRepository;
     private final LegaRepository legaRepository;
     private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
     private final UtilCalendarioService utilCalendarioService;
     private final SospensioniLegaService sospensioniLegaService;
     private final GiocatoreService giocatoreService;
-    private final GiocataService giocataService;
     private final GiocatoreRepository giocatoreRepository;
     private final UserService userService;
     private final EmailService emailService;
     private final MagicLinkService magicLinkService;
     private final Utility utility;
     private final CacheableService cacheableService;
+    private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -319,7 +318,7 @@ public class LegaService {
                             giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
                             giocataRequestDTO.setLegaId(legaDTO.getId());
                             giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
-                            giocataService.inserisciGiocata(giocataRequestDTO);
+                            inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
                         } else if (giocate.size() == 1) {
                             GiocataDTO giocataDTO = giocate.get(0);
                             vincente = vincente(giocataDTO.getSquadraSigla(), partite);
@@ -706,6 +705,13 @@ public class LegaService {
                 Saluti,
                 Il team di Survivor
                 """.formatted(legaDTO.getName(), userDTO.getEmail(), magicLink, expirationDays);
+    }
+
+    @Transactional
+    public Lega findByIdEntity(Long legaId){
+        return legaRepository.findById(legaId)
+                .orElseThrow(() -> new IllegalArgumentException("Lega non trovata"));
+
     }
 
 }
