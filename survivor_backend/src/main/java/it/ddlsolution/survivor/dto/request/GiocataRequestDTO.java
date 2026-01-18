@@ -1,7 +1,10 @@
 package it.ddlsolution.survivor.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
+
+import java.util.Map;
 
 @Data
 public class GiocataRequestDTO {
@@ -10,5 +13,7 @@ public class GiocataRequestDTO {
     private Long legaId;
     private String squadraSigla;
     private Enumeratori.EsitoGiocata esitoGiocata;
+    @JsonIgnore
+    private Map<String, Object> guardReturn;
 }
 

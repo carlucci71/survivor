@@ -58,6 +58,11 @@ public class GiocatoreService {
     }
 
     @Transactional
+    public GiocatoreDTO findByUserId(Long userId) {
+        return giocatoreMapper.toDTO(giocatoreRepository.findByUser_Id(userId).orElseThrow(()->new RuntimeException("Giocatore non trovato con user: " + userId)));
+    }
+
+    @Transactional
     public GiocatoreDTO find(Long id) {
         return giocatoreMapper.toDTO(giocatoreRepository.findById(id).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + id)));
     }

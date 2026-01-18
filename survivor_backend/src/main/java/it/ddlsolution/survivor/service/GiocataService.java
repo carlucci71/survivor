@@ -21,6 +21,8 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
+
 @Service
 @RequiredArgsConstructor
 public class GiocataService {
@@ -39,7 +41,7 @@ public class GiocataService {
                 .orElseThrow(() -> new IllegalArgumentException("Lega non trovata"));
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
-            squadra = squadraRepository.findBySiglaAndCampionato_IdAndAnno(request.getSquadraSigla(), lega.getCampionato().getId(),lega.getAnno())
+            squadra = squadraRepository.findBySiglaAndCampionato_IdAndAnno(request.getSquadraSigla(), lega.getCampionato().getId(), lega.getAnno())
                     .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
         }
 
@@ -54,6 +56,10 @@ public class GiocataService {
         giocata.setLega(lega);
         giocata.setSquadra(squadra);
         giocata.setEsito(request.getEsitoGiocata());
+        if (!ObjectUtils.isEmpty(request.getGuardReturn())) {
+            String forzatura = String.join(" - ", (List<String>)request.getGuardReturn().get(WARNING_GIOCATA_RULE));
+            giocata.setForzatura(forzatura);
+        }
         giocataRepository.save(giocata);
 
         giocate.add(giocataMapper.toDTO(giocata));

@@ -75,9 +75,6 @@ public class CacheableService {
     public final static String SOSPENSIONI = "sospensioni";
     public final static String PARTITE = "partite";
 
-    @Value("${anno-default}")
-    short annoDefault;
-
     @Value("${cache.allcampionati.threads:11}")
     private int allCampionatiThreads;
 
@@ -100,8 +97,7 @@ public class CacheableService {
             List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
                     .map(campionatoDTO -> {
                         CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
-                        short anno = campionatoDTO.getId().equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault;
-                        executor.submit(() -> elaboraCampionato(campionatoDTO, anno, future));
+                        executor.submit(() -> elaboraCampionato(campionatoDTO, utility.getAnnoDefault(campionatoDTO.getId()), future));
                         return future;
                     })
                     .toList();

@@ -81,10 +81,20 @@ public class Enumeratori {
     }
 
     public enum StatoPartita {
-        DA_GIOCARE,
-        SOSPESA,
-        TERMINATA,
-        IN_CORSO
+        DA_GIOCARE("Da giocare"),
+        SOSPESA ("Sospesa"),
+        TERMINATA ("Terminata"),
+        IN_CORSO ("In corso");
+
+        private final String descrizione;
+
+        StatoPartita(String descrizione){
+            this.descrizione=descrizione;
+        }
+
+        public String getDescrizione() {
+            return descrizione;
+        }
     }
 
     public enum StatoLega {

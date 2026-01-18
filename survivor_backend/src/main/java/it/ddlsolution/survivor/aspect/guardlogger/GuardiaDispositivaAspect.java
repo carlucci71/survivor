@@ -41,7 +41,6 @@ public class GuardiaDispositivaAspect {
     public void before(JoinPoint joinPoint, GuardiaDispositiva guardiaDispositiva) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
-        GuardiaDispositiva ann = method.getAnnotation(GuardiaDispositiva.class);
         log.info("*******************************");
         String[] paramNames = signature.getParameterNames(); // nomi dei parametri (se disponibili)
         Object[] args = joinPoint.getArgs();                 // valori dei parametri
@@ -51,6 +50,10 @@ public class GuardiaDispositivaAspect {
         }
         Map<String, Object> guardReturn = ctx.getBean(guardiaDispositiva.rule()).run(parametriRule);
 
+        if (!ObjectUtils.isEmpty(guardReturn)) {
+            GuardContextHolder.setGuardReturn(guardReturn);
+            log.info("GuardReturn salvato nel contesto: {}", guardReturn);
+        }
     }
 
     private @NonNull Map<GuardRule.PARAM, Object> addParameterInMap(Map<GuardRule.PARAM, Object> parametriRule, String[] paramNames, Object[] args, GuardiaDispositiva guardiaDispositiva, GuardRule.PARAM tipoParam) {

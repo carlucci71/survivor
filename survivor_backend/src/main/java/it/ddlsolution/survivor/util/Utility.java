@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,9 @@ public class Utility {
     @Autowired
     Environment environment;
 
+    @Value("${anno-default}")
+    short annoDefault;
+
     @Autowired
     RestTemplate restTemplate;
 
@@ -56,6 +61,10 @@ public class Utility {
         }
     }
 
+    public short getAnnoDefault(String idCampionato){
+        return idCampionato.equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault;
+
+    }
     public <T> T callUrl(String url, Class<T> clazz) {
         log.info("++++++++++++++++++++++++++++++ {}",url);
         try {
