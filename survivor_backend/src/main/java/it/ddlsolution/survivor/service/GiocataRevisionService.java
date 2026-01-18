@@ -4,6 +4,7 @@ import it.ddlsolution.survivor.dto.GiocataRevisionDTO;
 import it.ddlsolution.survivor.entity.Giocata;
 import it.ddlsolution.survivor.entity.RevInfo;
 import it.ddlsolution.survivor.repository.GiocataRevisionRepository;
+import it.ddlsolution.survivor.repository.GiocataSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class GiocataRevisionService {
 
     private final GiocataRevisionRepository giocataRevisionRepository;
+    private final GiocataSnapshotRepository giocataSnapshotRepository;
 
     /**
      * Ottiene tutte le revisioni di una Giocata
@@ -94,6 +97,11 @@ public class GiocataRevisionService {
             revtstmp = revision.getRevisionInstant().get().toEpochMilli();
         }
 
+        // Recover snapshot fields from separate audit table (if present)
+        Map<String, String> snapshots = giocataSnapshotRepository.findSnapshotMap(g.getId(), revNumber);
+
+        String snapshotGiocatoreNome = snapshots != null ? snapshots.get("snapshot_giocatore_nome") : null;
+
         return GiocataRevisionDTO.builder()
                 .revisionNumber(revNumber)
                 .revisionDate(GiocataRevisionDTO.convertTimestamp(revtstmp))
@@ -107,6 +115,8 @@ public class GiocataRevisionService {
                 .squadraId(g.getSquadra() != null ? String.valueOf(g.getSquadra().getId()) : null)
                 .esito(g.getEsito())
                 .forzatura(g.getForzatura())
+                .snapshotGiocatoreNome(snapshotGiocatoreNome)
+                .snapshots(snapshots)
                 .build();
     }
 }

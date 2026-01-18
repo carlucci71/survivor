@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Map;
 
 @Data
 @Builder
@@ -31,6 +32,12 @@ public class GiocataRevisionDTO {
     private String squadraId;
     private Enumeratori.EsitoGiocata esito;
     private String forzatura;
+
+    // Explicit snapshot fields commonly used
+    private String snapshotGiocatoreNome;
+
+    // Snapshot fields stored in a separate audit table (key = column name, value = value)
+    private Map<String, String> snapshots;
 
     public static LocalDateTime convertTimestamp(Long timestamp) {
         if (timestamp == null) {

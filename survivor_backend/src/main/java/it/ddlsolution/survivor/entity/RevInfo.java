@@ -15,14 +15,33 @@ public class RevInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @RevisionNumber
-    private Long rev;
+    @Column(name = "rev")
+    private Long id;
 
     @RevisionTimestamp
-    private Long revtstmp;
+    @Column(name = "revtstmp")
+    private Long timestamp;
 
     @Column(name = "username", length = 255)
     private String username;
 
     @Column(name = "user_id")
     private Long userId;
+
+    // Keep legacy accessors for compatibility if anyone used old names
+    public Long getRev() {
+        return this.id;
+    }
+
+    public void setRev(Long rev) {
+        this.id = rev;
+    }
+
+    public Long getRevtstmp() {
+        return this.timestamp;
+    }
+
+    public void setRevtstmp(Long revtstmp) {
+        this.timestamp = revtstmp;
+    }
 }
