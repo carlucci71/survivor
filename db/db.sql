@@ -110,6 +110,28 @@ CREATE TABLE param_log_dispositiva (
     class_name VARCHAR(1000) NOT NULL,
     id_log_dispositiva INTEGER NOT NULL
 );
+CREATE TABLE  revinfo (
+    rev SERIAL PRIMARY KEY,
+    revtstmp BIGINT NOT NULL,
+    username VARCHAR(255),
+    user_id INTEGER
+);
+
+CREATE TABLE  giocata_aud (
+    id INTEGER NOT NULL,
+    rev INTEGER NOT NULL,
+    revtype SMALLINT NOT NULL,
+    giornata INTEGER,
+    id_giocatore INTEGER,
+    id_lega INTEGER,
+    id_squadra INTEGER,
+    esito CHAR(2),
+    forzatura VARCHAR(1000),
+    PRIMARY KEY (id, rev),
+    CONSTRAINT fk_giocata_aud_revinfo
+        FOREIGN KEY (rev) REFERENCES revinfo(rev) ON DELETE CASCADE
+);
+
 
 ALTER TABLE lega
 ADD CONSTRAINT fk_lega_campionato
@@ -157,6 +179,14 @@ FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 CREATE UNIQUE INDEX idx_lega_name_unico ON lega (name,edizione);
 
 CREATE UNIQUE INDEX idx_giocatore_name_unico ON giocatore (nome);
+
+CREATE INDEX idx_revinfo_revtstmp ON revinfo(revtstmp);
+CREATE INDEX idx_revinfo_user_id ON revinfo(user_id);
+CREATE INDEX idx_giocata_aud_rev ON giocata_aud(rev);
+CREATE INDEX idx_giocata_aud_id ON giocata_aud(id);
+CREATE INDEX idx_giocata_aud_id_giocatore ON giocata_aud(id_giocatore);
+CREATE INDEX idx_giocata_aud_id_lega ON giocata_aud(id_lega);
+
 
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');

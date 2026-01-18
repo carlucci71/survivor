@@ -102,6 +102,10 @@
             <artifactId>mapstruct</artifactId>
             <version>1.6.3</version>
         </dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
