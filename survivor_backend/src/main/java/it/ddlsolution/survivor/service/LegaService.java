@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -67,7 +66,7 @@ public class LegaService {
         return legheDTO;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> legheLibere() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
@@ -112,10 +111,18 @@ public class LegaService {
 
             }
             addInfoCalcolate(legaDTO, userId);
+
+
+
+            if (legaDTO.getStato()== Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE){
+                legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
+            }
+
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
             if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
                 offuscaUltimaGiocata(legaDTO);
             }
+
         } catch (Exception e) {
             log.error("Errore in info calcolate", e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
@@ -168,7 +175,9 @@ public class LegaService {
 
 
     @Transactional
-    public LegaDTO salva(LegaDTO legaDTO) {
+    public LegaDTO salva(LegaDTO legaDTO, Enumeratori.StatoLega statoForzato) {
+        calcolaStatoLega(legaDTO, statoForzato);
+
         // Carica l'entità esistente dal database
         Lega lega = legaRepository.findById(legaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Lega non trovata: " + legaDTO.getId()));
@@ -211,7 +220,7 @@ public class LegaService {
         return legaMapper.toDTO(legaRepository.save(lega));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LegaDTO> allLeghe() {
         return legaMapper.toDTOListProjection(legaRepository.allLeghe());
     }
@@ -233,7 +242,7 @@ public class LegaService {
         return statoPartita;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
@@ -333,8 +342,7 @@ public class LegaService {
                 }
             }
         }
-        aggiornaStatoLega(legaDTO);
-        salva(legaDTO);
+        salva(legaDTO, null);
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
@@ -376,13 +384,16 @@ public class LegaService {
     }
 
     private void addInfoCalcolate(LegaDTO legaDTO, Long userId) {
-        legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setEdizioni(legaRepository.findEdizioniByName(legaDTO.getName()).stream().sorted().toList());
-        legaDTO.setInizioProssimaGiornata(legaDTO.getCampionato().getIniziGiornate().get(legaDTO.getGiornataDaGiocare()-1));
         Integer giornataCalcolata = legaDTO.getGiornataCalcolata();
         Integer giornataCorrente = (giornataCalcolata == null ? legaDTO.getGiornataIniziale() : giornataCalcolata + 1);
         if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente) {
             giornataCorrente = legaDTO.getCampionato().getNumGiornate();
+        }
+        //legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
+        legaDTO.setGiornataDaGiocare(giornataCorrente);
+        if (legaDTO.getCampionato().getIniziGiornate().size()>=giornataCorrente) {
+            legaDTO.setInizioProssimaGiornata(legaDTO.getCampionato().getIniziGiornate().get(giornataCorrente - 1));
         }
 
         legaDTO.setGiornataCorrente(giornataCorrente);
@@ -407,8 +418,10 @@ public class LegaService {
     }
 
 
-    private void aggiornaStatoLega(LegaDTO legaDTO) {
-        if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
+    private void calcolaStatoLega(LegaDTO legaDTO, Enumeratori.StatoLega statoForzato) {
+        if (statoForzato != null) {
+            legaDTO.setStato(statoForzato);
+        } else if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
 
         } else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
@@ -431,8 +444,7 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
-        legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
-        salva(legaDTO);
+        salva(legaDTO, null);
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
@@ -442,8 +454,7 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
-        legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
-        salva(legaDTO);
+        salva(legaDTO, Enumeratori.StatoLega.AVVIATA);
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
@@ -470,8 +481,7 @@ public class LegaService {
             giocatoreDTO.getStatiPerLega().put(idLega, nuovoStatoGiocatore);
 //            giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), Enumeratori.StatoGiocatore.ATTIVO);
         }
-        legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
-        salva(legaDTO);
+        salva(legaDTO, Enumeratori.StatoLega.AVVIATA);
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
@@ -516,7 +526,7 @@ public class LegaService {
 
         }
 
-        salva(legaDTO);
+        salva(legaDTO, null);
         return getLegaDTO(legaDTO.getId(), true, userId);
 
     }
