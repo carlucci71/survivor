@@ -27,11 +27,8 @@ public class GiocataRevisionDTO {
     private Long id;
     private Integer giornata;
     private Long giocatoreId;
-    private String giocatoreNome;
     private Long legaId;
-    private String legaNome;
     private String squadraId;
-    private String squadraSigla;
     private Enumeratori.EsitoGiocata esito;
     private String forzatura;
 
