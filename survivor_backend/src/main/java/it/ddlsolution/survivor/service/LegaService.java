@@ -118,8 +118,8 @@ public class LegaService {
             }
 
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
-            if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && false) {//TODO opzione
-                offuscaUltimaGiocata(legaDTO);
+            if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
+                offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
             }
 
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class LegaService {
         return giocatori;
     }
 
-    private void offuscaUltimaGiocata(LegaDTO legaDTO) {
+    private void offuscaUltimaGiocata(LegaDTO legaDTO, Long giocatoreId) {
         List<GiocatoreDTO> giocatori = legaDTO.getGiocatori();
         Long idLega = legaDTO.getId();
         Integer giornata = legaDTO.getGiornataCorrente() - legaDTO.getGiornataIniziale() + 1;
@@ -163,7 +163,11 @@ public class LegaService {
             for (GiocatoreDTO giocatoreDTO : giocatori) {
                 List<GiocataDTO> giocate = giocatoreDTO.getGiocate();
                 for (GiocataDTO giocataDTO : giocate) {
-                    if (!ObjectUtils.isEmpty(giocataDTO.getSquadraId()) && giocataDTO.getGiornata().equals(giornata) && giocataDTO.getLegaId().equals(idLega)) {
+                    if (!ObjectUtils.isEmpty(giocataDTO.getSquadraId())
+                            && giocataDTO.getGiornata().equals(giornata)
+                            && giocataDTO.getLegaId().equals(idLega)
+                            && !giocataDTO.getGiocatoreId().equals(giocatoreId)
+                    ) {
                         giocataDTO.setSquadraId("***");
                         giocataDTO.setSquadraSigla("***");
                     }
