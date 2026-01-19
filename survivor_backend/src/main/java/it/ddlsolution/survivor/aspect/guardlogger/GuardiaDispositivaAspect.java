@@ -79,7 +79,11 @@ public class GuardiaDispositivaAspect {
                         LegaDTO legaDTO = legaService.getLegaDTO(idLega, false, userId);
 
                         LocalDateTime now = LocalDateTime.now();
-                        long diffMinutes = java.time.Duration.between(now, legaDTO.getInizioProssimaGiornata()).toMinutes();
+                        LocalDateTime inizioProssimaGiornata = legaDTO.getInizioProssimaGiornata();
+                        if (inizioProssimaGiornata==null){
+                            inizioProssimaGiornata=LocalDateTime.now().plusDays(1);
+                        }
+                        long diffMinutes = java.time.Duration.between(now, inizioProssimaGiornata).toMinutes();
 
                         if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE &&  diffMinutes<3){
                             legaService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());

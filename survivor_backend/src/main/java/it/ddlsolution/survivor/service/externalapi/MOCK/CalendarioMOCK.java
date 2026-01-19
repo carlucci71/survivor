@@ -33,8 +33,8 @@ public class CalendarioMOCK implements ICalendario {
 
         return partiteMock.stream()
                 .map(p -> {
-                            SquadraDTO squadraCasa = getSquadraDTO(p.getCasaSigla(), campionato, squadre, anno);
-                            SquadraDTO squadraFuori = getSquadraDTO(p.getFuoriSigla(), campionato, squadre, anno);
+                            SquadraDTO squadraCasa = getSquadraDTO(p.getCasaSigla(), campionato, squadre);
+                            SquadraDTO squadraFuori = getSquadraDTO(p.getFuoriSigla(), campionato, squadre);
                             return PartitaDTO.builder()
                                     .sportId(sport)
                                     .campionatoId(campionato)
@@ -72,7 +72,7 @@ public class CalendarioMOCK implements ICalendario {
     }
 
     @Override
-    public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO, short anno) {
+    public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO) {
         List<IEnumSquadre> squadre = new ArrayList<>(
                 squadreDTO
                         .stream()

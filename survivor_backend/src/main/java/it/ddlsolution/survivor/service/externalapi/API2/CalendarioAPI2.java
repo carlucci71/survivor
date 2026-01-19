@@ -89,7 +89,7 @@ public class CalendarioAPI2 implements ICalendario {
     }
 
     @Override
-    public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO, short anno) {
+    public IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO) {
         return EnumAPI2.Campionato.valueOf(idCampionato).getSquadre();
     }
 
@@ -147,11 +147,11 @@ public class CalendarioAPI2 implements ICalendario {
                     .orario(romaTime)
                     .stato(statoPartita)
                     //.casaSigla(resultHome.teamCode())
-                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato, anno).getSigla())
-                    .casaNome(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato, anno).getNome())
+                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla())
+                    .casaNome(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getNome())
 //                    .fuoriSigla(resultAway.teamCode())
-                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato, anno).getSigla())
-                    .fuoriNome(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato, anno).getNome())
+                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
+                    .fuoriNome(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getNome())
                     .casaNome(resultHome.team())
                     .fuoriNome(resultAway.team())
                     .scoreCasa(resultHome.teamScore())
@@ -204,11 +204,11 @@ public class CalendarioAPI2 implements ICalendario {
                         .orario(romaTime)
                         .stato(statoPartita)
 //                        .casaSigla(homeCode)
-                        .casaSigla(getSquadraDTO(homeCode, campionato, squadreCampionato, anno).getSigla())
-                        .casaNome(getSquadraDTO(homeCode, campionato, squadreCampionato, anno).getNome())
+                        .casaSigla(getSquadraDTO(homeCode, campionato, squadreCampionato).getSigla())
+                        .casaNome(getSquadraDTO(homeCode, campionato, squadreCampionato).getNome())
 //                        .fuoriSigla(awayCode)
-                        .fuoriSigla(getSquadraDTO(awayCode, campionato, squadreCampionato, anno).getSigla())
-                        .fuoriNome(getSquadraDTO(awayCode, campionato, squadreCampionato, anno).getNome())
+                        .fuoriSigla(getSquadraDTO(awayCode, campionato, squadreCampionato).getSigla())
+                        .fuoriNome(getSquadraDTO(awayCode, campionato, squadreCampionato).getNome())
                         .casaNome(resultHome.team())
                         .fuoriNome(resultAway.team())
                         .scoreCasa(resultHome.teamScore())

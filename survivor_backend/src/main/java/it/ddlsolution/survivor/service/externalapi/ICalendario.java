@@ -12,11 +12,11 @@ public interface ICalendario {
     //LISTA DELLE PARTITE DI UNA GIORNATA
     List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno);
     //SQUADRE DI UN CAMPIONATO (SIGLA E NOME)
-    IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO, short anno);
+    IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO);
 
-    default SquadraDTO getSquadraDTO(String squadraSiglaExternal, String idCampionato, List<SquadraDTO> squadreDTO, short anno) {
+    default SquadraDTO getSquadraDTO(String squadraSiglaExternal, String idCampionato, List<SquadraDTO> squadreDTO) {
         //In mapForAdapt ho Mappa con chiave
-        Map<String, String> mapForAdapt = Arrays.stream(getSquadre(idCampionato,squadreDTO,anno))
+        Map<String, String> mapForAdapt = Arrays.stream(getSquadre(idCampionato,squadreDTO))
                 .collect(Collectors.toMap(IEnumSquadre::getSiglaEsterna, IEnumSquadre::name)
                 );
         SquadraDTO squadraDTO;
@@ -24,7 +24,7 @@ public interface ICalendario {
             squadraDTO = squadreDTO.stream()
                     .filter(s ->  s.getSigla().equals(mapForAdapt.get(squadraSiglaExternal)))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Squadra da configurare: " + squadraSiglaExternal + " per il campionato: " + idCampionato + " e anno: " + anno)
+                    .orElseThrow(() -> new RuntimeException("Squadra da configurare: " + squadraSiglaExternal + " per il campionato: " + idCampionato)
                     );
         } catch (Exception e) {
             String upperCase = squadraSiglaExternal.replaceAll(" ", "_").replaceAll("-", "").toUpperCase();

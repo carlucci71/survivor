@@ -30,6 +30,7 @@ public class CacheConfig {
                 .maximumSize(1000);
 
         CaffeineCache sport = new CaffeineCache(SPORT, oneDayCache.build());
+        //CaffeineCache squadre = new CaffeineCache("SQUADRE", oneDayCache.build());
         CaffeineCache sospensioni = new CaffeineCache(SOSPENSIONI, oneDayCache.build());
         CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneDayCache.build());
 

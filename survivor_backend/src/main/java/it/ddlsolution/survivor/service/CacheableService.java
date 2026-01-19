@@ -4,18 +4,22 @@ import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
+import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
 import it.ddlsolution.survivor.entity.Sport;
+import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
 import it.ddlsolution.survivor.mapper.SportMapper;
+import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
+import it.ddlsolution.survivor.repository.SquadraRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -64,6 +68,7 @@ public class CacheableService {
     private final PartitaRepository partitaRepository;
     private final PartitaMapper partitaMapper;
     private final Utility utility;
+    private final SquadraService squadraService;
 
 
     // Lazy provider e servizio di utilità per calcolo stato giornata
@@ -78,7 +83,7 @@ public class CacheableService {
     @Value("${cache.allcampionati.threads:11}")
     private int allCampionatiThreads;
 
-    @Value("${cache.allcampionati.timeout-seconds:120}")
+    @Value("${cache.allcampionati.timeout-seconds:240}")
     private long allCampionatiTimeoutSeconds;
 
     private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
@@ -152,6 +157,8 @@ public class CacheableService {
     }
 
     public void elaboraCampionato(final CampionatoDTO campionatoDTO, short anno, CompletableFuture<CampionatoDTO> futureInput) {
+        campionatoDTO.setSquadre(squadraService.getSquadreFromIdCampionato(campionatoDTO.getId()));
+
         String lockKey = campionatoDTO.getId() + "_" + anno;
         log.info("elaboracampionato {}", lockKey);
 

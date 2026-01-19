@@ -5,6 +5,7 @@ import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +30,19 @@ public class SquadraService {
     }
 
     @Transactional(readOnly = true)
-    public Squadra findBySiglaAndCampionato_Id(String squadraSigla, String campionatoId){
-        return squadraRepository.findBySiglaAndCampionato_Id(squadraSigla, campionatoId)
+    public Squadra findBySiglaAndNazione(String squadraSigla, String nazione){
+        return squadraRepository.findBySiglaAndNazione(squadraSigla, nazione)
                 .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
     }
+
+    @Transactional(readOnly = true)
+    //@Cacheable(cacheNames = "SQUADRE", key = "#root.args[0]", sync = true)//FIXME IN CACHEABLESERVICE + LOCK
+    public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato){
+        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionato(idCampionato);
+        return squadraMapper.toDTOList(squadre);
+    }
+
+
 
 }
 

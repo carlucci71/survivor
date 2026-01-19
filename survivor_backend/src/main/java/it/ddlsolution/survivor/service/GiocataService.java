@@ -47,7 +47,7 @@ public class GiocataService {
         Lega lega = legaService.findByIdEntity(request.getLegaId());
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
-            squadra = squadraService.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId());
+            squadra = squadraService.findBySiglaAndNazione(request.getSquadraSigla(), lega.getCampionato().getNazione());
         }
 
         GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
