@@ -84,55 +84,91 @@ export class SelezionaGiocataComponent implements OnInit {
     { emoji: '🎬', message: 'Ciak, si gira! Sei il regista della vittoria!' }
   ];
 
-  // Mappa colori sociali delle squadre
+  // Mappa colori sociali delle squadre per sport
   private readonly teamColors: { [key: string]: { primary: string; secondary: string } } = {
-    // Serie A
-    'JUV': { primary: '#000000', secondary: '#FFFFFF' },
-    'INT': { primary: '#0068A8', secondary: '#000000' },
-    'MIL': { primary: '#AC1F2D', secondary: '#000000' },
-    'NAP': { primary: '#12A0D7', secondary: '#FFFFFF' },
-    'ROM': { primary: '#8E1F2F', secondary: '#F0BC42' },
-    'LAZ': { primary: '#87D8F7', secondary: '#FFFFFF' },
-    'ATA': { primary: '#1E71B8', secondary: '#000000' },
-    'FIO': { primary: '#482E92', secondary: '#FFFFFF' },
-    'TOR': { primary: '#8B0000', secondary: '#FFFFFF' },
-    'BOL': { primary: '#1A2F48', secondary: '#A41E22' },
-    'UDI': { primary: '#000000', secondary: '#FFFFFF' },
-    'EMP': { primary: '#005BA9', secondary: '#FFFFFF' },
-    'SAS': { primary: '#00A850', secondary: '#000000' },
-    'SAL': { primary: '#8B0000', secondary: '#FFFFFF' },
-    'LEC': { primary: '#FFCC00', secondary: '#E3242B' },
-    'VER': { primary: '#FFCC00', secondary: '#003DA5' },
-    'MON': { primary: '#ED1C24', secondary: '#FFFFFF' },
-    'SPE': { primary: '#FFFFFF', secondary: '#000000' },
-    'CRE': { primary: '#D71920', secondary: '#808080' },
-    'FRO': { primary: '#FFCC00', secondary: '#003DA5' },
-    'GEN': { primary: '#A41E22', secondary: '#003DA5' },
-    'CAG': { primary: '#A41E22', secondary: '#003DA5' },
-    'PAR': { primary: '#FFCC00', secondary: '#003DA5' },
-    'VEN': { primary: '#FF6600', secondary: '#007A33' },
-    'COM': { primary: '#003DA5', secondary: '#FFFFFF' },
-    'SAM': { primary: '#003DA5', secondary: '#FFFFFF' },
-    'BRE': { primary: '#003DA5', secondary: '#FFFFFF' },
-    'PIS': { primary: '#003DA5', secondary: '#000000' },
-    // Tennis - colori generici per nazione
-    'ITA': { primary: '#009246', secondary: '#CE2B37' },
-    'ESP': { primary: '#AA151B', secondary: '#F1BF00' },
-    'SRB': { primary: '#C6363C', secondary: '#0C4076' },
-    'USA': { primary: '#3C3B6E', secondary: '#B22234' },
-    'GER': { primary: '#000000', secondary: '#DD0000' },
-    'FRA': { primary: '#002395', secondary: '#ED2939' },
-    'GBR': { primary: '#012169', secondary: '#C8102E' },
-    'AUS': { primary: '#00008B', secondary: '#FFCD00' },
-    'RUS': { primary: '#FFFFFF', secondary: '#0039A6' },
-    'SUI': { primary: '#FF0000', secondary: '#FFFFFF' },
+    // CALCIO - Serie A
+    'CALCIO_JUV': { primary: '#000000', secondary: '#FFFFFF' },
+    'CALCIO_INT': { primary: '#0068A8', secondary: '#000000' },
+    'CALCIO_MIL': { primary: '#AC1F2D', secondary: '#000000' },
+    'CALCIO_NAP': { primary: '#12A0D7', secondary: '#FFFFFF' },
+    'CALCIO_ROM': { primary: '#8E1F2F', secondary: '#F0BC42' },
+    'CALCIO_LAZ': { primary: '#87D8F7', secondary: '#FFFFFF' },
+    'CALCIO_ATA': { primary: '#1E71B8', secondary: '#000000' },
+    'CALCIO_FIO': { primary: '#482E92', secondary: '#FFFFFF' },
+    'CALCIO_TOR': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'CALCIO_BOL': { primary: '#1A2F48', secondary: '#A41E22' },
+    'CALCIO_UDI': { primary: '#000000', secondary: '#FFFFFF' },
+    'CALCIO_EMP': { primary: '#005BA9', secondary: '#FFFFFF' },
+    'CALCIO_SAS': { primary: '#00A850', secondary: '#000000' },
+    'CALCIO_SAL': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'CALCIO_LEC': { primary: '#FFCC00', secondary: '#E3242B' },
+    'CALCIO_VER': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_MON': { primary: '#ED1C24', secondary: '#FFFFFF' },
+    'CALCIO_SPE': { primary: '#FFFFFF', secondary: '#000000' },
+    'CALCIO_CRE': { primary: '#D71920', secondary: '#808080' },
+    'CALCIO_FRO': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_GEN': { primary: '#A41E22', secondary: '#003DA5' },
+    'CALCIO_CAG': { primary: '#A41E22', secondary: '#003DA5' },
+    'CALCIO_PAR': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_VEN': { primary: '#FF6600', secondary: '#007A33' },
+    'CALCIO_COM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_SAM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_BRE': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_PIS': { primary: '#003DA5', secondary: '#000000' },
+
+    // BASKET - NBA
+    'BASKET_ATL': { primary: '#E03A3E', secondary: '#C1D32F' },
+    'BASKET_BOS': { primary: '#007A33', secondary: '#FFFFFF' },
+    'BASKET_BKN': { primary: '#000000', secondary: '#FFFFFF' },
+    'BASKET_CHA': { primary: '#1D1160', secondary: '#00788C' },
+    'BASKET_CHI': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_CLE': { primary: '#860038', secondary: '#FDBB30' },
+    'BASKET_DAL': { primary: '#00538C', secondary: '#B8C4CA' },
+    'BASKET_DEN': { primary: '#0E2240', secondary: '#FEC524' },
+    'BASKET_DET': { primary: '#C8102E', secondary: '#1D428A' },
+    'BASKET_GSW': { primary: '#1D428A', secondary: '#FFC72C' },
+    'BASKET_HOU': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_IND': { primary: '#002D62', secondary: '#FDBB30' },
+    'BASKET_LAC': { primary: '#C8102E', secondary: '#1D428A' },
+    'BASKET_LAL': { primary: '#552583', secondary: '#FDB927' },
+    'BASKET_MEM': { primary: '#5D76A9', secondary: '#12173F' },
+    'BASKET_MIA': { primary: '#98002E', secondary: '#000000' },
+    'BASKET_MIL': { primary: '#00471B', secondary: '#EEE1C6' },
+    'BASKET_MIN': { primary: '#0C2340', secondary: '#236192' },
+    'BASKET_NOP': { primary: '#0C2340', secondary: '#C8102E' },
+    'BASKET_NYK': { primary: '#006BB6', secondary: '#F58426' },
+    'BASKET_OKC': { primary: '#007AC1', secondary: '#EF3B24' },
+    'BASKET_ORL': { primary: '#0077C0', secondary: '#C4CED4' },
+    'BASKET_PHI': { primary: '#006BB6', secondary: '#ED174C' },
+    'BASKET_PHX': { primary: '#1D1160', secondary: '#E56020' },
+    'BASKET_POR': { primary: '#E03A3E', secondary: '#000000' },
+    'BASKET_SAC': { primary: '#5A2D81', secondary: '#63727A' },
+    'BASKET_SAS': { primary: '#C4CED4', secondary: '#000000' },
+    'BASKET_TOR': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_UTA': { primary: '#002B5C', secondary: '#00471B' },
+    'BASKET_WAS': { primary: '#002B5C', secondary: '#E31837' },
+
+    // TENNIS - colori generici per nazione
+    'TENNIS_ITA': { primary: '#009246', secondary: '#CE2B37' },
+    'TENNIS_ESP': { primary: '#AA151B', secondary: '#F1BF00' },
+    'TENNIS_SRB': { primary: '#C6363C', secondary: '#0C4076' },
+    'TENNIS_USA': { primary: '#3C3B6E', secondary: '#B22234' },
+    'TENNIS_GER': { primary: '#000000', secondary: '#DD0000' },
+    'TENNIS_FRA': { primary: '#002395', secondary: '#ED2939' },
+    'TENNIS_GBR': { primary: '#012169', secondary: '#C8102E' },
+    'TENNIS_AUS': { primary: '#00008B', secondary: '#FFCD00' },
+    'TENNIS_RUS': { primary: '#FFFFFF', secondary: '#0039A6' },
+    'TENNIS_SUI': { primary: '#FF0000', secondary: '#FFFFFF' },
+
     // Default
     'DEFAULT': { primary: '#0A3D91', secondary: '#4FC3F7' }
   };
 
   // Metodo per ottenere i colori sociali di una squadra
   getTeamColors(sigla: string): { primary: string; secondary: string } {
-    return this.teamColors[sigla] || this.teamColors['DEFAULT'];
+    const sportId = this.lega?.campionato?.sport?.id || 'DEFAULT';
+    const key = `${sportId}_${sigla}`;
+    return this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
   }
 
   constructor(
@@ -244,11 +280,18 @@ export class SelezionaGiocataComponent implements OnInit {
     ) {
       return '';
     }
-    return this.campionatoService.getDesGiornata(
+    const desc = this.campionatoService.getDesGiornata(
       this.lega?.campionato.id,
       index,
       alias
     );
+
+    // Abbreviate "Settimana" to "Sett." for Basket to save space
+    if (this.lega?.campionato?.sport?.id === 'BASKET') {
+      return desc.replace('Settimana', 'Sett.');
+    }
+
+    return desc;
   }
 
   mostraUltimiRisultati(sigla?: string) {

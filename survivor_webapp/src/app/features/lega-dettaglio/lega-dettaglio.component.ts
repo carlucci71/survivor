@@ -201,9 +201,9 @@ export class LegaDettaglioComponent {
     if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
       ret = false;
     }
-    if (this.lega!.giornataDaGiocare < this.lega!.giornataCorrente) {
-      ret = false;
-    }
+    // if (this.lega!.giornataDaGiocare < this.lega!.giornataCorrente) {
+    //   ret = false;
+    // }
     return ret;
   }
 
@@ -357,7 +357,7 @@ export class LegaDettaglioComponent {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
- isInLega(): boolean {
+  isInLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
   }
@@ -368,7 +368,7 @@ export class LegaDettaglioComponent {
   isChiudibile(): boolean {
     return this.contaAttivi() <= 3;
   }
-  contaAttivi():number{
+  contaAttivi(): number {
     let contaAttivi = 0;
     let giocatori = this.lega!.giocatori;
     if (giocatori && giocatori[0]) {
@@ -599,5 +599,10 @@ export class LegaDettaglioComponent {
         this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
       }
     });
+  }
+
+  getStatoGiornataValue(index: number): string {
+    if (!this.lega || !this.lega.statiGiornate) return '';
+    return this.lega.statiGiornate[index]?.value || '';
   }
 }
