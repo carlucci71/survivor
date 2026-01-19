@@ -8,13 +8,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { TerminiDialogComponent, PrivacyDialogComponent } from '../../shared/components/footer/footer.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -26,29 +25,8 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router,
-    private dialog: MatDialog
-  ) {}
-
-  openTermini(event: Event): void {
-    event.preventDefault();
-    this.dialog.open(TerminiDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
-  }
-
-  openPrivacy(event: Event): void {
-    event.preventDefault();
-    this.dialog.open(PrivacyDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
-  }
+    private router: Router
+  ) { }
 
   onSubmit(): void {
     if (!this.email) {
@@ -63,7 +41,7 @@ export class LoginComponent {
       return;
     }
 
-        this.authService.requestMagicLink(this.email).subscribe({
+    this.authService.requestMagicLink(this.email).subscribe({
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;

@@ -38,6 +38,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -255,7 +256,7 @@
         }
       }
 
-      input:checked ~ .checkmark {
+      input:checked~.checkmark {
         background: linear-gradient(135deg, #0A3D91, #4FC3F7);
         border-color: #0A3D91;
 
@@ -264,7 +265,7 @@
         }
       }
 
-      input:focus ~ .checkmark {
+      input:focus~.checkmark {
         box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
       }
 
@@ -312,6 +313,17 @@
       }
     }
   }
+
+  /* Age Disclaimer */
+  .age-disclaimer {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #9CA3AF;
+    text-align: center;
+    margin-top: -16px;
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
 }
 
 /* Messaggi */
@@ -350,9 +362,9 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-

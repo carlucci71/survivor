@@ -5,3 +5,4 @@ logFE.log
 nohup.out
 ReadmeSECRET.md
 /.idea
+.vscode/launch.json
