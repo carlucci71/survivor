@@ -9,6 +9,11 @@ drop table if exists sport;
 drop table if exists partita;
 drop TABLE if exists param_log_dispositiva;
 drop TABLE if exists log_dispositiva;
+drop TABLE if exists nazione;
+drop TABLE if exists partita;
+drop TABLE if exists partita_mock;
+drop table if exists revinfo;
+drop table if exists giocata_aud;
 
 create table lega(
 	id serial primary key,
@@ -42,17 +47,32 @@ create table sport(
 	id varchar(20) primary key,
 	nome varchar(100) not null
 );
+CREATE TABLE nazione(
+    codice varchar(100) PRIMARY KEY
+);
+insert into nazione(codice) values ('IT');
+insert into nazione values ('ES');
+insert into nazione values ('USA');
+insert into nazione values ('TENNIS');
+--
+update campionato set nazione = 'IT' where id in ('SERIE_A','SERIE_B');
+update campionato set nazione = 'ES' where id in ('LIGA');
+update campionato set nazione = 'USA' where id in ('NBA_RS');
+update campionato set nazione = 'TENNIS' where id in ('TENNIS_AO','TENNIS_W');
+--
 create table campionato(
 	id varchar(20) primary key,
 	id_sport varchar(20) not null,
 	nome varchar(100) not null,
+	nazione varchar(100) not null default 'IT',
 	num_giornate integer not null
 );
 create table squadra(
 	id serial primary key,
 	sigla varchar(200),
 	nome varchar(200) not null,
-	anno smallint not null default 2025,
+	anno smallint not null default 0,
+	nazione varchar(100) not null default 'IT',
 	id_campionato varchar(20) not null
 );
 create table giocata(
@@ -139,9 +159,17 @@ FOREIGN KEY (id_campionato) REFERENCES campionato(id);
 ALTER TABLE campionato
 ADD CONSTRAINT fk_campionato_sport
 FOREIGN KEY (id_sport) REFERENCES sport(id);
-ALTER TABLE squadra
-ADD CONSTRAINT fk_squadra_campionato
-FOREIGN KEY (id_campionato) REFERENCES campionato(id);
+--ALTER TABLE squadra
+--ADD CONSTRAINT fk_squadra_campionato
+--FOREIGN KEY (id_campionato) REFERENCES campionato(id);
+ALTER TABLE campionato 
+    ADD CONSTRAINT fk_campionato_nazione 
+    FOREIGN KEY (nazione) REFERENCES nazione(codice);
+
+ALTER TABLE squadra 
+    ADD CONSTRAINT fk_squadra_nazione 
+    FOREIGN KEY (nazione) REFERENCES nazione(codice);
+
 ALTER TABLE giocata
 ADD CONSTRAINT fk_giocata_giocatore
 FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);

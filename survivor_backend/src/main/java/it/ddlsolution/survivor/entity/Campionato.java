@@ -45,4 +45,7 @@ public class Campionato {
     @JsonManagedReference("campionato-squadre")
     private List<Squadra> squadre = new ArrayList<>();
 
+    @Column(name = "nazione", nullable = false, length = 100)
+    private String nazione;
+
 }

@@ -11,9 +11,8 @@ import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.GiocataMapper;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
-import it.ddlsolution.survivor.repository.SquadraRepository;
-import it.ddlsolution.survivor.repository.GiocataSnapshotRepository;
 import it.ddlsolution.survivor.repository.GiocataRevisionRepository;
+import it.ddlsolution.survivor.repository.GiocataSnapshotRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
@@ -34,12 +33,12 @@ import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
 public class GiocataService {
     private final GiocataRepository giocataRepository;
     private final GiocatoreService giocatoreService;
-    private final SquadraRepository squadraRepository;
     private final GiocataMapper giocataMapper;
     private final GiocatoreMapper giocatoreMapper;
     private final GiocataSnapshotRepository giocataSnapshotRepository;
     private final GiocataRevisionRepository giocataRevisionRepository;
     private final LegaService legaService;
+    private final SquadraService squadraService;
 
 
     @Transactional
@@ -48,8 +47,7 @@ public class GiocataService {
         Lega lega = legaService.findByIdEntity(request.getLegaId());
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
-            squadra = squadraRepository.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
+            squadra = squadraService.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId());
         }
 
         GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
