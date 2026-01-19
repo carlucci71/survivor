@@ -160,7 +160,6 @@ export interface Campionato {
 
 export interface Squadra {
   id?: number;
-  anno: number;
   sigla: string;
   nome: string;
 }

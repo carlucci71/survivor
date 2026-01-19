@@ -227,7 +227,7 @@ export class LegaDettaglioComponent {
 
     if (this.lega?.campionato) {
       this.squadraService
-        .getSquadreByCampionatoAndAnno(this.lega?.campionato?.id ?? '',this.lega.anno)
+        .getSquadreByCampionato(this.lega?.campionato?.id ?? '')
         .subscribe({
           next: (squadre: any[]) => {
             this.squadre = squadre;

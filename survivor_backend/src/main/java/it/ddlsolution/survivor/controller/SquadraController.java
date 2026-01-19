@@ -24,9 +24,9 @@ public class SquadraController {
     private final CampionatoService campionatoService;
     private final UtilCalendarioService utilCalendarioService;
 
-    @GetMapping("/campionato/{idCampionato}/{anno}")
-    public ResponseEntity<List<SquadraDTO>> getSquadreByCampionato(@PathVariable String idCampionato,@PathVariable Short anno) {
-        return ResponseEntity.ok(squadraService.getSquadreByCampionatoIdAndAnno(idCampionato, anno));
+    @GetMapping("/campionato/{idCampionato}")
+    public ResponseEntity<List<SquadraDTO>> getSquadreByCampionato(@PathVariable String idCampionato) {
+        return ResponseEntity.ok(squadraService.getSquadreByCampionatoId(idCampionato));
     }
 
     @GetMapping(value = "/calendario/{campionatoId}/squadreDisponibili/{anno}/{giornata}")

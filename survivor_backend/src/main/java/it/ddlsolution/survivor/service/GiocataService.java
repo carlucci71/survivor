@@ -48,7 +48,7 @@ public class GiocataService {
         Lega lega = legaService.findByIdEntity(request.getLegaId());
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
-            squadra = squadraRepository.findBySiglaAndCampionato_IdAndAnno(request.getSquadraSigla(), lega.getCampionato().getId(), lega.getAnno())
+            squadra = squadraRepository.findBySiglaAndCampionato_Id(request.getSquadraSigla(), lega.getCampionato().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
         }
 

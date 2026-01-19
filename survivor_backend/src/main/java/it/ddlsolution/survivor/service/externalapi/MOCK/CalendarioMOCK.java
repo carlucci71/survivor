@@ -76,7 +76,6 @@ public class CalendarioMOCK implements ICalendario {
         List<IEnumSquadre> squadre = new ArrayList<>(
                 squadreDTO
                         .stream()
-                        .filter(s -> s.getAnno() == anno)
                         .map(m -> new IEnumSquadre() {
                             @Override
                             public String name() {

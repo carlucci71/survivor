@@ -36,7 +36,6 @@ public abstract class CampionatoMapper  implements DtoMapper<CampionatoDTO, Camp
         dto.setId(squadra.getId());
         dto.setSigla(squadra.getSigla());
         dto.setNome(squadra.getNome());
-        dto.setAnno(squadra.getAnno());
         // campionato viene ignorato per evitare ricorsione
         return dto;
     }

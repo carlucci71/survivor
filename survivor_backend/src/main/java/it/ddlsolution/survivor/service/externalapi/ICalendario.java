@@ -22,7 +22,7 @@ public interface ICalendario {
         SquadraDTO squadraDTO;
         try {
             squadraDTO = squadreDTO.stream()
-                    .filter(s -> s.getAnno() == anno && s.getSigla().equals(mapForAdapt.get(squadraSiglaExternal)))
+                    .filter(s ->  s.getSigla().equals(mapForAdapt.get(squadraSiglaExternal)))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Squadra da configurare: " + squadraSiglaExternal + " per il campionato: " + idCampionato + " e anno: " + anno)
                     );
