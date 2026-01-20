@@ -124,6 +124,7 @@ public class CalendarioAPI2 implements ICalendario {
                     || match.get("matchId").toString().equals("396499")
                     || match.get("matchId").toString().equals("396552")
                     || match.get("matchId").toString().equals("396556")
+                    || match.get("matchId").toString().equals("414228")//414228
             ) {//TODO GESTIRE FORZATURE
                 status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
             }
