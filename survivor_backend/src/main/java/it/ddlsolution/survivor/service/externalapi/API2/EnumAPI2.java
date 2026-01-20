@@ -3,20 +3,22 @@ package it.ddlsolution.survivor.service.externalapi.API2;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 
+import java.util.Map;
+
 class EnumAPI2 {
 
     public enum Campionato {
-        SERIE_A(21, SquadreSerieA_API2.values()),
-        SERIE_B(105, SquadreSerieB_API2.values()),
-        LIGA(23, SquadreLiga_API2.values()),
-        TENNIS_W(11316, SquadreTennis_API2.values()),
-        TENNIS_AO(12389, SquadreTennis_API2.values()),
-        NBA_RS(3, SquadreNBA_API2.values());
+        SERIE_A(Map.of(2025, 21), SquadreSerieA_API2.values()),
+        SERIE_B(Map.of(2025, 105), SquadreSerieB_API2.values()),
+        LIGA(Map.of(2025, 23), SquadreLiga_API2.values()),
+        TENNIS_W(Map.of(2025, 11316), SquadreTennis_API2.values()),
+        TENNIS_AO(Map.of(2025, 10376, 2026, 12389), SquadreTennis_API2.values()),
+        NBA_RS(Map.of(2025, 3), SquadreNBA_API2.values());
 
-        final int id;
+        final Map<Integer, Integer> id;
         final IEnumSquadre[] squadre;
 
-        Campionato(int id, IEnumSquadre[] squadre) {
+        Campionato(Map<Integer, Integer> id, IEnumSquadre[] squadre) {
             this.id = id;
             this.squadre = squadre;
         }
@@ -29,10 +31,10 @@ class EnumAPI2 {
             return valueOf(name);
         }
 
-        static Campionato fromId(int id) {
+        static Campionato fromId(int anno, int id) {
             Campionato ret = null;
             for (Campionato campionato : values()) {
-                if (campionato.id == id) {
+                if (campionato.id.get(anno) != null && campionato.id.get(anno) == id) {
                     ret = campionato;
                 }
             }
@@ -101,6 +103,7 @@ class EnumAPI2 {
         Finale("final");
 
         final String key;
+
         RoundTennis(String key) {
             this.key = key;
         }

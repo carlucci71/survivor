@@ -43,7 +43,6 @@ magic-link:
   relative-url-send-mail: /auth/verify?token=
   secret-token-generated: ${JWT_SECRET_TOKEN_MAGICLINK}
 
-anno-default: 2025
 external-api:
   calendario:
     selected: ${EXTERNAL_API_CALENDARIO_SELECTED}

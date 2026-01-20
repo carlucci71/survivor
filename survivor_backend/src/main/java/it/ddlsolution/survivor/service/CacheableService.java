@@ -13,13 +13,11 @@ import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
 import it.ddlsolution.survivor.mapper.SportMapper;
-import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
-import it.ddlsolution.survivor.repository.SquadraRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -57,7 +55,7 @@ import java.util.stream.Collectors;
 public class CacheableService {
     private final CacheManager cacheManager;
     private final LegaRepository legaRepository;
-    private final CampionatoRepository campionatoRepository;
+    private final CampionatoService campionatoService;
     private final CampionatoMapper campionatoMapper;
     private final LegaMapper legaMapper;
     private final RestTemplate restTemplate;
@@ -76,6 +74,7 @@ public class CacheableService {
     private final UtilCalendarioService utilCalendarioService;
 
     public final static String CAMPIONATI = "campionati";
+    public final static String SQUADRE = "squadre";
     public final static String SPORT = "sport";
     public final static String SOSPENSIONI = "sospensioni";
     public final static String PARTITE = "partite";
@@ -94,7 +93,7 @@ public class CacheableService {
     public List<CampionatoDTO> allCampionati() {
 
         List<CampionatoDTO> campionatiDTO = new ArrayList<>();
-        List<CampionatoDTO> campionatiDaElaborare = campionatoMapper.toDTOList(campionatoRepository.findAll());
+        List<CampionatoDTO> campionatiDaElaborare = campionatoService.leggiCampionati();
 
         ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
         try {
@@ -102,7 +101,7 @@ public class CacheableService {
             List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
                     .map(campionatoDTO -> {
                         CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
-                        executor.submit(() -> elaboraCampionato(campionatoDTO, utility.getAnnoDefault(campionatoDTO.getId()), future));
+                        executor.submit(() -> elaboraCampionato(campionatoDTO, campionatoDTO.getAnnoCorrente(), future));
                         return future;
                     })
                     .toList();
@@ -157,7 +156,6 @@ public class CacheableService {
     }
 
     public void elaboraCampionato(final CampionatoDTO campionatoDTO, short anno, CompletableFuture<CampionatoDTO> futureInput) {
-        campionatoDTO.setSquadre(squadraService.getSquadreFromIdCampionato(campionatoDTO.getId()));
 
         String lockKey = campionatoDTO.getId() + "_" + anno;
         log.info("elaboracampionato {}", lockKey);
@@ -264,6 +262,13 @@ public class CacheableService {
     public List<PartitaDTO> getPartiteCampionatoAnno(String idCampionato, short anno) {
         return partitaMapper.toDTOList(partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(), anno));
     }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = SQUADRE, key = "#root.args[0]", sync = true)
+    public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato){
+        return squadraService.getSquadreFromIdCampionato(idCampionato);
+    }
+
 
     @CacheEvict(cacheNames = PARTITE, key = "#root.args[0] + '_' + #root.args[1]")
     public void clearCachePartite(String idCampionato, short anno) {

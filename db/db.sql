@@ -55,17 +55,14 @@ insert into nazione values ('ES');
 insert into nazione values ('USA');
 insert into nazione values ('TENNIS');
 --
-update campionato set nazione = 'IT' where id in ('SERIE_A','SERIE_B');
-update campionato set nazione = 'ES' where id in ('LIGA');
-update campionato set nazione = 'USA' where id in ('NBA_RS');
-update campionato set nazione = 'TENNIS' where id in ('TENNIS_AO','TENNIS_W');
 --
 create table campionato(
 	id varchar(20) primary key,
 	id_sport varchar(20) not null,
 	nome varchar(100) not null,
 	nazione varchar(100) not null default 'IT',
-	num_giornate integer not null
+	num_giornate integer not null,
+	anno_corrente integer not null default 2025
 );
 create table squadra(
 	id serial primary key,
@@ -224,6 +221,11 @@ insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO'
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',7);
+update campionato set nazione = 'IT' where id in ('SERIE_A','SERIE_B');
+update campionato set nazione = 'ES' where id in ('LIGA');
+update campionato set nazione = 'USA' where id in ('NBA_RS');
+update campionato set nazione = 'TENNIS' where id in ('TENNIS_AO','TENNIS_W');
+
 insert into squadra(sigla,nome,id_campionato,anno) values('ATA','Atalanta','SERIE_A',2025);
 insert into squadra(sigla,nome,id_campionato,anno) values('BOL','Bologna','SERIE_A',2025);
 insert into squadra(sigla,nome,id_campionato,anno) values('CAG','Cagliari','SERIE_A',2025);

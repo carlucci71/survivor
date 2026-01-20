@@ -1,6 +1,9 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.entity.Campionato;
+import it.ddlsolution.survivor.mapper.CampionatoMapper;
+import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
@@ -16,6 +19,8 @@ import java.util.Map;
 public class CampionatoService {
 //    private final CacheableService cacheableService;
     private final ObjectProvider<CacheableService> cacheableProvider;
+    private final CampionatoRepository campionatoRepository;
+    private final CampionatoMapper campionatoMapper;
 
     @Transactional(readOnly = true)
     public CampionatoDTO getCampionato(String campionatoId) {
@@ -29,6 +34,14 @@ public class CampionatoService {
     @Transactional(readOnly = true)
     public List<CampionatoDTO> allCampionati() {
         return cacheableProvider.getIfAvailable().allCampionati();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CampionatoDTO> leggiCampionati() {
+        List<Campionato> all = campionatoRepository.findAll();
+        List<CampionatoDTO> dtoList = campionatoMapper.toDTOList(all);
+        dtoList.forEach(c->c.setSquadre(cacheableProvider.getIfAvailable().getSquadreFromIdCampionato(c.getId())));
+        return dtoList;
     }
 
     @Transactional(readOnly = true)

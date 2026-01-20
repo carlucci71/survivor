@@ -36,12 +36,10 @@ public class SquadraService {
     }
 
     @Transactional(readOnly = true)
-    //@Cacheable(cacheNames = "SQUADRE", key = "#root.args[0]", sync = true)//FIXME IN CACHEABLESERVICE + LOCK
     public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato){
         List<Squadra> squadre = squadraRepository.findByNazioneOfCampionato(idCampionato);
         return squadraMapper.toDTOList(squadre);
     }
-
 
 
 }

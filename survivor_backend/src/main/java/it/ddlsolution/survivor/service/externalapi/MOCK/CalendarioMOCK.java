@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi.MOCK;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.PartitaMock;
@@ -28,7 +29,10 @@ public class CalendarioMOCK implements ICalendario {
     private final PartitaMockRepository partitaMockRepository;
 
     @Override
-    public List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno) {
+    public List<PartitaDTO> getPartite( CampionatoDTO campionatoDTO, int giornata, short anno) {
+        String campionato=campionatoDTO.getId();
+        List<SquadraDTO> squadre=campionatoDTO.getSquadre();
+        String sport = campionatoDTO.getSport().getId();
         List<PartitaMock> partiteMock = partitaMockRepository.findByCampionato_IdAndGiornataAndAnno(campionato, giornata, anno);
 
         return partiteMock.stream()

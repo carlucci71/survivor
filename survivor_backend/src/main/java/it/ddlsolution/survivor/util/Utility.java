@@ -34,9 +34,6 @@ public class Utility {
     @Autowired
     Environment environment;
 
-    @Value("${anno-default}")
-    short annoDefault;
-
     @Autowired
     RestTemplate restTemplate;
 
@@ -61,10 +58,6 @@ public class Utility {
         }
     }
 
-    public short getAnnoDefault(String idCampionato){
-        return idCampionato.equals(Enumeratori.CampionatiDisponibili.TENNIS_AO.name()) ? 2026 : annoDefault;
-
-    }
     public <T> T callUrl(String url, Class<T> clazz) {
         log.info("++++++++++++++++++++++++++++++ {}",url);
         try {

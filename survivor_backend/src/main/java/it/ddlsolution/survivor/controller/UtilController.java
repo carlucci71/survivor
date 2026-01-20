@@ -6,7 +6,6 @@ import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +25,6 @@ public class UtilController {
     private final UtilCalendarioService utilCalendarioService;
     private final CampionatoService campionatoService;
 
-    @Value("${anno-default}")
-    short annoDefault;
-
-
     @GetMapping("/profilo")
     public ResponseEntity<Map<String, String>> profilo() {
         String[] activeProfiles = environment.getActiveProfiles();
@@ -41,6 +36,6 @@ public class UtilController {
     @GetMapping("/calendario")
     public ResponseEntity<List<PartitaDTO>> calendario() {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(Enumeratori.CampionatiDisponibili.SERIE_A.name());
-        return ResponseEntity.ok(utilCalendarioService.partite(campionatoDTO, annoDefault));
+        return ResponseEntity.ok(utilCalendarioService.partite(campionatoDTO, campionatoDTO.getAnnoCorrente()));
     }
 }

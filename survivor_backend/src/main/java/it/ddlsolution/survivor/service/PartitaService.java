@@ -7,6 +7,7 @@ import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,9 @@ public class PartitaService {
     private final PartitaRepository partitaRepository;
     private final PartitaMapper partitaMapper;
     private final Utility utility;
+
+    @Value("${REFRESH_TERMINATE:false}")
+    private boolean refreshTerminate;
 
 
     @Transactional
@@ -32,7 +36,7 @@ public class PartitaService {
 
         if (partitaEsistente.isPresent()) {
             Partita esistente = partitaEsistente.get();
-            if (esistente.getStato() != Enumeratori.StatoPartita.TERMINATA) {
+            if (refreshTerminate || esistente.getStato() != Enumeratori.StatoPartita.TERMINATA) {
                 partita.setId(esistente.getId());
                 partita = partitaRepository.save(partita);
                 return partitaMapper.toDTO(partita);

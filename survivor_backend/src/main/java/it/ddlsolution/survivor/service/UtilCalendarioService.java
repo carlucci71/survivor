@@ -1,15 +1,13 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.GiocataDTO;
-import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
-import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UtilCalendarioService {
+
+    @Value("${REFRESH_TERMINATE:false}")
+    private boolean refreshTerminate;
 
     private final ObjectProvider<ICalendario> calendarioProvider;
     private final ObjectProvider<CacheableService> cacheableProvider;
@@ -65,7 +66,7 @@ public class UtilCalendarioService {
         return ret;
     }
 
-    public void refreshPartite( CampionatoDTO campionatoDTO, short anno) {
+    public void refreshPartite(CampionatoDTO campionatoDTO, short anno) {
         cacheableProvider.getIfAvailable().clearCachePartite(campionatoDTO.getId(), anno);
         cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(campionatoDTO.getId(), anno);
     }
@@ -109,10 +110,9 @@ public class UtilCalendarioService {
         if (isFirstLoading || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             partiteDiCampionatoDellaGiornata = new ArrayList<>();
-            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(campionatoDTO.getSport().getId()
-                    , campionatoDTO.getId()
+            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
+                    campionatoDTO
                     , giornata
-                    , campionatoDTO.getSquadre()
                     , anno);
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
@@ -132,7 +132,10 @@ public class UtilCalendarioService {
 
     //se almeno una partita non è terminata  o se almeno una partita si gioca nei prossimi x giorni
     private boolean partitaDaRefreshare(PartitaDTO partitaDTO) {
-        return partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0;
+        return (
+                (refreshTerminate || partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA)
+                        && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0
+        );
     }
 
     public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi, short anno) {

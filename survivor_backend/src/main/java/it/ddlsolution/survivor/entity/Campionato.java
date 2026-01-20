@@ -43,12 +43,6 @@ public class Campionato {
     @JsonManagedReference("campionato-leghe")
     private List<Lega> leghe = new ArrayList<>();
 
-    /*
-    @OneToMany(mappedBy = "campionato", cascade = CascadeType.ALL)
-    @JsonManagedReference("campionato-squadre")
-    private List<Squadra> squadre = new ArrayList<>();
-     */
-
     // Aggiungi un campo transient per le squadre filtrate
     @Transient
     @JsonProperty("squadre")
@@ -56,5 +50,8 @@ public class Campionato {
 
     @Column(name = "nazione", nullable = false, length = 100)
     private String nazione;
+
+    @Column(name = "anno_corrente", nullable = false)
+    private short annoCorrente;
 
 }

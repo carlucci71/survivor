@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service.externalapi;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 public interface ICalendario {
     //LISTA DELLE PARTITE DI UNA GIORNATA
-    List<PartitaDTO> getPartite(String sport, String campionato, int giornata, List<SquadraDTO> squadre, short anno);
+    List<PartitaDTO> getPartite(CampionatoDTO campionatoDTO, int giornata, short anno);
     //SQUADRE DI UN CAMPIONATO (SIGLA E NOME)
     IEnumSquadre[] getSquadre(String idCampionato, List<SquadraDTO> squadreDTO);
 
