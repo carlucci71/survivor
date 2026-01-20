@@ -19,7 +19,9 @@ public class InserisciGiocataService {
                 .filter(g -> g.getGiornata().equals(request.getGiornata()))
                 .filter(g -> g.getLegaId().equals(request.getLegaId()))
                 .findFirst().get();
-        giocataService.aggiornaSnapshotGiocata(giocataDTO);
+        try {
+            giocataService.aggiornaSnapshotGiocata(giocataDTO);
+        }catch (Exception e){}
         return giocatoreDTO;
     }
 

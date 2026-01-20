@@ -64,11 +64,11 @@ public class CalendarioAPI2 implements ICalendario {
         String sport = campionatoDTO.getSport().getId();
         List<PartitaDTO> ret = new ArrayList<>();
         EnumAPI2.Campionato enumCampionato = EnumAPI2.Campionato.valueOf(campionato);
-        String urlGiornata = Integer.toString(giornata);
+        String giornataPerUrl = Integer.toString(giornata);
         String attUrlCalendar;
         if (campionato.equals(EnumAPI2.Campionato.NBA_RS.name())) {
             attUrlCalendar = urlCalendar + "&phase=" + faseFromCampionato(enumCampionato);
-            urlGiornata = calcolaGiornataNBA(enumCampionato, giornata, anno);
+            giornataPerUrl = calcolaGiornataNBA(enumCampionato, giornata, anno);
         } else if (campionato.equals(EnumAPI2.Campionato.SERIE_B.name())) {
             attUrlCalendar = urlCalendar + "&phase=" + faseFromCampionato(enumCampionato);
         } else if (campionato.equals(EnumAPI2.Campionato.TENNIS_AO.name()) || campionato.equals(EnumAPI2.Campionato.TENNIS_W.name())) {
@@ -78,7 +78,12 @@ public class CalendarioAPI2 implements ICalendario {
         } else {
             throw new RuntimeException("Campionato da configurare: " + campionato);
         }
-        String urlResolved = String.format(attUrlCalendar, EnumAPI2.Sport.valueOf(sport).id, enumCampionato.id.get(Integer.valueOf(anno)), urlGiornata, anno);
+        String urlResolved = String.format(attUrlCalendar
+                , EnumAPI2.Sport.valueOf(sport).id
+                , enumCampionato.id.get(Integer.valueOf(anno))
+                , giornataPerUrl
+                , anno
+        );
         urlResolved = urlResolved.replaceAll("&seasonId=" + campionatoDTO.getAnnoCorrente(), "");
         Map response = utility.callUrl(urlResolved, Map.class);
         Map m = (Map) response.get("data");
@@ -129,6 +134,7 @@ public class CalendarioAPI2 implements ICalendario {
                     || match.get("matchId").toString().equals("396499")
                     || match.get("matchId").toString().equals("396552")
                     || match.get("matchId").toString().equals("396556")
+                    || match.get("matchId").toString().equals("414228")
             ) {
                 status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
             }

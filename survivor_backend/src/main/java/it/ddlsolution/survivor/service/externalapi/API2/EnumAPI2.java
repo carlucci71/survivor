@@ -8,7 +8,7 @@ import java.util.Map;
 class EnumAPI2 {
 
     public enum Campionato {
-        SERIE_A(Map.of(2025, 21), SquadreSerieA_API2.values()),
+        SERIE_A(Map.of(2024, 21,2025, 21), SquadreSerieA_API2.values()),
         SERIE_B(Map.of(2025, 105), SquadreSerieB_API2.values()),
         LIGA(Map.of(2025, 23), SquadreLiga_API2.values()),
         TENNIS_W(Map.of(2025, 11316), SquadreTennis_API2.values()),

@@ -24,6 +24,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
 
@@ -79,26 +80,30 @@ public class GiocataService {
     }
 
     @Transactional
-    public Long getRevNumberOfGiocata(GiocataDTO giocata) {
+    public Optional<Long> getRevNumberOfGiocata(GiocataDTO giocata) {
         Revisions<Long, Giocata> revisions = giocataRevisionRepository.findRevisions(giocata.getId());
         System.out.println("revisions = " + revisions);
-        Revision<Long, Giocata> lastRevOpt = giocataRevisionRepository.findLastChangeRevision(giocata.getId())
-                .orElseThrow(() -> new RuntimeException("Revisione non trovata"));
-        return lastRevOpt.getRequiredRevisionNumber();
+        Optional<Revision<Long, Giocata>> lastRevOpt = giocataRevisionRepository.findLastChangeRevision(giocata.getId());
+        if (lastRevOpt.isEmpty()){
+            return Optional.empty();
+        }
+        return Optional.of(lastRevOpt.get().getRequiredRevisionNumber());
 
     }
 
     @Transactional
     public void aggiornaSnapshotGiocata(GiocataDTO giocata) {
-        Long revNumber = getRevNumberOfGiocata(giocata);
-        // Prepare snapshot rows to persist
-        List<GiocataSnapshot> snapshots = List.of(
-                creaGiocataSnapshot(giocata.getId(), revNumber, "giocatore_nome", giocatoreService.findById(giocata.getGiocatoreId()).getNome()),
-                creaGiocataSnapshot(giocata.getId(), revNumber, "squadra_sigla", giocata.getSquadraSigla()),
-                creaGiocataSnapshot(giocata.getId(), revNumber, "lega_nome", legaService.getLegaDTO(giocata.getLegaId(), false, null).getName())
-        );
+        Optional<Long> revNumber = getRevNumberOfGiocata(giocata);
+        if (revNumber.isPresent()) {
+            // Prepare snapshot rows to persist
+            List<GiocataSnapshot> snapshots = List.of(
+                    creaGiocataSnapshot(giocata.getId(), revNumber.get(), "giocatore_nome", giocatoreService.findById(giocata.getGiocatoreId()).getNome()),
+                    creaGiocataSnapshot(giocata.getId(), revNumber.get(), "squadra_sigla", giocata.getSquadraSigla()),
+                    creaGiocataSnapshot(giocata.getId(), revNumber.get(), "lega_nome", legaService.getLegaDTO(giocata.getLegaId(), false, null).getName())
+            );
 
-        giocataSnapshotRepository.saveAll(snapshots);
+            giocataSnapshotRepository.saveAll(snapshots);
+        }
 
     }
 
