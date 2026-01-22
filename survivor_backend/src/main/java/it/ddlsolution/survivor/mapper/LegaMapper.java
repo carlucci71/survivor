@@ -64,6 +64,7 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {
 
+
         CampionatoDTO campionatoDTO = campionatoService.allCampionati()
                 .stream()
                 .filter(c -> c.getAnnoCorrente() == lega.getAnno() &&  c.getId().equals(lega.getCampionato().getId()))
