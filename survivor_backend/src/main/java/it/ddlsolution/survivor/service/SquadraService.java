@@ -19,8 +19,8 @@ public class SquadraService {
     private final SquadraMapper squadraMapper;
 
     @Transactional(readOnly = true)
-    public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId) {
-        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionato(campionatoId);
+    public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {
+        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId,anno);
         List<SquadraDTO> squadreDTO = squadraMapper.toDTOList(squadre)
                 .stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))

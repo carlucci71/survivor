@@ -162,7 +162,7 @@
             <span class="nome-giocatore">{{ giocatore.nome }}</span>
             <button
               *ngIf="lega.giornataCorrente !== undefined && !visualizzaGiocata(lega.giornataCorrente - lega.giornataIniziale + 1, giocatore)"
-              mat-raised-button class="gioca-btn-mobile" (click)="giocaGiornata(giocatore, lega.giornataCorrente)">
+              mat-raised-button class="gioca-btn-mobile" (click)="giocaGiornata(giocatore, lega.giornataCorrente-lega.giornataIniziale+1)">
               <mat-icon>{{ getGiocaIcon() }}</mat-icon>
               <span class="btn-text">Gioca</span>
             </button>
