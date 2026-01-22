@@ -1,5 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
@@ -61,7 +61,7 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
 })
-export class LegaDettaglioComponent {
+export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
 
   public StatoGiocatore = StatoGiocatore;
@@ -73,6 +73,11 @@ export class LegaDettaglioComponent {
   displayedColumns: string[] = [];
 
   giornataIndices: number[] = [];
+
+  // Countdown timer
+  countdown: string = '';
+  countdownActive: boolean = false;
+  private countdownIntervalId: any;
 
   // Elimina lega
   showDeleteConfirm = false;
@@ -98,6 +103,7 @@ export class LegaDettaglioComponent {
             this.lega = lega;
             this.caricaTabella();
             this.scrollTableToRight();
+            this.startCountdown();
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
@@ -604,5 +610,109 @@ export class LegaDettaglioComponent {
   getStatoGiornataValue(index: number): string {
     if (!this.lega || !this.lega.statiGiornate) return '';
     return this.lega.statiGiornate[index]?.value || '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownIntervalId) {
+      clearInterval(this.countdownIntervalId);
+    }
+  }
+
+  startCountdown(): void {
+    console.log('🕐 startCountdown chiamato per:', this.lega?.campionato?.sport?.id);
+    console.log('📅 inizioProssimaGiornata:', this.lega?.inizioProssimaGiornata);
+
+    if (!this.lega) {
+      console.warn('⚠️ Countdown non attivo - lega non caricata');
+      this.countdownActive = false;
+      return;
+    }
+
+    if (this.lega.inizioProssimaGiornata) {
+      // CASO 1: inizioProssimaGiornata è disponibile (dovrebbe funzionare per tutti gli sport)
+      this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
+    } else {
+      // CASO 2: FALLBACK - carica le partite della giornata e trova la prima
+      console.warn('⚠️ inizioProssimaGiornata non disponibile, carico le partite...');
+      this.loadFirstMatchTimeAndStartCountdown();
+    }
+  }
+
+  private loadFirstMatchTimeAndStartCountdown(): void {
+    if (!this.lega || !this.lega.campionato?.id) return;
+
+    this.campionatoService
+      .calendario(
+        this.lega.campionato.id,
+        '', // Squadra vuota per prendere tutte le partite
+        this.lega.anno,
+        this.lega.giornataCorrente,
+        true
+      )
+      .subscribe({
+        next: (partite) => {
+          if (partite && partite.length > 0) {
+            // Trova la prima partita ordinando per orario
+            const primaPartita = partite
+              .filter(p => p.orario)
+              .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
+
+            if (primaPartita && primaPartita.orario) {
+              console.log('✅ Prima partita trovata:', primaPartita.orario);
+              this.startCountdownWithTime(new Date(primaPartita.orario));
+            } else {
+              console.warn('⚠️ Nessuna partita con orario trovata');
+              this.countdownActive = false;
+            }
+          } else {
+            console.warn('⚠️ Nessuna partita trovata per la giornata');
+            this.countdownActive = false;
+          }
+        },
+        error: (error) => {
+          console.error('❌ Errore caricamento partite:', error);
+          this.countdownActive = false;
+        }
+      });
+  }
+
+  private startCountdownWithTime(matchTime: Date): void {
+    // Sottrai 5 minuti (5 * 60 * 1000 millisecondi)
+    const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
+
+    console.log('⏰ Match time:', matchTime);
+    console.log('🎯 Target time (5min prima):', targetTime);
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const countdownEndTime = targetTime.getTime();
+      const distance = countdownEndTime - now;
+
+      if (distance < 0) {
+        // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
+        this.countdown = '⏰ Tempo scaduto';
+        this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
+        // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (days > 0) {
+        this.countdown = `${days}g ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        this.countdown = `${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        this.countdown = `${minutes}m ${seconds}s`;
+      }
+
+      this.countdownActive = true;
+    };
+
+    updateCountdown();
+    this.countdownIntervalId = setInterval(updateCountdown, 1000);
   }
 }

@@ -396,7 +396,8 @@ public class LegaService {
         }
         //legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setGiornataDaGiocare(giornataCorrente);
-        if (legaDTO.getCampionato().getIniziGiornate().size()>=giornataCorrente) {
+        if (giornataCorrente > 0 && legaDTO.getCampionato().getIniziGiornate() != null
+                && legaDTO.getCampionato().getIniziGiornate().size() >= giornataCorrente) {
             legaDTO.setInizioProssimaGiornata(legaDTO.getCampionato().getIniziGiornate().get(giornataCorrente - 1));
         }
 

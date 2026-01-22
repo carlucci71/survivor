@@ -23,7 +23,20 @@
           }
     <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
     <div>Stato Lega: {{ lega.stato.descrizione }}</div>
- <div>Prossimo inizio: {{ lega.inizioProssimaGiornata }}</div>
+
+    @if(countdownActive) {
+    <div class="countdown-wrapper" [class.expired]="countdown.includes('scaduto')">
+      <mat-icon class="countdown-icon">schedule</mat-icon>
+      <div class="countdown-content">
+        @if(!countdown.includes('scaduto')) {
+          <span class="countdown-label">Chiusura scelte tra</span>
+        }
+        <span class="countdown-time">{{ countdown }}</span>
+      </div>
+    </div>
+    } @else if(lega.inizioProssimaGiornata) {
+    <div>Prossimo inizio: {{ lega.inizioProssimaGiornata }}</div>
+    }
           </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>

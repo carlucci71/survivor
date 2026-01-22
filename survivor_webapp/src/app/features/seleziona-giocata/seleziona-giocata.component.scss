@@ -139,6 +139,110 @@ h2 {
 		text-transform: uppercase;
 		letter-spacing: 0.3px;
 		text-align: center;
+
+		.team-count {
+			font-size: 0.75rem;
+			font-weight: 600;
+			color: #4FC3F7;
+			margin-left: 4px;
+		}
+	}
+}
+
+/* SEARCH CONTAINER - BARRA DI RICERCA */
+.search-container {
+	position: relative;
+	margin: 0 0 12px 0;
+	display: flex;
+	align-items: center;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.04), rgba(79, 195, 247, 0.06));
+	border: 2px solid rgba(10, 61, 145, 0.15);
+	border-radius: 16px;
+	padding: 8px 12px;
+	transition: all 0.3s ease;
+
+	&:focus-within {
+		border-color: #0A3D91;
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.1));
+		box-shadow: 0 4px 12px rgba(10, 61, 145, 0.15);
+	}
+
+	.search-icon {
+		color: #0A3D91;
+		margin-right: 8px;
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+		opacity: 0.7;
+	}
+
+	.search-input {
+		flex: 1;
+		border: none;
+		background: transparent;
+		outline: none;
+		font-size: 0.9rem;
+		font-family: 'Poppins', sans-serif;
+		color: #0A3D91;
+		font-weight: 500;
+		padding: 4px 0;
+
+		&::placeholder {
+			color: rgba(10, 61, 145, 0.5);
+			font-weight: 400;
+		}
+	}
+
+	.clear-search {
+		background: rgba(10, 61, 145, 0.1);
+		border: none;
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		padding: 0;
+		margin-left: 4px;
+
+		mat-icon {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			color: #0A3D91;
+		}
+
+		&:hover {
+			background: rgba(10, 61, 145, 0.2);
+			transform: scale(1.1);
+		}
+	}
+}
+
+/* NO RESULTS MESSAGE */
+.no-results {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 32px 16px;
+	color: #6B7280;
+
+	mat-icon {
+		font-size: 48px;
+		width: 48px;
+		height: 48px;
+		margin-bottom: 12px;
+		opacity: 0.5;
+	}
+
+	p {
+		margin: 0;
+		font-size: 0.9rem;
+		font-weight: 500;
+		text-align: center;
 	}
 }
 
@@ -150,6 +254,22 @@ h2 {
 	padding: 8px 0;
 	justify-content: center;
 	align-items: flex-start;
+	max-height: 50vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(10, 61, 145, 0.2);
+		border-radius: 10px;
+	}
 }
 
 /* CARD SQUADRA - MINI CHIP */

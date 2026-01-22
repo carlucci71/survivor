@@ -27,10 +27,38 @@
   @if(squadreDisponibili.length > 0) {
   <!-- SELEZIONE SQUADRE -->
   <div class="calendario-container">
-    <h3 class="calendario-title">Seleziona squadra</h3>
+    <h3 class="calendario-title">
+      Seleziona squadra
+      @if(searchQuery && squadreFiltrate.length > 0) {
+        <span class="team-count">({{ squadreFiltrate.length }})</span>
+      }
+    </h3>
 
-    <div class="squadre-grid">
-      @for (squadra of squadreConPartite; track squadra.sigla) {
+    <!-- BARRA DI RICERCA -->
+    <div class="search-container">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="getSearchPlaceholder()"
+        [(ngModel)]="searchQuery"
+        (input)="filtraSquadre()"
+      />
+      @if(searchQuery) {
+        <button class="clear-search" (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+
+    @if(squadreFiltrate.length === 0) {
+      <div class="no-results">
+        <mat-icon>search_off</mat-icon>
+        <p>Nessuna squadra trovata</p>
+      </div>
+    } @else {
+      <div class="squadre-grid">
+        @for (squadra of squadreFiltrate; track squadra.sigla) {
       <div
         class="squadra-card"
         [class.selected]="squadraSelezionata === squadra.sigla"
@@ -47,15 +75,16 @@
           {{ getSquadraInitials(squadra.nome) }}
         </div>
         <div class="squadra-info">
-          <span class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ squadra.nome }}</span>
+          <span class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ formatNomeSquadra(squadra.nome) }}</span>
           @if(squadra.prossimaPartita) {
-          <span class="vs-text" [style.color]="squadraSelezionata === squadra.sigla ? 'rgba(255,255,255,0.85)' : '#9CA3AF'">vs {{ getAvversarioNome(squadra.prossimaPartita, squadra.sigla) }}</span>
+          <span class="vs-text" [style.color]="squadraSelezionata === squadra.sigla ? 'rgba(255,255,255,0.85)' : '#9CA3AF'">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
           }
         </div>
         <mat-icon class="check-icon">check</mat-icon>
       </div>
       }
     </div>
+    }
   </div>
 
   <!-- AZIONI: CONFERMA + DETTAGLI -->
