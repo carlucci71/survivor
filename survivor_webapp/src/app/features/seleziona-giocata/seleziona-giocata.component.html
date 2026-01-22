@@ -8,201 +8,84 @@
     <mat-icon>close</mat-icon>
   </button>
   <h2>
-    <span class="value">{{
-      getDesGiornataTitle(data.giornata + lega.giornataIniziale - 1)
-    }}</span>
+    <span class="value">{{ getDesGiornataTitle(data.giornata) }}</span>
   </h2>
-  <div class="info-row">
-    <span class="label">Giocatore:</span>
-    <span class="value">{{ giocatore.nome }}</span>
-  </div>
-  <div class="info-row">
-    <span class="label">Stato:</span>
-    <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+
+  <!-- INFO COMPATTA ELEGANTE -->
+  <div class="info-compact">
+    <span class="info-item">
+      <span class="label">👤</span>
+      <span class="value">{{ giocatore.nome }}</span>
+    </span>
+    <span class="info-separator">|</span>
+    <span class="info-item">
+      <mat-icon class="stato-icon">{{ getGiocaIcon() }}</mat-icon>
+      <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+    </span>
   </div>
 
-  <!-- Tabs to switch between result sections (mobile-friendly) -->
-  <!-- Tabs moved below the 'vs' next-opponent span per user request -->
+  @if(squadreDisponibili.length > 0) {
+  <!-- SELEZIONE SQUADRE -->
+  <div class="calendario-container">
+    <h3 class="calendario-title">Seleziona squadra</h3>
 
-  @if(squadreDisponibili.length>0){
-  <div class="squadra-select-save">
-    <mat-form-field #selectField appearance="outline" class="select-squadra">
-      <mat-select
-        #teamSelect
-        placeholder="Seleziona squadra"
-        [(ngModel)]="squadraSelezionata"
-        (selectionChange)="mostraUltimiRisultati(); mostraProssimePartite()"
-        [ngModelOptions]="{ standalone: true }"
+    <div class="squadre-grid">
+      @for (squadra of squadreConPartite; track squadra.sigla) {
+      <div
+        class="squadra-card"
+        [class.selected]="squadraSelezionata === squadra.sigla"
+        [style.background]="squadraSelezionata === squadra.sigla
+          ? 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + ', ' + getTeamColors(squadra.sigla).secondary + ')'
+          : 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + '08, ' + getTeamColors(squadra.sigla).secondary + '12)'"
+        [style.borderColor]="getTeamColors(squadra.sigla).primary"
+        (click)="selezionaSquadra(squadra.sigla)"
       >
-        @for (squadra of squadreDisponibili; track squadra.sigla) {
-        <mat-option [value]="squadra.sigla">{{ squadra.nome }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+        <div class="squadra-icon"
+             [style.background]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).primary"
+             [style.borderColor]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).secondary"
+             [style.color]="squadraSelezionata === squadra.sigla ? getTeamColors(squadra.sigla).primary : '#FFFFFF'">
+          {{ getSquadraInitials(squadra.nome) }}
+        </div>
+        <div class="squadra-info">
+          <span class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ squadra.nome }}</span>
+          @if(squadra.prossimaPartita) {
+          <span class="vs-text" [style.color]="squadraSelezionata === squadra.sigla ? 'rgba(255,255,255,0.85)' : '#9CA3AF'">vs {{ getAvversarioNome(squadra.prossimaPartita, squadra.sigla) }}</span>
+          }
+        </div>
+        <mat-icon class="check-icon">check</mat-icon>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- AZIONI: CONFERMA + DETTAGLI -->
+  <div class="actions-container">
+    <div class="save-container">
+      <button
+        mat-raised-button
+        class="save-button"
+        (click)="salvaSquadra()"
+        [disabled]="!squadraSelezionata"
+      >
+        <mat-icon>check</mat-icon>
+        <span>Conferma</span>
+      </button>
+    </div>
+
+    @if(squadraSelezionata) {
     <button
-      mat-raised-button
-      color="primary"
-      class="save-small"
-      (click)="salvaSquadra()"
-      [disabled]="!squadraSelezionata"
+      class="details-button"
+      [style.borderColor]="getTeamColors(squadraSelezionata).primary"
+      [style.color]="getTeamColors(squadraSelezionata).primary"
+      (click)="toggleDettagli()"
     >
-      Salva
+      <mat-icon>analytics</mat-icon>
+      <span>Dettagli</span>
     </button>
-    <span class="next-opponent" *ngIf="getNextOpponentSigla(false)"
-      >vs {{ getNextOpponentSigla(false) }}</span
-    >
-    <!-- Tabs moved here: under the 'vs' opponent label -->
-    <div class="result-tabs" *ngIf="ultimiRisultati.length || prossimePartite.length || ultimiRisultatiOpponent.length">
-      <button class="tab" [class.active]="activeTab === 'ultimi'" (click)="setActiveTab('ultimi')">Ultimi</button>
-      <button class="tab" [class.active]="activeTab === 'prossime'" (click)="setActiveTab('prossime')">Prossime</button>
-      <button class="tab" [class.active]="activeTab === 'opponent'" (click)="setActiveTab('opponent')">{{getNextOpponentSigla(false)}}</button>
-    </div>
+    }
   </div>
-  <div class="risultati-row" #risultatiRow>
-    <!-- On desktop show all three columns side-by-side; on mobile show only the active tab column -->
-    <div *ngIf="!isMobile || activeTab === 'ultimi'" class="risultati-col" role="region" aria-label="Ultimi risultati">
-      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Ultimi Risultati</h3>
-      @if (squadraSelezionata && ultimiRisultati.length === 0) {
-      <div>Nessun risultato recente</div>
-      } @for (risultato of ultimiRisultati; track risultato.giornata) {
-      <div class="risultato-item">
-        <div>
-          [{{
-            getDesGiornata(
-              risultato,
-              risultato.casaSigla === squadraSelezionata
-            )
-          }}]
-          {{ risultato.orario | date : "yyyy/MM/dd" }}
-        </div>
-        <div>
-          <span
-            [class.selected-team]="risultato.casaSigla === squadraSelezionata"
-            >{{ risultato.casaNome }}</span
-          >
-          -
-          <span
-            [class.selected-team]="risultato.fuoriSigla === squadraSelezionata"
-            >{{ risultato.fuoriNome }}</span
-          >
-          <span>
-            {{ risultato.scoreCasa }}
-          </span>
-          -
-          <span>
-            {{ risultato.scoreFuori }}
-          </span>
-          <span class="result-badge">
-            @if (squadraSelezionata === risultato.casaSigla) { @if
-            (risultato.scoreCasa > risultato.scoreFuori) {
-            <span class="badge badge-v">V</span>
-            } @if (risultato.scoreCasa === risultato.scoreFuori) {
-            <span class="badge badge-n">N</span>
-            } @if (risultato.scoreCasa < risultato.scoreFuori) {
-            <span class="badge badge-p">P</span>
-            } } @if (squadraSelezionata === risultato.fuoriSigla) { @if
-            (risultato.scoreFuori > risultato.scoreCasa) {
-            <span class="badge badge-v">V</span>
-            } @if (risultato.scoreFuori === risultato.scoreCasa) {
-            <span class="badge badge-n">N</span>
-            } @if (risultato.scoreFuori < risultato.scoreCasa) {
-            <span class="badge badge-p">P</span>
-            } }
-          </span>
-        </div>
-        @if (risultato.stato && risultato.stato.value !==
-        StatoPartita.TERMINATA.value) {
-        <span>{{ risultato.stato.value }}</span>
-        }
-      </div>
-      }
-    </div>
 
-    <div *ngIf="!isMobile || activeTab === 'prossime'" class="risultati-col" role="region" aria-label="Prossime partite">
-      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Prossime partite</h3>
-      @if (squadraSelezionata && prossimePartite.length === 0) {
-      <div>Nessuna partita in programma</div>
-      } @for (risultato of prossimePartite; track risultato.giornata) {
-      <div class="risultato-item">
-        <div>
-          [{{
-            getDesGiornata(
-              risultato,
-              risultato.casaSigla === squadraSelezionata
-            )
-          }}]
-          {{ risultato.orario | date : "yyyy/MM/dd" }}
-        </div>
-        <div>
-          <span
-            [class.selected-team]="risultato.casaSigla === squadraSelezionata"
-            >{{ risultato.casaNome }}</span
-          >
-          -
-          <span
-            [class.selected-team]="risultato.fuoriSigla === squadraSelezionata"
-            >{{ risultato.fuoriNome }}</span
-          >
-        </div>
-      </div>
-      }
-    </div>
-
-    <div *ngIf="!isMobile || activeTab === 'opponent'" class="risultati-col" role="region" [attr.aria-label]="'Ultimi risultati ' + (getNextOpponentSigla(false) || '')">
-      <h3 class="risultati-title" [class.hidden-when-tabs]="!(ultimiRisultati.length||prossimePartite.length||ultimiRisultatiOpponent.length)">Ultimi Risultati {{ getNextOpponentSigla(false) }}</h3>
-      @if (squadraSelezionata && ultimiRisultatiOpponent.length === 0) {
-      <div>Nessun risultato recente per {{ getNextOpponentSigla(false) }}</div>
-      } @for (risultato of ultimiRisultatiOpponent; track risultato.giornata) {
-      <div class="risultato-item">
-        <div>
-          [{{
-            getDesGiornata(
-              risultato,
-              risultato.casaSigla === getNextOpponentSigla(true)
-            )
-          }}]
-          {{ risultato.orario | date : "yyyy/MM/dd" }}
-        </div>
-        <div>
-          <span
-            [class.selected-team]="
-              risultato.casaSigla === getNextOpponentSigla(true)
-            "
-            >{{ risultato.casaNome }}</span
-          >
-          -
-          <span
-            [class.selected-team]="
-              risultato.fuoriSigla === getNextOpponentSigla(true)
-            "
-            >{{ risultato.fuoriNome }}</span
-          >
-        </div>
-        <div>
-          {{ risultato.scoreCasa }} - {{ risultato.scoreFuori }}
-          <span class="result-badge">
-            @if (getNextOpponentSigla(true) === risultato.casaSigla) { @if
-            (risultato.scoreCasa > risultato.scoreFuori) {
-            <span class="badge badge-v">V</span>
-            } @if (risultato.scoreCasa === risultato.scoreFuori) {
-            <span class="badge badge-n">N</span>
-            } @if (risultato.scoreCasa < risultato.scoreFuori) {
-            <span class="badge badge-p">P</span>
-            } } @if (getNextOpponentSigla(true) === risultato.fuoriSigla) { @if
-            (risultato.scoreFuori > risultato.scoreCasa) {
-            <span class="badge badge-v">V</span>
-            } @if (risultato.scoreFuori === risultato.scoreCasa) {
-            <span class="badge badge-n">N</span>
-            } @if (risultato.scoreFuori < risultato.scoreCasa) {
-            <span class="badge badge-p">P</span>
-            } }
-          </span>
-        </div>
-      </div>
-      }
-    </div>
-  </div>
-  }@else {
-    <h4>Purtroppo non hai giocate disponibili</h4>
+  } @else {
+    <h4 style="text-align: center; color: #6B7280;">Purtroppo non hai giocate disponibili</h4>
   }
 </div>

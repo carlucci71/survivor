@@ -66,7 +66,7 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
         CampionatoDTO campionatoDTO = campionatoService.allCampionati()
                 .stream()
-                .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                .filter(c -> c.getAnnoCorrente() == lega.getAnno() &&  c.getId().equals(lega.getCampionato().getId()))
                 .findFirst()
                 .get();
         legaDTO.setCampionato(campionatoDTO);

@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
@@ -12,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class GiocatoreService {
                 }
         ));
     }
+
 
     @Transactional
     public Giocatore findMe() {

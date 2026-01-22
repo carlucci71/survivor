@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-login',
@@ -20,12 +21,12 @@ export class LoginComponent {
   email = '';
   message = '';
   isSuccess = false;
-  
+  termsAccepted = false;
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   onSubmit(): void {
     if (!this.email) {
@@ -34,7 +35,13 @@ export class LoginComponent {
       return;
     }
 
-        this.authService.requestMagicLink(this.email).subscribe({
+    if (!this.termsAccepted) {
+      this.message = 'Devi accettare i Termini e Condizioni per continuare';
+      this.isSuccess = false;
+      return;
+    }
+
+    this.authService.requestMagicLink(this.email).subscribe({
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;

@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCard, MatCardHeader } from "@angular/material/card";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatFormField, MatLabel, MatFormFieldModule } from "@angular/material/form-field";
 import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { GiocatoreService } from '../../core/services/giocatore.service';
 import { Giocatore } from '../../core/models/interfaces.model';
@@ -14,7 +14,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 
 @Component({
   selector: 'app-me',
-  imports: [HeaderComponent, MatCard, MatCardHeader, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton],
+  imports: [HeaderComponent, MatCard, MatCardHeader, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton, MatIcon],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss']
 })
@@ -38,7 +38,7 @@ export class MeComponent {
         this.nome=giocatore.nome;
       }}
     );
-  }  
+  }
 
   goBack(): void {
     this.router.navigate(['/home']);

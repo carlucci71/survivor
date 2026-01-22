@@ -1,285 +1,648 @@
+/* Popup Selezione Squadra - DESIGN COMPATTO */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* CONTAINER PRINCIPALE */
 .modal-container {
 	position: relative;
-	background: #fff;
-	border-radius: 14px;
-	box-shadow: 0 4px 24px rgba(0,0,0,0.13);
-	padding: 32px 36px 28px 36px;
-	min-width: 340px;
+	background: #FFFFFF;
+	border-radius: 20px;
+	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
+	padding: 20px 16px;
+	width: 94vw;
+	max-width: 500px;
 	max-height: 90vh;
-	overflow: hidden;
-	z-index: 2;
+	overflow-y: auto;
+	overflow-x: hidden;
+	z-index: 10000;
+	font-family: 'Poppins', sans-serif;
+	box-sizing: border-box;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(10, 61, 145, 0.2);
+		border-radius: 10px;
+	}
 }
 
-/* Ensure modal appears above overlays and is scrollable on small screens */
-.modal-container { z-index: 10000; }
-
+/* CLOSE BUTTON */
 .close-btn {
 	position: absolute;
-	top: 12px;
-	right: 12px;
+	top: 10px;
+	right: 10px;
 	z-index: 10;
+	width: 32px;
+	height: 32px;
+	background: rgba(10, 61, 145, 0.08);
+	border-radius: 50%;
+	transition: all 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	border: none;
+	cursor: pointer;
+
+	mat-icon {
+		color: #0A3D91;
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.15);
+		transform: scale(1.1);
+	}
 }
 
+/* TITOLO H2 */
 h2 {
-	margin-top: 0;
-	margin-bottom: 18px;
-	font-size: 2rem;
-	font-weight: 700;
-	letter-spacing: -1px;
-}
-
-.info-row {
-	display: flex;
-	gap: 8px;
-	margin-bottom: 4px;
-	font-size: 1.08rem;
-}
-.label {
-	font-weight: 600;
-}
-.value {
-	font-weight: 400;
-}
-
-.squadra-select-save {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	margin-top: 24px;
-}
-
-.next-opponent {
-	margin-left: 8px;
-	font-weight: 600;
-	align-self: center;
-}
-
-button[mat-raised-button] {
-	min-width: 80px;
-	max-height: 30px;
-	font-weight: 600;
-	font-size: 1rem;
-}
-
-.risultati {
-	margin-top: 18px;
-	max-height: min(40vh, 320px);
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
-	padding-right: 8px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.risultati-row {
-	display: flex;
-	gap: 20px;
-	margin-top: 18px;
-}
-
-.result-tabs {
-	display: flex;
-	gap: 8px;
-	margin-top: 10px;
-}
-.result-tabs .tab {
-	flex: 1 1 auto;
-	padding: 8px 10px;
-	border-radius: 8px;
-	background: #f5f7fb;
-	border: 1px solid #e0e6f0;
-	font-weight: 700;
-}
-.result-tabs .tab.active {
-	background: var(--primary-color);
-	color: #fff;
-	border-color: var(--primary-dark);
-}
-
-.save-small { padding: 8px 12px; height: 40px; min-width: 64px; }
-.hidden-when-tabs { display: none; }
-.result-tabs { display: none; } /* hide tabs by default (desktop) */
-.result-tabs + .squadra-select-save { margin-top: 12px; }
-.risultati-col {
-	/* each column takes one third on larger screens */
-	flex: 0 0 33%;
-	min-width: 240px;
-	max-height: min(48vh, 420px);
-	/* use overlay scrollbars inside each column so they sit flush to the column edge */
-	overflow-y: overlay;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-.risultati-title {
-	margin: 0 0 8px 0;
-	font-size: 1.05rem;
-	font-weight: 700;
-}
-
-.risultato-item {
-	padding: 8px 10px;
-	border-radius: 8px;
-	background: #f8f8f8;
-	font-size: 0.95rem;
-}
-
-.selected-team {
-  font-weight: 700;
-}
-
-.result-badge {
-	display: inline-flex;
-	align-items: center;
-	margin-left: 8px;
-}
-.badge {
-	display: inline-block;
-	width: 22px;
-	height: 18px;
-	line-height: 18px;
+	margin: 0 0 12px 0;
+	font-size: 1.2rem;
+	font-weight: 800;
+	color: #0A3D91;
+	font-family: 'Poppins', sans-serif;
+	padding-right: 40px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
 	text-align: center;
-	border-radius: 4px;
-	font-weight: 700;
-	color: #fff;
-	font-size: 0.85rem;
-	margin-left: 4px;
-}
-.badge-v { background: var(--primary-color); }
-.badge-n { background: #f5c842; color: #212121; }
-.badge-p { background: #e21b1b; }
 
-/* Fallbacks / tweaks for small screens */
-@media (max-width: 700px) {
-	/* On small screens show the tabs */
-	.result-tabs { display: flex !important; }
-	/* hide desktop column headers/titles when tabs are present */
-	.hidden-when-tabs { display: none !important; }
-	/* Make dialog full-screen and ensure only one visible container */
-	:host ::ng-deep .cdk-overlay-backdrop {
-		z-index: 10000 !important;
-		position: fixed !important;
-		inset: 0 !important;
-		height: 100vh !important;
-		background: rgba(0,0,0,0.28) !important;
+	.value {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
 	}
-	:host ::ng-deep .mat-dialog-container {
-		padding: 0 !important;
-		max-width: 100vw !important;
-		width: 100vw !important;
-		height: 100vh !important;
-		margin: 0 !important;
-		display: block !important;
-		background: transparent !important;
-		box-shadow: none !important;
-		position: fixed !important;
-		top: 0 !important;
-		left: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		z-index: 10002 !important;
-	}
-
-/* prevent background page scrolling when overlay is active */
-:host ::ng-deep .cdk-global-scrollblock {
-  height: 100% !important;
-  overflow: hidden !important;
 }
 
-	/* Force the actual content container to fill the viewport and remove floating box visuals */
-	.modal-container {
-		position: fixed !important;
-		top: 0 !important;
-		left: 0 !important;
-		right: 0 !important;
-		bottom: 0 !important;
-		width: 100% !important;
-		height: 100vh !important;
-		min-height: 100vh !important;
-		padding: 18px 16px 24px 16px !important; /* reduce space reserved for footer */
-		margin: 0 !important;
-		border-radius: 0 !important;
-		box-shadow: none !important;
-		background: #fff !important;
-		overflow-y: auto !important;
-		z-index: 10001 !important;
-	}
+/* INFO COMPATTA - STILE CARD ELEGANTE */
+.info-compact {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	margin-bottom: 16px;
+	padding: 12px 20px;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08));
+	border-radius: 16px;
+	border: 1px solid rgba(10, 61, 145, 0.1);
 
-	.risultati {
-		max-height: min(50vh, 320px);
-		overflow: visible;
-	}
-
-	.risultati-row {
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	.risultati-col {
-		flex: 1 1 0;
-		min-width: auto;
-		max-height: 35vh;
-		overflow-y: auto;
-	}
-
-	/* Hide column titles on mobile, tabs are sufficient */
-	.risultati-title { display: none !important; }
-
-	/* Make the tabs sticky at the top of the modal so they remain visible while scrolling results */
-	.result-tabs {
-		position: sticky;
-		top: 12px; /* a little below the dialog header */
-		z-index: 10005;
-		background: #fff;
-		padding: 6px 6px 8px 6px;
-		border-radius: 8px;
-		box-shadow: 0 6px 18px rgba(16,24,40,0.08);
-	}
-	.result-tabs .tab { min-height: 36px; height: 36px; padding: 6px 8px; }
-
-	/* Ensure the risultati-row has space on top so sticky tabs don't overlap content */
-	.risultati-row { padding-top: 12px; }
-}
-
-/* Additional tweaks to make controls stack and be tappable on phones */
-@media (max-width: 700px) {
-  :host ::ng-deep .mat-dialog-container { padding: 0 !important; display: flex; align-items: flex-start; justify-content: center; }
-
-  .squadra-select-save { flex-direction: column; align-items: stretch; gap: 10px; }
-  .select-squadra { width: 100% !important; min-width: auto !important; }
-  button[mat-raised-button] { width: 100%; }
-  .next-opponent { margin-left: 0; }
-  .close-btn { top: 8px; right: 8px; }
-}
-
-/* Mobile footer becomes part of the flow (not fixed) to avoid keyboard pushing content */
-@media (max-width: 700px) {
-	.squadra-select-save {
-		position: relative;
-		left: auto;
-		right: auto;
-		bottom: auto;
-		padding: 12px 8px;
-		background: transparent;
-		box-shadow: none;
-		z-index: auto;
+	.info-item {
 		display: flex;
+		align-items: center;
 		gap: 8px;
+
+		.label {
+			font-size: 1.1rem;
+		}
+
+		.value {
+			font-weight: 700;
+			font-size: 0.9rem;
+			color: #0A3D91;
+			background: rgba(255, 255, 255, 0.8);
+			padding: 4px 12px;
+			border-radius: 20px;
+			box-shadow: 0 2px 8px rgba(10, 61, 145, 0.1);
+		}
+
+		.stato-icon {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+			color: #4FC3F7;
+		}
+	}
+
+	.info-separator {
+		color: rgba(10, 61, 145, 0.3);
+		font-size: 1.2rem;
+	}
+}
+
+/* CALENDARIO CONTAINER */
+.calendario-container {
+	margin: 12px 0;
+
+	.calendario-title {
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: #0A3D91;
+		margin: 0 0 10px 0;
+		text-transform: uppercase;
+		letter-spacing: 0.3px;
+		text-align: center;
+	}
+}
+
+/* GRID SQUADRE - GRIGLIA COMPATTA CENTRATA */
+.squadre-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 8px 0;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+/* CARD SQUADRA - MINI CHIP */
+.squadra-card {
+	border: 2px solid;
+	border-radius: 12px;
+	padding: 6px 10px;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	min-width: 105px;
+	max-width: 140px;
+	box-sizing: border-box;
+
+	&:hover {
+		transform: scale(1.04);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+		z-index: 2;
+	}
+
+	&.selected {
+		transform: scale(1.06);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+		z-index: 3;
+
+		.squadra-nome {
+			font-weight: 800;
+		}
+
+		.check-icon {
+			display: flex;
+		}
+	}
+
+	.squadra-icon {
+		width: 28px;
+		height: 28px;
+		min-width: 28px;
+		border-radius: 50%;
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-top: 12px;
+		color: #FFFFFF;
+		font-weight: 700;
+		font-size: 0.6rem;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+		border: 2px solid;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	}
-	.squadra-select-save .select-squadra { flex: 1 1 auto; max-width: none; }
-	.squadra-select-save button[mat-raised-button] { flex: 0 0 72px; width: 72px; height: 36px; padding: 6px 8px; border-radius: 6px; }
-	/* ensure content isn't hidden behind footer */
-	.modal-container { padding-bottom: 24px !important; }
-	.risultati-row { padding-bottom: 8px; }
 
-	/* ensure scrollIntoView doesn't hide content behind footer */
-	.risultati-row { scroll-margin-bottom: 60px; }
+	.squadra-info {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		flex: 1;
+		min-width: 0;
+	}
 
-	/* On mobile, show all results inline (no inner scroll) so items are visible */
-	.risultati-col { max-height: none !important; overflow: visible !important; }
+	.squadra-nome {
+		font-size: 0.65rem;
+		font-weight: 700;
+		color: #0A3D91;
+		margin: 0;
+		line-height: 1.2;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.vs-text {
+		font-size: 0.5rem;
+		font-weight: 500;
+		color: #9CA3AF;
+		line-height: 1.1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.check-icon {
+		display: none;
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		color: #FFFFFF;
+		font-size: 14px;
+		width: 14px;
+		height: 14px;
+		background: #10B981;
+		border-radius: 50%;
+		animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+@keyframes checkPop {
+	0% { transform: scale(0); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+}
+
+/* CONTAINER AZIONI */
+.actions-container {
+	display: flex;
+	gap: 10px;
+	margin-top: 16px;
+}
+
+/* BOTTONE SALVA */
+.save-container {
+	flex: 1;
+}
+
+.save-button {
+	width: 100%;
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+	color: #FFFFFF !important;
+	border: none !important;
+	border-radius: 14px !important;
+	padding: 14px 24px !important;
+	font-weight: 700 !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-size: 0.9rem !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.5px !important;
+	box-shadow: 0 6px 24px rgba(10, 61, 145, 0.25) !important;
+	transition: all 0.3s ease !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 8px !important;
+
+	mat-icon {
+		font-size: 20px;
+		width: 20px;
+		height: 20px;
+	}
+
+	&:hover:not(:disabled) {
+		transform: translateY(-3px);
+		box-shadow: 0 10px 36px rgba(10, 61, 145, 0.35) !important;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		background: #E0E0E0 !important;
+		color: #9CA3AF !important;
+		transform: none !important;
+		box-shadow: none !important;
+	}
+}
+
+/* BOTTONE DETTAGLI */
+.details-button {
+	background: transparent !important;
+	border: 2px solid !important;
+	border-radius: 14px !important;
+	padding: 14px 20px !important;
+	font-weight: 600 !important;
+	font-family: 'Poppins', sans-serif !important;
+	font-size: 0.8rem !important;
+	transition: all 0.3s ease !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	gap: 6px !important;
+	white-space: nowrap;
+
+	mat-icon {
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+	}
+}
+
+/* DETTAGLI SQUADRA - CARD CON COLORI SQUADRA */
+.dettagli-squadra {
+	border-radius: 16px;
+	padding: 16px;
+	margin-top: 16px;
+	animation: slideIn 0.3s ease;
+	border: 2px solid;
+}
+
+@keyframes slideIn {
+	from { opacity: 0; transform: translateY(-10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.dettagli-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 14px;
+	padding-bottom: 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+
+	.dettagli-title {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 1rem;
+		font-weight: 700;
+
+		.squadra-badge {
+			padding: 6px 14px;
+			background: rgba(255, 255, 255, 0.95);
+			border-radius: 20px;
+			font-size: 0.85rem;
+			font-weight: 800;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		}
+	}
+
+	.close-dettagli {
+		background: rgba(255, 255, 255, 0.2);
+		border: none;
+		cursor: pointer;
+		padding: 6px;
+		border-radius: 50%;
+		transition: all 0.2s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.4);
+			transform: scale(1.1);
+		}
+
+		mat-icon {
+			font-size: 18px;
+			width: 18px;
+			height: 18px;
+		}
+	}
+}
+
+/* TABS COMPATTI */
+.tabs-dettagli {
+	display: flex;
+	gap: 6px;
+	margin-bottom: 12px;
+
+	.tab-dettaglio {
+		flex: 1;
+		padding: 8px 10px;
+		background: rgba(255, 255, 255, 0.9);
+		color: #374151;
+		border: none;
+		border-radius: 10px;
+		font-weight: 600;
+		font-family: 'Poppins', sans-serif;
+		font-size: 0.7rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		text-align: center;
+
+		&:hover {
+			background: #FFFFFF;
+			transform: translateY(-1px);
+		}
+
+		&.active {
+			background: #FFFFFF;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			font-weight: 700;
+		}
+	}
+}
+
+/* CONTENUTO TAB */
+.tab-content {
+	background: rgba(255, 255, 255, 0.95);
+	border-radius: 12px;
+	padding: 12px;
+	max-height: 200px;
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.15);
+		border-radius: 4px;
+	}
+}
+
+.risultati-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.risultato-item-detail {
+	background: #F8FAFC;
+	border-radius: 8px;
+	padding: 6px 10px;
+	border-left: 3px solid;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+
+	.risultato-header {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		min-width: auto;
+
+		.giornata-label {
+			font-size: 0.55rem;
+			font-weight: 700;
+			color: #374151;
+			white-space: nowrap;
+		}
+
+		.data-label {
+			font-size: 0.5rem;
+			color: #9CA3AF;
+			white-space: nowrap;
+		}
+	}
+
+	.risultato-match {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		font-size: 0.6rem;
+		font-weight: 600;
+		color: #0A3D91;
+		flex: 1;
+		justify-content: center;
+		white-space: nowrap;
+
+		.team-selected {
+			font-weight: 800;
+		}
+
+		.score {
+			font-weight: 700;
+			background: #FFFFFF;
+			padding: 2px 6px;
+			border-radius: 4px;
+			font-size: 0.6rem;
+			border: 1px solid #E5E7EB;
+		}
+
+		.vs {
+			color: #9CA3AF;
+			font-size: 0.5rem;
+		}
+	}
+
+	.risultato-badge {
+		.badge {
+			padding: 2px 6px;
+			font-size: 0.5rem;
+			border-radius: 4px;
+		}
+	}
+}
+
+/* BADGE RISULTATI */
+.badge {
+	padding: 5px 12px;
+	border-radius: 8px;
+	font-weight: 700;
+	font-size: 0.7rem;
+	color: #FFFFFF;
+	display: inline-block;
+
+	&.badge-v {
+		background: linear-gradient(135deg, #10B981, #34D399);
+	}
+
+	&.badge-n {
+		background: linear-gradient(135deg, #F59E0B, #FBBF24);
+	}
+
+	&.badge-p {
+		background: linear-gradient(135deg, #EF4444, #F87171);
+	}
+}
+
+.no-data {
+	text-align: center;
+	color: #6B7280;
+	font-style: italic;
+	padding: 24px;
+	font-size: 0.8rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+	.modal-container {
+		padding: 16px 12px;
+		width: 90vw;
+		max-width: 98vw;
+	}
+
+	h2 {
+		font-size: 1rem;
+		margin-bottom: 10px;
+	}
+
+	.info-compact {
+		padding: 10px 14px;
+		gap: 12px;
+		flex-wrap: wrap;
+
+		.info-item .value {
+			font-size: 0.8rem;
+			padding: 3px 10px;
+		}
+	}
+
+	.squadre-grid {
+		gap: 5px;
+	}
+
+	.squadra-card {
+		min-width: 95px;
+		max-width: 125px;
+		padding: 5px 8px;
+		gap: 6px;
+
+		.squadra-icon {
+			width: 24px;
+			height: 24px;
+			min-width: 24px;
+			font-size: 0.55rem;
+		}
+
+		.squadra-nome {
+			font-size: 0.6rem;
+		}
+
+		.vs-text {
+			font-size: 0.45rem;
+		}
+	}
+
+	.actions-container {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.save-button {
+		padding: 12px 20px !important;
+		font-size: 0.85rem !important;
+	}
+
+	.details-button {
+		padding: 10px 16px !important;
+		font-size: 0.75rem !important;
+	}
+
+	.dettagli-squadra {
+		padding: 12px;
+	}
+
+	.tabs-dettagli .tab-dettaglio {
+		padding: 6px 8px;
+		font-size: 0.65rem;
+	}
+
+	.tab-content {
+		max-height: 160px;
+		padding: 10px;
+	}
+
+	.risultato-item-detail {
+		padding: 8px 10px;
+		flex-wrap: wrap;
+
+		.risultato-match {
+			font-size: 0.65rem;
+			order: -1;
+			width: 100%;
+			margin-bottom: 6px;
+		}
+	}
 }

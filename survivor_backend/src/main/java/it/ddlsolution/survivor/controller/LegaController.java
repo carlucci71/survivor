@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -114,6 +115,12 @@ public class LegaController {
     @PutMapping("/cancellaGiocatoreDaLega/{idLega}/{idGiocatore}")
     public ResponseEntity<LegaDTO> cancellaGiocatoreDaLega(@PathVariable Long idLega,@PathVariable Long idGiocatore) {
         return ResponseEntity.ok(legaService.cancellaGiocatoreDaLega(idLega, idGiocatore));
+    }
+
+    @DeleteMapping("/{idLega}")
+    public ResponseEntity<Map<String, Object>> eliminaLega(@PathVariable Long idLega) {
+        legaService.eliminaLega(idLega);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Lega eliminata con successo"));
     }
 
 }

@@ -1,16 +1,98 @@
+/* ICONA GIOCA - MINIMAL SENZA SFONDO */
 .gioca-icon {
-	font-size: 20px;
-	color: var(--primary-color);
-	/* spacing handled by container */
+	font-size: 22px;
+	color: #0A3D91;
 	margin: 0;
 	vertical-align: middle;
 	cursor: pointer;
-	transition: color 0.2s;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: transparent;
+	border: none;
+
+	&:hover {
+		color: #4FC3F7;
+		transform: scale(1.15);
+	}
+
+	&:active {
+		transform: scale(1);
+	}
 }
-.gioca-icon:hover {
-	color: var(--primary-dark);
+
+/* ICONA GIOCA ACCANTO AL NOME - SENZA SFONDO AZZURRO */
+.gioca-icon-nome {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	color: #0A3D91 !important;
+	font-size: 20px !important;
+	line-height: 1 !important;
+	transition: all 0.2s ease !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 24px !important;
+	height: 24px !important;
+	margin-left: 8px !important;
+	cursor: pointer !important;
+	vertical-align: middle !important;
+
+	&:hover {
+		color: #4FC3F7 !important;
+		transform: scale(1.2) !important;
+	}
+
+	&:active {
+		transform: scale(1) !important;
+	}
 }
-.giocatori-table td.ko-font, .ko-font {
+
+@media (max-width: 768px) {
+	.gioca-icon {
+		width: 28px;
+		height: 28px;
+		font-size: 20px;
+	}
+
+	.gioca-icon-nome {
+		width: 20px;
+		height: 20px;
+		font-size: 18px;
+		margin-left: 6px;
+	}
+}
+
+/* TOOLTIP MODERNI E COERENTI */
+::ng-deep {
+
+	.mat-mdc-tooltip,
+	.mat-tooltip {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+		color: #FFFFFF !important;
+		font-family: 'Poppins', sans-serif !important;
+		font-size: 0.9rem !important;
+		font-weight: 600 !important;
+		padding: 10px 16px !important;
+		border-radius: 12px !important;
+		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3) !important;
+		letter-spacing: 0.01em !important;
+	}
+
+	.mat-mdc-tooltip .mdc-tooltip__surface,
+	.mat-tooltip-panel {
+		background: transparent !important;
+		color: inherit !important;
+	}
+}
+
+.giocatori-table td.ko-font,
+.ko-font {
 	color: #ffff00 !important;
 	font-weight: bold !important;
 	text-shadow: none !important;
@@ -20,14 +102,15 @@
 
 .ok-font {
 	display: inline-block;
-	background: #2e7d32; /* green 700 */
+	background: #2e7d32;
+	/* green 700 */
 	color: #fff !important;
 	padding: 2px 8px;
 	border-radius: 12px;
 	font-weight: 600;
 	font-size: 0.9em;
 	line-height: 1;
-	box-shadow: 0 1px 0 rgba(0,0,0,0.12);
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
 }
 
 /* If the ok badge appears inside a red cell, invert to keep contrast */
@@ -42,7 +125,8 @@
 /* KO badge style */
 .ko-badge {
 	display: inline-block;
-	background: #d32f2f; /* red 700 */
+	background: #d32f2f;
+	/* red 700 */
 	color: #fff;
 	padding: 2px 8px;
 	border-radius: 12px;
@@ -92,38 +176,42 @@
 /* If row is eliminato or ko, keep pill readable */
 .eliminato-row .stato-pill,
 .ko-font .stato-pill {
-	background: rgba(255,255,255,0.95) !important;
+	background: rgba(255, 255, 255, 0.95) !important;
 	color: #222 !important;
 }
 
 .corrente-col .gioca-icon {
-	background: #ffe600;
+	/* Stile pulito senza background - come l'icona generale */
+	background: transparent;
 	border-radius: 50%;
-	padding: 0; /* use fixed width/height */
-	border: 2px solid #ff9800;
-	box-shadow: 0 0 6px 1px #ff980033;
-	color: #111;
-	font-size: 16px;
+	padding: 0;
+	border: none;
+	box-shadow: none;
+	color: #0A3D91;
+	font-size: 22px;
 	line-height: 1;
-	transition: transform 0.12s ease, box-shadow 0.12s ease;
+	transition: all 0.2s ease;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
+	width: 32px;
+	height: 32px;
 }
+
 .corrente-col .gioca-icon:hover {
-	transform: translateY(-1px) scale(1.02);
-	box-shadow: 0 2px 8px 2px #ff980044;
+	color: #4FC3F7;
+	transform: scale(1.15);
 }
+
 .giocatori-table td .team-name,
 .team-name {
 	background: #f8fbff;
 	padding: 4px 8px !important;
 	border-radius: 8px !important;
-	box-shadow: 0 2px 6px rgba(16,24,40,0.06) !important;
+	box-shadow: 0 2px 6px rgba(16, 24, 40, 0.06) !important;
 	/* Keep the full name in the DOM, but visually constrain it with ellipsis */
-	max-width: 200px !important; /* aumentato per ellipsis più lunghi */
+	max-width: 200px !important;
+	/* aumentato per ellipsis più lunghi */
 	overflow: hidden !important;
 	text-overflow: ellipsis !important;
 	white-space: nowrap !important;
@@ -156,79 +244,75 @@
 	border: 1px solid #757575 !important;
 }
 
-/* Keep card-like look readable in red/eliminated rows */
-.eliminato-row .team-name,
-.ko-font .team-name {
-	/* Mantiene il colore basato su ok/ko/empty */
-}
+
 
 .header {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-  color: white;
-  padding: 20px 0;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+	color: white;
+	padding: 20px 0;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
-  .header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	.header-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 20px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 
-    h1 {
-      margin: 0;
-      font-size: 28px;
-    }
+		h1 {
+			margin: 0;
+			font-size: 28px;
+		}
 
 		.config-user {
-      display: flex;
-      align-items: center;
-      gap: 15px;
+			display: flex;
+			align-items: center;
+			gap: 15px;
 
-	      /* ensure projected config-user isn't truncated by surrounding component styles */
-	      max-width: none !important;
-	      overflow: visible !important;
-	      white-space: normal !important;
+			/* ensure projected config-user isn't truncated by surrounding component styles */
+			max-width: none !important;
+			overflow: visible !important;
+			white-space: normal !important;
 
-      .welcome {
-        font-weight: 500;
-      }
+			.welcome {
+				font-weight: 500;
+			}
 
-      .role-badge {
-        padding: 6px 12px;
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 600;
+			.role-badge {
+				padding: 6px 12px;
+				background-color: rgba(255, 255, 255, 0.2);
+				border-radius: 20px;
+				font-size: 14px;
+				font-weight: 600;
 
-        &.admin {
-          background-color: #ffc107;
-          color: #333;
-        }
-      }
+				&.admin {
+					background-color: #ffc107;
+					color: #333;
+				}
+			}
 
-      .btn-logout {
-        padding: 8px 20px;
-        background-color: rgba(255, 255, 255, 0.2);
-        color: white;
-        border: 2px solid white;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s;
+			.btn-logout {
+				padding: 8px 20px;
+				background-color: rgba(255, 255, 255, 0.2);
+				color: white;
+				border: 2px solid white;
+				border-radius: 8px;
+				cursor: pointer;
+				font-weight: 600;
+				transition: all 0.3s;
 
-        &:hover {
-          background-color: white;
-          color: #667eea;
-        }
-      }
-    }
-  }
+				&:hover {
+					background-color: white;
+					color: #667eea;
+				}
+			}
+		}
+	}
 }
 
 /* Ensure standalone header inside this view spans full width like admin */
-.lega-dettaglio-container > .header {
+.lega-dettaglio-container>.header {
 	width: 100%;
 	box-sizing: border-box;
 }
@@ -239,7 +323,7 @@
 		gap: 15px;
 		text-align: center;
 
-        .config-user {
+		.config-user {
 			flex-wrap: wrap;
 			justify-content: center;
 		}
@@ -261,7 +345,7 @@
 .lega-card {
 	background: #fff;
 	border-radius: 16px;
-	box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 	padding: 32px 40px;
 	width: 100%;
 	max-width: 900px;
@@ -275,7 +359,8 @@
 	border-collapse: separate;
 	border-spacing: 0;
 	margin-top: 16px;
-	table-layout: auto; /* allow first column to size for long names */
+	table-layout: auto;
+	/* allow first column to size for long names */
 	background: #fff;
 	font-size: 0.97rem;
 }
@@ -283,14 +368,19 @@
 .giocatori-table th,
 .giocatori-table td {
 	width: 100px;
-	border: 1px solid #e0e0e0;
-	padding: 6px 4px;
+	border: 1px solid var(--color-gray-border);
+	padding: 10px 8px;
 	text-align: center;
 	vertical-align: middle;
-	font-size: 0.97rem;
+	font-size: 0.95rem;
 	overflow-wrap: break-word;
 	word-break: break-word;
-	background: #fff;
+	background: var(--color-white);
+	transition: background 0.2s ease;
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.02);
+	}
 }
 
 .giocatori-table th.mat-header-cell {
@@ -316,9 +406,10 @@
 .giocatori-table td:first-child {
 	white-space: normal;
 	word-wrap: break-word;
-		width: auto !important;
-		min-width: 220px !important; /* larger so names don't get clipped */
-		max-width: 480px !important;
+	width: auto !important;
+	min-width: 220px !important;
+	/* larger so names don't get clipped */
+	max-width: 480px !important;
 	font-weight: 600;
 	font-size: 0.92rem;
 	padding: 8px 12px !important;
@@ -335,7 +426,8 @@
 
 /* Allow the first cell content to align flex-start so multi-line names look natural */
 .giocatori-table td.mat-cell:first-child {
-	justify-content: center; /* keep centered vertically */
+	justify-content: center;
+	/* keep centered vertically */
 	padding-left: 14px !important;
 	padding-right: 14px !important;
 }
@@ -357,7 +449,7 @@
 }
 
 .eliminato-row .nome-giocatore {
-	background: rgba(255,255,255,0.95) !important;
+	background: rgba(255, 255, 255, 0.95) !important;
 	color: #1a237e !important;
 }
 
@@ -368,28 +460,34 @@
 .giocatori-table th:last-of-type,
 .giocatori-table td:last-of-type {
 	/* Più specifico e con !important per evitare sovrascritture da Material */
-	min-width: 180px !important; /* era 120px */
-	width: 200px !important; /* era 130px */
-	max-width: 320px !important; /* più spazio massimo per contenuti lunghi */
+	min-width: 180px !important;
+	/* era 120px */
+	width: 200px !important;
+	/* era 130px */
+	max-width: 320px !important;
+	/* più spazio massimo per contenuti lunghi */
 }
 
 @media (max-width: 800px) {
+
 	.giocatori-table th.mat-header-cell:last-child,
 	.giocatori-table td.mat-cell:last-child,
 	.giocatori-table th:last-child.mat-header-cell,
 	.giocatori-table td:last-child.mat-cell,
 	.giocatori-table th:last-of-type,
 	.giocatori-table td:last-of-type {
-		min-width: 140px !important; /* riduci su piccoli schermi */
+		min-width: 140px !important;
+		/* riduci su piccoli schermi */
 		width: 160px !important;
 		max-width: 220px !important;
 	}
 }
+
 /* Se il td è vincolato, forziamo il contenuto interno a occupare più spazio */
-.giocatori-table th.mat-header-cell:last-child > div,
-.giocatori-table td.mat-cell:last-child > span,
-.giocatori-table th:last-of-type > div,
-.giocatori-table td:last-of-type > span {
+.giocatori-table th.mat-header-cell:last-child>div,
+.giocatori-table td.mat-cell:last-child>span,
+.giocatori-table th:last-of-type>div,
+.giocatori-table td:last-of-type>span {
 	display: inline-block !important;
 	min-width: 180px !important;
 	max-width: 320px !important;
@@ -397,10 +495,11 @@
 }
 
 @media (max-width: 800px) {
-	.giocatori-table th.mat-header-cell:last-child > div,
-	.giocatori-table td.mat-cell:last-child > span,
-	.giocatori-table th:last-of-type > div,
-	.giocatori-table td:last-of-type > span {
+
+	.giocatori-table th.mat-header-cell:last-child>div,
+	.giocatori-table td.mat-cell:last-child>span,
+	.giocatori-table th:last-of-type>div,
+	.giocatori-table td:last-of-type>span {
 		min-width: 140px !important;
 		max-width: 220px !important;
 	}
@@ -430,6 +529,7 @@
 	width: 200px !important;
 	max-width: 360px !important;
 }
+
 /* Explicit widths for other columns */
 .giocatori-table th.mat-header-cell:nth-child(2),
 .giocatori-table td.mat-cell:nth-child(2) {
@@ -437,6 +537,7 @@
 	min-width: 60px;
 	max-width: 90px;
 }
+
 .giocatori-table th.mat-header-cell[class*='giocata'],
 .giocatori-table td.mat-cell[class*='giocata'] {
 	width: 90px;
@@ -449,7 +550,7 @@
 	width: 100%;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
-	box-shadow: inset 0 -1px 0 rgba(0,0,0,0.02);
+	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.02);
 	position: relative;
 }
 
@@ -462,11 +563,12 @@
 }
 
 /* Header row per le giornate (esclusa la prima colonna) */
-.headerRow{
-  position: sticky;
-  top: 0;
-  background-color: white; /* importante per coprire il contenuto sottostante */
-  z-index: 15;
+.headerRow {
+	position: sticky;
+	top: 0;
+	background-color: white;
+	/* importante per coprire il contenuto sottostante */
+	z-index: 15;
 }
 
 /* Sticky first column (player names) */
@@ -498,16 +600,16 @@
 	top: 0;
 	bottom: 0;
 	width: 1px;
-	background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
-	box-shadow: 1px 0 3px rgba(0,0,0,0.05);
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+	box-shadow: 1px 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .squadra-select-save {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: center;
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: center;
+	cursor: pointer;
 }
 
 .select-squadra {
@@ -524,14 +626,283 @@
 	font-size: 0.97rem;
 }
 
-.calcola-icon{
-	margin-left: 4px;
-	font-size: 20px;
-	color: #1976d2;
-	cursor: pointer;
-	transition: color 0.2s;
-	font-family: 'Material Icons', sans-serif !important;
+/* AZIONI ADMIN - SULLA STESSA RIGA ORIZZONTALE E CENTRATE */
+.admin-actions {
+	display: flex !important;
+	flex-direction: row !important;
+	flex-wrap: nowrap !important;
+	gap: 10px;
+	margin: 0 auto 20px;
+	padding: 12px 16px;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.03));
+	border-radius: 12px;
+	border: 1px solid rgba(79, 195, 247, 0.2);
+	justify-content: center;
+	align-items: center;
+	width: max-content;
+	max-width: 95%;
 
+	/* Versione piccola per Riapri e 2° Chance */
+	&.admin-actions-small {
+		padding: 8px 12px;
+		gap: 8px;
+		margin-bottom: 16px;
+	}
+
+	@media (max-width: 768px) {
+		gap: 8px;
+		padding: 10px 12px;
+		margin-bottom: 16px;
+	}
+}
+
+.admin-action-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 10px;
+	background: #FFFFFF;
+	border: 2px solid #E0E0E0;
+	transition: all 0.3s ease;
+	width: 75px;
+	min-width: 75px;
+	max-width: 75px;
+	height: 68px;
+	min-height: 68px;
+	max-height: 68px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+
+	/* Versione piccola */
+	&.small {
+		width: 60px;
+		min-width: 60px;
+		max-width: 60px;
+		height: 52px;
+		min-height: 52px;
+		max-height: 52px;
+		padding: 6px;
+		gap: 2px;
+
+		.calcola-icon {
+			font-size: 18px;
+			width: 18px;
+			height: 18px;
+		}
+
+		.action-label {
+			font-size: 0.55rem;
+		}
+	}
+
+	&:hover {
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.05));
+		border-color: #4FC3F7;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15);
+
+		.calcola-icon {
+			color: #4FC3F7;
+			transform: scale(1.15);
+		}
+
+		.action-label {
+			color: #0A3D91;
+			font-weight: 700;
+		}
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	@media (max-width: 768px) {
+		padding: 6px;
+		width: 68px;
+		min-width: 68px;
+		max-width: 68px;
+		height: 62px;
+		min-height: 62px;
+		max-height: 62px;
+		gap: 3px;
+	}
+}
+
+
+/* BANNER ELIMINATO - Simpatico e colorato */
+.eliminato-banner {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0 auto 20px;
+	padding: 16px 20px;
+	background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+	border: 2px solid #FECACA;
+	border-radius: 16px;
+	max-width: 500px;
+	box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+	animation: shakeHead 0.5s ease-in-out;
+
+	@keyframes shakeHead {
+
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+
+		20% {
+			transform: translateX(-5px);
+		}
+
+		40% {
+			transform: translateX(5px);
+		}
+
+		60% {
+			transform: translateX(-3px);
+		}
+
+		80% {
+			transform: translateX(3px);
+		}
+	}
+
+	.eliminato-emoji {
+		font-size: 3rem;
+		animation: bounce 1s ease infinite;
+
+		@keyframes bounce {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-8px);
+			}
+		}
+	}
+
+	.eliminato-content {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.eliminato-title {
+		font-size: 1.1rem;
+		font-weight: 800;
+		color: #DC2626;
+		font-family: 'Poppins', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.eliminato-squadra {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+
+		.eliminato-label {
+			font-size: 0.75rem;
+			color: #6B7280;
+		}
+
+		.eliminato-team {
+			font-size: 0.85rem;
+			font-weight: 700;
+			color: #0A3D91;
+			background: #FFFFFF;
+			padding: 4px 12px;
+			border-radius: 20px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.eliminato-giornata {
+			font-size: 0.7rem;
+			color: #9CA3AF;
+			font-style: italic;
+		}
+	}
+
+	.eliminato-message {
+		font-size: 0.75rem;
+		color: #6B7280;
+		font-style: italic;
+		margin-top: 4px;
+	}
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		text-align: center;
+		padding: 14px 16px;
+		gap: 10px;
+
+		.eliminato-emoji {
+			font-size: 2.5rem;
+		}
+
+		.eliminato-title {
+			font-size: 1rem;
+		}
+
+		.eliminato-squadra {
+			justify-content: center;
+		}
+	}
+}
+
+.action-label {
+	font-size: 0.58rem;
+	font-weight: 600;
+	color: #6B7280;
+	text-align: center;
+	letter-spacing: 0.1px;
+	transition: all 0.3s ease;
+	text-transform: uppercase;
+	white-space: normal;
+	line-height: 1.1;
+	margin: 0;
+	padding: 0;
+	max-width: 100%;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+
+	@media (max-width: 768px) {
+		font-size: 0.55rem;
+		line-height: 1;
+	}
+}
+
+.calcola-icon {
+	margin: 0;
+	padding: 0;
+	font-size: 24px;
+	color: #0A3D91;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-family: 'Material Icons', sans-serif !important;
+	vertical-align: middle;
+	line-height: 1;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	@media (max-width: 768px) {
+		font-size: 22px;
+		width: 22px;
+		height: 22px;
+	}
 }
 
 .save-icon {
@@ -542,7 +913,186 @@
 	transition: color 0.2s;
 	font-family: 'Material Icons', sans-serif !important;
 }
-.save-icon:hover { color: #125199; }
+
+.save-icon:hover {
+	color: #125199;
+}
+
+/* ELIMINA LEGA - Stile discreto in fondo */
+.delete-lega-footer {
+	margin-top: 40px;
+	padding-top: 20px;
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+	text-align: center;
+}
+
+.delete-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	color: #9CA3AF;
+	font-size: 0.85rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	padding: 8px 16px;
+	border-radius: 8px;
+	font-family: 'Poppins', sans-serif;
+
+	mat-icon {
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
+
+	&:hover {
+		color: #EF4444;
+		background: rgba(239, 68, 68, 0.08);
+	}
+}
+
+/* DIALOG CONFERMA ELIMINAZIONE */
+.delete-confirm-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	backdrop-filter: blur(4px);
+}
+
+.delete-confirm-card {
+	background: #FFFFFF;
+	border-radius: 20px;
+	padding: 32px;
+	max-width: 420px;
+	width: 90%;
+	box-shadow: 0 16px 64px rgba(0, 0, 0, 0.25);
+	animation: slideIn 0.3s ease;
+
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translateY(-20px) scale(0.95);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+}
+
+.delete-confirm-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 20px;
+
+	.warning-icon {
+		color: #EF4444;
+		font-size: 32px;
+		width: 32px;
+		height: 32px;
+	}
+
+	h3 {
+		margin: 0;
+		color: #EF4444;
+		font-size: 1.4rem;
+		font-weight: 700;
+		font-family: 'Poppins', sans-serif;
+	}
+}
+
+.delete-confirm-message {
+	color: #6B7280;
+	font-size: 1rem;
+	line-height: 1.6;
+	margin-bottom: 28px;
+	font-family: 'Poppins', sans-serif;
+
+	strong {
+		color: #0A3D91;
+	}
+}
+
+.delete-confirm-actions {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+
+	.btn-cancel {
+		padding: 12px 24px;
+		background: #F4F6F8;
+		color: #6B7280;
+		border: 1px solid #E0E0E0;
+		border-radius: 12px;
+		font-weight: 600;
+		font-size: 0.95rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-family: 'Poppins', sans-serif;
+
+		&:hover {
+			background: #E0E0E0;
+			color: #333;
+		}
+	}
+
+	.btn-delete {
+		padding: 12px 24px;
+		background: linear-gradient(135deg, #EF4444, #DC2626);
+		color: #FFFFFF;
+		border: none;
+		border-radius: 12px;
+		font-weight: 700;
+		font-size: 0.95rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		font-family: 'Poppins', sans-serif;
+
+		&:hover:not(:disabled) {
+			transform: translateY(-2px);
+			box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+			transform: none;
+		}
+	}
+}
+
+@media (max-width: 480px) {
+	.delete-confirm-card {
+		padding: 24px;
+	}
+
+	.delete-confirm-header h3 {
+		font-size: 1.2rem;
+	}
+
+	.delete-confirm-message {
+		font-size: 0.9rem;
+	}
+
+	.delete-confirm-actions {
+		flex-direction: column;
+
+		.btn-cancel,
+		.btn-delete {
+			width: 100%;
+			text-align: center;
+		}
+	}
+}
 
 
 /* Sfondo rosso solo sui pill (badge) di nome per righe eliminate - stesso colore KO */
@@ -561,15 +1111,30 @@
 }
 
 
-.error-card { margin: 16px auto; max-width: 900px; }
+.error-card {
+	margin: 16px auto;
+	max-width: 900px;
+}
 
 @media (max-width: 800px) {
-	.select-squadra { min-width: 70px; max-width: 100px; }
-	.lega-card { padding: 10px; }
-	.giocatori-table th, .giocatori-table td { font-size: 0.93rem; padding: 4px 2px; }
+	.select-squadra {
+		min-width: 70px;
+		max-width: 100px;
+	}
+
+	.lega-card {
+		padding: 10px;
+	}
+
+	.giocatori-table th,
+	.giocatori-table td {
+		font-size: 0.93rem;
+		padding: 4px 2px;
+	}
 
 	/* On small screens reduce badge width so layout fits */
-	.giocatori-table td .team-name, .team-name {
+	.giocatori-table td .team-name,
+	.team-name {
 		max-width: 120px !important;
 	}
 
@@ -587,10 +1152,20 @@
 	 - allow team-name and player name to wrap and use smaller paddings
 	 - keep table horizontally scrollable when needed */
 @media (max-width: 480px) {
-	.table-horizontal-wrapper, .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+	.table-horizontal-wrapper,
+	.table-wrapper {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
 
 	/* Make the card use full width on very small screens to avoid internal centering */
-	.lega-card { max-width: 100%; padding-left: 10px; padding-right: 10px; border-radius: 8px; }
+	.lega-card {
+		max-width: 100%;
+		padding-left: 10px;
+		padding-right: 10px;
+		border-radius: 8px;
+	}
 
 	.giocatori-table {
 		font-size: 0.85rem;
@@ -601,15 +1176,21 @@
 		margin-right: 0 !important;
 	}
 
-	.giocatori-table th, .giocatori-table td {
+	.giocatori-table th,
+	.giocatori-table td {
 		padding: 6px 6px !important;
 		min-width: 60px !important;
 		width: auto !important;
 	}
 
 	/* Prefer the table to snap to the left when opening on mobile and avoid intermediate centered scroll */
-	.table-wrapper { scroll-snap-type: x proximity; }
-	.giocatori-table { scroll-snap-align: start; }
+	.table-wrapper {
+		scroll-snap-type: x proximity;
+	}
+
+	.giocatori-table {
+		scroll-snap-align: start;
+	}
 
 	/* Disable sticky first column on very small screens to avoid overlap/clip issues */
 	.giocatori-table th:first-child,
@@ -626,7 +1207,8 @@
 	}
 
 	/* Keep header sticky (horizontal scroll still works) but reduce height/space */
-	.giocatori-table th.mat-header-cell, .giocatori-table th.headerRow {
+	.giocatori-table th.mat-header-cell,
+	.giocatori-table th.headerRow {
 		position: sticky;
 		top: 0;
 		z-index: 12;
@@ -662,52 +1244,200 @@
 	}
 
 	/* So the visual highlight for current column doesn't produce huge shadows on small screens */
-	.corrente-col { border-width: 1px !important; box-shadow: none !important; }
+	.corrente-col {
+		border-width: 1px !important;
+		box-shadow: none !important;
+	}
 
 	/* hide sticky column shadow on small screens */
-	.giocatori-table th:first-child::after, .giocatori-table td:first-child::after { display: none; }
+	.giocatori-table th:first-child::after,
+	.giocatori-table td:first-child::after {
+		display: none;
+	}
 
 	/* Ensure wrapper doesn't add extra left padding that could push the visible area */
-	.table-horizontal-wrapper, .table-wrapper { padding-left: 0 !important; }
+	.table-horizontal-wrapper,
+	.table-wrapper {
+		padding-left: 0 !important;
+	}
 }
 
 /* Mobile stacked (card) view styles */
-.mobile-only { display: none; }
-.desktop-only { display: block; }
+.mobile-only {
+	display: none;
+}
+
+.desktop-only {
+	display: block;
+}
 
 @media (max-width: 800px) {
-	.mobile-only { display: block !important; }
-	.desktop-only { display: none !important; }
+	.mobile-only {
+		display: block !important;
+	}
 
-	.stacked-view { display: flex; flex-direction: column; gap: 12px; padding: 8px 4px; }
+	.desktop-only {
+		display: none !important;
+	}
+
+	.stacked-view {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding: 8px 4px;
+	}
 
 	.player-card {
-		background: #fff;
-		border-radius: 10px;
-		box-shadow: 0 2px 8px rgba(16,24,40,0.06);
-		padding: 10px;
-		border: 1px solid #eef3fb;
+		background: var(--color-white);
+		border-radius: 16px;
+		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.08);
+		padding: 16px;
+		border: 1px solid var(--color-gray-border);
+		transition: all 0.2s ease;
+
+		&:hover {
+			box-shadow: 0 6px 24px rgba(10, 61, 145, 0.12);
+			transform: translateY(-2px);
+		}
 	}
 
-	.player-header { margin-bottom: 8px; }
+	.player-header {
+		margin-bottom: 8px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
 
-	.giornate-list { display: flex; flex-wrap: wrap; gap: 6px; }
+		.nome-giocatore {
+			font-weight: 700;
+			color: #0A3D91;
+			font-size: 1rem;
+			flex: 1;
+		}
 
-	.giornata-item { width: 48%; display: flex; flex-direction: column; gap: 4px; }
+		/* BOTTONE GIOCA MOBILE - STILE COERENTE CON APP */
+		.gioca-btn-mobile {
+			background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+			color: #FFFFFF !important;
+			border: none !important;
+			border-radius: 12px !important;
+			padding: 8px 16px !important;
+			font-weight: 700 !important;
+			font-family: 'Poppins', sans-serif !important;
+			font-size: 0.85rem !important;
+			box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15) !important;
+			transition: all 0.2s ease !important;
+			text-transform: none !important;
+			letter-spacing: 0.3px !important;
+			min-height: 36px !important;
+			display: flex !important;
+			align-items: center !important;
+			gap: 6px !important;
+			flex-shrink: 0 !important;
 
-	/* make pill take full width inside giornata-item and center text */
-	.giornata-item .team-pill { display: block; width: 100%; box-sizing: border-box; }
+			mat-icon {
+				color: #FFFFFF !important;
+				font-size: 18px !important;
+				width: 18px !important;
+				height: 18px !important;
+				margin: 0 !important;
+			}
 
-	/* On very small phones stack giornata items full width */
+			.btn-text {
+				font-size: 0.85rem !important;
+				font-weight: 700 !important;
+				white-space: nowrap !important;
+			}
+
+			&:hover:not(:disabled) {
+				transform: translateY(-2px) !important;
+				box-shadow: 0 6px 24px rgba(10, 61, 145, 0.25) !important;
+			}
+
+			&:active {
+				transform: translateY(0) !important;
+			}
+
+			&:disabled {
+				opacity: 0.5 !important;
+				cursor: not-allowed !important;
+				background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+				color: #6B7280 !important;
+			}
+		}
+	}
+
+	.giornate-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.giornata-item {
+		width: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 8px 0;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.giornata-item .team-pill {
+		display: block;
+		width: auto;
+		min-width: 80px;
+		box-sizing: border-box;
+	}
+
 	@media (max-width: 360px) {
-		.giornata-item { width: 100%; }
-		.player-card { padding: 8px; }
-		.team-pill { padding: 6px 10px; font-size: 0.82rem; }
+		.giornata-item {
+			width: 100%;
+		}
+
+		.player-card {
+			padding: 8px;
+		}
+
+		.team-pill {
+			padding: 6px 10px;
+			font-size: 0.82rem;
+		}
+
+		/* Bottone più compatto su schermi molto piccoli */
+		.player-header .gioca-btn-mobile {
+			padding: 6px 12px !important;
+			font-size: 0.75rem !important;
+			min-height: 32px !important;
+
+			mat-icon {
+				font-size: 16px !important;
+				width: 16px !important;
+				height: 16px !important;
+			}
+
+			.btn-text {
+				font-size: 0.75rem !important;
+			}
+		}
 	}
 
-	.giornata-title { font-size: 0.78rem; color: #555; font-weight: 600; }
+	.giornata-title {
+		font-size: 0.78rem;
+		color: var(--color-gray-text);
+		font-weight: 600;
+	}
 
-	.stato-giornata-mobile { font-size: 0.72rem; color: #777; margin-top: 2px; }
+	.stato-giornata-mobile {
+		font-size: 0.72rem;
+		color: var(--color-gray-text);
+		margin-top: 2px;
+	}
 
 	.team-pill {
 		display: inline-block;
@@ -716,24 +1446,201 @@
 		font-weight: 700;
 		font-size: 0.86rem;
 		text-align: center;
-		background: #f0f7fb;
-		color: #0b2540;
-		border: 1px solid #e6f0fb;
+		background: #F4F6F8;
+		/* Grigio chiaro */
+		color: #0A3D91;
+		/* Blu principale */
+		border: 1px solid #4FC3F7;
+		/* Celeste */
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.team-pill.ok { background: #2e7d32; color: #fff; border-color: #1b5e20; }
-	.team-pill.ko { background: #d32f2f; color: #fff; border-color: #b71c1c; }
-	.team-pill.empty { background: #9e9e9e; color: #fff; border-color: #757575; }
-	.mobile-gioca { margin-top: 6px; display: flex; justify-content: flex-end; }
-	.mobile-gioca .gioca-icon { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: #ffe600; color: #111; border: 1px solid #ff9800; }
+	.team-pill.ok {
+		background: #2E7D32;
+		color: #FFFFFF;
+		border-color: #2E7D32;
+	}
+
+	.team-pill.ko {
+		background: #D32F2F;
+		color: #FFFFFF;
+		border-color: #D32F2F;
+	}
+
+	.team-pill.empty {
+		background: #F4F6F8;
+		color: #6B7280;
+		border-color: #6B7280;
+	}
+
+	/* Mobile-gioca rimosso - l'icona è ora nell'header */
+	.mobile-gioca {
+		display: none;
+	}
 }
 
 /* Fallback: also explicitly hide table elements inside desktop-only up to 800px */
 @media (max-width: 800px) {
+
 	.desktop-only .table-horizontal-wrapper,
 	.desktop-only .table-wrapper,
-	.desktop-only .giocatori-table { display: none !important; }
+	.desktop-only .giocatori-table {
+		display: none !important;
+	}
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+	--color-primary: #0A3D91;
+	--color-accent: #4FC3F7;
+	--color-white: #FFFFFF;
+	--color-gray-bg: #F4F6F8;
+	--color-gray-border: #E0E0E0;
+	--color-gray-text: #6B7280;
+
+	--font-main: 'Inter', sans-serif;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+table {
+	font-family: var(--font-main) !important;
+}
+
+/* ANIMATED STATUS BADGES & CARDS RESTORATION */
+.status-badge-full {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-weight: 700;
+	font-size: 0.8rem;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	margin-bottom: 0;
+	width: auto;
+	/* Fit content */
+	flex: 1;
+	/* Allow it to grow slightly but not dominate */
+	max-width: fit-content;
+	box-sizing: border-box;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+}
+
+.status-badge-full.in-corso {
+	background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+	color: #1976D2;
+	border: 1px solid #90CAF9;
+	animation: pulse-blue 2s infinite;
+}
+
+.status-badge-full.da-giocare {
+	background: linear-gradient(135deg, #FFFDE7, #FFF9C4);
+	color: #FBC02D;
+	border: 1px solid #FFF59D;
+	animation: pulse-yellow 3s infinite;
+}
+
+.status-badge-full.terminata {
+	background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+	color: #388E3C;
+	border: 1px solid #A5D6A7;
+}
+
+.status-badge-full.sospesa {
+	background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+	color: #8E24AA;
+	border: 1px solid #CE93D8;
+}
+
+.status-emoji {
+	font-size: 1.1rem;
+}
+
+.giornata-number {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: #455A64;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-bottom: 0;
+	min-width: 90px;
+}
+
+/* TEAM PILL CLEAN - Modern, pill-shaped team badge */
+.team-pill-clean {
+	display: block;
+	width: 100%;
+	padding: 8px 12px;
+	border-radius: 50px;
+	/* Fully rounded */
+	font-weight: 700;
+	font-size: 0.9rem;
+	text-align: center;
+	background: #FFFFFF;
+	color: #455A64;
+	border: 1px solid #CFD8DC;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	transition: transform 0.2s;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	box-sizing: border-box;
+	/* Ensure padding doesn't overflow width */
+}
+
+.team-pill-clean.ok {
+	background: linear-gradient(135deg, #43A047, #2E7D32);
+	color: #FFFFFF;
+	border: none;
+	box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.team-pill-clean.ko {
+	background: linear-gradient(135deg, #E53935, #C62828);
+	color: #FFFFFF;
+	border: none;
+	box-shadow: 0 2px 8px rgba(198, 40, 40, 0.3);
+}
+
+.team-pill-clean:hover {
+	transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes pulse-blue {
+	0% {
+		box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.4);
+	}
+
+	70% {
+		box-shadow: 0 0 0 6px rgba(33, 150, 243, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+	}
+}
+
+@keyframes pulse-yellow {
+	0% {
+		box-shadow: 0 0 0 0 rgba(253, 216, 53, 0.4);
+	}
+
+	70% {
+		box-shadow: 0 0 0 6px rgba(253, 216, 53, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(253, 216, 53, 0);
+	}
 }

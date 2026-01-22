@@ -17,6 +17,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./features/public/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./features/public/terms.component').then(m => m.TermsComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]

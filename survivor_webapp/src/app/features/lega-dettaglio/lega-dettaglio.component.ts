@@ -74,6 +74,10 @@ export class LegaDettaglioComponent {
 
   giornataIndices: number[] = [];
 
+  // Elimina lega
+  showDeleteConfirm = false;
+  isDeleting = false;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -292,6 +296,60 @@ export class LegaDettaglioComponent {
   getCurrentUser() {
     return this.authService.getCurrentUser();
   }
+
+  // Verifica se il giocatore corrente (utente loggato) è eliminato in questa lega
+  isCurrentUserEliminato(): boolean {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return false;
+
+    const giocatore = this.lega.giocatori.find(g => g.user?.id === currentUserId);
+    if (!giocatore) return false;
+
+    return giocatore.statiPerLega?.[this.lega.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value;
+  }
+
+  // Ottiene il giocatore corrente (utente loggato)
+  getCurrentGiocatore(): any | null {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return null;
+    return this.lega.giocatori.find(g => g.user?.id === currentUserId) || null;
+  }
+
+  // Ottiene la squadra che ha fatto perdere il giocatore corrente
+  getSquadraEliminazione(): { sigla: string; nome: string; giornata: number } | null {
+    const giocatore = this.getCurrentGiocatore();
+    if (!giocatore || !giocatore.giocate) return null;
+
+    // Trova la giocata con esito KO
+    const giocataKO = giocatore.giocate.find((g: any) => g.esito === 'KO');
+    if (!giocataKO) return null;
+
+    return {
+      sigla: giocataKO.squadraSigla,
+      nome: this.getSquadraNome(giocataKO.squadraSigla) || giocataKO.squadraSigla,
+      giornata: giocataKO.giornata
+    };
+  }
+
+  // Messaggi simpatici per l'eliminazione
+  private eliminationMessages = [
+    { emoji: '💀', message: 'Sei stato eliminato!' },
+    { emoji: '☠️', message: 'Game Over, amico!' },
+    { emoji: '😵', message: 'K.O. tecnico!' },
+    { emoji: '🪦', message: 'R.I.P. alla tua avventura!' },
+    { emoji: '💔', message: 'Il tuo cuore è spezzato!' },
+    { emoji: '🎭', message: 'Tragedia greca!' },
+    { emoji: '🌧️', message: 'Piove sul bagnato!' },
+    { emoji: '🔥', message: 'Bruciato vivo!' },
+    { emoji: '⚰️', message: 'Seppellito dalla sfortuna!' },
+    { emoji: '🎲', message: 'I dadi non ti hanno favorito!' }
+  ];
+
+  getEliminationMessage(): { emoji: string; message: string } {
+    const index = Math.floor(Math.random() * this.eliminationMessages.length);
+    return this.eliminationMessages[index];
+  }
+
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
@@ -299,7 +357,7 @@ export class LegaDettaglioComponent {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
- isInLega(): boolean {
+  isInLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
   }
@@ -310,7 +368,7 @@ export class LegaDettaglioComponent {
   isChiudibile(): boolean {
     return this.contaAttivi() <= 3;
   }
-  contaAttivi():number{
+  contaAttivi(): number {
     let contaAttivi = 0;
     let giocatori = this.lega!.giocatori;
     if (giocatori && giocatori[0]) {
@@ -484,5 +542,67 @@ export class LegaDettaglioComponent {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+  }
+
+  hasGiocataDisponibile(giocatore: Giocatore): boolean {
+    // Verifica se esiste almeno una giornata giocabile per questo giocatore
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return false;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  giocaGiornataDisponibile(giocatore: Giocatore): void {
+    // Trova la prima giornata disponibile e apri il popup
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        this.giocaGiornata(giocatore, giornataAssoluta);
+        return;
+      }
+    }
+  }
+
+  // Mostra/nascondi conferma eliminazione
+  toggleDeleteConfirm(): void {
+    this.showDeleteConfirm = !this.showDeleteConfirm;
+  }
+
+  // Elimina la lega
+  confirmEliminaLega(): void {
+    if (!this.lega) return;
+
+    console.log('Eliminazione lega in corso...', this.lega.id);
+    this.isDeleting = true;
+    this.showDeleteConfirm = false; // Chiudi il dialog subito
+
+    this.legaService.eliminaLega(this.lega.id).subscribe({
+      next: (response) => {
+        console.log('Lega eliminata con successo:', response);
+        this.isDeleting = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Errore durante l\'eliminazione della lega:', err);
+        this.isDeleting = false;
+        this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
+      }
+    });
+  }
+
+  getStatoGiornataValue(index: number): string {
+    if (!this.lega || !this.lega.statiGiornate) return '';
+    return this.lega.statiGiornate[index]?.value || '';
   }
 }
