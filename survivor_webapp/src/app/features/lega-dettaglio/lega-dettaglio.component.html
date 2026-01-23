@@ -151,10 +151,19 @@
                       {{ getSquadraNome(giocata.squadraSigla) }}
                     </div>
                   </ng-container>
-                  @if (visualizzaGiocata(giornata, giocatore)) {
-                  <div>
-                    <!-- Icona spostata accanto al nome -->
-                  </div>
+                  @if (!visualizzaGiocata(giornata, giocatore)) {
+                      <div>
+                        <mat-icon
+                          class="gioca-icon"
+                          matTooltip="Gioca ora"
+                          (click)="giocaGiornata(giocatore, giornata)"
+                          >{{ getGiocaIcon() }}</mat-icon
+                        >
+                      </div>
+                  } @else {
+                    <!--
+                    {{visualizzaGiocata(giornata, giocatore)}}
+                    -->
                   }
                 </span>
               </td>
