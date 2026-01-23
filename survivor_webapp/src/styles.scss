@@ -66,9 +66,22 @@ mat-toolbar.header {
 }
 
 html, body {
-  height: 100%;
+  height: auto !important;
+  min-height: 100vh;
+  overflow-y: visible;
+  overflow-x: hidden;
 }
 
+body {
+  position: relative;
+}
+
+/* Fix per Angular - app-root deve permettere scroll */
+app-root {
+  display: block;
+  min-height: 100vh;
+  height: auto !important;
+}
 
 .multi-line-snackbar,
 .multi-line-snackbar .mat-simple-snackbar,
@@ -185,13 +198,13 @@ mat-dialog-actions {
 /* CORREZIONE DIALOG ANGULAR MATERIAL - ELIMINAZIONE SPAZI BIANCHI */
 .cdk-overlay-pane {
   border-radius: 16px !important;
-  overflow: hidden !important;
+  /* Rimosso overflow: hidden per permettere lo scroll nei dialog */
 
   .mat-mdc-dialog-container,
   .mat-dialog-container {
     padding: 0 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    /* Rimosso overflow per permettere che il contenuto interno gestisca lo scroll */
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
@@ -205,7 +218,7 @@ mat-dialog-actions {
   .mat-dialog-container {
     padding: 0 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    /* Rimosso overflow per permettere scroll interno */
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
@@ -215,7 +228,7 @@ mat-dialog-actions {
     .mat-dialog-surface {
       padding: 0 !important;
       border-radius: 16px !important;
-      overflow: hidden !important;
+      /* Rimosso overflow per permettere scroll interno */
       background: transparent !important;
       box-shadow: none !important;
       border: none !important;
@@ -297,3 +310,25 @@ mat-dialog-actions {
   backdrop-filter: blur(4px) !important;
 }
 
+/* CLASSE CUSTOM PER DIALOG SELEZIONE GIOCATA - FORZA SCROLL */
+.seleziona-giocata-dialog {
+  max-height: 95vh !important;
+
+  .mat-mdc-dialog-container,
+  .mat-dialog-container {
+    padding: 0 !important;
+    max-height: 95vh !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+
+  .mat-mdc-dialog-surface,
+  .mat-dialog-surface {
+    padding: 0 !important;
+    max-height: 95vh !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+  }
+}

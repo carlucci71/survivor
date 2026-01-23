@@ -1,18 +1,22 @@
 /* Popup Selezione Squadra - DESIGN COMPATTO */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+
 /* CONTAINER PRINCIPALE */
 .modal-container {
 	position: relative;
 	background: #FFFFFF;
 	border-radius: 20px;
 	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-	padding: 20px 16px;
+	padding: 20px 16px 20px 16px;
 	width: 94vw;
 	max-width: 500px;
 	max-height: 90vh;
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow-y: scroll !important;
+	overflow-x: hidden !important;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+	touch-action: pan-y !important;
 	z-index: 10000;
 	font-family: 'Poppins', sans-serif;
 	box-sizing: border-box;
@@ -254,22 +258,7 @@ h2 {
 	padding: 8px 0;
 	justify-content: center;
 	align-items: flex-start;
-	max-height: 50vh;
-	overflow-y: auto;
-	overflow-x: hidden;
-
-	&::-webkit-scrollbar {
-		width: 4px;
-	}
-
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background: rgba(10, 61, 145, 0.2);
-		border-radius: 10px;
-	}
+	/* Rimosso max-height e overflow per permettere scroll del container principale */
 }
 
 /* CARD SQUADRA - MINI CHIP */

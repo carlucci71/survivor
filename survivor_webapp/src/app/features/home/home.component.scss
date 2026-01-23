@@ -7,7 +7,9 @@
 	font-family: 'Poppins', sans-serif;
 	padding: 0 0 40px 0;
 	position: relative;
+	overflow-x: hidden;
 }
+
 
 /* Contenitore config-user con chip e icona settings */
 ::ng-deep .config-user {

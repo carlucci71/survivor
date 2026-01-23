@@ -23,22 +23,25 @@
           }
     <div>Ruolo in Lega: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
     <div>Stato Lega: {{ lega.stato.descrizione }}</div>
-
-    @if(countdownActive) {
-    <div class="countdown-wrapper" [class.expired]="countdown.includes('scaduto')">
-      <mat-icon class="countdown-icon">schedule</mat-icon>
-      <div class="countdown-content">
-        @if(!countdown.includes('scaduto')) {
-          <span class="countdown-label">Chiusura scelte tra</span>
-        }
-        <span class="countdown-time">{{ countdown }}</span>
-      </div>
-    </div>
-    } @else if(lega.inizioProssimaGiornata) {
-    <div>Prossimo inizio: {{ lega.inizioProssimaGiornata }}</div>
-    }
           </mat-card-subtitle>
-    </mat-card-header>
+        </mat-card-header>
+
+        <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
+        <div class="countdown-timer-section">
+          @if(countdownActive) {
+          <div class="countdown-wrapper" [class.expired]="countdown.includes('scaduto')">
+            <mat-icon class="countdown-icon">schedule</mat-icon>
+            <div class="countdown-content">
+              @if(!countdown.includes('scaduto')) {
+                <span class="countdown-label">Chiusura scelte tra</span>
+              }
+              <span class="countdown-time">{{ countdown }}</span>
+            </div>
+          </div>
+          } @else if(lega.inizioProssimaGiornata) {
+          <div class="prossimo-inizio">Prossimo inizio: {{ lega.inizioProssimaGiornata }}</div>
+          }
+        </div>
     <mat-card-content>
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
       <div class="admin-actions">
@@ -73,26 +76,6 @@
           <span class="action-label">2° Chance</span>
         </div>
         }
-      </div>
-      }
-
-      <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
-      @if (isCurrentUserEliminato()) {
-      <div class="eliminato-banner">
-        <div class="eliminato-emoji">💀</div>
-        <div class="eliminato-content">
-          <div class="eliminato-title">Sei stato eliminato!</div>
-          @if (getSquadraEliminazione()) {
-          <div class="eliminato-squadra">
-            <span class="eliminato-label">Ti ha tradito:</span>
-            <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
-            <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
-          </div>
-          }
-          <div class="eliminato-message">
-            La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀
-          </div>
-        </div>
       </div>
       }
 
@@ -228,6 +211,27 @@
                 {{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
+      <!-- Posizionato dopo la tabella così appare sotto alla giocata dell'utente -->
+      @if (isCurrentUserEliminato()) {
+      <div class="eliminato-banner">
+        <div class="eliminato-emoji">💀</div>
+        <div class="eliminato-content">
+          <div class="eliminato-title">Sei stato eliminato!</div>
+          @if (getSquadraEliminazione()) {
+          <div class="eliminato-squadra">
+            <span class="eliminato-label">Ti ha tradito:</span>
+            <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
+            <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
+          </div>
+          }
+          <div class="eliminato-message">
+            {{ getRandomConsolationMessage() }}
           </div>
         </div>
       </div>

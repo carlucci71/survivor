@@ -1,4 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
+import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -83,6 +84,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   showDeleteConfirm = false;
   isDeleting = false;
 
+  // Messaggio di consolazione (salvato una sola volta)
+  private savedConsolationMessage: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -93,6 +97,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
+    private overlay: Overlay,
     private sospensioniService: SospensioniService,
   ) {
     this.route.paramMap.subscribe((params) => {
@@ -157,6 +162,12 @@ export class LegaDettaglioComponent implements OnDestroy {
       },
       width: '820px',
       maxWidth: '90vw',
+      maxHeight: '95vh',
+      panelClass: 'seleziona-giocata-dialog',
+      hasBackdrop: true,
+      disableClose: false,
+      autoFocus: false,
+      scrollStrategy: this.overlay.scrollStrategies.noop()
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
@@ -335,6 +346,44 @@ export class LegaDettaglioComponent implements OnDestroy {
       nome: this.getSquadraNome(giocataKO.squadraSigla) || giocataKO.squadraSigla,
       giornata: giocataKO.giornata
     };
+  }
+
+  // Messaggi di consolazione simpatici per l'eliminazione
+  private consolationMessages = [
+    "La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀",
+    "Non tutti possono vincere, ma tu hai giocato con stile! 😎",
+    "La prossima volta andrà meglio, promesso! 💪",
+    "Hai dato il massimo, questo conta! 🌟",
+    "Meglio eliminato con onore che vincitore per caso! 🎖️",
+    "La sfortuna ti ha beccato, ma tu sei un campione! 🏆",
+    "Non piangere, c'è sempre la prossima edizione! 😢➡️😊",
+    "Hai perso la battaglia, ma non la guerra! ⚔️",
+    "La statistica dice che prima o poi si vince... forse! 📊😅",
+    "Almeno ora puoi dormire tranquillo la domenica! 😴",
+    "Consolati: hai fatto meglio di chi non ha nemmeno provato! 💫",
+    "La ruota gira, la prossima volta toccherà a te! 🎡",
+    "Hai sfidato il destino e... beh, hai perso! Ma che coraggio! 🦁",
+    "Non sei stato eliminato, sei stato promosso a spettatore VIP! 🎭",
+    "La sconfitta è temporanea, la gloria eterna... o quasi! ✨",
+    "Hai fatto squadra con la squadra sbagliata, capita! 🤷",
+    "Il tuo nome rimarrà nella storia... della tua famiglia! 📜",
+    "Meglio essere stati ed essere stati eliminati che non essere mai stati! 🤔",
+    "La tua eliminazione è arte, pura arte tragica! 🎨",
+    "Hai perso, ma almeno hai una bella storia da raccontare! 📖",
+    "Non tutti possono essere Ronaldo, qualcuno deve fare il pubblico! ⚽😂",
+    "La vittoria è dei più forti, ma tu sei simpatico! 😄",
+    "Prossima volta scegli meglio... o affidati al caso! 🎲",
+    "Hai fatto ridere, piangere ed emozionare. Missione compiuta! 🎬"
+  ];
+
+  // Ottiene un messaggio di consolazione casuale (solo la prima volta)
+  getRandomConsolationMessage(): string {
+    // Se non abbiamo ancora un messaggio salvato, scegline uno casuale
+    if (!this.savedConsolationMessage) {
+      const randomIndex = Math.floor(Math.random() * this.consolationMessages.length);
+      this.savedConsolationMessage = this.consolationMessages[randomIndex];
+    }
+    return this.savedConsolationMessage;
   }
 
   // Messaggi simpatici per l'eliminazione
