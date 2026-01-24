@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.scheduled;
 
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +24,9 @@ public class ScheduledCalcola {
                 l -> {
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0L, null, new ArrayList<>()));
                     try {
-                        legaService.calcola(l.getId());
+                        if (l.getStato() != Enumeratori.StatoLega.TERMINATA) {
+                            legaService.calcola(l.getId());
+                        }
                     } catch (Exception e) {
                         log.error("Errore in calcolo batch ", e);
                     } finally {

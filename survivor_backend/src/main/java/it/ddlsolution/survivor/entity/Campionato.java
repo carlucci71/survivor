@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +43,15 @@ public class Campionato {
     @JsonManagedReference("campionato-leghe")
     private List<Lega> leghe = new ArrayList<>();
 
-    @OneToMany(mappedBy = "campionato", cascade = CascadeType.ALL)
-    @JsonManagedReference("campionato-squadre")
+    // Aggiungi un campo transient per le squadre filtrate
+    @Transient
+    @JsonProperty("squadre")
     private List<Squadra> squadre = new ArrayList<>();
+
+    @Column(name = "nazione", nullable = false, length = 100)
+    private String nazione;
+
+    @Column(name = "anno_corrente", nullable = false)
+    private short annoCorrente;
 
 }

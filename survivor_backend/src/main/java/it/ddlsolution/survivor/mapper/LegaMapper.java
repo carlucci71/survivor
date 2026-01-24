@@ -1,15 +1,19 @@
 package it.ddlsolution.survivor.mapper;
 
+import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
+import it.ddlsolution.survivor.service.CampionatoService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
@@ -22,15 +26,17 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @Autowired
     protected GiocatoreMapper giocatoreMapper;
+    @Autowired
+    private CampionatoService campionatoService;
 
     @Mapping(target = "giocatori", ignore = true)
-    @Mapping(target = "withPwd", expression = "java(this.hasPwd(lega))")
+    @Mapping(target = "withPwd", source = ".", qualifiedByName = "hasPwdLega")
     public abstract LegaDTO toDTO(Lega lega);
 
     @Mapping(target = "giocatori", ignore = true)
     @Mapping(target = "giornataCorrente", ignore = true)
     @Mapping(target = "statoGiornataCorrente", ignore = true)
-    @Mapping(target = "withPwd", expression = "java(this.hasPwd(legaProjection))")
+    @Mapping(target = "withPwd", source = ".", qualifiedByName = "hasPwdLegaProjection")
     public abstract LegaDTO toDTO(LegaProjection legaProjection);
 
     public abstract List<LegaDTO> toDTOListProjection(List<LegaProjection> legaProjection);
@@ -42,19 +48,31 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
     @Mapping(target = "campionato.id", source = "campionato")
     @Mapping(target = "campionato.sport.id", source = "sport")
-    @Mapping(target = "stato", expression = "java(it.ddlsolution.survivor.util.Enumeratori.StatoLega.DA_AVVIARE)")
+    @Mapping(target = "stato", expression = "java(valorizzaStatoDaAvviare())")
     public abstract Lega toEntity(LegaInsertDTO legaInsertDTO);
 
-    protected boolean hasPwd(LegaProjection legaProjection) {
+    @Named("hasPwdLegaProjection")
+    protected boolean hasPwdLegaProjection(LegaProjection legaProjection) {
         return !ObjectUtils.isEmpty(legaProjection.getPwd());
     }
 
-    protected boolean hasPwd(Lega lega) {
+    @Named("hasPwdLega")
+    protected boolean hasPwdLega(Lega lega) {
         return !ObjectUtils.isEmpty(lega.getPwd());
     }
 
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {
+
+
+        CampionatoDTO campionatoDTO = campionatoService.allCampionati()
+                .stream()
+                .filter(c ->   c.getId().equals(lega.getCampionato().getId()))
+                .findFirst()
+                .get();
+        legaDTO.setCampionato(campionatoDTO);
+
+
         if (lega.getGiocatoreLeghe() != null) {
             legaDTO.setGiocatori(lega.getGiocatoreLeghe().stream()
                     .map(gl -> {
@@ -79,4 +97,22 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
                     .toList());
         }
     }
+
+    @Named("valorizzaStatoDaAvviare")
+    Enumeratori.StatoLega valorizzaStatoDaAvviare() {
+        return it.ddlsolution.survivor.util.enums.Enumeratori.StatoLega.DA_AVVIARE;
+    }
+
+    @AfterMapping
+    protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, LegaProjection lega) {
+
+        CampionatoDTO campionatoDTO = campionatoService.allCampionati()
+                .stream()
+                .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                .findFirst()
+                .get();
+        legaDTO.setCampionato(campionatoDTO);
+    }
+
+
 }

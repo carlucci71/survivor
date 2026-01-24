@@ -25,7 +25,7 @@ public class ParamLogDispositiva {
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
-    @Column(name = "valore", nullable = false, length = 100)
+    @Column(name = "valore", nullable = false, length = 4000)
     private String valore;
 
     @Column(name = "className", nullable = false, length = 1000)

@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.repository;
 
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.projection.GiocatoreProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +20,9 @@ public interface GiocatoreRepository extends JpaRepository<Giocatore, Long> {
             where giocatoreLeghe.lega.id = ?1 and g.user.id = ?2""")
     Optional<Giocatore> findByGiocatoreLeghe_Lega_IdAndUser_Id(Long legaId, Long userId);
 
-    Optional<Giocatore> findByUser_Id(Long id);
+    Optional<Giocatore> findByUser_Id(Long userId);
 
+    void deleteByUser_Id(Long userId);
 
 
 }

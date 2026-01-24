@@ -1,37 +1,54 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Survivor - Login</mat-card-title>
-      <mat-card-subtitle>Inserisci la tua email per ricevere il magic link</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <form (ngSubmit)="onSubmit()" class="login-form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input
-            matInput
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
-            placeholder="la-tua-email@esempio.com"
-            required
-            (keydown.enter)="onSubmit()"
-          />
-        </mat-form-field>
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo-container">
+      <h1 class="app-title">SURVIVOR</h1>
+      <p class="app-subtitle">ONE SHOT</p>
+    </div>
 
-        <button mat-raised-button color="primary" type="submit"  class="submit-btn">
-          {{ 'Invia Magic Link' }}
-        </button>
-      </form>
+    <!-- Titolo -->
+    <div class="card-header">
+      <h2>Accedi</h2>
+      <p class="subtitle">Inserisci la tua email per ricevere il magic link</p>
+    </div>
 
-      @if (message) {
-        <mat-card class="message-card" [class.success]="isSuccess" [class.error]="!isSuccess">
-          <mat-card-content>
-            {{ message }}
-          </mat-card-content>
-        </mat-card>
-      }
-    </mat-card-content>
-  </mat-card>
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email*</label>
+        <input type="email" id="email" name="email" [(ngModel)]="email"
+          placeholder="Inserisci indirizzo email (es. utente&#64;esempio.com)" required autocomplete="email" />
+      </div>
+
+      <!-- Checkbox Termini e Condizioni -->
+      <div class="terms-checkbox">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="termsAccepted" name="terms">
+          <span class="checkmark"></span>
+          <span class="checkbox-text">
+            Dichiaro di aver letto e accettato i
+            <a href="/terms" target="_blank">Termini e Condizioni</a>
+            e la
+            <a href="/privacy" target="_blank">Privacy Policy</a>.
+          </span>
+        </label>
+      </div>
+
+      <!-- Age Disclaimer -->
+      <p class="age-disclaimer">
+        L'applicazione è destinata esclusivamente a utenti di età pari o superiore a 14 anni.
+      </p>
+
+      <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
+        Invia Magic Link
+      </button>
+    </form>
+
+    <!-- Messaggio -->
+    @if (message) {
+    <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+      {{ message }}
+    </div>
+    }
+  </div>
 </div>

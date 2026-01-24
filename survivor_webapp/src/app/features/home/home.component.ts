@@ -15,7 +15,9 @@ import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
+import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -27,11 +29,13 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     MatCardModule,
     MatButtonModule,
     HeaderComponent,
+    InfoBannerComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
     MatIcon,
     MatTooltip,
+    MatDialogModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -250,7 +254,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         legaId: lega.id,
         legaNome: lega.name,
       },
-      width: '600px',
+      width: '90vw',
+      maxWidth: '600px',
+      maxHeight: '85vh',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false
     });
   }
 }

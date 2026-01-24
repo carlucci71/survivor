@@ -5,6 +5,7 @@ import {
   MatDialogRef,
   MatDialog,
 } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfermaAssegnazioneDialogComponent } from '../../shared/components/conferma-assegnazione-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,6 +35,7 @@ import { SquadraService } from '../../core/services/squadra.service';
     MatButtonModule,
     MatIconModule,
     FormsModule,
+    MatSnackBarModule,
   ],
 })
 export class SelezionaGiocataComponent implements OnInit {
@@ -51,10 +53,126 @@ export class SelezionaGiocataComponent implements OnInit {
   statoGiornataCorrente!: StatoPartita;
   lega!: Lega;
   giocatore: Giocatore;
+  showDettagli = false;
+  squadreConPartite: any[] = [];
+  squadreFiltrate: any[] = [];
+  searchQuery: string = '';
   @ViewChild('risultatiRow') risultatiRow?: ElementRef<HTMLDivElement>;
   @ViewChild('teamSelect') teamSelect?: MatSelect;
   @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
   activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
+
+  // Messaggi simpatici di incoraggiamento dopo la selezione
+  private encouragementMessages = [
+    { emoji: '🔥', message: 'Grande scelta! Questa squadra è on fire!' },
+    { emoji: '💪', message: 'Ottima decisione! Hai le idee chiare!' },
+    { emoji: '🎯', message: 'Centro! Hai puntato sulla squadra giusta!' },
+    { emoji: '🏆', message: 'Scelta da campione! La vittoria ti aspetta!' },
+    { emoji: '⚡', message: 'Che grinta! Questa selezione è elettrizzante!' },
+    { emoji: '🚀', message: 'Stai volando alto! Selezione spaziale!' },
+    { emoji: '👏', message: 'Applausi! Una scelta davvero intelligente!' },
+    { emoji: '🎲', message: 'I dadi sono lanciati! Che vinca il migliore!' },
+    { emoji: '🦁', message: 'Ruggisci come un leone! Scelta coraggiosa!' },
+    { emoji: '⭐', message: 'Sei una stella! Selezione da 10 e lode!' },
+    { emoji: '🧠', message: 'Cervello in azione! Mossa strategica!' },
+    { emoji: '🎪', message: 'Benvenuto allo show! Hai scelto i protagonisti!' },
+    { emoji: '🍀', message: 'In bocca al lupo! Che la fortuna sia con te!' },
+    { emoji: '🌟', message: 'Brillante! Questa scelta ti porterà lontano!' },
+    { emoji: '🏅', message: 'Medaglia d\'oro per questa selezione!' },
+    { emoji: '🎸', message: 'Rock\'n\'roll! Scelta che spacca!' },
+    { emoji: '🦅', message: 'Occhio d\'aquila! Hai visto giusto!' },
+    { emoji: '💎', message: 'Hai trovato la gemma! Selezione preziosa!' },
+    { emoji: '🌈', message: 'Dopo la pioggia esce l\'arcobaleno! Vai così!' },
+    { emoji: '🎬', message: 'Ciak, si gira! Sei il regista della vittoria!' }
+  ];
+
+  // Mappa colori sociali delle squadre per sport
+  private readonly teamColors: { [key: string]: { primary: string; secondary: string } } = {
+    // CALCIO - Serie A
+    'CALCIO_JUV': { primary: '#000000', secondary: '#FFFFFF' },
+    'CALCIO_INT': { primary: '#0068A8', secondary: '#000000' },
+    'CALCIO_MIL': { primary: '#AC1F2D', secondary: '#000000' },
+    'CALCIO_NAP': { primary: '#12A0D7', secondary: '#FFFFFF' },
+    'CALCIO_ROM': { primary: '#8E1F2F', secondary: '#F0BC42' },
+    'CALCIO_LAZ': { primary: '#87D8F7', secondary: '#FFFFFF' },
+    'CALCIO_ATA': { primary: '#1E71B8', secondary: '#000000' },
+    'CALCIO_FIO': { primary: '#482E92', secondary: '#FFFFFF' },
+    'CALCIO_TOR': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'CALCIO_BOL': { primary: '#1A2F48', secondary: '#A41E22' },
+    'CALCIO_UDI': { primary: '#000000', secondary: '#FFFFFF' },
+    'CALCIO_EMP': { primary: '#005BA9', secondary: '#FFFFFF' },
+    'CALCIO_SAS': { primary: '#00A850', secondary: '#000000' },
+    'CALCIO_SAL': { primary: '#8B0000', secondary: '#FFFFFF' },
+    'CALCIO_LEC': { primary: '#FFCC00', secondary: '#E3242B' },
+    'CALCIO_VER': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_MON': { primary: '#ED1C24', secondary: '#FFFFFF' },
+    'CALCIO_SPE': { primary: '#FFFFFF', secondary: '#000000' },
+    'CALCIO_CRE': { primary: '#D71920', secondary: '#808080' },
+    'CALCIO_FRO': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_GEN': { primary: '#A41E22', secondary: '#003DA5' },
+    'CALCIO_CAG': { primary: '#A41E22', secondary: '#003DA5' },
+    'CALCIO_PAR': { primary: '#FFCC00', secondary: '#003DA5' },
+    'CALCIO_VEN': { primary: '#FF6600', secondary: '#007A33' },
+    'CALCIO_COM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_SAM': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_BRE': { primary: '#003DA5', secondary: '#FFFFFF' },
+    'CALCIO_PIS': { primary: '#003DA5', secondary: '#000000' },
+
+    // BASKET - NBA
+    'BASKET_ATL': { primary: '#E03A3E', secondary: '#C1D32F' },
+    'BASKET_BOS': { primary: '#007A33', secondary: '#FFFFFF' },
+    'BASKET_BKN': { primary: '#000000', secondary: '#FFFFFF' },
+    'BASKET_CHA': { primary: '#1D1160', secondary: '#00788C' },
+    'BASKET_CHI': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_CLE': { primary: '#860038', secondary: '#FDBB30' },
+    'BASKET_DAL': { primary: '#00538C', secondary: '#B8C4CA' },
+    'BASKET_DEN': { primary: '#0E2240', secondary: '#FEC524' },
+    'BASKET_DET': { primary: '#C8102E', secondary: '#1D428A' },
+    'BASKET_GSW': { primary: '#1D428A', secondary: '#FFC72C' },
+    'BASKET_HOU': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_IND': { primary: '#002D62', secondary: '#FDBB30' },
+    'BASKET_LAC': { primary: '#C8102E', secondary: '#1D428A' },
+    'BASKET_LAL': { primary: '#552583', secondary: '#FDB927' },
+    'BASKET_MEM': { primary: '#5D76A9', secondary: '#12173F' },
+    'BASKET_MIA': { primary: '#98002E', secondary: '#000000' },
+    'BASKET_MIL': { primary: '#00471B', secondary: '#EEE1C6' },
+    'BASKET_MIN': { primary: '#0C2340', secondary: '#236192' },
+    'BASKET_NOP': { primary: '#0C2340', secondary: '#C8102E' },
+    'BASKET_NYK': { primary: '#006BB6', secondary: '#F58426' },
+    'BASKET_OKC': { primary: '#007AC1', secondary: '#EF3B24' },
+    'BASKET_ORL': { primary: '#0077C0', secondary: '#C4CED4' },
+    'BASKET_PHI': { primary: '#006BB6', secondary: '#ED174C' },
+    'BASKET_PHX': { primary: '#1D1160', secondary: '#E56020' },
+    'BASKET_POR': { primary: '#E03A3E', secondary: '#000000' },
+    'BASKET_SAC': { primary: '#5A2D81', secondary: '#63727A' },
+    'BASKET_SAS': { primary: '#C4CED4', secondary: '#000000' },
+    'BASKET_TOR': { primary: '#CE1141', secondary: '#000000' },
+    'BASKET_UTA': { primary: '#002B5C', secondary: '#00471B' },
+    'BASKET_WAS': { primary: '#002B5C', secondary: '#E31837' },
+
+    // TENNIS - colori generici per nazione
+    'TENNIS_ITA': { primary: '#009246', secondary: '#CE2B37' },
+    'TENNIS_ESP': { primary: '#AA151B', secondary: '#F1BF00' },
+    'TENNIS_SRB': { primary: '#C6363C', secondary: '#0C4076' },
+    'TENNIS_USA': { primary: '#3C3B6E', secondary: '#B22234' },
+    'TENNIS_GER': { primary: '#000000', secondary: '#DD0000' },
+    'TENNIS_FRA': { primary: '#002395', secondary: '#ED2939' },
+    'TENNIS_GBR': { primary: '#012169', secondary: '#C8102E' },
+    'TENNIS_AUS': { primary: '#00008B', secondary: '#FFCD00' },
+    'TENNIS_RUS': { primary: '#FFFFFF', secondary: '#0039A6' },
+    'TENNIS_SUI': { primary: '#FF0000', secondary: '#FFFFFF' },
+
+    // Default
+    'DEFAULT': { primary: '#0A3D91', secondary: '#4FC3F7' }
+  };
+
+  // Metodo per ottenere i colori sociali di una squadra
+  getTeamColors(sigla: string): { primary: string; secondary: string } {
+    const sportId = this.lega?.campionato?.sport?.id || 'DEFAULT';
+    const key = `${sportId}_${sigla}`;
+    return this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
+  }
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -68,7 +186,8 @@ export class SelezionaGiocataComponent implements OnInit {
       squadraCorrenteId?: string;
       lega: Lega;
     },
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
@@ -82,13 +201,15 @@ export class SelezionaGiocataComponent implements OnInit {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
     this.getSquadreByCampionatoAndGiornata(
       this.lega.campionato!.id,
-      this.data.giornata + this.lega.giornataIniziale - 1
+      this.lega.anno,
+      this.data.giornata
     );
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati();
       this.mostraProssimePartite();
-      this.activeTab = 'ultimi';
     }
+    // Carica le partite per tutte le squadre disponibili
+    this.caricaPartitePerTutteSquadre();
   }
 
   ngOnDestroy(): void {
@@ -124,10 +245,11 @@ export class SelezionaGiocataComponent implements OnInit {
 
   getSquadreByCampionatoAndGiornata(
     idCampionato: string,
+    anno: number,
     giornata: number
   ): void {
     this.squadraService
-      .getSquadreByCampionatoAndGiornata(idCampionato, giornata)
+      .getSquadreByCampionatoAndGiornata(idCampionato, anno, giornata)
       .subscribe({
         next: (squadre) => {
           const returnedSigle = new Set<string>();
@@ -162,11 +284,18 @@ export class SelezionaGiocataComponent implements OnInit {
     ) {
       return '';
     }
-    return this.campionatoService.getDesGiornata(
+    const desc = this.campionatoService.getDesGiornata(
       this.lega?.campionato.id,
       index,
       alias
     );
+
+    // Abbreviate "Settimana" to "Sett." for Basket to save space
+    if (this.lega?.campionato?.sport?.id === 'BASKET') {
+      return desc.replace('Settimana', 'Sett.');
+    }
+
+    return desc;
   }
 
   mostraUltimiRisultati(sigla?: string) {
@@ -181,6 +310,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.id,
           squadra,
+          this.lega.anno,
           this.lega.giornataCorrente - 1,
           false
         )
@@ -206,8 +336,39 @@ export class SelezionaGiocataComponent implements OnInit {
 
   mostraUltimiRisultatiOpponent() {
     const opp = this.getNextOpponentSigla(true);
-    if (opp) {
-      this.mostraUltimiRisultati(opp);
+    if (opp && this.squadraSelezionata) {
+      // Carica tutti i risultati storici dell'avversario
+      if (this.lega.campionato?.id && this.lega.campionato?.sport?.id) {
+        // Per il tennis, carica dalla giornata 1 per avere tutto lo storico del torneo
+        const giornataInizio = this.lega.campionato?.sport?.id === 'TENNIS' ? 1 : this.lega.giornataCorrente - 1;
+
+        this.campionatoService
+          .calendario(
+            this.lega.campionato.id,
+            opp,
+            this.lega.anno,
+            giornataInizio,
+            false
+          )
+          .subscribe({
+            next: (risultatiAvversario) => {
+              // Filtra solo le partite dove l'avversario ha giocato contro la squadra selezionata (testa a testa)
+              this.ultimiRisultatiOpponent = risultatiAvversario.filter(partita => {
+                const casaSigla = partita.casaSigla || '';
+                const fuoriSigla = partita.fuoriSigla || '';
+                const squadraCorrente = this.squadraSelezionata || '';
+
+                // Verifica se la squadra selezionata è presente nella partita
+                return casaSigla === squadraCorrente || fuoriSigla === squadraCorrente;
+              });
+
+              console.log('Testa a testa trovati:', this.ultimiRisultatiOpponent.length, 'tra', this.squadraSelezionata, 'e', opp);
+            },
+            error: (error) => {
+              console.error('Errore caricamento testa a testa:', error);
+            }
+          });
+      }
     }
   }
 
@@ -222,6 +383,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .calendario(
           this.lega.campionato?.id,
           this.squadraSelezionata,
+          this.lega.anno,
           this.lega.giornataCorrente,
           true
         )
@@ -249,6 +411,7 @@ export class SelezionaGiocataComponent implements OnInit {
         .afterClosed()
         .subscribe((result) => {
           if (result) {
+            this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
             });
@@ -256,8 +419,20 @@ export class SelezionaGiocataComponent implements OnInit {
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
+      this.showEncouragementMessage();
       this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
     }
+  }
+
+  private showEncouragementMessage(): void {
+    const randomIndex = Math.floor(Math.random() * this.encouragementMessages.length);
+    const selected = this.encouragementMessages[randomIndex];
+    this.snackBar.open(`${selected.emoji} ${selected.message}`, '✕', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: ['encouragement-snackbar']
+    });
   }
 
   getNextOpponentSigla(sigla: boolean): string | null {
@@ -285,5 +460,240 @@ export class SelezionaGiocataComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  getGiocaIcon(): string {
+    // Restituisce l'icona appropriata in base allo sport
+    const sportId = this.lega?.campionato?.sport?.id;
+    if (sportId === 'BASKET') return 'sports_basketball';
+    if (sportId === 'CALCIO') return 'sports_soccer';
+    if (sportId === 'TENNIS') return 'sports_tennis';
+    return 'sports_esports';
+  }
+
+  getSquadraInitials(nomeSquadra: string): string {
+    if (!nomeSquadra) return '?';
+
+    // Rimuovi parole comuni
+    const parole = nomeSquadra
+      .replace(/^(FC|AC|US|AS|SS|UC)\s+/i, '')
+      .trim()
+      .split(' ');
+
+    if (parole.length === 1) {
+      // Se è una parola sola, prendi le prime 2 lettere
+      return parole[0].substring(0, 2).toUpperCase();
+    }
+
+    // Altrimenti prendi la prima lettera di ogni parola (max 2)
+    return parole
+      .slice(0, 2)
+      .map(p => p[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  formatNomeSquadra(nome: string): string {
+    if (!nome) return '';
+    // Rimuovi underscore e sostituiscili con spazi
+    return nome.replace(/_/g, ' ');
+  }
+
+  getSearchPlaceholder(): string {
+    const sportId = this.lega?.campionato?.sport?.id;
+    return sportId === 'TENNIS' ? 'Cerca giocatore...' : 'Cerca squadra...';
+  }
+
+  getTabLabel(type: 'ultimi' | 'prossime', opponentSigla?: string): string {
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    if (type === 'ultimi') {
+      return sportId === 'TENNIS' ? 'Ultimi incontri' : 'Ultimi';
+    } else if (type === 'prossime') {
+      return sportId === 'TENNIS' ? 'Prossime partite' : 'Prossime';
+    }
+
+    return opponentSigla ? this.formatNomeSquadra(opponentSigla) : '';
+  }
+
+  getTabOpponentLabel(): string {
+    const sportId = this.lega?.campionato?.sport?.id;
+    const opponentSigla = this.getNextOpponentSigla(true);
+
+    if (sportId === 'TENNIS') {
+      return 'Testa a testa';
+    }
+
+    return opponentSigla ? this.formatNomeSquadra(opponentSigla) : '';
+  }
+
+  getAvversarioNome(partita: Partita, siglaMiaSquadra: string): string {
+    if (!partita) return '-';
+
+    if (partita.casaSigla === siglaMiaSquadra) {
+      return partita.fuoriNome || '-';
+    } else {
+      return partita.casaNome || '-';
+    }
+  }
+
+  toggleDettagli(): void {
+    if (!this.squadraSelezionata) return;
+
+    const squadraSelezionata = this.squadraSelezionata; // Per evitare problemi di null check
+
+    // Apri il dialog dei dettagli
+    import('./dettagli-squadra-dialog.component').then(m => {
+      const squadra = this.squadreConPartite.find(s => s.sigla === squadraSelezionata);
+      const opponentSigla = this.getNextOpponentSigla(true);
+      const sportId = this.lega?.campionato?.sport?.id;
+
+      this.dialog.open(m.DettagliSquadraDialogComponent, {
+        data: {
+          squadraSelezionata: this.formatNomeSquadra(squadraSelezionata),
+          squadraNome: squadra?.nome ? this.formatNomeSquadra(squadra.nome) : this.formatNomeSquadra(squadraSelezionata),
+          ultimiRisultati: this.ultimiRisultati,
+          prossimePartite: this.prossimePartite,
+          ultimiRisultatiOpponent: this.ultimiRisultatiOpponent,
+          opponentSigla: opponentSigla ? this.formatNomeSquadra(opponentSigla) : null,
+          teamColors: this.getTeamColors(squadraSelezionata),
+          getDesGiornata: this.getDesGiornata.bind(this),
+          sportId: sportId,
+          tabLabels: {
+            ultimi: this.getTabLabel('ultimi'),
+            prossime: this.getTabLabel('prossime'),
+            opponent: this.getTabOpponentLabel()
+          }
+        },
+        panelClass: 'dettagli-squadra-dialog-panel',
+        backdropClass: 'dettagli-dialog-backdrop'
+      });
+    });
+  }
+
+  selezionaSquadra(sigla: string): void {
+    this.squadraSelezionata = sigla;
+    this.mostraUltimiRisultati();
+    this.mostraProssimePartite();
+  }
+
+  caricaPartitePerTutteSquadre(): void {
+    if (!this.lega.campionato?.id) return;
+
+    const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    let caricamentiCompletati = 0;
+    const totaleSquadre = this.squadreDisponibili.length;
+
+    // Inizializza subito le squadre con i dati base
+    this.squadreConPartite = this.squadreDisponibili.map(squadra => {
+      const squadraConPartite = {
+        ...squadra,
+        prossimaPartita: null as Partita | null,
+        ultimiRisultati: [] as any[]
+      };
+
+      // Carica prossima partita
+      this.campionatoService
+        .calendario(
+          this.lega.campionato!.id,
+          squadra.sigla!,
+            this.lega.anno,
+          this.lega.giornataCorrente,
+          true
+        )
+        .subscribe({
+          next: (partite) => {
+            if (partite && partite.length > 0) {
+              squadraConPartite.prossimaPartita = partite[0];
+            }
+
+            // Incrementa il contatore
+            caricamentiCompletati++;
+
+            // Quando tutti i caricamenti sono completati, applica il filtro
+            if (isTennis && caricamentiCompletati === totaleSquadre) {
+              this.applicaFiltroGiocatoriAttivi();
+            }
+          },
+          error: (error) => {
+            console.error('Errore caricamento prossima partita:', error);
+            caricamentiCompletati++;
+
+            if (isTennis && caricamentiCompletati === totaleSquadre) {
+              this.applicaFiltroGiocatoriAttivi();
+            }
+          }
+        });
+
+      // Carica ultimi risultati
+      this.campionatoService
+        .calendario(
+          this.lega.campionato!.id,
+          squadra.sigla!,
+            this.lega.anno,
+            this.lega.giornataCorrente - 1,
+          false
+        )
+        .subscribe({
+          next: (risultati) => {
+            squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
+              let esito = 'N';
+              if (r.casaSigla === squadra.sigla) {
+                if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
+                else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
+              } else if (r.fuoriSigla === squadra.sigla) {
+                if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
+                else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
+              }
+              return { ...r, esito };
+            });
+          },
+          error: (error) => console.error('Errore caricamento ultimi risultati:', error)
+        });
+
+      return squadraConPartite;
+    });
+
+    // Inizializza la lista filtrata con tutte le squadre
+    this.squadreFiltrate = [...this.squadreConPartite];
+  }
+
+  applicaFiltroGiocatoriAttivi(): void {
+    const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+
+    if (isTennis) {
+      // Filtra solo i giocatori che hanno una prossima partita (sono ancora in gara)
+      this.squadreConPartite = this.squadreConPartite.filter(squadra => squadra.prossimaPartita !== null);
+    }
+
+    // Riapplica il filtro di ricerca
+    this.filtraSquadre();
+  }
+
+  filtraSquadre(): void {
+    const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    let squadreDaFiltrare = [...this.squadreConPartite];
+
+    // Per il tennis, mostra solo i giocatori ancora in gara (con prossima partita)
+    if (isTennis) {
+      squadreDaFiltrare = squadreDaFiltrare.filter(squadra => squadra.prossimaPartita !== null);
+    }
+
+    if (!this.searchQuery || this.searchQuery.trim() === '') {
+      this.squadreFiltrate = squadreDaFiltrare;
+      return;
+    }
+
+    const query = this.searchQuery.toLowerCase().trim();
+    this.squadreFiltrate = squadreDaFiltrare.filter(squadra => {
+      const nome = (squadra.nome || '').toLowerCase();
+      const sigla = (squadra.sigla || '').toLowerCase();
+      return nome.includes(query) || sigla.includes(query);
+    });
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.filtraSquadre();
   }
 }

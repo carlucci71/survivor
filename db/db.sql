@@ -6,8 +6,14 @@ drop table if exists lega;
 drop table if exists squadra;
 drop table if exists campionato;
 drop table if exists sport;
-DROP TABLE if exists param_log_dispositiva;
-DROP TABLE if exists log_dispositiva;
+drop table if exists partita;
+drop TABLE if exists param_log_dispositiva;
+drop TABLE if exists log_dispositiva;
+drop TABLE if exists nazione;
+drop TABLE if exists partita;
+drop TABLE if exists partita_mock;
+drop table if exists revinfo;
+drop table if exists giocata_aud;
 
 create table lega(
 	id serial primary key,
@@ -17,6 +23,7 @@ create table lega(
 	edizione integer NOT NULL DEFAULT 1;
 	stato char(1) not null,
 	pwd varchar(50) null,
+	anno smallint not null default 2025,
 	id_campionato varchar(20) not null
 );
 create table giocatore(
@@ -40,16 +47,29 @@ create table sport(
 	id varchar(20) primary key,
 	nome varchar(100) not null
 );
+CREATE TABLE nazione(
+    codice varchar(100) PRIMARY KEY
+);
+insert into nazione(codice) values ('IT');
+insert into nazione values ('ES');
+insert into nazione values ('USA');
+insert into nazione values ('TENNIS');
+--
+--
 create table campionato(
 	id varchar(20) primary key,
 	id_sport varchar(20) not null,
 	nome varchar(100) not null,
-	num_giornate integer not null
+	nazione varchar(100) not null default 'IT',
+	num_giornate integer not null,
+	anno_corrente integer not null default 2025
 );
 create table squadra(
 	id serial primary key,
-	sigla varchar(10),
-	nome varchar(100) not null,
+	sigla varchar(200),
+	nome varchar(200) not null,
+	anno smallint not null default 0,
+	nazione varchar(100) not null default 'IT',
 	id_campionato varchar(20) not null
 );
 create table giocata(
@@ -58,6 +78,7 @@ create table giocata(
 	id_giocatore integer not null,
 	id_lega integer not null,
 	id_squadra integer not null,
+	forzatura varchar(1000),
 	esito char(2)
 );
 CREATE TABLE log_dispositiva (
@@ -70,6 +91,35 @@ CREATE TABLE log_dispositiva (
     user_id BIGINT NOT NULL
 );
 
+create table partita(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+    giornata integer NOT NULL,
+    orario timestamp NOT NULL,
+    stato varchar(20) NOT NULL,
+    casa_nome varchar(200) NOT NULL,
+    fuori_nome varchar(200) NOT NULL,
+    casa_sigla varchar(200),
+    fuori_sigla varchar(200),
+    score_casa integer,
+    score_fuori integer,
+    alias_giornata_casa varchar(200),
+	anno smallint not null default 2025,
+    alias_giornata_fuori varchar(200)
+);
+
+create table partita_mock(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+    giornata integer NOT NULL,
+    orario timestamp NULL,
+    casa_sigla varchar(200),
+    fuori_sigla varchar(200),
+    score_casa integer,
+    score_fuori integer,
+	anno smallint not null
+);
+
 CREATE TABLE param_log_dispositiva (
 	id serial primary key,
     nome VARCHAR(100) NOT NULL,
@@ -77,6 +127,28 @@ CREATE TABLE param_log_dispositiva (
     class_name VARCHAR(1000) NOT NULL,
     id_log_dispositiva INTEGER NOT NULL
 );
+CREATE TABLE  revinfo (
+    rev SERIAL PRIMARY KEY,
+    revtstmp BIGINT NOT NULL,
+    username VARCHAR(255),
+    user_id INTEGER
+);
+
+CREATE TABLE  giocata_aud (
+    id INTEGER NOT NULL,
+    rev INTEGER NOT NULL,
+    revtype SMALLINT NOT NULL,
+    giornata INTEGER,
+    id_giocatore INTEGER,
+    id_lega INTEGER,
+    id_squadra INTEGER,
+    esito CHAR(2),
+    forzatura VARCHAR(1000),
+    PRIMARY KEY (id, rev),
+    CONSTRAINT fk_giocata_aud_revinfo
+        FOREIGN KEY (rev) REFERENCES revinfo(rev) ON DELETE CASCADE
+);
+
 
 ALTER TABLE lega
 ADD CONSTRAINT fk_lega_campionato
@@ -84,9 +156,17 @@ FOREIGN KEY (id_campionato) REFERENCES campionato(id);
 ALTER TABLE campionato
 ADD CONSTRAINT fk_campionato_sport
 FOREIGN KEY (id_sport) REFERENCES sport(id);
-ALTER TABLE squadra
-ADD CONSTRAINT fk_squadra_campionato
-FOREIGN KEY (id_campionato) REFERENCES campionato(id);
+--ALTER TABLE squadra
+--ADD CONSTRAINT fk_squadra_campionato
+--FOREIGN KEY (id_campionato) REFERENCES campionato(id);
+ALTER TABLE campionato 
+    ADD CONSTRAINT fk_campionato_nazione 
+    FOREIGN KEY (nazione) REFERENCES nazione(codice);
+
+ALTER TABLE squadra 
+    ADD CONSTRAINT fk_squadra_nazione 
+    FOREIGN KEY (nazione) REFERENCES nazione(codice);
+
 ALTER TABLE giocata
 ADD CONSTRAINT fk_giocata_giocatore
 FOREIGN KEY (id_giocatore) REFERENCES giocatore(id);
@@ -109,6 +189,10 @@ ADD CONSTRAINT fk_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 alter TABLE sospensione_lega 
 ADD CONSTRAINT fk_sospensione_lega FOREIGN KEY (id_lega) REFERENCES lega(id);
 
+ALTER TABLE partita
+ADD CONSTRAINT fk_partita_campionato
+FOREIGN KEY (id_campionato) REFERENCES campionato(id);
+
 ALTER TABLE log_dispositiva
 ADD CONSTRAINT fk_log_dispositiva_users
 FOREIGN KEY (user_id) REFERENCES users(id);
@@ -119,6 +203,16 @@ FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
 CREATE UNIQUE INDEX idx_lega_name_unico ON lega (name,edizione);
 
+CREATE UNIQUE INDEX idx_giocatore_name_unico ON giocatore (nome);
+
+CREATE INDEX idx_revinfo_revtstmp ON revinfo(revtstmp);
+CREATE INDEX idx_revinfo_user_id ON revinfo(user_id);
+CREATE INDEX idx_giocata_aud_rev ON giocata_aud(rev);
+CREATE INDEX idx_giocata_aud_id ON giocata_aud(id);
+CREATE INDEX idx_giocata_aud_id_giocatore ON giocata_aud(id_giocatore);
+CREATE INDEX idx_giocata_aud_id_lega ON giocata_aud(id_lega);
+
+
 insert into sport(id,nome) values('CALCIO','Calcio');
 insert into sport(id,nome) values('BASKET','Basket');
 insert into sport(id,nome) values('TENNIS','Tennis');
@@ -127,27 +221,55 @@ insert into campionato(id,id_sport,nome, num_giornate) values('SERIE_B','CALCIO'
 insert into campionato(id,id_sport,nome, num_giornate) values('LIGA','CALCIO','Liga',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('NBA_RS','BASKET','NBA Regular Season',38);
 insert into campionato(id,id_sport,nome, num_giornate) values('TENNIS_AO','TENNIS','Australian Open',7);
-insert into squadra(sigla,nome,id_campionato) values('ATA','Atalanta','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('BOL','Bologna','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('CAG','Cagliari','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('COM','Como','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('CRE','Cremonese','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('FIO','Fiorentina','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('GEN','Genoa','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('INT','Inter','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('JUV','Juventus','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('LAZ','Lazio','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('LEC','Lecce','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('MIL','Milan','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('NAP','Napoli','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('PAR','Parma','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('PIS','Pisa','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('ROM','Roma','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('SAS','Sassuolo','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('TOR','Torino','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('UDI','Udinese','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('VER','Verona','SERIE_A');
-insert into squadra(sigla,nome,id_campionato) values('DET','Detroit Pistons','NBA_RS');
+update campionato set nazione = 'IT' where id in ('SERIE_A','SERIE_B');
+update campionato set nazione = 'ES' where id in ('LIGA');
+update campionato set nazione = 'USA' where id in ('NBA_RS');
+update campionato set nazione = 'TENNIS' where id in ('TENNIS_AO','TENNIS_W');
+
+insert into squadra(sigla,nome,id_campionato,anno) values('ATA','Atalanta','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('BOL','Bologna','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('CAG','Cagliari','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('COM','Como','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('CRE','Cremonese','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('FIO','Fiorentina','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('GEN','Genoa','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('INT','Inter','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('JUV','Juventus','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('LAZ','Lazio','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('LEC','Lecce','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('MIL','Milan','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('NAP','Napoli','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('PAR','Parma','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('PIS','Pisa','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('ROM','Roma','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('SAS','Sassuolo','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('TOR','Torino','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('UDI','Udinese','SERIE_A',2025);
+insert into squadra(sigla,nome,id_campionato,anno) values('VER','Verona','SERIE_A',2025);
+
+insert into squadra(sigla,nome,id_campionato,anno) values('ATA','Atalanta','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('BOL','Bologna','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('CAG','Cagliari','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('COM','Como','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('VEN','Venezia','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('FIO','Fiorentina','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('GEN','Genoa','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('INT','Inter','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('JUV','Juventus','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('LAZ','Lazio','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('LEC','Lecce','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('MIL','Milan','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('NAP','Napoli','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('PAR','Parma','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('MON','Monza','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('ROM','Roma','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('EMP','Empoli','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('TOR','Torino','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('UDI','Udinese','SERIE_A',2024);
+insert into squadra(sigla,nome,id_campionato,anno) values('VER','Verona','SERIE_A',2024);
+
+
+insert into squadra(sigla,nome,id_campionato,anno) values('DET','Detroit Pistons','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('NYK','New York Knicks','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('TOR','Toronto Raptors','NBA_RS');
 insert into squadra(sigla, nome,id_campionato) values('BOS','Boston Celtics','NBA_RS');
@@ -186,7 +308,7 @@ insert into squadra(sigla,nome,id_campionato) values('FRO','Frosinone','SERIE_B'
 insert into squadra(sigla,nome,id_campionato) values('VEN','Venezia','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('MOD','Modena','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('CAR','Carrarese','SERIE_B');
-insert into squadra(sigla,nome,id_campionato) values('MONZ','Monza','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('MON','Monza','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('SAM','Sampdoria','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('PAD','Padova','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('PAL','Palermo','SERIE_B');
@@ -535,6 +657,10 @@ insert into sospensione_lega(id_lega,giornata) values (1,16);
 
 delete from users where id=0;
 INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+
+insert into partita_mock(id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno)
+SELECT id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno FROM partita
+where implementation_external_api = 'CALENDARIO_API2';
 
 
 SELECT setval('giocata_id_seq', (SELECT MAX(id) FROM giocata));

@@ -1,4 +1,4 @@
-package it.ddlsolution.survivor.util;
+package it.ddlsolution.survivor.util.enums;
 
 public class Enumeratori {
 
@@ -81,10 +81,20 @@ public class Enumeratori {
     }
 
     public enum StatoPartita {
-        DA_GIOCARE,
-        SOSPESA,
-        TERMINATA,
-        IN_CORSO
+        DA_GIOCARE("Da giocare"),
+        SOSPESA ("Sospesa"),
+        TERMINATA ("Terminata"),
+        IN_CORSO ("In corso");
+
+        private final String descrizione;
+
+        StatoPartita(String descrizione){
+            this.descrizione=descrizione;
+        }
+
+        public String getDescrizione() {
+            return descrizione;
+        }
     }
 
     public enum StatoLega {
@@ -125,6 +135,23 @@ public class Enumeratori {
         TENNIS_W,
         TENNIS_AO,
         NBA_RS;
+    }
+
+    public enum DesRoundTennis {
+        Sessantaquattresimi("64-esimi"),
+        Trentaduesimi("32-esimi"),
+        Sedicesimi("16-esimi"),
+        Ottavi("Ottavi"),
+        Quarti("Quarti"),
+        Semifinali("Semifinali"),
+        Finale("Finale");
+        String descrizione;
+        DesRoundTennis(String descrizione){
+            this.descrizione=descrizione;
+        }
+        public String getDescrizione(){
+            return descrizione;
+        }
     }
 
 }

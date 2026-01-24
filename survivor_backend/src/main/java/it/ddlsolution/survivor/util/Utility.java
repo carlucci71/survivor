@@ -4,9 +4,15 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,17 +21,53 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
+
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Component
 @Slf4j
 public class Utility {
     @Autowired
+    Environment environment;
+
+    @Autowired
+    RestTemplate restTemplate;
+
     public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     ObjectMapper mapper = null;
 
+    public StopWatch startStopWatch(String nome) {
+        StopWatch stopWatch = new StopWatch(nome);
+        stopWatch.start();
+        return stopWatch;
+    }
+
+    public void stopStopWatch(StopWatch stopWatch) {
+        stopStopWatch(stopWatch, true);
+    }
+
+    public void stopStopWatch(StopWatch stopWatch, boolean logga) {
+        stopWatch.stop();
+        if (logga) {
+            log.info("process {} executed in {} ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
+        }
+    }
+
+    public <T> T callUrl(String url, Class<T> clazz) {
+        log.info("++++++++++++++++++++++++++++++ {}",url);
+        try {
+            ResponseEntity<T> forEntity = restTemplate.getForEntity(url, clazz);
+            return forEntity.getBody();
+        } catch (Exception e){
+            log.error("Errore in {} {}", url,e);
+            throw e;
+        }
+    }
 
     private ObjectMapper getMapper() {
         if (mapper == null) {
@@ -111,6 +153,15 @@ public class Utility {
     public static BigDecimal roundBigDecimal(BigDecimal value, int newScale) {
         if (value == null) return BigDecimal.ZERO.stripTrailingZeros();
         return value.setScale(newScale, RoundingMode.HALF_UP);
+    }
+
+    public String getImplementationExternalApi() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        String implementationExternalApi = Arrays.stream(activeProfiles)
+                .filter(p -> p.equals(CALENDARIO_MOCK) || p.equals(CALENDARIO_API2))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Implementazione Api External non trovata"));
+        return implementationExternalApi;
     }
 
 

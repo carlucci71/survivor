@@ -13,3 +13,7 @@ DB_USER: survivor_user
 PORT: 8389
 SWAGGER_SERVER_URL: http://localhost:8389/api/survivorBe
 ALLOWED_SERVERS: http://localhost:4200
+SHOW_SQL: DEBUG
+SHOW_SQL_PARAMETER: TRACE
+#REFRESH_TERMINATE: false
+

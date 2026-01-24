@@ -2,11 +2,10 @@ package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
-import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +21,7 @@ import java.util.Optional;
 public class GiocatoreService {
     private final GiocatoreRepository giocatoreRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final GiocatoreMapper giocatoreMapper;
-    private final GiocataRepository giocataRepository;
 
     @Transactional
     public GiocatoreDTO me() {
@@ -43,6 +40,7 @@ public class GiocatoreService {
         ));
     }
 
+
     @Transactional
     public Giocatore findMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,8 +56,18 @@ public class GiocatoreService {
     }
 
     @Transactional
-    public GiocatoreDTO find(Long id) {
-        return giocatoreMapper.toDTO(giocatoreRepository.findById(id).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + id)));
+    public GiocatoreDTO findByUserId(Long userId) {
+        return giocatoreMapper.toDTO(giocatoreRepository.findByUser_Id(userId).orElseThrow(()->new RuntimeException("Giocatore non trovato con user: " + userId)));
+    }
+
+    @Transactional
+    public GiocatoreDTO findById(Long id) {
+        return giocatoreMapper.toDTO(findByIdEntity(id));
+    }
+
+    @Transactional
+    public Giocatore findByIdEntity(Long id) {
+        return giocatoreRepository.findById(id).orElseThrow(()->new RuntimeException("Giocatore non trovato: " + id));
     }
 
 
@@ -76,12 +84,12 @@ public class GiocatoreService {
     }
 
     @Transactional(readOnly = true)
-    public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
+    public GiocatoreDTO getMyInfoInLega(LegaDTO legaDTO,Long userId) {
         Giocatore giocatore = giocatoreRepository.findByGiocatoreLeghe_Lega_IdAndUser_Id(legaDTO.getId(), userId).orElseThrow(()->new RuntimeException("Ruolo non trovato in lega"));
         return giocatoreMapper.toDTO(giocatore);
     }
+
+
 
 }
 

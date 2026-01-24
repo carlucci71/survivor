@@ -84,19 +84,81 @@
 	.me-actions {
 		display: flex;
 		align-items: center;
-		gap: 12px;
-		margin-top: 18px;
+		gap: 16px;
+		margin-top: 20px;
 		flex-wrap: wrap;
 	}
 
-	.feedback {
-		margin: 0;
+	/* BOTTONE CONFERMA - STILE IDENTICO AGLI ALTRI BOTTONI */
+	.btn-conferma {
+		background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+		color: #FFFFFF !important;
+		border: none !important;
+		border-radius: 12px !important;
+		padding: 12px 28px !important;
+		font-weight: 700 !important;
+		font-family: 'Poppins', sans-serif !important;
+		font-size: 0.95rem !important;
+		box-shadow: 0 4px 20px rgba(10, 61, 145, 0.15) !important;
+		transition: all 0.2s ease !important;
+		text-transform: none !important;
+		letter-spacing: 0.3px !important;
+		min-height: 44px !important;
+
+		&:hover:not(:disabled) {
+			transform: translateY(-2px) !important;
+			box-shadow: 0 8px 32px rgba(10, 61, 145, 0.25) !important;
+		}
+
+		&:disabled {
+			opacity: 0.5 !important;
+			cursor: not-allowed !important;
+			background: linear-gradient(135deg, #E0E0E0, #F4F6F8) !important;
+			color: #6B7280 !important;
+		}
+	}
+
+	/* FEEDBACK BADGE - STILE MODERNO CON ICONA */
+	.feedback-badge {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 16px;
+		border-radius: 10px;
 		font-size: 0.9rem;
-		color: #2e7d32;
+		font-weight: 600;
+		font-family: 'Poppins', sans-serif;
+		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+		transition: all 0.2s ease;
+
+		mat-icon {
+			font-size: 20px;
+			width: 20px;
+			height: 20px;
+		}
+
+		&.success {
+			background: linear-gradient(135deg, #10B981, #34D399);
+			color: #FFFFFF;
+
+			mat-icon {
+				color: #FFFFFF;
+			}
+		}
 
 		&.error {
-			color: #c62828;
+			background: linear-gradient(135deg, #EF4444, #F87171);
+			color: #FFFFFF;
+
+			mat-icon {
+				color: #FFFFFF;
+			}
 		}
+	}
+
+	/* Rimuovo il vecchio feedback text */
+	.feedback {
+		display: none;
 	}
 }
 

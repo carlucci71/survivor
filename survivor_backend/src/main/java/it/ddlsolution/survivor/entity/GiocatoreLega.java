@@ -2,7 +2,7 @@ package it.ddlsolution.survivor.entity;
 
 import it.ddlsolution.survivor.converter.RuoloGiocatoreLegaConverter;
 import it.ddlsolution.survivor.converter.StatoGiocatoreConverter;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.*;
 import lombok.Data;
 

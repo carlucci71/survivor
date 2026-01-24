@@ -11,7 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -49,7 +48,7 @@ external-api:
     selected: ${EXTERNAL_API_CALENDARIO_SELECTED}
     implementation:
       API2:
-        url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s
+        url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s&seasonId=%s
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal
@@ -75,3 +74,11 @@ server:
     key-store-password: ${SSL_KEYSTORE_PASSWORD:changeit}
     key-store-type: PKCS12
     key-alias: survivor
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: ${SHOW_SQL:INFO}
+        orm:
+          jdbc:
+            bind: ${SHOW_SQL_PARAMETER:INFO}

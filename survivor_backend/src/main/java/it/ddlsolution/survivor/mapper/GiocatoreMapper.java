@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.mapper;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.projection.GiocatoreProjection;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;

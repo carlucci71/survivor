@@ -12,6 +12,6 @@ public class ManagedException extends RuntimeException{
     }
 
     public enum InternalCode{
-        PWD_LEGA_ERRATA, ALREADY_JOINED, CODE_LEGA_PRESENTE
+        PWD_LEGA_ERRATA, ALREADY_JOINED, CODE_LEGA_PRESENTE, LEGA_NOT_FOUND, NOT_LEADER
     }
 }

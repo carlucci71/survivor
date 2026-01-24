@@ -4,7 +4,11 @@ package it.ddlsolution.survivor.aspect.guardlogger.rule;
 import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.dto.UserDTO;
+import it.ddlsolution.survivor.service.GiocatoreService;
+import it.ddlsolution.survivor.service.UserService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -12,17 +16,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
+import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class GiocataRule implements GuardRule {
+
+    private final GiocatoreService giocatoreService;
+
     @Override
-    public void run(Map<GuardRule.PARAM, Object> args) {
+    public Map<String, Object> run(Map<GuardRule.PARAM, Object> args) {
+        Map<String, Object> ret = new HashMap<>();
+        List<String> warning = new ArrayList<>();
+        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
+        String squadra = (String) args.get(SIGLASQUADRA);
+        Integer giornata = (Integer) args.get(PARAM.GIORNATA);
+        GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new InsufficientAuthenticationException("Utente non autenticato");
@@ -30,23 +48,12 @@ public class GiocataRule implements GuardRule {
         Long userId = (Long) authentication.getPrincipal();
         boolean isAdmin = authentication != null && authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_" + "ADMIN"));
-        LegaDTO legaDTO = (LegaDTO) args.get(IDLEGA);
         Long idLega = legaDTO.getId();
-        String squadra = (String) args.get(SIGLASQUADRA);
         Enumeratori.RuoloGiocatoreLega ruoloGiocatoreLega = legaDTO.getRuoloGiocatoreLega();
         Enumeratori.StatoPartita statoGiornataCorrente = legaDTO.getStatoGiornataCorrente();
-        Integer giornata = (Integer) args.get(PARAM.GIORNATA);
-        GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
         Optional<GiocataDTO> attGiocata = giocatoreDTO.getGiocate().stream()
                 .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega))
                 .findFirst();
-
-        log.info("legaDTO.getRuoloGiocatoreLega() = {}", ruoloGiocatoreLega);
-        log.info("legaDTO.getStatoGiornataCorrente() = {}", statoGiornataCorrente);
-        log.info("legaDTO.getGiornataCorrente() = {}", legaDTO.getGiornataCorrente());
-        log.info("giornata {}", giornata);
-        log.info("giocatore {}", giocatoreDTO);
-        log.info("legaDTO.getGiornataIniziale() = {}", legaDTO.getGiornataIniziale());
 
         if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
             throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getName() + "-" + legaDTO.getEdizione());
@@ -75,17 +82,29 @@ public class GiocataRule implements GuardRule {
         ) {
             throw new AccessDeniedException("Solo il leader o admin può giocare su una giornata non ancora da giocare");
         }
+        if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE
+        ) {
+            warning.add("Giocata di " + getUser(userId).getNome() + "[" + (isAdmin ? "ADMIN" : "LEADER") + "] UserId:" + userId + " Stato: " + statoGiornataCorrente.getDescrizione());
+        }
         if (giocatoreDTO.getGiocate().stream()
-                .filter(g -> g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
+                .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
                 .count() > 0) {
             throw new AccessDeniedException("Squadra già usata");
         }
         if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
-        if (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente()) {
-            throw new AccessDeniedException("Lega in stato TERMINATA");
+        if (legaDTO.getGiornataDaGiocare() > 0 && (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente())) {
+            //throw new AccessDeniedException("La giornata da giocare " + legaDTO.getGiornataDaGiocare() + " è inferiore alla corrente " + legaDTO.getGiornataCorrente());
         }
+        if (warning.size() > 0) {
+            ret.put(WARNING_GIOCATA_RULE, warning);
+        }
+        return ret;
+    }
+
+    private GiocatoreDTO getUser(Long userId) {
+        return giocatoreService.findByUserId(userId);
     }
 
 }

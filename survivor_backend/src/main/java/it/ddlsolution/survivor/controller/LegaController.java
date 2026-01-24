@@ -7,9 +7,13 @@ import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.util.Utility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +33,7 @@ import java.util.Map;
 public class LegaController {
 
     private final LegaService legaService;
+    private final Utility utility;
 
 
     @GetMapping(value = "/mieLeghe")
@@ -39,7 +44,9 @@ public class LegaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LegaDTO> getLegaById(@PathVariable Long id) {
-        LegaDTO legaDTO = legaService.getLegaDTO(id,true);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        LegaDTO legaDTO = legaService.getLegaDTO(id,true,userId);
         if (legaDTO == null) {
             return ResponseEntity.notFound().build();
         }
@@ -108,6 +115,12 @@ public class LegaController {
     @PutMapping("/cancellaGiocatoreDaLega/{idLega}/{idGiocatore}")
     public ResponseEntity<LegaDTO> cancellaGiocatoreDaLega(@PathVariable Long idLega,@PathVariable Long idGiocatore) {
         return ResponseEntity.ok(legaService.cancellaGiocatoreDaLega(idLega, idGiocatore));
+    }
+
+    @DeleteMapping("/{idLega}")
+    public ResponseEntity<Map<String, Object>> eliminaLega(@PathVariable Long idLega) {
+        legaService.eliminaLega(idLega);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Lega eliminata con successo"));
     }
 
 }

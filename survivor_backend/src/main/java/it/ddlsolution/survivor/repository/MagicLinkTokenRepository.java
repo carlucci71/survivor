@@ -13,6 +13,7 @@ public interface MagicLinkTokenRepository extends JpaRepository<MagicLinkToken, 
     Optional<MagicLinkToken> findByTokenAndUsedFalseAndExpiresAtAfter(String token, LocalDateTime now);
     void deleteByExpiresAtBefore(LocalDateTime now);
     void deleteByUserAndTipo(User user, String tipo);
+    void deleteByUser(User user);
 
 }
 

@@ -1,5 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LegaService } from '../../core/services/lega.service';
@@ -61,7 +62,7 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
 })
-export class LegaDettaglioComponent {
+export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
 
   public StatoGiocatore = StatoGiocatore;
@@ -74,6 +75,18 @@ export class LegaDettaglioComponent {
 
   giornataIndices: number[] = [];
 
+  // Countdown timer
+  countdown: string = '';
+  countdownActive: boolean = false;
+  private countdownIntervalId: any;
+
+  // Elimina lega
+  showDeleteConfirm = false;
+  isDeleting = false;
+
+  // Messaggio di consolazione (salvato una sola volta)
+  private savedConsolationMessage: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -84,6 +97,7 @@ export class LegaDettaglioComponent {
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
+    private overlay: Overlay,
     private sospensioniService: SospensioniService,
   ) {
     this.route.paramMap.subscribe((params) => {
@@ -94,6 +108,7 @@ export class LegaDettaglioComponent {
             this.lega = lega;
             this.caricaTabella();
             this.scrollTableToRight();
+            this.startCountdown();
           },
           error: (error) => {
             console.error('Errore nel caricamento delle leghe:', error);
@@ -147,6 +162,12 @@ export class LegaDettaglioComponent {
       },
       width: '820px',
       maxWidth: '90vw',
+      maxHeight: '95vh',
+      panelClass: 'seleziona-giocata-dialog',
+      hasBackdrop: true,
+      disableClose: false,
+      autoFocus: false,
+      scrollStrategy: this.overlay.scrollStrategies.noop()
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
@@ -158,23 +179,23 @@ export class LegaDettaglioComponent {
     this.router.navigate(['/home']);
   }
 
-  visualizzaGiocata(giornata: number, giocatore: Giocatore) {
+  visualizzaGiocata(giornata: number, giocatore: Giocatore): string {
     const giornataIniziale = this.lega?.giornataIniziale || 0;
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined ? '' : giocata.esito;
-    let ret = true;
+    let ret = '';
     if (giornata + giornataIniziale - 1 !== giornataCorrente) {
-      ret = false;
+      ret = 'Non visualizzo perchè non è la giornata corrente';
     }
     if (
       giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
       StatoGiocatore.ELIMINATO.value
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè il giocatore è eliminato';
     }
     if (esito == 'OK' || esito == 'KO') {
-      ret = false;
+      ret = 'Non visualizzo perchè è presente un esito';
     }
     if (
       !this.isAdmin() &&
@@ -182,23 +203,23 @@ export class LegaDettaglioComponent {
       (giocatore.user == null ||
         giocatore.user.id !== this.authService.getCurrentUser()?.id)
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè non sei leader e non sei tu';
     }
     if (
       !this.isAdmin() &&
       !this.isLeaderLega() &&
       this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
     ) {
-      ret = false;
+      ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
     }
     if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
-      ret = false;
+      ret = 'Non visualizzo perchè la giornata è sospesa';
     }
     if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
-      ret = false;
+      ret = 'Non visualizzo perchè la lega è terminata';
     }
-    if (this.lega!.giornataDaGiocare < this.lega!.giornataCorrente) {
-      ret = false;
+    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
+    //  ret = 'Non visualizzo perchè la giornata da giocare ' + this.lega.giornataDaGiocare + ' è inferiore alla corrente ' + this.lega.giornataCorrente;
     }
     return ret;
   }
@@ -227,7 +248,7 @@ export class LegaDettaglioComponent {
 
     if (this.lega?.campionato) {
       this.squadraService
-        .getSquadreByCampionato(this.lega?.campionato?.id ?? '')
+        .getSquadreByCampionato(this.lega?.campionato?.id ?? '', this.lega.anno)
         .subscribe({
           next: (squadre: any[]) => {
             this.squadre = squadre;
@@ -292,6 +313,98 @@ export class LegaDettaglioComponent {
   getCurrentUser() {
     return this.authService.getCurrentUser();
   }
+
+  // Verifica se il giocatore corrente (utente loggato) è eliminato in questa lega
+  isCurrentUserEliminato(): boolean {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return false;
+
+    const giocatore = this.lega.giocatori.find(g => g.user?.id === currentUserId);
+    if (!giocatore) return false;
+
+    return giocatore.statiPerLega?.[this.lega.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value;
+  }
+
+  // Ottiene il giocatore corrente (utente loggato)
+  getCurrentGiocatore(): any | null {
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (!currentUserId || !this.lega?.giocatori) return null;
+    return this.lega.giocatori.find(g => g.user?.id === currentUserId) || null;
+  }
+
+  // Ottiene la squadra che ha fatto perdere il giocatore corrente
+  getSquadraEliminazione(): { sigla: string; nome: string; giornata: number } | null {
+    const giocatore = this.getCurrentGiocatore();
+    if (!giocatore || !giocatore.giocate) return null;
+
+    // Trova la giocata con esito KO
+    const giocataKO = giocatore.giocate.find((g: any) => g.esito === 'KO');
+    if (!giocataKO) return null;
+
+    return {
+      sigla: giocataKO.squadraSigla,
+      nome: this.getSquadraNome(giocataKO.squadraSigla) || giocataKO.squadraSigla,
+      giornata: giocataKO.giornata
+    };
+  }
+
+  // Messaggi di consolazione simpatici per l'eliminazione
+  private consolationMessages = [
+    "La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀",
+    "Non tutti possono vincere, ma tu hai giocato con stile! 😎",
+    "La prossima volta andrà meglio, promesso! 💪",
+    "Hai dato il massimo, questo conta! 🌟",
+    "Meglio eliminato con onore che vincitore per caso! 🎖️",
+    "La sfortuna ti ha beccato, ma tu sei un campione! 🏆",
+    "Non piangere, c'è sempre la prossima edizione! 😢➡️😊",
+    "Hai perso la battaglia, ma non la guerra! ⚔️",
+    "La statistica dice che prima o poi si vince... forse! 📊😅",
+    "Almeno ora puoi dormire tranquillo la domenica! 😴",
+    "Consolati: hai fatto meglio di chi non ha nemmeno provato! 💫",
+    "La ruota gira, la prossima volta toccherà a te! 🎡",
+    "Hai sfidato il destino e... beh, hai perso! Ma che coraggio! 🦁",
+    "Non sei stato eliminato, sei stato promosso a spettatore VIP! 🎭",
+    "La sconfitta è temporanea, la gloria eterna... o quasi! ✨",
+    "Hai fatto squadra con la squadra sbagliata, capita! 🤷",
+    "Il tuo nome rimarrà nella storia... della tua famiglia! 📜",
+    "Meglio essere stati ed essere stati eliminati che non essere mai stati! 🤔",
+    "La tua eliminazione è arte, pura arte tragica! 🎨",
+    "Hai perso, ma almeno hai una bella storia da raccontare! 📖",
+    "Non tutti possono essere Ronaldo, qualcuno deve fare il pubblico! ⚽😂",
+    "La vittoria è dei più forti, ma tu sei simpatico! 😄",
+    "Prossima volta scegli meglio... o affidati al caso! 🎲",
+    "Hai fatto ridere, piangere ed emozionare. Missione compiuta! 🎬"
+  ];
+
+  // Ottiene un messaggio di consolazione casuale (solo la prima volta)
+  getRandomConsolationMessage(): string {
+    // Se non abbiamo ancora un messaggio salvato, scegline uno casuale
+    if (!this.savedConsolationMessage) {
+      const randomIndex = Math.floor(Math.random() * this.consolationMessages.length);
+      this.savedConsolationMessage = this.consolationMessages[randomIndex];
+    }
+    return this.savedConsolationMessage;
+  }
+
+  // Messaggi simpatici per l'eliminazione
+  private eliminationMessages = [
+    { emoji: '💀', message: 'Sei stato eliminato!' },
+    { emoji: '☠️', message: 'Game Over, amico!' },
+    { emoji: '😵', message: 'K.O. tecnico!' },
+    { emoji: '🪦', message: 'R.I.P. alla tua avventura!' },
+    { emoji: '💔', message: 'Il tuo cuore è spezzato!' },
+    { emoji: '🎭', message: 'Tragedia greca!' },
+    { emoji: '🌧️', message: 'Piove sul bagnato!' },
+    { emoji: '🔥', message: 'Bruciato vivo!' },
+    { emoji: '⚰️', message: 'Seppellito dalla sfortuna!' },
+    { emoji: '🎲', message: 'I dadi non ti hanno favorito!' }
+  ];
+
+  getEliminationMessage(): { emoji: string; message: string } {
+    const index = Math.floor(Math.random() * this.eliminationMessages.length);
+    return this.eliminationMessages[index];
+  }
+
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
@@ -299,7 +412,7 @@ export class LegaDettaglioComponent {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
- isInLega(): boolean {
+  isInLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
   }
@@ -310,7 +423,7 @@ export class LegaDettaglioComponent {
   isChiudibile(): boolean {
     return this.contaAttivi() <= 3;
   }
-  contaAttivi():number{
+  contaAttivi(): number {
     let contaAttivi = 0;
     let giocatori = this.lega!.giocatori;
     if (giocatori && giocatori[0]) {
@@ -484,5 +597,171 @@ export class LegaDettaglioComponent {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+  }
+
+  hasGiocataDisponibile(giocatore: Giocatore): boolean {
+    // Verifica se esiste almeno una giornata giocabile per questo giocatore
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return false;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  giocaGiornataDisponibile(giocatore: Giocatore): void {
+    // Trova la prima giornata disponibile e apri il popup
+    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+      return;
+    }
+
+    for (let i = 0; i < this.giornataIndices.length; i++) {
+      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
+      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
+        this.giocaGiornata(giocatore, giornataAssoluta);
+        return;
+      }
+    }
+  }
+
+  // Mostra/nascondi conferma eliminazione
+  toggleDeleteConfirm(): void {
+    this.showDeleteConfirm = !this.showDeleteConfirm;
+  }
+
+  // Elimina la lega
+  confirmEliminaLega(): void {
+    if (!this.lega) return;
+
+    console.log('Eliminazione lega in corso...', this.lega.id);
+    this.isDeleting = true;
+    this.showDeleteConfirm = false; // Chiudi il dialog subito
+
+    this.legaService.eliminaLega(this.lega.id).subscribe({
+      next: (response) => {
+        console.log('Lega eliminata con successo:', response);
+        this.isDeleting = false;
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Errore durante l\'eliminazione della lega:', err);
+        this.isDeleting = false;
+        this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
+      }
+    });
+  }
+
+  getStatoGiornataValue(index: number): string {
+    if (!this.lega || !this.lega.statiGiornate) return '';
+    return this.lega.statiGiornate[index]?.value || '';
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownIntervalId) {
+      clearInterval(this.countdownIntervalId);
+    }
+  }
+
+  startCountdown(): void {
+    console.log('🕐 startCountdown chiamato per:', this.lega?.campionato?.sport?.id);
+    console.log('📅 inizioProssimaGiornata:', this.lega?.inizioProssimaGiornata);
+
+    if (!this.lega) {
+      console.warn('⚠️ Countdown non attivo - lega non caricata');
+      this.countdownActive = false;
+      return;
+    }
+
+    if (this.lega.inizioProssimaGiornata) {
+      // CASO 1: inizioProssimaGiornata è disponibile (dovrebbe funzionare per tutti gli sport)
+      this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
+    } else {
+      // CASO 2: FALLBACK - carica le partite della giornata e trova la prima
+      console.warn('⚠️ inizioProssimaGiornata non disponibile, carico le partite...');
+      this.loadFirstMatchTimeAndStartCountdown();
+    }
+  }
+
+  private loadFirstMatchTimeAndStartCountdown(): void {
+    if (!this.lega || !this.lega.campionato?.id) return;
+
+    this.campionatoService
+      .calendario(
+        this.lega.campionato.id,
+        '', // Squadra vuota per prendere tutte le partite
+        this.lega.anno,
+        this.lega.giornataCorrente,
+        true
+      )
+      .subscribe({
+        next: (partite) => {
+          if (partite && partite.length > 0) {
+            // Trova la prima partita ordinando per orario
+            const primaPartita = partite
+              .filter(p => p.orario)
+              .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
+
+            if (primaPartita && primaPartita.orario) {
+              console.log('✅ Prima partita trovata:', primaPartita.orario);
+              this.startCountdownWithTime(new Date(primaPartita.orario));
+            } else {
+              console.warn('⚠️ Nessuna partita con orario trovata');
+              this.countdownActive = false;
+            }
+          } else {
+            console.warn('⚠️ Nessuna partita trovata per la giornata');
+            this.countdownActive = false;
+          }
+        },
+        error: (error) => {
+          console.error('❌ Errore caricamento partite:', error);
+          this.countdownActive = false;
+        }
+      });
+  }
+
+  private startCountdownWithTime(matchTime: Date): void {
+    // Sottrai 5 minuti (5 * 60 * 1000 millisecondi)
+    const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
+
+    console.log('⏰ Match time:', matchTime);
+    console.log('🎯 Target time (5min prima):', targetTime);
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const countdownEndTime = targetTime.getTime();
+      const distance = countdownEndTime - now;
+
+      if (distance < 0) {
+        // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
+        this.countdown = '⏰ Tempo scaduto';
+        this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
+        // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (days > 0) {
+        this.countdown = `${days}g ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        this.countdown = `${hours}h ${minutes}m ${seconds}s`;
+      } else {
+        this.countdown = `${minutes}m ${seconds}s`;
+      }
+
+      this.countdownActive = true;
+    };
+
+    updateCountdown();
+    this.countdownIntervalId = setInterval(updateCountdown, 1000);
   }
 }

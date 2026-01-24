@@ -1,14 +1,12 @@
 package it.ddlsolution.survivor.repository;
 
 import it.ddlsolution.survivor.entity.Lega;
-import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +14,7 @@ import java.util.Optional;
 public interface LegaRepository extends JpaRepository<Lega, Long> {
     List<Lega> findByGiocatoreLeghe_Giocatore_User_Id(Long id);
 
-    @Query("SELECT l.id as id, l.name as name, l.edizione as edizione, l.stato as stato,l.giornataIniziale as giornataIniziale, " +
+    @Query("SELECT l.id as id, l.name as name, l.anno as anno, l.edizione as edizione, l.stato as stato,l.giornataIniziale as giornataIniziale, " +
            "l.giornataCalcolata as giornataCalcolata, l.campionato as campionato " +
            "FROM Lega l LEFT JOIN l.campionato c LEFT JOIN c.sport s WHERE l.id = :id")
     Optional<LegaProjection> findProjectionById(@Param("id") Long id);

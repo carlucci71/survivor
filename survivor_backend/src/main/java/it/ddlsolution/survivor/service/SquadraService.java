@@ -5,12 +5,12 @@ import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +19,8 @@ public class SquadraService {
     private final SquadraMapper squadraMapper;
 
     @Transactional(readOnly = true)
-    public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId) {
-        List<Squadra> squadre = squadraRepository.findByCampionato_Id(campionatoId);
+    public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {
+        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId,anno);
         List<SquadraDTO> squadreDTO = squadraMapper.toDTOList(squadre)
                 .stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
@@ -28,6 +28,19 @@ public class SquadraService {
 
         return squadreDTO;
     }
+
+    @Transactional(readOnly = true)
+    public Squadra findBySiglaAndNazione(String squadraSigla, String nazione){
+        return squadraRepository.findBySiglaAndNazione(squadraSigla, nazione)
+                .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato){
+        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionato(idCampionato);
+        return squadraMapper.toDTOList(squadre);
+    }
+
 
 }
 

@@ -4,3 +4,6 @@ errFE.log
 logFE.log
 nohup.out
 ReadmeSECRET.md
+survivor_backend/.github/
+/.idea
+.vscode/launch.json
