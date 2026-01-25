@@ -34,11 +34,11 @@ public class MagicLinkService {
     @Value("${magic-link.base-url}")
     private String baseUrl;
 
-    @Value("${magic-link.base-url-mobile}")
-    private String baseUrlMobile;
-
     @Value("${magic-link.relative-url-send-mail}")
     private String relativeUrlSendMail;
+
+    @Value("${magic-link.relative-url-send-mail-mobile}")
+    private String relativeUrlSendMailMobile;
 
     @Transactional
     public void sendMagicLink(String email, boolean mobile) {
@@ -83,7 +83,7 @@ public class MagicLinkService {
     }
 
     public String getUrlMagicLink(String token, String codiceTipoMagicLink, boolean mobile) {
-        return (mobile ? baseUrlMobile : baseUrl) + relativeUrlSendMail + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+        return baseUrl + (mobile ? relativeUrlSendMailMobile : relativeUrlSendMail) + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
     }
 
     private String buildEmailContent(String magicLink) {

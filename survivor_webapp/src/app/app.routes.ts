@@ -25,6 +25,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/public/terms.component').then(m => m.TermsComponent)
   },
   {
+    path: 'magic-redirect',
+    loadComponent: () => import('./features/public/magic-redirect.component').then(m => m.MagicRedirectComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]
