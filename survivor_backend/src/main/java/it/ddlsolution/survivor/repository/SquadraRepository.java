@@ -23,7 +23,7 @@ public interface SquadraRepository extends JpaRepository<Squadra, String> {
  union
  select distinct fuori_sigla from partita p, campionato c where id_campionato = c.id
  and c.id = :campionatoId and anno = :anno
- ) and id_campionato = :campionatoId
+ ) and nazione = (select nazione from campionato where id = :campionatoId)
  order by nome
 """)
     List<Squadra> findByNazioneOfCampionatoAndAnno(@Param("campionatoId") String campionatoId,@Param("anno") short anno);
