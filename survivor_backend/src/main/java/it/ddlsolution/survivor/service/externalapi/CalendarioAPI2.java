@@ -139,6 +139,10 @@ public class CalendarioAPI2 implements ICalendario {
             Result resultHome = getResultTennis(match, "first", statoPartita);
             Result resultAway = getResultTennis(match, "second", statoPartita);
 
+            if (match.get("matchId").toString().equals("414341")){
+                resultAway=new Result(resultAway.team, resultAway.teamCode, 3);
+            }
+
 
             PartitaDTO calendarioDTO = PartitaDTO.builder()
                     .sportId(sport)
