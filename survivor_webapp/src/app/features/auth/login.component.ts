@@ -47,7 +47,7 @@ export class LoginComponent {
         this.isSuccess = response.success;
       },
       error: (error) => {
-        this.message = 'Errore durante l\'invio del magic link';
+        this.message = 'Errore durante l\'invio del magic link!';
         this.isSuccess = false;
       }
     });

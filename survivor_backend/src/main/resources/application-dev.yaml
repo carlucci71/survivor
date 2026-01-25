@@ -7,13 +7,13 @@ MAIL_FROM: fantasurvivorddl@gmail.com
 ADMIN_PASSWORD: ${ENV_ADMIN_PASSWORD}
 JWT_SECRET: ${ENV_JWT_SECRET}
 JWT_SECRET_TOKEN_MAGICLINK: ${ENV_JWT_SECRET_TOKEN_MAGICLINK}
-MAGIC_LINK_BASE_URL: http://localhost:4200
+#MAGIC_LINK_BASE_URL: http://localhost:4200
+MAGIC_LINK_BASE_URL: survivor:/
 DB_URL: jdbc:postgresql://85.235.148.177:6438/db_test_survivor
 DB_USER: survivor_user
 PORT: 8389
 SWAGGER_SERVER_URL: http://localhost:8389/api/survivorBe
-ALLOWED_SERVERS: http://localhost:4200
+ALLOWED_SERVERS: http://localhost:4200,http://localhost
 SHOW_SQL: DEBUG
 SHOW_SQL_PARAMETER: TRACE
 #REFRESH_TERMINATE: false
-
