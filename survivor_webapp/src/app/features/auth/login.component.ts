@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -41,7 +42,7 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.requestMagicLink(this.email).subscribe({
+    this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;

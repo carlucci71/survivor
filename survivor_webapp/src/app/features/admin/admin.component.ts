@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilService } from '../../core/services/util.service';
+import { environment } from '../../../environments/environment';
  
 @Component({
   selector: 'app-admin',
@@ -19,6 +20,7 @@ import { UtilService } from '../../core/services/util.service';
 })
 export class AdminComponent implements OnInit {
   profilo: {} = {};
+  profiloFe  = environment.ambiente + " - " + environment.mobile;
   calendario: {} = {};
 
   constructor(
