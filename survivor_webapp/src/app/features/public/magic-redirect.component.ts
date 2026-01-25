@@ -31,7 +31,7 @@ export class MagicRedirectComponent implements OnInit {
           codiceTipoMagicLink: this.codiceTipoMagicLink
         }
       });
-    }, 1200);
+    }, 120000);
   }
 
   openApp(): void {
