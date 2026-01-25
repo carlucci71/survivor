@@ -31,8 +31,8 @@ export class AuthService {
     return this.injector.get(Router);
   }
 
-  requestMagicLink(email: string): Observable<MagicLinkResponse> {
-    const request: MagicLinkRequest = { email };
+  requestMagicLink(email: string, mobile: boolean): Observable<MagicLinkResponse> {
+    const request: MagicLinkRequest = { email, mobile };
     return this.http.post<MagicLinkResponse>(
       `${this.apiUrl}/request-magic-link`,
       request

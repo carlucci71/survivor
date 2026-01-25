@@ -34,9 +34,6 @@ export class VerifyComponent implements OnInit {
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     const codiceTipoMagicLink = this.route.snapshot.queryParamMap.get('codiceTipoMagicLink') || '';
-
-    console.info('[Verify] init with', { token, codiceTipoMagicLink });
-
     if (!token) {
       this.message = 'Token non trovato';
       this.isSuccess = false;

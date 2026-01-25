@@ -40,6 +40,7 @@ jwt:
 magic-link:
   expiration-minutes: 20
   base-url: ${MAGIC_LINK_BASE_URL}
+  base-url-mobile: survivor:/
   relative-url-send-mail: /auth/verify?token=
   secret-token-generated: ${JWT_SECRET_TOKEN_MAGICLINK}
 
