@@ -67,6 +67,7 @@ class EnumAPI2 {
         PreMatch(Enumeratori.StatoPartita.DA_GIOCARE),
         Postponed(Enumeratori.StatoPartita.DA_GIOCARE),
         POSTPONED(Enumeratori.StatoPartita.DA_GIOCARE),
+        WALKOVER(Enumeratori.StatoPartita.TERMINATA),
         Cancelled(Enumeratori.StatoPartita.DA_GIOCARE),
         Walkover(Enumeratori.StatoPartita.TERMINATA),
         FirstHalf(Enumeratori.StatoPartita.IN_CORSO),
