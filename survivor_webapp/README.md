@@ -136,3 +136,6 @@ adb uninstall com.survivor.app
 
 **visualizzare device su chrome
 chrome://inspect/#devices
+
+**copiare APK su device
+adb -d install -t <PATH_APP>\survivor\survivor_webapp\android\app\build\intermediates\apk\debug\app-debug.apk
