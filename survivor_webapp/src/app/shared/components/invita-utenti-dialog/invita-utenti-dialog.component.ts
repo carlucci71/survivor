@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LegaService } from '../../../core/services/lega.service';
 import { MatCardModule } from '@angular/material/card';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-invita-utenti-dialog',
@@ -902,7 +903,7 @@ export class InvitaUtentiDialogComponent {
     this.inviteError = null;
     this.inviteSuccess = false;
 
-    this.legaService.invitaUtenti(this.data.legaId, this.emailsList).subscribe({
+    this.legaService.invitaUtenti(this.data.legaId, this.emailsList, environment.mobile).subscribe({
       next: () => {
         this.inviteSuccess = true;
         this.emailsList = [];

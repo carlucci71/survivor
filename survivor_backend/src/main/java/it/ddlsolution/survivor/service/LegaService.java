@@ -667,7 +667,7 @@ public class LegaService {
 
 
     @Transactional
-    public void invita(long idLega, List<String> emails) {
+    public void invita(long idLega, List<String> emails,boolean mobile) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         for (String email : emails) {
@@ -687,7 +687,7 @@ public class LegaService {
             int expirationDays = 3;
             String token = magicLinkService.salvaMagicToken(user, null, expirationDays, Enumeratori.TipoMagicToken.JOIN.getCodice(), Enumeratori.TipoMagicToken.JOIN + ":" + legaDTO.getId().toString());
             String subject = "Invito per giocare a Survivor";
-            String magicLink = magicLinkService.getUrlMagicLinkInvita(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
+            String magicLink = magicLinkService.getUrlMagicLinkInvita(token, Enumeratori.TipoMagicToken.JOIN.getCodice(), mobile);
             emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
             log.info("Magic link inviato a: {}", email);
         }

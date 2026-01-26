@@ -35,7 +35,7 @@ bootstrapApplication(AppComponent, appConfig)
         const parsed = new URL(url);
         const path = parsed.pathname.toLowerCase();
         const host = parsed.host.toLowerCase();
-        console.info('[DeepLink] appUrlOpen', { url, host, path });
+        //console.info('[DeepLink] appUrlOpen', { url, host, path });
 
         // For survivor://auth/verify?... the host is "auth" and the path is "/verify"
         const isVerify = (host === 'auth' && path.startsWith('/verify')) || path.startsWith('/auth/verify');
@@ -43,7 +43,7 @@ bootstrapApplication(AppComponent, appConfig)
         if (isVerify) {
           const token = parsed.searchParams.get('token');
           const codiceTipoMagicLink = parsed.searchParams.get('codiceTipoMagicLink') || '';
-          console.info('[DeepLink] routing to /auth/verify', { token: !!token, codiceTipoMagicLink });
+          //console.info('[DeepLink] routing to /auth/verify', { token: !!token, codiceTipoMagicLink });
           router.navigate(['/auth/verify'], { queryParams: { token, codiceTipoMagicLink } });
         }
       } catch (e) {

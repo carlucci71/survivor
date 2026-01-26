@@ -206,7 +206,7 @@ export class LegaNuovaComponent implements OnInit {
     }
 
 
-    this.legaService.invitaUtenti(this.legaCreataId, this.emailsList).subscribe({
+    this.legaService.invitaUtenti(this.legaCreataId, this.emailsList, environment.mobile).subscribe({
       next: () => {
         this.emailsList = [];
       },

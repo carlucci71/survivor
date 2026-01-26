@@ -73,7 +73,7 @@ public class LegaController {
 
     @PostMapping("/invita/{idLega}")
     public ResponseEntity<Map<String, String>> invita(@RequestBody LegaInvitaDTO legaInvitaDTO, @PathVariable("idLega") Long idLega) {
-        legaService.invita(idLega, legaInvitaDTO.getEmails());
+        legaService.invita(idLega, legaInvitaDTO.getEmails(), legaInvitaDTO.getMobile());
         return ResponseEntity.ok(Map.of("ESITO","OK"));
     }
 
