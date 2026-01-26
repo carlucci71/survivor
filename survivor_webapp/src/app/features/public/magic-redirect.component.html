@@ -1,6 +1,5 @@
 <mat-card>
-  <h2>Apri l'app per completare l'accesso</h2>
-  <p>Stiamo provando ad aprire l'app. Se non succede nulla, tocca il pulsante qui sotto.</p>
+  <h2>Completa l'accesso</h2>
   <div style="display:flex; gap:12px; margin-top:12px; flex-wrap: wrap;">
     <button mat-raised-button color="primary" (click)="openApp()">Apri app</button>
     <a mat-stroked-button [routerLink]="['/auth/verify']" [queryParams]="{ token: token, codiceTipoMagicLink: codiceTipoMagicLink }">

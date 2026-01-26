@@ -9,5 +9,6 @@ import java.util.List;
 @Valid
 public class LegaInvitaDTO {
     private List<String> emails;
+    private Boolean mobile;
 }
 
