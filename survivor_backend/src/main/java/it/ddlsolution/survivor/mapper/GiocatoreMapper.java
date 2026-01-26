@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {GiocataMapper.class, UserMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {GiocataMapper.class, UserMapper.class, SquadraMapper.class})
 public abstract class GiocatoreMapper  implements DtoMapper<GiocatoreDTO, Giocatore> {
 
     @Mapping(target = "leghe", ignore = true)

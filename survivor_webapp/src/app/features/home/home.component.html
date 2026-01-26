@@ -6,20 +6,22 @@
     (logout)="logout()"
   >
     <div class="config-user">
-      <mat-chip class="user-chip" [class.short-name]="(me?.nome?.length || 0) <= 6">
+      <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nome)?.length || 0) <= 6">
         <ng-container *ngIf="isMobile; else desktopName">
           <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
         </ng-container>
         <ng-template #desktopName>
-          <span class="config-user-name">{{ me?.nome }}</span>
+          <span class="config-user-name">{{ me?.nickname || me?.nome }}</span>
         </ng-template>
       </mat-chip>
-      <mat-icon
-        class="settings-icon"
-        (click)="goToMe()"
-        matTooltip="Configura l'utente"
-        >settings</mat-icon
+      @if (isAdmin()) {
+      <span
+        class="admin-emoji"
+        (click)="goToAdmin()"
+        matTooltip="Area Admin"
+        >👑</span
       >
+      }
     </div>
   </app-header>
 
@@ -29,18 +31,6 @@
 
   <main class="main-content">
 
-    <div class="actions">
-      @if (isAdmin()) {
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="goToAdmin()"
-        class="btn-admin"
-      >
-        Area Admin
-      </button>
-      }
-    </div>
 
     <section class="leghe-section">
       <h2>Le tue Leghe</h2>

@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface SquadraRepository extends JpaRepository<Squadra, String> {
+public interface SquadraRepository extends JpaRepository<Squadra, Long> {
     Optional<Squadra> findBySiglaAndNazione(String sigla, String nazione);
+
+    Optional<Squadra> findByNome(String nome);
 
     @Query("SELECT s FROM Squadra s WHERE s.nazione = (SELECT c.nazione FROM Campionato c WHERE c.id = :campionatoId)")
     List<Squadra> findByNazioneOfCampionato(@Param("campionatoId") String campionatoId);

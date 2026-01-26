@@ -332,3 +332,59 @@ mat-dialog-actions {
     background: transparent !important;
   }
 }
+
+/* SNACKBAR PERSONALIZZATI - BEN VISIBILI */
+.success-snackbar {
+  .mat-mdc-snack-bar-container,
+  .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #43A047, #66BB6A) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: 20px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(67, 160, 71, 0.5) !important;
+  }
+
+  .mat-mdc-button,
+  .mat-mdc-snack-bar-action {
+    color: white !important;
+    font-weight: 700 !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3) !important;
+    }
+  }
+}
+
+.large-snackbar {
+  .mat-mdc-snack-bar-container {
+    min-width: 400px !important;
+    max-width: 600px !important;
+  }
+}
+
+.error-snackbar {
+  .mat-mdc-snack-bar-container,
+  .mdc-snackbar__surface {
+    background: linear-gradient(135deg, #E53935, #EF5350) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: 20px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(229, 57, 53, 0.5) !important;
+  }
+}
+
+/* Responsive Snackbar */
+@media (max-width: 600px) {
+  .large-snackbar .mat-mdc-snack-bar-container {
+    min-width: 90vw !important;
+    max-width: 90vw !important;
+  }
+}
+

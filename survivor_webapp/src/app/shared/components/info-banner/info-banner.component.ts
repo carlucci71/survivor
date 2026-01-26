@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,9 +6,12 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { GiocatoreService } from '../../../core/services/giocatore.service';
+import { SquadraService } from '../../../core/services/squadra.service';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
@@ -1050,7 +1053,7 @@ export class AlboOroDialogComponent {
 @Component({
   selector: 'app-profilo-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule],
   template: `
     <div class="modal-container">
       <!-- CLOSE BUTTON -->
@@ -1084,22 +1087,25 @@ export class AlboOroDialogComponent {
           <div class="value autocomplete-container">
             <input type="text"
               placeholder="Cerca la tua squadra..."
-              [(ngModel)]="searchQuery"
+              [(ngModel)]="userProfile.squadraPreferita"
               (input)="onSearchInput()"
-              (focus)="showSuggestions = true"
+              (focus)="onInputFocus()"
               (blur)="onBlur()"
               class="custom-input"
+              [class.has-value]="userProfile.squadraPreferita"
               autocomplete="off">
+            <button type="button"
+              class="clear-input-btn"
+              *ngIf="userProfile.squadraPreferita && !showSuggestions"
+              (mousedown)="clearSquadra()">
+              ×
+            </button>
             <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
               <div class="suggestion-item"
                 *ngFor="let squadra of filteredSquadre"
                 (mousedown)="selectSquadra(squadra)">
                 {{ squadra }}
               </div>
-            </div>
-            <div class="selected-badge" *ngIf="userProfile.squadraPreferita && !showSuggestions">
-              <span>{{ userProfile.squadraPreferita }}</span>
-              <button type="button" class="clear-btn" (click)="clearSquadra()">×</button>
             </div>
           </div>
         </div>
@@ -1114,10 +1120,16 @@ export class AlboOroDialogComponent {
         </button>
         <button type="submit"
           class="btn-primary"
-          [disabled]="!isFormValid()"
+          [disabled]="!isFormValid() || isSaving"
           (click)="onSubmit()">
-          Salva Profilo
+          {{ isSaving ? 'Salvataggio...' : 'Salva Profilo' }}
         </button>
+      </div>
+
+      <!-- FEEDBACK MESSAGE -->
+      <div *ngIf="feedbackMessage" class="feedback-message" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
+        <mat-icon>{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        <span>{{ feedbackMessage }}</span>
       </div>
 
       <!-- DANGER ZONE -->
@@ -1282,6 +1294,13 @@ export class AlboOroDialogComponent {
         color: #9CA3AF;
         font-weight: 400;
       }
+
+      &.has-value {
+        padding-right: 40px; /* Spazio per il pulsante clear */
+        background: #FFFFFF;
+        border-color: #4FC3F7;
+        font-weight: 600;
+      }
     }
 
     .custom-select {
@@ -1297,6 +1316,34 @@ export class AlboOroDialogComponent {
     /* AUTOCOMPLETE CONTAINER */
     .autocomplete-container {
       position: relative;
+    }
+
+    /* PULSANTE CLEAR DENTRO L'INPUT */
+    .clear-input-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(10, 61, 145, 0.08);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      color: #0A3D91;
+      transition: all 0.2s ease;
+      padding: 0;
+      z-index: 10;
+
+      &:hover {
+        background: rgba(10, 61, 145, 0.15);
+        transform: translateY(-50%) scale(1.1);
+      }
     }
 
     .suggestions-list {
@@ -1346,40 +1393,6 @@ export class AlboOroDialogComponent {
       }
     }
 
-    .selected-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 8px 12px;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-      border-radius: 20px;
-      color: #FFFFFF;
-      font-weight: 600;
-      font-size: 0.85rem;
-      width: fit-content;
-
-      .clear-btn {
-        background: rgba(255, 255, 255, 0.3);
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        color: #FFFFFF;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        line-height: 1;
-        padding: 0;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.5);
-        }
-      }
-    }
 
     /* ACTIONS SECTION */
     .actions-section {
@@ -1438,6 +1451,48 @@ export class AlboOroDialogComponent {
       color: #9CA3AF;
       cursor: not-allowed;
       transform: none;
+    }
+
+    /* FEEDBACK MESSAGE */
+    .feedback-message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+    }
+
+    .feedback-message.success {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      color: #2E7D32;
+      border: 1px solid #81C784;
+    }
+
+    .feedback-message.error {
+      background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+      color: #C62828;
+      border: 1px solid #EF5350;
+    }
+
+    .feedback-message mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* DANGER ZONE */
@@ -1640,15 +1695,17 @@ export class AlboOroDialogComponent {
     }
   `]
 })
-export class ProfiloDialogComponent {
+export class ProfiloDialogComponent implements OnInit {
   userProfile = {
     nickname: '',
     squadraPreferita: ''
   };
 
-  searchQuery = '';
   showSuggestions = false;
   filteredSquadre: string[] = [];
+  isSaving = false;
+  feedbackMessage: string | null = null;
+  feedbackType: 'success' | 'error' | null = null;
 
   // Lista completa squadre italiane (Serie A, B, C, D)
   tutteLeSquadre = [
@@ -1685,12 +1742,32 @@ export class ProfiloDialogComponent {
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private giocatoreService: GiocatoreService,
+    private squadraService: SquadraService,
+    private snackBar: MatSnackBar
   ) {}
 
+  ngOnInit() {
+    this.loadProfile();
+  }
+
+  loadProfile() {
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        this.userProfile.nickname = giocatore.nickname || '';
+        this.userProfile.squadraPreferita = giocatore.squadraCuore?.nome || '';
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo:', error);
+        this.showFeedback('Errore nel caricamento del profilo', 'error');
+      }
+    });
+  }
+
   onSearchInput() {
-    if (this.searchQuery.length >= 2) {
-      const query = this.searchQuery.toLowerCase();
+    const query = (this.userProfile.squadraPreferita || '').toLowerCase();
+    if (query.length >= 2) {
       this.filteredSquadre = this.tutteLeSquadre
         .filter(s => s.toLowerCase().includes(query))
         .slice(0, 10);
@@ -1701,16 +1778,25 @@ export class ProfiloDialogComponent {
     }
   }
 
+  onInputFocus() {
+    // Se c'è già un valore, mostra i suggerimenti
+    if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.length >= 2) {
+      this.onSearchInput();
+    } else {
+      this.showSuggestions = true;
+    }
+  }
+
   selectSquadra(squadra: string) {
     this.userProfile.squadraPreferita = squadra;
-    this.searchQuery = '';
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
 
   clearSquadra() {
     this.userProfile.squadraPreferita = '';
-    this.searchQuery = '';
+    this.filteredSquadre = [];
+    this.showSuggestions = false;
   }
 
   onBlur() {
@@ -1723,12 +1809,81 @@ export class ProfiloDialogComponent {
     return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0);
   }
 
+  showFeedback(message: string, type: 'success' | 'error') {
+    this.feedbackMessage = message;
+    this.feedbackType = type;
+    setTimeout(() => {
+      this.feedbackMessage = null;
+      this.feedbackType = null;
+    }, 3000);
+  }
+
   onSubmit() {
-    if (this.isFormValid()) {
-      console.log('Profilo da salvare:', this.userProfile);
-      // TODO: Implementare il salvataggio del profilo
-      this.closeDialog();
+    if (!this.isFormValid()) {
+      this.showFeedback('Inserisci un nickname valido', 'error');
+      return;
     }
+
+    this.isSaving = true;
+    this.feedbackMessage = null;
+
+    // Prima ottieni i dati del giocatore corrente
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        // Prepara l'oggetto aggiornato
+        const giocatoreAggiornato: any = {
+          id: giocatore.id,
+          nome: giocatore.nome,
+          nickname: this.userProfile.nickname.trim(),
+          user: giocatore.user
+        };
+
+        // Se c'è una squadra preferita, cercala e aggiungila
+        if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraPreferita.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.squadraCuore = squadra;
+              this.saveProfile(giocatoreAggiornato);
+            },
+            error: (error) => {
+              console.warn('Squadra non trovata, salvo senza squadra del cuore');
+              giocatoreAggiornato.squadraCuore = null;
+              this.saveProfile(giocatoreAggiornato);
+            }
+          });
+        } else {
+          // Nessuna squadra preferita, salva senza
+          giocatoreAggiornato.squadraCuore = null;
+          this.saveProfile(giocatoreAggiornato);
+        }
+      },
+      error: (error) => {
+        this.isSaving = false;
+        console.error('Errore nel caricamento del profilo:', error);
+        this.showFeedback('Errore nel caricamento del profilo', 'error');
+      }
+    });
+  }
+
+  private saveProfile(giocatoreAggiornato: any) {
+    this.giocatoreService.aggiornaMe(giocatoreAggiornato).subscribe({
+      next: (result) => {
+        this.isSaving = false;
+        this.showFeedback('Profilo salvato con successo! 🎉', 'success');
+
+        setTimeout(() => {
+          // Chiudi il dialog e ritorna true per indicare che il profilo è stato aggiornato
+          this.dialog.closeAll();
+          // Emetti un evento per ricaricare il nome nella home
+          window.dispatchEvent(new CustomEvent('profile-updated'));
+        }, 2000);
+      },
+      error: (error) => {
+        this.isSaving = false;
+        console.error('Errore nel salvataggio del profilo:', error);
+        this.showFeedback('❌ Errore nel salvataggio. Riprova.', 'error');
+      }
+    });
   }
 
   closeDialog() {

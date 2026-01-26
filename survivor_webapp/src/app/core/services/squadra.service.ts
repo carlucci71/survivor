@@ -37,5 +37,8 @@ export class SquadraService {
     return this.http.get<any[]>(`${this.apiUrl}/calendario/${campionatoId}/squadreDisponibili/${anno}/${giornata}`);
   }
 
+  searchByNome(nome: string): Observable<Squadra> {
+    return this.http.get<Squadra>(`${this.apiUrl}/search/${encodeURIComponent(nome)}`);
+  }
 
 }
