@@ -10,11 +10,12 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UtilService } from '../../core/services/util.service';
 import { environment } from '../../../environments/environment';
- 
+import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, HeaderComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatToolbarModule, MatProgressSpinnerModule, HeaderComponent, TranslateModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })

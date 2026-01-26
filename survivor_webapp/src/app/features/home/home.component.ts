@@ -19,6 +19,7 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
     MatChipsModule,
     MatTooltip,
     MatDialogModule,
+    TranslateModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],

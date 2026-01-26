@@ -8,16 +8,16 @@
 
     <!-- Titolo -->
     <div class="card-header">
-      <h2>Accedi</h2>
-      <p class="subtitle">Inserisci la tua email per ricevere il magic link</p>
+      <h2>{{ 'AUTH.LOGIN_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'AUTH.LOGIN_SUBTITLE' | translate }}</p>
     </div>
 
     <!-- Form -->
     <form (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
-        <label for="email">Email*</label>
+        <label for="email">{{ 'AUTH.EMAIL_LABEL' | translate }}*</label>
         <input type="email" id="email" name="email" [(ngModel)]="email"
-          placeholder="Inserisci indirizzo email (es. utente&#64;esempio.com)" required autocomplete="email" />
+          [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" required autocomplete="email" />
       </div>
 
       <!-- Checkbox Termini e Condizioni -->
@@ -26,21 +26,21 @@
           <input type="checkbox" [(ngModel)]="termsAccepted" name="terms">
           <span class="checkmark"></span>
           <span class="checkbox-text">
-            Dichiaro di aver letto e accettato i
-            <a href="/terms" target="_blank">Termini e Condizioni</a>
-            e la
-            <a href="/privacy" target="_blank">Privacy Policy</a>.
+            {{ 'AUTH.TERMS_DECLARATION' | translate }}
+            <a href="/terms" target="_blank">{{ 'FOOTER.TERMS' | translate }}</a>
+            {{ 'COMMON.AND' | translate }}
+            <a href="/privacy" target="_blank">{{ 'FOOTER.PRIVACY' | translate }}</a>.
           </span>
         </label>
       </div>
 
       <!-- Age Disclaimer -->
       <p class="age-disclaimer">
-        L'applicazione è destinata esclusivamente a utenti di età pari o superiore a 14 anni.
+        {{ 'AUTH.AGE_DISCLAIMER' | translate }}
       </p>
 
       <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
-        Invia Magic Link
+        {{ 'AUTH.SEND_MAGIC_LINK' | translate }}
       </button>
     </form>
 

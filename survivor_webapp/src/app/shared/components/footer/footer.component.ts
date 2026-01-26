@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from '../../../core/services/language.service';
 import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 
 // DIALOG CONTATTI
 @Component({
   selector: 'app-contatti-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -16,10 +20,10 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
       </button>
       <h2>
         <mat-icon class="title-icon">email</mat-icon>
-        <span class="value">Contatti</span>
+        <span class="value">{{ 'DIALOGS.CONTACT_TITLE' | translate }}</span>
       </h2>
       <div class="content-section">
-        <p class="intro-text">Per informazioni, suggerimenti o segnalazioni, contattaci via email:</p>
+        <p class="intro-text">{{ 'DIALOGS.CONTACT_INTRO' | translate }}</p>
         <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
           <mat-icon>mail_outline</mat-icon>
           <span>fantasurvivorddl&#64;gmail.com</span>
@@ -116,7 +120,7 @@ export class ContattiDialogComponent {
 @Component({
   selector: 'app-termini-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -124,67 +128,67 @@ export class ContattiDialogComponent {
       </button>
       <h2>
         <mat-icon class="title-icon">gavel</mat-icon>
-        <span class="value">Termini e Condizioni</span>
+        <span class="value">{{ 'DIALOGS.TERMS_TITLE' | translate }}</span>
       </h2>
       <div class="content-section">
-        <h3>Termini e Condizioni di Utilizzo</h3>
-        <p class="subtitle">Survivor</p>
+        <h3>{{ 'DIALOGS.TERMS_HEADING' | translate }}</h3>
+        <p class="subtitle">{{ 'DIALOGS.TERMS_SUBTITLE' | translate }}</p>
 
         <div class="section">
-          <h4>1. Oggetto del servizio</h4>
-          <p>Survivor è una piattaforma digitale di intrattenimento che consente agli utenti di partecipare a giochi e tornei basati su scelte sportive e dinamiche competitive. Il servizio non costituisce gioco d'azzardo né attività di scommessa.</p>
+          <h4>{{ 'DIALOGS.TERMS_1_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_1_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>2. Registrazione e account</h4>
-          <p>Per utilizzare Survivor è necessario creare un account tramite indirizzo email. L'utente è responsabile della correttezza delle informazioni fornite e dell'utilizzo del proprio account.</p>
-          <p>È consentito un solo account per ciascun utente. È vietata la creazione di account multipli o l'uso di sistemi automatizzati.</p>
+          <h4>{{ 'DIALOGS.TERMS_2_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_2_TEXT_1' | translate }}</p>
+          <p>{{ 'DIALOGS.TERMS_2_TEXT_2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>3. Utilizzo del servizio</h4>
-          <p>L'utente si impegna a utilizzare Survivor in modo corretto e conforme alle presenti condizioni. Sono vietati comportamenti che possano compromettere il corretto funzionamento della piattaforma, inclusi tentativi di manipolazione dei risultati o delle classifiche.</p>
+          <h4>{{ 'DIALOGS.TERMS_3_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_3_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>4. Regole di gioco</h4>
-          <p>Le regole dei giochi e dei tornei sono definite all'interno dell'app e possono essere modificate in qualsiasi momento. I risultati generati dalla piattaforma sono da considerarsi definitivi e non contestabili.</p>
+          <h4>{{ 'DIALOGS.TERMS_4_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_4_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>5. Premi</h4>
-          <p>Survivor non prevede premi in denaro reale. Eventuali premi, riconoscimenti o trofei hanno esclusivamente valore simbolico o promozionale.</p>
+          <h4>{{ 'DIALOGS.TERMS_5_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_5_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>6. Sospensione e chiusura dell'account</h4>
-          <p>Il gestore si riserva il diritto di sospendere o chiudere l'account di un utente, senza preavviso, in caso di violazione delle presenti condizioni o di utilizzo improprio del servizio.</p>
+          <h4>{{ 'DIALOGS.TERMS_6_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_6_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>7. Limitazione di responsabilità</h4>
-          <p>Il servizio è fornito "così com'è". Il gestore non garantisce l'assenza di errori, interruzioni o malfunzionamenti e non è responsabile per eventuali danni derivanti dall'utilizzo della piattaforma.</p>
-          <p>Il gestore non è responsabile per eventuali inesattezze nei dati sportivi forniti da fonti esterne.</p>
+          <h4>{{ 'DIALOGS.TERMS_7_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_7_TEXT_1' | translate }}</p>
+          <p>{{ 'DIALOGS.TERMS_7_TEXT_2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>8. Proprietà intellettuale</h4>
-          <p>Tutti i contenuti presenti su Survivor, inclusi testi, grafica, logo e struttura della piattaforma, sono di proprietà del gestore e non possono essere utilizzati senza autorizzazione.</p>
+          <h4>{{ 'DIALOGS.TERMS_8_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_8_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>9. Modifiche ai Termini</h4>
-          <p>I presenti Termini e Condizioni possono essere aggiornati o modificati in qualsiasi momento. Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma.</p>
+          <h4>{{ 'DIALOGS.TERMS_9_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_9_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>10. Legge applicabile e foro competente</h4>
-          <p>I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.</p>
+          <h4>{{ 'DIALOGS.TERMS_10_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_10_TEXT' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>11. Contatti</h4>
-          <p>Per informazioni o richieste è possibile contattare il gestore all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <h4>{{ 'DIALOGS.TERMS_11_TITLE' | translate }}</h4>
+          <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
         </div>
       </div>
     </div>
@@ -297,7 +301,7 @@ export class TerminiDialogComponent {
 @Component({
   selector: 'app-privacy-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -305,13 +309,12 @@ export class TerminiDialogComponent {
       </button>
       <h2>
         <mat-icon class="title-icon">security</mat-icon>
-        <span class="value">Privacy Policy</span>
+        <span class="value">{{ 'DIALOGS.PRIVACY_TITLE' | translate }}</span>
       </h2>
       <div class="content-section">
-        <h3>Privacy Policy</h3>
-        <p class="subtitle">Survivor</p>
-
-        <p class="intro-text">La presente Privacy Policy descrive le modalità di raccolta, utilizzo e protezione dei dati personali degli utenti che utilizzano la piattaforma Survivor (di seguito "Servizio"), in conformità al Regolamento UE 2016/679 (GDPR).</p>
+        <h3>{{ 'DIALOGS.PRIVACY_HEADING' | translate }}</h3>
+        <p class="subtitle">{{ 'DIALOGS.PRIVACY_SUBTITLE' | translate }}</p>
+        <p class="intro-text">{{ 'DIALOGS.PRIVACY_INTRO' | translate }}</p>
 
         <div class="section">
           <h4>1. Titolare del trattamento</h4>
@@ -531,7 +534,7 @@ export class PrivacyDialogComponent {
 @Component({
   selector: 'app-chi-siamo-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -539,32 +542,26 @@ export class PrivacyDialogComponent {
       </button>
       <h2>
         <mat-icon class="title-icon">groups</mat-icon>
-        <span class="value">Chi Siamo</span>
+        <span class="value">{{ 'DIALOGS.ABOUT_TITLE' | translate }}</span>
       </h2>
       <div class="content-section">
         <div class="intro-block">
-          <p class="main-text">
-            <strong>Survivor</strong> è un'app di intrattenimento dedicata agli appassionati di <strong>Serie A</strong>, <strong>Tennis</strong> e <strong>Basket</strong>.
-          </p>
-          <p class="main-text">
-            La nostra missione è offrire giochi e tornei divertenti, semplici e accessibili a tutti.
-          </p>
-          <p class="main-text">
-            Siamo un piccolo team appassionato di sport e tecnologia, e crediamo nel gioco pulito e nella competizione leale.
-          </p>
+          <p class="main-text" [innerHTML]="'DIALOGS.ABOUT_INTRO_1' | translate"></p>
+          <p class="main-text">{{ 'DIALOGS.ABOUT_INTRO_2' | translate }}</p>
+          <p class="main-text">{{ 'DIALOGS.ABOUT_INTRO_3' | translate }}</p>
         </div>
 
         <div class="notice-block">
           <mat-icon class="notice-icon">info</mat-icon>
           <p>
-            Survivor è un gioco di intrattenimento senza premi in denaro. Per informazioni su come trattiamo i dati e sulle regole del gioco, consulta i nostri
-            <a href="#" (click)="openTermini($event)">Termini e Condizioni</a> e la
-            <a href="#" (click)="openPrivacy($event)">Privacy Policy</a>.
+            {{ 'DIALOGS.ABOUT_NOTICE' | translate }}
+            <a href="#" (click)="openTermini($event)">{{ 'DIALOGS.ABOUT_TERMS_LINK' | translate }}</a> {{ 'DIALOGS.ABOUT_AND' | translate }}
+            <a href="#" (click)="openPrivacy($event)">{{ 'DIALOGS.ABOUT_PRIVACY_LINK' | translate }}</a>.
           </p>
         </div>
 
         <div class="contact-block">
-          <p>Per domande o supporto, scrivici a:</p>
+          <p>{{ 'DIALOGS.ABOUT_CONTACT' | translate }}</p>
           <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
             <mat-icon>email</mat-icon>
             <span>fantasurvivorddl&#64;gmail.com</span>
@@ -749,7 +746,7 @@ export class ChiSiamoDialogComponent {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatDialogModule, MatButtonModule, MatMenuModule, TranslateModule],
   template: `
     <footer class="survivor-footer">
       <div class="footer-container">
@@ -764,17 +761,35 @@ export class ChiSiamoDialogComponent {
 
           <!-- LINK NAVIGAZIONE -->
           <nav class="footer-nav">
-            <a href="#" class="footer-link" (click)="openTermini($event)">Termini e Condizioni</a>
+            <a href="#" class="footer-link" (click)="openTermini($event)">{{ 'FOOTER.TERMS' | translate }}</a>
             <span class="separator">|</span>
-            <a href="#" class="footer-link" (click)="openPrivacy($event)">Privacy Policy</a>
+            <a href="#" class="footer-link" (click)="openPrivacy($event)">{{ 'FOOTER.PRIVACY' | translate }}</a>
             <span class="separator">|</span>
-            <a href="#" class="footer-link" (click)="openFaq($event)">FAQ</a>
+            <a href="#" class="footer-link" (click)="openFaq($event)">{{ 'FOOTER.FAQ' | translate }}</a>
             <span class="separator">|</span>
-            <a href="#" class="footer-link" (click)="openChiSiamo($event)">Chi siamo</a>
+            <a href="#" class="footer-link" (click)="openChiSiamo($event)">{{ 'FOOTER.ABOUT' | translate }}</a>
             <span class="separator">|</span>
-            <a href="#" class="footer-link" (click)="openContatti($event)">Contatti</a>
+            <a href="#" class="footer-link" (click)="openContatti($event)">{{ 'FOOTER.CONTACT' | translate }}</a>
           </nav>
 
+          <!-- SELETTORE LINGUA -->
+          <div class="language-selector">
+            <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn">
+              <span class="lang-text">{{ getCurrentLangName() }}</span>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+
+            <mat-menu #langMenu="matMenu" class="lang-menu">
+              <button mat-menu-item (click)="changeLanguage('it')" [class.active]="currentLang === 'it'">
+                <span>Italiano</span>
+                <mat-icon *ngIf="currentLang === 'it'" class="check-icon">check</mat-icon>
+              </button>
+              <button mat-menu-item (click)="changeLanguage('en')" [class.active]="currentLang === 'en'">
+                <span>English</span>
+                <mat-icon *ngIf="currentLang === 'en'" class="check-icon">check</mat-icon>
+              </button>
+            </mat-menu>
+          </div>
 
           <!-- COPYRIGHT -->
           <div class="footer-copyright">
@@ -934,10 +949,115 @@ export class ChiSiamoDialogComponent {
         }
       }
     }
+
+    /* LANGUAGE SELECTOR */
+    .language-selector {
+      display: flex;
+      align-items: center;
+
+      .lang-btn {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 8px !important;
+        padding: 6px 12px !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 600 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        transition: all 0.2s ease !important;
+        min-height: auto !important;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.25) !important;
+          border-color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        .flag {
+          font-size: 1.2rem;
+          line-height: 1;
+        }
+
+        .lang-text {
+          font-size: 0.85rem;
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin-left: 0 !important;
+        }
+      }
+    }
+
+    ::ng-deep .lang-menu {
+      margin-top: 8px;
+
+      .mat-mdc-menu-content {
+        padding: 8px 0;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(10, 61, 145, 0.2);
+      }
+
+      button {
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        color: #0A3D91;
+        transition: all 0.2s ease;
+
+        .flag {
+          font-size: 1.3rem;
+        }
+
+        .check-icon {
+          margin-left: auto;
+          color: #4FC3F7;
+          font-size: 20px;
+        }
+
+        &.active {
+          background: rgba(79, 195, 247, 0.1);
+          font-weight: 600;
+        }
+
+        &:hover {
+          background: rgba(79, 195, 247, 0.15);
+        }
+      }
+    }
   `]
 })
 export class FooterComponent {
-  constructor(private dialog: MatDialog) {}
+  currentLang: string = 'it';
+
+  constructor(
+    private dialog: MatDialog,
+    private languageService: LanguageService
+  ) {
+    this.currentLang = this.languageService.getCurrentLanguage();
+    this.languageService.currentLang$.subscribe(lang => {
+      this.currentLang = lang;
+    });
+  }
+
+  changeLanguage(lang: string): void {
+    this.languageService.changeLanguage(lang);
+  }
+
+  getCurrentFlag(): string {
+    return '';
+  }
+
+  getCurrentLangName(): string {
+    return this.currentLang === 'it' ? 'Italiano' : 'English';
+  }
 
   openFaq(event: Event) {
     event.preventDefault();

@@ -36,6 +36,7 @@ import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -58,6 +59,7 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -78,6 +80,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Countdown timer
   countdown: string = '';
   countdownActive: boolean = false;
+  countdownExpired: boolean = false;
   private countdownIntervalId: any;
 
   // Elimina lega
@@ -99,6 +102,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private dialog: MatDialog,
     private overlay: Overlay,
     private sospensioniService: SospensioniService,
+    private translate: TranslateService,
   ) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
@@ -349,39 +353,36 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   // Messaggi di consolazione simpatici per l'eliminazione
-  private consolationMessages = [
-    "La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀",
-    "Non tutti possono vincere, ma tu hai giocato con stile! 😎",
-    "La prossima volta andrà meglio, promesso! 💪",
-    "Hai dato il massimo, questo conta! 🌟",
-    "Meglio eliminato con onore che vincitore per caso! 🎖️",
-    "La sfortuna ti ha beccato, ma tu sei un campione! 🏆",
-    "Non piangere, c'è sempre la prossima edizione! 😢➡️😊",
-    "Hai perso la battaglia, ma non la guerra! ⚔️",
-    "La statistica dice che prima o poi si vince... forse! 📊😅",
-    "Almeno ora puoi dormire tranquillo la domenica! 😴",
-    "Consolati: hai fatto meglio di chi non ha nemmeno provato! 💫",
-    "La ruota gira, la prossima volta toccherà a te! 🎡",
-    "Hai sfidato il destino e... beh, hai perso! Ma che coraggio! 🦁",
-    "Non sei stato eliminato, sei stato promosso a spettatore VIP! 🎭",
-    "La sconfitta è temporanea, la gloria eterna... o quasi! ✨",
-    "Hai fatto squadra con la squadra sbagliata, capita! 🤷",
-    "Il tuo nome rimarrà nella storia... della tua famiglia! 📜",
-    "Meglio essere stati ed essere stati eliminati che non essere mai stati! 🤔",
-    "La tua eliminazione è arte, pura arte tragica! 🎨",
-    "Hai perso, ma almeno hai una bella storia da raccontare! 📖",
-    "Non tutti possono essere Ronaldo, qualcuno deve fare il pubblico! ⚽😂",
-    "La vittoria è dei più forti, ma tu sei simpatico! 😄",
-    "Prossima volta scegli meglio... o affidati al caso! 🎲",
-    "Hai fatto ridere, piangere ed emozionare. Missione compiuta! 🎬"
+  // Array di chiavi di traduzione per i messaggi di consolazione
+  private consolationMessageKeys = [
+    'LEAGUE.CONSOLATION.1',
+    'LEAGUE.CONSOLATION.2',
+    'LEAGUE.CONSOLATION.3',
+    'LEAGUE.CONSOLATION.4',
+    'LEAGUE.CONSOLATION.5',
+    'LEAGUE.CONSOLATION.6',
+    'LEAGUE.CONSOLATION.7',
+    'LEAGUE.CONSOLATION.8',
+    'LEAGUE.CONSOLATION.9',
+    'LEAGUE.CONSOLATION.10',
+    'LEAGUE.CONSOLATION.11',
+    'LEAGUE.CONSOLATION.12',
+    'LEAGUE.CONSOLATION.13',
+    'LEAGUE.CONSOLATION.14',
+    'LEAGUE.CONSOLATION.15',
+    'LEAGUE.CONSOLATION.16',
+    'LEAGUE.CONSOLATION.17',
+    'LEAGUE.CONSOLATION.18',
+    'LEAGUE.CONSOLATION.19',
+    'LEAGUE.CONSOLATION.20'
   ];
 
   // Ottiene un messaggio di consolazione casuale (solo la prima volta)
   getRandomConsolationMessage(): string {
     // Se non abbiamo ancora un messaggio salvato, scegline uno casuale
     if (!this.savedConsolationMessage) {
-      const randomIndex = Math.floor(Math.random() * this.consolationMessages.length);
-      this.savedConsolationMessage = this.consolationMessages[randomIndex];
+      const randomIndex = Math.floor(Math.random() * this.consolationMessageKeys.length);
+      this.savedConsolationMessage = this.translate.instant(this.consolationMessageKeys[randomIndex]);
     }
     return this.savedConsolationMessage;
   }
@@ -739,8 +740,9 @@ export class LegaDettaglioComponent implements OnDestroy {
 
       if (distance < 0) {
         // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
-        this.countdown = '⏰ Tempo scaduto';
+        this.countdown = '⏰ ' + this.translate.instant('LEAGUE.TIME_EXPIRED');
         this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
+        this.countdownExpired = true; // Flag per applicare lo stile rosso
         // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
         return;
       }

@@ -5,28 +5,29 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-conferma-join-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+  imports: [CommonModule, MatDialogModule, FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, TranslateModule],
   template: `
-    <h2 mat-dialog-title>Conferma iscrizione</h2>
+    <h2 mat-dialog-title>{{ 'JOIN_LEAGUE.CONFIRM_TITLE' | translate }}</h2>
     <mat-dialog-content>
-      <p>Ti vuoi unire alla lega <strong>{{data.lega.name}}</strong>?</p>
-      <p>Campionato: {{data.lega.campionato?.nome || '-'}}</p>
-      <p>Giornata iniziale: {{data.lega.giornataIniziale}}</p>
-      <p>Numero iscritti: {{data.lega.giocatori.length}}</p>
+      <p>{{ 'JOIN_LEAGUE.CONFIRM_MESSAGE' | translate:{name: data.lega.name} }}</p>
+      <p>{{ 'JOIN_LEAGUE.CHAMPIONSHIP' | translate }}: {{data.lega.campionato?.nome || '-'}}</p>
+      <p>{{ 'JOIN_LEAGUE.INITIAL_ROUND' | translate }}: {{data.lega.giornataIniziale}}</p>
+      <p>{{ 'JOIN_LEAGUE.NUM_MEMBERS' | translate }}: {{data.lega.giocatori.length}}</p>
       <div *ngIf="data.lega.withPwd">
         <mat-form-field appearance="fill" style="width:100%;">
-          <mat-label>Password di accesso</mat-label>
-          <input matInput [(ngModel)]="password" />
+          <mat-label>{{ 'JOIN_LEAGUE.PASSWORD' | translate }}</mat-label>
+          <input matInput [(ngModel)]="password" [placeholder]="'JOIN_LEAGUE.PASSWORD_PLACEHOLDER' | translate" />
         </mat-form-field>
       </div>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="onNo()">Annulla</button>
-      <button mat-raised-button color="primary" (click)="onYes()">Conferma</button>
+      <button mat-button (click)="onNo()">{{ 'JOIN_LEAGUE.CANCEL_BUTTON' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="onYes()">{{ 'COMMON.CONFIRM' | translate }}</button>
     </mat-dialog-actions>
   `,
 })

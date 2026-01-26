@@ -3,7 +3,7 @@
     mat-icon-button
     class="close-btn"
     (click)="dialogRef.close()"
-    aria-label="Chiudi"
+    [attr.aria-label]="'COMMON.CLOSE' | translate"
   >
     <mat-icon>close</mat-icon>
   </button>
@@ -28,7 +28,7 @@
   <!-- SELEZIONE SQUADRE -->
   <div class="calendario-container">
     <h3 class="calendario-title">
-      Seleziona squadra
+      {{ 'PLAY.SELECT_TEAM' | translate }}
       @if(searchQuery && squadreFiltrate.length > 0) {
         <span class="team-count">({{ squadreFiltrate.length }})</span>
       }
@@ -54,7 +54,7 @@
     @if(squadreFiltrate.length === 0) {
       <div class="no-results">
         <mat-icon>search_off</mat-icon>
-        <p>Nessuna squadra trovata</p>
+        <p>{{ 'PLAY.NO_TEAMS_FOUND' | translate }}</p>
       </div>
     } @else {
       <div class="squadre-grid">
@@ -87,7 +87,7 @@
     }
   </div>
 
-  <!-- AZIONI: CONFERMA + DETTAGLI -->
+  <!-- AZIONI: CONFERMA + STATISTICHE -->
   <div class="actions-container">
     <div class="save-container">
       <button
@@ -97,7 +97,7 @@
         [disabled]="!squadraSelezionata"
       >
         <mat-icon>check</mat-icon>
-        <span>Conferma</span>
+        <span>{{ 'COMMON.CONFIRM' | translate }}</span>
       </button>
     </div>
 
@@ -109,12 +109,12 @@
       (click)="toggleDettagli()"
     >
       <mat-icon>analytics</mat-icon>
-      <span>Dettagli</span>
+      <span>{{ 'PLAY.STATISTICS' | translate }}</span>
     </button>
     }
   </div>
 
   } @else {
-    <h4 style="text-align: center; color: #6B7280;">Purtroppo non hai giocate disponibili</h4>
+    <h4 style="text-align: center; color: #6B7280;">{{ 'PLAY.NO_PLAYS_AVAILABLE' | translate }}</h4>
   }
 </div>

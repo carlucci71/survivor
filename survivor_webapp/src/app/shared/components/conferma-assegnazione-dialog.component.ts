@@ -4,19 +4,20 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-conferma-assegnazione-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, TranslateModule],
   template: `
-    <h2 mat-dialog-title>Conferma modifica</h2>
+    <h2 mat-dialog-title>{{ 'PLAY.CONFIRM_CHANGE_TITLE' | translate }}</h2>
     <mat-dialog-content>
-      Sei sicuro di voler cambiare questa assegnazione anche se la giornata è iniziata?
+      {{ 'PLAY.CONFIRM_CHANGE_MESSAGE' | translate }}
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button (click)="onNoClick()">Annulla</button>
-      <button mat-raised-button color="primary" (click)="onYesClick()">OK</button>
+      <button mat-button (click)="onNoClick()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button mat-raised-button color="primary" (click)="onYesClick()">{{ 'COMMON.OK' | translate }}</button>
     </mat-dialog-actions>
   `
 })

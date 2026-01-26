@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Campionato, Partita } from '../models/interfaces.model';
 import { LoadingService } from './loading.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({ providedIn: 'root' })
 export class CampionatoService {
@@ -12,7 +13,8 @@ export class CampionatoService {
 
   constructor(
     private http: HttpClient,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private translate: TranslateService
   ) {
     this.getDesGiornate();
   }
@@ -50,7 +52,7 @@ export class CampionatoService {
     ) {
       return this.desGiornate[campionato][index];
     } else {
-      return 'Giornata ' + index;
+      return this.translate.instant('LEAGUE.ROUND') + ' ' + index;
     }
   }
 

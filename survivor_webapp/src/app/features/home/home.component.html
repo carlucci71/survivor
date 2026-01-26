@@ -33,11 +33,11 @@
 
 
     <section class="leghe-section">
-      <h2>Le tue Leghe</h2>
+      <h2>{{ 'HOME.TITLE' | translate }}</h2>
       @if (leghe.length === 0) {
       <mat-card class="no-data">
         <mat-card-content>
-          <p>Nessuna lega disponibile al momento</p>
+          <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
       } @if (groupedLeghe.length > 0) {
@@ -66,7 +66,7 @@
                     color="primary"
                     (click)="goToLega(edizione.id)"
                   >
-                    Visualizza
+                    {{ 'HOME.VIEW_DETAILS' | translate }}
                   </button>
                   @if (visualizzaInvito(edizione)){
                   <button
@@ -74,7 +74,7 @@
                     color="accent"
                     (click)="openInvitaDialog(edizione)"
                   >
-                    Invita utenti
+                    {{ 'HOME.INVITE_USERS' | translate }}
                   </button>
                   } @if (isTerminata(edizione) &&
                   notExistsNuovaEdizione(edizione)){
@@ -83,7 +83,7 @@
                     color="warn"
                     (click)="nuovaEdizione(edizione)"
                   >
-                    Nuova Edizione
+                    {{ 'HOME.NEW_EDITION' | translate }}
                   </button>
                   }
                 </mat-card-actions>
@@ -111,7 +111,7 @@
             <div class="edizioni-list">
               <mat-card class="lega-card small">
                 <mat-card-header>
-                  <mat-card-title>Crea una nuova lega</mat-card-title>
+                  <mat-card-title>{{ 'HOME.CREATE_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
                   <button
@@ -119,7 +119,7 @@
                     color="warn"
                     (click)="goToCreaLega()"
                   >
-                    Crea
+                    {{ 'HOME.CREATE_LEAGUE' | translate }}
                   </button>
                 </mat-card-actions>
               </mat-card>
@@ -135,9 +135,7 @@
             <div class="edizioni-list">
               <mat-card class="lega-card small">
                 <mat-card-header>
-                  <mat-card-title
-                    >Unisciti ad una lega esistente</mat-card-title
-                  >
+                  <mat-card-title>{{ 'HOME.JOIN_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
                   <button
@@ -145,7 +143,7 @@
                     color="warn"
                     (click)="goToUniscitiLega()"
                   >
-                    Unisciti
+                    {{ 'HOME.JOIN_LEAGUE' | translate }}
                   </button>
                 </mat-card-actions>
               </mat-card>

@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { GiocatoreService } from '../../../core/services/giocatore.service';
@@ -17,84 +18,46 @@ import { SquadraService } from '../../../core/services/squadra.service';
 @Component({
   selector: 'app-regolamento-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="regolamento-dialog">
       <div class="dialog-header">
-        <h2 class="dialog-title">Regolamento Survivor</h2>
+        <h2 class="dialog-title">{{ 'RULES.TITLE' | translate }}</h2>
         <button mat-icon-button class="close-btn" (click)="closeDialog()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
       <div class="dialog-content">
+        <p class="intro">{{ 'RULES.INTRO' | translate }}</p>
+
         <div class="regola">
-          <h3>1. Scelta settimanale</h3>
-          <p>Ogni giocatore può scegliere una sola squadra per ogni giornata di gioco. La possibilità di rendere la scelta pubblica o privata sarà disponibile esclusivamente tramite app. Nella versione attuale del gioco tutte le scelte sono pubbliche e visibili agli altri partecipanti fin dal momento della conferma.</p>
+          <h3>{{ 'RULES.SECTION_1_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_1_TEXT' | translate }}</p>
         </div>
 
         <div class="regola">
-          <h3>2. Squadre non ripetibili</h3>
-          <p>Nel corso dello stesso torneo non è possibile scegliere due volte la stessa squadra, anche in giornate diverse.</p>
+          <h3>{{ 'RULES.SECTION_2_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_2_TEXT' | translate }}</p>
         </div>
 
         <div class="regola">
-          <h3>3. Eliminazione</h3>
-          <p>Se la squadra scelta perde o pareggia la propria partita, il giocatore viene eliminato dal torneo.</p>
-        </div>
-
-        <div class="regola">
-          <h3>4. Durata del torneo</h3>
-          <p>Il torneo termina quando:</p>
+          <h3>{{ 'RULES.SECTION_3_TITLE' | translate }}</h3>
           <ul>
-            <li>resta un solo giocatore attivo, che viene dichiarato vincitore;</li>
-            <li>vengono completate 10 giornate di gioco valide.</li>
-          </ul>
-          <p>In caso di termine per limite di giornate, il montepremi viene diviso in parti uguali tra i giocatori rimasti attivi.</p>
-        </div>
-
-        <div class="regola">
-          <h3>5. Tempistiche di scelta</h3>
-          <p>Le scelte devono essere effettuate entro 15 minuti prima dell'inizio della giornata di Serie A. Dopo l'inizio della prima partita della giornata, nessuna scelta può essere modificata.</p>
-        </div>
-
-        <div class="regola">
-          <h3>6. Calendario</h3>
-          <p>Le giornate di gioco fanno riferimento esclusivamente al calendario ufficiale della Serie A.</p>
-        </div>
-
-        <div class="regola">
-          <h3>7. Eliminazione totale ed equità del montepremi</h3>
-          <p>Se, al termine di una giornata valida, tutti i giocatori rimasti perdono o pareggiano, il torneo termina immediatamente. In questo caso, il montepremi viene diviso in parti uguali tra i giocatori rimasti in gioco in quella giornata.</p>
-          <p>Il montepremi è generato esclusivamente dai partecipanti del torneo e non può essere assegnato a giocatori esterni o subentranti, al fine di garantire la parità di condizioni.</p>
-        </div>
-
-        <div class="regola">
-          <h3>8. Divisione anticipata del montepremi</h3>
-          <p>Quando il numero di giocatori rimasti è pari o inferiore al 10% dei partecipanti iniziali, i giocatori attivi possono decidere di dividere anticipatamente l'intero montepremi in parti uguali. La decisione avviene tramite votazione a maggioranza.</p>
-          <p><strong>Esempio:</strong> Torneo con 72 iscritti → 10% = 7 giocatori. Se restano 7 o meno giocatori, è possibile votare la divisione del montepremi.</p>
-          <p>Se i giocatori rimasti (≤10%) rimangono gli stessi per tre giornate consecutive senza alcuna eliminazione, il montepremi viene automaticamente diviso tra di loro.</p>
-        </div>
-
-        <div class="regola">
-          <h3>9. Giornate con partite rinviate o sospese</h3>
-          <h4>9.1 Rinvio prima dell'inizio della giornata</h4>
-          <p>Se una o più partite di Serie A vengono rinviate prima dell'inizio della giornata:</p>
-          <ul>
-            <li>la giornata viene considerata neutra ai fini del Survivor;</li>
-            <li>nessun giocatore è tenuto a effettuare una scelta;</li>
-            <li>nessun giocatore viene eliminato;</li>
-            <li>la giornata non viene conteggiata nel totale delle giornate del torneo.</li>
-          </ul>
-
-          <h4>9.2 Rinvio o sospensione dopo l'inizio della giornata</h4>
-          <p>Se una o più partite vengono rinviate o sospese a giornata iniziata:</p>
-          <ul>
-            <li>i giocatori che hanno scelto una squadra coinvolta nel rinvio restano attivi;</li>
-            <li>la loro scelta viene considerata come vincente;</li>
-            <li>la squadra scelta viene comunque considerata utilizzata.</li>
+            <li>{{ 'RULES.RULE_1' | translate }}</li>
+            <li>{{ 'RULES.RULE_2' | translate }}</li>
+            <li>{{ 'RULES.RULE_3' | translate }}</li>
+            <li>{{ 'RULES.RULE_4' | translate }}</li>
+            <li>{{ 'RULES.RULE_5' | translate }}</li>
           </ul>
         </div>
+
+        <div class="regola">
+          <h3>{{ 'RULES.SECTION_4_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_4_TEXT' | translate }}</p>
+        </div>
+
+        <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
       </div>
     </div>
   `,
@@ -203,6 +166,26 @@ import { SquadraService } from '../../../core/services/squadra.service';
 
       scrollbar-width: thin;
       scrollbar-color: #C1C9D2 #F8F9FA;
+
+      .intro {
+        color: #0A3D91;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 24px;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      .good-luck {
+        color: #4FC3F7;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 24px;
+        padding: 16px;
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.08));
+        border-radius: 12px;
+      }
 
       .regola {
         margin: 0 0 24px 0;
@@ -447,13 +430,13 @@ export class RegolamentoBannerDialogComponent {
 @Component({
   selector: 'app-albo-oro-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="albo-oro-dialog">
       <div class="dialog-header">
         <div class="header-content">
           <mat-icon class="trophy-icon">emoji_events</mat-icon>
-          <h2 class="dialog-title">I MIEI TROFEI</h2>
+          <h2 class="dialog-title">{{ 'TROPHIES.YOUR_TROPHIES' | translate }}</h2>
         </div>
         <button mat-icon-button class="close-btn" (click)="closeDialog()">
           <mat-icon>close</mat-icon>
@@ -471,12 +454,12 @@ export class RegolamentoBannerDialogComponent {
         <!-- Lista trofei personali -->
         <div class="winner-card" *ngIf="hasTrofei">
           <div class="season">
-            <h3>🏆 Stagione 2024-2025</h3>
+            <h3>🏆 {{ 'TROPHIES.SEASON' | translate }} 2024-2025</h3>
             <div class="winner-info">
-              <div class="winner-name">1° Classificato</div>
+              <div class="winner-name">{{ 'TROPHIES.FIRST_PLACE' | translate }}</div>
               <div class="winner-details">
-                <span class="detail">Giornate Sopravvissute: 8</span>
-                <span class="detail">Squadra Finale: Napoli</span>
+                <span class="detail">{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: 8</span>
+                <span class="detail">{{ 'TROPHIES.FINAL_TEAM' | translate }}: Napoli</span>
               </div>
             </div>
           </div>
@@ -484,19 +467,19 @@ export class RegolamentoBannerDialogComponent {
 
         <!-- Statistiche personali - solo se ci sono dati -->
         <div class="stats-section" *ngIf="hasTrofei">
-          <h3>📊 LE TUE STATISTICHE</h3>
+          <h3>📊 {{ 'TROPHIES.YOUR_STATS' | translate }}</h3>
           <div class="stats-grid">
             <div class="stat-item">
               <span class="stat-number">5</span>
-              <span class="stat-label">Tornei Giocati</span>
+              <span class="stat-label">{{ 'TROPHIES.TOURNAMENTS_PLAYED' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">2</span>
-              <span class="stat-label">Vittorie</span>
+              <span class="stat-label">{{ 'TROPHIES.VICTORIES' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">35</span>
-              <span class="stat-label">Giornate Totali</span>
+              <span class="stat-label">{{ 'TROPHIES.TOTAL_ROUNDS' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">78%</span>
@@ -934,114 +917,35 @@ export class AlboOroDialogComponent {
   // TODO: Collegare ai dati reali dell'utente dal backend
   hasTrofei = false; // Imposta a true quando ci sono dati dal DB
 
-  // Messaggi simpatici per quando non ci sono trofei
-  private funnyMessages = [
-    {
-      emoji: '😅',
-      message: 'Sei proprio scarso! Non sei sopravvissuto neanche una volta!',
-      subtitle: 'Ma tranquillo, anche i campioni hanno iniziato così... o forse no.'
-    },
-    {
-      emoji: '🤦',
-      message: 'Houston, abbiamo un problema: zero vittorie!',
-      subtitle: 'Il tuo palmares è più vuoto del frigorifero di uno studente.'
-    },
-    {
-      emoji: '😭',
-      message: 'La bacheca dei trofei piange dalla solitudine!',
-      subtitle: 'Polvere e ragnatele sono gli unici inquilini qui.'
-    },
-    {
-      emoji: '🦗',
-      message: 'Cri cri cri... senti i grilli?',
-      subtitle: 'È il suono della tua bacheca trofei completamente vuota.'
-    },
-    {
-      emoji: '🎰',
-      message: 'Forse dovresti provare a giocare al lotto!',
-      subtitle: 'Con la fortuna che hai nel Survivor, magari lì va meglio.'
-    },
-    {
-      emoji: '🐢',
-      message: 'Piano piano si arriva... ma tu sei ancora fermo!',
-      subtitle: 'Anche la tartaruga ti sta battendo in questo momento.'
-    },
-    {
-      emoji: '📭',
-      message: 'La tua casella trofei dice: "Destinatario sconosciuto"',
-      subtitle: 'Nessuna vittoria è mai arrivata a questo indirizzo.'
-    },
-    {
-      emoji: '🌵',
-      message: 'Qui è più secco del deserto del Sahara!',
-      subtitle: 'Neanche una goccia di vittoria in vista.'
-    },
-    {
-      emoji: '👻',
-      message: 'I tuoi trofei sono come i fantasmi: nessuno li ha mai visti!',
-      subtitle: 'Leggenda narra che un giorno arriveranno... leggenda.'
-    },
-    {
-      emoji: '🥶',
-      message: 'Qui fa più freddo che in Siberia!',
-      subtitle: 'La tua bacheca è congelata dal gelo delle zero vittorie.'
-    },
-    {
-      emoji: '🔍',
-      message: 'Cercasi trofei disperatamente!',
-      subtitle: 'Ricompensa: la tua dignità di giocatore.'
-    },
-    {
-      emoji: '🪦',
-      message: 'R.I.P. alle tue speranze di vittoria!',
-      subtitle: 'Qui giace chi pensava di vincere almeno una volta.'
-    },
-    {
-      emoji: '🤡',
-      message: 'Il pagliaccio del torneo sei tu!',
-      subtitle: 'Ma almeno fai ridere gli altri partecipanti.'
-    },
-    {
-      emoji: '🧹',
-      message: 'Hai fatto piazza pulita... di te stesso!',
-      subtitle: 'Eliminato sempre, vincitore mai. Che record!'
-    },
-    {
-      emoji: '🐌',
-      message: 'Anche una lumaca sarebbe arrivata prima di te!',
-      subtitle: 'E probabilmente avrebbe anche vinto qualcosa.'
-    },
-    {
-      emoji: '🎪',
-      message: 'Benvenuto al circo delle eliminazioni!',
-      subtitle: 'Tu sei l\'attrazione principale: sempre fuori al primo colpo!'
-    },
-    {
-      emoji: '🧊',
-      message: 'Le tue vittorie sono in freezer... dal 1800!',
-      subtitle: 'Surgelate così bene che non le troverà mai nessuno.'
-    },
-    {
-      emoji: '🦴',
-      message: 'Neanche un osso di vittoria da rosicchiare!',
-      subtitle: 'Il tuo cane avrebbe più fortuna di te.'
-    }
-  ];
 
   currentEmoji = '';
   currentMessage = '';
   currentSubtitle = '';
 
-  constructor(private dialog: MatDialog) {
+  constructor(
+    private dialog: MatDialog,
+    private translate: TranslateService
+  ) {
     this.pickRandomMessage();
   }
 
   private pickRandomMessage() {
-    const randomIndex = Math.floor(Math.random() * this.funnyMessages.length);
-    const selected = this.funnyMessages[randomIndex];
-    this.currentEmoji = selected.emoji;
-    this.currentMessage = selected.message;
-    this.currentSubtitle = selected.subtitle;
+    // Scegli un messaggio casuale da 1 a 17
+    const randomNum = Math.floor(Math.random() * 17) + 1;
+    const msgKey = `MSG_${randomNum}`;
+    const subKey = `SUB_${randomNum}`;
+
+    // Carica i messaggi tradotti
+    this.translate.get(`TROPHIES.FUNNY_MESSAGES.${msgKey}`).subscribe(msg => {
+      this.currentMessage = msg;
+    });
+    this.translate.get(`TROPHIES.FUNNY_MESSAGES.${subKey}`).subscribe(sub => {
+      this.currentSubtitle = sub;
+    });
+
+    // Emoji rimangono le stesse per tutte le lingue
+    const emojis = ['🎲', '😅', '🤷', '😎', '🤠', '🚀', '🥶', '🎯', '📉', '👑', '🐌', '🤡', '🧹', '🐌', '🎪', '🧊', '🦴'];
+    this.currentEmoji = emojis[randomNum - 1];
   }
 
   closeDialog() {
@@ -1053,7 +957,7 @@ export class AlboOroDialogComponent {
 @Component({
   selector: 'app-profilo-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule, TranslateModule],
   template: `
     <div class="modal-container">
       <!-- CLOSE BUTTON -->
@@ -1064,17 +968,17 @@ export class AlboOroDialogComponent {
       <!-- TITLE -->
       <h2>
         <mat-icon class="title-icon">account_circle</mat-icon>
-        <span class="value">Il Tuo Profilo</span>
+        <span class="value">{{ 'PROFILE.TITLE' | translate }}</span>
       </h2>
 
 
       <!-- FORM FIELDS -->
       <div class="form-section">
         <div class="info-row">
-          <div class="label">Nickname:</div>
+          <div class="label">{{ 'PROFILE.NICKNAME' | translate }}</div>
           <div class="value">
             <input type="text"
-              placeholder="Il tuo nickname"
+              [placeholder]="'PROFILE.NICKNAME' | translate"
               [(ngModel)]="userProfile.nickname"
               name="nickname"
               class="custom-input"
@@ -1083,10 +987,10 @@ export class AlboOroDialogComponent {
         </div>
 
         <div class="info-row">
-          <div class="label">Squadra del cuore:</div>
+          <div class="label">{{ 'PROFILE.FAVORITE_TEAM' | translate }}</div>
           <div class="value autocomplete-container">
             <input type="text"
-              placeholder="Cerca la tua squadra..."
+              [placeholder]="'PROFILE.SEARCH_TEAM' | translate"
               [(ngModel)]="userProfile.squadraPreferita"
               (input)="onSearchInput()"
               (focus)="onInputFocus()"
@@ -1116,13 +1020,13 @@ export class AlboOroDialogComponent {
         <button type="button"
           class="btn-secondary"
           (click)="closeDialog()">
-          Annulla
+          {{ 'PROFILE.CANCEL' | translate }}
         </button>
         <button type="submit"
           class="btn-primary"
           [disabled]="!isFormValid() || isSaving"
           (click)="onSubmit()">
-          {{ isSaving ? 'Salvataggio...' : 'Salva Profilo' }}
+          {{ isSaving ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE' | translate) }}
         </button>
       </div>
 
@@ -1136,7 +1040,7 @@ export class AlboOroDialogComponent {
       <div class="danger-zone">
         <button type="button" class="btn-danger" (click)="openDeleteAccountDialog()">
           <mat-icon>delete_forever</mat-icon>
-          Elimina Account
+          {{ 'PROFILE.DELETE_ACCOUNT' | translate }}
         </button>
       </div>
     </div>
@@ -1745,7 +1649,8 @@ export class ProfiloDialogComponent implements OnInit {
     private router: Router,
     private giocatoreService: GiocatoreService,
     private squadraService: SquadraService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -1869,7 +1774,7 @@ export class ProfiloDialogComponent implements OnInit {
     this.giocatoreService.aggiornaMe(giocatoreAggiornato).subscribe({
       next: (result) => {
         this.isSaving = false;
-        this.showFeedback('Profilo salvato con successo! 🎉', 'success');
+        this.showFeedback(this.translate.instant('PROFILE.SUCCESS'), 'success');
 
         setTimeout(() => {
           // Chiudi il dialog e ritorna true per indicare che il profilo è stato aggiornato
@@ -1881,7 +1786,7 @@ export class ProfiloDialogComponent implements OnInit {
       error: (error) => {
         this.isSaving = false;
         console.error('Errore nel salvataggio del profilo:', error);
-        this.showFeedback('❌ Errore nel salvataggio. Riprova.', 'error');
+        this.showFeedback(this.translate.instant('PROFILE.ERROR'), 'error');
       }
     });
   }
@@ -1905,7 +1810,7 @@ export class ProfiloDialogComponent implements OnInit {
 @Component({
   selector: 'app-delete-account-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -1914,21 +1819,20 @@ export class ProfiloDialogComponent implements OnInit {
 
       <div class="warning-header">
         <mat-icon class="warning-icon">warning</mat-icon>
-        <h2>Elimina Account</h2>
+        <h2>{{ 'PROFILE.DELETE_DIALOG_TITLE' | translate }}</h2>
       </div>
 
-      <p class="warning-message">
-        Se elimini il tuo account, tutti i tuoi dati personali e il tuo profilo saranno cancellati in modo <strong>permanente</strong>.
+      <p class="warning-message" [innerHTML]="'PROFILE.DELETE_DIALOG_MESSAGE' | translate">
       </p>
 
-      <p class="warning-sub">Sei sicuro di voler procedere?</p>
+      <p class="warning-sub">{{ 'PROFILE.DELETE_DIALOG_CONFIRM' | translate }}</p>
 
       <div class="actions">
         <button class="btn-cancel" (click)="closeDialog()">
-          Annulla
+          {{ 'PROFILE.DELETE_DIALOG_CANCEL' | translate }}
         </button>
         <button class="btn-delete" (click)="confirmDelete()" [disabled]="isDeleting">
-          {{ isDeleting ? 'Eliminazione...' : 'Sì, elimina il mio account' }}
+          {{ isDeleting ? ('PROFILE.DELETE_DIALOG_DELETING' | translate) : ('PROFILE.DELETE_DIALOG_DELETE' | translate) }}
         </button>
       </div>
     </div>
@@ -2118,23 +2022,23 @@ export class DeleteAccountDialogComponent {
 @Component({
   selector: 'app-info-banner',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="info-banner">
       <div class="banner-container">
         <button class="banner-item" (click)="openRegolamento()">
           <mat-icon class="banner-icon">article</mat-icon>
-          <span class="banner-text">REGOLE</span>
+          <span class="banner-text">{{ 'BANNER.RULES' | translate }}</span>
         </button>
 
         <button class="banner-item" (click)="openAlboOro()">
           <mat-icon class="banner-icon trophy">emoji_events</mat-icon>
-          <span class="banner-text">TROFEI</span>
+          <span class="banner-text">{{ 'BANNER.TROPHIES' | translate }}</span>
         </button>
 
         <button class="banner-item" (click)="openProfilo()">
           <mat-icon class="banner-icon">person</mat-icon>
-          <span class="banner-text">PROFILO</span>
+          <span class="banner-text">{{ 'BANNER.PROFILE' | translate }}</span>
         </button>
       </div>
     </div>

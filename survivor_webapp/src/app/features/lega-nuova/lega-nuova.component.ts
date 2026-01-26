@@ -19,6 +19,7 @@ import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { environment } from '../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -35,6 +36,7 @@ import { environment } from '../../../environments/environment';
     FormsModule,
     MatChipsModule,
     MatIconModule,
+    TranslateModule,
   ],
   templateUrl: './lega-nuova.component.html',
   styleUrls: ['./lega-nuova.component.scss'],
