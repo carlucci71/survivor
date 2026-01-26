@@ -903,7 +903,7 @@ export class InvitaUtentiDialogComponent {
     this.inviteError = null;
     this.inviteSuccess = false;
 
-    this.legaService.invitaUtenti(this.data.legaId, this.emailsList, environment.mobile).subscribe({
+    this.legaService.invitaUtenti(this.data.legaId, this.emailsList).subscribe({
       next: () => {
         this.inviteSuccess = true;
         this.emailsList = [];
