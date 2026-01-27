@@ -18,6 +18,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -30,6 +31,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatButtonModule,
     HeaderComponent,
     InfoBannerComponent,
+    HeroThreeComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,

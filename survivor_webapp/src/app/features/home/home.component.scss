@@ -286,9 +286,37 @@
 .main-content {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 32px 20px;
+	padding: 16px 20px 32px 20px; /* Ridotto padding top per la hero section */
 	position: relative;
 	z-index: 1;
+}
+
+/* Hero section container */
+app-hero-three {
+	display: block;
+	margin: 0 20px 32px 20px;
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Responsive hero section */
+@media (max-width: 768px) {
+	app-hero-three {
+		margin: 0 16px 24px 16px;
+	}
+}
+
+@media (max-width: 480px) {
+	app-hero-three {
+		margin: 0 12px 20px 12px;
+	}
+}
+
+@media (max-width: 360px) {
+	app-hero-three {
+		margin: 0 8px 16px 8px;
+	}
 }
 
 h2 {
