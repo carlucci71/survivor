@@ -101,6 +101,7 @@ import { TranslateModule } from '@ngx-translate/core';
         opacity: 0.85;
       }
 
+
       /* Logo SURVIVOR 90px nella home quando title è vuoto */
       :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
         height: 90px;

@@ -124,6 +124,53 @@ import { CommonModule } from '@angular/common';
       }
     }
 
+    /* Nuova animazione di ingresso con scala */
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Nuova animazione di luce scintillante */
+    @keyframes shine {
+      0% {
+        background-position: -200% center;
+      }
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    /* Animazione di fluttuazione più lenta */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px); /* Movimento ridotto */
+      }
+    }
+
+    /* NUOVA animazione combinata per scrivere, attendere e scomparire */
+    @keyframes type-and-vanish {
+      0% { width: 0; opacity: 1; }
+      30% { width: 100%; opacity: 1; }
+      70% { width: 100%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
+    }
+
+    /* NUOVA animazione per il cursore sincronizzato */
+    @keyframes blink-caret-timed {
+      from, to { border-color: transparent; }
+      50% { border-color: white; }
+      71%, 100% { border-color: transparent; }
+    }
+
     .hero-overlay {
       position: absolute;
       top: 0;
@@ -147,28 +194,46 @@ import { CommonModule } from '@angular/common';
       max-width: 600px;
       padding: 0 20px;
       position: relative;
+      animation: float 10s ease-in-out infinite; /* Rallentata a 10s */
     }
 
     .hero-title {
       font-size: 3.5rem;
       font-weight: 900;
       margin: 0 0 16px 0;
-      text-shadow: 3px 5px 10px rgba(0, 0, 0, 0.5);
       letter-spacing: 0.05em;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(45deg, #ffffff, #e3f2fd);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+
+      /* Proprietà per l'effetto shine */
+      background-size: 200% auto;
+
+      /* Nuove animazioni applicate */
+      animation: fadeInScale 1.5s ease-out, shine 5s linear infinite;
+      animation-delay: 0.5s, 2.5s; /* Ritardo per l'inizio dello shine */
     }
 
     .hero-subtitle {
       font-size: 1.3rem;
       font-weight: 400;
       margin: 0;
-      opacity: 0.9;
-      text-shadow: 2px 3px 6px rgba(0, 0, 0, 0.4);
+      opacity: 1; /* Opacity a 1 per l'effetto typing */
       font-family: 'Poppins', sans-serif;
+
+      /* Stili per l'effetto typewriter */
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: .15em solid white;
+      width: 0;
+
+      /* Nuove animazioni applicate - CICLO INFINITO 7s */
+      animation:
+        type-and-vanish 7s steps(15, end) infinite,
+        blink-caret-timed 1s step-end infinite;
+      animation-delay: 2.5s;
     }
 
     /* RESPONSIVE - TABLET */
