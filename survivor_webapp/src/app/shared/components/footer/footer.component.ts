@@ -94,16 +94,16 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 16px 32px;
+      gap: 8px;
+      padding: 12px 20px;
       background: linear-gradient(135deg, #0A3D91, #4FC3F7);
       color: #FFFFFF;
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.95rem;
       transition: all 0.3s ease;
-      mat-icon { font-size: 20px; width: 20px; height: 20px; }
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(10, 61, 145, 0.3);
