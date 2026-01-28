@@ -142,6 +142,9 @@ public class CalendarioAPI2 implements ICalendario {
             if (match.get("matchId").toString().equals("414341")){
                 resultAway=new Result(resultAway.team, resultAway.teamCode, 3);
             }
+            if (match.get("matchId").toString().equals("414346")){
+                resultAway=new Result(resultAway.team, resultAway.teamCode, 3);
+            }
 
 
             PartitaDTO calendarioDTO = PartitaDTO.builder()
