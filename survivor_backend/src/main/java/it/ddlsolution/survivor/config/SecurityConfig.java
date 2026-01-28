@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers( "/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/push/**").authenticated()
 //                        .requestMatchers(apiBase + "/lega/**").authenticated() RIGA RIDONTANTE LASCIATA PER RICORDARE COME FARE CONFIGURAZIONI PARTICOLARI
                         .anyRequest().authenticated()
 

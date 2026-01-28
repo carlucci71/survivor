@@ -9,6 +9,7 @@ import {
   User
 } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
+import { PushService } from './push.service';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,9 @@ export class AuthService {
       role: response.role
     };
     this.currentUserSubject.next(user);
+    
+    // Push registration is now started from `HomeComponent` after login,
+    // so no need to send a cached token here.
   }
 
   refreshToken(refreshToken: string): Observable<AuthResponse> {

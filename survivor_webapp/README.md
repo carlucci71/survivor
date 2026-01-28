@@ -139,3 +139,15 @@ chrome://inspect/#devices
 
 **copiare APK su device
 adb -d install -t <PATH_APP>\survivor\survivor_webapp\android\app\build\intermediates\apk\debug\app-debug.apk
+
+**reset permessi su emulatore
+adb shell pm reset-permissions com.survivor.app
+
+**log su emulatore
+adb logcat -d | Select-String -Pattern "survivor|Capacitor|FATAL" -Context 2,2
+
+**log chiamate BE
+adb logcat -d | Select-String -Pattern "Capacitor/Console|chromium.*Console" | Select-Object -Last 30
+
+**per notifiche
+https://console.firebase.google.com/u/0/?pli=1
