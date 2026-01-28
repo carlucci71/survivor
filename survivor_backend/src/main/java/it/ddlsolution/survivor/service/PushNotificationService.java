@@ -82,30 +82,36 @@ public class PushNotificationService {
      */
     @Transactional
     public void registerToken(Long userId, String token, String platform, String deviceId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Utente non trovato: " + userId));
+        log.info("******************** REGISTER");
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Utente non trovato: " + userId));
 
-        Optional<PushToken> existing = pushTokenRepository.findByTokenAndUser_Id(token, userId);
+            Optional<PushToken> existing = pushTokenRepository.findByTokenAndUser_Id(token, userId);
 
-        if (existing.isPresent()) {
-            PushToken pushToken = existing.get();
-            pushToken.setLastUsedAt(LocalDateTime.now());
-            pushToken.setActive(true);
-            pushToken.setPlatform(platform);
-            if (deviceId != null) {
-                pushToken.setDeviceId(deviceId);
+            if (existing.isPresent()) {
+                PushToken pushToken = existing.get();
+                pushToken.setLastUsedAt(LocalDateTime.now());
+                pushToken.setActive(true);
+                pushToken.setPlatform(platform);
+                if (deviceId != null) {
+                    pushToken.setDeviceId(deviceId);
+                }
+                pushTokenRepository.save(pushToken);
+                log.info("Token push aggiornato per user {}", userId);
+            } else {
+                PushToken newToken = new PushToken();
+                newToken.setToken(token);
+                newToken.setPlatform(platform);
+                newToken.setUser(user);
+                newToken.setDeviceId(deviceId);
+                newToken.setActive(true);
+                pushTokenRepository.save(newToken);
+                log.info("Nuovo token push registrato per user {}", userId);
             }
-            pushTokenRepository.save(pushToken);
-            log.info("Token push aggiornato per user {}", userId);
-        } else {
-            PushToken newToken = new PushToken();
-            newToken.setToken(token);
-            newToken.setPlatform(platform);
-            newToken.setUser(user);
-            newToken.setDeviceId(deviceId);
-            newToken.setActive(true);
-            pushTokenRepository.save(newToken);
-            log.info("Nuovo token push registrato per user {}", userId);
+            log.info("******************** REGISTER OK");
+        } catch (Exception e){
+            log.error("******************** ERROR",e);
         }
     }
 
