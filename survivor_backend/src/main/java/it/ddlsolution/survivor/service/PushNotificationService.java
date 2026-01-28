@@ -111,7 +111,7 @@ public class PushNotificationService {
             }
             log.info("******************** REGISTER OK");
         } catch (Exception e){
-            log.error("******************** ERROR",e);
+            log.error("******************** REGISTER ERROR",e);
         }
     }
 

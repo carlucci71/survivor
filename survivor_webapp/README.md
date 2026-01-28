@@ -141,4 +141,3 @@ chrome://inspect/#devices
 adb -d install -t <PATH_APP>\survivor\survivor_webapp\android\app\build\intermediates\apk\debug\app-debug.apk
 
 
-npm install -D patch-package postinstall-postinstall
