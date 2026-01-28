@@ -31,7 +31,7 @@ public class ScheduledPushNotifications {
      * Esegue ogni 15 minuti e invia notifiche per le partite che iniziano tra ~1 ora
      * (finestra: tra 50 e 70 minuti da ora)
      */
-    @Scheduled(cron = "0 */1 * * * ?") // Ogni 15 minuti
+    //@Scheduled(cron = "0 */1 * * * ?") // Ogni 15 minuti
     public void sendUpcomingMatchNotifications() {
         PushNotificationDTO notification = PushNotificationDTO.builder()
                 .title("Partita in arrivo!")
@@ -50,7 +50,7 @@ public class ScheduledPushNotifications {
 
     }
 
-    @Scheduled(cron = "0 */15 * * * ?") // Ogni 15 minuti
+    //@Scheduled(cron = "0 */15 * * * ?") // Ogni 15 minuti
     public void sendUpcomingMatchNotificationsOrig() {
         if (!notificationsEnabled) {
             log.debug("Notifiche push disabilitate");
