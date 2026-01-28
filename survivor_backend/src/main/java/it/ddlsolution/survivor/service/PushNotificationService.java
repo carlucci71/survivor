@@ -139,6 +139,7 @@ public class PushNotificationService {
     /**
      * Invia una notifica push a più utenti
      */
+    @Transactional(readOnly = true)
     public void sendNotificationToUsers(List<Long> userIds, PushNotificationDTO notification) {
         List<PushToken> tokens = pushTokenRepository.findByUser_IdInAndActiveTrue(userIds);
         log.info("****************************************** INVIATA A TOKEN" + tokens.size());
