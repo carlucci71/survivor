@@ -88,7 +88,7 @@ push:
   notifications:
     enabled: ${PUSH_NOTIFICATIONS_ENABLED:false}
   fcm:
-    enabled: ${PUSH_FCM_ENABLED:false}
+    enabled: ${PUSH_FCM_ENABLED:true}
     credentials-path: ${PUSH_FCM_CREDENTIALS_PATH:}
     credentials-json: ${PUSH_FCM_CREDENTIALS_JSON:}
 

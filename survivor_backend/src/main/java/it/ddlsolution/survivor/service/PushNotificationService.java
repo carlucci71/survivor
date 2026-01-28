@@ -173,6 +173,7 @@ public class PushNotificationService {
             if ("ios".equalsIgnoreCase(platform)) {
                 sendToIosTokens(tokens, notificationDTO);
             } else if ("android".equalsIgnoreCase(platform)) {
+                log.info("****************************************** sendToAndroidTokens");
                 sendToAndroidTokens(tokens, notificationDTO);
             } else {
                 log.warn("Piattaforma non supportata: {}", platform);
