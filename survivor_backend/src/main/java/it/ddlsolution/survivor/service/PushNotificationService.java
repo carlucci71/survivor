@@ -41,6 +41,9 @@ public class PushNotificationService {
     @Value("${push.fcm.credentials-json:}")
     private String fcmCredentialsJson;
 
+    // Flag che indica se Firebase è stato inizializzato correttamente
+    private volatile boolean firebaseInitialized = false;
+
     @PostConstruct
     public void initializeFirebase() {
         if (!fcmEnabled) {
@@ -70,9 +73,15 @@ public class PushNotificationService {
                         .build();
 
                 FirebaseApp.initializeApp(options);
+                firebaseInitialized = true;
                 log.info("Firebase FCM inizializzato con successo");
+            } else {
+                // Se già presente almeno un'app, consideriamo Firebase inizializzato
+                firebaseInitialized = true;
+                log.info("Firebase FCM già inizializzato (app esistente)");
             }
         } catch (IOException e) {
+            firebaseInitialized = false;
             log.error("Errore inizializzazione Firebase FCM", e);
         }
     }
@@ -160,6 +169,11 @@ public class PushNotificationService {
             return;
         }
 
+        if (!firebaseInitialized) {
+            log.warn("Firebase non inizializzato correttamente: notifica non inviata: {}", notificationDTO.getTitle());
+            return;
+        }
+
         // Raggruppa per piattaforma se necessario
         Map<String, List<String>> tokensByPlatform = pushTokens.stream()
                 .collect(Collectors.groupingBy(
@@ -183,6 +197,11 @@ public class PushNotificationService {
     }
 
     private void sendToAndroidTokens(List<String> tokens, PushNotificationDTO dto) {
+        // Se Firebase non è inizializzato, evita la chiamata che lancia IllegalStateException
+        if (FirebaseApp.getApps().isEmpty()) {
+            log.warn("FCM non inizializzato: salta invio FCM Android");
+            return;
+        }
         try {
             Notification notification = Notification.builder()
                     .setTitle(dto.getTitle())
@@ -213,6 +232,11 @@ public class PushNotificationService {
     }
 
     private void sendToIosTokens(List<String> tokens, PushNotificationDTO dto) {
+        // Se Firebase non è inizializzato, evita la chiamata che lancia IllegalStateException
+        if (FirebaseApp.getApps().isEmpty()) {
+            log.warn("FCM non inizializzato: salta invio FCM iOS");
+            return;
+        }
         try {
             Notification notification = Notification.builder()
                     .setTitle(dto.getTitle())
