@@ -10,7 +10,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prebuild:test": "rimraf dist/survivor_webapp",
-    "generate-favicon": "node scripts/generate-favicon.js"
+    "generate-favicon": "node scripts/generate-favicon.js",
+    "postinstall": "patch-package"
   },
   "private": true,
   "dependencies": {
@@ -46,7 +47,9 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "patch-package": "^8.0.1",
     "png-to-ico": "^3.0.1",
+    "postinstall-postinstall": "^2.1.0",
     "sharp": "^0.34.5",
     "typescript": "~5.7.2"
   }
