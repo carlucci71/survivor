@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class PushService {
   private lastRegisteredToken: string | null = null;
+  private pendingToken: string | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -31,7 +32,13 @@ export class PushService {
     }
 
     this.registerListeners();
-    await PushNotifications.register();
+    
+    try {
+      await PushNotifications.register();
+    } catch (error) {
+      console.error('Errore registrazione push notifications - Firebase non configurato?', error);
+      // L'app continua a funzionare anche senza notifiche push
+    }
   }
 
   private isNativeMobile(): boolean {
@@ -51,13 +58,15 @@ export class PushService {
 
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
+      console.log('Push notification token registrato:', token.value);
+      this.pendingToken = token.value;
       void this.sendTokenToBackend(token.value).catch((error) => {
-        console.error('Errore invio token push al backend', error);
+        console.warn('Impossibile inviare token push ora (probabilmente utente non autenticato):', error);
       });
     });
 
     PushNotifications.addListener('registrationError', (error) => {
-      console.error('Errore registrazione push', error);
+      console.error('Errore registrazione push - Firebase potrebbe non essere configurato', error);
     });
 
     PushNotifications.addListener('pushNotificationReceived', (_notification: PushNotificationSchema) => {
@@ -81,6 +90,29 @@ export class PushService {
       platform: Capacitor.getPlatform(),
     };
 
-    await firstValueFrom(this.http.post(`${environment.apiUrl}/push/register`, payload));
+    const url = `${environment.apiUrl}/push/register`;
+    console.log('Invio token push al backend:', url, payload);
+    
+    try {
+      await firstValueFrom(this.http.post(url, payload));
+      console.log('Token push inviato con successo al backend');
+    } catch (error) {
+      console.error('Errore invio token push al backend - URL:', url, 'Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Chiamare questo metodo dopo il login per inviare il token push al backend
+   */
+  async sendPendingToken(): Promise<void> {
+    if (this.pendingToken) {
+      try {
+        await this.sendTokenToBackend(this.pendingToken);
+        this.pendingToken = null;
+      } catch (error) {
+        console.error('Errore invio token push dopo login:', error);
+      }
+    }
   }
 }

@@ -9,6 +9,7 @@ import {
   User
 } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
+import { PushService } from './push.service';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,10 @@ export class AuthService {
       role: response.role
     };
     this.currentUserSubject.next(user);
+    
+    // Invia il token push al backend ora che l'utente è autenticato
+    const pushService = this.injector.get(PushService);
+    void pushService.sendPendingToken();
   }
 
   refreshToken(refreshToken: string): Observable<AuthResponse> {

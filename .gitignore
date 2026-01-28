@@ -7,3 +7,4 @@ ReadmeSECRET.md
 survivor_backend/.github/
 /.idea
 .vscode/launch.json
+survivor_webapp/android/app/google-services.json
