@@ -1,7 +1,6 @@
 package it.ddlsolution.survivor.scheduled;
 
 import it.ddlsolution.survivor.dto.PushNotificationDTO;
-import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.Partita;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.PartitaRepository;
@@ -9,11 +8,12 @@ import it.ddlsolution.survivor.service.PushNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
