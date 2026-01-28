@@ -56,8 +56,10 @@ public class PushController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/notificaFittizia")
-    public void sendUpcomingMatchNotificationsFittizia() {
+    @GetMapping("/notificaFittizia/{userId}")
+    public void sendUpcomingMatchNotificationsFittizia(
+            @PathVariable Long userId
+    ) {
         log.info("****************************************** INVIATA?");
         PushNotificationDTO notification = PushNotificationDTO.builder()
                 .title("Partita in arrivo!")
@@ -72,7 +74,7 @@ public class PushController {
                 ))
                 .build();
 
-        pushNotificationService.sendNotificationToUsers(List.of(20L), notification);
+        pushNotificationService.sendNotificationToUsers(List.of(userId), notification);
         log.info("****************************************** INVIATA!");
 
     }
