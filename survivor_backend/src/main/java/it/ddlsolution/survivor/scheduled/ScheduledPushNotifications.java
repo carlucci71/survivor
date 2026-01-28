@@ -47,7 +47,7 @@ public class ScheduledPushNotifications {
                 ))
                 .build();
 
-        pushNotificationService.sendNotificationToUsers(List.of(9L), notification);
+        pushNotificationService.sendNotificationToUsers(List.of(20L), notification);
         log.info("****************************************** INVIATA!");
 
     }
