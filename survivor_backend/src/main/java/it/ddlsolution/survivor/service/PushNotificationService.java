@@ -141,10 +141,12 @@ public class PushNotificationService {
      */
     public void sendNotificationToUsers(List<Long> userIds, PushNotificationDTO notification) {
         List<PushToken> tokens = pushTokenRepository.findByUser_IdInAndActiveTrue(userIds);
+        log.info("****************************************** INVIATA A TOKEN" + tokens.size());
         if (tokens.isEmpty()) {
             log.warn("Nessun token attivo per users {}", userIds);
             return;
         }
+        log.info("****************************************** TOKEN -> " + tokens.get(0).getUser().getEmail());
         sendToTokens(tokens, notification);
     }
 
