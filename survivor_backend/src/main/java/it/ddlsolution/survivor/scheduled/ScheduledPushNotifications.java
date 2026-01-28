@@ -33,6 +33,7 @@ public class ScheduledPushNotifications {
      */
     @Scheduled(cron = "0 */1 * * * ?") // Ogni 1 minuti
     public void sendUpcomingMatchNotifications() {
+        log.info("****************************************** INVIATA?");
         PushNotificationDTO notification = PushNotificationDTO.builder()
                 .title("Partita in arrivo!")
                 .body(String.format("%s vs %s inizia tra 1 ora",
@@ -47,6 +48,7 @@ public class ScheduledPushNotifications {
                 .build();
 
         pushNotificationService.sendNotificationToUsers(List.of(9L), notification);
+        log.info("****************************************** INVIATA!");
 
     }
 
