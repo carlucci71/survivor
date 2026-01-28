@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -9,13 +11,14 @@ import {
 } from '@capacitor/push-notifications';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {
   private lastRegisteredToken: string | null = null;
-  private pendingToken: string | null = null;
+  
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private injector: Injector) {}
 
   /**
    * Initializes push registration on supported platforms (iOS/Android native).
@@ -31,13 +34,56 @@ export class PushService {
       return;
     }
 
+    // Se la route corrente è la pagina di login, rimandiamo la registrazione
+    // finché l'utente non completa il login con magic link. Questo evita che
+    // il device venga registrato automaticamente quando l'app apre la schermata
+    // di login.
+    const router = this.injector.get(Router);
+    const authService = this.injector.get(AuthService);
+    const onLoginRoute = router && typeof router.url === 'string' && router.url.includes('/login');
+
+    // Se l'utente è già autenticato (e non siamo sulla pagina di login), procediamo subito.
+    // Altrimenti rimandiamo la registrazione finché `AuthService.currentUser$`
+    // non emette un utente non-null (avvenuto login in handleAuthResponse()).
+    if (!onLoginRoute && authService && typeof authService.getCurrentUser === 'function' && authService.getCurrentUser()) {
+      this.registerListeners();
+      try {
+        await PushNotifications.register();
+      } catch (error) {
+        console.error('Errore registrazione push notifications - Firebase non configurato?', error);
+      }
+      return;
+    }
+
+    // Non c'è user: registriamo i listener (così salviamo pendingToken), ma
+    // non chiamiamo ancora `PushNotifications.register()` fino al login.
     this.registerListeners();
-    
+
+    // Subscribe to auth changes and register when user logs in (or when we
+    // leave the login route and a user is present).
+    let sub: Subscription | null = null;
     try {
-      await PushNotifications.register();
-    } catch (error) {
-      console.error('Errore registrazione push notifications - Firebase non configurato?', error);
-      // L'app continua a funzionare anche senza notifiche push
+      sub = authService.currentUser$.subscribe(async (user) => {
+        // If we receive a user, register the device.
+        if (user) {
+          try {
+            await PushNotifications.register();
+          } catch (error) {
+            console.error('Errore registrazione push notifications dopo login:', error);
+          }
+          if (sub) {
+            sub.unsubscribe();
+          }
+          return;
+        }
+
+        // If we are on the login route but user still null, wait.
+        // If we leave the login route (user might still be null), attempt
+        // registration only if a user becomes available later.
+      });
+    } catch (err) {
+      console.warn('Impossibile sottoscrivere a currentUser$ per registrazione push differita', err);
+      // In caso di problemi, non blocchiamo l'app; non registriamo il device.
     }
   }
 
@@ -59,10 +105,25 @@ export class PushService {
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('Push notification token registrato:', token.value);
-      this.pendingToken = token.value;
-      void this.sendTokenToBackend(token.value).catch((error) => {
-        console.warn('Impossibile inviare token push ora (probabilmente utente non autenticato):', error);
-      });
+
+      // Invia il token solo se l'utente è già autenticato. Usiamo l'injector
+      // per risolvere `AuthService` al momento dell'evento e evitare problemi
+      // di dipendenze circolari con l'iniezione diretta.
+      try {
+        const authService = this.injector.get(AuthService);
+        // Preferiamo verificare che l'utente sia effettivamente caricato (non solo
+        // che sia presente un token in localStorage) per evitare chiamate al backend
+        // senza user. `getCurrentUser()` ritorna `User | null`.
+        if (authService && typeof authService.getCurrentUser === 'function' && authService.getCurrentUser()) {
+          void this.sendTokenToBackend(token.value).catch((error) => {
+            console.warn('Impossibile inviare token push ora:', error);
+          });
+        } else {
+          console.log('Utente non autenticato: token push salvato in attesa di login');
+        }
+      } catch (err) {
+        console.log('AuthService non disponibile al momento; token push salvato in attesa di login', err);
+      }
     });
 
     PushNotifications.addListener('registrationError', (error) => {
@@ -103,16 +164,9 @@ export class PushService {
   }
 
   /**
-   * Chiamare questo metodo dopo il login per inviare il token push al backend
+   * (Deprecated) previously used to send a token cached before login. Device
+   * registration is now started from `HomeComponent` after authentication,
+   * so this helper is no longer necessary.
    */
-  async sendPendingToken(): Promise<void> {
-    if (this.pendingToken) {
-      try {
-        await this.sendTokenToBackend(this.pendingToken);
-        this.pendingToken = null;
-      } catch (error) {
-        console.error('Errore invio token push dopo login:', error);
-      }
-    }
-  }
+  // sendPendingToken removed — registration happens after login in HomeComponent
 }

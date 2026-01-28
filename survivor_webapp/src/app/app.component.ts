@@ -20,7 +20,5 @@ export class AppComponent implements OnInit {
     // Applica il tema dall'environment
     document.documentElement.style.setProperty('--primary-color', environment.theme.primary);
     document.body.classList.add(`theme-${environment.theme.name}`);
-
-    void this.pushService.initPush();
   }
 }
