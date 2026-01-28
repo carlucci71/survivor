@@ -20,6 +20,7 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { PushService } from '../../core/services/push.service';
 
 @Component({
   selector: 'app-home',
@@ -58,6 +59,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
     ,
     private sanitizer: DomSanitizer
+    ,
+    private pushService: PushService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +77,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.isMobile = window.innerWidth <= 768;
     };
     window.addEventListener('resize', this.resizeHandler);
+
+    // Avvia la registrazione push qui: Home è protetta da `authGuard`, quindi
+    // l'utente è autenticato e possiamo procedere in sicurezza.
+    void this.pushService.initPush();
   }
 
   ngOnDestroy(): void {

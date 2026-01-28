@@ -58,9 +58,8 @@ export class AuthService {
     };
     this.currentUserSubject.next(user);
     
-    // Invia il token push al backend ora che l'utente è autenticato
-    const pushService = this.injector.get(PushService);
-    void pushService.sendPendingToken();
+    // Push registration is now started from `HomeComponent` after login,
+    // so no need to send a cached token here.
   }
 
   refreshToken(refreshToken: string): Observable<AuthResponse> {

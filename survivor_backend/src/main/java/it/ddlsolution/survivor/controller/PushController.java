@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.dto.PushTokenDTO;
 import it.ddlsolution.survivor.service.PushNotificationService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/push")
@@ -50,4 +55,28 @@ public class PushController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/notificaFittizia")
+    public void sendUpcomingMatchNotificationsFittizia() {
+        log.info("****************************************** INVIATA?");
+        PushNotificationDTO notification = PushNotificationDTO.builder()
+                .title("Partita in arrivo!")
+                .body(String.format("%s vs %s inizia tra 1 ora",
+                        "GIMMI",
+                        "BUBU"))
+                .sound("default")
+                .data(Map.of(
+                        "type", "match_starting",
+                        "matchId", String.valueOf(11),
+                        "matchDate", LocalDateTime.now().toString()
+                ))
+                .build();
+
+        pushNotificationService.sendNotificationToUsers(List.of(20L), notification);
+        log.info("****************************************** INVIATA!");
+
+    }
+
+
+
 }
