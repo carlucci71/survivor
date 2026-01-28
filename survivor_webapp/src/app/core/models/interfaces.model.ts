@@ -39,7 +39,7 @@ export class RuoloGiocatore {
   static readonly LEADER = new RuoloGiocatore('LEADER', 'Leader');
   static readonly NESSUNO = new RuoloGiocatore('NESSUNO', 'Nessuno');
   static readonly GIOCATORE = new RuoloGiocatore('GIOCATORE', 'Giocatore');
-  
+
   private constructor(
     public readonly value: string,
     public readonly descrizione: string
@@ -142,7 +142,7 @@ export interface Partita {
     casaNome: string;
     fuoriNome: string;
     scoreCasa: number;
-    scoreFuori: number; 
+    scoreFuori: number;
     aliasGiornataCasa: string;
     aliasGiornataFuori: string;
 }
@@ -167,6 +167,8 @@ export interface Squadra {
 export interface Giocatore {
   id: number;
   nome: string;
+  nickname?: string;
+  squadraCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
   giocate?: Giocata[]
@@ -192,7 +194,7 @@ export class StatoLega {
   static readonly DA_AVVIARE = new StatoLega('DA_AVVIARE', 'Da Avviare');
   static readonly AVVIATA = new StatoLega('AVVIATA', 'Avviata');
   static readonly TERMINATA = new StatoLega('TERMINATA', 'Terminata');
-  
+
   private constructor(
     public readonly value: string,
     public readonly descrizione: string

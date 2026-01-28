@@ -4,6 +4,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLabel } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
@@ -14,6 +16,8 @@ import { MatLabel } from '@angular/material/form-field';
     MatButtonModule,
     MatIconModule,
     MatLabel,
+    MatTooltipModule,
+    TranslateModule,
   ],
   template: `
     <mat-toolbar color="primary" class="header">
@@ -32,14 +36,14 @@ import { MatLabel } from '@angular/material/form-field';
             (click)="back.emit()"
             class="btn-back"
           >
-            ← Torna alla Home
+            ← {{ 'HEADER.BACK_TO_HOME' | translate }}
           </button>
 
           <mat-icon
             *ngIf="visLogout === 'S'"
             class="logout-icon"
             (click)="logout.emit()"
-            matTooltip="Logout"
+            [matTooltip]="'HEADER.LOGOUT' | translate"
             >logout</mat-icon
           >
         </div>
@@ -96,6 +100,7 @@ import { MatLabel } from '@angular/material/form-field';
         filter: brightness(0) invert(1);
         opacity: 0.85;
       }
+
 
       /* Logo SURVIVOR 90px nella home quando title è vuoto */
       :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {

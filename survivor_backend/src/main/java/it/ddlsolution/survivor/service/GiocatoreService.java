@@ -3,10 +3,11 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.entity.Giocatore;
-import it.ddlsolution.survivor.entity.GiocatoreLega;
+import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.SquadraRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -14,14 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class GiocatoreService {
     private final GiocatoreRepository giocatoreRepository;
     private final UserRepository userRepository;
     private final GiocatoreMapper giocatoreMapper;
+    private final SquadraRepository squadraRepository;
 
     @Transactional
     public GiocatoreDTO me() {
@@ -31,11 +31,13 @@ public class GiocatoreService {
                 () -> {
                     //Se non esiste ancora un giocatore associato allo user, lo creo e glielo associo
                     Giocatore giocatore = new Giocatore();
-                    User user = userRepository.findById(userId).get();
+                    User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
                     giocatore.setUser(user);
                     giocatore.setNome(user.getName());
                     giocatoreRepository.save(giocatore);
-                    return giocatoreRepository.findProjectionByUserId(userId).get();
+                    return giocatoreRepository.findProjectionByUserId(userId)
+                        .orElseThrow(() -> new RuntimeException("Errore creazione giocatore per userId: " + userId));
                 }
         ));
     }
@@ -46,7 +48,8 @@ public class GiocatoreService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return giocatoreRepository.findByUser_Id(userId).orElseGet(()->{
-            User user = userRepository.findById(userId).get();
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
             Giocatore giocatore=new Giocatore();
             giocatore.setNome(user.getName());
             giocatore.setUser(user);
@@ -75,12 +78,45 @@ public class GiocatoreService {
     public GiocatoreDTO aggiorna(GiocatoreDTO giocatoreDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId()).get();
+        Giocatore giocatore = giocatoreRepository.findById(giocatoreDTO.getId())
+            .orElseThrow(() -> new RuntimeException("Giocatore non trovato con id: " + giocatoreDTO.getId()));
+
         // Aggiorna solo i campi della tabella giocatore
         giocatore.setNome(giocatoreDTO.getNome());
 
+        // Aggiorna nickname (opzionale)
+        if (giocatoreDTO.getNickname() != null && !giocatoreDTO.getNickname().trim().isEmpty()) {
+            giocatore.setNickname(giocatoreDTO.getNickname().trim());
+        } else {
+            giocatore.setNickname(null);
+        }
+
+        // Aggiorna squadra del cuore (opzionale)
+        if (giocatoreDTO.getSquadraCuore() != null && giocatoreDTO.getSquadraCuore().getId() != null) {
+            // Usa l'ID (Long) per cercare la squadra
+            Squadra squadra = squadraRepository.findById(giocatoreDTO.getSquadraCuore().getId())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Squadra del cuore salvata: ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setSquadraCuore(squadra);
+        } else if (giocatoreDTO.getSquadraCuore() != null && giocatoreDTO.getSquadraCuore().getNome() != null) {
+            // Fallback: cerca per nome se non c'è ID
+            Squadra squadra = squadraRepository.findByNome(giocatoreDTO.getSquadraCuore().getNome())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Squadra del cuore salvata (da nome): ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setSquadraCuore(squadra);
+        } else {
+            giocatore.setSquadraCuore(null);
+        }
+
         giocatoreRepository.save(giocatore);
-        return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).get());
+        return giocatoreMapper.projectionToDTO(
+            giocatoreRepository.findProjectionByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Giocatore non trovato per userId: " + userId))
+        );
     }
 
     @Transactional(readOnly = true)

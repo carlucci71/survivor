@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,92 +6,121 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { GiocatoreService } from '../../../core/services/giocatore.service';
+import { SquadraService } from '../../../core/services/squadra.service';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
   selector: 'app-regolamento-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="regolamento-dialog">
       <div class="dialog-header">
-        <h2 class="dialog-title">Regolamento Survivor</h2>
+        <h2 class="dialog-title">{{ 'RULES.TITLE' | translate }}</h2>
         <button mat-icon-button class="close-btn" (click)="closeDialog()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
       <div class="dialog-content">
+        <!-- 1. Scelta settimanale -->
         <div class="regola">
-          <h3>1. Scelta settimanale</h3>
-          <p>Ogni giocatore può scegliere una sola squadra per ogni giornata di gioco. La possibilità di rendere la scelta pubblica o privata sarà disponibile esclusivamente tramite app. Nella versione attuale del gioco tutte le scelte sono pubbliche e visibili agli altri partecipanti fin dal momento della conferma.</p>
+          <h3>{{ 'RULES.SECTION_1_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_1_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_1_P2' | translate }}</p>
         </div>
 
+        <!-- 2. Squadre non ripetibili -->
         <div class="regola">
-          <h3>2. Squadre non ripetibili</h3>
-          <p>Nel corso dello stesso torneo non è possibile scegliere due volte la stessa squadra, anche in giornate diverse.</p>
+          <h3>{{ 'RULES.SECTION_2_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_2_TEXT' | translate }}</p>
         </div>
 
+        <!-- 3. Eliminazione -->
         <div class="regola">
-          <h3>3. Eliminazione</h3>
-          <p>Se la squadra scelta perde o pareggia la propria partita, il giocatore viene eliminato dal torneo.</p>
+          <h3>{{ 'RULES.SECTION_3_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_3_TEXT' | translate }}</p>
         </div>
 
+        <!-- 4. Durata del torneo -->
         <div class="regola">
-          <h3>4. Durata del torneo</h3>
-          <p>Il torneo termina quando:</p>
+          <h3>{{ 'RULES.SECTION_4_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_4_P1' | translate }}</p>
           <ul>
-            <li>resta un solo giocatore attivo, che viene dichiarato vincitore;</li>
-            <li>vengono completate 10 giornate di gioco valide.</li>
+            <li>{{ 'RULES.SECTION_4_L1' | translate }}</li>
+            <li>{{ 'RULES.SECTION_4_L2' | translate }}</li>
           </ul>
-          <p>In caso di termine per limite di giornate, il montepremi viene diviso in parti uguali tra i giocatori rimasti attivi.</p>
+          <p>{{ 'RULES.SECTION_4_P2' | translate }}</p>
         </div>
 
+        <!-- 5. Tempistiche di scelta -->
         <div class="regola">
-          <h3>5. Tempistiche di scelta</h3>
-          <p>Le scelte devono essere effettuate entro 15 minuti prima dell'inizio della giornata di Serie A. Dopo l'inizio della prima partita della giornata, nessuna scelta può essere modificata.</p>
+          <h3>{{ 'RULES.SECTION_5_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_5_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_5_P2' | translate }}</p>
         </div>
 
+        <!-- 6. Calendario -->
         <div class="regola">
-          <h3>6. Calendario</h3>
-          <p>Le giornate di gioco fanno riferimento esclusivamente al calendario ufficiale della Serie A.</p>
+          <h3>{{ 'RULES.SECTION_6_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_6_TEXT' | translate }}</p>
         </div>
 
+        <!-- 7. Eliminazione totale ed equità del montepremi -->
         <div class="regola">
-          <h3>7. Eliminazione totale ed equità del montepremi</h3>
-          <p>Se, al termine di una giornata valida, tutti i giocatori rimasti perdono o pareggiano, il torneo termina immediatamente. In questo caso, il montepremi viene diviso in parti uguali tra i giocatori rimasti in gioco in quella giornata.</p>
-          <p>Il montepremi è generato esclusivamente dai partecipanti del torneo e non può essere assegnato a giocatori esterni o subentranti, al fine di garantire la parità di condizioni.</p>
+          <h3>{{ 'RULES.SECTION_7_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_7_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_7_P2' | translate }}</p>
+          <p>{{ 'RULES.SECTION_7_P3' | translate }}</p>
         </div>
 
+        <!-- 8. Divisione anticipata del montepremi -->
         <div class="regola">
-          <h3>8. Divisione anticipata del montepremi</h3>
-          <p>Quando il numero di giocatori rimasti è pari o inferiore al 10% dei partecipanti iniziali, i giocatori attivi possono decidere di dividere anticipatamente l'intero montepremi in parti uguali. La decisione avviene tramite votazione a maggioranza.</p>
-          <p><strong>Esempio:</strong> Torneo con 72 iscritti → 10% = 7 giocatori. Se restano 7 o meno giocatori, è possibile votare la divisione del montepremi.</p>
-          <p>Se i giocatori rimasti (≤10%) rimangono gli stessi per tre giornate consecutive senza alcuna eliminazione, il montepremi viene automaticamente diviso tra di loro.</p>
+          <h3>{{ 'RULES.SECTION_8_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_8_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_8_P2' | translate }}</p>
+          <p><strong>{{ 'RULES.SECTION_8_EXAMPLE_TITLE' | translate }}</strong></p>
+          <p>{{ 'RULES.SECTION_8_EXAMPLE' | translate }}</p>
+          <p>{{ 'RULES.SECTION_8_P3' | translate }}</p>
         </div>
 
+        <!-- 9. Giornate con partite rinviate o sospese -->
         <div class="regola">
-          <h3>9. Giornate con partite rinviate o sospese</h3>
-          <h4>9.1 Rinvio prima dell'inizio della giornata</h4>
-          <p>Se una o più partite di Serie A vengono rinviate prima dell'inizio della giornata:</p>
+          <h3>{{ 'RULES.SECTION_9_TITLE' | translate }}</h3>
+
+          <h4>{{ 'RULES.SECTION_9_1_TITLE' | translate }}</h4>
+          <p>{{ 'RULES.SECTION_9_1_P1' | translate }}</p>
           <ul>
-            <li>la giornata viene considerata neutra ai fini del Survivor;</li>
-            <li>nessun giocatore è tenuto a effettuare una scelta;</li>
-            <li>nessun giocatore viene eliminato;</li>
-            <li>la giornata non viene conteggiata nel totale delle giornate del torneo.</li>
+            <li>{{ 'RULES.SECTION_9_1_L1' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_1_L2' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_1_L3' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_1_L4' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_1_L5' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_1_L6' | translate }}</li>
           </ul>
 
-          <h4>9.2 Rinvio o sospensione dopo l'inizio della giornata</h4>
-          <p>Se una o più partite vengono rinviate o sospese a giornata iniziata:</p>
+          <h4>{{ 'RULES.SECTION_9_2_TITLE' | translate }}</h4>
+          <p>{{ 'RULES.SECTION_9_2_P1' | translate }}</p>
           <ul>
-            <li>i giocatori che hanno scelto una squadra coinvolta nel rinvio restano attivi;</li>
-            <li>la loro scelta viene considerata come vincente;</li>
-            <li>la squadra scelta viene comunque considerata utilizzata.</li>
+            <li>{{ 'RULES.SECTION_9_2_L1' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_2_L2' | translate }}</li>
           </ul>
+          <p>{{ 'RULES.SECTION_9_2_P2' | translate }}</p>
+          <ul>
+            <li>{{ 'RULES.SECTION_9_2_L3' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_2_L4' | translate }}</li>
+            <li>{{ 'RULES.SECTION_9_2_L5' | translate }}</li>
+          </ul>
+          <p>{{ 'RULES.SECTION_9_2_P3' | translate }}</p>
         </div>
+
+        <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
       </div>
     </div>
   `,
@@ -200,6 +229,26 @@ import { AuthService } from '../../../core/services/auth.service';
 
       scrollbar-width: thin;
       scrollbar-color: #C1C9D2 #F8F9FA;
+
+      .intro {
+        color: #0A3D91;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 24px;
+        text-align: center;
+        line-height: 1.6;
+      }
+
+      .good-luck {
+        color: #4FC3F7;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 24px;
+        padding: 16px;
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.08));
+        border-radius: 12px;
+      }
 
       .regola {
         margin: 0 0 24px 0;
@@ -444,13 +493,13 @@ export class RegolamentoBannerDialogComponent {
 @Component({
   selector: 'app-albo-oro-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="albo-oro-dialog">
       <div class="dialog-header">
         <div class="header-content">
           <mat-icon class="trophy-icon">emoji_events</mat-icon>
-          <h2 class="dialog-title">I MIEI TROFEI</h2>
+          <h2 class="dialog-title">{{ 'TROPHIES.YOUR_TROPHIES' | translate }}</h2>
         </div>
         <button mat-icon-button class="close-btn" (click)="closeDialog()">
           <mat-icon>close</mat-icon>
@@ -468,12 +517,12 @@ export class RegolamentoBannerDialogComponent {
         <!-- Lista trofei personali -->
         <div class="winner-card" *ngIf="hasTrofei">
           <div class="season">
-            <h3>🏆 Stagione 2024-2025</h3>
+            <h3>🏆 {{ 'TROPHIES.SEASON' | translate }} 2024-2025</h3>
             <div class="winner-info">
-              <div class="winner-name">1° Classificato</div>
+              <div class="winner-name">{{ 'TROPHIES.FIRST_PLACE' | translate }}</div>
               <div class="winner-details">
-                <span class="detail">Giornate Sopravvissute: 8</span>
-                <span class="detail">Squadra Finale: Napoli</span>
+                <span class="detail">{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: 8</span>
+                <span class="detail">{{ 'TROPHIES.FINAL_TEAM' | translate }}: Napoli</span>
               </div>
             </div>
           </div>
@@ -481,19 +530,19 @@ export class RegolamentoBannerDialogComponent {
 
         <!-- Statistiche personali - solo se ci sono dati -->
         <div class="stats-section" *ngIf="hasTrofei">
-          <h3>📊 LE TUE STATISTICHE</h3>
+          <h3>📊 {{ 'TROPHIES.YOUR_STATS' | translate }}</h3>
           <div class="stats-grid">
             <div class="stat-item">
               <span class="stat-number">5</span>
-              <span class="stat-label">Tornei Giocati</span>
+              <span class="stat-label">{{ 'TROPHIES.TOURNAMENTS_PLAYED' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">2</span>
-              <span class="stat-label">Vittorie</span>
+              <span class="stat-label">{{ 'TROPHIES.VICTORIES' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">35</span>
-              <span class="stat-label">Giornate Totali</span>
+              <span class="stat-label">{{ 'TROPHIES.TOTAL_ROUNDS' | translate }}</span>
             </div>
             <div class="stat-item">
               <span class="stat-number">78%</span>
@@ -931,114 +980,35 @@ export class AlboOroDialogComponent {
   // TODO: Collegare ai dati reali dell'utente dal backend
   hasTrofei = false; // Imposta a true quando ci sono dati dal DB
 
-  // Messaggi simpatici per quando non ci sono trofei
-  private funnyMessages = [
-    {
-      emoji: '😅',
-      message: 'Sei proprio scarso! Non sei sopravvissuto neanche una volta!',
-      subtitle: 'Ma tranquillo, anche i campioni hanno iniziato così... o forse no.'
-    },
-    {
-      emoji: '🤦',
-      message: 'Houston, abbiamo un problema: zero vittorie!',
-      subtitle: 'Il tuo palmares è più vuoto del frigorifero di uno studente.'
-    },
-    {
-      emoji: '😭',
-      message: 'La bacheca dei trofei piange dalla solitudine!',
-      subtitle: 'Polvere e ragnatele sono gli unici inquilini qui.'
-    },
-    {
-      emoji: '🦗',
-      message: 'Cri cri cri... senti i grilli?',
-      subtitle: 'È il suono della tua bacheca trofei completamente vuota.'
-    },
-    {
-      emoji: '🎰',
-      message: 'Forse dovresti provare a giocare al lotto!',
-      subtitle: 'Con la fortuna che hai nel Survivor, magari lì va meglio.'
-    },
-    {
-      emoji: '🐢',
-      message: 'Piano piano si arriva... ma tu sei ancora fermo!',
-      subtitle: 'Anche la tartaruga ti sta battendo in questo momento.'
-    },
-    {
-      emoji: '📭',
-      message: 'La tua casella trofei dice: "Destinatario sconosciuto"',
-      subtitle: 'Nessuna vittoria è mai arrivata a questo indirizzo.'
-    },
-    {
-      emoji: '🌵',
-      message: 'Qui è più secco del deserto del Sahara!',
-      subtitle: 'Neanche una goccia di vittoria in vista.'
-    },
-    {
-      emoji: '👻',
-      message: 'I tuoi trofei sono come i fantasmi: nessuno li ha mai visti!',
-      subtitle: 'Leggenda narra che un giorno arriveranno... leggenda.'
-    },
-    {
-      emoji: '🥶',
-      message: 'Qui fa più freddo che in Siberia!',
-      subtitle: 'La tua bacheca è congelata dal gelo delle zero vittorie.'
-    },
-    {
-      emoji: '🔍',
-      message: 'Cercasi trofei disperatamente!',
-      subtitle: 'Ricompensa: la tua dignità di giocatore.'
-    },
-    {
-      emoji: '🪦',
-      message: 'R.I.P. alle tue speranze di vittoria!',
-      subtitle: 'Qui giace chi pensava di vincere almeno una volta.'
-    },
-    {
-      emoji: '🤡',
-      message: 'Il pagliaccio del torneo sei tu!',
-      subtitle: 'Ma almeno fai ridere gli altri partecipanti.'
-    },
-    {
-      emoji: '🧹',
-      message: 'Hai fatto piazza pulita... di te stesso!',
-      subtitle: 'Eliminato sempre, vincitore mai. Che record!'
-    },
-    {
-      emoji: '🐌',
-      message: 'Anche una lumaca sarebbe arrivata prima di te!',
-      subtitle: 'E probabilmente avrebbe anche vinto qualcosa.'
-    },
-    {
-      emoji: '🎪',
-      message: 'Benvenuto al circo delle eliminazioni!',
-      subtitle: 'Tu sei l\'attrazione principale: sempre fuori al primo colpo!'
-    },
-    {
-      emoji: '🧊',
-      message: 'Le tue vittorie sono in freezer... dal 1800!',
-      subtitle: 'Surgelate così bene che non le troverà mai nessuno.'
-    },
-    {
-      emoji: '🦴',
-      message: 'Neanche un osso di vittoria da rosicchiare!',
-      subtitle: 'Il tuo cane avrebbe più fortuna di te.'
-    }
-  ];
 
   currentEmoji = '';
   currentMessage = '';
   currentSubtitle = '';
 
-  constructor(private dialog: MatDialog) {
+  constructor(
+    private dialog: MatDialog,
+    private translate: TranslateService
+  ) {
     this.pickRandomMessage();
   }
 
   private pickRandomMessage() {
-    const randomIndex = Math.floor(Math.random() * this.funnyMessages.length);
-    const selected = this.funnyMessages[randomIndex];
-    this.currentEmoji = selected.emoji;
-    this.currentMessage = selected.message;
-    this.currentSubtitle = selected.subtitle;
+    // Scegli un messaggio casuale da 1 a 17
+    const randomNum = Math.floor(Math.random() * 17) + 1;
+    const msgKey = `MSG_${randomNum}`;
+    const subKey = `SUB_${randomNum}`;
+
+    // Carica i messaggi tradotti
+    this.translate.get(`TROPHIES.FUNNY_MESSAGES.${msgKey}`).subscribe(msg => {
+      this.currentMessage = msg;
+    });
+    this.translate.get(`TROPHIES.FUNNY_MESSAGES.${subKey}`).subscribe(sub => {
+      this.currentSubtitle = sub;
+    });
+
+    // Emoji rimangono le stesse per tutte le lingue
+    const emojis = ['🎲', '😅', '🤷', '😎', '🤠', '🚀', '🥶', '🎯', '📉', '👑', '🐌', '🤡', '🧹', '🐌', '🎪', '🧊', '🦴'];
+    this.currentEmoji = emojis[randomNum - 1];
   }
 
   closeDialog() {
@@ -1050,7 +1020,7 @@ export class AlboOroDialogComponent {
 @Component({
   selector: 'app-profilo-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule, TranslateModule],
   template: `
     <div class="modal-container">
       <!-- CLOSE BUTTON -->
@@ -1061,17 +1031,17 @@ export class AlboOroDialogComponent {
       <!-- TITLE -->
       <h2>
         <mat-icon class="title-icon">account_circle</mat-icon>
-        <span class="value">Il Tuo Profilo</span>
+        <span class="value">{{ 'PROFILE.TITLE' | translate }}</span>
       </h2>
 
 
       <!-- FORM FIELDS -->
       <div class="form-section">
         <div class="info-row">
-          <div class="label">Nickname:</div>
+          <div class="label">{{ 'PROFILE.NICKNAME' | translate }}</div>
           <div class="value">
             <input type="text"
-              placeholder="Il tuo nickname"
+              [placeholder]="'PROFILE.NICKNAME' | translate"
               [(ngModel)]="userProfile.nickname"
               name="nickname"
               class="custom-input"
@@ -1080,26 +1050,29 @@ export class AlboOroDialogComponent {
         </div>
 
         <div class="info-row">
-          <div class="label">Squadra del cuore:</div>
+          <div class="label">{{ 'PROFILE.FAVORITE_TEAM' | translate }}</div>
           <div class="value autocomplete-container">
             <input type="text"
-              placeholder="Cerca la tua squadra..."
-              [(ngModel)]="searchQuery"
+              [placeholder]="'PROFILE.SEARCH_TEAM' | translate"
+              [(ngModel)]="userProfile.squadraPreferita"
               (input)="onSearchInput()"
-              (focus)="showSuggestions = true"
+              (focus)="onInputFocus()"
               (blur)="onBlur()"
               class="custom-input"
+              [class.has-value]="userProfile.squadraPreferita"
               autocomplete="off">
+            <button type="button"
+              class="clear-input-btn"
+              *ngIf="userProfile.squadraPreferita && !showSuggestions"
+              (mousedown)="clearSquadra()">
+              ×
+            </button>
             <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
               <div class="suggestion-item"
                 *ngFor="let squadra of filteredSquadre"
                 (mousedown)="selectSquadra(squadra)">
                 {{ squadra }}
               </div>
-            </div>
-            <div class="selected-badge" *ngIf="userProfile.squadraPreferita && !showSuggestions">
-              <span>{{ userProfile.squadraPreferita }}</span>
-              <button type="button" class="clear-btn" (click)="clearSquadra()">×</button>
             </div>
           </div>
         </div>
@@ -1110,21 +1083,27 @@ export class AlboOroDialogComponent {
         <button type="button"
           class="btn-secondary"
           (click)="closeDialog()">
-          Annulla
+          {{ 'PROFILE.CANCEL' | translate }}
         </button>
         <button type="submit"
           class="btn-primary"
-          [disabled]="!isFormValid()"
+          [disabled]="!isFormValid() || isSaving"
           (click)="onSubmit()">
-          Salva Profilo
+          {{ isSaving ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE' | translate) }}
         </button>
+      </div>
+
+      <!-- FEEDBACK MESSAGE -->
+      <div *ngIf="feedbackMessage" class="feedback-message" [class.success]="feedbackType === 'success'" [class.error]="feedbackType === 'error'">
+        <mat-icon>{{ feedbackType === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+        <span>{{ feedbackMessage }}</span>
       </div>
 
       <!-- DANGER ZONE -->
       <div class="danger-zone">
         <button type="button" class="btn-danger" (click)="openDeleteAccountDialog()">
           <mat-icon>delete_forever</mat-icon>
-          Elimina Account
+          {{ 'PROFILE.DELETE_ACCOUNT' | translate }}
         </button>
       </div>
     </div>
@@ -1282,6 +1261,13 @@ export class AlboOroDialogComponent {
         color: #9CA3AF;
         font-weight: 400;
       }
+
+      &.has-value {
+        padding-right: 40px; /* Spazio per il pulsante clear */
+        background: #FFFFFF;
+        border-color: #4FC3F7;
+        font-weight: 600;
+      }
     }
 
     .custom-select {
@@ -1297,6 +1283,34 @@ export class AlboOroDialogComponent {
     /* AUTOCOMPLETE CONTAINER */
     .autocomplete-container {
       position: relative;
+    }
+
+    /* PULSANTE CLEAR DENTRO L'INPUT */
+    .clear-input-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(10, 61, 145, 0.08);
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      color: #0A3D91;
+      transition: all 0.2s ease;
+      padding: 0;
+      z-index: 10;
+
+      &:hover {
+        background: rgba(10, 61, 145, 0.15);
+        transform: translateY(-50%) scale(1.1);
+      }
     }
 
     .suggestions-list {
@@ -1346,40 +1360,6 @@ export class AlboOroDialogComponent {
       }
     }
 
-    .selected-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 8px 12px;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-      border-radius: 20px;
-      color: #FFFFFF;
-      font-weight: 600;
-      font-size: 0.85rem;
-      width: fit-content;
-
-      .clear-btn {
-        background: rgba(255, 255, 255, 0.3);
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        color: #FFFFFF;
-        font-size: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        line-height: 1;
-        padding: 0;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.5);
-        }
-      }
-    }
 
     /* ACTIONS SECTION */
     .actions-section {
@@ -1438,6 +1418,48 @@ export class AlboOroDialogComponent {
       color: #9CA3AF;
       cursor: not-allowed;
       transform: none;
+    }
+
+    /* FEEDBACK MESSAGE */
+    .feedback-message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      animation: slideIn 0.3s ease;
+    }
+
+    .feedback-message.success {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      color: #2E7D32;
+      border: 1px solid #81C784;
+    }
+
+    .feedback-message.error {
+      background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+      color: #C62828;
+      border: 1px solid #EF5350;
+    }
+
+    .feedback-message mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* DANGER ZONE */
@@ -1640,15 +1662,17 @@ export class AlboOroDialogComponent {
     }
   `]
 })
-export class ProfiloDialogComponent {
+export class ProfiloDialogComponent implements OnInit {
   userProfile = {
     nickname: '',
     squadraPreferita: ''
   };
 
-  searchQuery = '';
   showSuggestions = false;
   filteredSquadre: string[] = [];
+  isSaving = false;
+  feedbackMessage: string | null = null;
+  feedbackType: 'success' | 'error' | null = null;
 
   // Lista completa squadre italiane (Serie A, B, C, D)
   tutteLeSquadre = [
@@ -1685,12 +1709,33 @@ export class ProfiloDialogComponent {
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private giocatoreService: GiocatoreService,
+    private squadraService: SquadraService,
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
+  ngOnInit() {
+    this.loadProfile();
+  }
+
+  loadProfile() {
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        this.userProfile.nickname = giocatore.nickname || '';
+        this.userProfile.squadraPreferita = giocatore.squadraCuore?.nome || '';
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo:', error);
+        this.showFeedback('Errore nel caricamento del profilo', 'error');
+      }
+    });
+  }
+
   onSearchInput() {
-    if (this.searchQuery.length >= 2) {
-      const query = this.searchQuery.toLowerCase();
+    const query = (this.userProfile.squadraPreferita || '').toLowerCase();
+    if (query.length >= 2) {
       this.filteredSquadre = this.tutteLeSquadre
         .filter(s => s.toLowerCase().includes(query))
         .slice(0, 10);
@@ -1701,16 +1746,25 @@ export class ProfiloDialogComponent {
     }
   }
 
+  onInputFocus() {
+    // Se c'è già un valore, mostra i suggerimenti
+    if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.length >= 2) {
+      this.onSearchInput();
+    } else {
+      this.showSuggestions = true;
+    }
+  }
+
   selectSquadra(squadra: string) {
     this.userProfile.squadraPreferita = squadra;
-    this.searchQuery = '';
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
 
   clearSquadra() {
     this.userProfile.squadraPreferita = '';
-    this.searchQuery = '';
+    this.filteredSquadre = [];
+    this.showSuggestions = false;
   }
 
   onBlur() {
@@ -1723,12 +1777,81 @@ export class ProfiloDialogComponent {
     return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0);
   }
 
+  showFeedback(message: string, type: 'success' | 'error') {
+    this.feedbackMessage = message;
+    this.feedbackType = type;
+    setTimeout(() => {
+      this.feedbackMessage = null;
+      this.feedbackType = null;
+    }, 3000);
+  }
+
   onSubmit() {
-    if (this.isFormValid()) {
-      console.log('Profilo da salvare:', this.userProfile);
-      // TODO: Implementare il salvataggio del profilo
-      this.closeDialog();
+    if (!this.isFormValid()) {
+      this.showFeedback('Inserisci un nickname valido', 'error');
+      return;
     }
+
+    this.isSaving = true;
+    this.feedbackMessage = null;
+
+    // Prima ottieni i dati del giocatore corrente
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        // Prepara l'oggetto aggiornato
+        const giocatoreAggiornato: any = {
+          id: giocatore.id,
+          nome: giocatore.nome,
+          nickname: this.userProfile.nickname.trim(),
+          user: giocatore.user
+        };
+
+        // Se c'è una squadra preferita, cercala e aggiungila
+        if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraPreferita.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.squadraCuore = squadra;
+              this.saveProfile(giocatoreAggiornato);
+            },
+            error: (error) => {
+              console.warn('Squadra non trovata, salvo senza squadra del cuore');
+              giocatoreAggiornato.squadraCuore = null;
+              this.saveProfile(giocatoreAggiornato);
+            }
+          });
+        } else {
+          // Nessuna squadra preferita, salva senza
+          giocatoreAggiornato.squadraCuore = null;
+          this.saveProfile(giocatoreAggiornato);
+        }
+      },
+      error: (error) => {
+        this.isSaving = false;
+        console.error('Errore nel caricamento del profilo:', error);
+        this.showFeedback('Errore nel caricamento del profilo', 'error');
+      }
+    });
+  }
+
+  private saveProfile(giocatoreAggiornato: any) {
+    this.giocatoreService.aggiornaMe(giocatoreAggiornato).subscribe({
+      next: (result) => {
+        this.isSaving = false;
+        this.showFeedback(this.translate.instant('PROFILE.SUCCESS'), 'success');
+
+        setTimeout(() => {
+          // Chiudi il dialog e ritorna true per indicare che il profilo è stato aggiornato
+          this.dialog.closeAll();
+          // Emetti un evento per ricaricare il nome nella home
+          window.dispatchEvent(new CustomEvent('profile-updated'));
+        }, 2000);
+      },
+      error: (error) => {
+        this.isSaving = false;
+        console.error('Errore nel salvataggio del profilo:', error);
+        this.showFeedback(this.translate.instant('PROFILE.ERROR'), 'error');
+      }
+    });
   }
 
   closeDialog() {
@@ -1750,7 +1873,7 @@ export class ProfiloDialogComponent {
 @Component({
   selector: 'app-delete-account-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -1759,21 +1882,20 @@ export class ProfiloDialogComponent {
 
       <div class="warning-header">
         <mat-icon class="warning-icon">warning</mat-icon>
-        <h2>Elimina Account</h2>
+        <h2>{{ 'PROFILE.DELETE_DIALOG_TITLE' | translate }}</h2>
       </div>
 
-      <p class="warning-message">
-        Se elimini il tuo account, tutti i tuoi dati personali e il tuo profilo saranno cancellati in modo <strong>permanente</strong>.
+      <p class="warning-message" [innerHTML]="'PROFILE.DELETE_DIALOG_MESSAGE' | translate">
       </p>
 
-      <p class="warning-sub">Sei sicuro di voler procedere?</p>
+      <p class="warning-sub">{{ 'PROFILE.DELETE_DIALOG_CONFIRM' | translate }}</p>
 
       <div class="actions">
         <button class="btn-cancel" (click)="closeDialog()">
-          Annulla
+          {{ 'PROFILE.DELETE_DIALOG_CANCEL' | translate }}
         </button>
         <button class="btn-delete" (click)="confirmDelete()" [disabled]="isDeleting">
-          {{ isDeleting ? 'Eliminazione...' : 'Sì, elimina il mio account' }}
+          {{ isDeleting ? ('PROFILE.DELETE_DIALOG_DELETING' | translate) : ('PROFILE.DELETE_DIALOG_DELETE' | translate) }}
         </button>
       </div>
     </div>
@@ -1963,23 +2085,23 @@ export class DeleteAccountDialogComponent {
 @Component({
   selector: 'app-info-banner',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="info-banner">
       <div class="banner-container">
         <button class="banner-item" (click)="openRegolamento()">
           <mat-icon class="banner-icon">article</mat-icon>
-          <span class="banner-text">REGOLE</span>
+          <span class="banner-text">{{ 'BANNER.RULES' | translate }}</span>
         </button>
 
         <button class="banner-item" (click)="openAlboOro()">
           <mat-icon class="banner-icon trophy">emoji_events</mat-icon>
-          <span class="banner-text">TROFEI</span>
+          <span class="banner-text">{{ 'BANNER.TROPHIES' | translate }}</span>
         </button>
 
         <button class="banner-item" (click)="openProfilo()">
           <mat-icon class="banner-icon">person</mat-icon>
-          <span class="banner-text">PROFILO</span>
+          <span class="banner-text">{{ 'BANNER.PROFILE' | translate }}</span>
         </button>
       </div>
     </div>

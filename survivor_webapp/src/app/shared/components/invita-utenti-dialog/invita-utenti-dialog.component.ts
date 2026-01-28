@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { LegaService } from '../../../core/services/lega.service';
 import { MatCardModule } from '@angular/material/card';
 import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-invita-utenti-dialog',
@@ -24,11 +25,12 @@ import { environment } from '../../../../environments/environment';
     MatIconModule,
     FormsModule,
     MatCardModule,
+    TranslateModule,
   ],
   template: `
     <div class="dialog-container">
       <div class="dialog-header">
-        <h2 class="dialog-title">Invita Utenti a {{ data.legaNome }}</h2>
+        <h2 class="dialog-title">{{ 'INVITE_USERS.TITLE' | translate }} {{ data.legaNome }}</h2>
         <button mat-icon-button class="close-btn" (click)="onCancel()">
           <mat-icon>close</mat-icon>
         </button>
@@ -36,13 +38,13 @@ import { environment } from '../../../../environments/environment';
 
       <div class="dialog-content" [class.scroll-enabled]="shouldEnableScroll()">
         <div class="invite-section">
-          <p class="instructions">Inserisci gli indirizzi email degli utenti che vuoi invitare:</p>
+          <p class="instructions">{{ 'INVITE_USERS.INSTRUCTIONS' | translate }}</p>
 
           <div class="email-input-section">
             <mat-form-field appearance="outline" class="email-field">
               <input
                 matInput
-                placeholder="Inserisci indirizzo email (es. utente@esempio.com)"
+                [placeholder]="'INVITE_USERS.EMAIL_PLACEHOLDER' | translate"
                 [(ngModel)]="emailInput"
                 (keyup.enter)="addEmail()"
               />
@@ -51,8 +53,8 @@ import { environment } from '../../../../environments/environment';
                     (click)="addEmail()"
                     [disabled]="!isValidEmail(emailInput)"
                     type="button"
-                    aria-label="Aggiungi indirizzo email alla lista">
-              <span>Aggiungi</span>
+                    [attr.aria-label]="'INVITE_USERS.ADD_EMAIL' | translate">
+              <span>{{ 'COMMON.ADD' | translate }}</span>
             </button>
           </div>
 
@@ -70,7 +72,7 @@ import { environment } from '../../../../environments/environment';
           <div class="invite-success" *ngIf="inviteSuccess">
             <div class="success-message">
               <mat-icon>check_circle</mat-icon>
-              <span>Inviti inviati con successo!</span>
+              <span>{{ 'INVITE_USERS.SUCCESS' | translate }}</span>
             </div>
           </div>
 
@@ -84,13 +86,13 @@ import { environment } from '../../../../environments/environment';
       </div>
 
       <div class="dialog-actions">
-        <button class="cancel-btn" (click)="onCancel()">Annulla</button>
+        <button class="cancel-btn" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button
           class="send-btn"
           (click)="invitaUtenti()"
           [disabled]="emailsList.length === 0 || inviteSuccess"
         >
-          Invia Inviti ({{emailsList.length}})
+          {{ 'COMMON.SEND_INVITES' | translate }} ({{emailsList.length}})
         </button>
       </div>
     </div>

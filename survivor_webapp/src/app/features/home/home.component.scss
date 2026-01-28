@@ -1,6 +1,90 @@
 /* Home Component - Moderna e Pulita con Bottoni Visibili */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* ANIMAZIONI KEYFRAMES - VERSIONE EVIDENTE */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(50px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes bounceIn {
+	0% {
+		opacity: 0;
+		transform: scale(0.3) translateY(50px);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.05);
+	}
+	70% {
+		transform: scale(0.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes pulse {
+	0%, 100% {
+		transform: scale(1);
+		box-shadow: 0 4px 20px rgba(10, 61, 145, 0.12);
+	}
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 8px 40px rgba(79, 195, 247, 0.4);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: -1000px 0;
+	}
+	100% {
+		background-position: 1000px 0;
+	}
+}
+
+@keyframes gradientShift {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-100px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(100px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
 .home-container {
 	min-height: 100vh;
 	background: linear-gradient(135deg, #F4F6F8 0%, #FFFFFF 100%);
@@ -115,7 +199,33 @@
 	}
 }
 
-/* SETTINGS ICON - STACCATA DAL CHIP UTENTE */
+/* ADMIN EMOJI - CORONA PER ACCESSO AREA ADMIN */
+::ng-deep .admin-emoji {
+	background: rgba(255, 255, 255, 0.25) !important;
+	color: white !important;
+	border: 2px solid rgba(255, 255, 255, 0.5) !important;
+	border-radius: 50% !important;
+	padding: 8px 10px !important;
+	font-size: 24px !important; /* Emoji più grande */
+	cursor: pointer !important;
+	transition: all 0.3s ease !important;
+	margin-left: 12px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	box-sizing: content-box !important;
+	z-index: 1000 !important;
+	line-height: 1 !important;
+
+	&:hover {
+		background: rgba(255, 215, 0, 0.3) !important; /* Dorato al hover */
+		border-color: rgba(255, 215, 0, 0.8) !important;
+		transform: scale(1.1) rotate(10deg) !important; /* Effetto corona */
+		box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+	}
+}
+
+/* SETTINGS ICON - STACCATA DAL CHIP UTENTE (DEPRECATO) */
 ::ng-deep .settings-icon {
 	background: rgba(255, 255, 255, 0.25) !important; /* Più visibile */
 	color: white !important;
@@ -142,8 +252,14 @@
 	}
 }
 
-/* Responsive settings icon */
+/* Responsive admin emoji e settings icon */
 @media (max-width: 768px) {
+	::ng-deep .admin-emoji {
+		font-size: 20px !important;
+		padding: 6px 8px !important;
+		margin-left: 8px !important;
+	}
+
 	::ng-deep .settings-icon {
 		font-size: 18px !important;
 		width: 18px !important;
@@ -170,9 +286,37 @@
 .main-content {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 32px 20px;
+	padding: 16px 20px 32px 20px; /* Ridotto padding top per la hero section */
 	position: relative;
 	z-index: 1;
+}
+
+/* Hero section container */
+app-hero-three {
+	display: block;
+	margin: 0 20px 32px 20px;
+	max-width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Responsive hero section */
+@media (max-width: 768px) {
+	app-hero-three {
+		margin: 0 16px 24px 16px;
+	}
+}
+
+@media (max-width: 480px) {
+	app-hero-three {
+		margin: 0 12px 20px 12px;
+	}
+}
+
+@media (max-width: 360px) {
+	app-hero-three {
+		margin: 0 8px 16px 8px;
+	}
 }
 
 h2 {
@@ -183,6 +327,20 @@ h2 {
 	font-family: 'Poppins', sans-serif;
 	letter-spacing: 0.5px;
 	text-transform: uppercase;
+	animation: slideInLeft 1s ease-out;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: -8px;
+		left: 0;
+		width: 80px;
+		height: 4px;
+		background: linear-gradient(90deg, #0A3D91, #4FC3F7);
+		border-radius: 2px;
+		animation: slideInLeft 1s ease-out 0.3s both;
+	}
 }
 
 .leghe-groups {
@@ -197,11 +355,20 @@ h2 {
 		box-shadow: 0 4px 20px rgba(10, 61, 145, 0.08) !important;
 		border: 1px solid #E0E0E0 !important;
 		overflow: hidden !important;
-		transition: all 0.2s ease !important;
+		transition: all 0.3s ease !important;
+		animation: bounceIn 1s ease-out both;
+
+		/* Animazione staggered per le card - PIÙ EVIDENTE */
+		&:nth-child(1) { animation-delay: 0.2s; }
+		&:nth-child(2) { animation-delay: 0.4s; }
+		&:nth-child(3) { animation-delay: 0.6s; }
+		&:nth-child(4) { animation-delay: 0.8s; }
+		&:nth-child(5) { animation-delay: 1s; }
+		&:nth-child(6) { animation-delay: 1.2s; }
 
 		&:hover {
-			transform: translateY(-2px) !important;
-			box-shadow: 0 8px 32px rgba(10, 61, 145, 0.15) !important;
+			transform: translateY(-8px) scale(1.02) !important;
+			box-shadow: 0 12px 48px rgba(10, 61, 145, 0.25) !important;
 			border-color: #4FC3F7 !important;
 		}
 
@@ -319,6 +486,7 @@ h2 {
 	gap: 16px;
 	margin-bottom: 32px;
 	flex-wrap: wrap;
+	animation: fadeInUp 0.5s ease-out;
 
 	button,
 	.btn-admin {
@@ -336,6 +504,11 @@ h2 {
 		display: inline-flex !important;
 		align-items: center !important;
 		gap: 8px !important;
+		position: relative;
+		overflow: hidden;
+
+		/* Animazione pulse sottile */
+		animation: pulse 3s ease-in-out infinite;
 
 		mat-icon {
 			font-size: 20px;
@@ -346,6 +519,7 @@ h2 {
 		&:hover {
 			transform: translateY(-2px) !important;
 			box-shadow: 0 6px 30px rgba(10, 61, 145, 0.18) !important;
+			animation: none; /* Ferma pulse al hover */
 		}
 
 		&:active {

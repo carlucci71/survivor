@@ -41,6 +41,12 @@ public class SquadraService {
         return squadraMapper.toDTOList(squadre);
     }
 
+    @Transactional(readOnly = true)
+    public SquadraDTO findByNome(String nome) {
+        Squadra squadra = squadraRepository.findByNome(nome)
+                .orElseThrow(() -> new RuntimeException("Squadra non trovata: " + nome));
+        return squadraMapper.toDTO(squadra);
+    }
 
 }
 

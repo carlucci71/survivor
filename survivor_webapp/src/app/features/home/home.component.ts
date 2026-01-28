@@ -12,15 +12,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
-import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 import { PushService } from '../../core/services/push.service';
+
 
 @Component({
   selector: 'app-home',
@@ -31,12 +33,13 @@ import { PushService } from '../../core/services/push.service';
     MatButtonModule,
     HeaderComponent,
     InfoBannerComponent,
+    HeroThreeComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    MatIcon,
     MatTooltip,
     MatDialogModule,
+    TranslateModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -65,12 +68,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.giocatoreService.me().subscribe({
-      next: (giocatore) => {
-        this.me = giocatore;
-      },
-    });
+    this.loadMe();
     this.loadLeghe();
+
     // detect mobile breakpoint
     this.isMobile = window.innerWidth <= 768;
     this.resizeHandler = () => {
@@ -78,6 +78,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     };
     window.addEventListener('resize', this.resizeHandler);
 
+    // Ascolta l'evento profile-updated per ricaricare me
+    window.addEventListener('profile-updated', () => {
+      this.loadMe();
+    });
     // Avvia la registrazione push qui: Home è protetta da `authGuard`, quindi
     // l'utente è autenticato e possiamo procedere in sicurezza.
     void this.pushService.initPush();
@@ -90,13 +94,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
+  private loadMe(): void {
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        this.me = giocatore;
+      },
+    });
+  }
+
   getNome(): string {
-    // return name with newlines between words; safe if me or nome are undefined
-    return (this.me?.nome || '').replaceAll(' ', '\n');
+    // Mostra nickname se disponibile, altrimenti il nome
+    const displayName = this.me?.nickname || this.me?.nome || '';
+    // return name with newlines between words
+    return displayName.replaceAll(' ', '\n');
   }
 
   getNomeHtml(): SafeHtml {
-    const nome = (this.me?.nome || '');
+    // Mostra nickname se disponibile, altrimenti il nome
+    const nome = this.me?.nickname || this.me?.nome || '';
     // Greedy pack words into lines up to 20 characters.
     // If a word exceeds 20 chars, truncate to 17 + '...'.
     const maxChars = 20;

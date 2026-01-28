@@ -72,15 +72,18 @@ public class CampionatoService {
     }
 
     private Map<Integer, String> desNbaRS(){
-        CampionatoDTO campionatoDTO = campionatiBySport(Enumeratori.SportDisponibili.BASKET.name()).stream()
-                .filter(c->c.getId().equals(Enumeratori.CampionatiDisponibili.NBA_RS.name()))
-                .findFirst().get();
-        Map<Integer, String> ret = new HashMap<>();
-        for (int i=1;i<=campionatoDTO.getNumGiornate();i++){
-            ret.put(i,"Settimana " + i);
-        }
-
-        return ret;
+        return campionatiBySport(Enumeratori.SportDisponibili.BASKET.name()).stream()
+                .filter(c -> c.getId().equals(Enumeratori.CampionatiDisponibili.NBA_RS.name()))
+                .findFirst()
+                .map(campionatoDTO -> {
+                    Map<Integer, String> ret = new HashMap<>();
+                    for (int i = 1; i <= campionatoDTO.getNumGiornate(); i++){
+                        ret.put(i, "Settimana " + i);
+                    }
+                    return ret;
+                })
+                .orElseGet(HashMap::new);
     }
+
 
 }

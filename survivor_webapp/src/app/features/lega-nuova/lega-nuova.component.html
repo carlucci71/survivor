@@ -1,5 +1,5 @@
 <app-header
-  title="Nuova Lega"
+  [title]="'CREATE_LEAGUE.TITLE' | translate"
   (back)="goBack()"
   (logout)="logout()"
 ></app-header>
@@ -15,21 +15,22 @@
         >
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nome lega</mat-label>
+              <mat-label>{{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }}</mat-label>
               <input
                 matInput
                 name="name"
+                [placeholder]="'CREATE_LEAGUE.LEAGUE_NAME_PLACEHOLDER' | translate"
                 [(ngModel)]="name"
                 (blur)="nameTouched = true"
               />
               <mat-error *ngIf="nameTouched && !name"
-                >Nome lega obbligatorio</mat-error
+                >{{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
               >
             </mat-form-field>
           </div>
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Sport</mat-label>
+              <mat-label>{{ 'CREATE_LEAGUE.SPORT' | translate }}</mat-label>
               <mat-select
                 name="sportSel"
                 [(ngModel)]="sportSel"
@@ -40,13 +41,13 @@
                 }
               </mat-select>
               <mat-error *ngIf="sportTouched && !sportSel"
-                >Sport obbligatorio</mat-error
+                >{{ 'CREATE_LEAGUE.SPORT' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
               >
             </mat-form-field>
           </div>
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Campionato</mat-label>
+              <mat-label>{{ 'CREATE_LEAGUE.CHAMPIONSHIP' | translate }}</mat-label>
               <mat-select
                 name="campionatoSel"
                 [(ngModel)]="campionatoSel"
@@ -60,7 +61,7 @@
                 }
               </mat-select>
               <mat-error *ngIf="campionatoTouched && !campionatoSel"
-                >Campionato obbligatorio</mat-error
+                >{{ 'CREATE_LEAGUE.CHAMPIONSHIP' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
               >
             </mat-form-field>
           </div>
@@ -70,7 +71,7 @@
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
               <mat-label
-                >Giornata iniziale {{ campionatoSel?.giornataDaGiocare }}-{{
+                >{{ 'CREATE_LEAGUE.INITIAL_ROUND' | translate }} {{ campionatoSel?.giornataDaGiocare }}-{{
                   campionatoSel?.numGiornate
                 }}</mat-label
               >
@@ -88,41 +89,29 @@
                   giornataTouched &&
                   (giornataIniziale === null || giornataIniziale === undefined)
                 "
-                >Giornata iniziale obbligatoria</mat-error
+                >{{ 'CREATE_LEAGUE.INITIAL_ROUND' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
               >
               <mat-error *ngIf="giornataTouched && !isGiornataValid()"
-                >Giornata iniziale deve essere compresa tra
-                {{ campionatoSel?.giornataDaGiocare }} e
+                >{{ 'CREATE_LEAGUE.INITIAL_ROUND_ERROR' | translate }}
+                {{ campionatoSel?.giornataDaGiocare }} {{ 'COMMON.AND' | translate }}
                 {{ campionatoSel?.numGiornate }}</mat-error
               >
             </mat-form-field>
           </div>
           } @if(campionatoSel && (campionatoSel.giornataDaGiocare || 0) > (campionatoSel.numGiornate|| 0)){
-          <mat-label>Purtroppo il campionato è terminato</mat-label>
+          <mat-label>{{ 'CREATE_LEAGUE.CHAMPIONSHIP_ENDED' | translate }}</mat-label>
           }
 
           <div class="form-row">
             <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Password per unirsi</mat-label>
+              <mat-label>{{ 'CREATE_LEAGUE.PASSWORD' | translate }}</mat-label>
               <input
                 matInput
                 name="pwd"
+                [placeholder]="'CREATE_LEAGUE.PASSWORD_PLACEHOLDER' | translate"
                 [(ngModel)]="pwd"
                 type="text"
-                (blur)="giornataTouched = true"
               />
-              <mat-error
-                *ngIf="
-                  giornataTouched &&
-                  (giornataIniziale === null || giornataIniziale === undefined)
-                "
-                >Giornata iniziale obbligatoria</mat-error
-              >
-              <mat-error *ngIf="giornataTouched && !isGiornataValid()"
-                >Giornata iniziale deve essere compresa tra
-                {{ campionatoSel?.giornataDaGiocare }} e
-                {{ campionatoSel?.numGiornate }}</mat-error
-              >
             </mat-form-field>
           </div>
 
@@ -132,7 +121,7 @@
               color="primary"
               [disabled]="!isFormValid()"
             >
-              Crea Lega
+              {{ 'CREATE_LEAGUE.CREATE_BUTTON' | translate }}
             </button>
           </div>
         </form>
@@ -140,10 +129,9 @@
         <div class="confirmation" *ngIf="confirmationMessage">
           <mat-card class="confirmation-card">
             <mat-card-content>
-              <p class="success-message">
-                La lega <b>{{ name }}</b> è stata creata con successo.
+              <p class="success-message" [innerHTML]="'CREATE_LEAGUE.SUCCESS_MESSAGE' | translate: {name: name}">
               </p>
-              <p>Puoi dire ai tuoi amici di cercare la lega all'url</p>
+              <p>{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
 
               <div class="link-row">
                 <a class="share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
@@ -152,24 +140,24 @@
                   mat-icon-button
                   color="primary"
                   (click)="copyLink()"
-                  aria-label="Copia link"
+                  [attr.aria-label]="'COMMON.COPY_LINK' | translate"
                 >
                   <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
                 </button>
 
-                <span class="copy-feedback" *ngIf="copied">Copiato!</span>
+                <span class="copy-feedback" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
               </div>
 
-              <span *ngIf="pwd">ed unirsi con la password <b>{{ pwd }}</b></span>
+              <span *ngIf="pwd">{{ 'CREATE_LEAGUE.WITH_PASSWORD_JOIN' | translate }} <b>{{ pwd }}</b></span>
 
               <div class="invite-section">
-                <h3>Invita amici via email</h3>
+                <h3>{{ 'CREATE_LEAGUE.INVITE_EMAIL' | translate }}</h3>
 
                 <div class="email-input-section">
                   <mat-form-field appearance="outline" class="email-field" subscriptSizing="dynamic">
                     <input
                       matInput
-                      placeholder="email@esempio.com"
+                      [placeholder]="'CREATE_LEAGUE.EMAIL_PLACEHOLDER' | translate"
                       [(ngModel)]="emailInput"
                       (keyup.enter)="addEmail()"
                     />
@@ -180,7 +168,7 @@
                     (click)="addEmail()"
                     [disabled]="!isValidEmail(emailInput)"
                   >
-                    Aggiungi
+                    {{ 'COMMON.ADD' | translate }}
                   </button>
                 </div>
 
@@ -204,7 +192,7 @@
                     color="primary"
                     (click)="invitaUtenti()"
                   >
-                    Invia Inviti ({{ emailsList.length }})
+                    {{ 'COMMON.SEND_INVITES' | translate }} ({{ emailsList.length }})
                   </button>
                 </div>
               </div>

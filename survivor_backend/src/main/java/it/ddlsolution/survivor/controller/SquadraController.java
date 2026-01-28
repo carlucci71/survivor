@@ -38,5 +38,10 @@ public class SquadraController {
         return ResponseEntity.ok(nomiSquadre);
     }
 
+    @GetMapping("/search/{nome}")
+    public ResponseEntity<SquadraDTO> searchByNome(@PathVariable String nome) {
+        return ResponseEntity.ok(squadraService.findByNome(nome));
+    }
+
 }
 

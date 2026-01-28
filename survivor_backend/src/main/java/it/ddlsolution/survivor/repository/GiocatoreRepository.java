@@ -1,7 +1,6 @@
 package it.ddlsolution.survivor.repository;
 
 import it.ddlsolution.survivor.entity.Giocatore;
-import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.projection.GiocatoreProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface GiocatoreRepository extends JpaRepository<Giocatore, Long> {
-    @Query("SELECT g.id as id, g.nome as nome, g.user as user FROM Giocatore g WHERE g.user.id = :userId")
+    @Query("SELECT g.id as id, g.nome as nome, g.nickname as nickname, g.squadraCuore as squadraCuore, g.user as user FROM Giocatore g WHERE g.user.id = :userId")
     Optional<GiocatoreProjection> findProjectionByUserId(@Param("userId") Long userId);
 
     @Query("""

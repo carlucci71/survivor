@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Giocatore,
   Lega,
@@ -36,6 +37,7 @@ import { SquadraService } from '../../core/services/squadra.service';
     MatIconModule,
     FormsModule,
     MatSnackBarModule,
+    TranslateModule,
   ],
 })
 export class SelezionaGiocataComponent implements OnInit {
@@ -187,7 +189,8 @@ export class SelezionaGiocataComponent implements OnInit {
       lega: Lega;
     },
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
@@ -501,16 +504,22 @@ export class SelezionaGiocataComponent implements OnInit {
 
   getSearchPlaceholder(): string {
     const sportId = this.lega?.campionato?.sport?.id;
-    return sportId === 'TENNIS' ? 'Cerca giocatore...' : 'Cerca squadra...';
+    return sportId === 'TENNIS'
+      ? this.translate.instant('LEAGUE.SEARCH_PLAYER')
+      : this.translate.instant('LEAGUE.SEARCH_TEAM');
   }
 
   getTabLabel(type: 'ultimi' | 'prossime', opponentSigla?: string): string {
     const sportId = this.lega?.campionato?.sport?.id;
 
     if (type === 'ultimi') {
-      return sportId === 'TENNIS' ? 'Ultimi incontri' : 'Ultimi';
+      return sportId === 'TENNIS'
+        ? this.translate.instant('LEAGUE.LAST_ENCOUNTERS')
+        : this.translate.instant('LEAGUE.LAST_MATCHES');
     } else if (type === 'prossime') {
-      return sportId === 'TENNIS' ? 'Prossime partite' : 'Prossime';
+      return sportId === 'TENNIS'
+        ? this.translate.instant('LEAGUE.NEXT_GAMES')
+        : this.translate.instant('LEAGUE.NEXT_MATCHES');
     }
 
     return opponentSigla ? this.formatNomeSquadra(opponentSigla) : '';
@@ -521,7 +530,7 @@ export class SelezionaGiocataComponent implements OnInit {
     const opponentSigla = this.getNextOpponentSigla(true);
 
     if (sportId === 'TENNIS') {
-      return 'Testa a testa';
+      return this.translate.instant('LEAGUE.HEAD_TO_HEAD');
     }
 
     return opponentSigla ? this.formatNomeSquadra(opponentSigla) : '';
