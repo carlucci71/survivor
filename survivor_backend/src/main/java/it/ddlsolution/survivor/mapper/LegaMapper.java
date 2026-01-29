@@ -19,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {CampionatoMapper.class, GiocatoreMapper.class})
@@ -65,12 +66,14 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, Lega lega) {
 
 
-        CampionatoDTO campionatoDTO = campionatoService.allCampionati()
-                .stream()
-                .filter(c ->   c.getId().equals(lega.getCampionato().getId()))
-                .findFirst()
-                .get();
-        legaDTO.setCampionato(campionatoDTO);
+        // Cerca il campionato corrispondente in modo sicuro (evita .get() su Optional)
+        if (lega != null && lega.getCampionato() != null && lega.getCampionato().getId() != null) {
+            Optional<CampionatoDTO> campOpt = campionatoService.allCampionati()
+                    .stream()
+                    .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                    .findFirst();
+            campOpt.ifPresent(legaDTO::setCampionato);
+        }
 
 
         if (lega.getGiocatoreLeghe() != null) {
@@ -106,12 +109,13 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     @AfterMapping
     protected void mapGiocatori(@MappingTarget LegaDTO legaDTO, LegaProjection lega) {
 
-        CampionatoDTO campionatoDTO = campionatoService.allCampionati()
-                .stream()
-                .filter(c -> c.getId().equals(lega.getCampionato().getId()))
-                .findFirst()
-                .get();
-        legaDTO.setCampionato(campionatoDTO);
+        if (lega != null && lega.getCampionato() != null && lega.getCampionato().getId() != null) {
+            Optional<CampionatoDTO> campOpt = campionatoService.allCampionati()
+                    .stream()
+                    .filter(c -> c.getId().equals(lega.getCampionato().getId()))
+                    .findFirst();
+            campOpt.ifPresent(legaDTO::setCampionato);
+        }
     }
 
 

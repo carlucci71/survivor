@@ -15,12 +15,15 @@ import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
+import { PushService } from '../../core/services/push.service';
+
 
 @Component({
   selector: 'app-home',
@@ -37,6 +40,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatChipsModule,
     MatTooltip,
     MatDialogModule,
+    MatIconModule,
     TranslateModule
   ],
   templateUrl: './home.component.html',
@@ -60,6 +64,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
     ,
     private sanitizer: DomSanitizer
+    ,
+    private pushService: PushService
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +84,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     window.addEventListener('profile-updated', () => {
       this.loadMe();
     });
+    // Avvia la registrazione push qui: Home è protetta da `authGuard`, quindi
+    // l'utente è autenticato e possiamo procedere in sicurezza.
+    void this.pushService.initPush();
   }
 
   ngOnDestroy(): void {
