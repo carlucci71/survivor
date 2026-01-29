@@ -28,7 +28,7 @@ import { SquadraService } from '../../../core/services/squadra.service';
         </button>
       </div>
 
-      <div class="dialog-content">
+      <div class="dialog-content" #dialogContent (scroll)="onScroll($event)">
         <!-- 1. Scelta settimanale -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_1_TITLE' | translate }}</h3>
@@ -122,6 +122,16 @@ import { SquadraService } from '../../../core/services/squadra.service';
 
         <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
       </div>
+
+      <!-- BACK TO TOP BUTTON -->
+      <button
+        mat-fab
+        class="back-to-top-btn"
+        [class.visible]="showBackToTop"
+        (click)="scrollToTop()"
+        aria-label="Torna su">
+        <mat-icon>arrow_upward</mat-icon>
+      </button>
     </div>
   `,
   styles: [`
@@ -479,10 +489,116 @@ import { SquadraService } from '../../../core/services/squadra.service';
         }
       }
     }
+
+    /* BACK TO TOP BUTTON */
+    .back-to-top-btn {
+      position: absolute !important;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(10, 61, 145, 0.75), rgba(79, 195, 247, 0.75)) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2) !important;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      z-index: 100;
+      width: 48px !important;
+      height: 48px !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50% !important;
+      backdrop-filter: blur(8px);
+
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.9), rgba(79, 195, 247, 0.9)) !important;
+        box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3) !important;
+        transform: translateY(-3px) !important;
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      &:active {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25) !important;
+      }
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        font-weight: 500;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .back-to-top-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 44px !important;
+        height: 44px !important;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      .back-to-top-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 44px !important;
+        height: 44px !important;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
   `]
 })
 export class RegolamentoBannerDialogComponent {
+  showBackToTop = false;
+  private lastScrollTop = 0;
+  private scrollTimeout: any;
+
   constructor(private dialog: MatDialog) {}
+
+  onScroll(event: any): void {
+    const scrollTop = event.target.scrollTop;
+    const isScrollingDown = scrollTop > this.lastScrollTop;
+
+    // Mostra il bottone solo se scrolli verso il basso e sei oltre i 300px
+    if (isScrollingDown && scrollTop > 300) {
+      this.showBackToTop = true;
+
+      // Nascondi il bottone dopo 2 secondi di inattività
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = setTimeout(() => {
+        this.showBackToTop = false;
+      }, 2000);
+    } else if (scrollTop <= 300) {
+      this.showBackToTop = false;
+    }
+
+    this.lastScrollTop = scrollTop;
+  }
+
+  scrollToTop(): void {
+    const dialogContent = document.querySelector('.regolamento-dialog .dialog-content');
+    if (dialogContent) {
+      dialogContent.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   closeDialog() {
     this.dialog.closeAll();

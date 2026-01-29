@@ -317,94 +317,94 @@ export class TerminiDialogComponent {
         <p class="intro-text">{{ 'DIALOGS.PRIVACY_INTRO' | translate }}</p>
 
         <div class="section">
-          <h4>1. Titolare del trattamento</h4>
-          <p>Il titolare del trattamento dei dati è il gestore della piattaforma Survivor.</p>
-          <p>Per qualsiasi richiesta relativa alla presente Privacy Policy è possibile contattare il titolare all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <h4>{{ 'PRIVACY.SECTION_1_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_1_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
-          <h4>2. Dati personali raccolti</h4>
-          <p>I dati personali raccolti attraverso l'utilizzo del Servizio sono limitati a quanto strettamente necessario al suo funzionamento:</p>
+          <h4>{{ 'PRIVACY.SECTION_2_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_2_INTRO' | translate }}</p>
           <ul>
-            <li>Indirizzo email (utilizzato per l'autenticazione tramite magic link)</li>
-            <li>Nickname scelto dall'utente</li>
-            <li>Preferenza sportiva (squadra del cuore)</li>
-            <li>Dati tecnici di utilizzo del Servizio (log, informazioni sul dispositivo e sull'accesso)</li>
+            <li>{{ 'PRIVACY.SECTION_2_L1' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_2_L2' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_2_L3' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_2_L4' | translate }}</li>
           </ul>
         </div>
 
         <div class="section">
-          <h4>3. Finalità del trattamento</h4>
-          <p>I dati personali sono trattati per le seguenti finalità:</p>
+          <h4>{{ 'PRIVACY.SECTION_3_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_3_INTRO' | translate }}</p>
           <ul>
-            <li>Consentire la registrazione e l'accesso al Servizio</li>
-            <li>Permettere la partecipazione ai giochi e ai tornei</li>
-            <li>Gestire le funzionalità della piattaforma e le classifiche</li>
-            <li>Garantire la sicurezza e il corretto funzionamento del Servizio</li>
-            <li>Adempiere a eventuali obblighi di legge</li>
+            <li>{{ 'PRIVACY.SECTION_3_L1' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_3_L2' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_3_L3' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_3_L4' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_3_L5' | translate }}</li>
           </ul>
         </div>
 
         <div class="section">
-          <h4>4. Base giuridica del trattamento</h4>
-          <p>Il trattamento dei dati personali è effettuato sulla base:</p>
+          <h4>{{ 'PRIVACY.SECTION_4_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_4_INTRO' | translate }}</p>
           <ul>
-            <li>Dell'esecuzione del contratto di cui l'utente è parte (utilizzo del Servizio)</li>
-            <li>Del legittimo interesse del titolare alla sicurezza e al miglioramento della piattaforma</li>
+            <li>{{ 'PRIVACY.SECTION_4_L1' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_4_L2' | translate }}</li>
           </ul>
         </div>
 
         <div class="section">
-          <h4>5. Modalità del trattamento</h4>
-          <p>Il trattamento dei dati è effettuato mediante strumenti informatici e telematici, nel rispetto dei principi di liceità, correttezza, trasparenza e minimizzazione dei dati.</p>
-          <p>Sono adottate adeguate misure di sicurezza per proteggere i dati personali da accessi non autorizzati, perdita o utilizzo illecito.</p>
+          <h4>{{ 'PRIVACY.SECTION_5_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_5_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_5_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>6. Conservazione dei dati</h4>
-          <p>I dati personali sono conservati per il tempo necessario a fornire il Servizio.</p>
-          <p>L'utente può in qualsiasi momento richiedere la cancellazione del proprio account e dei dati associati.</p>
+          <h4>{{ 'PRIVACY.SECTION_6_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_6_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_6_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>7. Comunicazione e diffusione dei dati</h4>
-          <p>I dati personali non sono venduti né ceduti a terzi.</p>
-          <p>I dati possono essere trattati da fornitori di servizi tecnici (ad esempio hosting o servizi email) esclusivamente per finalità connesse al funzionamento del Servizio.</p>
+          <h4>{{ 'PRIVACY.SECTION_7_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_7_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_7_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>8. Dati aggregati e anonimi</h4>
-          <p>Il titolare può elaborare dati in forma aggregata e anonima per finalità statistiche e di analisi dell'utilizzo della piattaforma.</p>
-          <p>Tali dati non consentono in alcun modo l'identificazione degli utenti.</p>
+          <h4>{{ 'PRIVACY.SECTION_8_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_8_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_8_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>9. Diritti dell'utente</h4>
-          <p>L'utente ha il diritto di:</p>
+          <h4>{{ 'PRIVACY.SECTION_9_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_9_INTRO' | translate }}</p>
           <ul>
-            <li>Accedere ai propri dati personali</li>
-            <li>Richiederne la rettifica o la cancellazione</li>
-            <li>Opporsi o limitarne il trattamento, nei casi previsti dalla legge</li>
+            <li>{{ 'PRIVACY.SECTION_9_L1' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_9_L2' | translate }}</li>
+            <li>{{ 'PRIVACY.SECTION_9_L3' | translate }}</li>
           </ul>
-          <p>Le richieste possono essere inviate all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
-          <h4>10. Minori</h4>
-          <p>Il Servizio è riservato a utenti che abbiano compiuto almeno 14 anni.</p>
-          <p>Registrandosi, l'utente dichiara di possedere i requisiti di età richiesti.</p>
+          <h4>{{ 'PRIVACY.SECTION_10_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_10_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_10_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>11. Cookie</h4>
-          <p>La web app può utilizzare cookie tecnici necessari al corretto funzionamento del Servizio.</p>
-          <p>Non vengono utilizzati cookie di profilazione senza il consenso dell'utente.</p>
+          <h4>{{ 'PRIVACY.SECTION_11_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_11_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_11_P2' | translate }}</p>
         </div>
 
         <div class="section">
-          <h4>12. Modifiche alla Privacy Policy</h4>
-          <p>La presente Privacy Policy può essere aggiornata in qualsiasi momento.</p>
-          <p>Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma.</p>
+          <h4>{{ 'PRIVACY.SECTION_12_TITLE' | translate }}</h4>
+          <p>{{ 'PRIVACY.SECTION_12_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.SECTION_12_P2' | translate }}</p>
         </div>
       </div>
     </div>

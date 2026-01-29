@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-terms',
@@ -14,82 +15,93 @@ import { Router } from '@angular/router';
         MatCardModule,
         MatButtonModule,
         MatIconModule,
-        HeaderComponent
+        HeaderComponent,
+        TranslateModule
     ],
     template: `
     <div class="page-container">
       <app-header
-        title="Termini e Condizioni"
+        [title]="'FOOTER.TERMS' | translate"
         visHome="S"
         (back)="goBack()"
         [hideActions]="false"
       ></app-header>
-      
+
       <main class="content">
         <mat-card class="policy-card">
-          <mat-card-content>
+          <mat-card-content #cardContent (scroll)="onScroll($event)">
             <div class="content-section">
               <!-- Content from TerminiDialogComponent -->
-              <h3>Termini e Condizioni di Utilizzo</h3>
-              <p class="subtitle">Survivor</p>
+              <h3>{{ 'TERMS.TITLE' | translate }}</h3>
+              <p class="subtitle">{{ 'TERMS.SUBTITLE' | translate }}</p>
 
               <div class="section">
-                <h4>1. Oggetto del servizio</h4>
-                <p>Survivor è una piattaforma digitale di intrattenimento che consente agli utenti di partecipare a giochi e tornei basati su scelte sportive e dinamiche competitive. Il servizio non costituisce gioco d'azzardo né attività di scommessa.</p>
+                <h4>{{ 'TERMS.SECTION_1_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_1_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>2. Registrazione e account</h4>
-                <p>Per utilizzare Survivor è necessario creare un account tramite indirizzo email. L'utente è responsabile della correttezza delle informazioni fornite e dell'utilizzo del proprio account.</p>
-                <p>È consentito un solo account per ciascun utente. È vietata la creazione di account multipli o l'uso di sistemi automatizzati.</p>
+                <h4>{{ 'TERMS.SECTION_2_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_2_P1' | translate }}</p>
+                <p>{{ 'TERMS.SECTION_2_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>3. Utilizzo del servizio</h4>
-                <p>L'utente si impegna a utilizzare Survivor in modo corretto e conforme alle presenti condizioni. Sono vietati comportamenti che possano compromettere il corretto funzionamento della piattaforma, inclusi tentativi di manipolazione dei risultati o delle classifiche.</p>
+                <h4>{{ 'TERMS.SECTION_3_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_3_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>4. Regole di gioco</h4>
-                <p>Le regole dei giochi e dei tornei sono definite all'interno dell'app e possono essere modificate in qualsiasi momento. I risultati generati dalla piattaforma sono da considerarsi definitivi e non contestabili.</p>
+                <h4>{{ 'TERMS.SECTION_4_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_4_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>5. Premi</h4>
-                <p>Survivor non prevede premi in denaro reale. Eventuali premi, riconoscimenti o trofei hanno esclusivamente valore simbolico o promozionale.</p>
+                <h4>{{ 'TERMS.SECTION_5_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_5_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>6. Sospensione e chiusura dell'account</h4>
-                <p>Il gestore si riserva il diritto di sospendere o chiudere l'account di un utente, senza preavviso, in caso di violazione delle presenti condizioni o di utilizzo improprio del servizio.</p>
+                <h4>{{ 'TERMS.SECTION_6_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_6_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>7. Limitazione di responsabilità</h4>
-                <p>Il servizio è fornito "così com'è". Il gestore non garantisce l'assenza di errori, interruzioni o malfunzionamenti e non è responsabile per eventuali danni derivanti dall'utilizzo della piattaforma.</p>
-                <p>Il gestore non è responsabile per eventuali inesattezze nei dati sportivi forniti da fonti esterne.</p>
+                <h4>{{ 'TERMS.SECTION_7_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_7_P1' | translate }}</p>
+                <p>{{ 'TERMS.SECTION_7_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>8. Proprietà intellettuale</h4>
-                <p>Tutti i contenuti presenti su Survivor, inclusi testi, grafica, logo e struttura della piattaforma, sono di proprietà del gestore e non possono essere utilizzati senza autorizzazione.</p>
+                <h4>{{ 'TERMS.SECTION_8_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_8_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>9. Modifiche ai Termini</h4>
-                <p>I presenti Termini e Condizioni possono essere aggiornati o modificati in qualsiasi momento. Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma.</p>
+                <h4>{{ 'TERMS.SECTION_9_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_9_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>10. Legge applicabile e foro competente</h4>
-                <p>I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.</p>
+                <h4>{{ 'TERMS.SECTION_10_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_10_TEXT' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>11. Contatti</h4>
-                <p>Per informazioni o richieste è possibile contattare il gestore all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <h4>{{ 'TERMS.SECTION_11_TITLE' | translate }}</h4>
+                <p>{{ 'TERMS.SECTION_11_TEXT' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
               </div>
             </div>
+
+            <!-- BACK TO TOP BUTTON -->
+            <button
+              mat-mini-fab
+              class="back-to-top-btn"
+              [class.visible]="showBackToTop"
+              (click)="scrollToTop()"
+              aria-label="Torna su">
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
           </mat-card-content>
         </mat-card>
       </main>
@@ -114,13 +126,35 @@ import { Router } from '@angular/router';
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       background: #FFFFFF;
-      padding: 24px;
+      padding: 0;
+      position: relative;
+
+      mat-card-content {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 24px;
+        position: relative;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #F4F6F8;
+          border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #0A3D91;
+          border-radius: 3px;
+        }
+      }
     }
-    
+
     // Copying styles from PrivacyComponent for consistency
     .content-section {
       font-family: 'Poppins', sans-serif;
-      
+
       h3 {
         text-align: center;
         color: #0A3D91;
@@ -174,10 +208,113 @@ import { Router } from '@angular/router';
       .section h4 { font-size: 1rem; }
       .section p { font-size: 0.9rem; }
     }
+
+    /* BACK TO TOP BUTTON */
+    .back-to-top-btn {
+      position: absolute !important;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(10, 61, 145, 0.75), rgba(79, 195, 247, 0.75)) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2) !important;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      z-index: 100;
+      width: 48px !important;
+      height: 48px !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50% !important;
+      backdrop-filter: blur(8px);
+
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.9), rgba(79, 195, 247, 0.9)) !important;
+        box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3) !important;
+        transform: translateY(-3px) !important;
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      &:active {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25) !important;
+      }
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        font-weight: 500;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .back-to-top-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 44px !important;
+        height: 44px !important;
+
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
   `]
 })
-export class TermsComponent {
+export class TermsComponent implements OnInit, OnDestroy {
+    showBackToTop = false;
+    private lastScrollTop = 0;
+    private scrollTimeout: any;
+
     constructor(private router: Router) { }
+
+    ngOnInit() {
+        // Non serve più il window scroll listener
+    }
+
+    ngOnDestroy() {
+        // Pulisci il timeout se esiste
+        if (this.scrollTimeout) {
+            clearTimeout(this.scrollTimeout);
+        }
+    }
+
+    onScroll(event: any): void {
+        const scrollTop = event.target.scrollTop;
+        const isScrollingDown = scrollTop > this.lastScrollTop;
+
+        // Mostra il bottone solo se scrolli verso il basso e sei oltre i 300px
+        if (isScrollingDown && scrollTop > 300) {
+            this.showBackToTop = true;
+
+            // Nascondi il bottone dopo 2 secondi di inattività
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = setTimeout(() => {
+                this.showBackToTop = false;
+            }, 2000);
+        } else if (scrollTop <= 300) {
+            this.showBackToTop = false;
+        }
+
+        this.lastScrollTop = scrollTop;
+    }
+
+    scrollToTop(): void {
+        const cardContent = document.querySelector('.policy-card mat-card-content');
+        if (cardContent) {
+            cardContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
 
     goBack() {
         this.router.navigate(['/auth/login']);

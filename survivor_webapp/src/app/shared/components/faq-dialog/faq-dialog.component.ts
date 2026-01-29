@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
 
 // FAQ DIALOG COMPONENT
 @Component({
   selector: 'app-faq-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="modal-container">
       <button class="close-btn" (click)="closeDialog()">
@@ -15,87 +17,87 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
       </button>
       <h2>
         <mat-icon class="title-icon">help</mat-icon>
-        <span class="value">FAQ - Domande Frequenti</span>
+        <span class="value">{{ 'FAQ.TITLE' | translate }}</span>
       </h2>
       <div class="content-section">
         <div class="faq-item">
-          <h4>Cos'è Survivor?</h4>
-          <p>Survivor è un gioco a eliminazione basato sulle partite di calcio. Ogni giornata scegli una squadra: se vince, resti in gioco; se perde o pareggia (secondo regolamento), sei eliminato.</p>
+          <h4>{{ 'FAQ.Q1' | translate }}</h4>
+          <p>{{ 'FAQ.A1' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Come si partecipa?</h4>
-          <p>Per partecipare devi essere aggiunto a un gruppo, accettare il regolamento e inviare la tua scelta entro l'orario limite della giornata.</p>
+          <h4>{{ 'FAQ.Q2' | translate }}</h4>
+          <p>{{ 'FAQ.A2' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Come scelgo la squadra?</h4>
-          <p>Puoi scegliere una squadra tra quelle che giocano nella giornata disponibile. La scelta va effettuata prima della scadenza indicata nell'app.</p>
+          <h4>{{ 'FAQ.Q3' | translate }}</h4>
+          <p>{{ 'FAQ.A3' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Posso scegliere la stessa squadra più volte?</h4>
-          <p>No. Ogni squadra può essere scelta una sola volta durante tutta la competizione, salvo diversa indicazione nel regolamento specifico della lega.</p>
+          <h4>{{ 'FAQ.Q4' | translate }}</h4>
+          <p>{{ 'FAQ.A4' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Cosa succede se dimentico di scegliere?</h4>
-          <p>Se non invii la scelta entro il termine stabilito, vieni eliminato automaticamente dalla competizione.</p>
+          <h4>{{ 'FAQ.Q5' | translate }}</h4>
+          <p>{{ 'FAQ.A5' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Quando viene considerata valida la scelta?</h4>
-          <p>La scelta è valida solo se effettuata correttamente prima della scadenza e confermata dall'app.</p>
+          <h4>{{ 'FAQ.Q6' | translate }}</h4>
+          <p>{{ 'FAQ.A6' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Cosa succede in caso di rinvio o sospensione di una partita?</h4>
-          <p>In caso di rinvio o sospensione, si applicano le regole indicate nel regolamento ufficiale della competizione (es. partita annullata, scelta da rifare o esito valido solo se completata).</p>
+          <h4>{{ 'FAQ.Q7' | translate }}</h4>
+          <p>{{ 'FAQ.A7' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Il pareggio elimina?</h4>
-          <p>Dipende dal formato della competizione. In alcune modalità il pareggio equivale a eliminazione, in altre no. Fai sempre riferimento al regolamento attivo.</p>
+          <h4>{{ 'FAQ.Q8' | translate }}</h4>
+          <p>{{ 'FAQ.A8' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Come vengono comunicati i risultati?</h4>
-          <p>I risultati vengono aggiornati automaticamente nell'app al termine delle partite ufficiali.</p>
+          <h4>{{ 'FAQ.Q9' | translate }}</h4>
+          <p>{{ 'FAQ.A9' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Posso cambiare scelta?</h4>
-          <p>Sì, puoi cambiare la tua scelta fino alla scadenza della giornata. Dopo la chiusura non sarà più possibile modificarla.</p>
+          <h4>{{ 'FAQ.Q10' | translate }}</h4>
+          <p>{{ 'FAQ.A10' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Cosa succede se più giocatori vincono Survivor?</h4>
-          <p>Se restano più giocatori senza eliminazioni fino alla fine del calendario, il vincitore (o i vincitori) viene determinato secondo le regole della lega (es. spareggio, premio condiviso, giornata extra).</p>
+          <h4>{{ 'FAQ.Q11' | translate }}</h4>
+          <p>{{ 'FAQ.A11' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Ci sono premi?</h4>
-          <p>Eventuali premi dipendono dalla lega o dal gruppo di gioco. L'app gestisce il gioco, ma non è responsabile della gestione dei premi.</p>
+          <h4>{{ 'FAQ.Q12' | translate }}</h4>
+          <p>{{ 'FAQ.A12' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Survivor è un'app di scommesse?</h4>
-          <p>No. Survivor è un gioco ludico basato su pronostici, senza finalità di gioco d'azzardo.</p>
+          <h4>{{ 'FAQ.Q13' | translate }}</h4>
+          <p>{{ 'FAQ.A13' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>I miei dati sono al sicuro?</h4>
-          <p>Sì. I dati personali vengono trattati nel rispetto della normativa vigente sulla privacy e utilizzati solo per il funzionamento dell'app.</p>
+          <h4>{{ 'FAQ.Q14' | translate }}</h4>
+          <p>{{ 'FAQ.A14' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Posso partecipare a più Survivor contemporaneamente?</h4>
-          <p>Sì, puoi partecipare a più competizioni se abilitate dall'organizzatore.</p>
+          <h4>{{ 'FAQ.Q15' | translate }}</h4>
+          <p>{{ 'FAQ.A15' | translate }}</p>
         </div>
 
         <div class="faq-item">
-          <h4>Chi posso contattare per assistenza?</h4>
-          <p>Per problemi tecnici o dubbi, utilizza la sezione Contatti presente nell'app o scrivi a <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a>.</p>
+          <h4>{{ 'FAQ.Q16' | translate }}</h4>
+          <p>{{ 'FAQ.A16' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a>.</p>
         </div>
       </div>
     </div>
@@ -240,6 +242,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 })
 export class FaqDialogComponent {
   constructor(private dialog: MatDialog) {}
+
 
   closeDialog() {
     this.dialog.closeAll();

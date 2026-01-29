@@ -1,6 +1,18 @@
 /* Lega Nuova - Stile Coerente con Dettaglio Lega */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* Animazione entrata card dall'alto */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -23,6 +35,7 @@
       margin-bottom: 30px;
       box-shadow: 0 4px 20px rgba(10, 61, 145, 0.08);
       border: 1px solid #E0E0E0;
+      animation: slideInFromTop 0.4s ease-out;
 
       p {
         margin: 0;
