@@ -25,7 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
         <div class="left-section">
           <div class="title-logo-container">
             <mat-label class="header-title" *ngIf="title">{{ title }}</mat-label>
-            <img src="/assets/survivor-logo-simple.svg" alt="Survivor Logo" class="header-logo" />
+            <img src="assets/survivor-logo-simple.svg" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
