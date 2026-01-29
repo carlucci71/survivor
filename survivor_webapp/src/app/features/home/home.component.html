@@ -14,14 +14,10 @@
           <span class="config-user-name">{{ me?.nickname || me?.nome }}</span>
         </ng-template>
       </mat-chip>
-      @if (isAdmin()) {
-      <span
-        class="admin-emoji"
-        (click)="goToAdmin()"
-        matTooltip="Area Admin"
-        >👑</span
-      >
-      }
+
+      <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
+        <mat-icon>verified_user</mat-icon>
+      </button>
     </div>
   </app-header>
 
@@ -36,67 +32,58 @@
 
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
-      @if (leghe.length === 0) {
-      <mat-card class="no-data">
+
+      <mat-card *ngIf="leghe.length === 0" class="no-data">
         <mat-card-content>
           <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
-      } @if (groupedLeghe.length > 0) {
-      <div class="leghe-groups">
-        @for (group of groupedLeghe; track group.name) {
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{ group.name }}</mat-card-title>
-            <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="edizioni-list">
-              @for (edizione of group.edizioni; track edizione.id) {
-              <mat-card class="lega-card small">
-                <mat-card-header>
-                  <mat-card-title
-                    >Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title
-                  >
-                  <mat-card-subtitle>{{
-                    edizione.stato.descrizione
-                  }}</mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-actions>
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="goToLega(edizione.id)"
-                  >
-                    {{ 'HOME.VIEW_DETAILS' | translate }}
-                  </button>
-                  @if (visualizzaInvito(edizione)){
-                  <button
-                    mat-raised-button
-                    color="accent"
-                    (click)="openInvitaDialog(edizione)"
-                  >
-                    {{ 'HOME.INVITE_USERS' | translate }}
-                  </button>
-                  } @if (isTerminata(edizione) &&
-                  notExistsNuovaEdizione(edizione)){
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="nuovaEdizione(edizione)"
-                  >
-                    {{ 'HOME.NEW_EDITION' | translate }}
-                  </button>
-                  }
-                </mat-card-actions>
-              </mat-card>
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
-        }
+
+      <div *ngIf="groupedLeghe.length > 0" class="leghe-groups">
+        <ng-container *ngFor="let group of groupedLeghe">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>{{ group.name }}</mat-card-title>
+              <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="edizioni-list">
+                <mat-card *ngFor="let edizione of group.edizioni" class="lega-card small">
+                  <mat-card-header>
+                    <mat-card-title>Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title>
+                    <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="goToLega(edizione.id)"
+                    >
+                      {{ 'HOME.VIEW_DETAILS' | translate }}
+                    </button>
+
+                    <button *ngIf="visualizzaInvito(edizione)"
+                      mat-raised-button
+                      color="accent"
+                      (click)="openInvitaDialog(edizione)"
+                    >
+                      {{ 'HOME.INVITE_USERS' | translate }}
+                    </button>
+
+                    <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione)"
+                      mat-raised-button
+                      color="warn"
+                      (click)="nuovaEdizione(edizione)"
+                    >
+                      {{ 'HOME.NEW_EDITION' | translate }}
+                    </button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </ng-container>
       </div>
-      }
     </section>
 
     <!-- Divisorio tra sezioni -->

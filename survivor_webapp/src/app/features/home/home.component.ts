@@ -15,6 +15,7 @@ import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
@@ -37,6 +38,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatChipsModule,
     MatTooltip,
     MatDialogModule,
+    MatIconModule,
     TranslateModule
   ],
   templateUrl: './home.component.html',
