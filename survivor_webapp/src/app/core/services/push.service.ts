@@ -16,9 +16,9 @@ import { AuthService } from './auth.service';
 @Injectable({ providedIn: 'root' })
 export class PushService {
   private lastRegisteredToken: string | null = null;
-  
 
-  constructor(private http: HttpClient, private injector: Injector) {}
+
+  constructor(private readonly http: HttpClient, private readonly injector: Injector) {}
 
   /**
    * Initializes push registration on supported platforms (iOS/Android native).
@@ -126,7 +126,7 @@ export class PushService {
       }
     });
 
-    PushNotifications.addListener('registrationError', (error) => {
+    PushNotifications.addListener('registrationError', (error: any) => {
       console.error('Errore registrazione push - Firebase potrebbe non essere configurato', error);
     });
 
@@ -153,7 +153,7 @@ export class PushService {
 
     const url = `${environment.apiUrl}/push/register`;
     console.log('Invio token push al backend:', url, payload);
-    
+
     try {
       await firstValueFrom(this.http.post(url, payload));
       console.log('Token push inviato con successo al backend');
