@@ -22,6 +22,8 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
+import { PushService } from '../../core/services/push.service';
+
 
 @Component({
   selector: 'app-home',
@@ -62,6 +64,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private dialog: MatDialog
     ,
     private sanitizer: DomSanitizer
+    ,
+    private pushService: PushService
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +84,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     window.addEventListener('profile-updated', () => {
       this.loadMe();
     });
+    // Avvia la registrazione push qui: Home è protetta da `authGuard`, quindi
+    // l'utente è autenticato e possiamo procedere in sicurezza.
+    void this.pushService.initPush();
   }
 
   ngOnDestroy(): void {
