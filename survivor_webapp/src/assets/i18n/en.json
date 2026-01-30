@@ -339,7 +339,13 @@
     "ADD": "Add",
     "SEND_INVITES": "Send Invites",
     "COPY_LINK": "Copy link",
-    "COPIED": "Copied!"
+    "COPIED": "Copied!",
+    "REFRESH": "Refresh"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "TITLE": "Service Unavailable",
+    "HEADING": "Service temporarily unavailable",
+    "MESSAGE": "The backend service is currently unreachable. Please try again later or press Refresh to retry."
   },
   "ADMIN": {
     "TITLE": "Admin Area",

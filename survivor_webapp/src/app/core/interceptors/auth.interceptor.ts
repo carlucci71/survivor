@@ -1,5 +1,6 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { AuthService } from '../services/auth.service';
@@ -30,8 +31,34 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: any) => {
+      // If backend is down or network error, redirect to friendly page
+      try {
+        const skipHeader = authReq && authReq.headers && authReq.headers.get
+          ? authReq.headers.get('X-Skip-ServiceUnavailable')
+          : null;
+        if (!skipHeader && error instanceof HttpErrorResponse && (error.status === 503 || error.status === 0)) {
+          try {
+            const router = inject(Router);
+            // avoid redirect loop
+            const current = router?.url || '';
+            if (current !== '/service-unavailable') {
+              router.navigate(['/service-unavailable']);
+            }
+          } catch (e) {
+            /* noop */
+          }
+          try {
+            const loading = inject(LoadingService);
+            loading.reset();
+          } catch (e) {}
+          return throwError(() => error);
+        }
+      } catch (e) {
+        // ignore header read errors and continue
+      }
+
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        // Usa direttamente il token JWT attuale (anche se scaduto) come refresh token
+        // Use current JWT as a refresh token attempt
         const expiredToken = authService.getToken();
         if (expiredToken) {
           console.log('Refresh token: ' + error.message);
@@ -47,9 +74,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 console.log('Token refresh ok!!');
                 return next(retryReq);
               }
-              console.log(
-                'Forzo logout per authService.getToken() null ' + +error.message
-              );
+              console.log('Forzo logout per authService.getToken() null ' + error.message);
               try {
                 loading.reset();
               } catch (e) {}
@@ -57,12 +82,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               return throwError(() => error);
             }),
             catchError((refreshError) => {
-              console.log(
-                'Forzo logout per refreshError: ' +
-                  refreshError +
-                  '---' +
-                  +error.message
-              );
+              console.log('Forzo logout per refreshError: ' + refreshError + ' --- ' + error.message);
               try {
                 loading.reset();
               } catch (e) {}
@@ -80,7 +100,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         let fullMessage = '';
 
-        if (error.status != 499) {//GLI ERRORI 499 VANNO GESTITI NELLE PAGINE
+        if (error.status != 499) {
           if (!fullMessage) {
             const msgParts = [] as string[];
             if (error?.message) {

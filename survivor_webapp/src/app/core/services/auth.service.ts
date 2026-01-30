@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
 import {
@@ -68,8 +68,23 @@ export class AuthService {
     );
   }
 
-  getMyData(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {});
+  getMyData(skipServiceUnavailableRedirect = false): Observable<AuthResponse> {
+    const options: { headers?: HttpHeaders } = {};
+    if (skipServiceUnavailableRedirect) {
+      options.headers = new HttpHeaders({ 'X-Skip-ServiceUnavailable': '1' });
+    }
+    return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {}, options);
+  }
+
+  // Probe endpoint and update local auth state if successful.
+  probeMyData(skipServiceUnavailableRedirect = false): Observable<AuthResponse> {
+    return this.getMyData(skipServiceUnavailableRedirect).pipe(
+      tap((response: AuthResponse) => {
+        if (response) {
+          this.handleAuthResponse(response);
+        }
+      })
+    );
   }
 
 
@@ -87,9 +102,17 @@ export class AuthService {
       },
       error: (error) => {
         console.error('Errore :', error);
-        // failed to load user; ensure subject is null and redirect to login
+        // failed to load user; ensure subject is null
         this.currentUserSubject.next(null);
-        this.router.navigate(['/login']);
+
+        // If backend returned 503 or there was a network error (status 0),
+        // show a friendly "service unavailable" page with a refresh option.
+        const status = error && (error.status || (error.statusCode as any));
+        if (status === 503 || status === 0 || !status) {
+          this.router.navigate(['/service-unavailable']);
+        } else {
+          this.router.navigate(['/login']);
+        }
       }
     });
   }

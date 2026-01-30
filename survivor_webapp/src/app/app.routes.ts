@@ -64,6 +64,10 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'service-unavailable',
+    loadComponent: () => import('./features/public/service-unavailable.component').then(m => m.ServiceUnavailableComponent)
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }
