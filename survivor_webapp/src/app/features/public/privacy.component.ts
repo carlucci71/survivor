@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-privacy',
@@ -14,118 +15,129 @@ import { Router } from '@angular/router';
         MatCardModule,
         MatButtonModule,
         MatIconModule,
-        HeaderComponent
+        HeaderComponent,
+        TranslateModule
     ],
     template: `
     <div class="page-container">
       <app-header
-        title="Privacy Policy"
+        [title]="'FOOTER.PRIVACY' | translate"
         visHome="S"
         (back)="goBack()"
         [hideActions]="false"
       ></app-header>
-      
+
       <main class="content">
         <mat-card class="policy-card">
-          <mat-card-content>
+          <mat-card-content #cardContent (scroll)="onScroll($event)">
             <div class="content-section">
               <!-- Content from PrivacyDialogComponent -->
-              <h3>Privacy Policy</h3>
-              <p class="subtitle">Survivor</p>
+              <h3>{{ 'PRIVACY.TITLE' | translate }}</h3>
+              <p class="subtitle">{{ 'PRIVACY.SUBTITLE' | translate }}</p>
 
-              <p class="intro-text">La presente Privacy Policy descrive le modalità di raccolta, utilizzo e protezione dei dati personali degli utenti che utilizzano la piattaforma Survivor (di seguito "Servizio"), in conformità al Regolamento UE 2016/679 (GDPR).</p>
+              <p class="intro-text">{{ 'PRIVACY.INTRO' | translate }}</p>
 
               <div class="section">
-                <h4>1. Titolare del trattamento</h4>
-                <p>Il titolare del trattamento dei dati è il gestore della piattaforma Survivor.</p>
-                <p>Per qualsiasi richiesta relativa alla presente Privacy Policy è possibile contattare il titolare all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <h4>{{ 'PRIVACY.SECTION_1_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_1_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
               </div>
 
               <div class="section">
-                <h4>2. Dati personali raccolti</h4>
-                <p>I dati personali raccolti attraverso l'utilizzo del Servizio sono limitati a quanto strettamente necessario al suo funzionamento:</p>
+                <h4>{{ 'PRIVACY.SECTION_2_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_2_INTRO' | translate }}</p>
                 <ul>
-                  <li>Indirizzo email (utilizzato per l'autenticazione tramite magic link)</li>
-                  <li>Nickname scelto dall'utente</li>
-                  <li>Preferenza sportiva (squadra del cuore)</li>
-                  <li>Dati tecnici di utilizzo del Servizio (log, informazioni sul dispositivo e sull'accesso)</li>
+                  <li>{{ 'PRIVACY.SECTION_2_L1' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_2_L2' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_2_L3' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_2_L4' | translate }}</li>
                 </ul>
               </div>
 
               <div class="section">
-                <h4>3. Finalità del trattamento</h4>
-                <p>I dati personali sono trattati per le seguenti finalità:</p>
+                <h4>{{ 'PRIVACY.SECTION_3_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_3_INTRO' | translate }}</p>
                 <ul>
-                  <li>Consentire la registrazione e l'accesso al Servizio</li>
-                  <li>Permettere la partecipazione ai giochi e ai tornei</li>
-                  <li>Gestire le funzionalità della piattaforma e le classifiche</li>
-                  <li>Garantire la sicurezza e il corretto funzionamento del Servizio</li>
-                  <li>Adempiere a eventuali obblighi di legge</li>
+                  <li>{{ 'PRIVACY.SECTION_3_L1' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_3_L2' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_3_L3' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_3_L4' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_3_L5' | translate }}</li>
                 </ul>
               </div>
 
               <div class="section">
-                <h4>4. Base giuridica del trattamento</h4>
-                <p>Il trattamento dei dati personali è effettuato sulla base:</p>
+                <h4>{{ 'PRIVACY.SECTION_4_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_4_INTRO' | translate }}</p>
                 <ul>
-                  <li>Dell'esecuzione del contratto di cui l'utente è parte (utilizzo del Servizio)</li>
-                  <li>Del legittimo interesse del titolare alla sicurezza e al miglioramento della piattaforma</li>
+                  <li>{{ 'PRIVACY.SECTION_4_L1' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_4_L2' | translate }}</li>
                 </ul>
               </div>
 
               <div class="section">
-                <h4>5. Modalità del trattamento</h4>
-                <p>Il trattamento dei dati è effettuato mediante strumenti informatici e telematici, nel rispetto dei principi di liceità, correttezza, trasparenza e minimizzazione dei dati.</p>
-                <p>Sono adottate adeguate misure di sicurezza per proteggere i dati personali da accessi non autorizzati, perdita o utilizzo illecito.</p>
+                <h4>{{ 'PRIVACY.SECTION_5_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_5_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_5_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>6. Conservazione dei dati</h4>
-                <p>I dati personali sono conservati per il tempo necessario a fornire il Servizio.</p>
-                <p>L'utente può in qualsiasi momento richiedere la cancellazione del proprio account e dei dati associati.</p>
+                <h4>{{ 'PRIVACY.SECTION_6_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_6_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_6_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>7. Comunicazione e diffusione dei dati</h4>
-                <p>I dati personali non sono venduti né ceduti a terzi.</p>
-                <p>I dati possono essere trattati da fornitori di servizi tecnici (ad esempio hosting o servizi email) esclusivamente per finalità connesse al funzionamento del Servizio.</p>
+                <h4>{{ 'PRIVACY.SECTION_7_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_7_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_7_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>8. Dati aggregati e anonimi</h4>
-                <p>Il titolare può elaborare dati in forma aggregata e anonima per finalità statistiche e di analisi dell'utilizzo della piattaforma.</p>
-                <p>Tali dati non consentono in alcun modo l'identificazione degli utenti.</p>
+                <h4>{{ 'PRIVACY.SECTION_8_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_8_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_8_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>9. Diritti dell'utente</h4>
-                <p>L'utente ha il diritto di:</p>
+                <h4>{{ 'PRIVACY.SECTION_9_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_9_INTRO' | translate }}</p>
                 <ul>
-                  <li>Accedere ai propri dati personali</li>
-                  <li>Richiederne la rettifica o la cancellazione</li>
-                  <li>Opporsi o limitarne il trattamento, nei casi previsti dalla legge</li>
+                  <li>{{ 'PRIVACY.SECTION_9_L1' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_9_L2' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_9_L3' | translate }}</li>
                 </ul>
-                <p>Le richieste possono essere inviate all'indirizzo email: <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
               </div>
 
               <div class="section">
-                <h4>10. Minori</h4>
-                <p>Il Servizio è riservato a utenti che abbiano compiuto almeno 14 anni.</p>
-                <p>Registrandosi, l'utente dichiara di possedere i requisiti di età richiesti.</p>
+                <h4>{{ 'PRIVACY.SECTION_10_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_10_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_10_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>11. Cookie</h4>
-                <p>La web app può utilizzare cookie tecnici necessari al corretto funzionamento del Servizio.</p>
-                <p>Non vengono utilizzati cookie di profilazione senza il consenso dell'utente.</p>
+                <h4>{{ 'PRIVACY.SECTION_11_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_11_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_11_P2' | translate }}</p>
               </div>
 
               <div class="section">
-                <h4>12. Modifiche alla Privacy Policy</h4>
-                <p>La presente Privacy Policy può essere aggiornata in qualsiasi momento.</p>
-                <p>Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma.</p>
+                <h4>{{ 'PRIVACY.SECTION_12_TITLE' | translate }}</h4>
+                <p>{{ 'PRIVACY.SECTION_12_P1' | translate }}</p>
+                <p>{{ 'PRIVACY.SECTION_12_P2' | translate }}</p>
               </div>
             </div>
+
+            <!-- BACK TO TOP BUTTON -->
+            <button
+              mat-mini-fab
+              class="back-to-top-btn"
+              [class.visible]="showBackToTop"
+              (click)="scrollToTop()"
+              aria-label="Torna su">
+              <mat-icon>arrow_upward</mat-icon>
+            </button>
           </mat-card-content>
         </mat-card>
       </main>
@@ -150,16 +162,38 @@ import { Router } from '@angular/router';
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       background: #FFFFFF;
-      padding: 24px;
+      padding: 0;
+      position: relative;
+
+      mat-card-content {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 24px;
+        position: relative;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #F4F6F8;
+          border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #0A3D91;
+          border-radius: 3px;
+        }
+      }
     }
     :host ::ng-deep .header-logo {
       // Adjust header logo for this page if needed, but default is fine
     }
-    
+
     // Copying styles from PrivacyDialogComponent but adjusting for page layout
     .content-section {
       font-family: 'Poppins', sans-serif;
-      
+
       h3 {
         text-align: center;
         color: #0A3D91;
@@ -229,10 +263,112 @@ import { Router } from '@angular/router';
       .section h4 { font-size: 1rem; }
       .section p, .section ul { font-size: 0.9rem; }
     }
+
+    /* BACK TO TOP BUTTON */
+    .back-to-top-btn {
+      position: absolute !important;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, rgba(10, 61, 145, 0.75), rgba(79, 195, 247, 0.75)) !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2) !important;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      z-index: 100;
+      width: 48px !important;
+      height: 48px !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50% !important;
+      backdrop-filter: blur(8px);
+
+      &.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.9), rgba(79, 195, 247, 0.9)) !important;
+        box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3) !important;
+        transform: translateY(-3px) !important;
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      &:active {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25) !important;
+      }
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        font-weight: 500;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .back-to-top-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 44px !important;
+        height: 44px !important;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
   `]
 })
-export class PrivacyComponent {
+export class PrivacyComponent implements OnInit, OnDestroy {
+    showBackToTop = false;
+    private lastScrollTop = 0;
+    private scrollTimeout: any;
+
     constructor(private router: Router) { }
+
+    ngOnInit() {
+        // Non serve più il window scroll listener
+    }
+
+    ngOnDestroy() {
+        // Pulisci il timeout se esiste
+        if (this.scrollTimeout) {
+            clearTimeout(this.scrollTimeout);
+        }
+    }
+
+    onScroll(event: any): void {
+        const scrollTop = event.target.scrollTop;
+        const isScrollingDown = scrollTop > this.lastScrollTop;
+
+        // Mostra il bottone solo se scrolli verso il basso e sei oltre i 300px
+        if (isScrollingDown && scrollTop > 300) {
+            this.showBackToTop = true;
+
+            // Nascondi il bottone dopo 2 secondi di inattività
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = setTimeout(() => {
+                this.showBackToTop = false;
+            }, 2000);
+        } else if (scrollTop <= 300) {
+            this.showBackToTop = false;
+        }
+
+        this.lastScrollTop = scrollTop;
+    }
+
+    scrollToTop(): void {
+        const cardContent = document.querySelector('.policy-card mat-card-content');
+        if (cardContent) {
+            cardContent.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
 
     goBack() {
         this.router.navigate(['/auth/login']);

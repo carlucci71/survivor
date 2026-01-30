@@ -691,10 +691,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   private loadFirstMatchTimeAndStartCountdown(): void {
     if (!this.lega || !this.lega.campionato?.id) return;
 
+    // Carica TUTTE le partite della giornata passando stringa vuota come squadraId
     this.campionatoService
       .calendario(
         this.lega.campionato.id,
-        '', // Squadra vuota per prendere tutte le partite
+        '', // Stringa vuota = recupera tutte le partite della giornata
         this.lega.anno,
         this.lega.giornataCorrente,
         true
