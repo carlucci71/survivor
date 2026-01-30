@@ -34,6 +34,9 @@ public class GiocatoreLega implements Serializable {
     @Convert(converter = RuoloGiocatoreLegaConverter.class)
     private Enumeratori.RuoloGiocatoreLega ruolo;
 
+    @Column(name = "posizione_finale")
+    private Integer posizioneFinale;
+
     @Embeddable
     @Data
     public static class GiocatoreLegaId implements Serializable {
