@@ -793,7 +793,7 @@ export class ChiSiamoDialogComponent {
 
           <!-- COPYRIGHT -->
           <div class="footer-copyright">
-            <span>© 2026 Survivor DDL</span>
+            <span>© {{ currentYear }} DDL Solutions</span>
           </div>
         </div>
       </div>
@@ -820,9 +820,10 @@ export class ChiSiamoDialogComponent {
     .footer-content {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 24px;
       flex-wrap: wrap;
+      text-align: center;
     }
 
     /* LOGO COMPATTO */
@@ -1036,6 +1037,7 @@ export class ChiSiamoDialogComponent {
 })
 export class FooterComponent {
   currentLang: string = 'it';
+  currentYear: number = new Date().getFullYear();
 
   constructor(
     private dialog: MatDialog,
