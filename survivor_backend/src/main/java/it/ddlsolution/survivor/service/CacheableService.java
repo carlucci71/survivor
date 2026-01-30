@@ -7,13 +7,11 @@ import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
 import it.ddlsolution.survivor.entity.Sport;
-import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
 import it.ddlsolution.survivor.mapper.SportMapper;
-import it.ddlsolution.survivor.repository.CampionatoRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
@@ -44,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -73,6 +72,9 @@ public class CacheableService {
     private final ObjectProvider<ICalendario> calendarioProvider;
     private final UtilCalendarioService utilCalendarioService;
 
+    // Self provider per invocare metodi transazionali sul proxy del bean (per worker threads)
+    private final ObjectProvider<CacheableService> selfProvider;
+
     public final static String CAMPIONATI = "campionati";
     public final static String SQUADRE = "squadre";
     public final static String SPORT = "sport";
@@ -85,11 +87,38 @@ public class CacheableService {
     @Value("${cache.allcampionati.timeout-seconds:240}")
     private long allCampionatiTimeoutSeconds;
 
+    // Limite di quanti worker possono accedere al DB contemporaneamente (configurabile)
+    @Value("${cache.allcampionati.db-parallelism:6}")
+    private int allCampionatiDbParallelism;
+
+    // Semaphore lazy inizializzato per rispettare il valore configurato
+    private volatile Semaphore dbSemaphore;
+
+    private Semaphore getDbSemaphore() {
+        if (dbSemaphore == null) {
+            synchronized (this) {
+                if (dbSemaphore == null) {
+                    int permits = Math.max(1, allCampionatiDbParallelism);
+                    dbSemaphore = new Semaphore(permits);
+                    log.info("Inizializzato semaphore DB parallelism con {} permessi", permits);
+                }
+            }
+        }
+        return dbSemaphore;
+    }
+
     private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
 
 
     @Cacheable(value = CAMPIONATI, sync = true)
-    @Transactional
+    // Nota: rimuoviamo l'annotazione @Transactional da questo metodo per evitare che
+    // il thread chiamante mantenga una connessione al DB aperta per tutta la durata
+    // dell'elaborazione parallela. Il metodo avvia molti task su thread separati che
+    // possono eseguire operazioni sui repository; se il thread principale trattiene
+    // una connessione, si può esaurire il pool (HikariPool - Connection is not available).
+    // Le chiamate ai repository dovrebbero essere gestite con transazioni locali
+    // (es. annotando i metodi chiamati dai worker con @Transactional) così che ogni
+    // worker apra e chiuda rapidamente le proprie connessioni.
     public List<CampionatoDTO> allCampionati() {
 
         List<CampionatoDTO> campionatiDTO = new ArrayList<>();
@@ -183,46 +212,82 @@ public class CacheableService {
         log.debug("Thread {} avvia nuova elaborazione per campionato: {} anno: {}",
             Thread.currentThread().getName(), campionatoDTO.getId(), anno);
 
+        boolean permitAcquired = false;
         try {
-            List<LocalDateTime> iniziGiornate = new ArrayList<>();
-            Integer giornataDaGiocare = null;
-            for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-                List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
-
-                if (!partiteDTO.isEmpty()) {
-                    final int currentGiornata = giornata;
-                    LocalDateTime first = partiteDTO.stream()
-                            .map(PartitaDTO::getOrario)
-                            .sorted()
-                            .findFirst()
-                            .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
-                    iniziGiornate.add(first);
-
-                    Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
-                    log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);
-                    if (giornataDaGiocare == null && (statoGiornata != Enumeratori.StatoPartita.TERMINATA)) {
-                        giornataDaGiocare = giornata;
-                    }
-                }
+            // Acquisisce un permesso per limitare l'accesso concorrente al DB
+            Semaphore sem = getDbSemaphore();
+            try {
+                sem.acquire();
+                permitAcquired = true;
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw ie;
             }
-            if (giornataDaGiocare==null){
-                giornataDaGiocare=campionatoDTO.getNumGiornate();
-            }
-            campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
-            campionatoDTO.setIniziGiornate(iniziGiornate);
 
-            utilCalendarioService.refreshPartite(campionatoDTO, anno);
-            log.debug("Thread {} ha completato l'elaborazione per campionato: {} anno: {}", Thread.currentThread().getName(), campionatoDTO.getId(), anno);
-            futureInput.complete(campionatoDTO);
+            // Esegui l'elaborazione dentro un metodo transazionale invocato via proxy del bean
+            // in modo che ogni worker apra/chiuda la propria transazione e non mantenga
+            // la connessione del chiamante per tutta la durata dell'elaborazione.
+            CampionatoDTO result = selfProvider.getObject().processCampionatoTransactional(campionatoDTO, anno);
+            futureInput.complete(result);
 
+        } catch (InterruptedException ie) {
+            log.error("Thread interrotto durante l'acquisizione del permesso DB per campionato {} anno {}", campionatoDTO.getId(), anno, ie);
+            futureInput.completeExceptionally(ie);
         } catch (Exception e) {
             // In caso di errore, completa il future con l'eccezione
             log.error("Errore durante l'elaborazione del campionato {} anno {}", campionatoDTO.getId(), anno, e);
             futureInput.completeExceptionally(e);
         } finally {
-            // Rimuove il future dalla mappa una volta completato
+            // Rilascia il permesso se acquisito e rimuove il future dalla mappa
+            if (permitAcquired) {
+                try {
+                    getDbSemaphore().release();
+                } catch (Exception ex) {
+                    log.warn("Errore durante il rilascio del permesso DB", ex);
+                }
+            }
             elaborazioniInCorso.remove(lockKey);
         }
+    }
+
+    /**
+     * Metodo invocato dai worker threads tramite il proxy del bean per garantire
+     * che la logica che accede ai repository venga eseguita all'interno di una
+     * transazione separata per ogni worker. Questo evita che il thread chiamante
+     * (es. il thread HTTP che ha attivato la cache) mantenga la connessione al DB
+     * per tutta la durata dell'elaborazione parallela.
+     */
+    @Transactional
+    public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {
+        List<LocalDateTime> iniziGiornate = new ArrayList<>();
+        Integer giornataDaGiocare = null;
+        for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
+            List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
+
+            if (!partiteDTO.isEmpty()) {
+                final int currentGiornata = giornata;
+                LocalDateTime first = partiteDTO.stream()
+                        .map(PartitaDTO::getOrario)
+                        .sorted()
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
+                iniziGiornate.add(first);
+
+                Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
+                log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);
+                if (giornataDaGiocare == null && (statoGiornata != Enumeratori.StatoPartita.TERMINATA)) {
+                    giornataDaGiocare = giornata;
+                }
+            }
+        }
+        if (giornataDaGiocare==null){
+            giornataDaGiocare=campionatoDTO.getNumGiornate();
+        }
+        campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
+        campionatoDTO.setIniziGiornate(iniziGiornate);
+
+        utilCalendarioService.refreshPartite(campionatoDTO, anno);
+        return campionatoDTO;
     }
 
 

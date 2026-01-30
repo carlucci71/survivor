@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -41,7 +41,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './lega-nuova.component.html',
   styleUrls: ['./lega-nuova.component.scss'],
 })
-export class LegaNuovaComponent implements OnInit {
+export class LegaNuovaComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -70,6 +70,12 @@ export class LegaNuovaComponent implements OnInit {
   ngOnInit(): void {
     this.caricaSport();
   }
+
+  ngAfterViewInit(): void {
+    // Scrolla la pagina in alto all'apertura del componente
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
   goBack(): void {
     this.router.navigate(['/home']);
   }
