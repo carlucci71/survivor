@@ -339,7 +339,13 @@
     "ADD": "Aggiungi",
     "SEND_INVITES": "Invia Inviti",
     "COPY_LINK": "Copia link",
-    "COPIED": "Copiato!"
+    "COPIED": "Copiato!",
+    "REFRESH": "Aggiorna"
+  },
+  "SERVICE_UNAVAILABLE": {
+    "TITLE": "Servizio non disponibile",
+    "HEADING": "Servizio momentaneamente non disponibile",
+    "MESSAGE": "Il servizio backend non è raggiungibile al momento. Riprova più tardi oppure premi Aggiorna per riprovare."
   },
   "ADMIN": {
     "TITLE": "Area Admin",
