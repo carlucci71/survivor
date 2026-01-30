@@ -110,8 +110,11 @@ public class LegaService {
                 legaDTO.setGiocatori(List.of(giocatoreDTO));
 
             }
-            addInfoCalcolate(legaDTO, userId);
+            if (legaDTO.getStato()== Enumeratori.StatoLega.ERRORE){
+                calcolaStatoLega(legaDTO,null);
+            }
 
+            addInfoCalcolate(legaDTO, userId);
 
 
             if (legaDTO.getStato()== Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE){
@@ -426,15 +429,16 @@ public class LegaService {
     private void calcolaStatoLega(LegaDTO legaDTO, Enumeratori.StatoLega statoForzato) {
         if (statoForzato != null) {
             legaDTO.setStato(statoForzato);
-        } else if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
+        } else if ((legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
+                && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
 
-        } else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
                 && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
-        } else if (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA
+        } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getGiocatori().stream()
                 .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
                 .count() <= 1
