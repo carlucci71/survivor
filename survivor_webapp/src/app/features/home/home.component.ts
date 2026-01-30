@@ -23,6 +23,7 @@ import { HeroThreeComponent } from '../../shared/components/hero-three/hero-thre
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { PushService } from '../../core/services/push.service';
+import { LegaCardSkeletonComponent } from '../../shared/components/lega-card-skeleton/lega-card-skeleton.component';
 
 
 @Component({
@@ -41,7 +42,8 @@ import { PushService } from '../../core/services/push.service';
     MatTooltip,
     MatDialogModule,
     MatIconModule,
-    TranslateModule
+    TranslateModule,
+    LegaCardSkeletonComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
@@ -55,6 +57,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
+  isLoadingLeghe = true;
 
   constructor(
     private authService: AuthService,
@@ -209,13 +212,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   loadLeghe(): void {
+    this.isLoadingLeghe = true;
     this.legaService.mieLeghe().subscribe({
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
+        this.isLoadingLeghe = false;
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);
+        this.isLoadingLeghe = false;
       },
     });
   }
