@@ -22,6 +22,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
+  // Allow certain requests (probe) to opt-out of global service-unavailable redirect and snackbars
+  const skipServiceUnavailable = authReq && authReq.headers && authReq.headers.get
+    ? authReq.headers.get('X-Skip-ServiceUnavailable')
+    : null;
+
   // Show loading overlay for every outgoing request
   try {
     loading.show(true);
@@ -31,12 +36,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: any) => {
-      // If backend is down or network error, redirect to friendly page
+      // If backend is down or network error, redirect to friendly page (unless skip header present)
       try {
-        const skipHeader = authReq && authReq.headers && authReq.headers.get
-          ? authReq.headers.get('X-Skip-ServiceUnavailable')
-          : null;
-        if (!skipHeader && error instanceof HttpErrorResponse && (error.status === 503 || error.status === 0)) {
+        if (!skipServiceUnavailable && error instanceof HttpErrorResponse && (error.status === 503 || error.status === 0)) {
           try {
             const router = inject(Router);
             // avoid redirect loop
@@ -117,11 +119,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             fullMessage = msgParts.join('\n');
           }
 
-          snackBar.openFromComponent(SnackMessageComponent, {
-            data: fullMessage,
-            duration: 5000,
-            panelClass: 'multi-line-snackbar',
-          });
+          if (!skipServiceUnavailable) {
+            snackBar.openFromComponent(SnackMessageComponent, {
+              data: fullMessage,
+              duration: 5000,
+              panelClass: 'multi-line-snackbar',
+            });
+          }
         }
       }
       try {
