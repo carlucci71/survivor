@@ -447,13 +447,58 @@ public class LegaService {
         }
     }
 
+    /**
+     * Assegna le posizioni finali ai giocatori in base alla classifica
+     * Posizione 1 = vincitore, 2 = secondo posto, etc.
+     */
+    private void assegnaPosizioniFinali(LegaDTO legaDTO) {
+        log.info("Assegnazione posizioni finali per lega: {} - {}", legaDTO.getId(), legaDTO.getName());
+
+        // Ordina i giocatori come nella classifica finale
+        List<GiocatoreDTO> classificaFinale = getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId());
+
+        // Trova la lega entity
+        Lega lega = legaRepository.findById(legaDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Lega non trovata: " + legaDTO.getId()));
+
+        int posizione = 1;
+        for (GiocatoreDTO giocatoreDTO : classificaFinale) {
+            // Trova il GiocatoreLega corrispondente
+            GiocatoreLega giocatoreLega = lega.getGiocatoreLeghe().stream()
+                    .filter(gl -> gl.getGiocatore().getId().equals(giocatoreDTO.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (giocatoreLega != null) {
+                // Assegna posizione solo ai giocatori attivi (vincitori/sopravvissuti)
+                // o con almeno una giocata (giocatori eliminati)
+                Enumeratori.StatoGiocatore stato = giocatoreDTO.getStatiPerLega().get(legaDTO.getId());
+                boolean haGiocate = giocatoreDTO.getGiocate() != null && !giocatoreDTO.getGiocate().isEmpty();
+
+                if (stato == Enumeratori.StatoGiocatore.ATTIVO || haGiocate) {
+                    giocatoreLega.setPosizioneFinale(posizione);
+                    log.debug("Giocatore {} - Posizione: {}, Stato: {}, Giocate: {}",
+                            giocatoreDTO.getNome(), posizione, stato,
+                            haGiocate ? giocatoreDTO.getGiocate().size() : 0);
+                    posizione++;
+                }
+            }
+        }
+
+        log.info("Assegnate {} posizioni finali per lega {}", posizione - 1, legaDTO.getId());
+    }
+
     @LoggaDispositiva(tipologia = "termina")
     @Transactional
     public LegaDTO termina(Long idLega) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
-        salva(legaDTO, null);
+
+        // Calcola e assegna le posizioni finali prima di terminare
+        assegnaPosizioniFinali(legaDTO);
+
+        salva(legaDTO, Enumeratori.StatoLega.TERMINATA);
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 

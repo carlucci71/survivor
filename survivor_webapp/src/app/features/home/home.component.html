@@ -33,13 +33,20 @@
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
 
-      <mat-card *ngIf="leghe.length === 0" class="no-data">
+      <!-- Skeleton Loading -->
+      <div *ngIf="isLoadingLeghe" class="leghe-groups">
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+      </div>
+
+      <mat-card *ngIf="!isLoadingLeghe && leghe.length === 0" class="no-data">
         <mat-card-content>
           <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
 
-      <div *ngIf="groupedLeghe.length > 0" class="leghe-groups">
+      <div *ngIf="!isLoadingLeghe && groupedLeghe.length > 0" class="leghe-groups">
         <ng-container *ngFor="let group of groupedLeghe">
           <mat-card>
             <mat-card-header>

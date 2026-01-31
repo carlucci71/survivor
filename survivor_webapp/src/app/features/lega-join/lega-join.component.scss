@@ -4,33 +4,37 @@
 }
 
 .main-content {
-	max-width: 1000px;
+	max-width: 1200px;
 	margin: 0 auto;
-	padding: 32px 20px;
+	padding: 24px 16px;
 }
 
 h2 {
-	margin: 0 0 12px 0;
-	font-size: 1.6rem;
+	margin: 0 0 16px 0;
+	font-size: 1.5rem;
 	color: #333;
+	font-weight: 600;
 }
 
 .leghe-groups {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-bottom: 16px;
 
 	.edizioni-list {
 		display: flex;
 		flex-direction: column;
-		align-items: center; /* center narrow cards */
+		align-items: stretch;
 		width: 100%;
+		gap: 16px;
 	}
 }
 
 .edizioni-list {
-	display: grid;
-	gap: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
 }
 
 /* .lega-card.small styles are provided by the shared LegaCardComponent */
@@ -38,9 +42,9 @@ h2 {
 .lega-card .meta {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 4px;
 	color: #666;
-	font-size: 14px;
+	font-size: 13px;
 }
 
 .no-data {
@@ -49,6 +53,42 @@ h2 {
 	color: #666;
 }
 
+/* Desktop ottimizzato - Card a tutta larghezza */
+@media (min-width: 901px) {
+	.main-content {
+		padding: 32px 24px;
+		max-width: 1400px;
+	}
+
+	.leghe-groups {
+		gap: 20px;
+	}
+
+	.edizioni-list {
+		gap: 20px;
+	}
+
+	h2 {
+		font-size: 1.6rem;
+		margin-bottom: 20px;
+	}
+}
+
+/* Mobile */
 @media (max-width: 900px) {
-	.leghe-groups { grid-template-columns: 1fr; }
+	.leghe-groups {
+		gap: 12px;
+	}
+
+	.edizioni-list {
+		gap: 12px;
+	}
+
+	.main-content {
+		padding: 20px 12px;
+	}
+
+	h2 {
+		font-size: 1.3rem;
+	}
 }
