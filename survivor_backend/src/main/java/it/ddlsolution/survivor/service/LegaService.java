@@ -191,6 +191,7 @@ public class LegaService {
 
         // Aggiorna solo i campi modificabili
         lega.setGiornataCalcolata(legaDTO.getGiornataCalcolata());
+        lega.setGiornataFinale(legaDTO.getGiornataFinale());
 
         // Aggiorna gli stati dei giocatori e le loro giocate
         if (legaDTO.getGiocatori() != null) {
@@ -429,21 +430,29 @@ public class LegaService {
     private void calcolaStatoLega(LegaDTO legaDTO, Enumeratori.StatoLega statoForzato) {
         if (statoForzato != null) {
             legaDTO.setStato(statoForzato);
+            if (statoForzato!= Enumeratori.StatoLega.TERMINATA){
+                legaDTO.setGiornataFinale(null);
+            }
         } else if ((legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
-
+            legaDTO.setGiornataFinale(null);
         } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
                 && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
+            legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getGiocatori().stream()
                 .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
                 .count() <= 1
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
+            legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
+        }
+        if (legaDTO.getStato()== Enumeratori.StatoLega.TERMINATA){
+            assegnaPosizioniFinali(legaDTO);
         }
     }
 

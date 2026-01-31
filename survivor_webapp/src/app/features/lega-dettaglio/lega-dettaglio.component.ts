@@ -219,7 +219,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
       ret = 'Non visualizzo perchè la giornata è sospesa';
     }
-    if (this.lega?.stato.value === StatoLega.TERMINATA.value) {
+    if (this.isTerminata()) {
       ret = 'Non visualizzo perchè la lega è terminata';
     }
     if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
@@ -235,7 +235,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     let maxGiornata = this.lega?.giornataCalcolata
       ? this.lega?.giornataCalcolata + 1
       : giornataIniziale;
-
+      if (this.lega?.giornataFinale){
+        maxGiornata=this.lega?.giornataFinale+1;
+      }
     const numGg = this.lega?.campionato?.numGiornate || 0;
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
@@ -711,7 +713,8 @@ export class LegaDettaglioComponent implements OnDestroy {
             if (primaPartita && primaPartita.orario) {
               console.log('✅ Prima partita trovata:', primaPartita.orario);
               this.startCountdownWithTime(new Date(primaPartita.orario));
-            } else {
+            }
+            else {
               console.warn('⚠️ Nessuna partita con orario trovata');
               this.countdownActive = false;
             }
@@ -735,33 +738,33 @@ export class LegaDettaglioComponent implements OnDestroy {
     console.log('🎯 Target time (5min prima):', targetTime);
 
     const updateCountdown = () => {
-      const now = new Date().getTime();
-      const countdownEndTime = targetTime.getTime();
-      const distance = countdownEndTime - now;
+        const now = new Date().getTime();
+        const countdownEndTime = targetTime.getTime();
+        const distance = countdownEndTime - now;
 
-      if (distance < 0) {
-        // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
-        this.countdown = '⏰ ' + this.translate.instant('LEAGUE.TIME_EXPIRED');
-        this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
-        this.countdownExpired = true; // Flag per applicare lo stile rosso
-        // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
-        return;
-      }
+        if (distance < 0) {
+          // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
+          this.countdown = '⏰ ' + this.translate.instant('LEAGUE.TIME_EXPIRED');
+          this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
+          this.countdownExpired = true; // Flag per applicare lo stile rosso
+          // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
+          return;
+        }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      if (days > 0) {
-        this.countdown = `${days}g ${hours}h ${minutes}m`;
-      } else if (hours > 0) {
-        this.countdown = `${hours}h ${minutes}m ${seconds}s`;
-      } else {
-        this.countdown = `${minutes}m ${seconds}s`;
-      }
+        if (days > 0) {
+          this.countdown = `${days}g ${hours}h ${minutes}m`;
+        } else if (hours > 0) {
+          this.countdown = `${hours}h ${minutes}m ${seconds}s`;
+        } else {
+          this.countdown = `${minutes}m ${seconds}s`;
+        }
 
-      this.countdownActive = true;
+        this.countdownActive = true;
     };
 
     updateCountdown();

@@ -14,6 +14,7 @@ public interface LegaProjection {
     String getPwd();
     Enumeratori.StatoLega getStato();
     int getGiornataIniziale();
+    int getGiornataFinale();
     Integer getGiornataCalcolata();
     CampionatoProjection getCampionato();
 }

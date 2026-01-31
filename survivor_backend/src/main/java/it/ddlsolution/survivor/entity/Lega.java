@@ -41,6 +41,9 @@ public class Lega {
     @Column(name = "giornata_calcolata")
     private Integer giornataCalcolata;
 
+    @Column(name = "giornata_finale")
+    private Integer giornataFinale;
+
     @ManyToOne
     @JoinColumn(name = "id_campionato", nullable = false)
     @JsonBackReference("campionato-leghe")

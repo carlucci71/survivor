@@ -112,6 +112,7 @@ export interface Lega {
   campionato?: Campionato;
   giocatori?: Giocatore[];
   giornataIniziale: number;
+  giornataFinale: number;
   giornataCalcolata: number;
   giornataDaGiocare: number;
   giornataCorrente: number;

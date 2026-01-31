@@ -23,9 +23,13 @@
           }
     <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
     <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.descrizione }}</div>
+    @if (lega.giornataFinale) {
+      <div>{{ 'LEAGUE.FINAL_ROUND' | translate }}: {{lega.giornataFinale}}</div>
+    }
           </mat-card-subtitle>
         </mat-card-header>
 
+        @if (!this.isTerminata()){
         <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
         <div class="countdown-timer-section">
           @if(countdownActive) {
@@ -42,6 +46,7 @@
           <div class="prossimo-inizio">{{ 'LEAGUE.NEXT_START' | translate }}: {{ lega.inizioProssimaGiornata }}</div>
           }
         </div>
+      }
     <mat-card-content>
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
       <div class="admin-actions">
