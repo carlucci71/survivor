@@ -27,7 +27,8 @@ public class ScheduledCacheRefresher {
     private final CacheableService cacheableService;
     private final WarmupService warmupService;
 
-    @Scheduled(cron = "0 0/5 * * * ?") // OGNI 5 MINUTI
+    //@Scheduled(cron = "0 0/5 * * * ?") // OGNI 5 MINUTI FIXME
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void autoRefresh(){
         if (isCacheEmpty(CAMPIONATI)) {
             cacheableService.allCampionati();

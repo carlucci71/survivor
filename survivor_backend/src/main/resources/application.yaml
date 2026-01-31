@@ -92,3 +92,7 @@ push:
     credentials-path: ${PUSH_FCM_CREDENTIALS_PATH:}
     credentials-json: ${PUSH_FCM_CREDENTIALS_JSON:}
 
+# Flag to enable connection acquire/release logging (configured via environment or dev profile)
+app:
+  datasource:
+    log-connections: ${APP_DATASOURCE_LOG_CONNECTIONS:false}

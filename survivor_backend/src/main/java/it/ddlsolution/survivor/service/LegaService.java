@@ -78,7 +78,7 @@ public class LegaService {
     public List<LegaDTO> legheUser(Long userId) {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         return leghe
-                .parallelStream()
+                .stream()
                 .map(lega -> getLegaDTO(lega.getId(), false, userId))
                 .toList();
     }
