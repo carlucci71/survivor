@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import it.ddlsolution.survivor.config.DataSourceConnectionLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -74,6 +75,7 @@ public class CacheableService {
 
     // Self provider per invocare metodi transazionali sul proxy del bean (per worker threads)
     private final ObjectProvider<CacheableService> selfProvider;
+    private final ObjectProvider<DataSourceConnectionLogger> dsLoggerProvider;
 
     public final static String CAMPIONATI = "campionati";
     public final static String SQUADRE = "squadre";
@@ -213,6 +215,15 @@ public class CacheableService {
                     allCampionatiInProgress = null;
                 }
             }
+            // Debug: log delle connection aperte (solo se il bean è presente e abilitato)
+            try {
+                DataSourceConnectionLogger logger = dsLoggerProvider.getIfAvailable();
+                if (logger != null) {
+                    logger.logOpenConnections();
+                }
+            } catch (Exception ex) {
+                log.warn("Errore durante il log delle connection aperte", ex);
+            }
         }
     }
 
@@ -298,8 +309,9 @@ public class CacheableService {
      * transazione separata per ogni worker. Questo evita che il thread chiamante
      * (es. il thread HTTP che ha attivato la cache) mantenga la connessione al DB
      * per tutta la durata dell'elaborazione parallela.
+     * Non funzionava ed ho rimosso @Transactional
      */
-    @Transactional
+    // @Transactional
     public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {
         List<LocalDateTime> iniziGiornate = new ArrayList<>();
         Integer giornataDaGiocare = null;

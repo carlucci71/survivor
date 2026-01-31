@@ -8,6 +8,7 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +28,7 @@ public class CacheConfig {
                 .expireAfterWrite(1, TimeUnit.DAYS)
                 .maximumSize(1000);
         Caffeine<Object, Object> tenMinutesCache = Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .expireAfterWrite(Duration.ofMinutes(9).plusSeconds(30).toSeconds(), TimeUnit.SECONDS)
                 .maximumSize(1000);
 
         CaffeineCache sport = new CaffeineCache(SPORT, oneDayCache.build());

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
@@ -36,23 +36,52 @@ import { TranslateModule } from '@ngx-translate/core';
     .actions { margin-top: 16px; }
   `]
 })
-export class ServiceUnavailableComponent {
+export class ServiceUnavailableComponent implements OnDestroy, OnInit {
   checking = false;
+  private pollingInterval: any = null;
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  ngOnInit(): void {
+    this.startPolling();
+  }
+
   refresh(): void {
-    if (this.checking) return;
+    // original behaviour: reload the page
+    window.location.reload();
+  }
+
+  private startPolling(): void {
+    if (this.pollingInterval) return;
     this.checking = true;
-    this.auth.probeMyData(true).subscribe({
-      next: () => {
-        this.router.navigate(['/home']).catch(() => { window.location.href = '/home'; });
-      },
-        error: () => {
-          // keep user on this page; re-enable button
+
+    const tryProbe = () => {
+      this.auth.probeMyData(true).subscribe({
+        next: () => {
+          this.clearPolling();
           this.checking = false;
+          this.router.navigate(['/home']).catch(() => { window.location.href = '/home'; });
+        },
+        error: () => {
+          // ignore; next interval will retry
         }
-    });
+      });
+    };
+
+    this.pollingInterval = setInterval(tryProbe, 10000);
+    tryProbe();
+  }
+
+  private clearPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    this.checking = false;
+  }
+
+  ngOnDestroy(): void {
+    this.clearPolling();
   }
 
   goBack(): void {
