@@ -236,13 +236,11 @@ export class LegaDettaglioComponent implements OnDestroy {
       ? this.lega?.giornataCalcolata + 1
       : giornataIniziale;
       if (this.lega?.giornataFinale){
-        maxGiornata=this.lega?.giornataFinale+1;
+        maxGiornata=this.lega?.giornataFinale;
       }
     const numGg = this.lega?.campionato?.numGiornate || 0;
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
-    } else if (this.lega?.stato.value === StatoLega.TERMINATA.value && this.lega.statoGiornataCorrente != StatoPartita.IN_CORSO) {
-      maxGiornata--;
     }
     //const giornataCorrente = this.lega?.giornataCorrente || 0;
     for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
