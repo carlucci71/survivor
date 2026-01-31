@@ -37,7 +37,7 @@ public class DataSourceConnectionLogger implements BeanPostProcessor {
     private final Map<Connection, AcquisitionInfo> openConnections = new ConcurrentHashMap<>();
 
     // Numero di stack frames da loggare per non intasare i log
-    private static final int STACK_FRAMES_TO_LOG = 20;
+    private static final int STACK_FRAMES_TO_LOG = 10;
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
@@ -90,7 +90,7 @@ public class DataSourceConnectionLogger implements BeanPostProcessor {
                     new Class[]{Connection.class},
                     h);
             // registra
-            AcquisitionInfo info = new AcquisitionInfo(Thread.currentThread().getName(), Thread.currentThread().getId(), captureStack());
+            AcquisitionInfo info = new AcquisitionInfo(Integer.toHexString(System.identityHashCode(proxy)),Thread.currentThread().getName(), Thread.currentThread().getId(), captureStack());
             openConnections.put(proxy, info);
             logAcquired(proxy, info);
             return proxy;
@@ -99,19 +99,20 @@ public class DataSourceConnectionLogger implements BeanPostProcessor {
         private List<String> captureStack() {
             return Arrays.stream(Thread.currentThread().getStackTrace())
                     .skip(3) // skip runtime frames
+                    .filter(s->s.toString().indexOf("ddlsolution")>-1)
                     .limit(STACK_FRAMES_TO_LOG)
-                    .map(StackTraceElement::toString)
+                    .map(s -> s.toString() + System.lineSeparator())
                     .collect(Collectors.toList());
         }
     }
 
     private class ConnectionInvocationHandler implements InvocationHandler {
         private final Connection delegate;
-        private final String id;
+        //private final String id;
 
         ConnectionInvocationHandler(Connection delegate) {
             this.delegate = delegate;
-            this.id = Integer.toHexString(System.identityHashCode(delegate));
+           // this.id = Integer.toHexString(System.identityHashCode(delegate));
         }
 
         @Override
@@ -120,9 +121,9 @@ public class DataSourceConnectionLogger implements BeanPostProcessor {
             if ("close".equals(name) && (args == null || args.length == 0)) {
                 AcquisitionInfo info = openConnections.remove(proxy);
                 if (info != null) {
-                    logReleased(id, info);
+                    logReleased(info);
                 } else {
-                    log.info("Releasing connection {} (info not found)", id);
+                    log.info("Releasing connection (info not found)");
                 }
                 try {
                     return method.invoke(delegate, args);
@@ -139,21 +140,22 @@ public class DataSourceConnectionLogger implements BeanPostProcessor {
     }
 
     private void logAcquired(Connection proxy, AcquisitionInfo info) {
-        String id = Integer.toHexString(System.identityHashCode(proxy));
-        log.info("[CONN-ACQUIRE] id={} thread={} tid={} stack={}",
-                id, info.threadName, info.threadId, String.join(" | ", info.stack));
+        log.info("[CONN-ACQUIRE] id={} thread={} tid={} stack={}", info.id, info.threadName, info.threadId, String.join(" | ", info.stack));
+
     }
 
-    private void logReleased(String id, AcquisitionInfo info) {
-        log.info("[CONN-RELEASE] id={} thread={} tid={} acquiredStack={}", id, info.threadName, info.threadId, String.join(" | ", info.stack));
+    private void logReleased(AcquisitionInfo info) {
+        log.info("[CONN-RELEASE] id={} thread={} tid={} acquiredStack={}", info.id, info.threadName, info.threadId, String.join(" | ", info.stack));
     }
 
     private static class AcquisitionInfo {
+        final String id;
         final String threadName;
         final long threadId;
         final List<String> stack;
 
-        AcquisitionInfo(String threadName, long threadId, List<String> stack) {
+        AcquisitionInfo(String id, String threadName, long threadId, List<String> stack) {
+            this.id = id;
             this.threadName = threadName;
             this.threadId = threadId;
             this.stack = stack;
