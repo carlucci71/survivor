@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,11 +78,9 @@ public class TrofeiService {
         dto.setIdSport(gl.getLega().getCampionato().getSport().getId());
 
         // Calcola numero giornate giocate - conta le giocate dalla entity
-        Long giornateGiocate = giocataRepository.countByGiocatore_IdAndLega_Id(
-                gl.getGiocatore().getId(),
-                gl.getLega().getId()
-        );
-        dto.setGiornateGiocate(giornateGiocate.intValue());
+        if (!ObjectUtils.isEmpty(gl.getLega().getGiornataFinale())) {
+            dto.setGiornateGiocate(gl.getLega().getGiornataFinale() - gl.getLega().getGiornataIniziale()+1);
+        }
 
         // Recupera ultima squadra scelta (se disponibile) usando query nativa
         giocataRepository.findTopByGiocatore_IdAndLega_IdOrderByGiornataDesc(
