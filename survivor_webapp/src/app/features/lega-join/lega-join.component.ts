@@ -57,7 +57,8 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
   seleziona(lega: Lega | null): void {
     if (!lega) return;
     const dialogRef = this.dialog.open(ConfermaJoinDialogComponent, {
-      width: '420px',
+      width: '380px',
+      maxWidth: '95vw',
       disableClose: true,
       data: { lega },
     });

@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { GiocatoreService } from '../../../core/services/giocatore.service';
 import { SquadraService } from '../../../core/services/squadra.service';
+import { TrofeiService } from '../../../core/services/trofei.service';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
@@ -623,46 +624,55 @@ export class RegolamentoBannerDialogComponent {
       </div>
 
       <div class="dialog-content">
+        <!-- Loading state -->
+        <div class="loading-state" *ngIf="isLoading" style="text-align: center; padding: 40px;">
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px; animation: spin 1s linear infinite;">autorenew</mat-icon>
+          <p>{{ 'COMMON.LOADING' | translate }}...</p>
+        </div>
+
         <!-- Messaggio simpatico se non ci sono trofei -->
-        <div class="empty-state" *ngIf="!hasTrofei">
+        <div class="empty-state" *ngIf="!isLoading && !hasTrofei">
           <div class="empty-emoji">{{ currentEmoji }}</div>
           <p class="empty-message">{{ currentMessage }}</p>
           <p class="empty-subtitle">{{ currentSubtitle }}</p>
         </div>
 
         <!-- Lista trofei personali -->
-        <div class="winner-card" *ngIf="hasTrofei">
-          <div class="season">
-            <h3>🏆 {{ 'TROPHIES.SEASON' | translate }} 2024-2025</h3>
-            <div class="winner-info">
-              <div class="winner-name">{{ 'TROPHIES.FIRST_PLACE' | translate }}</div>
-              <div class="winner-details">
-                <span class="detail">{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: 8</span>
-                <span class="detail">{{ 'TROPHIES.FINAL_TEAM' | translate }}: Napoli</span>
+        <div *ngIf="!isLoading && hasTrofei && statistiche">
+          <div class="winner-card" *ngFor="let trofeo of statistiche.trofei">
+            <div class="season">
+              <h3>{{ getPosizioneEmoji(trofeo.posizioneFinale) }} {{ trofeo.nomeLega }} - Ed. {{ trofeo.edizione }}</h3>
+              <div class="winner-info">
+                <div class="winner-name">{{ getPosizioneLabel(trofeo.posizioneFinale) }}</div>
+                <div class="winner-details">
+                  <span class="detail">{{ trofeo.nomeSport }} - {{ trofeo.nomeCampionato }} {{ trofeo.anno }}</span>
+                  <span class="detail">{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: {{ trofeo.giornateGiocate }}</span>
+                  <span class="detail" *ngIf="trofeo.ultimaSquadraScelta">{{ 'TROPHIES.FINAL_TEAM' | translate }}: {{ trofeo.ultimaSquadraScelta }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Statistiche personali - solo se ci sono dati -->
-        <div class="stats-section" *ngIf="hasTrofei">
+        <div class="stats-section" *ngIf="!isLoading && hasTrofei && statistiche">
           <h3>📊 {{ 'TROPHIES.YOUR_STATS' | translate }}</h3>
           <div class="stats-grid">
             <div class="stat-item">
-              <span class="stat-number">5</span>
+              <span class="stat-number">{{ statistiche.torneiGiocati }}</span>
               <span class="stat-label">{{ 'TROPHIES.TOURNAMENTS_PLAYED' | translate }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">2</span>
+              <span class="stat-number">{{ statistiche.vittorie }}</span>
               <span class="stat-label">{{ 'TROPHIES.VICTORIES' | translate }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">35</span>
-              <span class="stat-label">{{ 'TROPHIES.TOTAL_ROUNDS' | translate }}</span>
+              <span class="stat-number">{{ statistiche.podi }}</span>
+              <span class="stat-label">{{ 'TROPHIES.PODIUMS' | translate }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number">78%</span>
-              <span class="stat-label">% Successo</span>
+              <span class="stat-number">{{ statistiche.winRate.toFixed(1) }}%</span>
+              <span class="stat-label">Win Rate</span>
             </div>
           </div>
         </div>
@@ -1092,10 +1102,10 @@ export class RegolamentoBannerDialogComponent {
     }
   `]
 })
-export class AlboOroDialogComponent {
-  // TODO: Collegare ai dati reali dell'utente dal backend
-  hasTrofei = false; // Imposta a true quando ci sono dati dal DB
-
+export class AlboOroDialogComponent implements OnInit {
+  hasTrofei = false;
+  statistiche: any = null;
+  isLoading = true;
 
   currentEmoji = '';
   currentMessage = '';
@@ -1103,9 +1113,38 @@ export class AlboOroDialogComponent {
 
   constructor(
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private trofeiService: TrofeiService
   ) {
     this.pickRandomMessage();
+  }
+
+  ngOnInit(): void {
+    this.loadTrofei();
+  }
+
+  private loadTrofei(): void {
+    this.isLoading = true;
+    this.trofeiService.getMieiTrofei().subscribe({
+      next: (stats) => {
+        this.statistiche = stats;
+        this.hasTrofei = stats.trofei && stats.trofei.length > 0;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Errore caricamento trofei:', err);
+        this.hasTrofei = false;
+        this.isLoading = false;
+      }
+    });
+  }
+
+  getPosizioneEmoji(posizione: number): string {
+    return this.trofeiService.getPosizioneEmoji(posizione);
+  }
+
+  getPosizioneLabel(posizione: number): string {
+    return this.trofeiService.getPosizioneLabel(posizione);
   }
 
   private pickRandomMessage() {
