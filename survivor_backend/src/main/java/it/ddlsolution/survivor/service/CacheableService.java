@@ -109,6 +109,9 @@ public class CacheableService {
 
     private final ConcurrentHashMap<String, CompletableFuture<CampionatoDTO>> elaborazioniInCorso = new ConcurrentHashMap<>();
 
+    // Guard che evita invocazioni parallele dell'intero allCampionati
+    private final Object allCampionatiLock = new Object();
+    private volatile CompletableFuture<List<CampionatoDTO>> allCampionatiInProgress = null;
 
     @Cacheable(value = CAMPIONATI, sync = true)
     // Nota: rimuoviamo l'annotazione @Transactional da questo metodo per evitare che
@@ -121,57 +124,96 @@ public class CacheableService {
     // worker apra e chiuda rapidamente le proprie connessioni.
     public List<CampionatoDTO> allCampionati() {
 
-        List<CampionatoDTO> campionatiDTO = new ArrayList<>();
-        List<CampionatoDTO> campionatiDaElaborare = campionatoService.leggiCampionati();
-
-        ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
-        try {
-            // Crea i future e li passa a elaboraCampionato per la gestione della sincronizzazione
-            List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
-                    .map(campionatoDTO -> {
-                        CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
-                        executor.submit(() -> elaboraCampionato(campionatoDTO, campionatoDTO.getAnnoCorrente(), future));
-                        return future;
-                    })
-                    .toList();
-
-            CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-            try {
-                all.get(allCampionatiTimeoutSeconds, TimeUnit.SECONDS);
-            } catch (TimeoutException te) {
-                futures.forEach(f -> f.cancel(true));
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                log.warn("Thread interrotto mentre si attendeva il completamento di allCampionati", ie);
-            } catch (ExecutionException ee) {
-                // Log già gestito nei singoli future
+        // Se esiste già un'elaborazione in corso, usa quella
+        synchronized (allCampionatiLock) {
+            if (allCampionatiInProgress != null && !allCampionatiInProgress.isDone()) {
+                log.info("allCampionati già in corso, attendo risultato esistente");
+                return allCampionatiInProgress.join();
             }
-
-            for (CompletableFuture<CampionatoDTO> f : futures) {
-                try {
-                    CampionatoDTO result = f.join(); // rilancia CompletionException se il task ha fallito
-                    if (result != null) {
-                        campionatiDTO.add(result);
-                    }
-                } catch (CompletionException ex) {
-                    log.error("Errore durante l'elaborazione di un campionato (parallelo)", ex.getCause());
-                }
-            }
-            log.info("Elaborati {} campionati con successo su {}.", campionatiDTO.size(), futures.size());
-
-        } finally {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt();
-            }
+            allCampionatiInProgress = new CompletableFuture<>();
         }
 
-        return campionatiDTO;
+        List<CampionatoDTO> campionatiDTO = new ArrayList<>();
+        boolean completedNormally = false;
+        try {
+            List<CampionatoDTO> campionatiDaElaborare = campionatoService.leggiCampionati();
+
+            ExecutorService executor = Executors.newFixedThreadPool(allCampionatiThreads);
+            try {
+                // Crea i future e li passa a elaboraCampionato per la gestione della sincronizzazione
+                List<CompletableFuture<CampionatoDTO>> futures = campionatiDaElaborare.stream()
+                        .map(campionatoDTO -> {
+                            CompletableFuture<CampionatoDTO> future = new CompletableFuture<>();
+                            executor.submit(() -> elaboraCampionato(campionatoDTO, campionatoDTO.getAnnoCorrente(), future));
+                            return future;
+                        })
+                        .toList();
+
+                CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                boolean timedOut = false;
+                try {
+                    all.get(allCampionatiTimeoutSeconds, TimeUnit.SECONDS);
+                } catch (TimeoutException te) {
+                    // Non cancelliamo i task: l'interruzione può causare leak di connessioni se una transazione viene
+                    // interrotta in modo non pulito. Raccogliamo invece solo i risultati completati entro il timeout.
+                    timedOut = true;
+                    log.warn("Timeout ({}) raggiunto durante l'elaborazione parallela di allCampionati; verranno raccolti solo i risultati completati.", allCampionatiTimeoutSeconds);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    log.warn("Thread interrotto mentre si attendeva il completamento di allCampionati", ie);
+                } catch (ExecutionException ee) {
+                    // Log già gestito nei singoli future
+                }
+
+                for (CompletableFuture<CampionatoDTO> f : futures) {
+                    if (!f.isDone()) {
+                        log.debug("Task per un campionato non completato entro il timeout; verrà ignorato nella raccolta dei risultati.");
+                        continue;
+                    }
+                    try {
+                        CampionatoDTO result = f.join(); // rilancia CompletionException se il task ha fallito
+                        if (result != null) {
+                            campionatiDTO.add(result);
+                        }
+                    } catch (CompletionException ex) {
+                        log.error("Errore durante l'elaborazione di un campionato (parallelo)", ex.getCause());
+                    }
+                }
+
+                if (timedOut) {
+                    log.info("Elaborazione parallela di allCampionati terminata con timeout; {} risultati raccolti su {}.", campionatiDTO.size(), futures.size());
+                } else {
+                    log.info("Elaborati {} campionati con successo su {}.", campionatiDTO.size(), futures.size());
+                }
+
+            } finally {
+                executor.shutdown();
+                try {
+                    if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
+                        executor.shutdownNow();
+                    }
+                } catch (InterruptedException e) {
+                    executor.shutdownNow();
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            completedNormally = true;
+            return campionatiDTO;
+
+        } finally {
+            // completa la future condivisa in base al risultato
+            synchronized (allCampionatiLock) {
+                if (allCampionatiInProgress != null) {
+                    if (completedNormally) {
+                        allCampionatiInProgress.complete(campionatiDTO);
+                    } else {
+                        allCampionatiInProgress.completeExceptionally(new RuntimeException("allCampionati non completato regolarmente"));
+                    }
+                    allCampionatiInProgress = null;
+                }
+            }
+        }
     }
 
     /**
