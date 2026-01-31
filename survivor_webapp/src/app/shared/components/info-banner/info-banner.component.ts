@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { GiocatoreService } from '../../../core/services/giocatore.service';
 import { SquadraService } from '../../../core/services/squadra.service';
 import { TrofeiService } from '../../../core/services/trofei.service';
+import { Squadra } from '../../../core/models/interfaces.model';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
@@ -572,7 +573,12 @@ export class RegolamentoBannerDialogComponent {
   private lastScrollTop = 0;
   private scrollTimeout: any;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog,
+    private squadraService: SquadraService
+  ) {
+    
+
+  }
 
   onScroll(event: any): void {
     const scrollTop = event.target.scrollTop;
@@ -1226,7 +1232,7 @@ export class AlboOroDialogComponent implements OnInit {
               <div class="suggestion-item"
                 *ngFor="let squadra of filteredSquadre"
                 (mousedown)="selectSquadra(squadra)">
-                {{ squadra }}
+                {{squadra.nome}}
               </div>
             </div>
           </div>
@@ -1824,41 +1830,13 @@ export class ProfiloDialogComponent implements OnInit {
   };
 
   showSuggestions = false;
-  filteredSquadre: string[] = [];
+  filteredSquadre: Squadra[] = [];
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
 
-  // Lista completa squadre italiane (Serie A, B, C, D)
-  tutteLeSquadre = [
-    // Serie A
-    'Atalanta', 'Bologna', 'Cagliari', 'Como', 'Empoli', 'Fiorentina',
-    'Genoa', 'Hellas Verona', 'Inter', 'Juventus', 'Lazio', 'Lecce',
-    'Milan', 'Monza', 'Napoli', 'Parma', 'Roma', 'Torino', 'Udinese', 'Venezia',
-    // Serie B
-    'Bari', 'Brescia', 'Catanzaro', 'Cesena', 'Cittadella', 'Cosenza',
-    'Cremonese', 'Frosinone', 'Juve Stabia', 'Mantova', 'Modena', 'Palermo',
-    'Pisa', 'Reggiana', 'Salernitana', 'Sampdoria', 'Sassuolo', 'Spezia',
-    'Südtirol', 'Carrarese',
-    // Serie C - Gruppo A
-    'Albinoleffe', 'Alessandria', 'Arzignano', 'Atalanta U23', 'Feralpisalò',
-    'Juventus Next Gen', 'Lecco', 'Lumezzane', 'Novara', 'Padova', 'Pergolettese',
-    'Pro Patria', 'Pro Vercelli', 'Renate', 'Trento', 'Triestina', 'Vicenza', 'Virtus Verona',
-    // Serie C - Gruppo B
-    'Arezzo', 'Ascoli', 'Campobasso', 'Carpi', 'Entella', 'Gubbio',
-    'Lucchese', 'Milan Futuro', 'Perugia', 'Pescara', 'Pianese', 'Pineto',
-    'Pontedera', 'Rimini', 'SPAL', 'Ternana', 'Torres', 'Vis Pesaro',
-    // Serie C - Gruppo C
-    'ACR Messina', 'Altamura', 'Audace Cerignola', 'Avellino', 'Benevento',
-    'Casertana', 'Catania', 'Cavese', 'Crotone', 'Foggia', 'Giugliano',
-    'Latina', 'Monopoli', 'Picerno', 'Potenza', 'Sorrento', 'Taranto', 'Trapani', 'Turris',
-    // Altre squadre storiche/Serie D
-    'Ancona', 'Barletta', 'Brindisi', 'Casale', 'Fano', 'Fermana',
-    'Francavilla', 'Gela', 'Grosseto', 'Imolese', 'L\'Aquila', 'Legnago',
-    'Maceratese', 'Matera', 'Messina', 'Nocerina', 'Piacenza', 'Prato',
-    'Pro Piacenza', 'Ravenna', 'Reggina', 'Rieti', 'Siena', 'Siracusa',
-    'Terni', 'Vibonese', 'Vigor Lamezia', 'Viterbese'
-  ].sort();
+
+  tutteLeSquadre: Squadra[]  = [];
 
 
   constructor(
@@ -1876,6 +1854,18 @@ export class ProfiloDialogComponent implements OnInit {
   }
 
   loadProfile() {
+
+        this.squadraService.getAllSquadre().subscribe({
+          next: (sq) => {
+              this.tutteLeSquadre=sq;
+          },
+          error: (error) => {
+            console.error('Errore nel caricamento delle squadre:', error);
+          },
+        });
+
+
+
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.userProfile.nickname = giocatore.nickname || '';
@@ -1892,7 +1882,7 @@ export class ProfiloDialogComponent implements OnInit {
     const query = (this.userProfile.squadraPreferita || '').toLowerCase();
     if (query.length >= 2) {
       this.filteredSquadre = this.tutteLeSquadre
-        .filter(s => s.toLowerCase().includes(query))
+        .filter(s => s.nome.toLowerCase().includes(query))
         .slice(0, 10);
       this.showSuggestions = true;
     } else {
@@ -1910,8 +1900,8 @@ export class ProfiloDialogComponent implements OnInit {
     }
   }
 
-  selectSquadra(squadra: string) {
-    this.userProfile.squadraPreferita = squadra;
+  selectSquadra(squadra: Squadra) {
+    this.userProfile.squadraPreferita = squadra.nome;
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
