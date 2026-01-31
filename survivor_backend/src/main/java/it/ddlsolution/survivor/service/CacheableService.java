@@ -329,7 +329,7 @@ public class CacheableService {
 
                 Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                 log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);
-                if (giornataDaGiocare == null && (statoGiornata != Enumeratori.StatoPartita.TERMINATA)) {
+                if (giornataDaGiocare == null && (statoGiornata == Enumeratori.StatoPartita.DA_GIOCARE)) {
                     giornataDaGiocare = giornata;
                 }
             }

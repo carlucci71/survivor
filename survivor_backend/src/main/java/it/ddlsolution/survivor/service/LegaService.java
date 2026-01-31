@@ -628,7 +628,7 @@ public class LegaService {
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
-        lega.setAnno(lega.getCampionato().getAnnoCorrente());
+        lega.setAnno(campionatoService.getCampionato(lega.getCampionato().getId()).getAnnoCorrente());
         Lega legaSalvata = legaRepository.save(lega);
         return legaMapper.toDTO(legaSalvata);
     }
