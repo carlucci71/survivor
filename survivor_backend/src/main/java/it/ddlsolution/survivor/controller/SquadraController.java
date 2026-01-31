@@ -43,5 +43,10 @@ public class SquadraController {
         return ResponseEntity.ok(squadraService.findByNome(nome));
     }
 
+    @GetMapping
+    public ResponseEntity<List<SquadraDTO>> all() {
+        return ResponseEntity.ok(squadraService.all());
+    }
+
 }
 

@@ -5,7 +5,7 @@ import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,26 +17,25 @@ import java.util.List;
 public class SquadraService {
     private final SquadraRepository squadraRepository;
     private final SquadraMapper squadraMapper;
+    private final ObjectProvider<CacheableService> cacheableProvider;
 
     @Transactional(readOnly = true)
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {
-        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId,anno);
-        List<SquadraDTO> squadreDTO = squadraMapper.toDTOList(squadre)
+        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId, anno);
+        return squadraMapper.toDTOList(squadre)
                 .stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
                 .toList();
-
-        return squadreDTO;
     }
 
     @Transactional(readOnly = true)
-    public Squadra findBySiglaAndNazione(String squadraSigla, String nazione){
+    public Squadra findBySiglaAndNazione(String squadraSigla, String nazione) {
         return squadraRepository.findBySiglaAndNazione(squadraSigla, nazione)
                 .orElseThrow(() -> new IllegalArgumentException("Squadra non trovata"));
     }
 
     @Transactional(readOnly = true)
-    public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato){
+    public List<SquadraDTO> getSquadreFromIdCampionato(String idCampionato) {
         List<Squadra> squadre = squadraRepository.findByNazioneOfCampionato(idCampionato);
         return squadraMapper.toDTOList(squadre);
     }
@@ -48,5 +47,14 @@ public class SquadraService {
         return squadraMapper.toDTO(squadra);
     }
 
-}
+    @Transactional(readOnly = true)
+    public List<SquadraDTO> all() {
+        return cacheableProvider.getIfAvailable().allCampionati()
+                .stream()
+                .flatMap(c -> c.getSquadre().stream())
+                .distinct()
+                .sorted(Comparator.comparing(SquadraDTO::getNome))
+                .toList();
+    }
 
+}

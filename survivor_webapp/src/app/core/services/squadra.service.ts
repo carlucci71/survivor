@@ -41,4 +41,8 @@ export class SquadraService {
     return this.http.get<Squadra>(`${this.apiUrl}/search/${encodeURIComponent(nome)}`);
   }
 
+  getAllSquadre(): Observable<Squadra[]> {
+    return this.http.get<any[]>(`${this.apiUrl}`);
+  }
+
 }
