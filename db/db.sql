@@ -19,6 +19,7 @@ create table lega(
 	id serial primary key,
 	giornata_iniziale  integer NOT NULL,
 	giornata_calcolata  integer NULL,
+	giornata_finale  integer NULL,
 	name varchar(100) not null,
 	edizione integer NOT NULL DEFAULT 1;
 	stato char(1) not null,

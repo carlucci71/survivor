@@ -13,6 +13,7 @@ public class LegaDTO {
     private int giornataIniziale;
     private int giornataDaGiocare;
     private Integer giornataCalcolata;
+    private Integer giornataFinale;
     private List<Integer> edizioni;
     private String name;
     private Integer edizione;
