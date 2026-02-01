@@ -6,4 +6,11 @@
         <domain includeSubdomains="true">localhost</domain>
         <domain includeSubdomains="true">10.0.2.2</domain>
     </domain-config>
+    <!-- Explicitly allow connections to production domain (HTTPS). -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">liberaleidee.it</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
 </network-security-config>
