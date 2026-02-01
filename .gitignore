@@ -9,5 +9,3 @@ survivor_backend/.github/
 .vscode/launch.json
 survivor_webapp/android/app/google-services.json
 survivor-webapp-firebase-adminsdk-fbsvc-7e5e89a47c.json
-survivor_webapp/src/assets/build_fe.html
-survivor_backend/build_be.html
