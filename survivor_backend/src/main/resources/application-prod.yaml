@@ -13,5 +13,5 @@ DB_USER: ${ENV_DB_USER}
 PORT: 8389
 SSL_ENABLED: false
 SWAGGER_SERVER_URL: ${ENV_SERVER}/api/survivorBe
-ALLOWED_SERVERS: ${ENV_SERVER},https://localhost
+ALLOWED_SERVERS: ${ENV_SERVER},capacitor://localhost,http://localhost,http://127.0.0.1,https://localhost
 
