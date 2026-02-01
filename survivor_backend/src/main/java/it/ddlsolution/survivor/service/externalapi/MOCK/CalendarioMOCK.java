@@ -1,32 +1,50 @@
 package it.ddlsolution.survivor.service.externalapi.MOCK;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.ParametriDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.PartitaMock;
 import it.ddlsolution.survivor.repository.PartitaMockRepository;
+import it.ddlsolution.survivor.service.CacheableService;
+import it.ddlsolution.survivor.service.ParametriService;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Service
 @Profile(CALENDARIO_MOCK)
 @Slf4j
-@RequiredArgsConstructor
+
 public class CalendarioMOCK implements ICalendario {
 
     private final PartitaMockRepository partitaMockRepository;
+    private final ParametriService parametriService;
+    private final LocalDateTime dataRiferimento;
+
+    public CalendarioMOCK(PartitaMockRepository partitaMockRepository, ParametriService parametriService) {
+        this.partitaMockRepository = partitaMockRepository;
+        this.parametriService = parametriService;
+        String dateString = parametriService.valueByCodeSystem(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
+                .withLocale(Locale.ITALY);
+
+        dataRiferimento = LocalDateTime.parse(dateString, formatter);
+
+    }
 
     @Override
     public List<PartitaDTO> getPartite( CampionatoDTO campionatoDTO, int giornata, short anno) {
@@ -63,8 +81,7 @@ public class CalendarioMOCK implements ICalendario {
         if (orario == null) {
             return Enumeratori.StatoPartita.SOSPESA;
         }
-        LocalDateTime now = LocalDateTime.now();
-        long diffMinutes = java.time.Duration.between(now, orario).toMinutes();
+        long diffMinutes = java.time.Duration.between(dataRiferimento, orario).toMinutes();
 
         if (diffMinutes < -120) {
             return Enumeratori.StatoPartita.TERMINATA;

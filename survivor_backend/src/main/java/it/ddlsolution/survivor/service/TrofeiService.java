@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.StatisticheTrofeiDTO;
 import it.ddlsolution.survivor.dto.TrofeoDTO;
+import it.ddlsolution.survivor.entity.Giocata;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.TrofeiRepository;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +21,7 @@ public class TrofeiService {
 
     private final TrofeiRepository trofeiRepository;
     private final GiocataRepository giocataRepository;
+    private final GiocataService giocataService;
 
     /**
      * Ottiene le statistiche complete dei trofei di un giocatore
@@ -78,9 +79,16 @@ public class TrofeiService {
         dto.setIdSport(gl.getLega().getCampionato().getSport().getId());
 
         // Calcola numero giornate giocate - conta le giocate dalla entity
-        if (!ObjectUtils.isEmpty(gl.getLega().getGiornataFinale())) {
-            dto.setGiornateGiocate(gl.getLega().getGiornataFinale() - gl.getLega().getGiornataIniziale()+1);
-        }
+        List<Giocata> giocateOfGiocatore = giocataService.giocateOfGiocatoreInLega(gl.getGiocatore().getId(), gl.getLega().getId());
+        Long giornateGiocate = giocateOfGiocatore
+                .stream()
+                .filter(g -> g.getGiornata() <= gl.getLega().getGiornataFinale() - gl.getLega().getGiornataIniziale()+1)
+                .count();
+
+
+        dto.setGiornateGiocate(giornateGiocate.intValue());
+
+
 
         // Recupera ultima squadra scelta (se disponibile) usando query nativa
         giocataRepository.findTopByGiocatore_IdAndLega_IdOrderByGiornataDesc(

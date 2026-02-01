@@ -1,3 +1,4 @@
+drop table if exists parametri;
 drop table if exists giocata;
 drop table if exists giocatore_lega;
 drop table if exists sospensione_lega;
@@ -15,6 +16,13 @@ drop TABLE if exists partita_mock;
 drop table if exists revinfo;
 drop table if exists giocata_aud;
 
+create table parametri(
+	id serial primary key,
+    id_lega integer NULL,
+	codice varchar(100) not null,
+	valore varchar(100) not null
+);
+insert into parametri (codice, valore) values ('MOCK_LOCALDATE_RIF','202602011000')
 create table lega(
 	id serial primary key,
 	giornata_iniziale  integer NOT NULL,
@@ -30,13 +38,16 @@ create table lega(
 create table giocatore(
 	id serial primary key,
 	nome varchar(100) not null,
-    user_id BIGINT NULL
+    user_id BIGINT NULL,
+	nickname VARCHAR(100),
+	squadra_cuore_id integer
 );
 CREATE TABLE giocatore_lega (
     id_giocatore integer NOT NULL,
     id_lega integer NOT NULL,
 	stato char(1) not null,
 	ruolo char(1) not null,
+	posizione_finale integer,
     PRIMARY KEY (id_giocatore, id_lega)
 );
 CREATE TABLE sospensione_lega (
@@ -202,6 +213,12 @@ ALTER TABLE param_log_dispositiva
 ADD CONSTRAINT fk_param_log_dispositiva_log_dispositiva
 FOREIGN KEY (id_log_dispositiva) REFERENCES log_dispositiva(id);
 
+ALTER TABLE giocatore
+ADD CONSTRAINT fk_giocatore_squadra_cuore 
+FOREIGN KEY (squadra_cuore_id) 
+REFERENCES squadra(id);
+
+
 CREATE UNIQUE INDEX idx_lega_name_unico ON lega (name,edizione);
 
 CREATE UNIQUE INDEX idx_giocatore_name_unico ON giocatore (nome);
@@ -212,6 +229,12 @@ CREATE INDEX idx_giocata_aud_rev ON giocata_aud(rev);
 CREATE INDEX idx_giocata_aud_id ON giocata_aud(id);
 CREATE INDEX idx_giocata_aud_id_giocatore ON giocata_aud(id_giocatore);
 CREATE INDEX idx_giocata_aud_id_lega ON giocata_aud(id_lega);
+
+CREATE INDEX idx_giocatore_squadra_cuore 
+ON giocatore(squadra_cuore_id);
+
+CREATE INDEX idx_giocatore_lega_posizione 
+ON giocatore_lega(posizione_finale);
 
 
 insert into sport(id,nome) values('CALCIO','Calcio');
