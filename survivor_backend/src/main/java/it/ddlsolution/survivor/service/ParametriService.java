@@ -1,6 +1,8 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.ParametriDTO;
+import it.ddlsolution.survivor.entity.Parametri;
+import it.ddlsolution.survivor.repository.ParametriRepository;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ParametriService {
     private final CacheableService cacheableService;
+    private final ParametriRepository parametriRepository;
 
     @Transactional(readOnly = true)
     public List<ParametriDTO> all() {
         return cacheableService.parametri();
+    }
+
+    @Transactional
+    public void aggiornaMockLocalDateRif(String valore) {
+        Parametri parametri = parametriRepository
+                .findByCodice(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF)
+                .orElseThrow(() -> new RuntimeException("Parametro non trovato: " + Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF));
+        parametri.setValore(valore);
+        parametriRepository.save(parametri);
+        cacheableService.clearCacheParametri();
     }
 
     @Transactional(readOnly = true)
