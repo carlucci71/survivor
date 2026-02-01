@@ -355,6 +355,8 @@
     "DASHBOARD": "Dashboard Amministratore",
     "PROFILE": "Profilo",
     "PROFILE_FE_MOBILE": "Profilo fe / mobile",
+    "BUILD_FE": "Build FE",
+    "BUILD_BE": "Build BE",
     "CALENDAR_URL": "Url calendario",
     "LEAGUES_MANAGEMENT": "Gestione Leghe",
     "LEAGUES_DESCRIPTION": "Crea e gestisci le leghe del sistema",

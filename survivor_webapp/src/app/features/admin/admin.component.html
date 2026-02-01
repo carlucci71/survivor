@@ -10,8 +10,9 @@
           <mat-card-content>
             <p>{{ 'ADMIN.PROFILE' | translate }}: <strong>{{ profilo }}</strong></p>
             <p>{{ 'ADMIN.PROFILE_FE_MOBILE' | translate }}: <strong>{{ profiloFe }}</strong></p>
+            <p>{{ 'ADMIN.BUILD_FE' | translate }}: <strong><span class="external-html-preview" *ngIf="externalHtml" [innerHTML]="externalHtml"></span></strong></p>
+            <p>{{ 'ADMIN.BUILD_BE' | translate }}: <strong><span class="external-html-preview" *ngIf="versioneBEHtml" [innerHTML]="versioneBEHtml"></span></strong></p>
             <p>{{ 'ADMIN.CALENDAR_URL' | translate }}: <strong>{{ calendario }}</strong></p>
-
           </mat-card-content>
         </mat-card>
 
@@ -64,6 +65,11 @@
           </mat-card-actions>
         </mat-card>
       </div>
+      <mat-card class="section-card external-html-card">
+        <mat-card-header>
+          <mat-card-title>HTML statico (assets)</mat-card-title>
+        </mat-card-header>
+      </mat-card>
     </div>
   </main>
 </div>
