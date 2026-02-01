@@ -307,6 +307,86 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  // ========== LOGHI E FOTO SQUADRE/TENNISTI ==========
+
+  // Mapping loghi calcio (Serie A + Serie B)
+  private readonly logoFiles: { [key: string]: string } = {
+    // SERIE A
+    'ATA': 'ATA', 'BOL': 'BOLO.png', 'CAG': 'CAGL.png', 'COM': 'COMO.png',
+    'CRE': 'CREMON.png', 'EMP': 'EMP.png', 'FIO': 'FIO.png', 'GEN': 'GENOA.png',
+    'INT': 'INT.png', 'JUV': 'JUV.png', 'LAZ': 'LAZIO.png', 'LEC': 'LECCE.webp',
+    'MIL': 'MIL.png', 'MON': 'MON.png', 'NAP': 'NAP.png', 'PAR': 'PARMA.png',
+    'PIS': 'PISA.png', 'ROM': 'ROMA.webp', 'SAS': 'SASS.png', 'TOR': 'TORO.png',
+    'UDI': 'UDI.png', 'VEN': 'VEN.png', 'VER': 'VER.png',
+    // SERIE B
+    'AVE': 'AVE.png', 'BAR': 'BARI.png', 'CAR': 'CARRARESE.png', 'CTZ': 'CATANZARO.png',
+    'CES': 'CES.png', 'ENT': 'ENT.png', 'JST': 'JUVE_STABIA.png', 'MAN': 'MANT.png',
+    'MOD': 'MOD.png', 'PAD': 'PADOVA.png', 'PAL': 'PAL.png', 'PES': 'PESC.png',
+    'REG': 'REGGIANA.png', 'SAM': 'SAMP.png', 'SPE': 'SPEZIA.webp', 'STR': 'SUDTIROL.png',
+  };
+
+  // Mapping foto tennisti
+  private readonly tennisPhotos: { [key: string]: string } = {
+    'ALCARAZ': 'ALCARAZ.png', 'BUBLIK': 'BUBLIK.png', 'CERUNDOLO': 'CERUNDOLO.png',
+    'DARDERI': 'DARDERI.png', 'DE_MINAUR': 'DE_MIINAUR.png', 'DE MINAUR': 'DE_MIINAUR.png',
+    'DEMINAUR': 'DE_MIINAUR.png', 'DJOKOVIC': 'DJOKOVIC.png', 'FRITZ': 'FRITZ.png',
+    'MEDVEDEV': 'MEDVEDEV.png', 'MENSIK': 'MENSIK.png', 'MUSETTI': 'MUSETTI.webp',
+    'PAUL': 'PAUL.png', 'RUUD': 'RUUD.png', 'SHELTON': 'SHELTON.png',
+    'SINNER': 'SINNER.png', 'TIEN': 'TIEN.png', 'ZVEREV': 'ZVEREV.webp',
+  };
+
+  // Mapping loghi NBA basket
+  private readonly basketLogos: { [key: string]: string } = {
+    'PHI': '76ERS.png', 'ATL': 'HAWKS.png', 'BOS': 'CELTICS.png', 'BKN': 'NETS.png',
+    'CHA': 'HORNETS.png', 'CHI': 'BULLS.png', 'CLE': 'CAVALIERS.png', 'IND': 'PACERS.png',
+    'MIA': 'HEAT.png', 'MIL': 'BUCKS.png', 'NYK': 'KNICKS.png', 'ORL': 'ORLANDO_MAGIC.png',
+    'TOR': 'RAPTORS.png', 'WAS': 'WIZARDS.png', 'DET': 'PISTONS.png', 'DEN': 'NUGGETS.png',
+    'SAS': 'SPURS.png', 'LAL': 'LAKERS.png', 'HOU': 'ROCKETS.png', 'MIN': 'TIMBERWOLVES.png',
+    'PHX': 'SUNS.png', 'MEM': 'GRIZZLIES.png', 'GSW': 'WARRIORS.png', 'POR': 'BLAZERS.png',
+    'DAL': 'MAVERICKS.png', 'UTA': 'UTAH.webp', 'LAC': 'CLIPPERS.png', 'SAC': 'SACRAMENTO.png',
+    'NOP': 'PELICANS.png', 'OKC': 'THUNDER.png',
+  };
+
+  // Metodo per ottenere il logo/foto della squadra/tennista
+  getTeamLogo(sigla: string | null | undefined): string | null {
+    if (!sigla) return null;
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    // Tennis - foto giocatore
+    if (sportId === 'TENNIS') {
+      const original = sigla.toUpperCase().trim();
+      const withUnderscore = original.replace(/\s+/g, '_');
+      const withoutSpaces = original.replace(/\s+/g, '');
+      const photoFile = this.tennisPhotos[original] || this.tennisPhotos[withUnderscore] || this.tennisPhotos[withoutSpaces];
+      if (photoFile) return `assets/logos/tennis/${photoFile}`;
+      return 'assets/logos/tennis/placeholder.svg';
+    }
+
+    // Calcio - stemmi
+    if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
+      const fileName = this.logoFiles[sigla];
+      if (fileName) return `assets/logos/calcio/${fileName}`;
+      return null;
+    }
+
+    // Basket - loghi NBA
+    if (sportId === 'BASKET') {
+      const logoFile = this.basketLogos[sigla];
+      if (logoFile) return `assets/logos/basket/${logoFile}`;
+      return null;
+    }
+
+    return null;
+  }
+
+  // Gestisce errore caricamento logo
+  onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.style.display = 'none';
+    }
+  }
+
   giornataDaGiocare(): boolean {
     if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return (

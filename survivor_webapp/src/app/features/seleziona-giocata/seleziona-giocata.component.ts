@@ -175,6 +175,184 @@ export class SelezionaGiocataComponent implements OnInit {
     return this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
   }
 
+  // Mapping esplicito sigla → file logo (con estensioni corrette)
+  private readonly logoFiles: { [key: string]: string } = {
+    // SERIE A (20 squadre)
+    'ATA': 'ATA',           // Atalanta (senza estensione)
+    'BOL': 'BOLO.png',      // Bologna
+    'CAG': 'CAGL.png',      // Cagliari
+    'COM': 'COMO.png',      // Como
+    'CRE': 'CREMON.png',    // Cremonese
+    'EMP': 'EMP.png',       // Empoli ✨ AGGIUNTO
+    'FIO': 'FIO.png',       // Fiorentina
+    'GEN': 'GENOA.png',     // Genoa
+    'INT': 'INT.png',       // Inter
+    'JUV': 'JUV.png',       // Juventus
+    'LAZ': 'LAZIO.png',     // Lazio
+    'LEC': 'LECCE.webp',    // Lecce (webp)
+    'MIL': 'MIL.png',       // Milan
+    'MON': 'MON.png',       // Monza
+    'NAP': 'NAP.png',       // Napoli
+    'PAR': 'PARMA.png',     // Parma
+    'PIS': 'PISA.png',      // Pisa
+    'ROM': 'ROMA.webp',     // Roma (webp)
+    'SAS': 'SASS.png',      // Sassuolo
+    'TOR': 'TORO.png',      // Torino
+    'UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
+    'VEN': 'VEN.png',       // Venezia
+    'VER': 'VER.png',       // Verona
+
+    // SERIE B (18 squadre)
+    'AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
+    'BAR': 'BARI.png',      // Bari
+    'CAR': 'CARRARESE.png', // Carrarese
+    'CTZ': 'CATANZARO.png', // Catanzaro
+    'CES': 'CES.png',       // Cesena
+    'ENT': 'ENT.png',       // Entella
+    'JST': 'JUVE_STABIA.png', // Juve Stabia (sigla corretta)
+    'MAN': 'MANT.png',      // Mantova
+    'MOD': 'MOD.png',       // Modena
+    'PAD': 'PADOVA.png',    // Padova
+    'PAL': 'PAL.png',       // Palermo
+    'PES': 'PESC.png',      // Pescara
+    'REG': 'REGGIANA.png',  // Reggiana
+    'SAM': 'SAMP.png',      // Sampdoria ✨ AGGIUNTO
+    'SPE': 'SPEZIA.webp',   // Spezia
+    'STR': 'SUDTIROL.png',  // Sudtirol (sigla corretta) ✨ CORRETTO
+  };
+
+  // Mapping foto tennisti (sigla → file)
+  private readonly tennisPhotos: { [key: string]: string } = {
+    'ALCARAZ': 'ALCARAZ.png',
+    'BUBLIK': 'BUBLIK.png',
+    'CERUNDOLO': 'CERUNDOLO.png',
+    'DARDERI': 'DARDERI.png',
+    'DE_MINAUR': 'DE_MIINAUR.png',
+    'DE MINAUR': 'DE_MIINAUR.png', // Alias senza underscore
+    'DEMINAUR': 'DE_MIINAUR.png',  // Alias senza spazi
+    'DJOKOVIC': 'DJOKOVIC.png',
+    'FRITZ': 'FRITZ.png',
+    'MEDVEDEV': 'MEDVEDEV.png',
+    'MENSIK': 'MENSIK.png',
+    'MUSETTI': 'MUSETTI.webp',
+    'PAUL': 'PAUL.png',
+    'RUUD': 'RUUD.png',
+    'SHELTON': 'SHELTON.png',
+    'SINNER': 'SINNER.png',
+    'TIEN': 'TIEN.png',
+    'ZVEREV': 'ZVEREV.webp',
+  };
+
+  // Mapping loghi NBA basket (sigla → file)
+  private readonly basketLogos: { [key: string]: string } = {
+    // EASTERN CONFERENCE
+    'PHI': '76ERS.png',        // Philadelphia 76ers
+    'ATL': 'HAWKS.png',        // Atlanta Hawks
+    'BOS': 'CELTICS.png',      // Boston Celtics
+    'BKN': 'NETS.png',         // Brooklyn Nets
+    'CHA': 'HORNETS.png',      // Charlotte Hornets
+    'CHI': 'BULLS.png',        // Chicago Bulls
+    'CLE': 'CAVALIERS.png',    // Cleveland Cavaliers
+    'IND': 'PACERS.png',       // Indiana Pacers
+    'MIA': 'HEAT.png',         // Miami Heat
+    'MIL': 'BUCKS.png',        // Milwaukee Bucks
+    'NYK': 'KNICKS.png',       // New York Knicks
+    'ORL': 'ORLANDO_MAGIC.png', // Orlando Magic
+    'TOR': 'RAPTORS.png',      // Toronto Raptors
+    'WAS': 'WIZARDS.png',      // Washington Wizards
+    'DET': 'PISTONS.png',      // Detroit Pistons
+
+    // WESTERN CONFERENCE
+    'DEN': 'NUGGETS.png',      // Denver Nuggets
+    'SAS': 'SPURS.png',        // San Antonio Spurs ✨ COMPLETATO
+    'LAL': 'LAKERS.png',       // Los Angeles Lakers
+    'HOU': 'ROCKETS.png',      // Houston Rockets
+    'MIN': 'TIMBERWOLVES.png', // Minnesota Timberwolves
+    'PHX': 'SUNS.png',         // Phoenix Suns
+    'MEM': 'GRIZZLIES.png',    // Memphis Grizzlies
+    'GSW': 'WARRIORS.png',     // Golden State Warriors
+    'POR': 'BLAZERS.png',      // Portland Trail Blazers
+    'DAL': 'MAVERICKS.png',    // Dallas Mavericks
+    'UTA': 'UTAH.webp',        // Utah Jazz
+    'LAC': 'CLIPPERS.png',     // LA Clippers
+    'SAC': 'SACRAMENTO.png',   // Sacramento Kings
+    'NOP': 'PELICANS.png',     // New Orleans Pelicans
+    'OKC': 'THUNDER.png',      // Oklahoma City Thunder
+  };
+
+  // Metodo per ottenere il logo ufficiale della squadra (assets locali)
+  getTeamLogo(sigla: string): string | null {
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    // Per tennis, usa foto giocatore se disponibile, altrimenti placeholder
+    if (sportId === 'TENNIS') {
+      console.log('🎾 TENNIS getTeamLogo called with sigla:', sigla);
+
+      // Normalizza la sigla in più varianti
+      const original = sigla.toUpperCase().trim();
+      const withUnderscore = original.replace(/\s+/g, '_');
+      const withoutSpaces = original.replace(/\s+/g, '');
+
+      console.log('🎾 Varianti:', { original, withUnderscore, withoutSpaces });
+      console.log('🎾 Available photos:', Object.keys(this.tennisPhotos));
+
+      // Prova diverse varianti
+      const photoFile = this.tennisPhotos[original] ||
+                       this.tennisPhotos[withUnderscore] ||
+                       this.tennisPhotos[withoutSpaces];
+
+      if (photoFile) {
+        const path = `assets/logos/tennis/${photoFile}`;
+        console.log('✅ Found photo:', path);
+        return path;
+      }
+
+      console.log('⚠️ No photo found, using placeholder');
+      return 'assets/logos/tennis/placeholder.svg'; // Fallback per tennisti senza foto
+    }
+
+
+    // Per calcio, usa mapping esplicito
+    if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
+      const fileName = this.logoFiles[sigla];
+      if (fileName) {
+        return `assets/logos/calcio/${fileName}`;
+      }
+      return null; // Fallback su SVG maglietta se non trovato
+    }
+
+    // Per basket, usa il mapping dei loghi NBA se disponibile
+    if (sportId === 'BASKET') {
+      const logoFile = this.basketLogos[sigla];
+      if (logoFile) {
+        return `assets/logos/basket/${logoFile}`;
+      }
+      return null; // Fallback su SVG maglietta se non trovato
+    }
+
+    return null;
+  }
+
+  // Metodo per calcolare il colore del testo in contrasto con lo sfondo
+  getContrastColor(hexColor: string): string {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return brightness > 128 ? '#000000' : '#FFFFFF';
+  }
+
+  // Gestisce errori di caricamento logo e mostra fallback SVG
+  onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    const svg = img.nextElementSibling as HTMLElement;
+    if (img && svg) {
+      img.style.display = 'none';
+      svg.style.display = 'block';
+    }
+  }
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -498,8 +676,50 @@ export class SelezionaGiocataComponent implements OnInit {
 
   formatNomeSquadra(nome: string): string {
     if (!nome) return '';
+
     // Rimuovi underscore e sostituiscili con spazi
-    return nome.replace(/_/g, ' ');
+    let formatted = nome.replace(/_/g, ' ');
+
+    // Standardizza nomi NBA - mostra il nome della squadra, non la città
+    const abbreviazioni: { [key: string]: string } = {
+      'PORTLAND TRAIL BLAZERS': 'TRAIL BLAZERS',
+      'GOLDEN STATE WARRIORS': 'WARRIORS',
+      'OKLAHOMA CITY THUNDER': 'THUNDER',
+      'NEW ORLEANS PELICANS': 'PELICANS',
+      'MINNESOTA TIMBERWOLVES': 'TIMBERWOLVES',
+      'SACRAMENTO KINGS': 'KINGS',
+      'SAN ANTONIO SPURS': 'SPURS',
+      'LOS ANGELES LAKERS': 'LAKERS',
+      'LOS ANGELES CLIPPERS': 'CLIPPERS',
+      'MEMPHIS GRIZZLIES': 'GRIZZLIES',
+      'DALLAS MAVERICKS': 'MAVERICKS',
+      'ORLANDO MAGIC': 'MAGIC',
+      'PHILADELPHIA 76ERS': '76ERS',
+      'CHARLOTTE HORNETS': 'HORNETS',
+      'CLEVELAND CAVALIERS': 'CAVALIERS',
+      'MILWAUKEE BUCKS': 'BUCKS',
+      'WASHINGTON WIZARDS': 'WIZARDS',
+      'TORONTO RAPTORS': 'RAPTORS',
+      'BROOKLYN NETS': 'NETS',
+      'NEW YORK KNICKS': 'KNICKS',
+      'BOSTON CELTICS': 'CELTICS',
+      'DETROIT PISTONS': 'PISTONS',
+      'INDIANA PACERS': 'PACERS',
+      'CHICAGO BULLS': 'BULLS',
+      'ATLANTA HAWKS': 'HAWKS',
+      'MIAMI HEAT': 'HEAT',
+      'DENVER NUGGETS': 'NUGGETS',
+      'UTAH JAZZ': 'JAZZ',
+      'PHOENIX SUNS': 'SUNS',
+      'HOUSTON ROCKETS': 'ROCKETS',
+    };
+
+    const upper = formatted.toUpperCase();
+    if (abbreviazioni[upper]) {
+      return abbreviazioni[upper];
+    }
+
+    return formatted;
   }
 
   getSearchPlaceholder(): string {
