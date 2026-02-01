@@ -15,5 +15,6 @@ public class CampionatoDTO {
     private int numGiornate;
     private int giornataDaGiocare;
     private List<LocalDateTime> iniziGiornate;
+    private short annoCorrente;
 }
 

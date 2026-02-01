@@ -1,18 +1,17 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.SquadraDTO;
-import it.ddlsolution.survivor.dto.response.PartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +23,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UtilCalendarioService {
 
+    @Value("${REFRESH_TERMINATE:false}")
+    private boolean refreshTerminate;
+
     private final ObjectProvider<ICalendario> calendarioProvider;
+    private final ObjectProvider<CacheableService> cacheableProvider;
+    private final PartitaService partitaService;
+
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
@@ -61,85 +66,98 @@ public class UtilCalendarioService {
         return ret;
     }
 
-    public List<PartitaDTO> partite(CampionatoDTO campionatoDTO) {
+    public void refreshPartite(CampionatoDTO campionatoDTO, short anno) {
+        cacheableProvider.getIfAvailable().clearCachePartite(campionatoDTO.getId(), anno);
+        cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(campionatoDTO.getId(), anno);
+    }
+
+
+    public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, short anno) {
         List<PartitaDTO> ret = new ArrayList<>();
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
-            ret.addAll(getPartiteAdapted(campionatoDTO, giornata));
+            ret.addAll(getPartiteDellaGiornata(campionatoDTO, giornata, anno));
         }
         return ret;
     }
 
-    public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, int giornata) {
-        return getPartiteAdapted(campionatoDTO, giornata);
+    public List<PartitaDTO> getPartiteDellaGiornata(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        return getPartiteCampionatoGiornataAnno(campionatoDTO.getId(), giornata, anno);
     }
 
-    private List<PartitaDTO> getPartiteAdapted(CampionatoDTO campionatoDTO, int giornata) {
-        ICalendario calendario = calendarioProvider.getIfAvailable();
-        Map<String, String> mapForAdapt = calendario.mapForAdapt().get(campionatoDTO.getId());
-        List<PartitaDTO> partite = calendario.getPartite(campionatoDTO.getSport().getId(), campionatoDTO.getId(), giornata);
-        if (!ObjectUtils.isEmpty(mapForAdapt)) {
-            boolean errore=false;
-            for (PartitaDTO partitaDTO : partite) {
-                SquadraDTO squadraDTO;
-                try {
-                    squadraDTO = getSquadraDTO(campionatoDTO, mapForAdapt, partitaDTO.getCasaSigla(), partitaDTO.getCasaNome());
-                    partitaDTO.setCasaSigla(squadraDTO.getSigla());
-                    partitaDTO.setCasaNome(squadraDTO.getNome());
-                } catch (Exception e) {
-                    errore=true;
-                }
-                try {
-                    squadraDTO = getSquadraDTO(campionatoDTO, mapForAdapt, partitaDTO.getFuoriSigla(), partitaDTO.getFuoriNome());
-                    partitaDTO.setFuoriSigla(squadraDTO.getSigla());
-                    partitaDTO.setFuoriNome(squadraDTO.getNome());
-                } catch (Exception e) {
-                    errore=true;
+    public List<PartitaDTO> getPartiteCampionatoGiornataAnno(String idCampionato, int giornata, short anno) {
+        List<PartitaDTO> partite = cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(idCampionato, anno);
+        return partite
+                .stream()
+                .filter(p -> p.getGiornata() == giornata)
+                .toList();
+    }
+
+
+    public List<PartitaDTO> partiteCampionatoDellaGiornataWithRefreshFromWeb(
+            CampionatoDTO campionatoDTO
+            , int giornata
+            , short anno) {
+        List<PartitaDTO> partiteDiCampionatoDellaGiornata = getPartiteCampionatoGiornataAnno(campionatoDTO.getId(), giornata, anno);
+
+        long partiteNotTerminate = partiteDiCampionatoDellaGiornata
+                .stream()
+                .filter(p -> partitaDaRefreshare(p))
+                .count();
+        boolean isFirstLoading = false;
+        if (partiteDiCampionatoDellaGiornata.size() == 0) {
+            isFirstLoading = true;
+        }
+        if (isFirstLoading || partiteNotTerminate > 0) {
+            //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
+            partiteDiCampionatoDellaGiornata = new ArrayList<>();
+            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
+                    campionatoDTO
+                    , giornata
+                    , anno);
+            if (partiteFromWeb.size() > 0) {
+                log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
+                for (PartitaDTO partitaDTO : partiteFromWeb) {
+                    //if (isFirstLoading || partitaDaRefreshare(partitaDTO)) {//FIXME
+                    if (true) {
+                        log.info("Aggiorno partita {} {} in stato {} in calendario {}", partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partitaDTO.getStato(), partitaDTO.getOrario());
+                        partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaDTO));
+                    } else {
+                        partiteDiCampionatoDellaGiornata.add(partitaDTO);
+                    }
                 }
             }
-            if (errore){
-                throw new RuntimeException("Squadre da configurare!");
-            }
         }
-
-        return partite;
+        return partiteDiCampionatoDellaGiornata;
     }
 
-    private static @NonNull SquadraDTO getSquadraDTO(CampionatoDTO campionatoDTO, Map<String, String> mapForAdapt, String squadraSigla, String squadraNome) {
-        SquadraDTO squadraDTO;
-        List<SquadraDTO> squadreDTO = campionatoDTO.getSquadre();
-        String upperCase = squadraNome.replaceAll(" ", "_").replaceAll("-", "").toUpperCase();
-        try {
-            squadraDTO = squadreDTO.stream().filter(s -> s.getSigla().equals(mapForAdapt.get(squadraSigla))).findFirst()
-                    .orElseThrow(() -> new RuntimeException("Squadra da configurare: " +squadraNome)
-                    );
-        } catch (Exception e) {
-            log.info("******-> {} (\"{}\"),", upperCase, squadraSigla);
-            log.info("******-> insert into squadra (sigla, nome, id_campionato) values ('{}','{}','{}');",upperCase,squadraNome, campionatoDTO.getId());
-            throw new RuntimeException(e);
-        }
-        return squadraDTO;
+    //se almeno una partita non è terminata  o se almeno una partita si gioca nei prossimi x giorni
+    private boolean partitaDaRefreshare(PartitaDTO partitaDTO) {
+        return (
+                (refreshTerminate || partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA)
+                        && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0
+        );
     }
 
-    public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi) {
+    public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi, short anno) {
         List<PartitaDTO> partite = new ArrayList<>();
         if (prossimi) {
             for (int g = giornataAttuale; g < giornataAttuale + 20; g++) {
                 if (g <= campionatoDTO.getNumGiornate()) {
-                    partite.addAll(addPartiteDellaGiornata(campionatoDTO, squadra, g));
+                    partite.addAll(addPartiteDellaGiornata(campionatoDTO, squadra, g, anno));
                 }
             }
         } else {
             for (int g = giornataAttuale; g >= giornataAttuale - 20; g--) {
                 if (g > 0) {
-                    partite.addAll(addPartiteDellaGiornata(campionatoDTO, squadra, g).reversed());
+                    partite.addAll(addPartiteDellaGiornata(campionatoDTO, squadra, g, anno).reversed());
                 }
             }
         }
         return partite;
     }
 
-    private List<PartitaDTO> addPartiteDellaGiornata(CampionatoDTO campionatoDTO, String squadra, int giornata) {
-        return partite(campionatoDTO, giornata)
+    private List<PartitaDTO> addPartiteDellaGiornata(CampionatoDTO campionatoDTO, String squadra, int giornata, short anno) {
+        return getPartiteDellaGiornata(campionatoDTO, giornata, anno)
                 .stream()
                 .filter(p -> p.getCasaSigla().equals(squadra) || p.getFuoriSigla().equals(squadra))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))

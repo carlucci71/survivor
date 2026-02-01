@@ -1,7 +1,7 @@
 <mat-card class="lega-card small">
   <mat-card-header>
     <mat-card-title
-      >{{ lega?.name }} <small>ed. {{ lega?.edizione }}</small></mat-card-title
+      >{{ lega?.name }} <small>{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</small></mat-card-title
     >
     <mat-card-subtitle
       >{{ lega?.campionato?.sport?.nome }} —
@@ -10,15 +10,15 @@
   </mat-card-header>
   <mat-card-content>
     <div class="meta">
-      <span *ngIf="lega">Giornata iniziale: {{ lega.giornataIniziale }}</span>
-      <span *ngIf="lega">Numero Iscritti: {{ lega.giocatori?.length }}</span>
-      <span *ngIf="lega?.withPwd">Con password</span>
+      <span *ngIf="lega">{{ 'LEAGUE.INITIAL_ROUND' | translate }}: {{ lega.giornataIniziale }}</span>
+      <span *ngIf="lega">{{ 'LEAGUE.NUM_MEMBERS' | translate }}: {{ lega.giocatori?.length }}</span>
+      <span *ngIf="lega?.withPwd">{{ 'LEAGUE.WITH_PASSWORD' | translate }}</span>
     </div>
   </mat-card-content>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="onAction()">
       <mat-icon>{{ getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>
-      Entra nella lega
+      {{ 'LEAGUE.ENTER_LEAGUE' | translate }}
     </button>
   </mat-card-actions>
 </mat-card>

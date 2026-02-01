@@ -20,6 +20,7 @@ export class UtilService {
   }
 
   getGiocaIcon(sportId: string): string {
+    // Icona pallone calcio
     if (sportId === 'BASKET') return 'sports_basketball';
     if (sportId === 'CALCIO') return 'sports_soccer';
     if (sportId === 'TENNIS') return 'sports_tennis';

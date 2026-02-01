@@ -1,104 +1,370 @@
+/* Login Component - Design Moderno e Responsive */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #0A3D91 0%, #4FC3F7 100%);
   padding: 20px;
+  font-family: 'Inter', sans-serif;
 }
 
 .login-card {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  max-width: 450px;
+  background: #FFFFFF;
+  padding: 48px 40px;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  max-width: 480px;
   width: 100%;
+  animation: fadeInUp 0.5s ease-out;
 
-  h1 {
-    margin: 0 0 10px;
-    color: #333;
-    text-align: center;
-  }
-
-  .subtitle {
-    color: #666;
-    text-align: center;
-    margin-bottom: 30px;
+  @media (max-width: 600px) {
+    padding: 32px 24px;
+    border-radius: 20px;
+    max-width: 100%;
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo e Header */
+.logo-container {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 2px 8px rgba(10, 61, 145, 0.2));
+
+    @media (max-width: 600px) {
+      width: 64px;
+      margin-bottom: 12px;
+    }
+  }
+
+  .app-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: #0A3D91;
+    margin: 0;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+
+    @media (max-width: 600px) {
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+  }
+
+  .app-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4FC3F7;
+    margin: 4px 0 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    @media (max-width: 600px) {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+    }
+  }
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0A3D91;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    @media (max-width: 600px) {
+      font-size: 20px;
+    }
+  }
+
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0;
+    line-height: 1.5;
+
+    @media (max-width: 600px) {
+      font-size: 13px;
+    }
+  }
+}
+
+/* Form */
 .login-form {
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 
     label {
       display: block;
       margin-bottom: 8px;
-      color: #333;
-      font-weight: 500;
+      color: #0A3D91;
+      font-weight: 600;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.3px;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s;
+      padding: 14px 16px;
+      border: 2px solid #E0E0E0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
       box-sizing: border-box;
+      background: #FFFFFF;
+
+      &::placeholder {
+        color: #9CA3AF;
+      }
 
       &:focus {
         outline: none;
-        border-color: var(--primary-color);
+        border-color: #4FC3F7;
+        box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
       }
 
       &:disabled {
-        background-color: #f5f5f5;
+        background-color: #F4F6F8;
         cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 600px) {
+        padding: 12px 14px;
+        font-size: 14px;
       }
     }
   }
 
   .btn-primary {
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-    color: white;
+    padding: 16px;
+    background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+    color: #FFFFFF;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2);
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 20px rgba(10, 61, 145, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
+
+    @media (max-width: 600px) {
+      padding: 14px;
+      font-size: 15px;
+    }
+  }
+
+  /* Checkbox Termini e Condizioni */
+  .terms-checkbox {
+    margin-bottom: 24px;
+
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+      padding-left: 32px;
+      min-height: 24px;
+
+      input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+      }
+
+      .checkmark {
+        position: absolute;
+        left: 0;
+        top: 2px;
+        height: 22px;
+        width: 22px;
+        background-color: #FFFFFF;
+        border: 2px solid #E0E0E0;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+
+        &:after {
+          content: "";
+          position: absolute;
+          display: none;
+          left: 6px;
+          top: 2px;
+          width: 6px;
+          height: 12px;
+          border: solid white;
+          border-width: 0 2.5px 2.5px 0;
+          transform: rotate(45deg);
+        }
+      }
+
+      input:checked~.checkmark {
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        border-color: #0A3D91;
+
+        &:after {
+          display: block;
+        }
+      }
+
+      input:focus~.checkmark {
+        box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
+      }
+
+      &:hover .checkmark {
+        border-color: #4FC3F7;
+      }
+
+      .checkbox-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        color: #6B7280;
+        line-height: 1.5;
+
+        a {
+          color: #0A3D91;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: #4FC3F7;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 600px) {
+      .checkbox-container {
+        .checkbox-text {
+          font-size: 12px;
+        }
+
+        .checkmark {
+          height: 20px;
+          width: 20px;
+
+          &:after {
+            left: 5px;
+            top: 1px;
+            width: 5px;
+            height: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  /* Age Disclaimer */
+  .age-disclaimer {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: #9CA3AF;
+    text-align: center;
+    margin-top: -16px;
+    margin-bottom: 24px;
+    line-height: 1.4;
   }
 }
 
+/* Messaggi */
 .message {
-  margin-top: 20px;
-  padding: 12px;
-  border-radius: 8px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  border-radius: 12px;
   text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: slideIn 0.3s ease-out;
 
   &.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(10, 61, 145, 0.05));
+    color: #0A3D91;
+    border: 2px solid #4FC3F7;
+    font-weight: 600;
   }
 
   &.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: #FEF2F2;
+    color: #DC2626;
+    border: 2px solid #FCA5A5;
+    font-weight: 500;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 13px;
+    padding: 12px 14px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

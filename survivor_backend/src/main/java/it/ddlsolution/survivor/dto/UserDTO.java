@@ -1,6 +1,5 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.Enumeratori;
 import lombok.Data;
 
 import java.time.LocalDateTime;

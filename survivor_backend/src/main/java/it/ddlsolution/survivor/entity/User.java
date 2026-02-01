@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.entity;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

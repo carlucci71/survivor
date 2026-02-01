@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 import { Lega } from '../../../core/models/interfaces.model';
 import { UtilService } from '../../../core/services/util.service';
 
 @Component({
   selector: 'app-lega-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TranslateModule],
   templateUrl: './lega-card.component.html',
   styleUrls: ['./lega-card.component.scss'],
 })

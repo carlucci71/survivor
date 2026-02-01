@@ -63,9 +63,6 @@ public class LogDispositivaAspect {
         log.info("*******************************");
         log.info(momento + " method execution: " + joinPoint.getSignature().toShortString());
 
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        String[] paramNames = signature.getParameterNames(); // nomi dei parametri (se disponibili)
-        Object[] args = joinPoint.getArgs();                 // valori dei parametri
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LogDispositivaDTO logDispositivaDTO = new LogDispositivaDTO(userService.userById((Long) authentication.getPrincipal()), LocalDateTime.now());
         logDispositivaDTO.setEsito(momento);
@@ -95,6 +92,9 @@ public class LogDispositivaAspect {
         logDispositivaDTO.setTipologia(loggaDispositiva.tipologia());
         List<ParamLogDispositivaDTO> paramsLogDispositiva = new ArrayList<>();
         logDispositivaDTO.setParamLogDispositive(paramsLogDispositiva);
+        Object[] args = joinPoint.getArgs();                 // valori dei parametri
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        String[] paramNames = signature.getParameterNames(); // nomi dei parametri (se disponibili)
         if (paramNames != null) {
             for (int i = 0; i < paramNames.length; i++) {
                 Object arg = (args != null && args.length > i) ? args[i] : null;

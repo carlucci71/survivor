@@ -3,8 +3,8 @@ package it.ddlsolution.survivor.service;
 import it.ddlsolution.survivor.entity.MagicLinkToken;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.repository.MagicLinkTokenRepository;
-import it.ddlsolution.survivor.util.Enumeratori;
 import it.ddlsolution.survivor.util.SignedTokenGenerator;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +37,11 @@ public class MagicLinkService {
     @Value("${magic-link.relative-url-send-mail}")
     private String relativeUrlSendMail;
 
+    @Value("${magic-link.relative-url-send-mail-mobile}")
+    private String relativeUrlSendMailMobile;
+
     @Transactional
-    public void sendMagicLink(String email) {
+    public void sendMagicLink(String email, boolean mobile) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
@@ -51,7 +54,7 @@ public class MagicLinkService {
         magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
         String token = salvaMagicToken(user, expirationMinutes, null, tipo, "");
         String subject = "Il tuo Magic Link per accedere a Survivor";
-        String magicLink = getUrlMagicLink(token, tipo);
+        String magicLink = getUrlMagicLink(token, tipo, mobile);
         emailService.send(email, subject, buildEmailContent(magicLink));
 
         log.info("Magic link inviato a: {}", email);
@@ -75,8 +78,12 @@ public class MagicLinkService {
         return token;
     }
 
-    public String getUrlMagicLink(String token, String codiceTipoMagicLink) {
-        return baseUrl + relativeUrlSendMail  + URLEncoder.encode(  token , StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+    public String getUrlMagicLinkInvita(String token, String codiceTipoMagicLink) {
+        return baseUrl + relativeUrlSendMailMobile + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+    }
+
+    public String getUrlMagicLink(String token, String codiceTipoMagicLink, boolean mobile) {
+        return baseUrl + (mobile ? relativeUrlSendMailMobile : relativeUrlSendMail) + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
     }
 
     private String buildEmailContent(String magicLink) {
@@ -112,7 +119,7 @@ public class MagicLinkService {
         if (setUsed) {
 
             if (codiceTipoMagicLink.equals(Enumeratori.TipoMagicToken.JOIN.getCodice()) && !magicLinkToken.getUser().getId().equals(authentication.getPrincipal())) {
-                    throw new RuntimeException("User link:" + magicLinkToken.getUser().getId() + " diverso da user loggato: " + authentication.getPrincipal());
+                throw new RuntimeException("User link:" + magicLinkToken.getUser().getId() + " diverso da user loggato: " + authentication.getPrincipal());
             }
 
 
@@ -142,7 +149,7 @@ public class MagicLinkService {
         }
     }
 
-    public String extractAddInfo(String token){
+    public String extractAddInfo(String token) {
         return signedTokenGenerator.extractAddInfo(token);
     }
 }

@@ -54,7 +54,7 @@ export class LegaService {
   }
 
   invitaUtenti(idLega: number, emails: string[]): Observable<any> {
-    const body = { emails: emails };
+    const body = { emails: emails, mobile: true }; 
     return this.http.post(`${this.apiUrl}/invita/${idLega}`, body);
   }
 
@@ -85,6 +85,10 @@ export class LegaService {
   cancellaGiocatoreDaLega(idLega: number, giocatore: Giocatore): Observable<Lega> {
     return this.http.put<Lega>(`${this.apiUrl}/cancellaGiocatoreDaLega/${idLega}/${giocatore.id}`, {})
       .pipe(map(mapLegaFromBE));
+  }
+
+  eliminaLega(idLega: number): Observable<{ success: boolean; message: string }> {
+    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${idLega}`);
   }
 
 }

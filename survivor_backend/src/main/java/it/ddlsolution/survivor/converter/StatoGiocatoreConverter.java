@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.converter;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

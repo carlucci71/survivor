@@ -17,6 +17,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },
   {
+    path: 'privacy',
+    loadComponent: () => import('./features/public/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./features/public/terms.component').then(m => m.TermsComponent)
+  },
+  {
+    path: 'magic-redirect',
+    loadComponent: () => import('./features/public/magic-redirect.component').then(m => m.MagicRedirectComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]
@@ -50,6 +62,10 @@ export const routes: Routes = [
     path: 'join/:id',
     loadComponent: () => import('./features/lega-join-magic/lega-join-magic.component').then(m => m.LegaJoinMagicComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'service-unavailable',
+    loadComponent: () => import('./features/public/service-unavailable.component').then(m => m.ServiceUnavailableComponent)
   },
   {
     path: '**',

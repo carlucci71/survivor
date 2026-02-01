@@ -8,15 +8,20 @@ import it.ddlsolution.survivor.dto.request.RefreshTokenRequestDTO;
 import it.ddlsolution.survivor.dto.response.AuthResponseDTO;
 import it.ddlsolution.survivor.dto.response.MagicLinkResponseDTO;
 import it.ddlsolution.survivor.entity.User;
+import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.LogDispositivaRepository;
+import it.ddlsolution.survivor.repository.MagicLinkTokenRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -33,6 +39,9 @@ import java.util.Optional;
 @Slf4j
 public class AuthController {
     private final UserRepository userRepository;
+    private final MagicLinkTokenRepository magicLinkTokenRepository;
+    private final GiocatoreRepository giocatoreRepository;
+    private final LogDispositivaRepository logDispositivaRepository;
 
     private final MagicLinkService magicLinkService;
     private final JwtService jwtService;
@@ -41,7 +50,7 @@ public class AuthController {
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
         try {
-            magicLinkService.sendMagicLink(request.getEmail());
+            magicLinkService.sendMagicLink(request.getEmail(), request.getMobile());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
                     "Magic link inviato con successo. Controlla la tua email.", true));
         } catch (Exception e) {
@@ -161,6 +170,52 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token non valido o manomesso");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore durante il refresh del token");
+        }
+    }
+
+    @DeleteMapping("/delete-account")
+    @Transactional
+    public ResponseEntity<?> deleteAccount(@RequestHeader(value = "Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("success", false, "message", "Token non valido"));
+            }
+
+            String jwt = authHeader.substring(7);
+            final Long userId = Long.parseLong(jwtService.extractId(jwt));
+
+            Optional<User> userOpt = userRepository.findById(userId);
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("success", false, "message", "Utente non trovato"));
+            }
+
+            User user = userOpt.get();
+
+            // 1. Elimina tutti i magic link tokens dell'utente
+            magicLinkTokenRepository.deleteByUser(user);
+
+            // 2. Elimina prima i param_log_dispositiva (figli) e poi log_dispositiva (padri)
+            logDispositivaRepository.deleteParamLogDispositivaByUserId(userId);
+            logDispositivaRepository.deleteByUserId(userId);
+
+            // 3. Elimina il giocatore associato all'utente (questo eliminerà anche giocate e giocatoreLeghe per cascade)
+            giocatoreRepository.deleteByUser_Id(userId);
+
+            // 4. Elimina l'utente dal database
+            userRepository.deleteById(userId);
+
+            log.info("Account eliminato con successo per l'utente con ID: {}", userId);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Account eliminato con successo"
+            ));
+        } catch (Exception e) {
+            log.error("Errore durante l'eliminazione dell'account: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("success", false, "message", "Errore durante l'eliminazione dell'account: " + e.getMessage()));
         }
     }
 }

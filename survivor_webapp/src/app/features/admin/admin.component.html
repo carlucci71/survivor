@@ -1,15 +1,16 @@
 <div class="admin-container">
-  <app-header title="Area Admin" (back)="goBack()" (logout)="logout()"></app-header>
+  <app-header [title]="'ADMIN.TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content">
     <div class="admin-panel">
-      <h2>Dashboard Amministratore</h2>
+      <h2>{{ 'ADMIN.DASHBOARD' | translate }}</h2>
 
 
         <mat-card class="message-box">
           <mat-card-content>
-            <p>Profilo: <strong>{{ profilo }}</strong></p>
-            <p>Url calendario: <strong>{{ calendario }}</strong></p>
+            <p>{{ 'ADMIN.PROFILE' | translate }}: <strong>{{ profilo }}</strong></p>
+            <p>{{ 'ADMIN.PROFILE_FE_MOBILE' | translate }}: <strong>{{ profiloFe }}</strong></p>
+            <p>{{ 'ADMIN.CALENDAR_URL' | translate }}: <strong>{{ calendario }}</strong></p>
 
           </mat-card-content>
         </mat-card>
@@ -17,49 +18,49 @@
       <div class="admin-sections">
         <mat-card class="section-card">
           <mat-card-header>
-            <mat-card-title>Gestione Leghe</mat-card-title>
+            <mat-card-title>{{ 'ADMIN.LEAGUES_MANAGEMENT' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>Crea e gestisci le leghe del sistema</p>
+            <p>{{ 'ADMIN.LEAGUES_DESCRIPTION' | translate }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>In arrivo</button>
+            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
           </mat-card-actions>
         </mat-card>
 
         <mat-card class="section-card">
           <mat-card-header>
-            <mat-card-title>Gestione Utenti</mat-card-title>
+            <mat-card-title>{{ 'ADMIN.USERS_MANAGEMENT' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>Visualizza e gestisci gli utenti</p>
+            <p>{{ 'ADMIN.USERS_DESCRIPTION' | translate }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>In arrivo</button>
+            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
           </mat-card-actions>
         </mat-card>
 
         <mat-card class="section-card">
           <mat-card-header>
-            <mat-card-title>Gestione Campionati</mat-card-title>
+            <mat-card-title>{{ 'ADMIN.CHAMPIONSHIPS_MANAGEMENT' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>Configura campionati e squadre</p>
+            <p>{{ 'ADMIN.CHAMPIONSHIPS_DESCRIPTION' | translate }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>In arrivo</button>
+            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
           </mat-card-actions>
         </mat-card>
 
         <mat-card class="section-card">
           <mat-card-header>
-            <mat-card-title>Statistiche</mat-card-title>
+            <mat-card-title>{{ 'ADMIN.STATISTICS' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>Visualizza statistiche del sistema</p>
+            <p>{{ 'ADMIN.STATISTICS_DESCRIPTION' | translate }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>In arrivo</button>
+            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
           </mat-card-actions>
         </mat-card>
       </div>

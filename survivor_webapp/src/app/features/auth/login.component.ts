@@ -8,11 +8,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule } from '@ngx-translate/core';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, TranslateModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -20,12 +23,12 @@ export class LoginComponent {
   email = '';
   message = '';
   isSuccess = false;
-  
+  termsAccepted = false;
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   onSubmit(): void {
     if (!this.email) {
@@ -34,7 +37,13 @@ export class LoginComponent {
       return;
     }
 
-        this.authService.requestMagicLink(this.email).subscribe({
+    if (!this.termsAccepted) {
+      this.message = 'Devi accettare i Termini e Condizioni per continuare';
+      this.isSuccess = false;
+      return;
+    }
+
+    this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;

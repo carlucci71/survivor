@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ import { ErrorDialogComponent } from '../../shared/components/error-dialog/error
   templateUrl: './lega-join.component.html',
   styleUrls: ['./lega-join.component.scss'],
 })
-export class LegaJoinComponent implements OnInit {
+export class LegaJoinComponent implements OnInit, AfterViewInit {
   leghe: Lega[] = [];
 
   constructor(
@@ -34,6 +34,11 @@ export class LegaJoinComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadLegheLibere();
+  }
+
+  ngAfterViewInit(): void {
+    // Scrolla la pagina in alto all'apertura del componente
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
   private loadLegheLibere(): void {
@@ -52,7 +57,8 @@ export class LegaJoinComponent implements OnInit {
   seleziona(lega: Lega | null): void {
     if (!lega) return;
     const dialogRef = this.dialog.open(ConfermaJoinDialogComponent, {
-      width: '420px',
+      width: '380px',
+      maxWidth: '95vw',
       disableClose: true,
       data: { lega },
     });

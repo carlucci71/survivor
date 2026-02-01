@@ -1,13 +1,15 @@
 import { Injectable, Injector } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { 
-  MagicLinkRequest, 
-  MagicLinkResponse, 
-  AuthResponse, 
-  User 
+import {
+  MagicLinkRequest,
+  MagicLinkResponse,
+  AuthResponse,
+  User
 } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
+import { PushService } from './push.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +28,14 @@ export class AuthService {
     return this.injector.get(HttpClient);
   }
 
-  requestMagicLink(email: string): Observable<MagicLinkResponse> {
-    const request: MagicLinkRequest = { email };
+  private get router(): Router {
+    return this.injector.get(Router);
+  }
+
+  requestMagicLink(email: string, mobile: boolean): Observable<MagicLinkResponse> {
+    const request: MagicLinkRequest = { email, mobile };
     return this.http.post<MagicLinkResponse>(
-      `${this.apiUrl}/request-magic-link`, 
+      `${this.apiUrl}/request-magic-link`,
       request
     );
   }
@@ -50,8 +56,10 @@ export class AuthService {
       name: response.name,
       role: response.role
     };
-    console.log(response.addInfo);
     this.currentUserSubject.next(user);
+    
+    // Push registration is now started from `HomeComponent` after login,
+    // so no need to send a cached token here.
   }
 
   refreshToken(refreshToken: string): Observable<AuthResponse> {
@@ -60,14 +68,35 @@ export class AuthService {
     );
   }
 
-  getMyData(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {});
+  getMyData(skipServiceUnavailableRedirect = false): Observable<AuthResponse> {
+    const options: { headers?: HttpHeaders } = {};
+    if (skipServiceUnavailableRedirect) {
+      options.headers = new HttpHeaders({ 'X-Skip-ServiceUnavailable': '1' });
+    }
+    return this.http.post<AuthResponse>(`${this.apiUrl}/myData`, {}, options);
   }
 
-  
+  // Probe endpoint and update local auth state if successful.
+  probeMyData(skipServiceUnavailableRedirect = false): Observable<AuthResponse> {
+    return this.getMyData(skipServiceUnavailableRedirect).pipe(
+      tap((response: AuthResponse) => {
+        if (response) {
+          this.handleAuthResponse(response);
+        }
+      })
+    );
+  }
+
+
   private loadUserFromBE(): void {
     this.getMyData().subscribe({
       next: (response: AuthResponse) => {
+        if (!response) {
+          // myData returned null, redirect to login
+          this.currentUserSubject.next(null);
+          this.router.navigate(['/login']);
+          return;
+        }
         // handle and store token + user via existing helper
         this.handleAuthResponse(response);
       },
@@ -75,6 +104,15 @@ export class AuthService {
         console.error('Errore :', error);
         // failed to load user; ensure subject is null
         this.currentUserSubject.next(null);
+
+        // If backend returned 503 or there was a network error (status 0),
+        // show a friendly "service unavailable" page with a refresh option.
+        const status = error && (error.status || (error.statusCode as any));
+        if (status === 503 || status === 0 || !status) {
+          this.router.navigate(['/service-unavailable']);
+        } else {
+          this.router.navigate(['/login']);
+        }
       }
     });
   }
@@ -99,5 +137,14 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('tokenSurvivor');
     this.currentUserSubject.next(null);
+  }
+
+  deleteAccount(): Observable<{ success: boolean; message: string }> {
+    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/delete-account`).pipe(
+      tap(() => {
+        // Dopo la cancellazione, effettua il logout
+        this.logout();
+      })
+    );
   }
 }

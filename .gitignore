@@ -4,3 +4,8 @@ errFE.log
 logFE.log
 nohup.out
 ReadmeSECRET.md
+survivor_backend/.github/
+/.idea
+.vscode/launch.json
+survivor_webapp/android/app/google-services.json
+survivor-webapp-firebase-adminsdk-fbsvc-7e5e89a47c.json

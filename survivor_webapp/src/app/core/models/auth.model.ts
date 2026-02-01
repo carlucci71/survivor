@@ -1,5 +1,6 @@
 export interface MagicLinkRequest {
   email: string;
+  mobile: boolean;
 }
 
 export interface MagicLinkResponse {

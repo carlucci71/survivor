@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { environment } from '../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -35,11 +36,12 @@ import { environment } from '../../../environments/environment';
     FormsModule,
     MatChipsModule,
     MatIconModule,
+    TranslateModule,
   ],
   templateUrl: './lega-nuova.component.html',
   styleUrls: ['./lega-nuova.component.scss'],
 })
-export class LegaNuovaComponent implements OnInit {
+export class LegaNuovaComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -68,6 +70,12 @@ export class LegaNuovaComponent implements OnInit {
   ngOnInit(): void {
     this.caricaSport();
   }
+
+  ngAfterViewInit(): void {
+    // Scrolla la pagina in alto all'apertura del componente
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
   goBack(): void {
     this.router.navigate(['/home']);
   }

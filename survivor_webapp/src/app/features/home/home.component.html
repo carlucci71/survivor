@@ -1,106 +1,103 @@
 <div class="home-container">
   <app-header
-    title="Survivor"
+    title=""
     visHome="N"
     visLogout="S"
     (logout)="logout()"
   >
-    <mat-chip class="config-user" [class.short-name]="(me?.nome?.length || 0) <= 6">
-      <ng-container *ngIf="isMobile; else desktopName">
-        <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
-      </ng-container>
-      <ng-template #desktopName>
-        <span class="config-user-name">{{ me?.nome }}</span>
-      </ng-template>
-      <mat-icon
-        class="calcola-icon"
-        (click)="goToMe()"
-        matTooltip="Configura l'utente"
-        >settings</mat-icon
-      >
-    </mat-chip>
+    <div class="config-user">
+      <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nome)?.length || 0) <= 6">
+        <ng-container *ngIf="isMobile; else desktopName">
+          <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
+        </ng-container>
+        <ng-template #desktopName>
+          <span class="config-user-name">{{ me?.nickname || me?.nome }}</span>
+        </ng-template>
+      </mat-chip>
+
+      <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
+        <mat-icon>verified_user</mat-icon>
+      </button>
+    </div>
   </app-header>
 
+  <!-- BANNER INFO -->
+  <app-info-banner></app-info-banner>
+
+  <!-- HERO SECTION -->
+  <app-hero-three></app-hero-three>
+
   <main class="main-content">
-    <div class="actions">
-      @if (isAdmin()) {
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="goToAdmin()"
-        class="btn-admin"
-      >
-        Area Admin
-      </button>
-      }
-    </div>
+
 
     <section class="leghe-section">
-      <h2>Le tue Leghe</h2>
-      @if (leghe.length === 0) {
-      <mat-card class="no-data">
+      <h2>{{ 'HOME.TITLE' | translate }}</h2>
+
+      <!-- Skeleton Loading -->
+      <div *ngIf="isLoadingLeghe" class="leghe-groups">
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+        <app-lega-card-skeleton></app-lega-card-skeleton>
+      </div>
+
+      <mat-card *ngIf="!isLoadingLeghe && leghe.length === 0" class="no-data">
         <mat-card-content>
-          <p>Nessuna lega disponibile al momento</p>
+          <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
-      } @if (groupedLeghe.length > 0) {
-      <div class="leghe-groups">
-        @for (group of groupedLeghe; track group.name) {
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{ group.name }}</mat-card-title>
-            <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="edizioni-list">
-              @for (edizione of group.edizioni; track edizione.id) {
-              <mat-card class="lega-card small">
-                <mat-card-header>
-                  <mat-card-title
-                    >Edizione {{ edizione.edizione }}</mat-card-title
-                  >
-                  <mat-card-subtitle>{{
-                    edizione.stato.descrizione
-                  }}</mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-actions>
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="goToLega(edizione.id)"
-                  >
-                    Visualizza
-                  </button>
-                  @if (visualizzaInvito(edizione)){
-                  <button
-                    mat-raised-button
-                    color="accent"
-                    (click)="openInvitaDialog(edizione)"
-                  >
-                    Invita utenti
-                  </button>
-                  } @if (isTerminata(edizione) &&
-                  notExistsNuovaEdizione(edizione)){
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="nuovaEdizione(edizione)"
-                  >
-                    Nuova Edizione
-                  </button>
-                  }
-                </mat-card-actions>
-              </mat-card>
-              }
-            </div>
-          </mat-card-content>
-        </mat-card>
-        }
+
+      <div *ngIf="!isLoadingLeghe && groupedLeghe.length > 0" class="leghe-groups">
+        <ng-container *ngFor="let group of groupedLeghe">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>{{ group.name }}</mat-card-title>
+              <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="edizioni-list">
+                <mat-card *ngFor="let edizione of group.edizioni" class="lega-card small">
+                  <mat-card-header>
+                    <mat-card-title>Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title>
+                    <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-actions>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="goToLega(edizione.id)"
+                    >
+                      {{ 'HOME.VIEW_DETAILS' | translate }}
+                    </button>
+
+                    <button *ngIf="visualizzaInvito(edizione)"
+                      mat-raised-button
+                      color="accent"
+                      (click)="openInvitaDialog(edizione)"
+                    >
+                      {{ 'HOME.INVITE_USERS' | translate }}
+                    </button>
+
+                    <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione)"
+                      mat-raised-button
+                      color="warn"
+                      (click)="nuovaEdizione(edizione)"
+                    >
+                      {{ 'HOME.NEW_EDITION' | translate }}
+                    </button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </ng-container>
       </div>
-      }
     </section>
+
+    <!-- Divisorio tra sezioni -->
+    <div class="section-divider"></div>
+
     <section class="leghe-section">
-      <h2>Nuove leghe</h2>
+      <h2>{{ 'HOME.NEW_LEAGUES' | translate }}</h2>
       <div class="leghe-groups">
         <mat-card class="lega-group-card">
           <mat-card-header>
@@ -110,7 +107,7 @@
             <div class="edizioni-list">
               <mat-card class="lega-card small">
                 <mat-card-header>
-                  <mat-card-title>Crea una nuova lega</mat-card-title>
+                  <mat-card-title>{{ 'HOME.CREATE_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
                   <button
@@ -118,7 +115,7 @@
                     color="warn"
                     (click)="goToCreaLega()"
                   >
-                    Crea
+                    {{ 'HOME.CREATE_LEAGUE' | translate }}
                   </button>
                 </mat-card-actions>
               </mat-card>
@@ -134,9 +131,7 @@
             <div class="edizioni-list">
               <mat-card class="lega-card small">
                 <mat-card-header>
-                  <mat-card-title
-                    >Unisciti ad una lega esistente</mat-card-title
-                  >
+                  <mat-card-title>{{ 'HOME.JOIN_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
                   <button
@@ -144,7 +139,7 @@
                     color="warn"
                     (click)="goToUniscitiLega()"
                   >
-                    Unisciti
+                    {{ 'HOME.JOIN_LEAGUE' | translate }}
                   </button>
                 </mat-card-actions>
               </mat-card>

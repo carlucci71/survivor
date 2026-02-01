@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 
 @Data
@@ -11,5 +11,6 @@ public class GiocatoreLegaDTO {
     private Enumeratori.RuoloGiocatoreLega ruolo;
     private String nomeGiocatore;
     private String nomeLega;
+    private Integer posizioneFinale;
 }
 

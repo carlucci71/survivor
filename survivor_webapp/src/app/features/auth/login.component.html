@@ -1,37 +1,54 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>Survivor - Login</mat-card-title>
-      <mat-card-subtitle>Inserisci la tua email per ricevere il magic link</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <form (ngSubmit)="onSubmit()" class="login-form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input
-            matInput
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
-            placeholder="la-tua-email@esempio.com"
-            required
-            (keydown.enter)="onSubmit()"
-          />
-        </mat-form-field>
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo-container">
+      <h1 class="app-title">SURVIVOR</h1>
+      <p class="app-subtitle">ONE SHOT</p>
+    </div>
 
-        <button mat-raised-button color="primary" type="submit"  class="submit-btn">
-          {{ 'Invia Magic Link' }}
-        </button>
-      </form>
+    <!-- Titolo -->
+    <div class="card-header">
+      <h2>{{ 'AUTH.LOGIN_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'AUTH.LOGIN_SUBTITLE' | translate }}</p>
+    </div>
 
-      @if (message) {
-        <mat-card class="message-card" [class.success]="isSuccess" [class.error]="!isSuccess">
-          <mat-card-content>
-            {{ message }}
-          </mat-card-content>
-        </mat-card>
-      }
-    </mat-card-content>
-  </mat-card>
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">{{ 'AUTH.EMAIL_LABEL' | translate }}*</label>
+        <input type="email" id="email" name="email" [(ngModel)]="email"
+          [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" required autocomplete="email" />
+      </div>
+
+      <!-- Checkbox Termini e Condizioni -->
+      <div class="terms-checkbox">
+        <label class="checkbox-container">
+          <input type="checkbox" [(ngModel)]="termsAccepted" name="terms">
+          <span class="checkmark"></span>
+          <span class="checkbox-text">
+            {{ 'AUTH.TERMS_DECLARATION' | translate }}
+            <a href="/terms" target="_blank">{{ 'FOOTER.TERMS' | translate }}</a>
+            {{ 'COMMON.AND' | translate }}
+            <a href="/privacy" target="_blank">{{ 'FOOTER.PRIVACY' | translate }}</a>.
+          </span>
+        </label>
+      </div>
+
+      <!-- Age Disclaimer -->
+      <p class="age-disclaimer">
+        {{ 'AUTH.AGE_DISCLAIMER' | translate }}
+      </p>
+
+      <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
+        {{ 'AUTH.SEND_MAGIC_LINK' | translate }}
+      </button>
+    </form>
+
+    <!-- Messaggio -->
+    @if (message) {
+    <div class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
+      {{ message }}
+    </div>
+    }
+  </div>
 </div>

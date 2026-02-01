@@ -3,7 +3,7 @@ package it.ddlsolution.survivor.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import it.ddlsolution.survivor.converter.StatoLegaConverter;
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -41,6 +41,9 @@ public class Lega {
     @Column(name = "giornata_calcolata")
     private Integer giornataCalcolata;
 
+    @Column(name = "giornata_finale")
+    private Integer giornataFinale;
+
     @ManyToOne
     @JoinColumn(name = "id_campionato", nullable = false)
     @JsonBackReference("campionato-leghe")
@@ -62,5 +65,6 @@ public class Lega {
     @Convert(converter = StatoLegaConverter.class)
     private Enumeratori.StatoLega stato;
 
-
+    @Column(name = "anno")
+    private short anno;
 }

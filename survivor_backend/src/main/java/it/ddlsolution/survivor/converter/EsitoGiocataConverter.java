@@ -1,10 +1,9 @@
 package it.ddlsolution.survivor.converter;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 
 @Converter(autoApply = false)
 @Slf4j

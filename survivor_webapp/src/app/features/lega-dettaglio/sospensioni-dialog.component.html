@@ -1,9 +1,9 @@
-<h2 mat-dialog-title>Sospensioni Lega</h2>
+<h2 mat-dialog-title>{{ 'SUSPENSIONS.TITLE' | translate }}</h2>
 <mat-dialog-content>
   <div *ngIf="giornate?.length; else empty">
     <mat-list>
       <mat-list-item *ngFor="let g of giornate">
-        <span class="mat-line">Giornata {{ g }}</span>
+        <span class="mat-line">{{ 'LEAGUE.ROUND' | translate }} {{ g }}</span>
         <button mat-icon-button color="warn" (click)="remove(g)">
           <mat-icon>delete</mat-icon>
         </button>
@@ -11,16 +11,16 @@
     </mat-list>
   </div>
   <ng-template #empty>
-    <div>Nessuna sospensione definita</div>
+    <div>{{ 'SUSPENSIONS.NO_SUSPENSIONS' | translate }}</div>
   </ng-template>
 
   <div class="add-row">
     <mat-form-field>
-      <input matInput type="number" placeholder="Nuova giornata" [(ngModel)]="newGiornata" />
+      <input matInput type="number" [placeholder]="'SUSPENSIONS.NEW_ROUND_PLACEHOLDER' | translate" [(ngModel)]="newGiornata" />
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="add()">Aggiungi</button>
+    <button mat-raised-button color="primary" (click)="add()">{{ 'COMMON.ADD' | translate }}</button>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Chiudi</button>
+  <button mat-button (click)="close()">{{ 'COMMON.CLOSE' | translate }}</button>
 </mat-dialog-actions>

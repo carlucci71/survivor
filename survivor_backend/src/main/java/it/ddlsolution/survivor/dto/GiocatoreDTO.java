@@ -1,6 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
-import it.ddlsolution.survivor.util.Enumeratori;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ import java.util.Map;
 public class GiocatoreDTO {
     private Long id;
     private String nome;
+    private String nickname;
+    private SquadraDTO squadraCuore;
     private Map<Long, Enumeratori.StatoGiocatore> statiPerLega = new HashMap<>();
     private Map<Long, Enumeratori.RuoloGiocatoreLega> ruoliPerLega = new HashMap<>();
     private List<GiocataDTO> giocate;

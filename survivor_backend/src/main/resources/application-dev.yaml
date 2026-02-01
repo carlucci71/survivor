@@ -12,4 +12,9 @@ DB_URL: jdbc:postgresql://85.235.148.177:6438/db_test_survivor
 DB_USER: survivor_user
 PORT: 8389
 SWAGGER_SERVER_URL: http://localhost:8389/api/survivorBe
-ALLOWED_SERVERS: http://localhost:4200
+ALLOWED_SERVERS: http://localhost:4200,http://localhost
+SHOW_SQL: DEBUG
+SHOW_SQL_PARAMETER: TRACE
+APP_DATASOURCE_LOG_CONNECTIONS: false
+#REFRESH_TERMINATE: false
+
