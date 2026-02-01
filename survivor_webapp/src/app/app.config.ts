@@ -5,7 +5,9 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { environment } from '../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import itTranslations from '../assets/i18n/it.json';
+import enTranslations from '../assets/i18n/en.json';
 
 import { routes } from './app.routes';
 
@@ -14,7 +16,14 @@ export class CustomTranslateLoader implements TranslateLoader {
   constructor(private http: HttpClient) {}
 
   getTranslation(lang: string): Observable<any> {
-    return this.http.get(`assets/i18n/${lang}.json`);
+    // Restituisce le traduzioni importate per includerle nel bundle
+    if (lang === 'it') {
+      return of(itTranslations);
+    }
+    if (lang === 'en') {
+      return of(enTranslations);
+    }
+    return of({});
   }
 }
 
