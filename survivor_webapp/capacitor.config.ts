@@ -7,7 +7,7 @@ const config: CapacitorConfig = {
   webDir: 'dist/survivor_webapp/browser',
   // Serve app over HTTP on Android so HTTP API calls are not blocked as mixed content during testing
   server: {
-    androidScheme: 'http'
+    androidScheme: 'https'
   }
 };
 
