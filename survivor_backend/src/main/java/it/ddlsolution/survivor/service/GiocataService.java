@@ -117,4 +117,13 @@ public class GiocataService {
 
     }
 
+    @Transactional(readOnly = true)
+    public List<Giocata> giocateOfGiocatoreInLega(Long giocatoreId, Long idLega) {
+       return giocataRepository.findAll()
+                        .stream()
+                .filter(g->g.getLega().getId().equals(idLega) && g.getGiocatore().getId().equals(giocatoreId))
+                .toList();
+    }
+
+
 }
