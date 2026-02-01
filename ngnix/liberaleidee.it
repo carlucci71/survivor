@@ -1,3 +1,4 @@
+
 # Posiziona questo file in /etc/nginx/sites-available/liberaleidee.it
 
 # HTTP -> HTTPS redirect
@@ -39,6 +40,7 @@ server {
         try_files $uri $uri/ /survivor/index.html;
     }
 
+
     # Serve index.html with no-cache so browsers always revalidate
     location = /survivor/index.html {
         alias /home/survivor/github/survivor/survivor_webapp/dist/survivor_webapp/browser/index.html;
@@ -52,6 +54,8 @@ server {
         access_log off;
         expires 1y;
     }
+
+
 
     # Swagger UI - IMPORTANTE: PRIMA di /api/
     location /swagger-ui/ {
@@ -99,6 +103,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
 
+        proxy_intercept_errors off;
+
         # CORS headers per preflight requests
         if ($request_method = 'OPTIONS') {
             add_header 'Access-Control-Allow-Origin' 'https://liberaleidee.it' always;
@@ -110,6 +116,14 @@ server {
             return 204;
         }
     }
+
+error_page 502 =503 /custom_503.html;
+
+location = /custom_503.html {
+    internal;
+    default_type application/json;
+    return 503 '{"error": "Service Unavailable", "status": 503}';
+}
 
     location /fantacalcio/ {
         proxy_pass http://127.0.0.1:8080/;
@@ -135,5 +149,4 @@ server {
         deny all;
     }
 }
-
 
