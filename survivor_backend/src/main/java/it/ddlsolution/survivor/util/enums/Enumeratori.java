@@ -154,6 +154,9 @@ public class Enumeratori {
         }
     }
 
+    public enum CodiciParametri {MOCK_LOCALDATE_RIF}
+
+
 }
 
 

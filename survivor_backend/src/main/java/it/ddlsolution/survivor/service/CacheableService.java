@@ -1,18 +1,22 @@
 package it.ddlsolution.survivor.service;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.ParametriDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.SospensioneLegaDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.response.SospensioniLegaResponseDTO;
+import it.ddlsolution.survivor.entity.Parametri;
 import it.ddlsolution.survivor.entity.Sport;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
+import it.ddlsolution.survivor.mapper.ParametriMapper;
 import it.ddlsolution.survivor.mapper.PartitaMapper;
 import it.ddlsolution.survivor.mapper.SospensioneLegaMapper;
 import it.ddlsolution.survivor.mapper.SportMapper;
 import it.ddlsolution.survivor.repository.LegaRepository;
+import it.ddlsolution.survivor.repository.ParametriRepository;
 import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SospensioneLegaRepository;
 import it.ddlsolution.survivor.repository.SportRepository;
@@ -63,7 +67,9 @@ public class CacheableService {
     private final SospensioneLegaMapper sospensioneLegaMapper;
     private final SportRepository sportRepository;
     private final SportMapper sportMapper;
+    private final ParametriMapper parametriMapper;
     private final PartitaRepository partitaRepository;
+    private final ParametriRepository parametriRepository;
     private final PartitaMapper partitaMapper;
     private final Utility utility;
     private final SquadraService squadraService;
@@ -79,6 +85,7 @@ public class CacheableService {
 
     public final static String CAMPIONATI = "campionati";
     public final static String SQUADRE = "squadre";
+    public final static String PARAMETRI = "parametri";
     public final static String SPORT = "sport";
     public final static String SOSPENSIONI = "sospensioni";
     public final static String PARTITE = "partite";
@@ -350,6 +357,13 @@ public class CacheableService {
     public List<SportDTO> allSport() {
         List<Sport> sport = sportRepository.findAll();
         return sportMapper.toDTOList(sport);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = PARAMETRI)
+    public List<ParametriDTO> parametri() {
+        List<Parametri> parametri = parametriRepository.findAll();
+        return parametriMapper.toDTOList(parametri);
     }
 
     @Transactional(readOnly = true)
