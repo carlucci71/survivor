@@ -242,7 +242,9 @@
     "PRIVACY_11_TEXT_2": "Profiling cookies are not used without the user's consent.",
     "PRIVACY_12_TITLE": "12. Changes to Privacy Policy",
     "PRIVACY_12_TEXT_1": "This Privacy Policy may be updated at any time.",
-    "PRIVACY_12_TEXT_2": "Changes will be effective upon their publication on the platform."
+    "PRIVACY_12_TEXT_2": "Changes will be effective upon their publication on the platform.",
+    "BUILD_FE": "Build FE",
+    "BUILD_BE": "Build BE"
   },
   "LEAGUE": {
     "LEAGUE_DETAILS": "League details",
@@ -354,8 +356,6 @@
     "DASHBOARD": "Administrator Dashboard",
     "PROFILE": "Profile",
     "PROFILE_FE_MOBILE": "FE / Mobile Profile",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE",
     "CALENDAR_URL": "Calendar URL",
     "LEAGUES_MANAGEMENT": "Leagues Management",
     "LEAGUES_DESCRIPTION": "Create and manage system leagues",

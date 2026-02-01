@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,6 +7,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/services/language.service';
 import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
+import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
 
 // DIALOG CONTATTI
 @Component({
@@ -293,7 +296,8 @@ export class ContattiDialogComponent {
   `]
 })
 export class TerminiDialogComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog,
+  ) {}
   closeDialog() { this.dialog.closeAll(); }
 }
 
@@ -407,7 +411,6 @@ export class TerminiDialogComponent {
           <p>{{ 'PRIVACY.SECTION_12_P2' | translate }}</p>
         </div>
       </div>
-    </div>
   `,
   styles: [`
     .modal-container {
@@ -567,6 +570,13 @@ export class PrivacyDialogComponent {
             <span>fantasurvivorddl&#64;gmail.com</span>
           </a>
         </div>
+        <div class="build-block">
+            <p>
+              {{ 'DIALOGS.BUILD_FE' | translate }}: <span class="external-html-preview" *ngIf="externalHtml" [innerHTML]="externalHtml"></span>
+            </p>
+            <p>
+            {{ 'DIALOGS.BUILD_BE' | translate }}: <span class="external-html-preview" *ngIf="versioneBEHtml" [innerHTML]="versioneBEHtml"></span>
+            </p>
       </div>
     </div>
   `,
@@ -697,6 +707,15 @@ export class PrivacyDialogComponent {
         }
       }
     }
+    .build-block {
+      p {
+        font-weight: 600;
+        font-size: 0.55rem;
+        margin: 0 0 12px 0;
+        align-items: right;
+        text-decoration: none;
+      }
+    }
     @media (max-width: 480px) {
       .modal-container { padding: 16px; }
       h2 { font-size: 1.1rem; }
@@ -707,10 +726,56 @@ export class PrivacyDialogComponent {
     }
   `]
 })
-export class ChiSiamoDialogComponent {
-  constructor(private dialog: MatDialog) {}
+export class ChiSiamoDialogComponent implements OnInit{
+  externalHtml: SafeHtml | null = null;
+  versioneBEHtml: SafeHtml | null = null;
+  constructor(private dialog: MatDialog,
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
+
+  ) {}
+
+  ngOnInit(): void {
+    this.loadStaticHtmlFromAssets();
+    this.getVersionBE();
+
+  }
+
 
   closeDialog() { this.dialog.closeAll(); }
+  loadStaticHtmlFromAssets(): void {
+    const path = 'assets/build_fe.html';
+
+    // Fetch the file as text. Some dev servers return `index.html` for unknown assets
+    // (status 200) — detect that fallback by checking for HTML doctype/root and
+    // treat it as missing so we return 'N/D'.
+    this.http.get(path, { responseType: 'text' }).subscribe({
+      next: (text) => {
+        const trimmed = (text || '').trim().toLowerCase();
+        const looksLikeIndex = trimmed.startsWith('<!doctype') || trimmed.startsWith('<html') || trimmed.includes('<app-root') || trimmed.includes('<base href=') || trimmed.includes('<script');
+        if (looksLikeIndex) {
+          console.debug('Static admin HTML appears to be index.html fallback, treating as missing:', path);
+          this.externalHtml = 'N/D';
+          return;
+        }
+        this.externalHtml = this.sanitizer.bypassSecurityTrustHtml(text);
+      },
+      error: (err) => {
+        console.debug('Static admin HTML not found at', path, err);
+        this.externalHtml = 'N/D';
+      }
+    });
+  }
+  getVersionBE(): void {
+    this.http.get(`${environment.apiUrl}/versione`, { responseType: 'text' }).subscribe({
+      next: (text) => {
+        this.versioneBEHtml = this.sanitizer.bypassSecurityTrustHtml(text);
+      },
+      error: (err) => {
+        console.debug('Versione BE non trovata: ', err);
+      }
+    });
+  }
 
   openTermini(event: Event) {
     event.preventDefault();
@@ -795,6 +860,8 @@ export class ChiSiamoDialogComponent {
           <div class="footer-copyright">
             <span>© {{ currentYear }} DDL Solutions</span>
           </div>
+
+
         </div>
       </div>
     </footer>
@@ -1035,19 +1102,21 @@ export class ChiSiamoDialogComponent {
     }
   `]
 })
-export class FooterComponent {
+export class FooterComponent  {
   currentLang: string = 'it';
   currentYear: number = new Date().getFullYear();
 
   constructor(
     private dialog: MatDialog,
-    private languageService: LanguageService
+    private languageService: LanguageService,
   ) {
     this.currentLang = this.languageService.getCurrentLanguage();
     this.languageService.currentLang$.subscribe(lang => {
       this.currentLang = lang;
     });
   }
+
+  
 
   changeLanguage(lang: string): void {
     this.languageService.changeLanguage(lang);
@@ -1109,5 +1178,7 @@ export class FooterComponent {
       panelClass: 'custom-dialog-container'
     });
   }
+
+
 }
 
