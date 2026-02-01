@@ -1,8 +1,21 @@
 param([string]$Title)
 
+
+# Controllo preventivo dello stato di Git
+$gitStatus = git status --porcelain
+if ($gitStatus) {
+    Write-Host "ERRORE: Il working tree non è pulito. Commit o stash le modifiche prima di procedere." -ForegroundColor Red
+    Write-Host "`nModifiche presenti:" -ForegroundColor Yellow
+    git status --short
+    Write-Host "Paused. Press Enter to exit..."
+    Read-Host | Out-Null
+    exit 1
+}
+
 $branch = git rev-parse --abbrev-ref HEAD
 $base = "develop"
 
+# Aggiorno file build e porto su git
 Get-Date -Format "dd/MM/yyyy HH:mm" > survivor_webapp\src\assets\build_fe.html
 Get-Date -Format "dd/MM/yyyy HH:mm" > survivor_backend\build_be.html
 
