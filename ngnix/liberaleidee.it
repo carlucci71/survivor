@@ -1,5 +1,20 @@
-
 # Posiziona questo file in /etc/nginx/sites-available/liberaleidee.it
+
+# NOTE: this file is intended to be included in the `http` context.
+# It contains a `map` that allows echoing back only allowed origins.
+
+# map incoming Origin to $cors_allow_origin only when it matches a permitted pattern
+map $http_origin $cors_allow_origin {
+    # fallback to the public origin so header is always present
+    default "https://liberaleidee.it";
+    # allow capacitor / local origins used by the mobile app
+    ~^capacitor://localhost$ $http_origin;
+    ~^http://localhost(:[0-9]+)?$ $http_origin;
+    ~^http://127\.0\.0\.1(:[0-9]+)?$ $http_origin;
+    ~^https?://localhost(:[0-9]+)?$ $http_origin;
+    # production origin
+    ~^https://liberaleidee\.it$ $http_origin;
+}
 
 # HTTP -> HTTPS redirect
 server {
@@ -9,7 +24,6 @@ server {
 
     return 301 https://$host$request_uri;
 }
-
 
 
 # HTTPS server
@@ -105,12 +119,18 @@ server {
 
         proxy_intercept_errors off;
 
-        # CORS headers per preflight requests
+        # Preflight responses are handled below; do not add duplicate CORS headers
+        # (backend will set CORS headers for actual responses)
+
+        # Respond to preflight requests here for speed
         if ($request_method = 'OPTIONS') {
-            add_header 'Access-Control-Allow-Origin' 'https://liberaleidee.it' always;
-            add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-            add_header 'Access-Control-Allow-Headers' 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since' always;
-            add_header 'Access-Control-Max-Age' 1728000 always;
+            # Explicitly set CORS headers for preflight responses and add a debug header
+            add_header Access-Control-Allow-Origin $cors_allow_origin always;
+            add_header Access-Control-Allow-Credentials 'true' always;
+            add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS, PATCH' always;
+            add_header Access-Control-Allow-Headers 'Authorization,Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since,X-Skip-ServiceUnavailable' always;
+            add_header Access-Control-Max-Age 1728000 always;
+            add_header X-Debug-Cors-Origin "$http_origin -> $cors_allow_origin" always;
             add_header 'Content-Type' 'text/plain; charset=utf-8' always;
             add_header 'Content-Length' 0 always;
             return 204;
@@ -149,4 +169,3 @@ location = /custom_503.html {
         deny all;
     }
 }
-
