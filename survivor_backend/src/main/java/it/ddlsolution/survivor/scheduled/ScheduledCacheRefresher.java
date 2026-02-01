@@ -3,18 +3,18 @@ package it.ddlsolution.survivor.scheduled;
 import it.ddlsolution.survivor.service.CacheableService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 
 import java.util.concurrent.CompletableFuture;
 
 import static it.ddlsolution.survivor.service.CacheableService.CAMPIONATI;
-import static it.ddlsolution.survivor.service.CacheableService.PARTITE;
+import static it.ddlsolution.survivor.service.CacheableService.PARAMETRI;
 import static it.ddlsolution.survivor.service.CacheableService.SOSPENSIONI;
 import static it.ddlsolution.survivor.service.CacheableService.SPORT;
 
@@ -38,6 +38,9 @@ public class ScheduledCacheRefresher {
         }
         if (isCacheEmpty(SPORT)) {
             cacheableService.allSport();
+        }
+        if (isCacheEmpty(PARAMETRI)) {
+            cacheableService.parametri();
         }
     }
 
