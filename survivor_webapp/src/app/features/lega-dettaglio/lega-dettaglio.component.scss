@@ -497,6 +497,71 @@
 	border: 1px solid #757575 !important;
 }
 
+// ========== STILI PER LOGHI SQUADRE/TENNISTI ==========
+
+.team-logo-container {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px 8px !important;
+	border-radius: 8px !important;
+	box-shadow: 0 2px 6px rgba(16, 24, 40, 0.06) !important;
+	border: 1px solid #e6f0fb !important;
+	background: #f8fbff;
+	min-width: 50px;
+	min-height: 40px;
+
+	&.ok {
+		background: #2e7d32 !important;
+		border: 1px solid #1b5e20 !important;
+	}
+
+	&.ko {
+		background: #d32f2f !important;
+		border: 1px solid #b71c1c !important;
+	}
+
+	&.empty {
+		background: #9e9e9e !important;
+		border: 1px solid #757575 !important;
+	}
+}
+
+.team-logo-small {
+	max-width: 40px;
+	max-height: 35px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	display: block;
+}
+
+.team-name-fallback {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: #111;
+	text-align: center;
+	max-width: 80px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.team-logo-mobile {
+	max-width: 45px;
+	max-height: 40px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	display: block;
+	margin: 0 auto;
+}
+
+.team-name-mobile-fallback {
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-align: center;
+}
 
 
 .header {
@@ -608,7 +673,7 @@
 	background: #fff;
 	border-radius: 16px;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-	padding: 32px 40px;
+	padding: 16px 24px; // Ridotto da 32px 40px per desktop/tablet
 	width: 100%;
 	max-width: 900px;
 	text-align: left;
@@ -618,15 +683,15 @@
 /* Stile per l'header della card Material */
 .mat-mdc-card-header {
 	display: flex;
-	padding: 16px 20px 0 20px;
+	padding: 8px 12px 0 12px; // Ridotto per desktop/tablet
 }
 
 /* Stile per il contenuto della card Material */
 .mat-mdc-card-content {
-	padding: 16px 16px;
+	padding: 12px 12px; // Ridotto per dare più spazio alla tabella
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 16px; // Ridotto da 20px
 }
 
 /* Table styles */
@@ -1579,7 +1644,7 @@
 	mat-card-title {
 		font-size: 1.05rem !important;
 		line-height: 1.3;
-		margin-bottom: 8px !important;
+		margin-bottom: 4px !important; // Ridotto da 8px
 		font-weight: 700 !important;
 	}
 
@@ -1590,7 +1655,7 @@
 
 		div {
 			font-size: 0.82rem !important;
-			margin: 5px 0;
+			margin: 3px 0; // Ridotto da 5px per compattare
 			line-height: 1.4;
 			text-align: left !important;
 		}
@@ -2290,7 +2355,15 @@ table {
 	.lega-card {
 		max-width: 1400px;
 		margin: 0 auto;
-		padding: 32px 40px;
+		padding: 20px 32px; // Ridotto da 32px 40px per dare più spazio alla tabella
+	}
+
+	.mat-mdc-card-header {
+		padding: 8px 16px 0 16px; // Ridotto per desktop
+	}
+
+	.mat-mdc-card-content {
+		padding: 12px 16px; // Ottimizzato
 	}
 
 	.giocatori-table th,
@@ -2307,6 +2380,41 @@ table {
 	.nome-giocatore {
 		font-size: 1rem;
 		padding: 10px 16px;
+	}
+}
+
+/* TABLET (768px - 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+	.lega-card {
+		padding: 16px 24px; // Padding ottimizzato per tablet
+	}
+
+	.mat-mdc-card-header {
+		padding: 6px 12px 0 12px; // Ridotto per tablet
+	}
+
+	.mat-mdc-card-content {
+		padding: 10px 12px; // Compatto per dare più spazio alla tabella
+		gap: 12px;
+	}
+
+	mat-card-title {
+		font-size: 1rem !important;
+		margin-bottom: 3px !important;
+	}
+
+	mat-card-subtitle {
+		font-size: 0.8rem !important;
+
+		div {
+			margin: 2px 0 !important;
+		}
+	}
+
+	.giocatori-table th,
+	.giocatori-table td {
+		padding: 10px 6px;
+		font-size: 0.9rem;
 	}
 }
 

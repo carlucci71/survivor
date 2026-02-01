@@ -133,12 +133,21 @@
                   <ng-container *ngIf="
                           getGiocataByGiornata(giocatore, giornata) as giocata
                         ">
-                    <div *ngIf="giocata.squadraSigla || giocata.esito" class="team-name" [ngClass]="{
+                    <div *ngIf="giocata.squadraSigla || giocata.esito" class="team-logo-container" [ngClass]="{
                             ok: giocata.esito === 'OK',
                             ko: giocata.esito === 'KO',
                             empty: !giocata.esito
                           }" [title]="getSquadraNome(giocata.squadraSigla)">
-                      {{ getSquadraNome(giocata.squadraSigla) }}
+                      @if(getTeamLogo(giocata.squadraSigla)) {
+                        <img
+                          class="team-logo-small"
+                          [src]="getTeamLogo(giocata.squadraSigla)"
+                          [alt]="getSquadraNome(giocata.squadraSigla) || ''"
+                          (error)="onLogoError($event)"
+                        />
+                      } @else {
+                        <span class="team-name-fallback">{{ getSquadraNome(giocata.squadraSigla) }}</span>
+                      }
                     </div>
                   </ng-container>
                   @if (!visualizzaGiocata(giornata, giocatore)) {
@@ -215,7 +224,16 @@
                          'ok': getGiocataByGiornata(giocatore, giornata)?.esito === 'OK',
                          'ko': getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                        }">
-                {{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}
+                @if(getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)) {
+                  <img
+                    class="team-logo-mobile"
+                    [src]="getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)"
+                    [alt]="getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) || ''"
+                    (error)="onLogoError($event)"
+                  />
+                } @else {
+                  <span class="team-name-mobile-fallback">{{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}</span>
+                }
               </div>
             </div>
           </div>

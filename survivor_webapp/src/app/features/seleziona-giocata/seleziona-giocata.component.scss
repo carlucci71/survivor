@@ -342,7 +342,7 @@ h2 {
 	}
 }
 
-/* CONTAINER MAGLIETTA */
+/* CONTAINER MAGLIETTA/LOGO */
 .jersey-container {
 	position: relative;
 	width: 100px;
@@ -351,6 +351,75 @@ h2 {
 	align-items: center;
 	justify-content: center;
 	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.tennis-container {
+		width: 100px;
+		height: 100px;
+	}
+}
+
+// ========== STILI TENNIS ==========
+
+.tennis-photo-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	overflow: hidden;
+	background: linear-gradient(135deg, #f8fbff, #e6f0fb);
+	border: 3px solid #0A3D91;
+	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.15);
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		transform: scale(1.05);
+		box-shadow: 0 6px 16px rgba(10, 61, 145, 0.25);
+		border-color: #4FC3F7;
+	}
+
+	.jersey-card.selected & {
+		transform: scale(1.08);
+		box-shadow: 0 8px 20px rgba(10, 61, 145, 0.35);
+		border-color: #4FC3F7;
+		border-width: 4px;
+	}
+}
+
+.tennis-photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center top;
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		transform: scale(1.05);
+	}
+
+	.jersey-card.selected & {
+		transform: scale(1.08);
+	}
+}
+
+/* LOGO UFFICIALE IMG */
+.team-logo-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
+		transform: scale(1.05);
+	}
+
+	.jersey-card.selected & {
+		filter: drop-shadow(0 8px 20px rgba(10, 61, 145, 0.35));
+		transform: scale(1.08);
+	}
 }
 
 .jersey-svg {
@@ -378,78 +447,8 @@ h2 {
 	transition: all 0.3s ease;
 }
 
-/* NOME SQUADRA SULLA MAGLIETTA */
-.jersey-team-name-wrapper {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	padding: 2px;
-}
-
-.jersey-team-name {
-	font-family: 'Poppins', sans-serif;
-	font-weight: 900;
-	text-transform: uppercase;
-	letter-spacing: -0.5px;
-	line-height: 1;
-	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	word-wrap: break-word;
-	overflow-wrap: break-word;
-	hyphens: auto;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	transition: all 0.3s ease;
-
-	/* Nomi corti (fino a 8 caratteri) */
-	&.short-name {
-		font-size: 14px;
-	}
-
-	/* Nomi medi (9-12 caratteri) */
-	&.medium-name {
-		font-size: 11px;
-		letter-spacing: -0.8px;
-	}
-
-	/* Nomi lunghi (oltre 12 caratteri) */
-	&.long-name {
-		font-size: 8px;
-		letter-spacing: -1px;
-		line-height: 1.1;
-	}
-}
-
 .jersey-number {
 	transition: all 0.3s ease;
-	font-weight: 700;
-}
-
-/* CHECK ICON SULLA MAGLIETTA */
-.jersey-check {
-	position: absolute;
-	top: -8px;
-	right: -8px;
-	width: 32px;
-	height: 32px;
-	background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.3);
-	animation: checkPulse 0.5s ease;
-
-	mat-icon {
-		color: #FFFFFF;
-		font-size: 20px;
-		width: 20px;
-		height: 20px;
-	}
 }
 
 @keyframes checkPulse {
@@ -468,11 +467,7 @@ h2 {
 
 /* INFO SQUADRA SOTTO LA MAGLIETTA */
 .jersey-info {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
-	width: 100%;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 	text-align: center;
 }
 
@@ -481,12 +476,10 @@ h2 {
 	font-weight: 600;
 	color: #0A3D91;
 	line-height: 1.2;
-	transition: all 0.3s ease;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
 	max-height: 2.4em;
 }
 
