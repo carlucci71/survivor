@@ -57,33 +57,66 @@
         <p>{{ 'PLAY.NO_TEAMS_FOUND' | translate }}</p>
       </div>
     } @else {
-      <div class="squadre-grid">
-        @for (squadra of squadreFiltrate; track squadra.sigla) {
-      <div
-        class="squadra-card"
-        [class.selected]="squadraSelezionata === squadra.sigla"
-        [style.background]="squadraSelezionata === squadra.sigla
-          ? 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + ', ' + getTeamColors(squadra.sigla).secondary + ')'
-          : 'linear-gradient(135deg, ' + getTeamColors(squadra.sigla).primary + '08, ' + getTeamColors(squadra.sigla).secondary + '12)'"
-        [style.borderColor]="getTeamColors(squadra.sigla).primary"
-        (click)="selezionaSquadra(squadra.sigla)"
-      >
-        <div class="squadra-icon"
-             [style.background]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).primary"
-             [style.borderColor]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : getTeamColors(squadra.sigla).secondary"
-             [style.color]="squadraSelezionata === squadra.sigla ? getTeamColors(squadra.sigla).primary : '#FFFFFF'">
-          {{ getSquadraInitials(squadra.nome) }}
-        </div>
-        <div class="squadra-info">
-          <span class="squadra-nome" [style.color]="squadraSelezionata === squadra.sigla ? '#FFFFFF' : '#0A3D91'">{{ formatNomeSquadra(squadra.nome) }}</span>
-          @if(squadra.prossimaPartita) {
-          <span class="vs-text" [style.color]="squadraSelezionata === squadra.sigla ? 'rgba(255,255,255,0.85)' : '#9CA3AF'">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
+      <!-- SCROLL ORIZZONTALE CON CARD MAGLIETTE -->
+      <div class="teams-scroll-container">
+        <div class="teams-scroll-wrapper">
+          @for (squadra of squadreFiltrate; track squadra.sigla) {
+            <div
+              class="jersey-card"
+              [class.selected]="squadraSelezionata === squadra.sigla"
+              (click)="selezionaSquadra(squadra.sigla)"
+            >
+              <!-- MAGLIETTA -->
+              <div class="jersey-container">
+                <svg class="jersey-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Corpo della maglietta -->
+                  <path
+                    class="jersey-body"
+                    [attr.fill]="getTeamColors(squadra.sigla).primary"
+                    d="M 20 25 L 10 35 L 10 50 L 15 50 L 15 120 L 85 120 L 85 50 L 90 50 L 90 35 L 80 25 L 75 20 Q 70 15 65 15 L 60 20 Q 55 25 50 25 Q 45 25 40 20 L 35 15 Q 30 15 25 20 L 20 25 Z"
+                  />
+                  <!-- Dettagli maglietta - strisce o colletto -->
+                  <path
+                    class="jersey-stripe"
+                    [attr.fill]="getTeamColors(squadra.sigla).secondary"
+                    opacity="0.3"
+                    d="M 35 30 L 65 30 L 65 50 L 35 50 Z"
+                  />
+                  <!-- Nome della squadra sulla maglietta -->
+                  <foreignObject x="15" y="55" width="70" height="50">
+                    <div xmlns="http://www.w3.org/1999/xhtml" class="jersey-team-name-wrapper">
+                      <div
+                        class="jersey-team-name"
+                        [style.color]="getTeamColors(squadra.sigla).secondary"
+                        [class.short-name]="formatNomeSquadra(squadra.nome).length <= 8"
+                        [class.medium-name]="formatNomeSquadra(squadra.nome).length > 8 && formatNomeSquadra(squadra.nome).length <= 12"
+                        [class.long-name]="formatNomeSquadra(squadra.nome).length > 12"
+                      >
+                        {{ formatNomeSquadra(squadra.nome) }}
+                      </div>
+                    </div>
+                  </foreignObject>
+                </svg>
+
+                <!-- Check icon quando selezionato -->
+                @if(squadraSelezionata === squadra.sigla) {
+                  <div class="jersey-check">
+                    <mat-icon>check_circle</mat-icon>
+                  </div>
+                }
+              </div>
+
+              <!-- INFO SQUADRA -->
+              <div class="jersey-info">
+                <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
+                @if(squadra.prossimaPartita) {
+                  <span class="jersey-vs">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
+                }
+              </div>
+            </div>
           }
         </div>
-        <mat-icon class="check-icon">check</mat-icon>
       </div>
-      }
-    </div>
     }
   </div>
 
