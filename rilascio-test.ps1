@@ -3,6 +3,10 @@ param([string]$Title)
 $branch = git rev-parse --abbrev-ref HEAD
 $base = "develop"
 
+Get-Date -Format "dd/MM/yyyy HH:mm" > survivor_webapp\src\assets\build_fe.html
+Get-Date -Format "dd/MM/yyyy HH:mm" > survivor_backend\build_be.html
+
+
 
 # LOGICA TITOLO
 if ($Title) {

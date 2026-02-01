@@ -354,6 +354,8 @@
     "DASHBOARD": "Administrator Dashboard",
     "PROFILE": "Profile",
     "PROFILE_FE_MOBILE": "FE / Mobile Profile",
+    "BUILD_FE": "Build FE",
+    "BUILD_BE": "Build BE",
     "CALENDAR_URL": "Calendar URL",
     "LEAGUES_MANAGEMENT": "Leagues Management",
     "LEAGUES_DESCRIPTION": "Create and manage system leagues",
