@@ -22,6 +22,7 @@ public interface TrofeiRepository extends JpaRepository<GiocatoreLega, Giocatore
         JOIN FETCH c.sport s
         WHERE gl.giocatore.id = :giocatoreId
         AND gl.posizioneFinale IS NOT NULL
+        AND l.stato = 'T' 
         ORDER BY l.anno DESC, l.edizione DESC, gl.posizioneFinale ASC
     """)
     List<GiocatoreLega> findTrofeiByGiocatoreId(@Param("giocatoreId") Long giocatoreId);
