@@ -10,7 +10,9 @@
     "NEW_LEAGUES": "Nuove leghe",
     "CREATE_NEW_LEAGUE": "Crea una nuova lega",
     "JOIN_EXISTING_LEAGUE": "Unisciti ad una lega esistente",
-    "YEAR": "Anno"
+    "YEAR": "Anno",
+    "SEARCH_LEAGUES": "Cerca leghe...",
+    "NO_RESULTS": "Nessuna lega trovata"
   },
   "HEADER": {
     "LOGOUT": "Esci",
@@ -323,7 +325,11 @@
     "CONFIRM_DELETE_MESSAGE": "Sei sicuro di voler eliminare questa lega? Questa azione è irreversibile e tutti i dati della lega verranno cancellati definitivamente.",
     "CONFIRM_DELETE_CANCEL": "Annulla",
     "CONFIRM_DELETE_CONFIRM": "Sì, elimina",
-    "CONFIRM_DELETE_DELETING": "Eliminazione..."
+    "CONFIRM_DELETE_DELETING": "Eliminazione...",
+    "PLAYER_JOURNEY": "Percorso Giocatori",
+    "VIEW_ALL_JOURNEYS": "Visualizza il percorso di tutti i giocatori",
+    "HIDE_JOURNEYS": "Nascondi percorsi",
+    "NO_PICKS_YET": "Nessuna scelta ancora effettuata"
   },
   "COMMON": {
     "CLOSE": "Chiudi",

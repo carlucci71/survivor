@@ -67,8 +67,8 @@
               (click)="selezionaSquadra(squadra.sigla)"
             >
               <!-- LOGO O FALLBACK -->
-              <div class="jersey-container" [class.tennis-container]="lega?.campionato?.sport?.id === 'TENNIS'">
-                @if(lega?.campionato?.sport?.id === 'TENNIS') {
+              <div class="jersey-container" [class.tennis-container]="lega.campionato?.sport?.id === 'TENNIS'">
+                @if(lega.campionato?.sport?.id === 'TENNIS') {
                   <!-- TENNIS: Foto giocatore circolare -->
                   <div class="tennis-photo-wrapper">
                     <img

@@ -284,31 +284,20 @@ export class SelezionaGiocataComponent implements OnInit {
   getTeamLogo(sigla: string): string | null {
     const sportId = this.lega?.campionato?.sport?.id;
 
-    // Per tennis, usa foto giocatore se disponibile, altrimenti placeholder
     if (sportId === 'TENNIS') {
-      console.log('🎾 TENNIS getTeamLogo called with sigla:', sigla);
-
-      // Normalizza la sigla in più varianti
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
 
-      console.log('🎾 Varianti:', { original, withUnderscore, withoutSpaces });
-      console.log('🎾 Available photos:', Object.keys(this.tennisPhotos));
-
-      // Prova diverse varianti
       const photoFile = this.tennisPhotos[original] ||
                        this.tennisPhotos[withUnderscore] ||
                        this.tennisPhotos[withoutSpaces];
 
       if (photoFile) {
-        const path = `assets/logos/tennis/${photoFile}`;
-        console.log('✅ Found photo:', path);
-        return path;
+        return `assets/logos/tennis/${photoFile}`;
       }
 
-      console.log('⚠️ No photo found, using placeholder');
-      return 'assets/logos/tennis/placeholder.svg'; // Fallback per tennisti senza foto
+      return 'assets/logos/tennis/placeholder.svg';
     }
 
 
@@ -542,8 +531,6 @@ export class SelezionaGiocataComponent implements OnInit {
                 // Verifica se la squadra selezionata è presente nella partita
                 return casaSigla === squadraCorrente || fuoriSigla === squadraCorrente;
               });
-
-              console.log('Testa a testa trovati:', this.ultimiRisultatiOpponent.length, 'tra', this.squadraSelezionata, 'e', opp);
             },
             error: (error) => {
               console.error('Errore caricamento testa a testa:', error);

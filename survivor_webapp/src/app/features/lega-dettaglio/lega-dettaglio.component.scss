@@ -655,6 +655,247 @@
 	}
 }
 
+/* ======================================= */
+/* SEZIONE PERCORSO GIOCATORI */
+/* ======================================= */
+
+.player-journeys-section {
+	margin-top: 32px;
+	width: 100%;
+}
+
+.journey-toggle-btn {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 16px;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.05));
+	border: 2px solid rgba(10, 61, 145, 0.15);
+	border-radius: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #0a3d91;
+
+	&:hover {
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.1), rgba(79, 195, 247, 0.1));
+		border-color: rgba(10, 61, 145, 0.25);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(10, 61, 145, 0.15);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	mat-icon {
+		font-size: 24px;
+		width: 24px;
+		height: 24px;
+	}
+}
+
+.journeys-container {
+	margin-top: 20px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 20px;
+	animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.journey-card {
+	background: #ffffff;
+	border: 2px solid rgba(10, 61, 145, 0.1);
+	border-radius: 12px;
+	padding: 16px;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+	&:hover {
+		box-shadow: 0 4px 16px rgba(10, 61, 145, 0.12);
+		transform: translateY(-2px);
+	}
+
+	&.eliminato {
+		opacity: 0.7;
+		background: rgba(244, 67, 54, 0.02);
+		border-color: rgba(244, 67, 54, 0.2);
+	}
+}
+
+.journey-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16px;
+	padding-bottom: 12px;
+	border-bottom: 2px solid rgba(10, 61, 145, 0.1);
+}
+
+.journey-player-name {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #0a3d91;
+}
+
+.journey-status-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	font-size: 0.9rem;
+
+	&.active {
+		background: rgba(76, 175, 80, 0.1);
+	}
+
+	&.eliminated {
+		background: rgba(244, 67, 54, 0.1);
+	}
+}
+
+.journey-picks {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.journey-pick {
+	display: grid;
+	grid-template-columns: 80px 1fr 40px;
+	align-items: center;
+	gap: 12px;
+	padding: 10px;
+	border-radius: 8px;
+	background: rgba(10, 61, 145, 0.03);
+	border: 1px solid rgba(10, 61, 145, 0.08);
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.06);
+		border-color: rgba(10, 61, 145, 0.15);
+	}
+
+	&.pick-ok {
+		border-left: 4px solid #4CAF50;
+		background: rgba(76, 175, 80, 0.04);
+	}
+
+	&.pick-ko {
+		border-left: 4px solid #f44336;
+		background: rgba(244, 67, 54, 0.04);
+	}
+
+	&.pick-pending {
+		border-left: 4px solid #FFC107;
+		background: rgba(255, 193, 7, 0.04);
+	}
+}
+
+.pick-round {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #6B7280;
+	white-space: nowrap;
+}
+
+.pick-team {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+.pick-logo {
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+	flex-shrink: 0;
+}
+
+.pick-name {
+	font-size: 0.95rem;
+	font-weight: 600;
+	color: #1F2937;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pick-result {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	span {
+		font-size: 1.2rem;
+		font-weight: 700;
+
+		&.result-win {
+			color: #4CAF50;
+		}
+
+		&.result-loss {
+			color: #f44336;
+		}
+	}
+}
+
+.no-picks {
+	text-align: center;
+	padding: 20px;
+	color: #9CA3AF;
+	font-style: italic;
+	font-size: 0.9rem;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+	.journeys-container {
+		grid-template-columns: 1fr;
+	}
+
+	.journey-pick {
+		grid-template-columns: 70px 1fr 35px;
+		gap: 8px;
+		padding: 8px;
+	}
+
+	.pick-round {
+		font-size: 0.75rem;
+	}
+
+	.pick-name {
+		font-size: 0.85rem;
+	}
+
+	.pick-logo {
+		width: 24px;
+		height: 24px;
+	}
+
+	.journey-toggle-btn {
+		padding: 12px;
+		font-size: 0.9rem;
+	}
+}
+
 
 .lega-dettaglio-container {
 	display: flex;
