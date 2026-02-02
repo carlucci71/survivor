@@ -158,7 +158,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     const { SelezionaGiocataComponent } = await import(
       '../seleziona-giocata/seleziona-giocata.component'
     );
-    const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
+
+    const isDesktop = window.innerWidth >= 768;
+    const dialogConfig = {
       data: {
         giocatore: giocatore,
         giornata: giornata,
@@ -167,15 +169,25 @@ export class LegaDettaglioComponent implements OnDestroy {
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega,
       },
-      width: '820px',
-      maxWidth: '90vw',
+      width: isDesktop ? '90vw' : '94vw',
+      maxWidth: isDesktop ? '1100px' : '500px',
       maxHeight: '95vh',
-      panelClass: 'seleziona-giocata-dialog',
+      panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
       scrollStrategy: this.overlay.scrollStrategies.noop()
+    };
+
+    console.log('🔍 Dialog Config:', {
+      isDesktop,
+      width: dialogConfig.width,
+      maxWidth: dialogConfig.maxWidth,
+      panelClass: dialogConfig.panelClass,
+      windowWidth: window.innerWidth
     });
+
+    const dialogRef = this.dialog.open(SelezionaGiocataComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
         this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
