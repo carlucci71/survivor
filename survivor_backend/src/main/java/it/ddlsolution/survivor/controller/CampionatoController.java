@@ -38,5 +38,12 @@ public class CampionatoController {
         return ResponseEntity.ok(squadraDTOListMap);
     }
 
+    @GetMapping(value = "/partiteDellaGiornata/{campionatoId}/{anno}/{giornata}")
+    public ResponseEntity<List<PartitaDTO>> partiteDellaGiornata(@PathVariable String campionatoId,@PathVariable Short anno, @PathVariable Integer giornata) {
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
+        List<PartitaDTO> squadraDTOListMap = utilCalendarioService.partiteDellaGiornata(campionatoDTO, giornata, anno);
+        return ResponseEntity.ok(squadraDTOListMap);
+    }
+
 }
 

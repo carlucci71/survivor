@@ -90,6 +90,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Messaggio di consolazione (salvato una sola volta)
   private savedConsolationMessage: string = '';
 
+  // Percorso giocatori
+  showPlayerJourneys = false;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -155,7 +158,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     const { SelezionaGiocataComponent } = await import(
       '../seleziona-giocata/seleziona-giocata.component'
     );
-    const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
+
+    const isDesktop = window.innerWidth >= 768;
+    const dialogConfig = {
       data: {
         giocatore: giocatore,
         giornata: giornata,
@@ -164,15 +169,25 @@ export class LegaDettaglioComponent implements OnDestroy {
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega,
       },
-      width: '820px',
-      maxWidth: '90vw',
+      width: isDesktop ? '90vw' : '94vw',
+      maxWidth: isDesktop ? '1100px' : '500px',
       maxHeight: '95vh',
-      panelClass: 'seleziona-giocata-dialog',
+      panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
       scrollStrategy: this.overlay.scrollStrategies.noop()
+    };
+
+    console.log('🔍 Dialog Config:', {
+      isDesktop,
+      width: dialogConfig.width,
+      maxWidth: dialogConfig.maxWidth,
+      panelClass: dialogConfig.panelClass,
+      windowWidth: window.innerWidth
     });
+
+    const dialogRef = this.dialog.open(SelezionaGiocataComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
         this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
@@ -719,13 +734,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   confirmEliminaLega(): void {
     if (!this.lega) return;
 
-    console.log('Eliminazione lega in corso...', this.lega.id);
     this.isDeleting = true;
-    this.showDeleteConfirm = false; // Chiudi il dialog subito
+    this.showDeleteConfirm = false;
 
     this.legaService.eliminaLega(this.lega.id).subscribe({
       next: (response) => {
-        console.log('Lega eliminata con successo:', response);
         this.isDeleting = false;
         this.router.navigate(['/home']);
       },
@@ -749,21 +762,14 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   startCountdown(): void {
-    console.log('🕐 startCountdown chiamato per:', this.lega?.campionato?.sport?.id);
-    console.log('📅 inizioProssimaGiornata:', this.lega?.inizioProssimaGiornata);
-
     if (!this.lega) {
-      console.warn('⚠️ Countdown non attivo - lega non caricata');
       this.countdownActive = false;
       return;
     }
 
     if (this.lega.inizioProssimaGiornata) {
-      // CASO 1: inizioProssimaGiornata è disponibile (dovrebbe funzionare per tutti gli sport)
       this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
     } else {
-      // CASO 2: FALLBACK - carica le partite della giornata e trova la prima
-      console.warn('⚠️ inizioProssimaGiornata non disponibile, carico le partite...');
       this.loadFirstMatchTimeAndStartCountdown();
     }
   }
@@ -771,11 +777,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   private loadFirstMatchTimeAndStartCountdown(): void {
     if (!this.lega || !this.lega.campionato?.id) return;
 
-    // Carica TUTTE le partite della giornata passando stringa vuota come squadraId
     this.campionatoService
       .calendario(
         this.lega.campionato.id,
-        '', // Stringa vuota = recupera tutte le partite della giornata
+        '',
         this.lega.anno,
         this.lega.giornataCorrente,
         true
@@ -783,37 +788,29 @@ export class LegaDettaglioComponent implements OnDestroy {
       .subscribe({
         next: (partite) => {
           if (partite && partite.length > 0) {
-            // Trova la prima partita ordinando per orario
             const primaPartita = partite
               .filter(p => p.orario)
               .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
 
             if (primaPartita && primaPartita.orario) {
-              console.log('✅ Prima partita trovata:', primaPartita.orario);
               this.startCountdownWithTime(new Date(primaPartita.orario));
-            }
-            else {
-              console.warn('⚠️ Nessuna partita con orario trovata');
+            } else {
               this.countdownActive = false;
             }
           } else {
-            console.warn('⚠️ Nessuna partita trovata per la giornata');
             this.countdownActive = false;
           }
         },
         error: (error) => {
-          console.error('❌ Errore caricamento partite:', error);
+          console.error('Errore caricamento partite:', error);
           this.countdownActive = false;
         }
       });
   }
 
   private startCountdownWithTime(matchTime: Date): void {
-    // Sottrai 5 minuti (5 * 60 * 1000 millisecondi)
     const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
 
-    console.log('⏰ Match time:', matchTime);
-    console.log('🎯 Target time (5min prima):', targetTime);
 
     const updateCountdown = () => {
         const now = new Date().getTime();
@@ -847,5 +844,18 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     updateCountdown();
     this.countdownIntervalId = setInterval(updateCountdown, 1000);
+  }
+
+  togglePlayerJourneys(): void {
+    this.showPlayerJourneys = !this.showPlayerJourneys;
+  }
+
+  // TrackBy functions per ottimizzare il rendering
+  trackByGiocatoreId(index: number, giocatore: Giocatore): number {
+    return giocatore.id;
+  }
+
+  trackByGiornataIndex(index: number, giornata: number): number {
+    return giornata;
   }
 }

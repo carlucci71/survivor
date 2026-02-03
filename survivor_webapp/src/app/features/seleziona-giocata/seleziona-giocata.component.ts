@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -27,8 +27,10 @@ import { SquadraService } from '../../core/services/squadra.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
+  standalone: true,
   templateUrl: './seleziona-giocata.component.html',
   styleUrls: ['./seleziona-giocata.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -40,7 +42,9 @@ import { SquadraService } from '../../core/services/squadra.service';
     TranslateModule,
   ],
 })
-export class SelezionaGiocataComponent implements OnInit {
+export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
+  @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
+
   isMobile = false;
   private resizeHandler: any;
   private tabsReservedHeight = 0;
@@ -56,6 +60,10 @@ export class SelezionaGiocataComponent implements OnInit {
   lega!: Lega;
   giocatore: Giocatore;
   showDettagli = false;
+
+  // Controllo scroll frecce
+  canScrollLeft = false;
+  canScrollRight = false;
   squadreConPartite: any[] = [];
   squadreFiltrate: any[] = [];
   searchQuery: string = '';
@@ -284,31 +292,36 @@ export class SelezionaGiocataComponent implements OnInit {
   getTeamLogo(sigla: string): string | null {
     const sportId = this.lega?.campionato?.sport?.id;
 
-    // Per tennis, usa foto giocatore se disponibile, altrimenti placeholder
     if (sportId === 'TENNIS') {
-      console.log('🎾 TENNIS getTeamLogo called with sigla:', sigla);
-
-      // Normalizza la sigla in più varianti
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
 
-      console.log('🎾 Varianti:', { original, withUnderscore, withoutSpaces });
-      console.log('🎾 Available photos:', Object.keys(this.tennisPhotos));
+      // Prova matching esatto
+      let photoFile = this.tennisPhotos[original] ||
+                      this.tennisPhotos[withUnderscore] ||
+                      this.tennisPhotos[withoutSpaces];
 
-      // Prova diverse varianti
-      const photoFile = this.tennisPhotos[original] ||
-                       this.tennisPhotos[withUnderscore] ||
-                       this.tennisPhotos[withoutSpaces];
+      // Se non trovato, prova a matchare solo il cognome
+      if (!photoFile) {
+        const parts = original.split(/[\s_]+/);
+        const cognome = parts[parts.length - 1]; // Ultimo elemento = cognome
 
-      if (photoFile) {
-        const path = `assets/logos/tennis/${photoFile}`;
-        console.log('✅ Found photo:', path);
-        return path;
+        // Cerca per cognome nelle chiavi
+        const matchingKey = Object.keys(this.tennisPhotos).find(key =>
+          key.includes(cognome) || cognome.includes(key)
+        );
+
+        if (matchingKey) {
+          photoFile = this.tennisPhotos[matchingKey];
+        }
       }
 
-      console.log('⚠️ No photo found, using placeholder');
-      return 'assets/logos/tennis/placeholder.svg'; // Fallback per tennisti senza foto
+      if (photoFile) {
+        return `assets/logos/tennis/${photoFile}`;
+      }
+
+      return 'assets/logos/tennis/placeholder.svg';
     }
 
 
@@ -343,13 +356,22 @@ export class SelezionaGiocataComponent implements OnInit {
     return brightness > 128 ? '#000000' : '#FFFFFF';
   }
 
-  // Gestisce errori di caricamento logo e mostra fallback SVG
+  // Gestisce errori di caricamento logo e mostra fallback
   onLogoError(event: Event): void {
     const img = event.target as HTMLImageElement;
-    const svg = img.nextElementSibling as HTMLElement;
-    if (img && svg) {
-      img.style.display = 'none';
-      svg.style.display = 'block';
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    if (sportId === 'TENNIS') {
+      // Per il tennis, usa placeholder.svg
+      console.warn('🎾 Errore caricamento foto tennista, uso placeholder');
+      img.src = 'assets/logos/tennis/placeholder.svg';
+    } else {
+      // Per calcio/basket, mostra SVG maglietta fallback
+      const svg = img.nextElementSibling as HTMLElement;
+      if (img && svg) {
+        img.style.display = 'none';
+        svg.style.display = 'block';
+      }
     }
   }
 
@@ -542,8 +564,6 @@ export class SelezionaGiocataComponent implements OnInit {
                 // Verifica se la squadra selezionata è presente nella partita
                 return casaSigla === squadraCorrente || fuoriSigla === squadraCorrente;
               });
-
-              console.log('Testa a testa trovati:', this.ultimiRisultatiOpponent.length, 'tra', this.squadraSelezionata, 'e', opp);
             },
             error: (error) => {
               console.error('Errore caricamento testa a testa:', error);
@@ -924,5 +944,47 @@ export class SelezionaGiocataComponent implements OnInit {
   clearSearch(): void {
     this.searchQuery = '';
     this.filtraSquadre();
+  }
+
+  // Scroll a sinistra
+  scrollLeft(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      container.scrollBy({ left: -300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 100);
+    }
+  }
+
+  // Scroll a destra
+  scrollRight(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      container.scrollBy({ left: 300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 100);
+    }
+  }
+
+  // Aggiorna visibilità pulsanti scroll
+  updateScrollButtons(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      this.canScrollLeft = container.scrollLeft > 0;
+      this.canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 5);
+    }
+  }
+
+  // Chiamato dopo AfterViewInit per inizializzare lo stato delle frecce
+  ngAfterViewInit(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+
+      // Listener per aggiornare le frecce durante lo scroll
+      container.addEventListener('scroll', () => {
+        this.updateScrollButtons();
+      });
+
+      // Inizializza stato frecce
+      setTimeout(() => this.updateScrollButtons(), 200);
+    }
   }
 }

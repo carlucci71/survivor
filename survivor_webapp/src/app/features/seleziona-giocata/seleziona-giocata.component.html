@@ -59,7 +59,25 @@
     } @else {
       <!-- SCROLL ORIZZONTALE CON CARD LOGHI -->
       <div class="teams-scroll-container">
-        <div class="teams-scroll-wrapper">
+        <!-- Freccia sinistra -->
+        <button
+          class="scroll-arrow scroll-arrow-left"
+          (click)="scrollLeft()"
+          [class.hidden]="!canScrollLeft"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <!-- Freccia destra -->
+        <button
+          class="scroll-arrow scroll-arrow-right"
+          (click)="scrollRight()"
+          [class.hidden]="!canScrollRight"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <div class="teams-scroll-wrapper" #scrollWrapper>
           @for (squadra of squadreFiltrate; track squadra.sigla) {
             <div
               class="jersey-card"
@@ -67,8 +85,8 @@
               (click)="selezionaSquadra(squadra.sigla)"
             >
               <!-- LOGO O FALLBACK -->
-              <div class="jersey-container" [class.tennis-container]="lega?.campionato?.sport?.id === 'TENNIS'">
-                @if(lega?.campionato?.sport?.id === 'TENNIS') {
+              <div class="jersey-container" [class.tennis-container]="lega.campionato?.sport?.id === 'TENNIS'">
+                @if(lega.campionato?.sport?.id === 'TENNIS') {
                   <!-- TENNIS: Foto giocatore circolare -->
                   <div class="tennis-photo-wrapper">
                     <img
