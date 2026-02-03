@@ -227,11 +227,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (
       !this.isAdmin() &&
       !this.isLeaderLega() &&
-      this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
+      this.lega?.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value
     ) {
       ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
     }
-    if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
+    if (this.lega?.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
       ret = 'Non visualizzo perchè la giornata è sospesa';
     }
     if (this.isTerminata()) {
@@ -367,13 +367,36 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!sigla) return null;
     const sportId = this.lega?.campionato?.sport?.id;
 
-    // Tennis - foto giocatore
+    // Tennis - foto giocatore con matching avanzato
     if (sportId === 'TENNIS') {
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
-      const photoFile = this.tennisPhotos[original] || this.tennisPhotos[withUnderscore] || this.tennisPhotos[withoutSpaces];
-      if (photoFile) return `assets/logos/tennis/${photoFile}`;
+
+      // Prova matching esatto
+      let photoFile = this.tennisPhotos[original] ||
+                      this.tennisPhotos[withUnderscore] ||
+                      this.tennisPhotos[withoutSpaces];
+
+      // Se non trovato, prova a matchare solo il cognome
+      if (!photoFile) {
+        const parts = original.split(/[\s_]+/);
+        const cognome = parts[parts.length - 1]; // Ultimo elemento = cognome
+
+        // Cerca per cognome nelle chiavi
+        const matchingKey = Object.keys(this.tennisPhotos).find(key =>
+          key.includes(cognome) || cognome.includes(key)
+        );
+
+        if (matchingKey) {
+          photoFile = this.tennisPhotos[matchingKey];
+        }
+      }
+
+      if (photoFile) {
+        return `assets/logos/tennis/${photoFile}`;
+      }
+
       return 'assets/logos/tennis/placeholder.svg';
     }
 
@@ -405,7 +428,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   giornataDaGiocare(): boolean {
     if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return (
-      this.lega?.statoGiornataCorrente.value == StatoPartita.DA_GIOCARE.value
+      this.lega?.statoGiornataCorrente?.value == StatoPartita.DA_GIOCARE.value
     );
   }
 
