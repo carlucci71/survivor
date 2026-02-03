@@ -175,25 +175,121 @@
         </div>
       </div>
 
-      <!-- Mobile stacked view: shown only on small screens via CSS -->
-      <div class="stacked-view mobile-only">
-        <div *ngFor="let giocatore of lega.giocatori; trackBy: trackByGiocatoreId" class="player-card"
-          [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
-          <div class="player-header">
-            <span class="nome-giocatore">{{ giocatore.nome }}</span>
-            <button
-              *ngIf="lega.giornataCorrente !== undefined && !visualizzaGiocata(lega.giornataCorrente - lega.giornataIniziale + 1, giocatore)"
-              mat-raised-button class="gioca-btn-mobile" (click)="giocaGiornata(giocatore, lega.giornataCorrente-lega.giornataIniziale+1)">
-              <mat-icon>{{ getGiocaIcon() }}</mat-icon>
-              <span class="btn-text">{{ 'PLAY.PLAY_BUTTON' | translate }}</span>
+      <!-- Vista Cards Moderna - Responsive per tutti i dispositivi -->
+      <div class="cards-view-responsive">
+
+        <!-- FILTRI E RICERCA MODERNI -->
+        <div class="mobile-filters-section">
+          <!-- Ricerca veloce -->
+          <div class="search-bar-container">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              type="text"
+              class="search-input"
+              [(ngModel)]="searchText"
+              (ngModelChange)="onSearchChange()"
+              placeholder="{{ 'LEAGUE.SEARCH_PLAYER' | translate }}"
+            />
+            <button *ngIf="searchText" class="clear-search-btn" (click)="clearSearch()">
+              <mat-icon>close</mat-icon>
             </button>
           </div>
-          <div class="giornate-list">
+
+          <!-- Filtri chips -->
+          <div class="filter-chips">
+            <button
+              class="filter-chip"
+              [class.active]="playerFilter === 'all'"
+              (click)="setPlayerFilter('all')"
+            >
+              <span class="chip-label">{{ 'LEAGUE.ALL' | translate }}</span>
+              <span class="chip-count">{{ getTotalPlayersCount() }}</span>
+            </button>
+            <button
+              class="filter-chip active-chip"
+              [class.active]="playerFilter === 'active'"
+              (click)="setPlayerFilter('active')"
+            >
+              <span class="chip-label">{{ 'LEAGUE.ACTIVE' | translate }}</span>
+              <span class="chip-count">{{ getActivePlayersCount() }}</span>
+            </button>
+            <button
+              class="filter-chip eliminated-chip"
+              [class.active]="playerFilter === 'eliminated'"
+              (click)="setPlayerFilter('eliminated')"
+            >
+              <span class="chip-label">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
+              <span class="chip-count">{{ getEliminatedPlayersCount() }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- EMPTY STATE - Nessun risultato -->
+        @if (getFilteredPlayers().length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">search_off</mat-icon>
+            <div class="empty-title">{{ 'LEAGUE.NO_RESULTS' | translate }}</div>
+            <div class="empty-message">
+              {{ searchText ? ('LEAGUE.NO_RESULTS_SEARCH' | translate) : ('LEAGUE.NO_RESULTS_FILTER' | translate) }}
+            </div>
+          </div>
+        }
+
+        <!-- LISTA GIOCATORI FILTRATI -->
+        <div *ngFor="let giocatore of getFilteredPlayers(); trackBy: trackByGiocatoreId" class="player-card"
+          [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
+          [class.expanded]="expandedPlayers[giocatore.id]">
+
+          <!-- Header giocatore - SEMPRE VISIBILE -->
+          <div class="player-header" (click)="togglePlayerExpansion(giocatore.id)">
+            <!-- Nome giocatore centrato su riga separata -->
+            <div class="player-name-row">
+              <span class="nome-giocatore">{{ giocatore.nome }}</span>
+            </div>
+
+            <!-- Info compatta su una sola riga: stato + ultima giocata + actions -->
+            <div class="player-compact-row">
+              <!-- Status badge -->
+              <span class="player-status-badge" [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value">
+                {{ giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value ? ('LEAGUE.ELIMINATED' | translate) : ('LEAGUE.IN_GAME' | translate) }}
+              </span>
+
+              <!-- Ultima giocata compatta -->
+              <div *ngIf="!expandedPlayers[giocatore.id] && getLastGiocata(giocatore)" class="last-game-inline">
+                @if(getTeamLogo(getLastGiocata(giocatore)?.squadraSigla)) {
+                  <img
+                    class="team-logo-mini"
+                    [src]="getTeamLogo(getLastGiocata(giocatore)?.squadraSigla)"
+                    [alt]="getSquadraNome(getLastGiocata(giocatore)?.squadraSigla) || ''"
+                  />
+                }
+                <span class="team-name-mini">{{ getSquadraNome(getLastGiocata(giocatore)?.squadraSigla) }}</span>
+                <span class="game-result-mini" [class.ok]="getLastGiocata(giocatore)?.esito === 'OK'" [class.ko]="getLastGiocata(giocatore)?.esito === 'KO'">
+                  {{ getLastGiocata(giocatore)?.esito === 'OK' ? '✓' : '✗' }}
+                </span>
+              </div>
+
+              <!-- Actions (Gioca button + Freccia) -->
+              <div class="expand-actions">
+                <button
+                  *ngIf="lega.giornataCorrente !== undefined && !visualizzaGiocata(lega.giornataCorrente - lega.giornataIniziale + 1, giocatore)"
+                  mat-icon-button class="gioca-btn-mobile-mini"
+                  (click)="giocaGiornata(giocatore, lega.giornataCorrente-lega.giornataIniziale+1); $event.stopPropagation()">
+                  <mat-icon>{{ getGiocaIcon() }}</mat-icon>
+                </button>
+                <mat-icon class="expand-icon">
+                  {{ expandedPlayers[giocatore.id] ? 'expand_less' : 'expand_more' }}
+                </mat-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Storia completa giocate - ESPANDIBILE -->
+          <div class="giornate-list" *ngIf="expandedPlayers[giocatore.id]" [@expandCollapse]>
             <div *ngFor="let giornata of mobileGiornateIndices()" class="giornata-item">
-              <!-- Title -->
+              <!-- ...existing code... -->
               <div class="giornata-number">{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
 
-              <!-- Full-width animated status badge -->
               <div class="status-badge-full" [ngClass]="{
                     'in-corso': getStatoGiornataValue(giornata + lega.giornataIniziale - 1) === 'IN_CORSO',
                     'da-giocare': getStatoGiornataValue(giornata + lega.giornataIniziale - 1) === 'DA_GIOCARE',
@@ -241,70 +337,6 @@
       </div>
       }
 
-      <!-- SEZIONE PERCORSO GIOCATORI -->
-      @if (lega.giocatori?.length) {
-      <div class="player-journeys-section">
-        <button class="journey-toggle-btn" (click)="togglePlayerJourneys()">
-          <mat-icon>{{ showPlayerJourneys ? 'expand_less' : 'expand_more' }}</mat-icon>
-          <span>{{ showPlayerJourneys ? ('LEAGUE.HIDE_JOURNEYS' | translate) : ('LEAGUE.VIEW_ALL_JOURNEYS' | translate) }}</span>
-        </button>
-
-        @if (showPlayerJourneys) {
-        <div class="journeys-container">
-          @for (giocatore of lega.giocatori; track giocatore.id) {
-          <div class="journey-card" [class.eliminato]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
-            <div class="journey-header">
-              <span class="journey-player-name">{{ giocatore.nome }}</span>
-              @if (giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
-                <span class="journey-status-badge eliminated">❌</span>
-              } @else {
-                <span class="journey-status-badge active">✅</span>
-              }
-            </div>
-
-            <div class="journey-picks">
-              @if (giocatore.giocate && giocatore.giocate.length > 0) {
-                @for (giornata of giornataIndices; track giornata) {
-                  @if (getGiocataByGiornata(giocatore, giornata); as giocata) {
-                    @if (giocata.squadraSigla) {
-                    <div class="journey-pick" [ngClass]="{
-                      'pick-ok': giocata.esito === 'OK',
-                      'pick-ko': giocata.esito === 'KO',
-                      'pick-pending': !giocata.esito
-                    }">
-                      <div class="pick-round">{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
-                      <div class="pick-team">
-                        @if(getTeamLogo(giocata.squadraSigla)) {
-                          <img
-                            class="pick-logo"
-                            [src]="getTeamLogo(giocata.squadraSigla)"
-                            [alt]="getSquadraNome(giocata.squadraSigla) || ''"
-                            (error)="onLogoError($event)"
-                          />
-                        }
-                        <span class="pick-name">{{ getSquadraNome(giocata.squadraSigla) }}</span>
-                      </div>
-                      @if (giocata.esito) {
-                        <div class="pick-result">
-                          <span [class.result-win]="giocata.esito === 'OK'" [class.result-loss]="giocata.esito === 'KO'">
-                            {{ giocata.esito === 'OK' ? '✓' : '✗' }}
-                          </span>
-                        </div>
-                      }
-                    </div>
-                    }
-                  }
-                }
-              } @else {
-                <div class="no-picks">{{ 'LEAGUE.NO_PICKS_YET' | translate }}</div>
-              }
-            </div>
-          </div>
-          }
-        </div>
-        }
-      </div>
-      }
 
       <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
       <!-- Posizionato dopo la tabella così appare sotto alla giocata dell'utente -->

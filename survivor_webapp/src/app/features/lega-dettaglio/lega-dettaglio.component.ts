@@ -3,6 +3,7 @@ import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LegaService } from '../../core/services/lega.service';
 import {
   Giocata,
@@ -63,6 +64,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
+  animations: [
+    trigger('expandCollapse', [
+      transition(':enter', [
+        style({ height: 0, opacity: 0, overflow: 'hidden' }),
+        animate('300ms ease-out', style({ height: '*', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: 1, overflow: 'hidden' }),
+        animate('300ms ease-in', style({ height: 0, opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
@@ -92,6 +105,11 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   // Percorso giocatori
   showPlayerJourneys = false;
+
+  // FILTRI E RICERCA MOBILE
+  searchText: string = '';
+  playerFilter: 'all' | 'active' | 'eliminated' = 'all';
+  expandedPlayers: { [key: number]: boolean } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -876,6 +894,80 @@ export class LegaDettaglioComponent implements OnDestroy {
   // TrackBy functions per ottimizzare il rendering
   trackByGiocatoreId(index: number, giocatore: Giocatore): number {
     return giocatore.id;
+  }
+
+  // ===== FILTRI E RICERCA MOBILE =====
+
+  setPlayerFilter(filter: 'all' | 'active' | 'eliminated'): void {
+    this.playerFilter = filter;
+  }
+
+  clearSearch(): void {
+    this.searchText = '';
+  }
+
+  onSearchChange(): void {
+    // La ricerca è reattiva, non serve fare nulla qui
+  }
+
+  togglePlayerExpansion(giocatoreId: number): void {
+    this.expandedPlayers[giocatoreId] = !this.expandedPlayers[giocatoreId];
+  }
+
+  getFilteredPlayers(): Giocatore[] {
+    if (!this.lega?.giocatori) return [];
+
+    let filtered = [...this.lega.giocatori];
+
+    // Filtro per stato
+    if (this.playerFilter === 'active') {
+      filtered = filtered.filter(g =>
+        g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
+      );
+    } else if (this.playerFilter === 'eliminated') {
+      filtered = filtered.filter(g =>
+        g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value
+      );
+    }
+
+    // Filtro per ricerca testo
+    if (this.searchText && this.searchText.trim()) {
+      const searchLower = this.searchText.toLowerCase().trim();
+      filtered = filtered.filter(g =>
+        g.nome?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    return filtered;
+  }
+
+  getTotalPlayersCount(): number {
+    return this.lega?.giocatori?.length || 0;
+  }
+
+  getActivePlayersCount(): number {
+    if (!this.lega?.giocatori) return 0;
+    return this.lega.giocatori.filter(g =>
+      g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
+    ).length;
+  }
+
+  getEliminatedPlayersCount(): number {
+    if (!this.lega?.giocatori) return 0;
+    return this.lega.giocatori.filter(g =>
+      g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value
+    ).length;
+  }
+
+  getLastGiocata(giocatore: Giocatore): any {
+    if (!giocatore.giocate || giocatore.giocate.length === 0) return null;
+
+    // Ordina per giornata decrescente e prendi la prima
+    const sorted = [...giocatore.giocate].sort((a: any, b: any) =>
+      (b.giornata || 0) - (a.giornata || 0)
+    );
+
+    return sorted[0];
   }
 
   trackByGiornataIndex(index: number, giornata: number): number {
