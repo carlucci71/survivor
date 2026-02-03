@@ -537,6 +537,22 @@ import { Squadra } from '../../../core/models/interfaces.model';
       }
     }
 
+    /* DESKTOP E TABLET - Centrato e senza scroll orizzontale */
+    @media (min-width: 769px) {
+      .regolamento-dialog {
+        width: 90vw;
+        max-width: 800px;
+        margin: 0 auto;
+        border-radius: 16px;
+      }
+
+      .dialog-content {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+    }
+
     @media (max-width: 768px) {
       .back-to-top-btn {
         bottom: 16px;
@@ -576,7 +592,7 @@ export class RegolamentoBannerDialogComponent {
   constructor(private dialog: MatDialog,
     private squadraService: SquadraService
   ) {
-    
+
 
   }
 
@@ -1270,23 +1286,38 @@ export class AlboOroDialogComponent implements OnInit {
     </div>
   `,
   styles: [`
-    /* CONTAINER PRINCIPALE - STESSO STILE DEL MODAL GIOCA ORA */
+    /* FORZA IL DIALOG CONTAINER A NON AVERE SCROLL ORIZZONTALE */
+    :host {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+    }
+
+    /* CONTAINER PRINCIPALE - COMPLETAMENTE RESPONSIVE */
     .modal-container {
       position: relative;
       background: #FFFFFF;
       border-radius: 20px;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      padding: 20px 24px;
-      width: 85vw;
-      max-width: 600px;
+      padding: 24px;
+      width: 100%;
+      max-width: 100%;
       max-height: 85vh;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: hidden !important;
       z-index: 10000;
       font-family: 'Poppins', sans-serif;
       margin: 0 auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
 
-      /* Scrollbar personalizzata */
+      * {
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+
       &::-webkit-scrollbar {
         width: 6px;
       }
@@ -1306,7 +1337,6 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-    /* CLOSE BUTTON - X CENTRATA */
     .close-btn {
       position: absolute;
       top: 12px;
@@ -1338,7 +1368,6 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-    /* TITOLO H2 */
     h2 {
       margin: 0 0 20px 0;
       font-size: 1.3rem;
@@ -1351,12 +1380,16 @@ export class AlboOroDialogComponent implements OnInit {
       display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
 
       .title-icon {
         font-size: 1.5rem;
         width: 1.5rem;
         height: 1.5rem;
         color: #4FC3F7;
+        flex-shrink: 0;
       }
 
       .value {
@@ -1364,10 +1397,18 @@ export class AlboOroDialogComponent implements OnInit {
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
-    /* INFO ROWS - OTTIMIZZATE PER LAYOUT VERTICALE SENZA SCROLL ORIZZONTALE */
+    .form-section {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
     .info-row {
       display: flex;
       flex-direction: column;
@@ -1379,27 +1420,33 @@ export class AlboOroDialogComponent implements OnInit {
       border: 1px solid rgba(10, 61, 145, 0.08);
       font-size: 0.95rem;
       width: 100%;
+      max-width: 100%;
       box-sizing: border-box;
+      overflow: hidden;
 
       .label {
         font-weight: 600;
         color: #0A3D91;
         font-size: 0.9rem;
         margin-bottom: 4px;
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .value {
         font-weight: 500;
         color: #6B7280;
         width: 100%;
+        max-width: 100%;
         box-sizing: border-box;
+        overflow: hidden;
       }
     }
 
-    /* INPUT E SELECT PERSONALIZZATI */
     .custom-input,
     .custom-select {
       width: 100%;
+      max-width: 100%;
       padding: 10px 12px;
       border-radius: 12px;
       background: #F4F6F8;
@@ -1424,29 +1471,20 @@ export class AlboOroDialogComponent implements OnInit {
       }
 
       &.has-value {
-        padding-right: 40px; /* Spazio per il pulsante clear */
+        padding-right: 40px;
         background: #FFFFFF;
         border-color: #4FC3F7;
         font-weight: 600;
       }
     }
 
-    .custom-select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A3D91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 16px;
-      padding-right: 40px;
-    }
-
-    /* AUTOCOMPLETE CONTAINER */
     .autocomplete-container {
       position: relative;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
-    /* PULSANTE CLEAR DENTRO L'INPUT */
     .clear-input-btn {
       position: absolute;
       right: 12px;
@@ -1485,8 +1523,11 @@ export class AlboOroDialogComponent implements OnInit {
       border-radius: 0 0 12px 12px;
       max-height: 200px;
       overflow-y: auto;
+      overflow-x: hidden;
       z-index: 1000;
       box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
+      width: 100%;
+      box-sizing: border-box;
 
       &::-webkit-scrollbar {
         width: 6px;
@@ -1510,6 +1551,11 @@ export class AlboOroDialogComponent implements OnInit {
       font-weight: 500;
       transition: all 0.2s ease;
       border-bottom: 1px solid #F4F6F8;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
 
       &:last-child {
         border-bottom: none;
@@ -1521,8 +1567,6 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-
-    /* ACTIONS SECTION */
     .actions-section {
       display: flex;
       gap: 12px;
@@ -1531,6 +1575,7 @@ export class AlboOroDialogComponent implements OnInit {
       border-top: 1px solid rgba(10, 61, 145, 0.08);
       justify-content: flex-end;
       width: 100%;
+      max-width: 100%;
       box-sizing: border-box;
     }
 
@@ -1546,42 +1591,42 @@ export class AlboOroDialogComponent implements OnInit {
       border: 2px solid;
       cursor: pointer;
       font-size: 0.9rem;
-      min-width: 100px;
+      min-width: 120px;
+      box-sizing: border-box;
     }
 
     .btn-secondary {
       background: transparent;
       color: #6B7280;
       border-color: #E0E0E0;
-    }
 
-    .btn-secondary:hover {
-      background: #F8F9FA;
-      border-color: #4FC3F7;
-      color: #4FC3F7;
-      transform: translateY(-1px);
+      &:hover {
+        background: #F8F9FA;
+        border-color: #4FC3F7;
+        color: #4FC3F7;
+        transform: translateY(-1px);
+      }
     }
 
     .btn-primary {
       background: linear-gradient(135deg, #0A3D91, #4FC3F7);
       color: #FFFFFF;
       border-color: transparent;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(10, 61, 145, 0.25);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        background: #E0E0E0;
+        color: #9CA3AF;
+        cursor: not-allowed;
+        transform: none;
+      }
     }
 
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(10, 61, 145, 0.25);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      background: #E0E0E0;
-      color: #9CA3AF;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* FEEDBACK MESSAGE */
     .feedback-message {
       display: flex;
       align-items: center;
@@ -1592,24 +1637,33 @@ export class AlboOroDialogComponent implements OnInit {
       font-size: 0.9rem;
       font-weight: 500;
       animation: slideIn 0.3s ease;
-    }
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
 
-    .feedback-message.success {
-      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
-      color: #2E7D32;
-      border: 1px solid #81C784;
-    }
+      &.success {
+        background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+        color: #2E7D32;
+        border: 1px solid #81C784;
+      }
 
-    .feedback-message.error {
-      background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
-      color: #C62828;
-      border: 1px solid #EF5350;
-    }
+      &.error {
+        background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+        color: #C62828;
+        border: 1px solid #EF5350;
+      }
 
-    .feedback-message mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+      }
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     @keyframes slideIn {
@@ -1623,12 +1677,14 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-    /* DANGER ZONE */
     .danger-zone {
       margin-top: 24px;
       padding-top: 20px;
       border-top: 1px dashed rgba(220, 38, 38, 0.3);
       text-align: center;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .btn-danger {
@@ -1645,34 +1701,52 @@ export class AlboOroDialogComponent implements OnInit {
       color: #DC2626;
       cursor: pointer;
       transition: all 0.3s ease;
-    }
+      max-width: 100%;
+      box-sizing: border-box;
 
-    .btn-danger mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+      }
 
-    .btn-danger:hover {
-      background: rgba(220, 38, 38, 0.08);
-      border-color: #DC2626;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 480px) {
-      .modal-container {
-        padding: 16px;
-        width: 95vw;
+      &:hover {
+        background: rgba(220, 38, 38, 0.08);
+        border-color: #DC2626;
       }
     }
 
-    /* RESPONSIVE TABLET */
-    @media (max-width: 768px) {
+    /* DESKTOP E TABLET - Centrato e senza scroll orizzontale */
+    @media (min-width: 769px) {
+      .modal-container {
+        width: 90vw;
+        max-width: 800px;
+        padding: 28px;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+      }
+
+      .info-row {
+        padding: 18px;
+      }
+
+      .actions-section {
+        .btn-primary,
+        .btn-secondary {
+          min-width: 140px;
+        }
+      }
+    }
+
+    /* TABLET */
+    @media (max-width: 768px) and (min-width: 481px) {
       .modal-container {
         width: 95vw;
         max-width: 95vw;
-        padding: 16px;
-        box-sizing: border-box;
+        padding: 20px;
       }
 
       h2 {
@@ -1686,27 +1760,7 @@ export class AlboOroDialogComponent implements OnInit {
       }
 
       .info-row {
-        padding: 12px;
-        margin-bottom: 14px;
-
-        .label {
-          font-size: 0.85rem;
-        }
-
-        .value {
-          width: 100%;
-        }
-      }
-
-      .custom-input,
-      .custom-select {
-        padding: 10px;
-        font-size: 0.85rem;
-      }
-
-      .custom-select {
-        background-size: 14px;
-        padding-right: 35px;
+        padding: 14px;
       }
 
       .actions-section {
@@ -1720,15 +1774,13 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-    /* RESPONSIVE MOBILE */
+    /* MOBILE */
     @media (max-width: 480px) {
       .modal-container {
-        width: 90vw;
-        max-width: 100vw;
+        width: 95vw;
+        max-width: 95vw;
         padding: 16px;
-        margin: 0;
-        border-radius: 0;
-        box-sizing: border-box;
+        border-radius: 16px;
       }
 
       h2 {
@@ -1756,40 +1808,39 @@ export class AlboOroDialogComponent implements OnInit {
       }
 
       .info-row {
-        padding: 10px;
+        padding: 12px;
         margin-bottom: 12px;
 
         .label {
-          font-size: 0.8rem;
+          font-size: 0.85rem;
         }
       }
 
-      .custom-input,
-      .custom-select {
+      .custom-input {
         padding: 10px;
-        font-size: 0.8rem;
-      }
-
-      .custom-select {
-        background-size: 14px;
-        padding-right: 35px;
+        font-size: 0.85rem;
       }
 
       .actions-section {
         margin-top: 20px;
         padding-top: 16px;
+        flex-direction: column;
 
         .btn-primary,
         .btn-secondary {
+          width: 100%;
+          min-width: auto;
           padding: 10px 16px;
           font-size: 0.85rem;
         }
       }
     }
 
+    /* EXTRA SMALL MOBILE */
     @media (max-width: 360px) {
       .modal-container {
         padding: 12px;
+        width: 98vw;
       }
 
       h2 {
@@ -1797,18 +1848,17 @@ export class AlboOroDialogComponent implements OnInit {
       }
 
       .info-row {
-        padding: 8px;
+        padding: 10px;
         margin-bottom: 10px;
 
         .label {
-          font-size: 0.75rem;
+          font-size: 0.8rem;
         }
       }
 
-      .custom-input,
-      .custom-select {
+      .custom-input {
         padding: 8px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
       }
 
       .actions-section {
@@ -1819,6 +1869,11 @@ export class AlboOroDialogComponent implements OnInit {
           padding: 8px 12px;
           font-size: 0.8rem;
         }
+      }
+
+      .btn-danger {
+        font-size: 0.8rem;
+        padding: 8px 12px;
       }
     }
   `]
@@ -1834,10 +1889,7 @@ export class ProfiloDialogComponent implements OnInit {
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
-
-
   tutteLeSquadre: Squadra[]  = [];
-
 
   constructor(
     private dialog: MatDialog,
@@ -1854,8 +1906,7 @@ export class ProfiloDialogComponent implements OnInit {
   }
 
   loadProfile() {
-
-        this.squadraService.getAllSquadre().subscribe({
+    this.squadraService.getAllSquadre().subscribe({
           next: (sq) => {
               this.tutteLeSquadre=sq;
           },
