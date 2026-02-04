@@ -50,3 +50,9 @@ try {
         Write-Host "$($_.Exception.Message)" -ForegroundColor Red
     }
 }
+
+# crea app android e porta su ftp
+Push-Location "$PSScriptRoot\survivor_webapp\scripts"
+# Esegui lo script build-and-install.ps1 passando eventuali argomenti
+& "$PSScriptRoot\survivor_webapp\scripts\build-and-install.ps1" -CopyFtp
+Pop-Location
