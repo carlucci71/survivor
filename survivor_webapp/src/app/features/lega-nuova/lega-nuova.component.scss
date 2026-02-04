@@ -298,23 +298,29 @@
       font-weight: 400 !important;
     }
 
-    /* SELECT - Freccia posizionata a destra */
+    /* SELECT - Freccia posizionata DENTRO il campo */
     .mat-mdc-select-arrow-wrapper {
       position: absolute !important;
-      right: 18px !important;
+      right: 16px !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: auto !important;
+      height: auto !important;
     }
 
-    /* Select arrow */
+    /* Select arrow - freccia ben visibile */
     .mat-mdc-select-arrow {
       color: #0A3D91 !important;
       width: 0 !important;
       height: 0 !important;
-      border-left: 5px solid transparent !important;
-      border-right: 5px solid transparent !important;
-      border-top: 5px solid #0A3D91 !important;
+      border-left: 7px solid transparent !important;
+      border-right: 7px solid transparent !important;
+      border-top: 7px solid #0A3D91 !important;
       border-bottom: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
     }
 
     /* Nascondi SVG di default */
@@ -322,15 +328,17 @@
       display: none !important;
     }
 
-    /* Select trigger - TESTO A SINISTRA */
+    /* Select trigger - TESTO A SINISTRA con padding aumentato */
     .mat-mdc-select-trigger {
       text-align: left !important;
-      padding-right: 0 !important;
+      padding-right: 42px !important;
+      padding-left: 0 !important;
     }
 
-    /* Select value */
+    /* Select value - allineato a sinistra */
     .mat-mdc-select-value {
       text-align: left !important;
+      padding-right: 0 !important;
     }
   }
 }

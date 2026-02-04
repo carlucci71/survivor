@@ -351,6 +351,9 @@ public class CacheableService {
         return campionatoDTO;
     }
 
+    @CacheEvict(cacheNames = CAMPIONATI)
+    public void clearCacheCampionati() {
+    }
 
     @Transactional(readOnly = true)
     @Cacheable(value = SPORT)
@@ -365,6 +368,11 @@ public class CacheableService {
         List<Parametri> parametri = parametriRepository.findAll();
         return parametriMapper.toDTOList(parametri);
     }
+
+    @CacheEvict(cacheNames = PARAMETRI)
+    public void clearCacheParametri() {
+    }
+
 
     @Transactional(readOnly = true)
     @Cacheable(value = SOSPENSIONI)

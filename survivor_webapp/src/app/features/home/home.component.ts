@@ -24,6 +24,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { PushService } from '../../core/services/push.service';
 import { LegaCardSkeletonComponent } from '../../shared/components/lega-card-skeleton/lega-card-skeleton.component';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 
 @Component({
@@ -43,10 +46,13 @@ import { LegaCardSkeletonComponent } from '../../shared/components/lega-card-ske
     MatDialogModule,
     MatIconModule,
     TranslateModule,
-    LegaCardSkeletonComponent
+    LegaCardSkeletonComponent,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isMobile = false;
@@ -54,6 +60,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   leghe: Lega[] = [];
   groupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
+  filteredGroupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
+  searchText: string = '';
+  private searchDebounceTimer: any;
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
@@ -96,6 +105,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.resizeHandler) {
       window.removeEventListener('resize', this.resizeHandler);
       this.resizeHandler = null;
+    }
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
     }
   }
 
@@ -244,6 +256,37 @@ export class HomeComponent implements OnInit, OnDestroy {
           .localeCompare((b.edizione || '').toString())
       ),
     }));
+    this.filteredGroupedLeghe = [...this.groupedLeghe];
+  }
+
+  filterLeghe(): void {
+    // Cancella il timer precedente se esiste
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
+
+    // Imposta un nuovo timer per ritardare la ricerca di 300ms
+    this.searchDebounceTimer = setTimeout(() => {
+      const search = this.searchText.toLowerCase().trim();
+
+      if (!search) {
+        this.filteredGroupedLeghe = [...this.groupedLeghe];
+        return;
+      }
+
+      this.filteredGroupedLeghe = this.groupedLeghe
+        .map(group => ({
+          ...group,
+          edizioni: group.edizioni.filter(edizione =>
+            group.name.toLowerCase().includes(search) ||
+            group.des.toLowerCase().includes(search) ||
+            edizione.edizione?.toString().includes(search) ||
+            edizione.anno?.toString().includes(search) ||
+            edizione.stato.descrizione.toLowerCase().includes(search)
+          )
+        }))
+        .filter(group => group.edizioni.length > 0);
+    }, 300);
   }
 
   isAdmin(): boolean {
@@ -291,5 +334,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       autoFocus: false,
       restoreFocus: false
     });
+  }
+
+  // TrackBy functions per ottimizzare il rendering
+  trackByGroupName(index: number, group: { name: string; des: string; edizioni: Lega[] }): string {
+    return group.name;
+  }
+
+  trackByLegaId(index: number, lega: Lega): number {
+    return lega.id;
   }
 }

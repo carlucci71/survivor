@@ -68,4 +68,14 @@ export class CampionatoService {
     );
   }
 
+  partiteDellaGiornata(
+    campionatoId: string,
+    anno: number,
+    giornata: number
+  ): Observable<Partita[]> {
+    return this.http.get<any>(
+      `${this.apiUrl}/partiteDellaGiornata/${campionatoId}/${anno}/${giornata}`
+    );
+  }
+
 }

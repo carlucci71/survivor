@@ -80,11 +80,16 @@ public class TrofeiService {
 
         // Calcola numero giornate giocate - conta le giocate dalla entity
         List<Giocata> giocateOfGiocatore = giocataService.giocateOfGiocatoreInLega(gl.getGiocatore().getId(), gl.getLega().getId());
-        Long giornateGiocate = giocateOfGiocatore
-                .stream()
-                .filter(g -> g.getGiornata() <= gl.getLega().getGiornataFinale() - gl.getLega().getGiornataIniziale()+1)
-                .count();
 
+        Long giornateGiocate;
+        if (gl.getLega().getGiornataFinale() != null) {
+            giornateGiocate = giocateOfGiocatore
+                    .stream()
+                    .filter(g -> g.getGiornata() <= gl.getLega().getGiornataFinale() - gl.getLega().getGiornataIniziale() + 1)
+                    .count();
+        } else {
+            giornateGiocate = (long) giocateOfGiocatore.size();
+        }
 
         dto.setGiornateGiocate(giornateGiocate.intValue());
 

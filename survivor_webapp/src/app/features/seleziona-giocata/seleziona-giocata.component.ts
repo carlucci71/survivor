@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -27,8 +27,10 @@ import { SquadraService } from '../../core/services/squadra.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
+  standalone: true,
   templateUrl: './seleziona-giocata.component.html',
   styleUrls: ['./seleziona-giocata.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -40,13 +42,16 @@ import { SquadraService } from '../../core/services/squadra.service';
     TranslateModule,
   ],
 })
-export class SelezionaGiocataComponent implements OnInit {
+export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
+  @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
+
   isMobile = false;
   private resizeHandler: any;
   private tabsReservedHeight = 0;
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
+  prossimaGiornata: Partita[] = [];
   prossimePartite: Partita[] = [];
   loadingUltimi = false;
   loadingProssime = false;
@@ -56,6 +61,10 @@ export class SelezionaGiocataComponent implements OnInit {
   lega!: Lega;
   giocatore: Giocatore;
   showDettagli = false;
+
+  // Controllo scroll frecce
+  canScrollLeft = false;
+  canScrollRight = false;
   squadreConPartite: any[] = [];
   squadreFiltrate: any[] = [];
   searchQuery: string = '';
@@ -175,6 +184,198 @@ export class SelezionaGiocataComponent implements OnInit {
     return this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
   }
 
+  // Mapping esplicito sigla → file logo (con estensioni corrette)
+  private readonly logoFiles: { [key: string]: string } = {
+    // SERIE A (20 squadre)
+    'ATA': 'ATA',           // Atalanta (senza estensione)
+    'BOL': 'BOLO.png',      // Bologna
+    'CAG': 'CAGL.png',      // Cagliari
+    'COM': 'COMO.png',      // Como
+    'CRE': 'CREMON.png',    // Cremonese
+    'EMP': 'EMP.png',       // Empoli ✨ AGGIUNTO
+    'FIO': 'FIO.png',       // Fiorentina
+    'GEN': 'GENOA.png',     // Genoa
+    'INT': 'INT.png',       // Inter
+    'JUV': 'JUV.png',       // Juventus
+    'LAZ': 'LAZIO.png',     // Lazio
+    'LEC': 'LECCE.webp',    // Lecce (webp)
+    'MIL': 'MIL.png',       // Milan
+    'MON': 'MON.png',       // Monza
+    'NAP': 'NAP.png',       // Napoli
+    'PAR': 'PARMA.png',     // Parma
+    'PIS': 'PISA.png',      // Pisa
+    'ROM': 'ROMA.webp',     // Roma (webp)
+    'SAS': 'SASS.png',      // Sassuolo
+    'TOR': 'TORO.png',      // Torino
+    'UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
+    'VEN': 'VEN.png',       // Venezia
+    'VER': 'VER.png',       // Verona
+
+    // SERIE B (18 squadre)
+    'AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
+    'BAR': 'BARI.png',      // Bari
+    'CAR': 'CARRARESE.png', // Carrarese
+    'CTZ': 'CATANZARO.png', // Catanzaro
+    'CES': 'CES.png',       // Cesena
+    'ENT': 'ENT.png',       // Entella
+    'JST': 'JUVE_STABIA.png', // Juve Stabia (sigla corretta)
+    'MAN': 'MANT.png',      // Mantova
+    'MOD': 'MOD.png',       // Modena
+    'PAD': 'PADOVA.png',    // Padova
+    'PAL': 'PAL.png',       // Palermo
+    'PES': 'PESC.png',      // Pescara
+    'REG': 'REGGIANA.png',  // Reggiana
+    'SAM': 'SAMP.png',      // Sampdoria ✨ AGGIUNTO
+    'SPE': 'SPEZIA.webp',   // Spezia
+    'STR': 'SUDTIROL.png',  // Sudtirol (sigla corretta) ✨ CORRETTO
+  };
+
+  // Mapping foto tennisti (sigla → file)
+  private readonly tennisPhotos: { [key: string]: string } = {
+    'ALCARAZ': 'ALCARAZ.png',
+    'BUBLIK': 'BUBLIK.png',
+    'CERUNDOLO': 'CERUNDOLO.png',
+    'DARDERI': 'DARDERI.png',
+    'DE_MINAUR': 'DE_MIINAUR.png',
+    'DE MINAUR': 'DE_MIINAUR.png', // Alias senza underscore
+    'DEMINAUR': 'DE_MIINAUR.png',  // Alias senza spazi
+    'DJOKOVIC': 'DJOKOVIC.png',
+    'FRITZ': 'FRITZ.png',
+    'MEDVEDEV': 'MEDVEDEV.png',
+    'MENSIK': 'MENSIK.png',
+    'MUSETTI': 'MUSETTI.webp',
+    'PAUL': 'PAUL.png',
+    'RUUD': 'RUUD.png',
+    'SHELTON': 'SHELTON.png',
+    'SINNER': 'SINNER.png',
+    'TIEN': 'TIEN.png',
+    'ZVEREV': 'ZVEREV.webp',
+  };
+
+  // Mapping loghi NBA basket (sigla → file)
+  private readonly basketLogos: { [key: string]: string } = {
+    // EASTERN CONFERENCE
+    'PHI': '76ERS.png',        // Philadelphia 76ers
+    'ATL': 'HAWKS.png',        // Atlanta Hawks
+    'BOS': 'CELTICS.png',      // Boston Celtics
+    'BKN': 'NETS.png',         // Brooklyn Nets
+    'CHA': 'HORNETS.png',      // Charlotte Hornets
+    'CHI': 'BULLS.png',        // Chicago Bulls
+    'CLE': 'CAVALIERS.png',    // Cleveland Cavaliers
+    'IND': 'PACERS.png',       // Indiana Pacers
+    'MIA': 'HEAT.png',         // Miami Heat
+    'MIL': 'BUCKS.png',        // Milwaukee Bucks
+    'NYK': 'KNICKS.png',       // New York Knicks
+    'ORL': 'ORLANDO_MAGIC.png', // Orlando Magic
+    'TOR': 'RAPTORS.png',      // Toronto Raptors
+    'WAS': 'WIZARDS.png',      // Washington Wizards
+    'DET': 'PISTONS.png',      // Detroit Pistons
+
+    // WESTERN CONFERENCE
+    'DEN': 'NUGGETS.png',      // Denver Nuggets
+    'SAS': 'SPURS.png',        // San Antonio Spurs ✨ COMPLETATO
+    'LAL': 'LAKERS.png',       // Los Angeles Lakers
+    'HOU': 'ROCKETS.png',      // Houston Rockets
+    'MIN': 'TIMBERWOLVES.png', // Minnesota Timberwolves
+    'PHX': 'SUNS.png',         // Phoenix Suns
+    'MEM': 'GRIZZLIES.png',    // Memphis Grizzlies
+    'GSW': 'WARRIORS.png',     // Golden State Warriors
+    'POR': 'BLAZERS.png',      // Portland Trail Blazers
+    'DAL': 'MAVERICKS.png',    // Dallas Mavericks
+    'UTA': 'UTAH.webp',        // Utah Jazz
+    'LAC': 'CLIPPERS.png',     // LA Clippers
+    'SAC': 'SACRAMENTO.png',   // Sacramento Kings
+    'NOP': 'PELICANS.png',     // New Orleans Pelicans
+    'OKC': 'THUNDER.png',      // Oklahoma City Thunder
+  };
+
+  // Metodo per ottenere il logo ufficiale della squadra (assets locali)
+  getTeamLogo(sigla: string): string | null {
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    if (sportId === 'TENNIS') {
+      const original = sigla.toUpperCase().trim();
+      const withUnderscore = original.replace(/\s+/g, '_');
+      const withoutSpaces = original.replace(/\s+/g, '');
+
+      // Prova matching esatto
+      let photoFile = this.tennisPhotos[original] ||
+                      this.tennisPhotos[withUnderscore] ||
+                      this.tennisPhotos[withoutSpaces];
+
+      // Se non trovato, prova a matchare solo il cognome
+      if (!photoFile) {
+        const parts = original.split(/[\s_]+/);
+        const cognome = parts[parts.length - 1]; // Ultimo elemento = cognome
+
+        // Cerca per cognome nelle chiavi
+        const matchingKey = Object.keys(this.tennisPhotos).find(key =>
+          key.includes(cognome) || cognome.includes(key)
+        );
+
+        if (matchingKey) {
+          photoFile = this.tennisPhotos[matchingKey];
+        }
+      }
+
+      if (photoFile) {
+        return `assets/logos/tennis/${photoFile}`;
+      }
+
+      return 'assets/logos/tennis/placeholder.svg';
+    }
+
+
+    // Per calcio, usa mapping esplicito
+    if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
+      const fileName = this.logoFiles[sigla];
+      if (fileName) {
+        return `assets/logos/calcio/${fileName}`;
+      }
+      return null; // Fallback su SVG maglietta se non trovato
+    }
+
+    // Per basket, usa il mapping dei loghi NBA se disponibile
+    if (sportId === 'BASKET') {
+      const logoFile = this.basketLogos[sigla];
+      if (logoFile) {
+        return `assets/logos/basket/${logoFile}`;
+      }
+      return null; // Fallback su SVG maglietta se non trovato
+    }
+
+    return null;
+  }
+
+  // Metodo per calcolare il colore del testo in contrasto con lo sfondo
+  getContrastColor(hexColor: string): string {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return brightness > 128 ? '#000000' : '#FFFFFF';
+  }
+
+  // Gestisce errori di caricamento logo e mostra fallback
+  onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    if (sportId === 'TENNIS') {
+      // Per il tennis, usa placeholder.svg
+      console.warn('🎾 Errore caricamento foto tennista, uso placeholder');
+      img.src = 'assets/logos/tennis/placeholder.svg';
+    } else {
+      // Per calcio/basket, mostra SVG maglietta fallback
+      const svg = img.nextElementSibling as HTMLElement;
+      if (img && svg) {
+        img.style.display = 'none';
+        svg.style.display = 'block';
+      }
+    }
+  }
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -208,9 +409,10 @@ export class SelezionaGiocataComponent implements OnInit {
       this.data.giornata
     );
     if (this.squadraSelezionata) {
-      this.mostraUltimiRisultati();
+      this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
     }
+    this.caricaProssimaGiornata();
     // Carica le partite per tutte le squadre disponibili
     this.caricaPartitePerTutteSquadre();
   }
@@ -337,44 +539,6 @@ export class SelezionaGiocataComponent implements OnInit {
     }
   }
 
-  mostraUltimiRisultatiOpponent() {
-    const opp = this.getNextOpponentSigla(true);
-    if (opp && this.squadraSelezionata) {
-      // Carica tutti i risultati storici dell'avversario
-      if (this.lega.campionato?.id && this.lega.campionato?.sport?.id) {
-        // Per il tennis, carica dalla giornata 1 per avere tutto lo storico del torneo
-        const giornataInizio = this.lega.campionato?.sport?.id === 'TENNIS' ? 1 : this.lega.giornataCorrente - 1;
-
-        this.campionatoService
-          .calendario(
-            this.lega.campionato.id,
-            opp,
-            this.lega.anno,
-            giornataInizio,
-            false
-          )
-          .subscribe({
-            next: (risultatiAvversario) => {
-              // Filtra solo le partite dove l'avversario ha giocato contro la squadra selezionata (testa a testa)
-              this.ultimiRisultatiOpponent = risultatiAvversario.filter(partita => {
-                const casaSigla = partita.casaSigla || '';
-                const fuoriSigla = partita.fuoriSigla || '';
-                const squadraCorrente = this.squadraSelezionata || '';
-
-                // Verifica se la squadra selezionata è presente nella partita
-                return casaSigla === squadraCorrente || fuoriSigla === squadraCorrente;
-              });
-
-              console.log('Testa a testa trovati:', this.ultimiRisultatiOpponent.length, 'tra', this.squadraSelezionata, 'e', opp);
-            },
-            error: (error) => {
-              console.error('Errore caricamento testa a testa:', error);
-            }
-          });
-      }
-    }
-  }
-
   mostraProssimePartite() {
     if (
       this.squadraSelezionata &&
@@ -393,7 +557,10 @@ export class SelezionaGiocataComponent implements OnInit {
         .subscribe({
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
-            this.mostraUltimiRisultatiOpponent();
+            const opponentSigla = this.getNextOpponentSigla(true);
+            if (opponentSigla){
+              this.mostraUltimiRisultati(opponentSigla);
+            }
             this.loadingProssime = false;
           },
           error: (error) => {
@@ -498,8 +665,50 @@ export class SelezionaGiocataComponent implements OnInit {
 
   formatNomeSquadra(nome: string): string {
     if (!nome) return '';
+
     // Rimuovi underscore e sostituiscili con spazi
-    return nome.replace(/_/g, ' ');
+    let formatted = nome.replace(/_/g, ' ');
+
+    // Standardizza nomi NBA - mostra il nome della squadra, non la città
+    const abbreviazioni: { [key: string]: string } = {
+      'PORTLAND TRAIL BLAZERS': 'TRAIL BLAZERS',
+      'GOLDEN STATE WARRIORS': 'WARRIORS',
+      'OKLAHOMA CITY THUNDER': 'THUNDER',
+      'NEW ORLEANS PELICANS': 'PELICANS',
+      'MINNESOTA TIMBERWOLVES': 'TIMBERWOLVES',
+      'SACRAMENTO KINGS': 'KINGS',
+      'SAN ANTONIO SPURS': 'SPURS',
+      'LOS ANGELES LAKERS': 'LAKERS',
+      'LOS ANGELES CLIPPERS': 'CLIPPERS',
+      'MEMPHIS GRIZZLIES': 'GRIZZLIES',
+      'DALLAS MAVERICKS': 'MAVERICKS',
+      'ORLANDO MAGIC': 'MAGIC',
+      'PHILADELPHIA 76ERS': '76ERS',
+      'CHARLOTTE HORNETS': 'HORNETS',
+      'CLEVELAND CAVALIERS': 'CAVALIERS',
+      'MILWAUKEE BUCKS': 'BUCKS',
+      'WASHINGTON WIZARDS': 'WIZARDS',
+      'TORONTO RAPTORS': 'RAPTORS',
+      'BROOKLYN NETS': 'NETS',
+      'NEW YORK KNICKS': 'KNICKS',
+      'BOSTON CELTICS': 'CELTICS',
+      'DETROIT PISTONS': 'PISTONS',
+      'INDIANA PACERS': 'PACERS',
+      'CHICAGO BULLS': 'BULLS',
+      'ATLANTA HAWKS': 'HAWKS',
+      'MIAMI HEAT': 'HEAT',
+      'DENVER NUGGETS': 'NUGGETS',
+      'UTAH JAZZ': 'JAZZ',
+      'PHOENIX SUNS': 'SUNS',
+      'HOUSTON ROCKETS': 'ROCKETS',
+    };
+
+    const upper = formatted.toUpperCase();
+    if (abbreviazioni[upper]) {
+      return abbreviazioni[upper];
+    }
+
+    return formatted;
   }
 
   getSearchPlaceholder(): string {
@@ -582,16 +791,38 @@ export class SelezionaGiocataComponent implements OnInit {
 
   selezionaSquadra(sigla: string): void {
     this.squadraSelezionata = sigla;
-    this.mostraUltimiRisultati();
+    this.mostraUltimiRisultati(this.squadraSelezionata);
     this.mostraProssimePartite();
   }
+
+  caricaProssimaGiornata(): void {
+    if (!this.lega.campionato?.id) return;
+      // Carica prossima giornata
+      this.campionatoService
+        .partiteDellaGiornata(
+          this.lega.campionato!.id,
+            this.lega.anno,
+          this.lega.giornataCorrente
+        )
+        .subscribe({
+          next: (partite) => {
+            this.prossimaGiornata = partite;
+          },
+          error: (error) => {
+            console.error('Errore caricamento prossima giornata:', error);
+          }
+
+
+    });
+
+  }
+
 
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
-    let caricamentiCompletati = 0;
-    const totaleSquadre = this.squadreDisponibili.length;
+    
 
     // Inizializza subito le squadre con i dati base
     this.squadreConPartite = this.squadreDisponibili.map(squadra => {
@@ -600,65 +831,17 @@ export class SelezionaGiocataComponent implements OnInit {
         prossimaPartita: null as Partita | null,
         ultimiRisultati: [] as any[]
       };
+        this.prossimaGiornata.forEach((partita) => {
+          if (partita.casaSigla == squadra.sigla || partita.fuoriSigla == squadra.sigla){
+              squadraConPartite.prossimaPartita = partita;
+        }
 
-      // Carica prossima partita
-      this.campionatoService
-        .calendario(
-          this.lega.campionato!.id,
-          squadra.sigla!,
-            this.lega.anno,
-          this.lega.giornataCorrente,
-          true
-        )
-        .subscribe({
-          next: (partite) => {
-            if (partite && partite.length > 0) {
-              squadraConPartite.prossimaPartita = partite[0];
-            }
+        // Quando tutti i caricamenti sono completati, applica il filtro
+        if (isTennis) {
+          this.applicaFiltroGiocatoriAttivi();
+        }
+      });
 
-            // Incrementa il contatore
-            caricamentiCompletati++;
-
-            // Quando tutti i caricamenti sono completati, applica il filtro
-            if (isTennis && caricamentiCompletati === totaleSquadre) {
-              this.applicaFiltroGiocatoriAttivi();
-            }
-          },
-          error: (error) => {
-            console.error('Errore caricamento prossima partita:', error);
-            caricamentiCompletati++;
-
-            if (isTennis && caricamentiCompletati === totaleSquadre) {
-              this.applicaFiltroGiocatoriAttivi();
-            }
-          }
-        });
-
-      // Carica ultimi risultati
-      this.campionatoService
-        .calendario(
-          this.lega.campionato!.id,
-          squadra.sigla!,
-            this.lega.anno,
-            this.lega.giornataCorrente - 1,
-          false
-        )
-        .subscribe({
-          next: (risultati) => {
-            squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
-              let esito = 'N';
-              if (r.casaSigla === squadra.sigla) {
-                if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
-                else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
-              } else if (r.fuoriSigla === squadra.sigla) {
-                if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
-                else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
-              }
-              return { ...r, esito };
-            });
-          },
-          error: (error) => console.error('Errore caricamento ultimi risultati:', error)
-        });
 
       return squadraConPartite;
     });
@@ -705,4 +888,48 @@ export class SelezionaGiocataComponent implements OnInit {
     this.searchQuery = '';
     this.filtraSquadre();
   }
+
+  // Scroll a sinistra
+  scrollLeft(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      container.scrollBy({ left: -300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 100);
+    }
+  }
+
+  // Scroll a destra
+  scrollRight(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      container.scrollBy({ left: 300, behavior: 'smooth' });
+      setTimeout(() => this.updateScrollButtons(), 100);
+    }
+  }
+
+  // Aggiorna visibilità pulsanti scroll
+  updateScrollButtons(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+      this.canScrollLeft = container.scrollLeft > 0;
+      this.canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 5);
+    }
+  }
+
+  // Chiamato dopo AfterViewInit per inizializzare lo stato delle frecce
+  ngAfterViewInit(): void {
+    if (this.scrollWrapper) {
+      const container = this.scrollWrapper.nativeElement;
+
+      // Listener per aggiornare le frecce durante lo scroll
+      container.addEventListener('scroll', () => {
+        this.updateScrollButtons();
+      });
+
+      // Inizializza stato frecce
+      setTimeout(() => this.updateScrollButtons(), 200);
+    }
+  }
+
+
 }

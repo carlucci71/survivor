@@ -90,6 +90,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Messaggio di consolazione (salvato una sola volta)
   private savedConsolationMessage: string = '';
 
+  // Percorso giocatori
+  showPlayerJourneys = false;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -155,7 +158,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     const { SelezionaGiocataComponent } = await import(
       '../seleziona-giocata/seleziona-giocata.component'
     );
-    const dialogRef = this.dialog.open(SelezionaGiocataComponent, {
+
+    const isDesktop = window.innerWidth >= 768;
+    const dialogConfig = {
       data: {
         giocatore: giocatore,
         giornata: giornata,
@@ -164,15 +169,25 @@ export class LegaDettaglioComponent implements OnDestroy {
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega,
       },
-      width: '820px',
-      maxWidth: '90vw',
+      width: isDesktop ? '90vw' : '94vw',
+      maxWidth: isDesktop ? '1100px' : '500px',
       maxHeight: '95vh',
-      panelClass: 'seleziona-giocata-dialog',
+      panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
       scrollStrategy: this.overlay.scrollStrategies.noop()
+    };
+
+    console.log('🔍 Dialog Config:', {
+      isDesktop,
+      width: dialogConfig.width,
+      maxWidth: dialogConfig.maxWidth,
+      panelClass: dialogConfig.panelClass,
+      windowWidth: window.innerWidth
     });
+
+    const dialogRef = this.dialog.open(SelezionaGiocataComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
         this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
@@ -212,11 +227,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (
       !this.isAdmin() &&
       !this.isLeaderLega() &&
-      this.lega?.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value
+      this.lega?.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value
     ) {
       ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
     }
-    if (this.lega?.statoGiornataCorrente.value === StatoPartita.SOSPESA.value) {
+    if (this.lega?.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
       ret = 'Non visualizzo perchè la giornata è sospesa';
     }
     if (this.isTerminata()) {
@@ -307,10 +322,113 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  // ========== LOGHI E FOTO SQUADRE/TENNISTI ==========
+
+  // Mapping loghi calcio (Serie A + Serie B)
+  private readonly logoFiles: { [key: string]: string } = {
+    // SERIE A
+    'ATA': 'ATA', 'BOL': 'BOLO.png', 'CAG': 'CAGL.png', 'COM': 'COMO.png',
+    'CRE': 'CREMON.png', 'EMP': 'EMP.png', 'FIO': 'FIO.png', 'GEN': 'GENOA.png',
+    'INT': 'INT.png', 'JUV': 'JUV.png', 'LAZ': 'LAZIO.png', 'LEC': 'LECCE.webp',
+    'MIL': 'MIL.png', 'MON': 'MON.png', 'NAP': 'NAP.png', 'PAR': 'PARMA.png',
+    'PIS': 'PISA.png', 'ROM': 'ROMA.webp', 'SAS': 'SASS.png', 'TOR': 'TORO.png',
+    'UDI': 'UDI.png', 'VEN': 'VEN.png', 'VER': 'VER.png',
+    // SERIE B
+    'AVE': 'AVE.png', 'BAR': 'BARI.png', 'CAR': 'CARRARESE.png', 'CTZ': 'CATANZARO.png',
+    'CES': 'CES.png', 'ENT': 'ENT.png', 'JST': 'JUVE_STABIA.png', 'MAN': 'MANT.png',
+    'MOD': 'MOD.png', 'PAD': 'PADOVA.png', 'PAL': 'PAL.png', 'PES': 'PESC.png',
+    'REG': 'REGGIANA.png', 'SAM': 'SAMP.png', 'SPE': 'SPEZIA.webp', 'STR': 'SUDTIROL.png',
+  };
+
+  // Mapping foto tennisti
+  private readonly tennisPhotos: { [key: string]: string } = {
+    'ALCARAZ': 'ALCARAZ.png', 'BUBLIK': 'BUBLIK.png', 'CERUNDOLO': 'CERUNDOLO.png',
+    'DARDERI': 'DARDERI.png', 'DE_MINAUR': 'DE_MIINAUR.png', 'DE MINAUR': 'DE_MIINAUR.png',
+    'DEMINAUR': 'DE_MIINAUR.png', 'DJOKOVIC': 'DJOKOVIC.png', 'FRITZ': 'FRITZ.png',
+    'MEDVEDEV': 'MEDVEDEV.png', 'MENSIK': 'MENSIK.png', 'MUSETTI': 'MUSETTI.webp',
+    'PAUL': 'PAUL.png', 'RUUD': 'RUUD.png', 'SHELTON': 'SHELTON.png',
+    'SINNER': 'SINNER.png', 'TIEN': 'TIEN.png', 'ZVEREV': 'ZVEREV.webp',
+  };
+
+  // Mapping loghi NBA basket
+  private readonly basketLogos: { [key: string]: string } = {
+    'PHI': '76ERS.png', 'ATL': 'HAWKS.png', 'BOS': 'CELTICS.png', 'BKN': 'NETS.png',
+    'CHA': 'HORNETS.png', 'CHI': 'BULLS.png', 'CLE': 'CAVALIERS.png', 'IND': 'PACERS.png',
+    'MIA': 'HEAT.png', 'MIL': 'BUCKS.png', 'NYK': 'KNICKS.png', 'ORL': 'ORLANDO_MAGIC.png',
+    'TOR': 'RAPTORS.png', 'WAS': 'WIZARDS.png', 'DET': 'PISTONS.png', 'DEN': 'NUGGETS.png',
+    'SAS': 'SPURS.png', 'LAL': 'LAKERS.png', 'HOU': 'ROCKETS.png', 'MIN': 'TIMBERWOLVES.png',
+    'PHX': 'SUNS.png', 'MEM': 'GRIZZLIES.png', 'GSW': 'WARRIORS.png', 'POR': 'BLAZERS.png',
+    'DAL': 'MAVERICKS.png', 'UTA': 'UTAH.webp', 'LAC': 'CLIPPERS.png', 'SAC': 'SACRAMENTO.png',
+    'NOP': 'PELICANS.png', 'OKC': 'THUNDER.png',
+  };
+
+  // Metodo per ottenere il logo/foto della squadra/tennista
+  getTeamLogo(sigla: string | null | undefined): string | null {
+    if (!sigla) return null;
+    const sportId = this.lega?.campionato?.sport?.id;
+
+    // Tennis - foto giocatore con matching avanzato
+    if (sportId === 'TENNIS') {
+      const original = sigla.toUpperCase().trim();
+      const withUnderscore = original.replace(/\s+/g, '_');
+      const withoutSpaces = original.replace(/\s+/g, '');
+
+      // Prova matching esatto
+      let photoFile = this.tennisPhotos[original] ||
+                      this.tennisPhotos[withUnderscore] ||
+                      this.tennisPhotos[withoutSpaces];
+
+      // Se non trovato, prova a matchare solo il cognome
+      if (!photoFile) {
+        const parts = original.split(/[\s_]+/);
+        const cognome = parts[parts.length - 1]; // Ultimo elemento = cognome
+
+        // Cerca per cognome nelle chiavi
+        const matchingKey = Object.keys(this.tennisPhotos).find(key =>
+          key.includes(cognome) || cognome.includes(key)
+        );
+
+        if (matchingKey) {
+          photoFile = this.tennisPhotos[matchingKey];
+        }
+      }
+
+      if (photoFile) {
+        return `assets/logos/tennis/${photoFile}`;
+      }
+
+      return 'assets/logos/tennis/placeholder.svg';
+    }
+
+    // Calcio - stemmi
+    if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
+      const fileName = this.logoFiles[sigla];
+      if (fileName) return `assets/logos/calcio/${fileName}`;
+      return null;
+    }
+
+    // Basket - loghi NBA
+    if (sportId === 'BASKET') {
+      const logoFile = this.basketLogos[sigla];
+      if (logoFile) return `assets/logos/basket/${logoFile}`;
+      return null;
+    }
+
+    return null;
+  }
+
+  // Gestisce errore caricamento logo
+  onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.style.display = 'none';
+    }
+  }
+
   giornataDaGiocare(): boolean {
     if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return (
-      this.lega?.statoGiornataCorrente.value == StatoPartita.DA_GIOCARE.value
+      this.lega?.statoGiornataCorrente?.value == StatoPartita.DA_GIOCARE.value
     );
   }
 
@@ -639,13 +757,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   confirmEliminaLega(): void {
     if (!this.lega) return;
 
-    console.log('Eliminazione lega in corso...', this.lega.id);
     this.isDeleting = true;
-    this.showDeleteConfirm = false; // Chiudi il dialog subito
+    this.showDeleteConfirm = false;
 
     this.legaService.eliminaLega(this.lega.id).subscribe({
       next: (response) => {
-        console.log('Lega eliminata con successo:', response);
         this.isDeleting = false;
         this.router.navigate(['/home']);
       },
@@ -669,21 +785,14 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   startCountdown(): void {
-    console.log('🕐 startCountdown chiamato per:', this.lega?.campionato?.sport?.id);
-    console.log('📅 inizioProssimaGiornata:', this.lega?.inizioProssimaGiornata);
-
     if (!this.lega) {
-      console.warn('⚠️ Countdown non attivo - lega non caricata');
       this.countdownActive = false;
       return;
     }
 
     if (this.lega.inizioProssimaGiornata) {
-      // CASO 1: inizioProssimaGiornata è disponibile (dovrebbe funzionare per tutti gli sport)
       this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
     } else {
-      // CASO 2: FALLBACK - carica le partite della giornata e trova la prima
-      console.warn('⚠️ inizioProssimaGiornata non disponibile, carico le partite...');
       this.loadFirstMatchTimeAndStartCountdown();
     }
   }
@@ -691,11 +800,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   private loadFirstMatchTimeAndStartCountdown(): void {
     if (!this.lega || !this.lega.campionato?.id) return;
 
-    // Carica TUTTE le partite della giornata passando stringa vuota come squadraId
     this.campionatoService
       .calendario(
         this.lega.campionato.id,
-        '', // Stringa vuota = recupera tutte le partite della giornata
+        '',
         this.lega.anno,
         this.lega.giornataCorrente,
         true
@@ -703,37 +811,29 @@ export class LegaDettaglioComponent implements OnDestroy {
       .subscribe({
         next: (partite) => {
           if (partite && partite.length > 0) {
-            // Trova la prima partita ordinando per orario
             const primaPartita = partite
               .filter(p => p.orario)
               .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
 
             if (primaPartita && primaPartita.orario) {
-              console.log('✅ Prima partita trovata:', primaPartita.orario);
               this.startCountdownWithTime(new Date(primaPartita.orario));
-            }
-            else {
-              console.warn('⚠️ Nessuna partita con orario trovata');
+            } else {
               this.countdownActive = false;
             }
           } else {
-            console.warn('⚠️ Nessuna partita trovata per la giornata');
             this.countdownActive = false;
           }
         },
         error: (error) => {
-          console.error('❌ Errore caricamento partite:', error);
+          console.error('Errore caricamento partite:', error);
           this.countdownActive = false;
         }
       });
   }
 
   private startCountdownWithTime(matchTime: Date): void {
-    // Sottrai 5 minuti (5 * 60 * 1000 millisecondi)
     const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
 
-    console.log('⏰ Match time:', matchTime);
-    console.log('🎯 Target time (5min prima):', targetTime);
 
     const updateCountdown = () => {
         const now = new Date().getTime();
@@ -767,5 +867,18 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     updateCountdown();
     this.countdownIntervalId = setInterval(updateCountdown, 1000);
+  }
+
+  togglePlayerJourneys(): void {
+    this.showPlayerJourneys = !this.showPlayerJourneys;
+  }
+
+  // TrackBy functions per ottimizzare il rendering
+  trackByGiocatoreId(index: number, giocatore: Giocatore): number {
+    return giocatore.id;
+  }
+
+  trackByGiornataIndex(index: number, giornata: number): number {
+    return giornata;
   }
 }

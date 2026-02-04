@@ -133,12 +133,21 @@
                   <ng-container *ngIf="
                           getGiocataByGiornata(giocatore, giornata) as giocata
                         ">
-                    <div *ngIf="giocata.squadraSigla || giocata.esito" class="team-name" [ngClass]="{
+                    <div *ngIf="giocata.squadraSigla || giocata.esito" class="team-logo-container" [ngClass]="{
                             ok: giocata.esito === 'OK',
                             ko: giocata.esito === 'KO',
                             empty: !giocata.esito
                           }" [title]="getSquadraNome(giocata.squadraSigla)">
-                      {{ getSquadraNome(giocata.squadraSigla) }}
+                      @if(getTeamLogo(giocata.squadraSigla)) {
+                        <img
+                          class="team-logo-small"
+                          [src]="getTeamLogo(giocata.squadraSigla)"
+                          [alt]="getSquadraNome(giocata.squadraSigla) || ''"
+                          (error)="onLogoError($event)"
+                        />
+                      } @else {
+                        <span class="team-name-fallback">{{ getSquadraNome(giocata.squadraSigla) }}</span>
+                      }
                     </div>
                   </ng-container>
                   @if (!visualizzaGiocata(giornata, giocatore)) {
@@ -168,7 +177,7 @@
 
       <!-- Mobile stacked view: shown only on small screens via CSS -->
       <div class="stacked-view mobile-only">
-        <div *ngFor="let giocatore of lega.giocatori" class="player-card"
+        <div *ngFor="let giocatore of lega.giocatori; trackBy: trackByGiocatoreId" class="player-card"
           [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
           <div class="player-header">
             <span class="nome-giocatore">{{ giocatore.nome }}</span>
@@ -215,11 +224,85 @@
                          'ok': getGiocataByGiornata(giocatore, giornata)?.esito === 'OK',
                          'ko': getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'
                        }">
-                {{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}
+                @if(getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)) {
+                  <img
+                    class="team-logo-mobile"
+                    [src]="getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)"
+                    [alt]="getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) || ''"
+                    (error)="onLogoError($event)"
+                  />
+                } @else {
+                  <span class="team-name-mobile-fallback">{{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}</span>
+                }
               </div>
             </div>
           </div>
         </div>
+      </div>
+      }
+
+      <!-- SEZIONE PERCORSO GIOCATORI -->
+      @if (lega.giocatori?.length) {
+      <div class="player-journeys-section">
+        <button class="journey-toggle-btn" (click)="togglePlayerJourneys()">
+          <mat-icon>{{ showPlayerJourneys ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span>{{ showPlayerJourneys ? ('LEAGUE.HIDE_JOURNEYS' | translate) : ('LEAGUE.VIEW_ALL_JOURNEYS' | translate) }}</span>
+        </button>
+
+        @if (showPlayerJourneys) {
+        <div class="journeys-container">
+          @for (giocatore of lega.giocatori; track giocatore.id) {
+          <div class="journey-card" [class.eliminato]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
+            <div class="journey-header">
+              <span class="journey-player-name">{{ giocatore.nome }}</span>
+              @if (giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+                <span class="journey-status-badge eliminated">❌</span>
+              } @else {
+                <span class="journey-status-badge active">✅</span>
+              }
+            </div>
+
+            <div class="journey-picks">
+              @if (giocatore.giocate && giocatore.giocate.length > 0) {
+                @for (giornata of giornataIndices; track giornata) {
+                  @if (getGiocataByGiornata(giocatore, giornata); as giocata) {
+                    @if (giocata.squadraSigla) {
+                    <div class="journey-pick" [ngClass]="{
+                      'pick-ok': giocata.esito === 'OK',
+                      'pick-ko': giocata.esito === 'KO',
+                      'pick-pending': !giocata.esito
+                    }">
+                      <div class="pick-round">{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</div>
+                      <div class="pick-team">
+                        @if(getTeamLogo(giocata.squadraSigla)) {
+                          <img
+                            class="pick-logo"
+                            [src]="getTeamLogo(giocata.squadraSigla)"
+                            [alt]="getSquadraNome(giocata.squadraSigla) || ''"
+                            (error)="onLogoError($event)"
+                          />
+                        }
+                        <span class="pick-name">{{ getSquadraNome(giocata.squadraSigla) }}</span>
+                      </div>
+                      @if (giocata.esito) {
+                        <div class="pick-result">
+                          <span [class.result-win]="giocata.esito === 'OK'" [class.result-loss]="giocata.esito === 'KO'">
+                            {{ giocata.esito === 'OK' ? '✓' : '✗' }}
+                          </span>
+                        </div>
+                      }
+                    </div>
+                    }
+                  }
+                }
+              } @else {
+                <div class="no-picks">{{ 'LEAGUE.NO_PICKS_YET' | translate }}</div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
       </div>
       }
 

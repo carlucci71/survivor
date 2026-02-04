@@ -5,21 +5,22 @@
 /* CONTAINER PRINCIPALE */
 .modal-container {
 	position: relative;
-	background: #FFFFFF;
+	background: #FFFFFF !important;
 	border-radius: 20px;
 	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-	padding: 20px 16px 20px 16px;
-	width: 94vw;
-	max-width: 500px;
+	padding: 16px 14px 14px 14px;
 	max-height: 90vh;
-	overflow-y: scroll !important;
-	overflow-x: hidden !important;
+	overflow-y: auto;
+	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	touch-action: pan-y !important;
 	z-index: 10000;
 	font-family: 'Poppins', sans-serif;
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+
 
 	&::-webkit-scrollbar {
 		width: 4px;
@@ -40,24 +41,43 @@
 	position: absolute;
 	top: 10px;
 	right: 10px;
-	z-index: 10;
-	width: 32px;
-	height: 32px;
+	left: auto;
+	z-index: 100;
+	width: 32px !important;
+	height: 32px !important;
 	background: rgba(10, 61, 145, 0.08);
-	border-radius: 50%;
+	border-radius: 50% !important;
 	transition: all 0.2s ease;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 0 !important;
+	margin: 0 !important;
 	border: none;
 	cursor: pointer;
+	min-width: 32px !important;
+	max-width: 32px !important;
+	min-height: 32px !important;
+	max-height: 32px !important;
+
+	/* Rimuovi padding Material Button */
+	.mat-mdc-button-touch-target,
+	.mat-mdc-button-persistent-ripple,
+	.mat-mdc-button-ripple {
+		display: none !important;
+	}
 
 	mat-icon {
-		color: #0A3D91;
-		font-size: 18px;
-		width: 18px;
-		height: 18px;
+		color: #0A3D91 !important;
+		font-size: 20px !important;
+		width: 20px !important;
+		height: 20px !important;
+		line-height: 20px !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		margin: 0 !important;
+		padding: 0 !important;
 	}
 
 	&:hover {
@@ -68,8 +88,8 @@
 
 /* TITOLO H2 */
 h2 {
-	margin: 0 0 12px 0;
-	font-size: 1.2rem;
+	margin: 0 0 6px 0;
+	font-size: 1.05rem;
 	font-weight: 800;
 	color: #0A3D91;
 	font-family: 'Poppins', sans-serif;
@@ -92,8 +112,8 @@ h2 {
 	align-items: center;
 	justify-content: center;
 	gap: 16px;
-	margin-bottom: 16px;
-	padding: 12px 20px;
+	margin-bottom: 10px;
+	padding: 8px 14px;
 	background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08));
 	border-radius: 16px;
 	border: 1px solid rgba(10, 61, 145, 0.1);
@@ -131,15 +151,51 @@ h2 {
 	}
 }
 
+/* Versione compatta per desktop/tablet */
+@media (min-width: 768px) {
+	.info-compact {
+		padding: 8px 16px !important;
+		margin-bottom: 12px !important;
+		gap: 12px !important;
+
+		.info-item {
+			gap: 6px !important;
+
+			.label {
+				font-size: 0.9rem !important;
+			}
+
+			.value {
+				font-size: 0.85rem !important;
+				padding: 3px 10px !important;
+			}
+
+			.stato-icon {
+				font-size: 18px !important;
+				width: 18px !important;
+				height: 18px !important;
+			}
+		}
+
+		.info-separator {
+			font-size: 1rem !important;
+		}
+	}
+}
+
 /* CALENDARIO CONTAINER */
 .calendario-container {
-	margin: 12px 0;
+	margin: 6px 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
 
 	.calendario-title {
 		font-size: 0.85rem;
 		font-weight: 700;
 		color: #0A3D91;
-		margin: 0 0 10px 0;
+		margin: 0 0 6px 0;
 		text-transform: uppercase;
 		letter-spacing: 0.3px;
 		text-align: center;
@@ -156,13 +212,13 @@ h2 {
 /* SEARCH CONTAINER - BARRA DI RICERCA */
 .search-container {
 	position: relative;
-	margin: 0 0 12px 0;
+	margin: 0 0 8px 0;
 	display: flex;
 	align-items: center;
 	background: linear-gradient(135deg, rgba(10, 61, 145, 0.04), rgba(79, 195, 247, 0.06));
 	border: 2px solid rgba(10, 61, 145, 0.15);
 	border-radius: 16px;
-	padding: 8px 12px;
+	padding: 6px 10px;
 	transition: all 0.3s ease;
 
 	&:focus-within {
@@ -250,126 +306,388 @@ h2 {
 	}
 }
 
-/* GRID SQUADRE - GRIGLIA COMPATTA CENTRATA */
-.squadre-grid {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	padding: 8px 0;
-	justify-content: center;
-	align-items: flex-start;
-	/* Rimosso max-height e overflow per permettere scroll del container principale */
-}
-
-/* CARD SQUADRA - MINI CHIP */
-.squadra-card {
-	border: 2px solid;
-	border-radius: 12px;
-	padding: 6px 10px;
-	cursor: pointer;
-	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* SCROLL ORIZZONTALE CONTAINER */
+.teams-scroll-container {
+	width: 100%;
+	overflow: hidden;
 	position: relative;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 8px;
-	min-width: 105px;
-	max-width: 140px;
-	box-sizing: border-box;
+	padding: 8px 0;
+	margin: 0 -16px;
 
-	&:hover {
-		transform: scale(1.04);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 30px;
+		pointer-events: none;
 		z-index: 2;
 	}
 
-	&.selected {
-		transform: scale(1.06);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-		z-index: 3;
-
-		.squadra-nome {
-			font-weight: 800;
-		}
-
-		.check-icon {
-			display: flex;
-		}
+	&::before {
+		left: 0;
+		background: linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0));
 	}
 
-	.squadra-icon {
+	&::after {
+		right: 0;
+		background: linear-gradient(to left, rgba(255,255,255,1), rgba(255,255,255,0));
+	}
+}
+
+/* FRECCE SCROLL */
+.scroll-arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 10;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+	color: #FFFFFF;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25);
+	transition: all 0.3s ease;
+	opacity: 0.9;
+
+	mat-icon {
+		font-size: 28px;
 		width: 28px;
 		height: 28px;
-		min-width: 28px;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		color: #FFFFFF;
-		font-weight: 700;
-		font-size: 0.6rem;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-		border: 2px solid;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	}
 
-	.squadra-info {
-		display: flex;
-		flex-direction: column;
-		gap: 1px;
-		flex: 1;
-		min-width: 0;
+	&:hover {
+		opacity: 1;
+		transform: translateY(-50%) scale(1.1);
+		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
 	}
 
-	.squadra-nome {
-		font-size: 0.65rem;
-		font-weight: 700;
-		color: #0A3D91;
-		margin: 0;
-		line-height: 1.2;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	&:active {
+		transform: translateY(-50%) scale(0.95);
 	}
 
-	.vs-text {
-		font-size: 0.5rem;
-		font-weight: 500;
-		color: #9CA3AF;
-		line-height: 1.1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	&.hidden {
+		opacity: 0;
+		pointer-events: none;
 	}
+}
 
-	.check-icon {
+.scroll-arrow-left {
+	left: 8px;
+}
+
+.scroll-arrow-right {
+	right: 8px;
+}
+
+/* Nascondi frecce su mobile */
+@media (max-width: 767px) {
+	.scroll-arrow {
 		display: none;
-		position: absolute;
-		top: -4px;
-		right: -4px;
-		color: #FFFFFF;
-		font-size: 14px;
-		width: 14px;
-		height: 14px;
-		background: #10B981;
-		border-radius: 50%;
-		animation: checkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-		box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
-		align-items: center;
-		justify-content: center;
 	}
 }
 
-@keyframes checkPop {
-	0% { transform: scale(0); opacity: 0; }
-	100% { transform: scale(1); opacity: 1; }
+.teams-scroll-wrapper {
+	display: flex;
+	gap: 16px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 8px 16px 16px 16px;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+
+	/* Nasconde scrollbar ma mantiene funzionalità */
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* IE/Edge */
+
+	&::-webkit-scrollbar {
+		display: none; /* Chrome/Safari */
+	}
 }
+
+/* CARD MAGLIETTA */
+.jersey-card {
+	flex: 0 0 auto;
+	width: 140px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	cursor: pointer;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	padding: 10px 8px 8px 8px;
+	border-radius: 16px;
+	background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.05));
+	border: 2px solid transparent;
+	overflow: hidden;
+
+	&:hover {
+		transform: scale(1.02);
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.1));
+		border-color: rgba(10, 61, 145, 0.2);
+		box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
+
+		.jersey-container {
+			transform: translateY(-2px);
+		}
+	}
+
+	&.selected {
+		transform: scale(1.05);
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.12), rgba(79, 195, 247, 0.15));
+		border-color: #0A3D91;
+		box-shadow: 0 12px 32px rgba(10, 61, 145, 0.25);
+
+		.jersey-container {
+			transform: translateY(-4px);
+		}
+
+		.jersey-info .jersey-name {
+			font-weight: 700;
+			color: #0A3D91;
+		}
+	}
+}
+
+/* CONTAINER MAGLIETTA/LOGO */
+.jersey-container {
+	position: relative;
+	width: 100px;
+	height: 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.tennis-container {
+		width: 100px;
+		height: 100px;
+	}
+}
+
+// ========== STILI TENNIS ==========
+
+.tennis-photo-wrapper {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	overflow: hidden;
+	background: linear-gradient(135deg, #f8fbff, #e6f0fb);
+	border: 3px solid #0A3D91;
+	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.15);
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		transform: scale(1.05);
+		box-shadow: 0 6px 16px rgba(10, 61, 145, 0.25);
+		border-color: #4FC3F7;
+	}
+
+	.jersey-card.selected & {
+		transform: scale(1.08);
+		box-shadow: 0 8px 20px rgba(10, 61, 145, 0.35);
+		border-color: #4FC3F7;
+		border-width: 4px;
+	}
+}
+
+.tennis-photo {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: center top;
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		transform: scale(1.05);
+	}
+
+	.jersey-card.selected & {
+		transform: scale(1.08);
+	}
+}
+
+/* LOGO UFFICIALE IMG */
+.team-logo-img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.2));
+		transform: scale(1.05);
+	}
+
+	.jersey-card.selected & {
+		filter: drop-shadow(0 8px 20px rgba(10, 61, 145, 0.35));
+		transform: scale(1.08);
+	}
+}
+
+.jersey-svg {
+	width: 100%;
+	height: 100%;
+	filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+	transition: all 0.3s ease;
+
+	.jersey-card:hover & {
+		filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.15));
+		transform: scale(1.05);
+	}
+
+	.jersey-card.selected & {
+		filter: drop-shadow(0 8px 20px rgba(10, 61, 145, 0.3));
+		transform: scale(1.08);
+	}
+}
+
+.jersey-body {
+	transition: all 0.3s ease;
+}
+
+.jersey-stripe {
+	transition: all 0.3s ease;
+}
+
+.jersey-number {
+	transition: all 0.3s ease;
+}
+
+@keyframes checkPulse {
+	0% {
+		transform: scale(0);
+		opacity: 0;
+	}
+	50% {
+		transform: scale(1.2);
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+/* INFO SQUADRA SOTTO LA MAGLIETTA */
+.jersey-info {
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	text-align: center;
+}
+
+.jersey-name {
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #0A3D91;
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	max-height: 2.4em;
+}
+
+.jersey-vs {
+	font-size: 0.7rem;
+	font-weight: 500;
+	color: #6B7280;
+	line-height: 1.1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+/* RESPONSIVE - Mobile first */
+@media (max-width: 480px) {
+	.jersey-card {
+		width: 120px;
+		padding: 10px;
+	}
+
+	.jersey-container {
+		width: 85px;
+		height: 100px;
+	}
+
+	.jersey-name {
+		font-size: 0.75rem;
+	}
+
+	.jersey-vs {
+		font-size: 0.65rem;
+	}
+
+	/* Dimensioni testo sulla maglietta per mobile */
+	.jersey-team-name {
+		&.short-name {
+			font-size: 11px;
+		}
+
+		&.medium-name {
+			font-size: 9px;
+		}
+
+		&.long-name {
+			font-size: 7px;
+		}
+	}
+}
+
+@media (min-width: 768px) {
+	.modal-container {
+		padding: 20px 28px !important;
+		width: 90vw !important;
+		max-width: 1100px !important;
+		min-width: 900px !important;
+	}
+
+	.jersey-card {
+		width: 160px;
+	}
+
+	.jersey-container {
+		width: 110px;
+		height: 130px;
+	}
+
+	.jersey-name {
+		font-size: 0.85rem;
+	}
+
+	/* Dimensioni testo sulla maglietta per desktop */
+	.jersey-team-name {
+		&.short-name {
+			font-size: 16px;
+		}
+
+		&.medium-name {
+			font-size: 13px;
+		}
+
+		&.long-name {
+			font-size: 9px;
+		}
+	}
+}
+
 
 /* CONTAINER AZIONI */
 .actions-container {
 	display: flex;
 	gap: 10px;
-	margin-top: 16px;
+	margin-top: 10px;
+	flex-shrink: 0;
 }
 
 /* BOTTONE SALVA */
@@ -669,7 +987,7 @@ h2 {
 	.modal-container {
 		padding: 16px 12px;
 		width: 90vw;
-		max-width: 98vw;
+		max-width: 500px !important;
 	}
 
 	h2 {
@@ -753,5 +1071,30 @@ h2 {
 			width: 100%;
 			margin-bottom: 6px;
 		}
+	}
+
+	/* Ottimizzazione container per mobile */
+	.modal-container {
+		padding: 16px 12px;
+		max-height: 92vh;
+	}
+
+	h2 {
+		margin: 0 0 6px 0;
+		font-size: 1rem;
+	}
+
+	.info-compact {
+		margin-bottom: 10px;
+		padding: 8px 12px;
+		font-size: 0.85rem;
+	}
+
+	.calendario-container {
+		margin: 6px 0;
+	}
+
+	.actions-container {
+		margin-top: 10px;
 	}
 }

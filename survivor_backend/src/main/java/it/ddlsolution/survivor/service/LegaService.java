@@ -206,7 +206,9 @@ public class LegaService {
                             if (nuovoStato != null) {
                                 gl.setStato(nuovoStato);
                             }
-
+                            if (legaDTO.getStato()!= Enumeratori.StatoLega.TERMINATA) {
+                                gl.setPosizioneFinale(null);
+                            }
                             // Aggiorna le giocate del giocatore (esito OK/KO)
                             if (giocatoreDTO.getGiocate() != null) {
                                 for (GiocataDTO giocataDTO : giocatoreDTO.getGiocate()) {
@@ -410,7 +412,7 @@ public class LegaService {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(legaDTO.getCampionato().getId());
         for (Integer giornata = legaDTO.getGiornataIniziale(); giornata <= giornataCorrente; giornata++) {
             List<PartitaDTO> partiteDellaGiornata = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, giornata, legaDTO.getAnno());
-            Enumeratori.StatoPartita statoGiornata = statoGiornata(partiteDellaGiornata, giornata);
+            Enumeratori.StatoPartita statoGiornata = statoGiornata(partiteDellaGiornata, giornata, legaDTO);
             statiGiornate.put(giornata, statoGiornata);
         }
         legaDTO.setStatoGiornataCorrente(statiGiornate.get(giornataCorrente));

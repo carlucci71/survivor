@@ -33,6 +33,29 @@
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
 
+      <!-- Barra di ricerca -->
+      <div class="search-container" *ngIf="!isLoadingLeghe && leghe.length > 0">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            [(ngModel)]="searchText"
+            (ngModelChange)="filterLeghe()"
+            [placeholder]="'HOME.SEARCH_LEAGUES' | translate"
+            autocomplete="off"
+          />
+          <button
+            *ngIf="searchText"
+            matSuffix
+            mat-icon-button
+            (click)="searchText = ''; filterLeghe()"
+            aria-label="Clear search"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
       <!-- Skeleton Loading -->
       <div *ngIf="isLoadingLeghe" class="leghe-groups">
         <app-lega-card-skeleton></app-lega-card-skeleton>
@@ -46,8 +69,16 @@
         </mat-card-content>
       </mat-card>
 
-      <div *ngIf="!isLoadingLeghe && groupedLeghe.length > 0" class="leghe-groups">
-        <ng-container *ngFor="let group of groupedLeghe">
+      <!-- Nessun risultato dalla ricerca -->
+      <mat-card *ngIf="!isLoadingLeghe && leghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
+        <mat-card-content>
+          <mat-icon class="search-empty-icon">search_off</mat-icon>
+          <p>{{ 'HOME.NO_RESULTS' | translate }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <div *ngIf="!isLoadingLeghe && filteredGroupedLeghe.length > 0" class="leghe-groups">
+        <ng-container *ngFor="let group of filteredGroupedLeghe; trackBy: trackByGroupName">
           <mat-card>
             <mat-card-header>
               <mat-card-title>{{ group.name }}</mat-card-title>
@@ -55,7 +86,7 @@
             </mat-card-header>
             <mat-card-content>
               <div class="edizioni-list">
-                <mat-card *ngFor="let edizione of group.edizioni" class="lega-card small">
+                <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
                   <mat-card-header>
                     <mat-card-title>Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title>
                     <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>

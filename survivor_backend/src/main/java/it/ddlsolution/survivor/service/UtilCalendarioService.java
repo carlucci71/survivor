@@ -138,6 +138,13 @@ public class UtilCalendarioService {
         );
     }
 
+    public List<PartitaDTO> partiteDellaGiornata(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        return getPartiteDellaGiornata(campionatoDTO, giornata, anno)
+                .stream()
+                .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                .toList();
+    }
+
     public List<PartitaDTO> calendario(CampionatoDTO campionatoDTO, String squadra, int giornataAttuale, boolean prossimi, short anno) {
         List<PartitaDTO> partite = new ArrayList<>();
         if (prossimi) {
