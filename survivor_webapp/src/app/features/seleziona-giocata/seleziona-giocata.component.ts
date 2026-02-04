@@ -51,6 +51,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
+  prossimaGiornata: Partita[] = [];
   prossimePartite: Partita[] = [];
   loadingUltimi = false;
   loadingProssime = false;
@@ -408,9 +409,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       this.data.giornata
     );
     if (this.squadraSelezionata) {
-      this.mostraUltimiRisultati();
+      this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
     }
+    this.caricaProssimaGiornata();
     // Carica le partite per tutte le squadre disponibili
     this.caricaPartitePerTutteSquadre();
   }
@@ -537,42 +539,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
-  mostraUltimiRisultatiOpponent() {
-    const opp = this.getNextOpponentSigla(true);
-    if (opp && this.squadraSelezionata) {
-      // Carica tutti i risultati storici dell'avversario
-      if (this.lega.campionato?.id && this.lega.campionato?.sport?.id) {
-        // Per il tennis, carica dalla giornata 1 per avere tutto lo storico del torneo
-        const giornataInizio = this.lega.campionato?.sport?.id === 'TENNIS' ? 1 : this.lega.giornataCorrente - 1;
-
-        this.campionatoService
-          .calendario(
-            this.lega.campionato.id,
-            opp,
-            this.lega.anno,
-            giornataInizio,
-            false
-          )
-          .subscribe({
-            next: (risultatiAvversario) => {
-              // Filtra solo le partite dove l'avversario ha giocato contro la squadra selezionata (testa a testa)
-              this.ultimiRisultatiOpponent = risultatiAvversario.filter(partita => {
-                const casaSigla = partita.casaSigla || '';
-                const fuoriSigla = partita.fuoriSigla || '';
-                const squadraCorrente = this.squadraSelezionata || '';
-
-                // Verifica se la squadra selezionata è presente nella partita
-                return casaSigla === squadraCorrente || fuoriSigla === squadraCorrente;
-              });
-            },
-            error: (error) => {
-              console.error('Errore caricamento testa a testa:', error);
-            }
-          });
-      }
-    }
-  }
-
   mostraProssimePartite() {
     if (
       this.squadraSelezionata &&
@@ -591,7 +557,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         .subscribe({
           next: (prossimePartite) => {
             this.prossimePartite = prossimePartite;
-            this.mostraUltimiRisultatiOpponent();
+            const opponentSigla = this.getNextOpponentSigla(true);
+            if (opponentSigla){
+              this.mostraUltimiRisultati(opponentSigla);
+            }
             this.loadingProssime = false;
           },
           error: (error) => {
@@ -822,16 +791,38 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   selezionaSquadra(sigla: string): void {
     this.squadraSelezionata = sigla;
-    this.mostraUltimiRisultati();
+    this.mostraUltimiRisultati(this.squadraSelezionata);
     this.mostraProssimePartite();
   }
+
+  caricaProssimaGiornata(): void {
+    if (!this.lega.campionato?.id) return;
+      // Carica prossima giornata
+      this.campionatoService
+        .partiteDellaGiornata(
+          this.lega.campionato!.id,
+            this.lega.anno,
+          this.lega.giornataCorrente
+        )
+        .subscribe({
+          next: (partite) => {
+            this.prossimaGiornata = partite;
+          },
+          error: (error) => {
+            console.error('Errore caricamento prossima giornata:', error);
+          }
+
+
+    });
+
+  }
+
 
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
-    let caricamentiCompletati = 0;
-    const totaleSquadre = this.squadreDisponibili.length;
+    
 
     // Inizializza subito le squadre con i dati base
     this.squadreConPartite = this.squadreDisponibili.map(squadra => {
@@ -840,65 +831,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         prossimaPartita: null as Partita | null,
         ultimiRisultati: [] as any[]
       };
+        this.prossimaGiornata.forEach((partita) => {
+          if (partita.casaSigla == squadra.sigla || partita.fuoriSigla == squadra.sigla){
+              squadraConPartite.prossimaPartita = partita;
+        }
 
-      // Carica prossima partita
-      this.campionatoService
-        .calendario(
-          this.lega.campionato!.id,
-          squadra.sigla!,
-            this.lega.anno,
-          this.lega.giornataCorrente,
-          true
-        )
-        .subscribe({
-          next: (partite) => {
-            if (partite && partite.length > 0) {
-              squadraConPartite.prossimaPartita = partite[0];
-            }
+        // Quando tutti i caricamenti sono completati, applica il filtro
+        if (isTennis) {
+          this.applicaFiltroGiocatoriAttivi();
+        }
+      });
 
-            // Incrementa il contatore
-            caricamentiCompletati++;
-
-            // Quando tutti i caricamenti sono completati, applica il filtro
-            if (isTennis && caricamentiCompletati === totaleSquadre) {
-              this.applicaFiltroGiocatoriAttivi();
-            }
-          },
-          error: (error) => {
-            console.error('Errore caricamento prossima partita:', error);
-            caricamentiCompletati++;
-
-            if (isTennis && caricamentiCompletati === totaleSquadre) {
-              this.applicaFiltroGiocatoriAttivi();
-            }
-          }
-        });
-
-      // Carica ultimi risultati
-      this.campionatoService
-        .calendario(
-          this.lega.campionato!.id,
-          squadra.sigla!,
-            this.lega.anno,
-            this.lega.giornataCorrente - 1,
-          false
-        )
-        .subscribe({
-          next: (risultati) => {
-            squadraConPartite.ultimiRisultati = risultati.slice(0, 3).map(r => {
-              let esito = 'N';
-              if (r.casaSigla === squadra.sigla) {
-                if (r.scoreCasa! > r.scoreFuori!) esito = 'V';
-                else if (r.scoreCasa! < r.scoreFuori!) esito = 'P';
-              } else if (r.fuoriSigla === squadra.sigla) {
-                if (r.scoreFuori! > r.scoreCasa!) esito = 'V';
-                else if (r.scoreFuori! < r.scoreCasa!) esito = 'P';
-              }
-              return { ...r, esito };
-            });
-          },
-          error: (error) => console.error('Errore caricamento ultimi risultati:', error)
-        });
 
       return squadraConPartite;
     });
@@ -987,4 +930,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       setTimeout(() => this.updateScrollButtons(), 200);
     }
   }
+
+
 }
