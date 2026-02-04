@@ -412,9 +412,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
     }
+    // Prima carica la prossima giornata, poi le partite per tutte le squadre
     this.caricaProssimaGiornata();
-    // Carica le partite per tutte le squadre disponibili
-    this.caricaPartitePerTutteSquadre();
   }
 
   ngOnDestroy(): void {
@@ -428,6 +427,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
   }
+
 
   trackByGiornata(index: number, item: any) {
     return item && item.giornata ? item.giornata : index;
@@ -807,9 +807,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         .subscribe({
           next: (partite) => {
             this.prossimaGiornata = partite;
+            // DOPO aver caricato prossimaGiornata, carica le partite per tutte le squadre
+            this.caricaPartitePerTutteSquadre();
           },
           error: (error) => {
             console.error('Errore caricamento prossima giornata:', error);
+            // Anche in caso di errore, carica le squadre (senza avversari)
+            this.caricaPartitePerTutteSquadre();
           }
 
 
@@ -822,7 +826,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (!this.lega.campionato?.id) return;
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
-    
+
 
     // Inizializza subito le squadre con i dati base
     this.squadreConPartite = this.squadreDisponibili.map(squadra => {
@@ -848,6 +852,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     // Inizializza la lista filtrata con tutte le squadre
     this.squadreFiltrate = [...this.squadreConPartite];
+
+    // Aggiorna i bottoni frecce dopo il caricamento
+    setTimeout(() => this.updateScrollButtons(), 200);
   }
 
   applicaFiltroGiocatoriAttivi(): void {
@@ -931,5 +938,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Gestisce scroll con mouse wheel (rotella)
+   * Converte lo scroll verticale in orizzontale
+   */
+  onScrollWrapperScroll(event: WheelEvent): void {
+    const wrapper = this.scrollWrapper?.nativeElement;
+    if (!wrapper) return;
+
+    // Previeni lo scroll verticale di default
+    event.preventDefault();
+
+    // Converti scroll verticale in orizzontale
+    wrapper.scrollLeft += event.deltaY;
+
+    // Aggiorna stato frecce
+    this.updateScrollButtons();
+  }
 
 }

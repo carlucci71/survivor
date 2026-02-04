@@ -143,6 +143,23 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
 
+  /**
+   * Ricarica i dettagli della lega dal backend
+   */
+  loadLegaDetails(): void {
+    if (this.id) {
+      this.legaService.getLegaById(this.id).subscribe({
+        next: (lega) => {
+          this.lega = lega;
+          this.caricaTabella();
+        },
+        error: (error) => {
+          console.error('Errore nel ricaricamento della lega:', error);
+        },
+      });
+    }
+  }
+
   getDesGiornataTitle(index: number): string {
     if (
       !this.lega ||
@@ -275,13 +292,25 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (numGg < maxGiornata) {
       maxGiornata = numGg;
     }
-    //const giornataCorrente = this.lega?.giornataCorrente || 0;
-    for (let i = 0; i <= maxGiornata - giornataIniziale; i++) {
-      this.displayedColumns.push('giocata' + i);
-    }
-    // populate giornata indices 1..maxGiornata
 
-    this.giornataIndices = Array.from({ length: maxGiornata }, (_, i) => i + 1);
+    // Calcola le giornate da visualizzare (max 10, centrate sulla giornata corrente)
+    const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
+    const maxGiornateVisibili = 10;
+    let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
+    let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
+
+    // Aggiusta se siamo vicini alla fine
+    if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
+      startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
+    }
+
+    // Popola le colonne visibili
+    for (let i = startGiornata; i <= endGiornata; i++) {
+      this.displayedColumns.push('giocata' + (i - giornataIniziale));
+    }
+
+    // Popola giornataIndices solo con le giornate visibili
+    this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
       this.squadraService
@@ -306,6 +335,72 @@ export class LegaDettaglioComponent implements OnDestroy {
     const numCols = Math.max(0, this.displayedColumns.length - 1); // exclude 'nome'
     if (!this.giornataIndices || numCols <= 0) return [];
     return this.giornataIndices.slice(0, numCols);
+  }
+
+  /**
+   * Ottiene la giocata dato il numero di giornata assoluto (non relativo)
+   */
+  getGiocataByGiornataAssoluta(giocatore: Giocatore, giornataAssoluta: number): any {
+    if (!giocatore?.giocate) return null;
+
+    // Il backend salva le giocate con giornata RELATIVA (1, 2, 3...)
+    // quando chiamiamo giocaGiornata viene passata la giornata relativa
+    // Quindi dobbiamo convertire la giornataAssoluta in relativa per cercare
+    const giornataRelativa = giornataAssoluta - (this.lega?.giornataIniziale || 1) + 1;
+
+    // Cerca SOLO per giornata relativa (è così che viene salvata)
+    return giocatore.giocate.find((g: any) => Number(g?.giornata) === giornataRelativa);
+  }
+
+  /**
+   * Verifica se un giocatore è quello dell'utente corrente loggato
+   */
+  isCurrentUserGiocatore(giocatore: Giocatore): boolean {
+    const currentUser = this.authService.getCurrentUser();
+    return !!currentUser && giocatore.user?.id === currentUser.id;
+  }
+
+  /**
+   * Verifica se un giocatore può giocare una determinata giornata assoluta
+   */
+  canPlayRound(giocatore: Giocatore, giornataAssoluta: number): boolean {
+    if (!this.lega) return false;
+
+    // Verifica che sia il giocatore dell'utente loggato
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser || giocatore.user?.id !== currentUser.id) {
+      return false;
+    }
+
+    // Verifica se il giocatore è eliminato
+    if (giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      return false;
+    }
+
+    // Verifica se ha già una giocata per quella giornata
+    const haGiocata = this.getGiocataByGiornataAssoluta(giocatore, giornataAssoluta) !== null;
+    if (haGiocata) {
+      return false;
+    }
+
+    // Verifica se la giornata è giocabile
+    const giornataDaGiocare = this.lega.giornataDaGiocare || 0;
+    const giornataCorrente = this.lega.giornataCorrente || 0;
+
+    // Può giocare se la giornata è quella da giocare O quella corrente
+    // E se la lega è in uno stato che permette il gioco
+    const isPlayableRound = (giornataAssoluta === giornataDaGiocare || giornataAssoluta === giornataCorrente);
+    const isLegaAvviata = this.isAvviata();
+
+    return isPlayableRound && isLegaAvviata && !haGiocata;
+  }
+
+  /**
+   * Gioca una giornata dato il numero assoluto
+   */
+  async giocaGiornataAssoluta(giocatore: Giocatore, giornataAssoluta: number): Promise<void> {
+    const giornataRelativa = giornataAssoluta - (this.lega?.giornataIniziale || 1) + 1;
+    await this.giocaGiornata(giocatore, giornataRelativa);
   }
 
   getSquadreDisponibili(giocatore: any): any[] {
@@ -724,6 +819,10 @@ export class LegaDettaglioComponent implements OnDestroy {
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
           if (res && Array.isArray(res.giocate)) {
             giocatore.giocate = res.giocate;
+
+            // Forza il refresh della vista per mostrare immediatamente la nuova giocata
+            // Ricarica i dettagli della lega per aggiornare tutto
+            this.loadLegaDetails();
           }
         },
         error: (err: any) => {
@@ -736,34 +835,55 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
   }
 
-  hasGiocataDisponibile(giocatore: Giocatore): boolean {
-    // Verifica se esiste almeno una giornata giocabile per questo giocatore
-    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
+  /**
+   * Controlla se il giocatore corrente può giocare/modificare la giornata corrente
+   *
+   * Logica:
+   * 1. Leader/Admin possono SEMPRE giocare
+   * 2. TUTTI possono giocare/modificare quando statoGiornataCorrente = DA_GIOCARE (timeout attivo)
+   * 3. Quando la giornata è IN_CORSO o TERMINATA, solo chi NON ha ancora giocato può farlo
+   */
+  hasGiocataDisponibile(giocatore: Giocatore | null): boolean {
+    if (!giocatore || !this.lega?.giornataCorrente) return false;
+
+    // Lega terminata? Nessuno può giocare
+    if (this.isTerminata()) return false;
+
+    // Giocatore eliminato? Non può giocare
+    if (giocatore.statiPerLega?.[this.lega.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
       return false;
     }
 
-    for (let i = 0; i < this.giornataIndices.length; i++) {
-      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
-      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
-        return true;
-      }
+    // Giornata sospesa? Nessuno può giocare
+    if (this.lega.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
+      return false;
     }
-    return false;
+
+    const giornataRelativa = this.lega.giornataCorrente - (this.lega.giornataIniziale || 1) + 1;
+    const giocata = this.getGiocataByGiornata(giocatore, giornataRelativa);
+
+    // Leader/Admin possono SEMPRE giocare/modificare
+    if (this.isLeaderLega() || this.isAdmin()) {
+      return true;
+    }
+
+    // Se la giornata è DA_GIOCARE (timeout attivo), TUTTI possono giocare/modificare
+    if (this.lega.statoGiornataCorrente?.value === StatoPartita.DA_GIOCARE.value) {
+      return true;
+    }
+
+    // Altrimenti, può giocare solo se NON ha ancora giocato
+    return !giocata;
   }
 
-  giocaGiornataDisponibile(giocatore: Giocatore): void {
-    // Trova la prima giornata disponibile e apri il popup
-    if (!this.lega || !this.lega.giornataIniziale || !this.lega.statiGiornate) {
-      return;
-    }
+  /**
+   * Gioca la prima giornata disponibile
+   */
+  async giocaGiornataDisponibile(giocatore: Giocatore | null): Promise<void> {
+    if (!giocatore || !this.lega?.giornataCorrente) return;
 
-    for (let i = 0; i < this.giornataIndices.length; i++) {
-      const giornataAssoluta = this.giornataIndices[i] + this.lega.giornataIniziale - 1;
-      if (this.visualizzaGiocata(giornataAssoluta, giocatore)) {
-        this.giocaGiornata(giocatore, giornataAssoluta);
-        return;
-      }
-    }
+    const giornataRelativa = this.lega.giornataCorrente - (this.lega.giornataIniziale || 1) + 1;
+    await this.giocaGiornata(giocatore, giornataRelativa);
   }
 
   // Mostra/nascondi conferma eliminazione
