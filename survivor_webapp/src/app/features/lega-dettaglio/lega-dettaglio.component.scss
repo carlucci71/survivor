@@ -3706,4 +3706,80 @@
 	}
 }
 
+/* ===== INDICATORI DI STATO ANIMATI ===== */
 
+/* Container per nome utente + indicatore */
+.user-name-container {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Indicatore di stato - Badge circolare animato */
+.status-indicator,
+.status-indicator-mobile {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	position: relative;
+	flex-shrink: 0;
+}
+
+/* Stato ATTIVO - Verde con pulse */
+.status-indicator.active-indicator,
+.status-indicator-mobile.active-indicator {
+	background: linear-gradient(135deg, #10B981, #34D399);
+	box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+	animation: statusPulseActive 2s ease-in-out infinite;
+}
+
+/* Stato ELIMINATO - Rosso con fade */
+.status-indicator.eliminated-indicator,
+.status-indicator-mobile.eliminated-indicator {
+	background: linear-gradient(135deg, #EF4444, #F87171);
+	box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+	animation: statusFadeEliminated 2s ease-in-out infinite;
+}
+
+/* Animazione Pulse per Attivi */
+@keyframes statusPulseActive {
+	0% {
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+		transform: scale(1);
+	}
+	50% {
+		box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+		transform: scale(1.1);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+		transform: scale(1);
+	}
+}
+
+/* Animazione Fade per Eliminati */
+@keyframes statusFadeEliminated {
+	0%, 100% {
+		opacity: 1;
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+	}
+	50% {
+		opacity: 0.4;
+		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0);
+	}
+}
+
+/* Responsive per mobile */
+.status-indicator-mobile {
+	width: 8px;
+	height: 8px;
+	margin-left: 6px;
+}
+
+@media (max-width: 480px) {
+	.status-indicator-mobile {
+		width: 7px;
+		height: 7px;
+	}
+}

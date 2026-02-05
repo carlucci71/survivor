@@ -170,7 +170,13 @@
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
-                    <span class="user-name">{{ giocatore.nome }}</span>
+                    <div class="user-name-container">
+                      <span class="user-name">{{ giocatore.nome }}</span>
+                      <span class="status-indicator"
+                            [class.active-indicator]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
+                            [class.eliminated-indicator]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
+                      </span>
+                    </div>
                     @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
                       <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
                                 matTooltip="Rimuovi giocatore">close</mat-icon>
@@ -292,9 +298,9 @@
             <!-- Sinistra: Nome + Badge stato -->
             <div class="player-info-left">
               <span class="nome-giocatore-mobile">{{ giocatore.nome }}</span>
-              <span class="player-status-badge-mobile"
-                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value">
-                {{ giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value ? '❌' : '✅' }}
+              <span class="status-indicator-mobile"
+                    [class.active-indicator]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
+                    [class.eliminated-indicator]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
               </span>
             </div>
 
