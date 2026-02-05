@@ -1,3 +1,6 @@
+/* ===== IMPORT MIGLIORAMENTI MOBILE AVANZATI ===== */
+@use './lega-dettaglio-mobile-enhanced.scss';
+
 /* COUNTDOWN TIMER */
 .countdown-timer-section {
 	width: 100%;
@@ -1627,8 +1630,6 @@
 	}
 }
 
-/* ===== IMPORT MIGLIORAMENTI MOBILE AVANZATI ===== */
-@import './lega-dettaglio-mobile-enhanced.scss';
 
 /* ===== FILTRI E RICERCA MOBILE - MODERNI ===== */
 .mobile-filters-section {
