@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -46,8 +46,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
 
   isMobile = false;
-  private resizeHandler: any;
-  private tabsReservedHeight = 0;
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
@@ -406,6 +404,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  currentLang: string = 'it';
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -421,8 +421,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     },
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
+    this.currentLang = this.translate.currentLang || this.translate.getDefaultLang() || 'it';
+    this.translate.onLangChange.subscribe((event) => {
+      this.currentLang = event.lang;
+    });
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
     // Se c'è una squadra già selezionata per questa giornata, selezionala
@@ -444,12 +448,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
     // Prima carica la prossima giornata, poi le partite per tutte le squadre
     this.caricaProssimaGiornata();
-  }
-
-  ngOnDestroy(): void {
-    if (this.resizeHandler) {
-      window.removeEventListener('resize', this.resizeHandler);
-    }
   }
 
   setActiveTab(tab: 'ultimi' | 'prossime' | 'opponent') {
@@ -830,31 +828,26 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   caricaProssimaGiornata(): void {
-    if (!this.lega.campionato?.id) return;
-      // Carica prossima giornata
-      this.campionatoService
-        .partiteDellaGiornata(
-          this.lega.campionato!.id,
-            this.lega.anno,
-          this.lega.giornataCorrente
-        )
-        .subscribe({
-          next: (partite) => {
-            this.prossimaGiornata = partite;
-            // DOPO aver caricato prossimaGiornata, carica le partite per tutte le squadre
-            this.caricaPartitePerTutteSquadre();
-          },
-          error: (error) => {
-            console.error('Errore caricamento prossima giornata:', error);
-            // Anche in caso di errore, carica le squadre (senza avversari)
-            this.caricaPartitePerTutteSquadre();
-          }
-
-
-    });
-
+    if (!this.lega.campionato?.id) {
+      return;
+    }
+    this.campionatoService
+      .partiteDellaGiornata(
+        this.lega.campionato!.id,
+        this.lega.anno,
+        this.lega.giornataCorrente
+      )
+      .subscribe({
+        next: (partite) => {
+          this.prossimaGiornata = partite;
+          this.caricaPartitePerTutteSquadre();
+        },
+        error: (error) => {
+          console.error('Errore caricamento prossima giornata:', error);
+          this.caricaPartitePerTutteSquadre();
+        },
+      });
   }
-
 
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
