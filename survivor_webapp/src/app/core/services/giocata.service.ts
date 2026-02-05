@@ -13,12 +13,13 @@ export class GiocataService {
 
     constructor(private http: HttpClient) {}
 
-    salvaGiocata(giornata: number, giocatoreId: number, squadraSelezionata: string, legaId: number): Observable<Giocatore> {
+    salvaGiocata(giornata: number, giocatoreId: number, squadraSelezionata: string, legaId: number, pubblica?: boolean): Observable<Giocatore> {
     const body = {
       giornata: giornata,
       legaId: legaId,
       giocatoreId: giocatoreId,
       squadraSigla: squadraSelezionata,
+      pubblica: pubblica !== undefined ? pubblica : false, // Default false (nascosta)
     };
 
       return this.http.post<Giocatore>(`${this.apiUrl}`, body);

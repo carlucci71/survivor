@@ -449,7 +449,9 @@
       "1": "Great choice! 🔥",
       "2": "Perfect! You nailed it! 🎯",
       "3": "Awesome! Winning selection! 💪"
-    }
+    },
+    "HIDE_PICK": "Hide my pick from others",
+    "SHOW_PICK": "Make my pick visible"
   },
   "INVITE_USERS": {
     "TITLE": "Invite Users to",
@@ -572,5 +574,9 @@
     "SECTION_12_TITLE": "12. Changes to Privacy Policy",
     "SECTION_12_P1": "This Privacy Policy may be updated at any time.",
     "SECTION_12_P2": "Changes will be effective from their publication on the platform."
+  },
+  "THEME": {
+    "SWITCH_TO_DARK": "Switch to dark theme",
+    "SWITCH_TO_LIGHT": "Switch to light theme"
   }
 }

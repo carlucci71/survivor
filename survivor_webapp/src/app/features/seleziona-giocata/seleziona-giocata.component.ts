@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -46,8 +46,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
 
   isMobile = false;
-  private resizeHandler: any;
-  private tabsReservedHeight = 0;
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
@@ -61,6 +59,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   lega!: Lega;
   giocatore: Giocatore;
   showDettagli = false;
+  giocataPubblica: boolean = false; // Di default la giocata è nascosta
 
   // Controllo scroll frecce
   canScrollLeft = false;
@@ -180,54 +179,81 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   // Metodo per ottenere i colori sociali di una squadra
   getTeamColors(sigla: string): { primary: string; secondary: string } {
     const sportId = this.lega?.campionato?.sport?.id || 'DEFAULT';
+   // if(sportId === 'CALCIO')
+       const sportId2 = this.lega?.campionato?.id ;
     const key = `${sportId}_${sigla}`;
-    return this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
+    const key2 = `${sportId2}_${sigla}`;
+    return this.teamColors[key2] || this.teamColors[key] || this.teamColors[sigla] || this.teamColors['DEFAULT'];
   }
 
   // Mapping esplicito sigla → file logo (con estensioni corrette)
   private readonly logoFiles: { [key: string]: string } = {
+    'LIGA_BAR': 'BARC.png',
+    'LIGA_RMA': 'RMA.png',
+    'LIGA_ATM': 'ATM.png',
+    'LIGA_ATH': 'ATH.png',
+    'LIGA_ALA': 'ALA.png',
+    'LIGA_BET': 'BET.png',
+    'LIGA_RSO': 'RSO.png',
+    'LIGA_OVI': 'OVI.png',
+    'LIGA_RAY': 'RAY.png',
+    'LIGA_VIL': 'VIL.png',
+    'LIGA_ESP': 'ESP.png',
+    'LIGA_VIG': 'CEL.png',
+    'LIGA_OSA': 'OSA.png',
+    'LIGA_SEV': 'SIV.png',
+    'LIGA_GIR': 'GIR.png',
+    'LIGA_MLL': 'MAI.png',
+    'LIGA_LEV': 'LEV.png',
+    'LIGA_ELC': 'ELC.png',
+    'LIGA_GET': 'GET.png',
+    'LIGA_VAL': 'VAL.png',
     // SERIE A (20 squadre)
-    'ATA': 'ATA',           // Atalanta (senza estensione)
-    'BOL': 'BOLO.png',      // Bologna
-    'CAG': 'CAGL.png',      // Cagliari
-    'COM': 'COMO.png',      // Como
-    'CRE': 'CREMON.png',    // Cremonese
-    'EMP': 'EMP.png',       // Empoli ✨ AGGIUNTO
-    'FIO': 'FIO.png',       // Fiorentina
-    'GEN': 'GENOA.png',     // Genoa
-    'INT': 'INT.png',       // Inter
-    'JUV': 'JUV.png',       // Juventus
-    'LAZ': 'LAZIO.png',     // Lazio
-    'LEC': 'LECCE.webp',    // Lecce (webp)
-    'MIL': 'MIL.png',       // Milan
-    'MON': 'MON.png',       // Monza
-    'NAP': 'NAP.png',       // Napoli
-    'PAR': 'PARMA.png',     // Parma
-    'PIS': 'PISA.png',      // Pisa
-    'ROM': 'ROMA.webp',     // Roma (webp)
-    'SAS': 'SASS.png',      // Sassuolo
-    'TOR': 'TORO.png',      // Torino
-    'UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
-    'VEN': 'VEN.png',       // Venezia
-    'VER': 'VER.png',       // Verona
+    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_BOL': 'BOLO.png',      // Bologna
+    'SERIE_A_CAG': 'CAGL.png',      // Cagliari
+    'SERIE_A_COM': 'COMO.png',      // Como
+    'SERIE_A_CRE': 'CREMON.png',    // Cremonese
+    'SERIE_A_EMP': 'EMP.png',       // Empoli ✨ AGGIUNTO
+    'SERIE_A_FIO': 'FIO.png',       // Fiorentina
+    'SERIE_A_GEN': 'GENOA.png',     // Genoa
+    'SERIE_A_INT': 'INT.png',       // Inter
+    'SERIE_A_JUV': 'JUV.png',       // Juventus
+    'SERIE_A_LAZ': 'LAZIO.png',     // Lazio
+    'SERIE_A_LEC': 'LECCE.webp',    // Lecce (webp)
+    'SERIE_A_MIL': 'MIL.png',       // Milan
+    'SERIE_A_MON': 'MON.png',       // Monza
+    'SERIE_A_NAP': 'NAP.png',       // Napoli
+    'SERIE_A_PAR': 'PARMA.png',     // Parma
+    'SERIE_A_PIS': 'PISA.png',      // Pisa
+    'SERIE_A_ROM': 'ROMA.webp',     // Roma (webp)
+    'SERIE_A_SAS': 'SASS.png',      // Sassuolo
+    'SERIE_A_TOR': 'TORO.png',      // Torino
+    'SERIE_A_UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
+    'SERIE_A_VEN': 'VEN.png',       // Venezia
+    'SERIE_A_VER': 'VER.png',       // Verona
 
     // SERIE B (18 squadre)
-    'AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
-    'BAR': 'BARI.png',      // Bari
-    'CAR': 'CARRARESE.png', // Carrarese
-    'CTZ': 'CATANZARO.png', // Catanzaro
-    'CES': 'CES.png',       // Cesena
-    'ENT': 'ENT.png',       // Entella
-    'JST': 'JUVE_STABIA.png', // Juve Stabia (sigla corretta)
-    'MAN': 'MANT.png',      // Mantova
-    'MOD': 'MOD.png',       // Modena
-    'PAD': 'PADOVA.png',    // Padova
-    'PAL': 'PAL.png',       // Palermo
-    'PES': 'PESC.png',      // Pescara
-    'REG': 'REGGIANA.png',  // Reggiana
-    'SAM': 'SAMP.png',      // Sampdoria ✨ AGGIUNTO
-    'SPE': 'SPEZIA.webp',   // Spezia
-    'STR': 'SUDTIROL.png',  // Sudtirol (sigla corretta) ✨ CORRETTO
+    'SERIE_B_AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
+    'SERIE_B_BAR': 'BARI.png',      // Bari
+    'SERIE_B_CAR': 'CARRARESE.png', // Carrarese
+    'SERIE_B_CTZ': 'CATANZARO.png', // Catanzaro
+    'SERIE_B_CES': 'CES.png',       // Cesena
+    'SERIE_B_ENT': 'ENT.png',       // Entella
+    'SERIE_B_JST': 'JUVE_STABIA.png', // Juve Stabia (sigla corretta)
+    'SERIE_B_MAN': 'MANT.png',      // Mantova
+    'SERIE_B_MOD': 'MOD.png',       // Modena
+    'SERIE_B_PAD': 'PADOVA.png',    // Padova
+    'SERIE_B_PAL': 'PAL.png',       // Palermo
+    'SERIE_B_PES': 'PESC.png',      // Pescara
+    'SERIE_B_REG': 'REGGIANA.png',  // Reggiana
+    'SERIE_B_SAM': 'SAMP.png',      // Sampdoria ✨ AGGIUNTO
+    'SERIE_B_SPE': 'SPEZIA.webp',   // Spezia
+    'SERIE_B_STR': 'SUDTIROL.png',  // Sudtirol (sigla corretta) ✨ CORRETTO
+    'SERIE_B_FRO': 'FRO.png',
+    'SERIE_B_EMP': 'EMP.png',
+    'SERIE_B_MON': 'MON.png',
+    'SERIE_B_VEN': 'VEN.png',
   };
 
   // Mapping foto tennisti (sigla → file)
@@ -292,7 +318,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   // Metodo per ottenere il logo ufficiale della squadra (assets locali)
   getTeamLogo(sigla: string): string | null {
     const sportId = this.lega?.campionato?.sport?.id;
-
+    const calcioId = this.lega?.campionato?.id; //SERIE_A, SERIE_B, LIGA
     if (sportId === 'TENNIS') {
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
@@ -327,8 +353,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
 
     // Per calcio, usa mapping esplicito
-    if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
-      const fileName = this.logoFiles[sigla];
+    // calcioId SERIE_A, SERIE_B,LIGAv
+    if (sportId === 'CALCIO') {
+      const fileName = this.logoFiles[calcioId+'_'+sigla];
+
       if (fileName) {
         return `assets/logos/calcio/${fileName}`;
       }
@@ -376,6 +404,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  currentLang: string = 'it';
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -391,8 +421,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     },
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
+    this.currentLang = this.translate.currentLang || this.translate.getDefaultLang() || 'it';
+    this.translate.onLangChange.subscribe((event) => {
+      this.currentLang = event.lang;
+    });
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
     // Se c'è una squadra già selezionata per questa giornata, selezionala
@@ -412,15 +446,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
     }
+    // Prima carica la prossima giornata, poi le partite per tutte le squadre
     this.caricaProssimaGiornata();
-    // Carica le partite per tutte le squadre disponibili
-    this.caricaPartitePerTutteSquadre();
-  }
-
-  ngOnDestroy(): void {
-    if (this.resizeHandler) {
-      window.removeEventListener('resize', this.resizeHandler);
-    }
   }
 
   setActiveTab(tab: 'ultimi' | 'prossime' | 'opponent') {
@@ -428,6 +455,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
   }
+
 
   trackByGiornata(index: number, item: any) {
     return item && item.giornata ? item.giornata : index;
@@ -584,13 +612,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
+              pubblica: this.giocataPubblica
             });
           }
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
       this.showEncouragementMessage();
-      this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
+      this.dialogRef.close({
+        squadraSelezionata: this.squadraSelezionata,
+        pubblica: this.giocataPubblica
+      });
     }
   }
 
@@ -796,33 +828,32 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   caricaProssimaGiornata(): void {
-    if (!this.lega.campionato?.id) return;
-      // Carica prossima giornata
-      this.campionatoService
-        .partiteDellaGiornata(
-          this.lega.campionato!.id,
-            this.lega.anno,
-          this.lega.giornataCorrente
-        )
-        .subscribe({
-          next: (partite) => {
-            this.prossimaGiornata = partite;
-          },
-          error: (error) => {
-            console.error('Errore caricamento prossima giornata:', error);
-          }
-
-
-    });
-
+    if (!this.lega.campionato?.id) {
+      return;
+    }
+    this.campionatoService
+      .partiteDellaGiornata(
+        this.lega.campionato!.id,
+        this.lega.anno,
+        this.lega.giornataCorrente
+      )
+      .subscribe({
+        next: (partite) => {
+          this.prossimaGiornata = partite;
+          this.caricaPartitePerTutteSquadre();
+        },
+        error: (error) => {
+          console.error('Errore caricamento prossima giornata:', error);
+          this.caricaPartitePerTutteSquadre();
+        },
+      });
   }
-
 
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
-    
+
 
     // Inizializza subito le squadre con i dati base
     this.squadreConPartite = this.squadreDisponibili.map(squadra => {
@@ -848,6 +879,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     // Inizializza la lista filtrata con tutte le squadre
     this.squadreFiltrate = [...this.squadreConPartite];
+
+    // Aggiorna i bottoni frecce dopo il caricamento
+    setTimeout(() => this.updateScrollButtons(), 200);
   }
 
   applicaFiltroGiocatoriAttivi(): void {
@@ -931,5 +965,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Gestisce scroll con mouse wheel (rotella)
+   * Converte lo scroll verticale in orizzontale
+   */
+  onScrollWrapperScroll(event: WheelEvent): void {
+    const wrapper = this.scrollWrapper?.nativeElement;
+    if (!wrapper) return;
+
+    // Previeni lo scroll verticale di default
+    event.preventDefault();
+
+    // Converti scroll verticale in orizzontale
+    wrapper.scrollLeft += event.deltaY;
+
+    // Aggiorna stato frecce
+    this.updateScrollButtons();
+  }
 
 }

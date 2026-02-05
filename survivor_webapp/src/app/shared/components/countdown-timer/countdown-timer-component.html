@@ -1,0 +1,79 @@
+<div class="sport-countdown-container"
+     [class.sport-calcio]="sportId === 1"
+     [class.sport-tennis]="sportId === 2"
+     [class.sport-basket]="sportId === 3"
+     [class]="getUrgencyClass()">
+
+  <!-- Header con icona sportiva animata -->
+  <div class="countdown-header">
+    <div class="sport-icon-wrapper">
+      <span class="sport-icon">{{ getSportIcon() }}</span>
+      <div class="icon-pulse"></div>
+    </div>
+    <h3 class="countdown-title">{{ giornataLabel }}</h3>
+  </div>
+
+  <!-- Timer principale -->
+  <div class="countdown-content" *ngIf="!isExpired && targetDate">
+
+    <!-- Giorni -->
+    <div class="time-unit" *ngIf="timeRemaining.days > 0">
+      <div class="time-card">
+        <div class="time-value">{{ padNumber(timeRemaining.days) }}</div>
+        <div class="time-label">Giorni</div>
+      </div>
+      <span class="separator">:</span>
+    </div>
+
+    <!-- Ore -->
+    <div class="time-unit">
+      <div class="time-card">
+        <div class="time-value">{{ padNumber(timeRemaining.hours) }}</div>
+        <div class="time-label">Ore</div>
+      </div>
+      <span class="separator">:</span>
+    </div>
+
+    <!-- Minuti -->
+    <div class="time-unit">
+      <div class="time-card">
+        <div class="time-value">{{ padNumber(timeRemaining.minutes) }}</div>
+        <div class="time-label">Minuti</div>
+      </div>
+      <span class="separator">:</span>
+    </div>
+
+    <!-- Secondi -->
+    <div class="time-unit">
+      <div class="time-card">
+        <div class="time-value">{{ padNumber(timeRemaining.seconds) }}</div>
+        <div class="time-label">Secondi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messaggio scadenza -->
+  <div class="countdown-expired" *ngIf="isExpired">
+    <div class="expired-icon">🏁</div>
+    <p class="expired-message">Le partite sono iniziate!</p>
+  </div>
+
+  <!-- Messaggio nessuna data -->
+  <div class="countdown-no-date" *ngIf="!targetDate && !isExpired">
+    <div class="no-date-icon">📅</div>
+    <p class="no-date-message">Data non disponibile</p>
+  </div>
+
+  <!-- Animazioni di sfondo basate sullo sport -->
+  <div class="sport-animations">
+    <!-- Palloni/oggetti sportivi animati -->
+    <div class="sport-object sport-object-1" [innerHTML]="getSportIcon()"></div>
+    <div class="sport-object sport-object-2" [innerHTML]="getSportIcon()"></div>
+    <div class="sport-object sport-object-3" [innerHTML]="getSportIcon()"></div>
+  </div>
+
+  <!-- Effetto campo/terreno di gioco -->
+  <div class="field-effect">
+    <div class="field-line" *ngFor="let line of [1,2,3,4,5]"></div>
+  </div>
+</div>
