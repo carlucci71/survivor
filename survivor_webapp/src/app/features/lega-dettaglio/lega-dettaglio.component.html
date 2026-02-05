@@ -242,24 +242,7 @@
             </button>
           </div>
 
-          <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
-          @if (isCurrentUserEliminato()) {
-          <div class="eliminato-banner">
-        <div class="eliminato-emoji">💀</div>
-        <div class="eliminato-content">
-          <div class="eliminato-title">Sei stato eliminato!</div>
-          @if (getSquadraEliminazione()) {
-          <div class="eliminato-squadra">
-            <span class="eliminato-label">Ti ha tradito:</span>
-            <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
-            <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
-          </div>
-          }
-        </div>
-      </div>
-      }
-
-      <!-- Filtri chips -->
+          <!-- Filtri chips -->
       <div class="filter-chips">
             <button
               class="filter-chip"

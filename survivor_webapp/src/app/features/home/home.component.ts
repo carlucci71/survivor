@@ -305,9 +305,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin']);
   }
 
-  goToMe(): void {
-    this.router.navigate(['/me']);
-  }
 
   goToLega(id: number): void {
     this.router.navigate(['/lega', id]);

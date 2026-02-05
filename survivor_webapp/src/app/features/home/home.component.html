@@ -13,7 +13,6 @@
       <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
         <mat-icon>verified_user</mat-icon>
       </button>
-      <mat-icon class="settings-icon" (click)="goToMe()" matTooltip="Configura l'utente">settings</mat-icon>
     </div>
   </app-header>
 
@@ -25,13 +24,6 @@
 
   <main class="main-content">
 
-    <div class="actions">
-      @if (isAdmin()) {
-      <button mat-raised-button color="accent" (click)="goToAdmin()" class="btn-admin">
-        Area Admin
-      </button>
-      }
-    </div>
 
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
