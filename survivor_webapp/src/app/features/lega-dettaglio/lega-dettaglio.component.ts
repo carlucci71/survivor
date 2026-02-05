@@ -1104,7 +1104,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.searchText && this.searchText.trim()) {
       const searchLower = this.searchText.toLowerCase().trim();
       filtered = filtered.filter(g =>
-        g.nome?.toLowerCase().includes(searchLower)
+        g.nickname?.toLowerCase().includes(searchLower)
       );
     }
 

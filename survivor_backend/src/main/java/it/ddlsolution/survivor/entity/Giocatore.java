@@ -26,10 +26,7 @@ public class Giocatore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome", nullable = false, length = 100)
-    private String nome;
-
-    @Column(name = "nickname", length = 100)
+    @Column(name = "nickname",nullable = false, length = 100)
     private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)

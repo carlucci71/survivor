@@ -11,7 +11,6 @@ import java.util.Map;
 @Data
 public class GiocatoreDTO {
     private Long id;
-    private String nome;
     private String nickname;
     private SquadraDTO squadraCuore;
     private Map<Long, Enumeratori.StatoGiocatore> statiPerLega = new HashMap<>();
