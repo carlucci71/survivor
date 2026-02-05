@@ -628,19 +628,37 @@ export class PrivacyDialogComponent {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 10;
+      -webkit-tap-highlight-color: transparent;
 
       mat-icon {
         color: #0A3D91;
         font-size: 16px;
         width: 16px;
         height: 16px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       &:hover {
         background: rgba(10, 61, 145, 0.15);
-        transform: scale(1.1);
+        transform: scale(1.1) rotate(90deg);
+
+        mat-icon {
+          color: #4FC3F7;
+        }
+      }
+
+      &:active {
+        transform: scale(1.05) rotate(90deg);
+        background: rgba(10, 61, 145, 0.2);
+        transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Rimuove il ripple effect di Material */
+      &::before,
+      &::after {
+        display: none !important;
       }
     }
 
@@ -748,20 +766,42 @@ export class PrivacyDialogComponent {
         font-weight: 600;
         font-size: 0.85rem;
         border: 1.5px solid #0A3D91;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
 
         mat-icon {
           font-size: 16px;
           width: 16px;
           height: 16px;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         &:hover {
-          background: #0A3D91;
+          background: linear-gradient(135deg, #0A3D91, #4FC3F7);
           color: #FFFFFF;
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25);
+          box-shadow: 0 4px 12px rgba(10, 61, 145, 0.3);
+          border-color: #4FC3F7;
+
+          mat-icon {
+            transform: scale(1.1);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 6px rgba(10, 61, 145, 0.2);
+          transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Rimuove il ripple effect di Material */
+        &::before,
+        &::after {
+          display: none !important;
         }
       }
     }
@@ -790,22 +830,40 @@ export class PrivacyDialogComponent {
         border-radius: 10px;
         font-weight: 600;
         font-size: 0.9rem;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
 
         mat-icon {
           font-size: 18px;
           width: 18px;
           height: 18px;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 18px rgba(10, 61, 145, 0.3);
+          background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+          transform: translateY(-3px);
+          box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
+
+          mat-icon {
+            transform: scale(1.15);
+          }
         }
 
         &:active {
-          transform: translateY(0);
+          transform: translateY(-1px);
+          box-shadow: 0 3px 10px rgba(10, 61, 145, 0.25);
+          transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Rimuove il ripple effect di Material */
+        &::before,
+        &::after {
+          display: none !important;
         }
       }
     }

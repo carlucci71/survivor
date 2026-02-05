@@ -119,14 +119,14 @@
 	justify-content: center;
 	gap: 10px;
 	padding: 12px 28px;
-	background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7);
 	color: #FFFFFF;
 	border: none;
 	border-radius: 12px;
 	font-size: 0.95rem;
 	font-weight: 600;
 	cursor: pointer;
-	box-shadow: 0 2px 8px rgba(79, 195, 247, 0.25);
+	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25);
 	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	letter-spacing: 0.3px;
 	position: relative;
@@ -165,23 +165,23 @@
 	}
 
 	&:hover {
-		background: linear-gradient(135deg, #29B6F6 0%, #0288D1 100%);
-		transform: translateY(-1px);
-		box-shadow: 0 4px 14px rgba(79, 195, 247, 0.35);
+		background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
 
 		.play-icon-primary {
-			transform: scale(1.1);
+			transform: scale(1.15);
 		}
 	}
 
 	&:active {
 		transform: translateY(0) scale(0.98);
-		box-shadow: 0 2px 6px rgba(79, 195, 247, 0.3);
+		box-shadow: 0 2px 8px rgba(10, 61, 145, 0.25);
 	}
 
 	// Stato focus per accessibilità
 	&:focus-visible {
-		outline: 2px solid #4FC3F7;
+		outline: 2px solid #0A3D91;
 		outline-offset: 2px;
 	}
 }
