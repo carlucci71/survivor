@@ -291,7 +291,7 @@
     "EDITION_LABEL": "Edizione",
     "STATUS": {
       "ACTIVE": "In Corso",
-      "COMPLETED": "Terminata",
+      "COMPLETED": "Terminata", 
       "UPCOMING": "Da Avviare"
     },
     "ROLE": {
