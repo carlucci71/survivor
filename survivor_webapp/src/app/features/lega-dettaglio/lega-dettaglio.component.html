@@ -48,9 +48,6 @@
         </div>
       }
     <mat-card-content>
-      @if (getCountdownTargetDate() && giornataDaGiocare()) {
-      <app-countdown-timer [targetDate]="getCountdownTargetDate()"></app-countdown-timer>
-      }
 
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
       <div class="admin-actions">
@@ -88,7 +85,6 @@
       </div>
       }
 
-<<<<<<< Updated upstream
 
       } @if (lega.giocatori?.length) {
 
@@ -244,17 +240,11 @@
             <button *ngIf="searchText" class="clear-search-btn" (click)="clearSearch()">
               <mat-icon>close</mat-icon>
             </button>
-=======
-      <app-countdown-timer
-        [targetDate]="getCountdownTargetDate()"
-        [sportId]="lega?.campionato?.sport?.id || 1"
-        [giornataLabel]="'Prossima Giornata'"
-      >
-      </app-countdown-timer>
+          </div>
 
-      <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
-      @if (isCurrentUserEliminato()) {
-      <div class="eliminato-banner">
+          <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
+          @if (isCurrentUserEliminato()) {
+          <div class="eliminato-banner">
         <div class="eliminato-emoji">💀</div>
         <div class="eliminato-content">
           <div class="eliminato-title">Sei stato eliminato!</div>
@@ -263,11 +253,14 @@
             <span class="eliminato-label">Ti ha tradito:</span>
             <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
             <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
->>>>>>> Stashed changes
           </div>
+          }
+        </div>
+      </div>
+      }
 
-          <!-- Filtri chips -->
-          <div class="filter-chips">
+      <!-- Filtri chips -->
+      <div class="filter-chips">
             <button
               class="filter-chip"
               [class.active]="playerFilter === 'all'"
