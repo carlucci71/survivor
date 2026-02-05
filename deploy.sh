@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cp ../survivor_test/survivor_webapp/src/assets/build_fe.html survivor_webapp/src/assets/
 echo "🔄 Deploy Survivor App"
 
 # Carica variabili ambiente

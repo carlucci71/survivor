@@ -1,4 +1,5 @@
 #!/bin/bash
+echo $(date) > survivor_webapp/src/assets/build_fe.html
 
 echo "🔄 Deploy Test Survivor App"
 
