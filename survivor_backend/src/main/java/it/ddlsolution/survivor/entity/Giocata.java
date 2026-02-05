@@ -47,5 +47,8 @@ public class Giocata {
     @Column(name = "forzatura", length = 1000)
     private String forzatura;
 
+    @Column(name = "pubblica")
+    private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
+
 
 }

@@ -1,0 +1,971 @@
+/* ===========================================================
+   MIGLIORAMENTI RESPONSIVE AVANZATI - LEGA DETTAGLIO
+   Funziona su Mobile, Tablet e Desktop
+   Sticky filters, animazioni fluide, empty states
+   =========================================================== */
+
+/* ===== LAYOUT RESPONSIVE PER TUTTI I DISPOSITIVI ===== */
+.cards-view-responsive {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	padding: 0;
+	min-height: 200px;
+}
+
+/* Desktop (≥ 1200px) - Layout a 2 colonne */
+@media (min-width: 1200px) {
+	.mobile-filters-section {
+		max-width: 1400px;
+		margin: 0 auto 20px auto;
+		padding: 16px 24px 20px 24px;
+	}
+
+	.cards-view-responsive {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: 0 24px;
+	}
+
+	.empty-state {
+		grid-column: 1 / -1;
+	}
+
+	.player-card {
+		margin-bottom: 0 !important;
+		min-height: 120px;
+	}
+
+	.expand-icon {
+		font-size: 36px !important;
+		width: 36px !important;
+		height: 36px !important;
+		cursor: pointer !important;
+		pointer-events: all !important;
+	}
+
+	.player-header {
+		cursor: pointer !important;
+		user-select: none;
+
+		&:hover {
+			background: rgba(10, 61, 145, 0.05) !important;
+		}
+	}
+
+	.expand-actions {
+		pointer-events: all !important;
+		display: flex !important;
+		gap: 12px !important;
+	}
+}
+
+/* Tablet (768px - 1199px) - Layout singola colonna più ampio */
+@media (min-width: 768px) and (max-width: 1199px) {
+	.mobile-filters-section {
+		max-width: 900px;
+		margin: 0 auto 20px auto;
+		padding: 14px 20px 18px 20px;
+	}
+
+	.cards-view-responsive {
+		max-width: 900px;
+		margin: 0 auto;
+		padding: 0 16px;
+	}
+
+	.player-card {
+		max-width: 100%;
+		min-height: 100px;
+	}
+
+	.expand-icon {
+		font-size: 32px !important;
+		width: 32px !important;
+		height: 32px !important;
+		cursor: pointer !important;
+		pointer-events: all !important;
+	}
+
+	.gioca-btn-mobile-mini {
+		width: 44px !important;
+		height: 44px !important;
+
+		mat-icon {
+			font-size: 24px !important;
+			width: 24px !important;
+			height: 24px !important;
+		}
+	}
+
+	.player-info-row {
+		margin-bottom: 14px !important;
+	}
+
+	.nome-giocatore {
+		font-size: 1.15rem !important;
+	}
+
+	.expand-actions {
+		pointer-events: all !important;
+		display: flex !important;
+		gap: 10px !important;
+	}
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 767px) {
+	.cards-view-responsive {
+		padding: 0 8px;
+	}
+
+	.expand-icon {
+		cursor: pointer !important;
+		pointer-events: all !important;
+	}
+
+	.expand-actions {
+		pointer-events: all !important;
+	}
+}
+
+/* Sticky filters che rimangono in alto */
+.mobile-filters-section {
+	position: sticky !important;
+	top: 56px !important;
+	z-index: 100 !important;
+	margin-bottom: 16px;
+	padding: 12px 16px 16px 16px;
+	background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+	border-radius: 0 0 20px 20px;
+	box-shadow: 0 4px 16px rgba(10, 61, 145, 0.08);
+	backdrop-filter: blur(10px);
+	animation: slideDown 0.3s ease-out;
+}
+
+/* Animazione ingresso filtri */
+@keyframes slideDownFade {
+	from {
+		opacity: 0;
+		transform: translateY(-15px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Search icon con pulse animation */
+.search-bar-container .search-icon {
+	animation: pulse 2s ease-in-out infinite !important;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		transform: translateY(-50%) scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: translateY(-50%) scale(1.08);
+		opacity: 0.9;
+	}
+}
+
+/* Input focus più marcato */
+.search-bar-container .search-input:focus {
+	border-color: #0A3D91 !important;
+	box-shadow: 0 0 0 4px rgba(10, 61, 145, 0.15), 0 4px 12px rgba(10, 61, 145, 0.1) !important;
+	transform: translateY(-1px);
+}
+
+/* Clear button con rotazione */
+.search-bar-container .clear-search-btn {
+	background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.18)) !important;
+	animation: fadeInScale 0.3s ease !important;
+}
+
+@keyframes fadeInScale {
+	from {
+		opacity: 0;
+		transform: translateY(-50%) scale(0.7);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(-50%) scale(1);
+	}
+}
+
+.search-bar-container .clear-search-btn:hover {
+	background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.25)) !important;
+	transform: translateY(-50%) scale(1.15) rotate(90deg) !important;
+}
+
+/* Chips con animazione di selezione migliorata */
+.filter-chip {
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+		transition: left 0.6s ease;
+	}
+
+	&.active::before {
+		left: 100%;
+	}
+}
+
+.filter-chip .chip-count {
+	transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+}
+
+.filter-chip:hover:not(.active) .chip-count {
+	transform: scale(1.2) !important;
+}
+
+.filter-chip.active .chip-count {
+	transform: scale(1.12) !important;
+	animation: countPop 0.5s ease;
+}
+
+@keyframes countPop {
+	0%, 100% { transform: scale(1.12); }
+	50% { transform: scale(1.25); }
+}
+
+/* Empty state - Nessun risultato */
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 56px 24px;
+	margin: 32px 16px;
+	background: linear-gradient(135deg, #F9FAFB, #F3F4F6);
+	border-radius: 24px;
+	border: 2px dashed #D1D5DB;
+	animation: fadeInUp 0.5s ease;
+
+	.empty-icon {
+		font-size: 72px;
+		color: #9CA3AF;
+		margin-bottom: 20px;
+		opacity: 0.7;
+		animation: float 3s ease-in-out infinite;
+	}
+
+	.empty-title {
+		font-size: 1.15rem;
+		font-weight: 800;
+		color: #374151;
+		margin-bottom: 10px;
+		text-align: center;
+		font-family: 'Poppins', sans-serif;
+	}
+
+	.empty-message {
+		font-size: 0.9rem;
+		color: #6B7280;
+		text-align: center;
+		line-height: 1.6;
+		max-width: 300px;
+	}
+}
+
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0px) rotate(0deg);
+	}
+	50% {
+		transform: translateY(-12px) rotate(3deg);
+	}
+}
+
+/* Player cards con animazione stagger */
+.player-card {
+	animation: slideInLeft 0.5s ease backwards !important;
+
+	&:nth-child(1) { animation-delay: 0.05s; }
+	&:nth-child(2) { animation-delay: 0.1s; }
+	&:nth-child(3) { animation-delay: 0.15s; }
+	&:nth-child(4) { animation-delay: 0.2s; }
+	&:nth-child(5) { animation-delay: 0.25s; }
+	&:nth-child(n+6) { animation-delay: 0.3s; }
+}
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+/* Card espansa con effetto elevazione */
+.player-card.expanded {
+	box-shadow: 0 16px 40px rgba(10, 61, 145, 0.2) !important;
+	transform: scale(1.02) !important;
+
+	.player-header {
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.04), rgba(79, 195, 247, 0.04)) !important;
+	}
+}
+
+/* Header tap feedback migliorato */
+.player-header {
+	cursor: pointer !important;
+	user-select: none !important;
+	position: relative !important;
+	z-index: 1 !important;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.player-header:active {
+	background: rgba(10, 61, 145, 0.06) !important;
+	transform: scale(0.98);
+	transition: all 0.1s ease !important;
+}
+
+/* Nome giocatore centrato su riga separata */
+.player-name-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	padding-bottom: 8px;
+	border-bottom: 2px solid rgba(10, 61, 145, 0.1);
+}
+
+/* Riga compatta con tutto su una linea */
+.player-compact-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	width: 100%;
+	flex-wrap: wrap;
+
+	@media (min-width: 768px) {
+		flex-wrap: nowrap;
+		gap: 16px;
+	}
+}
+
+/* Ultima giocata inline */
+.last-game-inline {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	background: linear-gradient(135deg, #F9FAFB, #F3F4F6);
+	border-radius: 10px;
+	border: 1px solid #E5E7EB;
+	flex: 1;
+	min-width: 0;
+	max-width: fit-content;
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: #CBD5E1;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	}
+
+	.team-logo-mini {
+		width: 24px;
+		height: 24px;
+		object-fit: contain;
+		border-radius: 4px;
+		flex-shrink: 0;
+	}
+
+	.team-name-mini {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: #0A3D91;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.game-result-mini {
+		font-size: 1rem;
+		font-weight: 800;
+		flex-shrink: 0;
+
+		&.ok {
+			color: #10B981;
+			text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+		}
+
+		&.ko {
+			color: #EF4444;
+			text-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+		}
+	}
+}
+
+/* Responsive per mobile piccoli */
+@media (max-width: 480px) {
+	.player-compact-row {
+		gap: 8px;
+	}
+
+	.last-game-inline {
+		padding: 5px 10px;
+		gap: 6px;
+
+		.team-logo-mini {
+			width: 20px;
+			height: 20px;
+		}
+
+		.team-name-mini {
+			font-size: 0.8rem;
+		}
+	}
+
+	.player-status-badge {
+		font-size: 0.7rem !important;
+		padding: 4px 8px !important;
+	}
+}
+
+/* Desktop e tablet - Layout più spazioso con logo centrato */
+@media (min-width: 768px) {
+	.player-header {
+		gap: 14px;
+	}
+
+	.player-name-row {
+		padding-bottom: 12px;
+
+		.nome-giocatore {
+			font-size: 1.2rem !important;
+		}
+	}
+
+	/* Layout per desktop/tablet - Logo centrato e più grande */
+	.player-compact-row {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 16px;
+	}
+
+	.last-game-inline {
+		padding: 12px 20px;
+		gap: 16px;
+		justify-self: center;
+		max-width: 100%;
+		background: linear-gradient(135deg, #F9FAFB, #EFF6FF);
+		border: 2px solid #E5E7EB;
+		box-shadow: 0 2px 8px rgba(10, 61, 145, 0.08);
+
+		.team-logo-mini {
+			width: 40px;
+			height: 40px;
+			border-radius: 8px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.team-name-mini {
+			font-size: 1rem;
+			font-weight: 700;
+		}
+
+		.game-result-mini {
+			font-size: 1.3rem;
+		}
+	}
+}
+
+@media (min-width: 1200px) {
+	.player-header {
+		gap: 18px;
+	}
+
+	.player-name-row {
+		padding-bottom: 14px;
+
+		.nome-giocatore {
+			font-size: 1.3rem !important;
+		}
+	}
+
+	.last-game-inline {
+		padding: 14px 24px;
+		gap: 20px;
+
+		.team-logo-mini {
+			width: 48px;
+			height: 48px;
+			border-radius: 10px;
+		}
+
+		.team-name-mini {
+			font-size: 1.05rem;
+		}
+
+		.game-result-mini {
+			font-size: 1.4rem;
+		}
+	}
+}
+
+/* Status badge con pulse per attivi */
+.player-status-badge.active {
+	animation: subtlePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+	0%, 100% {
+		box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+	}
+	50% {
+		box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+	}
+}
+
+/* Gioca button con hover effect */
+.gioca-btn-mobile-mini {
+	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25) !important;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+	&:hover {
+		transform: translateY(-3px) scale(1.08) !important;
+		box-shadow: 0 8px 20px rgba(10, 61, 145, 0.35) !important;
+	}
+
+	&:active {
+		transform: translateY(0) scale(0.95) !important;
+	}
+}
+
+/* Expand icon con rotazione fluida e clickable sempre */
+.expand-icon {
+	transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+	cursor: pointer !important;
+	pointer-events: all !important;
+	z-index: 10 !important;
+	position: relative !important;
+}
+
+.expand-actions {
+	pointer-events: all !important;
+	z-index: 10 !important;
+	position: relative !important;
+}
+
+.player-card.expanded .expand-icon {
+	transform: rotate(180deg) scale(1.1) !important;
+}
+
+/* Ultima giocata con hover effect */
+.last-game-team {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	border: 1px solid #E5E7EB;
+
+	&:hover {
+		transform: translateX(5px) !important;
+		box-shadow: 0 6px 14px rgba(10, 61, 145, 0.12) !important;
+		border-color: #0A3D91 !important;
+	}
+}
+
+/* Game result con glow effect */
+.game-result {
+	animation: resultPop 0.5s ease;
+
+	&.ok {
+		text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+	}
+
+	&.ko {
+		text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+	}
+}
+
+@keyframes resultPop {
+	0%, 100% { transform: scale(1); }
+	50% { transform: scale(1.25); }
+}
+
+/* Giornate list con scroll indicator */
+.giornate-list {
+	animation: expandDown 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+	max-height: 600px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: #CBD5E1 #F3F4F6;
+
+	&::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #F3F4F6;
+		border-radius: 3px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: linear-gradient(135deg, #CBD5E1, #94A3B8);
+		border-radius: 3px;
+
+		&:hover {
+			background: linear-gradient(135deg, #94A3B8, #64748B);
+		}
+	}
+}
+
+@keyframes expandDown {
+	from {
+		opacity: 0;
+		max-height: 0;
+		transform: scaleY(0.8);
+		transform-origin: top;
+	}
+	to {
+		opacity: 1;
+		max-height: 600px;
+		transform: scaleY(1);
+	}
+}
+
+/* Loading overlay migliorato */
+.loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.97);
+	backdrop-filter: blur(6px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+	animation: fadeIn 0.3s ease;
+
+	.spinner {
+		width: 50px;
+		height: 50px;
+		border: 4px solid #E5E7EB;
+		border-top-color: #0A3D91;
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+
+	.loading-text {
+		margin-top: 20px;
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: #6B7280;
+		animation: pulse 1.5s ease-in-out infinite;
+	}
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+/* Media query per dispositivi molto piccoli */
+@media (max-width: 360px) {
+	.mobile-filters-section {
+		padding: 10px 12px 14px 12px;
+	}
+
+	.filter-chip {
+		min-width: 85px;
+		padding: 10px 8px;
+	}
+
+	.filter-chip .chip-label {
+		font-size: 0.75rem;
+	}
+
+	.filter-chip .chip-count {
+		font-size: 1.15rem;
+	}
+
+	.empty-state {
+		padding: 40px 16px;
+
+		.empty-icon {
+			font-size: 56px;
+		}
+
+		.empty-title {
+			font-size: 1rem;
+		}
+	}
+}
+
+/* Transizioni smooth per tutti gli elementi interattivi */
+* {
+	-webkit-tap-highlight-color: transparent;
+}
+
+button, .clickable {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* ===== MIGLIORAMENTI ESTETICI AVANZATI ===== */
+
+/* Badge contatori con effetto lucido */
+.chip-count {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: -2px;
+		left: -2px;
+		right: -2px;
+		bottom: -2px;
+		background: linear-gradient(135deg,
+			rgba(255,255,255,0.3) 0%,
+			transparent 50%,
+			rgba(255,255,255,0.1) 100%);
+		border-radius: 50%;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+}
+
+.filter-chip.active .chip-count::after {
+	opacity: 1;
+}
+
+/* Player cards con bordo colorato per stato */
+.player-card {
+	border-left: 4px solid transparent;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+	            border-left-color 0.3s ease !important;
+}
+
+.player-card:not(.eliminato-row) {
+	border-left-color: #10B981;
+}
+
+.player-card.eliminato-row {
+	border-left-color: #EF4444;
+}
+
+.player-card.expanded:not(.eliminato-row) {
+	border-left-color: #0A3D91;
+	border-left-width: 6px;
+}
+
+/* Nome giocatore con gradient sottile */
+.nome-giocatore {
+	color: #0A3D91 !important;
+	font-weight: 800 !important;
+	font-size: 1.05rem;
+	letter-spacing: -0.3px;
+	text-align: center;
+	/* Rimuovo gradient text perché causa problemi di visualizzazione */
+}
+
+/* Status badge con glow effect migliorato */
+.player-status-badge {
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: -50%;
+		left: -50%;
+		width: 200%;
+		height: 200%;
+		background: linear-gradient(
+			45deg,
+			transparent 30%,
+			rgba(255, 255, 255, 0.3) 50%,
+			transparent 70%
+		);
+		transform: rotate(45deg);
+		animation: shimmer 3s infinite;
+	}
+}
+
+@keyframes shimmer {
+	0%, 100% { transform: translateX(-100%) rotate(45deg); }
+	50% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* Gioca button con pulse effect */
+.gioca-btn-mobile-mini {
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 0;
+		height: 0;
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 50%;
+		transform: translate(-50%, -50%);
+		transition: width 0.6s ease, height 0.6s ease;
+	}
+
+	&:active::before {
+		width: 200%;
+		height: 200%;
+	}
+}
+
+/* Last game team con effetto 3D */
+.last-game-team {
+	transform-style: preserve-3d;
+
+	&:hover {
+		transform: translateX(5px) rotateY(2deg) !important;
+	}
+}
+
+/* Empty state icon con rotazione al loop */
+.empty-icon {
+	animation: floatRotate 4s ease-in-out infinite !important;
+}
+
+@keyframes floatRotate {
+	0%, 100% {
+		transform: translateY(0px) rotate(0deg);
+		opacity: 0.6;
+	}
+	25% {
+		transform: translateY(-8px) rotate(2deg);
+		opacity: 0.7;
+	}
+	50% {
+		transform: translateY(-12px) rotate(0deg);
+		opacity: 0.8;
+	}
+	75% {
+		transform: translateY(-8px) rotate(-2deg);
+		opacity: 0.7;
+	}
+}
+
+/* Search bar con effetto focus avanzato */
+.search-bar-container .search-input:focus {
+	animation: inputGlow 2s ease-in-out infinite;
+}
+
+@keyframes inputGlow {
+	0%, 100% {
+		box-shadow: 0 0 0 4px rgba(10, 61, 145, 0.15), 0 4px 12px rgba(10, 61, 145, 0.1);
+	}
+	50% {
+		box-shadow: 0 0 0 4px rgba(10, 61, 145, 0.22), 0 4px 16px rgba(10, 61, 145, 0.15);
+	}
+}
+
+/* Giornate list con scroll fade effect */
+.giornate-list {
+	position: relative;
+
+	&::before,
+	&::after {
+		content: '';
+		position: sticky;
+		display: block;
+		height: 20px;
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	&::before {
+		top: 0;
+		background: linear-gradient(to bottom, #FFFFFF, transparent);
+		margin-bottom: -20px;
+	}
+
+	&::after {
+		bottom: 0;
+		background: linear-gradient(to top, #FFFFFF, transparent);
+		margin-top: -20px;
+	}
+}
+
+/* Tooltips eleganti (se aggiungi tooltip in futuro) */
+[data-tooltip] {
+	position: relative;
+
+	&::after {
+		content: attr(data-tooltip);
+		position: absolute;
+		bottom: calc(100% + 8px);
+		left: 50%;
+		transform: translateX(-50%) scale(0.9);
+		background: rgba(0, 0, 0, 0.9);
+		color: white;
+		padding: 6px 12px;
+		border-radius: 6px;
+		font-size: 0.75rem;
+		white-space: nowrap;
+		opacity: 0;
+		pointer-events: none;
+		transition: all 0.2s ease;
+		z-index: 1000;
+	}
+
+	&:hover::after {
+		opacity: 1;
+		transform: translateX(-50%) scale(1);
+	}
+}
+
+/* Performance optimization */
+.player-card,
+.filter-chip,
+.expand-icon,
+.gioca-btn-mobile-mini {
+	will-change: transform;
+}
+
+/* Smooth transitions globali */
+body {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+

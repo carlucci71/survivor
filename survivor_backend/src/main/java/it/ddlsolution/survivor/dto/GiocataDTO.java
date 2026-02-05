@@ -13,5 +13,6 @@ public class GiocataDTO {
     private String squadraSigla;
     private Enumeratori.EsitoGiocata esito;
     private String forzatura;
+    private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
 }
 

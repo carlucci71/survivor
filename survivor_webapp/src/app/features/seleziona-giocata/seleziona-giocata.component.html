@@ -77,7 +77,7 @@
           <mat-icon>chevron_right</mat-icon>
         </button>
 
-        <div class="teams-scroll-wrapper" #scrollWrapper>
+        <div class="teams-scroll-wrapper" #scrollWrapper (wheel)="onScrollWrapperScroll($event)" (scroll)="updateScrollButtons()">
           @for (squadra of squadreFiltrate; track squadra.sigla) {
             <div
               class="jersey-card"
@@ -146,6 +146,24 @@
 
   <!-- AZIONI: CONFERMA + STATISTICHE -->
   <div class="actions-container">
+    <!-- TOGGLE PRIVACY GIOCATA - SOLO ICONA OCCHIO -->
+    <div class="privacy-checkbox-container">
+      <div class="privacy-toggle-wrapper">
+        <button
+          type="button"
+          class="privacy-toggle"
+          (click)="giocataPubblica = !giocataPubblica"
+        >
+          <mat-icon class="privacy-icon">
+            {{ giocataPubblica ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+          <span class="privacy-label-text">
+            {{ giocataPubblica ? ('PLAY.HIDE_PICK' | translate) : ('PLAY.SHOW_PICK' | translate) }}
+          </span>
+        </button>
+      </div>
+    </div>
+
     <div class="save-container">
       <button
         mat-raised-button
