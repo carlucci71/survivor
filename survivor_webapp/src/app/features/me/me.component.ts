@@ -20,7 +20,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 })
 export class MeComponent {
   me: Giocatore | null = null;
-  nome: string | null = null;
+  nickname: string | null = null;
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
@@ -35,7 +35,7 @@ export class MeComponent {
     this.giocatoreService.me().subscribe(
       { next: (giocatore)=> {
         this.me=giocatore;
-        this.nome=giocatore.nome;
+        this.nickname=giocatore.nickname;
       }}
     );
   }
@@ -53,8 +53,8 @@ export class MeComponent {
     if (!this.me) {
       return false;
     }
-    const nomePulito = this.nome?.trim() ?? '';
-    return nomePulito !== '' && nomePulito !== this.me.nome;
+    const nomePulito = this.nickname?.trim() ?? '';
+    return nomePulito !== '' && nomePulito !== this.me.nickname;
   }
 
   clearFeedback(): void {
@@ -67,7 +67,7 @@ export class MeComponent {
       return;
     }
 
-    const nomePulito = this.nome?.trim() ?? '';
+    const nomePulito = this.nickname?.trim() ?? '';
 
     if (!nomePulito) {
       this.feedbackType = 'error';
@@ -75,13 +75,13 @@ export class MeComponent {
       return;
     }
 
-    if (nomePulito === this.me.nome) {
+    if (nomePulito === this.me.nickname) {
       this.feedbackType = 'error';
       this.feedbackMessage = 'Il nome non è cambiato';
       return;
     }
 
-    const aggiornato: Giocatore = { ...this.me, nome: nomePulito };
+    const aggiornato: Giocatore = { ...this.me, nickname: nomePulito };
     this.isSaving = true;
     this.feedbackMessage = null;
     this.feedbackType = null;
@@ -92,7 +92,7 @@ export class MeComponent {
       .subscribe({
         next: (giocatore) => {
           this.me = giocatore;
-          this.nome = giocatore.nome;
+          this.nickname = giocatore.nickname;
           this.feedbackType = 'success';
           this.feedbackMessage = 'Nome aggiornato';
         },

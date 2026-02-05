@@ -167,8 +167,7 @@ export interface Squadra {
 
 export interface Giocatore {
   id: number;
-  nome: string;
-  nickname?: string;
+  nickname: string;
   squadraCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
