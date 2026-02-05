@@ -572,5 +572,9 @@
     "SECTION_12_TITLE": "12. Changes to Privacy Policy",
     "SECTION_12_P1": "This Privacy Policy may be updated at any time.",
     "SECTION_12_P2": "Changes will be effective from their publication on the platform."
+  },
+  "THEME": {
+    "SWITCH_TO_DARK": "Switch to dark theme",
+    "SWITCH_TO_LIGHT": "Switch to light theme"
   }
 }

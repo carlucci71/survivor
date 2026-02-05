@@ -37,13 +37,13 @@ import { environment } from '../../../../environments/environment';
   styles: [`
     .modal-container {
       position: relative;
-      background: #FFFFFF;
+      background: var(--bg-card);
       border-radius: 20px;
-      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
+      box-shadow: var(--shadow-xl);
       padding: 24px;
       width: 85vw;
       max-width: 500px;
-      font-family: 'Poppins', sans-serif;
+      font-family: var(--font-family);
     }
     .close-btn {
       position: absolute;
@@ -51,29 +51,29 @@ import { environment } from '../../../../environments/environment';
       right: 12px;
       width: 32px;
       height: 32px;
-      background: rgba(10, 61, 145, 0.08);
+      background: var(--hover-overlay);
       border-radius: 50%;
       border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
-      mat-icon { color: #0A3D91; font-size: 16px; width: 16px; height: 16px; }
-      &:hover { background: rgba(10, 61, 145, 0.15); transform: scale(1.1); }
+      transition: all var(--transition-normal);
+      mat-icon { color: var(--primary-dark); font-size: 16px; width: 16px; height: 16px; }
+      &:hover { background: var(--active-overlay); transform: scale(1.1); }
     }
     h2 {
       margin: 0 0 20px 0;
       font-size: 1.3rem;
       font-weight: 700;
-      color: #0A3D91;
+      color: var(--primary-dark);
       text-transform: uppercase;
       display: flex;
       align-items: center;
       gap: 12px;
-      .title-icon { font-size: 1.5rem; color: #4FC3F7; }
+      .title-icon { font-size: 1.5rem; color: var(--primary-color); }
       .value {
-        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        background: var(--gradient-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -88,7 +88,7 @@ import { environment } from '../../../../environments/environment';
       padding: 24px 0;
     }
     .intro-text {
-      color: #6B7280;
+      color: var(--text-secondary);
       font-size: 0.95rem;
       margin-bottom: 24px;
       max-width: 300px;
@@ -99,8 +99,8 @@ import { environment } from '../../../../environments/environment';
       justify-content: center;
       gap: 8px;
       padding: 12px 20px;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-      color: #FFFFFF;
+      background: var(--gradient-primary);
+      color: var(--text-on-primary);
       text-decoration: none;
       border-radius: 10px;
       font-weight: 600;
@@ -109,7 +109,8 @@ import { environment } from '../../../../environments/environment';
       mat-icon { font-size: 18px; width: 18px; height: 18px; }
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(10, 61, 145, 0.3);
+        box-shadow: var(--shadow-lg);
+        background: var(--gradient-hover);
       }
     }
   `]
