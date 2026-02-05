@@ -67,7 +67,7 @@ if (-not (Test-Path $androidDir)) {
 
 if (Test-Path $changeJavaBat) {
     Write-Host "Running change-java.bat 21 and then Gradle in the same CMD session..."
-    $cmdString = 'call "' + $changeJavaBat + '" 21 && cd /d "' + $androidDir + '" && gradlew.bat clean ' + $gradleTask + ' && exit %ERRORLEVEL%'
+	$cmdString = 'call "' + $changeJavaBat + '" 21 && cd /d "' + $androidDir + '" && gradlew.bat clean ' + $gradleTask + ' --no-daemon --console=plain && exit %ERRORLEVEL%'
     $proc = Start-Process cmd.exe -ArgumentList "/c", $cmdString -NoNewWindow -Wait -PassThru
     if ($proc.ExitCode -ne 0) {
         Write-Error "Gradle (via cmd) failed with exit code $($proc.ExitCode)"
@@ -78,7 +78,7 @@ if (Test-Path $changeJavaBat) {
     Write-Host "change-java.bat not found at $changeJavaBat; running Gradle directly."
     Push-Location $androidDir
     try {
-        & .\gradlew.bat clean $gradleTask
+        & .\gradlew.bat clean $gradleTask --no-daemon --console=plain
     } finally {
         Pop-Location
     }
