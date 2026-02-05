@@ -194,7 +194,9 @@
     "TERMS_10_TITLE": "10. Legge applicabile e foro competente",
     "TERMS_10_TEXT": "I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.",
     "TERMS_11_TITLE": "11. Contatti",
-    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:"
+    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:",
+    "BUILD_FE": "Build FE",
+    "BUILD_BE": "Build BE"
   },
   "FAQ": {
     "TITLE": "FAQ - Domande Frequenti",
@@ -281,9 +283,7 @@
     "SECTION_11_P2": "Non vengono utilizzati cookie di profilazione senza il consenso dell'utente.",
     "SECTION_12_TITLE": "12. Modifiche alla Privacy Policy",
     "SECTION_12_P1": "La presente Privacy Policy può essere aggiornata in qualsiasi momento.",
-    "SECTION_12_P2": "Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma.",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE"
+    "SECTION_12_P2": "Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma."
   },
   "LEAGUE": {
     "LEAGUE_DETAILS": "Dettaglio lega",

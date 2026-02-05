@@ -21,7 +21,7 @@
               getDesGiornataTitle(lega.giornataDaGiocare) }}
             </div>
           }
-    <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
+    <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega ? lega.ruoloGiocatoreLega.descrizione : ''}}</div>
     <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.descrizione }}</div>
     @if (lega.giornataFinale) {
       <div>{{ 'LEAGUE.FINAL_ROUND' | translate }}: {{lega.giornataFinale}}</div>
