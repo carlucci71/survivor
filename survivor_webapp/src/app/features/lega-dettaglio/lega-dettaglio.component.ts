@@ -435,22 +435,75 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
-  // ========== LOGHI E FOTO SQUADRE/TENNISTI ==========
-
+  // ========== LOGHI E FOTO SQUADRE/TENNISTI ===
   // Mapping loghi calcio (Serie A + Serie B)
   private readonly logoFiles: { [key: string]: string } = {
-    // SERIE A
-    'ATA': 'ATA', 'BOL': 'BOLO.png', 'CAG': 'CAGL.png', 'COM': 'COMO.png',
-    'CRE': 'CREMON.png', 'EMP': 'EMP.png', 'FIO': 'FIO.png', 'GEN': 'GENOA.png',
-    'INT': 'INT.png', 'JUV': 'JUV.png', 'LAZ': 'LAZIO.png', 'LEC': 'LECCE.webp',
-    'MIL': 'MIL.png', 'MON': 'MON.png', 'NAP': 'NAP.png', 'PAR': 'PARMA.png',
-    'PIS': 'PISA.png', 'ROM': 'ROMA.webp', 'SAS': 'SASS.png', 'TOR': 'TORO.png',
-    'UDI': 'UDI.png', 'VEN': 'VEN.png', 'VER': 'VER.png',
-    // SERIE B
-    'AVE': 'AVE.png', 'BAR': 'BARI.png', 'CAR': 'CARRARESE.png', 'CTZ': 'CATANZARO.png',
-    'CES': 'CES.png', 'ENT': 'ENT.png', 'JST': 'JUVE_STABIA.png', 'MAN': 'MANT.png',
-    'MOD': 'MOD.png', 'PAD': 'PADOVA.png', 'PAL': 'PAL.png', 'PES': 'PESC.png',
-    'REG': 'REGGIANA.png', 'SAM': 'SAMP.png', 'SPE': 'SPEZIA.webp', 'STR': 'SUDTIROL.png',
+    'LIGA_BAR': 'BARC.png',
+    'LIGA_RMA': 'RMA.png',
+    'LIGA_ATM': 'ATM.png',
+    'LIGA_ATH': 'ATH.png',
+    'LIGA_ALA': 'ALA.png',
+    'LIGA_BET': 'BET.png',
+    'LIGA_RSO': 'RSO.png',
+    'LIGA_OVI': 'OVI.png',
+    'LIGA_RAY': 'RAY.png',
+    'LIGA_VIL': 'VIL.png',
+    'LIGA_ESP': 'ESP.png',
+    'LIGA_VIG': 'CEL.png',
+    'LIGA_OSA': 'OSA.png',
+    'LIGA_SEV': 'SIV.png',
+    'LIGA_GIR': 'GIR.png',
+    'LIGA_MLL': 'MAI.png',
+    'LIGA_LEV': 'LEV.png',
+    'LIGA_ELC': 'ELC.png',
+    'LIGA_GET': 'GET.png',
+    'LIGA_VAL': 'VAL.png',
+    // SERIE A (20 squadre)
+    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_BOL': 'BOLO.png',      // Bologna
+    'SERIE_A_CAG': 'CAGL.png',      // Cagliari
+    'SERIE_A_COM': 'COMO.png',      // Como
+    'SERIE_A_CRE': 'CREMON.png',    // Cremonese
+    'SERIE_A_EMP': 'EMP.png',       // Empoli ✨ AGGIUNTO
+    'SERIE_A_FIO': 'FIO.png',       // Fiorentina
+    'SERIE_A_GEN': 'GENOA.png',     // Genoa
+    'SERIE_A_INT': 'INT.png',       // Inter
+    'SERIE_A_JUV': 'JUV.png',       // Juventus
+    'SERIE_A_LAZ': 'LAZIO.png',     // Lazio
+    'SERIE_A_LEC': 'LECCE.webp',    // Lecce (webp)
+    'SERIE_A_MIL': 'MIL.png',       // Milan
+    'SERIE_A_MON': 'MON.png',       // Monza
+    'SERIE_A_NAP': 'NAP.png',       // Napoli
+    'SERIE_A_PAR': 'PARMA.png',     // Parma
+    'SERIE_A_PIS': 'PISA.png',      // Pisa
+    'SERIE_A_ROM': 'ROMA.webp',     // Roma (webp)
+    'SERIE_A_SAS': 'SASS.png',      // Sassuolo
+    'SERIE_A_TOR': 'TORO.png',      // Torino
+    'SERIE_A_UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
+    'SERIE_A_VEN': 'VEN.png',       // Venezia
+    'SERIE_A_VER': 'VER.png',       // Verona
+
+    // SERIE B (18 squadre)
+    'SERIE_B_AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
+    'SERIE_B_BAR': 'BARI.png',      // Bari
+    'SERIE_B_CAR': 'CARRARESE.png', // Carrarese
+    'SERIE_B_CTZ': 'CATANZARO.png', // Catanzaro
+    'SERIE_B_CES': 'CES.png',       // Cesena
+    'SERIE_B_ENT': 'ENT.png',       // Entella
+    'SERIE_B_JST': 'JUVE_STABIA.png', // Juve Stabia (sigla corretta)
+    'SERIE_B_MAN': 'MANT.png',      // Mantova
+    'SERIE_B_MOD': 'MOD.png',       // Modena
+    'SERIE_B_PAD': 'PADOVA.png',    // Padova
+    'SERIE_B_PAL': 'PAL.png',       // Palermo
+    'SERIE_B_PES': 'PESC.png',      // Pescara
+    'SERIE_B_REG': 'REGGIANA.png',  // Reggiana
+    'SERIE_B_SAM': 'SAMP.png',      // Sampdoria ✨ AGGIUNTO
+    'SERIE_B_SPE': 'SPEZIA.webp',   // Spezia
+    'SERIE_B_STR': 'SUDTIROL.png',  // Sudtirol (sigla corretta) ✨ CORRETTO
+    'SERIE_B_FRO': 'FRO.png',
+    'SERIE_B_EMP': 'EMP.png',
+    'SERIE_B_MON': 'MON.png',
+    'SERIE_B_VEN': 'VEN.png',
   };
 
   // Mapping foto tennisti
@@ -479,7 +532,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   getTeamLogo(sigla: string | null | undefined): string | null {
     if (!sigla) return null;
     const sportId = this.lega?.campionato?.sport?.id;
-
+    const legaId = this.lega?.campionato?.id;
     // Tennis - foto giocatore con matching avanzato
     if (sportId === 'TENNIS') {
       const original = sigla.toUpperCase().trim();
@@ -515,7 +568,7 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     // Calcio - stemmi
     if (sportId === 'CALCIO' || sportId === 'SERIE_A' || sportId === 'SERIE_B') {
-      const fileName = this.logoFiles[sigla];
+      const fileName = this.logoFiles[legaId+"_"+sigla];
       if (fileName) return `assets/logos/calcio/${fileName}`;
       return null;
     }
@@ -1137,5 +1190,13 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+  }
+
+  getCountdownTargetDate(): any {
+    if (!this.lega || !this.lega.campionato || !this.lega.campionato.iniziGiornate) {
+      return null;
+    }
+    const index = this.lega.giornataDaGiocare;
+    return this.lega.campionato.iniziGiornate[index] || null;
   }
 }

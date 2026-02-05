@@ -539,5 +539,9 @@
     "SECTION_10_TEXT": "I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.",
     "SECTION_11_TITLE": "11. Contatti",
     "SECTION_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:"
+  },
+  "THEME": {
+    "SWITCH_TO_DARK": "Passa al tema scuro",
+    "SWITCH_TO_LIGHT": "Passa al tema chiaro"
   }
 }

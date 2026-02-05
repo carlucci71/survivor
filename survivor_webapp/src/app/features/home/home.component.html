@@ -1,10 +1,5 @@
 <div class="home-container">
-  <app-header
-    title=""
-    visHome="N"
-    visLogout="S"
-    (logout)="logout()"
-  >
+  <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
       <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nome)?.length || 0) <= 6">
         <ng-container *ngIf="isMobile; else desktopName">
@@ -18,6 +13,7 @@
       <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
         <mat-icon>verified_user</mat-icon>
       </button>
+      <mat-icon class="settings-icon" (click)="goToMe()" matTooltip="Configura l'utente">settings</mat-icon>
     </div>
   </app-header>
 
@@ -29,6 +25,13 @@
 
   <main class="main-content">
 
+    <div class="actions">
+      @if (isAdmin()) {
+      <button mat-raised-button color="accent" (click)="goToAdmin()" class="btn-admin">
+        Area Admin
+      </button>
+      }
+    </div>
 
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
@@ -132,7 +135,7 @@
       <div class="leghe-groups">
         <mat-card class="lega-group-card">
           <mat-card-header>
-            <mat-card-title></mat-card-title>
+            <mat-card-title>{{ 'HOME.CREATE_NEW_LEAGUE' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <div class="edizioni-list">
@@ -156,7 +159,7 @@
 
         <mat-card class="lega-group-card">
           <mat-card-header>
-            <mat-card-title></mat-card-title>
+            <mat-card-title>{{ 'HOME.JOIN_EXISTING_LEAGUE' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <div class="edizioni-list">
