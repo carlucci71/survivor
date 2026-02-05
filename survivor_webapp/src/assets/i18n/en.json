@@ -449,7 +449,9 @@
       "1": "Great choice! 🔥",
       "2": "Perfect! You nailed it! 🎯",
       "3": "Awesome! Winning selection! 💪"
-    }
+    },
+    "HIDE_PICK": "Hide my pick from others",
+    "SHOW_PICK": "Make my pick visible"
   },
   "INVITE_USERS": {
     "TITLE": "Invite Users to",
