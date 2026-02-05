@@ -14,7 +14,7 @@ public class VersioneController {
     @GetMapping(value = "/versione", produces = MediaType.TEXT_PLAIN_VALUE)
     public String getVersion() throws Exception {
         try {
-            return new String(Files.readAllBytes(Paths.get("build_be.html")), StandardCharsets.UTF_16);
+            return new String(Files.readAllBytes(Paths.get("build_be.html")), StandardCharsets.UTF_8);
         } catch (Exception e) {
             return "N/D";
         }
