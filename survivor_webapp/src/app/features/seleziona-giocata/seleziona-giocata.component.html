@@ -146,6 +146,24 @@
 
   <!-- AZIONI: CONFERMA + STATISTICHE -->
   <div class="actions-container">
+    <!-- TOGGLE PRIVACY GIOCATA - SOLO ICONA OCCHIO -->
+    <div class="privacy-checkbox-container">
+      <div class="privacy-toggle-wrapper">
+        <button
+          type="button"
+          class="privacy-toggle"
+          (click)="giocataPubblica = !giocataPubblica"
+        >
+          <mat-icon class="privacy-icon">
+            {{ giocataPubblica ? 'visibility' : 'visibility_off' }}
+          </mat-icon>
+          <span class="privacy-label-text">
+            {{ giocataPubblica ? 'Rendi invisibile la mia giocata' : 'Rendi visibile la mia giocata' }}
+          </span>
+        </button>
+      </div>
+    </div>
+
     <div class="save-container">
       <button
         mat-raised-button

@@ -225,7 +225,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     const dialogRef = this.dialog.open(SelezionaGiocataComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
-        this.salvaSquadra(giocatore, giornata, result.squadraSelezionata);
+        this.salvaSquadra(giocatore, giornata, result.squadraSelezionata, result.pubblica);
       }
     });
   }
@@ -805,7 +805,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   salvaSquadra(
     giocatore: Giocatore,
     giornata: number,
-    squadraSelezionata: string
+    squadraSelezionata: string,
+    pubblica?: boolean
   ): void {
     if (!this.lega) {
       console.error('Nessuna lega caricata');
@@ -813,7 +814,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
 
     this.giocataService
-      .salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id)
+      .salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id, pubblica)
       .subscribe({
         next: (res: Giocatore) => {
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
@@ -829,10 +830,6 @@ export class LegaDettaglioComponent implements OnDestroy {
           console.error('Errore nel salvataggio della giocata', err);
         },
       });
-  }
-
-  getGiocaIcon(): string {
-    return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
   }
 
   /**
@@ -1092,5 +1089,53 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   trackByGiornataIndex(index: number, giornata: number): number {
     return giornata;
+  }
+
+  /**
+   * Verifica se una giocata deve essere nascosta (mostrare ***)
+   * Una giocata è nascosta se:
+   * - pubblica è false (esplicitamente privata)
+   * - E la giornata non è ancora iniziata (giornata > giornataCorrente)
+   */
+  shouldHideGiocata(giocata: any, giornata: number): boolean {
+    if (!giocata) return false;
+
+    // Se la giocata è esplicitamente pubblica, mostrala sempre
+    if (giocata.pubblica === true) return false;
+
+    // Se la giornata è già iniziata o passata, mostra sempre la giocata
+    if (giornata <= (this.lega?.giornataCorrente || 0)) return false;
+
+    // Se pubblica è false (esplicitamente privata), nascondi
+    if (giocata.pubblica === false) return true;
+
+    return false;
+  }
+
+  /**
+   * Ottiene il nome della squadra, badge "Voto Privato" o "-"
+   * - Se giocata non esiste (null) → "-"
+   * - Se giocata è privata (pubblica=false) e giornata futura → "🔒 Voto Privato"
+   * - Se giocata è pubblica o giornata iniziata → Nome squadra
+   */
+  getDisplaySquadraNome(giocatore: Giocatore, giornata: number): string {
+    const giocata = this.getGiocataByGiornataAssoluta(giocatore, giornata);
+
+    // Caso 1: Nessun voto (giocata null)
+    if (!giocata?.squadraSigla) {
+      return '-';
+    }
+
+    // Caso 2: Voto privato (pubblica = false e giornata non iniziata)
+    if (this.shouldHideGiocata(giocata, giornata)) {
+      return '🔒 Privato';
+    }
+
+    // Caso 3: Voto pubblico (mostra squadra)
+    return this.getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla;
+  }
+
+  getGiocaIcon(): string {
+    return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
   }
 }

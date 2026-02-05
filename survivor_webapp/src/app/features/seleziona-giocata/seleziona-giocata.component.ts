@@ -61,6 +61,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   lega!: Lega;
   giocatore: Giocatore;
   showDettagli = false;
+  giocataPubblica: boolean = false; // Di default la giocata è nascosta
 
   // Controllo scroll frecce
   canScrollLeft = false;
@@ -357,7 +358,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     // calcioId SERIE_A, SERIE_B,LIGAv
     if (sportId === 'CALCIO') {
       const fileName = this.logoFiles[calcioId+'_'+sigla];
-     
+
       if (fileName) {
         return `assets/logos/calcio/${fileName}`;
       }
@@ -613,13 +614,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
+              pubblica: this.giocataPubblica
             });
           }
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
       this.showEncouragementMessage();
-      this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
+      this.dialogRef.close({
+        squadraSelezionata: this.squadraSelezionata,
+        pubblica: this.giocataPubblica
+      });
     }
   }
 

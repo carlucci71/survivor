@@ -685,9 +685,206 @@ h2 {
 /* CONTAINER AZIONI */
 .actions-container {
 	display: flex;
-	gap: 10px;
+	flex-direction: column;
+	gap: 12px;
 	margin-top: 10px;
 	flex-shrink: 0;
+}
+
+/* PRIVACY CHECKBOX - INLINE SULLA STESSA RIGA - MIGLIORATO */
+.privacy-checkbox-container {
+	margin: 12px auto 0;
+	max-width: 400px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	background: transparent;
+	border: none;
+}
+
+.privacy-toggle {
+	background: transparent;
+	border: none;
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+}
+
+.privacy-toggle:focus-visible {
+	outline: 2px solid #0A3D91;
+	outline-offset: 2px;
+}
+
+.privacy-checkbox {
+	font-family: 'Poppins', sans-serif;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+
+	::ng-deep .mdc-form-field {
+		display: inline-flex;
+		align-items: center;
+		gap: 0;
+		margin: 0;
+		padding: 0;
+	}
+
+	// NASCONDE L'INTERO COMPONENTE MAT-CHECKBOX
+	::ng-deep mat-checkbox {
+		display: none !important;
+		visibility: hidden !important;
+		width: 0 !important;
+		height: 0 !important;
+		overflow: hidden !important;
+		position: absolute !important;
+		left: -9999px !important;
+	}
+
+	::ng-deep .mdc-checkbox {
+		// NASCONDI COMPLETAMENTE IL CHECKBOX QUADRATO
+		display: none !important;
+		width: 0 !important;
+		height: 0 !important;
+		opacity: 0 !important;
+		pointer-events: none !important;
+
+		.mdc-checkbox__background {
+			display: none !important;
+		}
+
+		.mdc-checkbox__native-control {
+			display: none !important;
+		}
+
+		.mat-mdc-checkbox-ripple,
+		.mdc-checkbox__ripple,
+		.mat-ripple,
+		.mat-mdc-focus-indicator {
+			display: none !important;
+		}
+	}
+
+	::ng-deep .mat-mdc-checkbox-touch-target {
+		display: none;
+	}
+
+	::ng-deep .mdc-label {
+		margin: 0;
+		padding: 0;
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 0.9rem;
+		font-weight: 500;
+		color: #374151;
+		white-space: nowrap;
+		margin: 0;
+		padding: 6px 12px;
+		line-height: 1.2;
+		cursor: pointer;
+		user-select: none;
+		border-radius: 12px;
+		transition: all 0.2s ease;
+
+		&:hover {
+			background: rgba(10, 61, 145, 0.05);
+		}
+	}
+
+	.privacy-text {
+		display: inline-flex;
+		align-items: center;
+		margin-top: 0;
+		margin-left: 6px;
+	}
+
+	.privacy-icon {
+		font-size: 24px;
+		width: 24px;
+		height: 24px;
+		color: #6B7280;
+		transition: all 0.3s ease;
+		flex-shrink: 0;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&:hover .privacy-icon {
+		color: #0A3D91;
+		transform: scale(1.15);
+	}
+
+	&:hover .checkbox-label {
+		color: #0A3D91;
+	}
+}
+
+.privacy-hint {
+	display: none;
+}
+
+/* PRIVACY TOGGLE PERSONALIZZATO */
+.privacy-checkbox-container {
+	margin: 12px auto 0;
+	max-width: 400px;
+	display: flex;
+	justify-content: center;
+}
+
+.privacy-toggle-wrapper {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.privacy-toggle {
+	background: transparent;
+	border: none;
+	padding: 4px 10px;
+	border-radius: 999px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.privacy-toggle:hover {
+	background: rgba(10, 61, 145, 0.06);
+	transform: translateY(-1px);
+}
+
+.privacy-icon {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	color: #6B7280;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.privacy-label-text {
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: #374151;
+	white-space: nowrap;
+}
+
+.privacy-toggle:hover .privacy-icon,
+.privacy-toggle:hover .privacy-label-text {
+	color: #0A3D91;
 }
 
 /* BOTTONE SALVA */

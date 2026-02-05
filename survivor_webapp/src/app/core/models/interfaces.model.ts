@@ -182,6 +182,7 @@ export interface Giocata {
   squadraSigla: string;
   esito?: string;
   forzatura?: string;
+  pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
 }
 
 export interface StatiPerLega {

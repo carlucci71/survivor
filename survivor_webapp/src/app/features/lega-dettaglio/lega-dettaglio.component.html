@@ -193,10 +193,11 @@
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <!-- Mostra il nome COMPLETO della squadra -->
-                        <span class="team-name-compact"
-                              [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                          {{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla }}
+                        <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
+                        <span
+                          [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
+                          [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                          {{ getDisplaySquadraNome(giocatore, giornata) }}
                         </span>
                       } @else {
                         <!-- Mostra bottone Gioca se è l'utente loggato e non ha giocato -->
