@@ -1997,7 +1997,7 @@ export class ProfiloDialogComponent implements OnInit {
         // Prepara l'oggetto aggiornato
         const giocatoreAggiornato: any = {
           id: giocatore.id,
-          nome: giocatore.nome,
+          nome: giocatore.nickname,
           nickname: this.userProfile.nickname.trim(),
           user: giocatore.user
         };

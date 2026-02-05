@@ -34,7 +34,7 @@ public class GiocatoreService {
                     User user = userRepository.findById(userId)
                         .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
                     giocatore.setUser(user);
-                    giocatore.setNome(user.getName());
+                    giocatore.setNickname(user.getName());
                     giocatoreRepository.save(giocatore);
                     return giocatoreRepository.findProjectionByUserId(userId)
                         .orElseThrow(() -> new RuntimeException("Errore creazione giocatore per userId: " + userId));
@@ -51,7 +51,7 @@ public class GiocatoreService {
             User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
             Giocatore giocatore=new Giocatore();
-            giocatore.setNome(user.getName());
+            giocatore.setNickname(user.getName());
             giocatore.setUser(user);
             giocatoreRepository.save(giocatore);
             return giocatore;
@@ -82,7 +82,7 @@ public class GiocatoreService {
             .orElseThrow(() -> new RuntimeException("Giocatore non trovato con id: " + giocatoreDTO.getId()));
 
         // Aggiorna solo i campi della tabella giocatore
-        giocatore.setNome(giocatoreDTO.getNome());
+        giocatore.setNickname(giocatoreDTO.getNickname());
 
         // Aggiorna nickname (opzionale)
         if (giocatoreDTO.getNickname() != null && !giocatoreDTO.getNickname().trim().isEmpty()) {
