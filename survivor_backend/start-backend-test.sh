@@ -1,5 +1,6 @@
 #!/bin/bash
-echo $(date) > build_be.html
+echo $(TZ='Europe/Rome' date '+%d/%m/%Y %H:%M') > build_be.html
+
 # Carica le variabili d'ambiente dal file .env
 set -a
 source /home/survivor/.envTest
