@@ -37,7 +37,11 @@ import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
+<<<<<<< Updated upstream
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+=======
+import { CountdownTimerComponent } from '../../shared/components/countdown-timer/countdown-timer.component';
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -60,7 +64,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+<<<<<<< Updated upstream
     TranslateModule,
+=======
+    CountdownTimerComponent,
+>>>>>>> Stashed changes
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -967,6 +975,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.lega.statiGiornate[index]?.value || '';
   }
 
+<<<<<<< Updated upstream
   ngOnDestroy(): void {
     if (this.countdownIntervalId) {
       clearInterval(this.countdownIntervalId);
@@ -1191,5 +1200,13 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+=======
+  getCountdownTargetDate(): any {
+    if (!this.lega || !this.lega.campionato || !this.lega.campionato.iniziGiornate) {
+      return null;
+    }
+    const index = this.lega.giornataDaGiocare;
+    return this.lega.campionato.iniziGiornate[index] || null;
+>>>>>>> Stashed changes
   }
 }

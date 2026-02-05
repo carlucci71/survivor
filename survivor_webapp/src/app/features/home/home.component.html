@@ -1,10 +1,5 @@
 <div class="home-container">
-  <app-header
-    title=""
-    visHome="N"
-    visLogout="S"
-    (logout)="logout()"
-  >
+  <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
       <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nome)?.length || 0) <= 6">
         <ng-container *ngIf="isMobile; else desktopName">
@@ -14,10 +9,14 @@
           <span class="config-user-name">{{ me?.nickname || me?.nome }}</span>
         </ng-template>
       </mat-chip>
+<<<<<<< Updated upstream
 
       <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
         <mat-icon>verified_user</mat-icon>
       </button>
+=======
+      <mat-icon class="settings-icon" (click)="goToMe()" matTooltip="Configura l'utente">settings</mat-icon>
+>>>>>>> Stashed changes
     </div>
   </app-header>
 
@@ -29,6 +28,16 @@
 
   <main class="main-content">
 
+<<<<<<< Updated upstream
+=======
+    <div class="actions">
+      @if (isAdmin()) {
+      <button mat-raised-button color="accent" (click)="goToAdmin()" class="btn-admin">
+        Area Admin
+      </button>
+      }
+    </div>
+>>>>>>> Stashed changes
 
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
@@ -68,6 +77,7 @@
           <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
+<<<<<<< Updated upstream
 
       <!-- Nessun risultato dalla ricerca -->
       <mat-card *ngIf="!isLoadingLeghe && leghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
@@ -121,6 +131,47 @@
             </mat-card-content>
           </mat-card>
         </ng-container>
+=======
+      } @if (groupedLeghe.length > 0) {
+      <div class="leghe-groups">
+        @for (group of groupedLeghe; track group.name) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ group.name }}</mat-card-title>
+            <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="edizioni-list">
+              @for (edizione of group.edizioni; track edizione.id) {
+              <mat-card class="lega-card small">
+                <mat-card-header>
+                  <mat-card-title>Edizione {{ edizione.edizione }}</mat-card-title>
+                  <mat-card-subtitle>{{
+                    edizione.stato.descrizione
+                    }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-actions>
+                  <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">
+                    Visualizza
+                  </button>
+                  @if (visualizzaInvito(edizione)){
+                  <button mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">
+                    Invita utenti
+                  </button>
+                  } @if (isTerminata(edizione) &&
+                  notExistsNuovaEdizione(edizione)){
+                  <button mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
+                    Nuova Edizione
+                  </button>
+                  }
+                </mat-card-actions>
+              </mat-card>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+        }
+>>>>>>> Stashed changes
       </div>
     </section>
 
@@ -141,12 +192,17 @@
                   <mat-card-title>{{ 'HOME.CREATE_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
+<<<<<<< Updated upstream
                   <button
                     mat-raised-button
                     color="warn"
                     (click)="goToCreaLega()"
                   >
                     {{ 'HOME.CREATE_LEAGUE' | translate }}
+=======
+                  <button mat-raised-button color="warn" (click)="goToCreaLega()">
+                    Crea
+>>>>>>> Stashed changes
                   </button>
                 </mat-card-actions>
               </mat-card>
@@ -162,6 +218,7 @@
             <div class="edizioni-list">
               <mat-card class="lega-card small">
                 <mat-card-header>
+<<<<<<< Updated upstream
                   <mat-card-title>{{ 'HOME.JOIN_LEAGUE' | translate }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
@@ -171,6 +228,13 @@
                     (click)="goToUniscitiLega()"
                   >
                     {{ 'HOME.JOIN_LEAGUE' | translate }}
+=======
+                  <mat-card-title>Unisciti ad una lega esistente</mat-card-title>
+                </mat-card-header>
+                <mat-card-actions>
+                  <button mat-raised-button color="warn" (click)="goToUniscitiLega()">
+                    Unisciti
+>>>>>>> Stashed changes
                   </button>
                 </mat-card-actions>
               </mat-card>
