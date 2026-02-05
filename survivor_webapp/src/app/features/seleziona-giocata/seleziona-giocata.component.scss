@@ -396,7 +396,7 @@ h2 {
 
 .teams-scroll-wrapper {
 	display: flex;
-	gap: 16px;
+	gap: 12px;
 	overflow-x: auto;
 	overflow-y: hidden;
 	padding: 8px 16px 8px 16px; /* Ridotto padding-bottom da 16px a 8px */
@@ -415,15 +415,15 @@ h2 {
 /* CARD MAGLIETTA */
 .jersey-card {
 	flex: 0 0 auto;
-	width: 140px;
+	width: 110px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	cursor: pointer;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	padding: 10px 8px 8px 8px;
-	border-radius: 16px;
+	padding: 8px 6px 6px 6px;
+	border-radius: 14px;
 	background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.05));
 	border: 2px solid transparent;
 	overflow: hidden;
@@ -459,16 +459,16 @@ h2 {
 /* CONTAINER MAGLIETTA/LOGO */
 .jersey-container {
 	position: relative;
-	width: 100px;
-	height: 120px;
+	width: 85px;
+	height: 100px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 	&.tennis-container {
-		width: 100px;
-		height: 100px;
+		width: 85px;
+		height: 85px;
 	}
 }
 
@@ -611,35 +611,35 @@ h2 {
 /* RESPONSIVE - Mobile first */
 @media (max-width: 480px) {
 	.jersey-card {
-		width: 120px;
-		padding: 10px;
+		width: 100px;
+		padding: 8px 6px;
 	}
 
 	.jersey-container {
-		width: 85px;
-		height: 100px;
+		width: 75px;
+		height: 90px;
 	}
 
 	.jersey-name {
-		font-size: 0.75rem;
+		font-size: 0.7rem;
 	}
 
 	.jersey-vs {
-		font-size: 0.65rem;
+		font-size: 0.6rem;
 	}
 
 	/* Dimensioni testo sulla maglietta per mobile */
 	.jersey-team-name {
 		&.short-name {
-			font-size: 11px;
+			font-size: 10px;
 		}
 
 		&.medium-name {
-			font-size: 9px;
+			font-size: 8px;
 		}
 
 		&.long-name {
-			font-size: 7px;
+			font-size: 6px;
 		}
 	}
 }
@@ -653,30 +653,30 @@ h2 {
 	}
 
 	.jersey-card {
-		width: 160px;
+		width: 120px;
 	}
 
 	.jersey-container {
-		width: 110px;
-		height: 130px;
+		width: 90px;
+		height: 105px;
 	}
 
 	.jersey-name {
-		font-size: 0.85rem;
+		font-size: 0.8rem;
 	}
 
 	/* Dimensioni testo sulla maglietta per desktop */
 	.jersey-team-name {
 		&.short-name {
-			font-size: 16px;
+			font-size: 14px;
 		}
 
 		&.medium-name {
-			font-size: 13px;
+			font-size: 11px;
 		}
 
 		&.long-name {
-			font-size: 9px;
+			font-size: 8px;
 		}
 	}
 }
