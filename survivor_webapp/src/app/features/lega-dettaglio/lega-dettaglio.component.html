@@ -307,7 +307,7 @@
             <!-- Header settimane -->
             <div class="settimane-header">
               <div *ngFor="let giornata of mobileGiornateIndices()" class="settimana-col">
-                <span class="settimana-label">{{ getDesGiornataTitle(giornata + lega.giornataIniziale - 1) }}</span>
+                <span class="settimana-label">{{ getDesGiornataTitle(giornata) }}</span>
               </div>
             </div>
 
@@ -315,19 +315,19 @@
             <div class="giocate-row">
               <div *ngFor="let giornata of mobileGiornateIndices()" class="giocata-col">
                 <!-- Team scelto -->
-                @if(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) {
+                @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
-                       [class.cell-ok]="getGiocataByGiornata(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornata(giocatore, giornata)?.esito === 'KO'">
-                    @if(getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)) {
+                       [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
+                    @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
                       <img
                         class="team-logo-cell"
-                        [src]="getTeamLogo(getGiocataByGiornata(giocatore, giornata)?.squadraSigla)"
-                        [alt]="getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) || ''"
+                        [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                        [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''"
                         (error)="onLogoError($event)"
                       />
                     }
-                    <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornata(giocatore, giornata)?.squadraSigla) }}</span>
+                    <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
                   </div>
                 } @else {
                   <!-- Cella vuota -->
