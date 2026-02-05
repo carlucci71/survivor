@@ -38,6 +38,7 @@ import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -61,6 +62,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    TranslateLeagueDataPipe,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],

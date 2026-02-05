@@ -12,8 +12,8 @@
         <mat-card-header>
           <mat-card-title>{{ lega.name }} - {{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</mat-card-title>
           <mat-card-subtitle>
-            <mat-card-subtitle>{{ lega.campionato?.sport?.id }} -
-              {{ lega.campionato?.nome }} - {{lega.anno}}</mat-card-subtitle>
+            <mat-card-subtitle>{{ (lega.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }} -
+              {{ (lega.campionato?.id ?? '') | translateLeagueData: 'championship' }} - {{lega.anno}}</mat-card-subtitle>
             @if (lega.giornataCalcolata){
             <div>{{ 'LEAGUE.CALCULATED_ROUND' | translate }}: {{ getDesGiornataTitle(lega.giornataCalcolata) }}</div>
             }
@@ -21,8 +21,8 @@
               getDesGiornataTitle(lega.giornataDaGiocare) }}
             </div>
           }
-    <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega.descrizione }}</div>
-    <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.descrizione }}</div>
+    <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega.value | translateLeagueData: 'role' }}</div>
+    <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.value | translateLeagueData: 'status' }}</div>
     @if (lega.giornataFinale) {
       <div>{{ 'LEAGUE.FINAL_ROUND' | translate }}: {{lega.giornataFinale}}</div>
     }

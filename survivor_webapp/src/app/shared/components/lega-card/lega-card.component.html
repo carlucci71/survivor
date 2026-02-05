@@ -4,8 +4,8 @@
       >{{ lega?.name }} <small>{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</small></mat-card-title
     >
     <mat-card-subtitle
-      >{{ lega?.campionato?.sport?.nome }} —
-      {{ lega?.campionato?.nome }}</mat-card-subtitle
+      >{{ (lega?.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }} —
+      {{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</mat-card-subtitle
     >
   </mat-card-header>
   <mat-card-content>

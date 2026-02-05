@@ -27,6 +27,7 @@ import { LegaCardSkeletonComponent } from '../../shared/components/lega-card-ske
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 
 
 @Component({
@@ -49,7 +50,8 @@ import { MatInputModule } from '@angular/material/input';
     LegaCardSkeletonComponent,
     FormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    TranslateLeagueDataPipe
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -59,8 +61,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  groupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
-  filteredGroupedLeghe: { name: string; des: string; edizioni: Lega[] }[] = [];
+  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }[] = [];
+  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }[] = [];
   searchText: string = '';
   private searchDebounceTimer: any;
   me: Giocatore | null = null;
@@ -247,15 +249,19 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       map.get(key)!.push(l);
     });
-    this.groupedLeghe = Array.from(map.entries()).map(([name, edizioni]) => ({
-      name,
-      des:edizioni[0].campionato?.sport?.nome + ' - ' + edizioni[0].campionato?.nome,
-      edizioni: edizioni.sort((a, b) =>
-        (a.edizione || '')
-          .toString()
-          .localeCompare((b.edizione || '').toString())
-      ),
-    }));
+    this.groupedLeghe = Array.from(map.entries()).map(([name, edizioni]) => {
+      const sportId = edizioni[0].campionato?.sport?.id || '';
+      const campionatoId = edizioni[0].campionato?.id || '';
+      return {
+        name,
+        des: { sportId, campionatoId }, // Memorizzo gli ID per tradurli nell'HTML
+        edizioni: edizioni.sort((a, b) =>
+          (a.edizione || '')
+            .toString()
+            .localeCompare((b.edizione || '').toString())
+        ),
+      };
+    });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
   }
 
@@ -279,10 +285,11 @@ export class HomeComponent implements OnInit, OnDestroy {
           ...group,
           edizioni: group.edizioni.filter(edizione =>
             group.name.toLowerCase().includes(search) ||
-            group.des.toLowerCase().includes(search) ||
+            group.des.sportId.toLowerCase().includes(search) ||
+            group.des.campionatoId.toLowerCase().includes(search) ||
             edizione.edizione?.toString().includes(search) ||
             edizione.anno?.toString().includes(search) ||
-            edizione.stato.descrizione.toLowerCase().includes(search)
+            edizione.stato.value.toLowerCase().includes(search)
           )
         }))
         .filter(group => group.edizioni.length > 0);
@@ -334,7 +341,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // TrackBy functions per ottimizzare il rendering
-  trackByGroupName(index: number, group: { name: string; des: string; edizioni: Lega[] }): string {
+  trackByGroupName(index: number, group: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }): string {
     return group.name;
   }
 

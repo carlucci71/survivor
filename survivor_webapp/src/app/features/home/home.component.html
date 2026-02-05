@@ -77,14 +77,14 @@
           <mat-card>
             <mat-card-header>
               <mat-card-title>{{ group.name }}</mat-card-title>
-              <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+              <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
               <div class="edizioni-list">
                 <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
                   <mat-card-header>
                     <mat-card-title>Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title>
-                    <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
+                    <mat-card-subtitle>{{ edizione.stato.value | translateLeagueData: 'status' }}</mat-card-subtitle>
                   </mat-card-header>
                   <mat-card-actions>
                     <button
