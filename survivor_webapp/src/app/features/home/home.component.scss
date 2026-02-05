@@ -87,8 +87,8 @@
 
 .home-container {
 	min-height: 100vh;
-	background: linear-gradient(135deg, #F4F6F8 0%, #FFFFFF 100%);
-	font-family: 'Poppins', sans-serif;
+	background: var(--bg-primary);
+	font-family: var(--font-family);
 	padding: 0 0 40px 0;
 	position: relative;
 	overflow-x: hidden;

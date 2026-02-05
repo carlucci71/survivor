@@ -1,0 +1,314 @@
+/* ============================================
+   STILI GLOBALI PER SUPPORTO TEMI SU COMPONENTI
+   ============================================ */
+
+/* Angular Material Card Support */
+mat-card,
+.mat-mdc-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: box-shadow var(--transition-normal) !important;
+
+  &:hover {
+    box-shadow: var(--card-hover-shadow) !important;
+  }
+
+  mat-card-title,
+  .mat-mdc-card-title {
+    color: var(--text-primary) !important;
+  }
+
+  mat-card-subtitle,
+  .mat-mdc-card-subtitle {
+    color: var(--text-secondary) !important;
+  }
+
+  mat-card-content,
+  .mat-mdc-card-content {
+    color: var(--text-primary) !important;
+  }
+}
+
+/* Input Fields */
+.mat-mdc-form-field,
+.mat-form-field {
+  .mat-mdc-text-field-wrapper,
+  .mat-form-field-wrapper {
+    background-color: var(--bg-tertiary) !important;
+  }
+
+  .mat-mdc-input-element,
+  .mat-input-element {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-form-field-label,
+  .mat-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-form-field-hint,
+  .mat-hint {
+    color: var(--text-tertiary) !important;
+  }
+}
+
+/* Dialogs */
+.mat-mdc-dialog-container,
+.mat-dialog-container {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+
+  .mat-mdc-dialog-title,
+  .mat-dialog-title {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-dialog-content,
+  .mat-dialog-content {
+    color: var(--text-primary) !important;
+  }
+}
+
+/* Select Dropdowns */
+.mat-mdc-select,
+.mat-select {
+  color: var(--text-primary) !important;
+
+  .mat-mdc-select-value,
+  .mat-select-value {
+    color: var(--text-primary) !important;
+  }
+
+  .mat-mdc-select-arrow,
+  .mat-select-arrow {
+    color: var(--text-secondary) !important;
+  }
+}
+
+.mat-mdc-select-panel,
+.mat-select-panel {
+  background-color: var(--bg-card) !important;
+
+  .mat-mdc-option,
+  .mat-option {
+    color: var(--text-primary) !important;
+
+    &:hover {
+      background-color: var(--hover-overlay) !important;
+    }
+
+    &.mat-selected {
+      background-color: var(--active-overlay) !important;
+    }
+  }
+}
+
+/* Chips */
+.mat-mdc-chip,
+.mat-chip {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+
+  &.mat-primary {
+    background-color: var(--primary-color) !important;
+    color: var(--text-on-primary) !important;
+  }
+}
+
+/* Lists */
+.mat-mdc-list,
+.mat-list {
+  background-color: var(--bg-secondary) !important;
+
+  .mat-mdc-list-item,
+  .mat-list-item {
+    color: var(--text-primary) !important;
+
+    &:hover {
+      background-color: var(--hover-overlay) !important;
+    }
+  }
+}
+
+/* Menus */
+.mat-mdc-menu-panel,
+.mat-menu-panel {
+  background-color: var(--bg-card) !important;
+  box-shadow: var(--shadow-lg) !important;
+
+  .mat-mdc-menu-item,
+  .mat-menu-item {
+    color: var(--text-primary) !important;
+
+    &:hover {
+      background-color: var(--hover-overlay) !important;
+    }
+
+    .mat-icon {
+      color: var(--text-secondary) !important;
+    }
+  }
+}
+
+/* Tabs */
+.mat-mdc-tab-group,
+.mat-tab-group {
+  .mat-mdc-tab-header,
+  .mat-tab-header {
+    background-color: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+
+  .mat-mdc-tab-label,
+  .mat-tab-label {
+    color: var(--text-secondary) !important;
+
+    &.mat-mdc-tab-label-active,
+    &.mat-tab-label-active {
+      color: var(--primary-color) !important;
+    }
+  }
+
+  .mat-mdc-tab-body-content,
+  .mat-tab-body-content {
+    background-color: var(--bg-secondary) !important;
+  }
+}
+
+/* Progress Spinner */
+.mat-mdc-progress-spinner circle,
+.mat-progress-spinner circle {
+  stroke: var(--primary-color) !important;
+}
+
+/* Progress Bar */
+.mat-mdc-progress-bar,
+.mat-progress-bar {
+  .mat-mdc-progress-bar-fill,
+  .mat-progress-bar-fill {
+    background-color: var(--primary-color) !important;
+  }
+
+  .mat-mdc-progress-bar-buffer,
+  .mat-progress-bar-buffer {
+    background-color: var(--bg-tertiary) !important;
+  }
+}
+
+/* Tooltips */
+.mat-mdc-tooltip,
+.mat-tooltip {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+}
+
+/* Dividers */
+.mat-divider,
+hr {
+  border-color: var(--divider-color) !important;
+}
+
+/* Custom Classes per componenti specifici */
+.content-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--card-hover-shadow);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+  }
+
+  p {
+    color: var(--text-secondary);
+  }
+}
+
+/* Lista con background */
+.list-container {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+/* Badge / Tag */
+.badge {
+  background: var(--primary-color);
+  color: var(--text-on-primary);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+
+  &.secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  &.success {
+    background: var(--success-color);
+    color: white;
+  }
+
+  &.error {
+    background: var(--error-color);
+    color: white;
+  }
+
+  &.warning {
+    background: var(--warning-color);
+    color: white;
+  }
+}
+
+/* Section Header */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 20px;
+
+  h2 {
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .mat-icon {
+    color: var(--primary-color);
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-tertiary);
+
+  .mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: var(--text-disabled);
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: var(--text-secondary);
+    margin: 16px 0 8px;
+  }
+
+  p {
+    color: var(--text-tertiary);
+  }
+}

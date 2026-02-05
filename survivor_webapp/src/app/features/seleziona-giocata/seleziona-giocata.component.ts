@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, OnDestroy, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -46,8 +46,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
 
   isMobile = false;
-  private resizeHandler: any;
-  private tabsReservedHeight = 0;
   public StatoPartita = StatoPartita;
   ultimiRisultati: Partita[] = [];
   ultimiRisultatiOpponent: Partita[] = [];
@@ -61,6 +59,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   lega!: Lega;
   giocatore: Giocatore;
   showDettagli = false;
+  giocataPubblica: boolean = false; // Di default la giocata è nascosta
 
   // Controllo scroll frecce
   canScrollLeft = false;
@@ -357,7 +356,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     // calcioId SERIE_A, SERIE_B,LIGAv
     if (sportId === 'CALCIO') {
       const fileName = this.logoFiles[calcioId+'_'+sigla];
-     
+
       if (fileName) {
         return `assets/logos/calcio/${fileName}`;
       }
@@ -405,6 +404,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  currentLang: string = 'it';
+
   constructor(
     private squadraService: SquadraService,
     private campionatoService: CampionatoService,
@@ -420,8 +421,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     },
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
+    this.currentLang = this.translate.currentLang || this.translate.getDefaultLang() || 'it';
+    this.translate.onLangChange.subscribe((event) => {
+      this.currentLang = event.lang;
+    });
     this.giocatore = data.giocatore;
     this.squadreDisponibili = data.squadreDisponibili || [];
     // Se c'è una squadra già selezionata per questa giornata, selezionala
@@ -441,15 +446,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
     }
+    // Prima carica la prossima giornata, poi le partite per tutte le squadre
     this.caricaProssimaGiornata();
-    // Carica le partite per tutte le squadre disponibili
-    this.caricaPartitePerTutteSquadre();
-  }
-
-  ngOnDestroy(): void {
-    if (this.resizeHandler) {
-      window.removeEventListener('resize', this.resizeHandler);
-    }
   }
 
   setActiveTab(tab: 'ultimi' | 'prossime' | 'opponent') {
@@ -457,6 +455,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (this.activeTab === tab) return;
     this.activeTab = tab;
   }
+
 
   trackByGiornata(index: number, item: any) {
     return item && item.giornata ? item.giornata : index;
@@ -613,13 +612,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
+              pubblica: this.giocataPubblica
             });
           }
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
       this.showEncouragementMessage();
-      this.dialogRef.close({ squadraSelezionata: this.squadraSelezionata });
+      this.dialogRef.close({
+        squadraSelezionata: this.squadraSelezionata,
+        pubblica: this.giocataPubblica
+      });
     }
   }
 
@@ -825,33 +828,32 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   caricaProssimaGiornata(): void {
-    if (!this.lega.campionato?.id) return;
-      // Carica prossima giornata
-      this.campionatoService
-        .partiteDellaGiornata(
-          this.lega.campionato!.id,
-            this.lega.anno,
-          this.lega.giornataCorrente
-        )
-        .subscribe({
-          next: (partite) => {
-            this.prossimaGiornata = partite;
-          },
-          error: (error) => {
-            console.error('Errore caricamento prossima giornata:', error);
-          }
-
-
-    });
-
+    if (!this.lega.campionato?.id) {
+      return;
+    }
+    this.campionatoService
+      .partiteDellaGiornata(
+        this.lega.campionato!.id,
+        this.lega.anno,
+        this.lega.giornataCorrente
+      )
+      .subscribe({
+        next: (partite) => {
+          this.prossimaGiornata = partite;
+          this.caricaPartitePerTutteSquadre();
+        },
+        error: (error) => {
+          console.error('Errore caricamento prossima giornata:', error);
+          this.caricaPartitePerTutteSquadre();
+        },
+      });
   }
-
 
   caricaPartitePerTutteSquadre(): void {
     if (!this.lega.campionato?.id) return;
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
-    
+
 
     // Inizializza subito le squadre con i dati base
     this.squadreConPartite = this.squadreDisponibili.map(squadra => {
@@ -877,6 +879,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     // Inizializza la lista filtrata con tutte le squadre
     this.squadreFiltrate = [...this.squadreConPartite];
+
+    // Aggiorna i bottoni frecce dopo il caricamento
+    setTimeout(() => this.updateScrollButtons(), 200);
   }
 
   applicaFiltroGiocatoriAttivi(): void {
@@ -960,5 +965,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Gestisce scroll con mouse wheel (rotella)
+   * Converte lo scroll verticale in orizzontale
+   */
+  onScrollWrapperScroll(event: WheelEvent): void {
+    const wrapper = this.scrollWrapper?.nativeElement;
+    if (!wrapper) return;
+
+    // Previeni lo scroll verticale di default
+    event.preventDefault();
+
+    // Converti scroll verticale in orizzontale
+    wrapper.scrollLeft += event.deltaY;
+
+    // Aggiorna stato frecce
+    this.updateScrollButtons();
+  }
 
 }

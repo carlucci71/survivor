@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatLabel } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatLabel,
     MatTooltipModule,
     TranslateModule,
+    ThemeToggleComponent,
   ],
   template: `
     <mat-toolbar color="primary" class="header">
@@ -38,6 +40,8 @@ import { TranslateModule } from '@ngx-translate/core';
           >
             ← {{ 'HEADER.BACK_TO_HOME' | translate }}
           </button>
+
+          <app-theme-toggle></app-theme-toggle>
 
           <mat-icon
             *ngIf="visLogout === 'S'"

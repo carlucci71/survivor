@@ -1,20 +1,25 @@
 .lega-card.small {
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
   padding: 18px 20px;
-  box-shadow: 0 2px 12px rgba(18,18,18,0.04);
+  box-shadow: var(--card-shadow);
   max-width: 720px; /* keep cards narrow */
   width: auto;
   margin: 0 auto; /* center when parent is wide */
+  transition: box-shadow var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--card-hover-shadow);
+  }
 
   mat-card-title {
     font-size: 1.4rem;
     font-weight: 700;
-    color: #111;
+    color: var(--text-primary);
   }
 
   mat-card-subtitle {
-    color: #7a7a7a;
+    color: var(--text-secondary);
     margin-top: 6px;
   }
 
@@ -22,7 +27,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 14px;
     margin-top: 8px;
   }
@@ -69,7 +74,7 @@
   .lega-card.small mat-card-subtitle {
     display: block;
     margin: 0 0 6px 0;
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95rem;
   }
   .lega-card.small mat-card-actions {
