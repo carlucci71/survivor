@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cp ../../survivor_test/survivor_backend/build_be.html .
 # Carica le variabili d'ambiente dal file .env
 set -a
 source /home/survivor/.env

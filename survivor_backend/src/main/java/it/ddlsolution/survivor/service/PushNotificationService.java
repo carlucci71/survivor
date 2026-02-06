@@ -3,10 +3,20 @@ package it.ddlsolution.survivor.service;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.AndroidConfig;
+import com.google.firebase.messaging.AndroidNotification;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.MulticastMessage;
+import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.SendResponse;
+import it.ddlsolution.survivor.dto.NotificationDTO;
 import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.entity.PushToken;
 import it.ddlsolution.survivor.entity.User;
+import it.ddlsolution.survivor.repository.NotificationRepository;
 import it.ddlsolution.survivor.repository.PushTokenRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -21,19 +31,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static it.ddlsolution.survivor.util.Utility.getInSeconds;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PushNotificationService {
+    private final NotificationRepository notificationRepository;
 
     private final PushTokenRepository pushTokenRepository;
+    private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Value("${push.fcm.enabled:false}")
     private boolean fcmEnabled;
+
+    @Value("${notification.enabled:false}")
+    private boolean notificationEnabled;
 
     @Value("${push.fcm.credentials-path:}")
     private String fcmCredentialsPath;
@@ -58,7 +79,7 @@ public class PushNotificationService {
                 if (fcmCredentialsJson != null && !fcmCredentialsJson.isBlank()) {
                     // Da variabile env JSON base64 o JSON inline
                     credentials = GoogleCredentials.fromStream(
-                        new ByteArrayInputStream(fcmCredentialsJson.getBytes(StandardCharsets.UTF_8))
+                            new ByteArrayInputStream(fcmCredentialsJson.getBytes(StandardCharsets.UTF_8))
                     );
                 } else if (fcmCredentialsPath != null && !fcmCredentialsPath.isBlank()) {
                     // Da file
@@ -119,8 +140,8 @@ public class PushNotificationService {
                 log.info("Nuovo token push registrato per user {}", userId);
             }
             log.info("******************** REGISTER OK");
-        } catch (Exception e){
-            log.error("******************** REGISTER ERROR",e);
+        } catch (Exception e) {
+            log.error("******************** REGISTER ERROR", e);
         }
     }
 
@@ -133,44 +154,54 @@ public class PushNotificationService {
         log.info("Token disattivato: {}, rows: {}", token, updated);
     }
 
-    /**
-     * Invia una notifica push a un singolo utente (tutti i suoi token attivi)
-     */
-    public void sendNotificationToUser(Long userId, PushNotificationDTO notification) {
-        List<PushToken> tokens = pushTokenRepository.findByUser_IdAndActiveTrue(userId);
-        if (tokens.isEmpty()) {
-            log.warn("Nessun token attivo per user {}", userId);
-            return;
-        }
-        sendToTokens(tokens, notification);
-    }
 
     /**
      * Invia una notifica push a più utenti
      */
-    @Transactional(readOnly = true)
-    public void sendNotificationToUsers(List<Long> userIds, PushNotificationDTO notification) {
+    @Transactional
+    public void sendNotificationToUsers(List<Long> userIds, PushNotificationDTO pushNotificationDTO) {
+        sendToUsers(userIds, pushNotificationDTO);
         List<PushToken> tokens = pushTokenRepository.findByUser_IdInAndActiveTrue(userIds);
-        log.info("****************************************** INVIATA A TOKEN" + tokens.size());
+        log.info("****************************************** INVIATA A TOKEN SIZE: " + tokens.size());
         if (tokens.isEmpty()) {
             log.warn("Nessun token attivo per users {}", userIds);
             return;
         }
         log.info("****************************************** TOKEN -> " + tokens.get(0).getUser().getEmail());
-        sendToTokens(tokens, notification);
+        sendToTokens(tokens, pushNotificationDTO);
+    }
+
+    private void sendToUsers(List<Long> userIds, PushNotificationDTO pushNotificationDTO) {
+        if (!notificationEnabled) {
+            log.warn("Notification disabilitato, notifica non inviata: {}", pushNotificationDTO.getTitle());
+            return;
+        }
+
+        for (Long userId : userIds) {
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setUser(userService.userById(userId));
+            notificationDTO.setBody(pushNotificationDTO.getBody());
+            notificationDTO.setImageUrl(pushNotificationDTO.getImageUrl());
+            notificationDTO.setTitle(pushNotificationDTO.getTitle());
+            notificationDTO.setType(pushNotificationDTO.getType());
+            notificationDTO.setExpiringAt(getInSeconds(pushNotificationDTO.getExpiringAt()));
+            notificationService.createNotification(notificationDTO);
+        }
+
+
     }
 
     /**
      * Logica di invio ai token (FCM per Android/iOS)
      */
-    private void sendToTokens(List<PushToken> pushTokens, PushNotificationDTO notificationDTO) {
+    private void sendToTokens(List<PushToken> pushTokens, PushNotificationDTO pushNotificationDTO) {
         if (!fcmEnabled) {
-            log.warn("FCM disabilitato, notifica non inviata: {}", notificationDTO.getTitle());
+            log.warn("FCM disabilitato, notifica non inviata: {}", pushNotificationDTO.getTitle());
             return;
         }
 
         if (!firebaseInitialized) {
-            log.warn("Firebase non inizializzato correttamente: notifica non inviata: {}", notificationDTO.getTitle());
+            log.warn("Firebase non inizializzato correttamente: notifica non inviata: {}", pushNotificationDTO.getTitle());
             return;
         }
 
@@ -181,15 +212,15 @@ public class PushNotificationService {
                         Collectors.mapping(PushToken::getToken, Collectors.toList())
                 ));
 
-        for (Map.Entry<String, List<String>> entry : tokensByPlatform.entrySet()) {
-            String platform = entry.getKey();
-            List<String> tokens = entry.getValue();
+        for (Map.Entry<String, List<String>> tokenByPlatform : tokensByPlatform.entrySet()) {
+            String platform = tokenByPlatform.getKey();
+            List<String> tokens = tokenByPlatform.getValue();
 
             if ("ios".equalsIgnoreCase(platform)) {
-                sendToIosTokens(tokens, notificationDTO);
+                sendToIosTokens(tokens, pushNotificationDTO);
             } else if ("android".equalsIgnoreCase(platform)) {
                 log.info("****************************************** sendToAndroidTokens");
-                sendToAndroidTokens(tokens, notificationDTO);
+                sendToAndroidTokens(tokens, pushNotificationDTO);
             } else {
                 log.warn("Piattaforma non supportata: {}", platform);
             }
@@ -219,7 +250,7 @@ public class PushNotificationService {
             MulticastMessage message = MulticastMessage.builder()
                     .setNotification(notification)
                     .setAndroidConfig(androidConfig)
-                    .putAllData(convertData(dto.getData()))
+                    .putAllData(getAllDataFromPushNotification(dto))
                     .addAllTokens(tokens)
                     .build();
 
@@ -253,7 +284,7 @@ public class PushNotificationService {
             MulticastMessage message = MulticastMessage.builder()
                     .setNotification(notification)
                     .setApnsConfig(apnsConfig)
-                    .putAllData(convertData(dto.getData()))
+                    .putAllData(getAllDataFromPushNotification(dto))
                     .addAllTokens(tokens)
                     .build();
 
@@ -265,14 +296,21 @@ public class PushNotificationService {
         }
     }
 
+    private Map<String, String> getAllDataFromPushNotification(PushNotificationDTO dto) {
+        Map ret = new HashMap();
+        ret.put("TYPE", dto.getType());
+        ret.put("EXPIRING_AT", dto.getExpiringAt().toString());
+        return ret;
+    }
+
     private void handleFailedTokens(List<String> tokens, BatchResponse response) {
         List<SendResponse> responses = response.getResponses();
         for (int i = 0; i < responses.size(); i++) {
             SendResponse sr = responses.get(i);
             if (!sr.isSuccessful() && sr.getException() != null) {
                 String errorCode = sr.getException().getMessagingErrorCode() != null
-                    ? sr.getException().getMessagingErrorCode().name()
-                    : "UNKNOWN";
+                        ? sr.getException().getMessagingErrorCode().name()
+                        : "UNKNOWN";
 
                 // Disattiva token non più validi
                 if ("INVALID_ARGUMENT".equals(errorCode) || "UNREGISTERED".equals(errorCode)) {
@@ -282,17 +320,5 @@ public class PushNotificationService {
                 }
             }
         }
-    }
-
-    private Map<String, String> convertData(Object data) {
-        if (data == null) {
-            return new HashMap<>();
-        }
-        if (data instanceof Map) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> map = (Map<String, String>) data;
-            return map;
-        }
-        return new HashMap<>();
     }
 }

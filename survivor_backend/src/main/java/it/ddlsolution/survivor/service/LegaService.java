@@ -149,7 +149,7 @@ public class LegaService {
                         .getValue();
                 if (statoGiocatore1 == statoGiocatore2) {
                     if (g1.getGiocate().size() == g2.getGiocate().size()) {
-                        return g1.getNome().compareTo(g2.getNome());
+                        return g1.getNickname().compareTo(g2.getNickname());
                     }
                     return g2.getGiocate().size() - g1.getGiocate().size();
                 }
@@ -489,7 +489,7 @@ public class LegaService {
                 if (stato == Enumeratori.StatoGiocatore.ATTIVO || haGiocate) {
                     giocatoreLega.setPosizioneFinale(posizione);
                     log.debug("Giocatore {} - Posizione: {}, Stato: {}, Giocate: {}",
-                            giocatoreDTO.getNome(), posizione, stato,
+                            giocatoreDTO.getNickname(), posizione, stato,
                             haGiocate ? giocatoreDTO.getGiocate().size() : 0);
                     posizione++;
                 }

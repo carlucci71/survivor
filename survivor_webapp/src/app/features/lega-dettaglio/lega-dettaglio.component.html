@@ -21,8 +21,13 @@
               getDesGiornataTitle(lega.giornataDaGiocare) }}
             </div>
           }
+<<<<<<< HEAD
     <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega.value | translateLeagueData: 'role' }}</div>
     <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.value | translateLeagueData: 'status' }}</div>
+=======
+    <div>{{ 'LEAGUE.YOUR_ROLE' | translate }}: {{ lega.ruoloGiocatoreLega ? lega.ruoloGiocatoreLega.descrizione : ''}}</div>
+    <div>{{ 'LEAGUE.LEAGUE_STATE' | translate }}: {{ lega.stato.descrizione }}</div>
+>>>>>>> ee94539ecd28d8dd72df1a3c70053e2765b29aef
     @if (lega.giornataFinale) {
       <div>{{ 'LEAGUE.FINAL_ROUND' | translate }}: {{lega.giornataFinale}}</div>
     }
@@ -170,13 +175,7 @@
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
-                    <div class="user-name-container">
-                      <span class="user-name">{{ giocatore.nome }}</span>
-                      <span class="status-indicator"
-                            [class.active-indicator]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
-                            [class.eliminated-indicator]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
-                      </span>
-                    </div>
+                    <span class="user-name">{{ giocatore.nickname }}</span>
                     @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
                       <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
                                 matTooltip="Rimuovi giocatore">close</mat-icon>
@@ -297,10 +296,10 @@
           <div class="player-header-mobile" (click)="togglePlayerExpansion(giocatore.id)">
             <!-- Sinistra: Nome + Badge stato -->
             <div class="player-info-left">
-              <span class="nome-giocatore-mobile">{{ giocatore.nome }}</span>
-              <span class="status-indicator-mobile"
-                    [class.active-indicator]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
-                    [class.eliminated-indicator]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
+              <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              <span class="player-status-badge-mobile"
+                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value">
+                {{ giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value ? '❌' : '✅' }}
               </span>
             </div>
 

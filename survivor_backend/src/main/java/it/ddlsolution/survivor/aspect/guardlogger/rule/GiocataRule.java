@@ -84,7 +84,7 @@ public class GiocataRule implements GuardRule {
         }
         if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE
         ) {
-            warning.add("Giocata di " + getUser(userId).getNome() + "[" + (isAdmin ? "ADMIN" : "LEADER") + "] UserId:" + userId + " Stato: " + statoGiornataCorrente.getDescrizione());
+            warning.add("Giocata di " + getUser(userId).getNickname() + "[" + (isAdmin ? "ADMIN" : "LEADER") + "] UserId:" + userId + " Stato: " + statoGiornataCorrente.getDescrizione());
         }
         if (giocatoreDTO.getGiocate().stream()
                 .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))

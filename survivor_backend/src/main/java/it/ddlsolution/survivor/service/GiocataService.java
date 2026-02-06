@@ -98,7 +98,7 @@ public class GiocataService {
         if (revNumber.isPresent()) {
             // Prepare snapshot rows to persist
             List<GiocataSnapshot> snapshots = List.of(
-                    creaGiocataSnapshot(giocata.getId(), revNumber.get(), "giocatore_nome", giocatoreService.findById(giocata.getGiocatoreId()).getNome()),
+                    creaGiocataSnapshot(giocata.getId(), revNumber.get(), "giocatore_nome", giocatoreService.findById(giocata.getGiocatoreId()).getNickname()),
                     creaGiocataSnapshot(giocata.getId(), revNumber.get(), "squadra_sigla", giocata.getSquadraSigla()),
                     creaGiocataSnapshot(giocata.getId(), revNumber.get(), "lega_nome", legaService.getLegaDTO(giocata.getLegaId(), false, null).getName())
             );

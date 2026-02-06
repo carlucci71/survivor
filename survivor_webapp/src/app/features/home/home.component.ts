@@ -123,14 +123,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getNome(): string {
     // Mostra nickname se disponibile, altrimenti il nome
-    const displayName = this.me?.nickname || this.me?.nome || '';
+    const displayName = this.me?.nickname || this.me?.nickname || '';
     // return name with newlines between words
     return displayName.replaceAll(' ', '\n');
   }
 
   getNomeHtml(): SafeHtml {
     // Mostra nickname se disponibile, altrimenti il nome
-    const nome = this.me?.nickname || this.me?.nome || '';
+    const nome = this.me?.nickname || this.me?.nickname || '';
     // Greedy pack words into lines up to 20 characters.
     // If a word exceeds 20 chars, truncate to 17 + '...'.
     const maxChars = 20;

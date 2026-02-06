@@ -1,4 +1,5 @@
 #!/bin/bash
+echo $(TZ='Europe/Rome' date '+%d/%m/%Y %H:%M') > build_be.html
 
 # Carica le variabili d'ambiente dal file .env
 set -a

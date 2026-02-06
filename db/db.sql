@@ -705,3 +705,25 @@ CREATE TABLE push_token (
 
 CREATE INDEX idx_push_token_user_active ON push_token(user_id, active);
 CREATE INDEX idx_push_token_active ON push_token(active);
+
+
+CREATE TABLE notification (
+    id          serial PRIMARY KEY,
+    user_id 	BIGINT not NULL,
+    title       VARCHAR(255) NOT NULL,
+    body        TEXT         NOT NULL,
+    type        VARCHAR(50)  NOT NULL, -- es. MATCH_STARTING, INFO, ecc.
+    read        BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    expiring_at  char(12) not  NULL
+);
+
+CREATE INDEX idx_notification_user_created
+    ON notification(user_id, created_at DESC);
+
+CREATE INDEX idx_notification_user_read
+    ON notification(user_id, read);
+
+ALTER TABLE notification
+ADD CONSTRAINT fk_notification_user
+FOREIGN KEY (user_id) REFERENCES users(id);
