@@ -715,7 +715,7 @@ CREATE TABLE notification (
     type        VARCHAR(50)  NOT NULL, -- es. MATCH_STARTING, INFO, ecc.
     read        BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    expiring_at  char(12) not  NULL
+    expiring_at  varchar(20) not  NULL
 );
 
 CREATE INDEX idx_notification_user_created
