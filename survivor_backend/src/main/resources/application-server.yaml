@@ -16,10 +16,4 @@ SWAGGER_SERVER_URL: ${ENV_BASEURL}:${PORT}/api/survivorBe
 
 ALLOWED_SERVERS: ${ENV_SERVER},http://localhost
 
-# Configurazione PUSH / Firebase per ambiente server
-push:
-  fcm:
-    # Nel server preferisci impostare queste variabili d'ambiente in modo sicuro
-    enabled: ${PUSH_FCM_ENABLED:true}
-    credentials-path: ${PUSH_FCM_CREDENTIALS_PATH:}
-    credentials-json: ${PUSH_FCM_CREDENTIALS_JSON:}
+
