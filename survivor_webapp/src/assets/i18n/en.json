@@ -14,6 +14,30 @@
     "SEARCH_LEAGUES": "Search leagues...",
     "NO_RESULTS": "No leagues found"
   },
+  "LEAGUE_STATUS": {
+    "DA_AVVIARE": "Not Started",
+    "AVVIATA": "In Progress",
+    "TERMINATA": "Completed",
+    "ERRORE": "Error"
+  },
+  "SPORTS": {
+    "CALCIO": "Soccer",
+    "BASKET": "Basketball",
+    "TENNIS": "Tennis"
+  },
+  "CHAMPIONSHIPS": {
+    "SERIE_A": "Serie A",
+    "SERIE_B": "Serie B",
+    "LIGA": "La Liga",
+    "TENNIS_W": "Wimbledon",
+    "TENNIS_AO": "Australian Open",
+    "NBA_RS": "NBA"
+  },
+  "PLAYER_ROLES": {
+    "LEADER": "Leader",
+    "GIOCATORE": "Player",
+    "NESSUNO": "None"
+  },
   "HEADER": {
     "LOGOUT": "Logout",
     "ADMIN_AREA": "Admin Area",
