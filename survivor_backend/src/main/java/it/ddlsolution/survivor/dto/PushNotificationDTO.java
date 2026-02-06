@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,5 +17,13 @@ public class PushNotificationDTO {
     private String body;
     private String imageUrl;
     private String sound;
-    private Object data; // Map<String, String> per dati custom
+    private String type;
+    private LocalDateTime expiringAt;
+
+    public LocalDateTime getExpiringAt() {
+        if (expiringAt==null){
+            return LocalDateTime.of(2050,1,1,12,0);
+        }
+        return expiringAt;
+    }
 }

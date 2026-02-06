@@ -22,3 +22,5 @@ push:
     enabled: ${PUSH_FCM_ENABLED:true}
     credentials-path: ${PUSH_FCM_CREDENTIALS_PATH:}
     credentials-json: ${PUSH_FCM_CREDENTIALS_JSON:}
+notification:
+  enabled: ${NOTIFICATION_ENABLED:true}

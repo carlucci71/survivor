@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -97,17 +101,17 @@ public class ScheduledPushNotifications {
                 return;
             }
 
+
+
             PushNotificationDTO notification = PushNotificationDTO.builder()
                     .title("Partita in arrivo!")
                     .body(String.format("%s vs %s inizia tra 1 ora",
                         partita.getCasaNome(),
                         partita.getFuoriNome()))
                     .sound("default")
-                    .data(Map.of(
-                        "type", "match_starting",
-                        "matchId", String.valueOf(partita.getId()),
-                        "matchDate", partita.getOrario().toString()
-                    ))
+                    .type("match_starting")
+                    .expiringAt(LocalDateTime.now(ZoneId.of("Europe/Rome")).plusHours(1))
+                    .imageUrl("https://st4.depositphotos.com/1014627/26361/v/1600/depositphotos_263610928-stock-illustration-3d-gold-trophy-or-cup.jpg")
                     .build();
 
             pushNotificationService.sendNotificationToUsers(userIds, notification);
