@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,6 +18,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -57,6 +57,12 @@ public class Utility {
             log.info("process {} executed in {} ms", stopWatch.getId(), stopWatch.getTotalTimeMillis());
         }
     }
+
+    public static String getInSeconds(LocalDateTime localDateTime){
+        return localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+    }
+
 
     public <T> T callUrl(String url, Class<T> clazz) {
         log.info("++++++++++++++++++++++++++++++ {}",url);
