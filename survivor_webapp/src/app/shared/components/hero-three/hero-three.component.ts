@@ -48,12 +48,417 @@ import { CommonModule } from '@angular/common';
           </svg>
         </div>
       </div>
+      <!-- Omini stilizzati -->
+      <div class="stickmen-container">
+        <svg class="stickman stickman-1" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-2" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-3" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-4" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-5" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-6" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-7" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-8" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-9" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-10" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-11" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-12" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-13" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-14" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-15" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-16" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-17" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-18" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-19" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-20" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-21" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-22" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-23" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-24" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-25" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-26" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-27" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-28" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-29" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-30" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-31" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-32" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-33" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-34" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-35" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-36" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-37" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-38" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-39" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-40" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-41" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-42" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-43" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-44" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-45" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-46" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-47" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-48" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-49" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+        <svg class="stickman stickman-50" viewBox="0 0 40 60">
+          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
+          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+        </svg>
+      </div>
       <div class="hero-overlay">
         <div class="hero-content">
           <h1 class="hero-title">{{ title }}</h1>
           <p class="hero-subtitle">{{ subtitle }}</p>
         </div>
       </div>
+      <!-- Overlay oscuramento -->
+      <div class="dark-overlay"></div>
     </div>
   `,
   styles: [`
@@ -171,6 +576,358 @@ import { CommonModule } from '@angular/common';
       71%, 100% { border-color: transparent; }
     }
 
+    /* Animazione di oscuramento che si schiarisce */
+    @keyframes lighten {
+      0% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .dark-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #2a80d5;
+      z-index: 10;
+      pointer-events: none;
+      animation: lighten 18s ease-out 1 forwards;
+    }
+
+    /* Omini stilizzati */
+    .stickmen-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .stickman {
+      position: absolute;
+      width: 30px;
+      height: 45px;
+    }
+
+    @keyframes stickmanDarkSync {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .stickman-1 {
+      top: 15%;
+      left: 10%;
+      animation: stickmanDarkSync 16s ease-in-out 1 forwards;
+    }
+
+    .stickman-2 {
+      top: 65%;
+      left: 25%;
+      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
+    }
+
+    .stickman-3 {
+      top: 35%;
+      left: 42%;
+      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
+    }
+
+    .stickman-4 {
+      top: 70%;
+      left: 55%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-5 {
+      top: 20%;
+      left: 72%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-6 {
+      top: 50%;
+      left: 88%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-7 {
+      top: 80%;
+      left: 5%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-8 {
+      top: 25%;
+      left: 18%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-9 {
+      top: 55%;
+      left: 33%;
+      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
+    }
+
+    .stickman-10 {
+      top: 10%;
+      left: 50%;
+      animation: stickmanDarkSync 11s ease-in-out 1 forwards;
+    }
+
+    .stickman-11 {
+      top: 45%;
+      left: 65%;
+      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
+    }
+
+    .stickman-12 {
+      top: 75%;
+      left: 78%;
+      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
+    }
+
+    .stickman-13 {
+      top: 30%;
+      left: 92%;
+      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
+    }
+
+    .stickman-14 {
+      top: 60%;
+      left: 8%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-15 {
+      top: 12%;
+      left: 28%;
+      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
+    }
+
+    .stickman-16 {
+      top: 85%;
+      left: 45%;
+      animation: stickmanDarkSync 8.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-17 {
+      top: 40%;
+      left: 60%;
+      animation: stickmanDarkSync 9.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-18 {
+      top: 68%;
+      left: 82%;
+      animation: stickmanDarkSync 10.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-19 {
+      top: 22%;
+      left: 3%;
+      animation: stickmanDarkSync 11.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-20 {
+      top: 50%;
+      left: 15%;
+      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
+    }
+
+    .stickman-21 {
+      top: 78%;
+      left: 38%;
+      //   width: 50px;
+      //height: 65px;
+      animation: stickmanDarkSync 30s ease-in-out 1 forwards;
+    }
+
+    .stickman-22 {
+      top: 18%;
+      left: 53%;
+      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
+    }
+
+    .stickman-23 {
+      top: 42%;
+      left: 70%;
+        // width: 50px;
+      //height: 65px;
+      animation: stickmanDarkSync 6.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-24 {
+      top: 72%;
+      left: 90%;
+      animation: stickmanDarkSync 7.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-25 {
+      top: 33%;
+      left: 12%;
+      animation: stickmanDarkSync 8.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-26 {
+      top: 58%;
+      left: 48%;
+      animation: stickmanDarkSync 9.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-27 {
+      top: 88%;
+      left: 63%;
+      animation: stickmanDarkSync 10.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-28 {
+      top: 8%;
+      left: 85%;
+      animation: stickmanDarkSync 11.2s ease-in-out 1 forwards;
+    }
+
+    .stickman-29 {
+      top: 52%;
+      left: 20%;
+      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
+    }
+
+    .stickman-30 {
+      top: 14%;
+      left: 35%;
+      animation: stickmanDarkSync 13s ease-in-out 1 forwards;
+    }
+
+    .stickman-31 {
+      top: 66%;
+      left: 52%;
+      animation: stickmanDarkSync 7s ease-in-out 1 forwards;
+    }
+
+    .stickman-32 {
+      top: 38%;
+      left: 76%;
+      animation: stickmanDarkSync 10s ease-in-out 1 forwards;
+    }
+
+    .stickman-33 {
+      top: 82%;
+      left: 18%;
+      animation: stickmanDarkSync 5s ease-in-out 1 forwards;
+    }
+
+    .stickman-34 {
+      top: 26%;
+      left: 58%;
+      animation: stickmanDarkSync 15s ease-in-out 1 forwards;
+    }
+
+    .stickman-35 {
+      top: 54%;
+      left: 8%;
+      animation: stickmanDarkSync 9s ease-in-out 1 forwards;
+    }
+
+    .stickman-36 {
+      top: 70%;
+      left: 42%;
+      animation: stickmanDarkSync 11s ease-in-out 1 forwards;
+    }
+
+    .stickman-37 {
+      top: 18%;
+      left: 68%;
+      animation: stickmanDarkSync 6s ease-in-out 1 forwards;
+    }
+
+    .stickman-38 {
+      top: 46%;
+      left: 94%;
+      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
+    }
+
+    .stickman-39 {
+      top: 90%;
+      left: 28%;
+      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
+    }
+
+    .stickman-40 {
+      top: 32%;
+      left: 4%;
+      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
+    }
+
+    .stickman-41 {
+      top: 62%;
+      left: 62%;
+      animation: stickmanDarkSync 16s ease-in-out 1 forwards;
+    }
+
+    .stickman-42 {
+      top: 6%;
+      left: 44%;
+      animation: stickmanDarkSync 4.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-43 {
+      top: 74%;
+      left: 84%;
+      animation: stickmanDarkSync 11.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-44 {
+      top: 42%;
+      left: 22%;
+      animation: stickmanDarkSync 9.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-45 {
+      top: 86%;
+      left: 56%;
+      animation: stickmanDarkSync 13.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-46 {
+      top: 28%;
+      left: 88%;
+      animation: stickmanDarkSync 6.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-47 {
+      top: 64%;
+      left: 14%;
+      animation: stickmanDarkSync 15.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-48 {
+      top: 16%;
+      left: 74%;
+      animation: stickmanDarkSync 7.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-49 {
+      top: 50%;
+      left: 36%;
+      animation: stickmanDarkSync 10.5s ease-in-out 1 forwards;
+    }
+
+    .stickman-50 {
+      top: 78%;
+      left: 66%;
+      animation: stickmanDarkSync 17s ease-in-out 1 forwards;
+    }
+
     .hero-overlay {
       position: absolute;
       top: 0;
@@ -207,20 +964,21 @@ import { CommonModule } from '@angular/common';
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      opacity: 0;
 
       /* Proprietà per l'effetto shine */
       background-size: 200% auto;
 
       /* Nuove animazioni applicate */
-      animation: fadeInScale 1.5s ease-out, shine 5s linear infinite;
-      animation-delay: 0.5s, 2.5s; /* Ritardo per l'inizio dello shine */
+      animation: fadeInScale 1.5s ease-out forwards, shine 5s linear infinite;
+      animation-delay: 12s, 13.5s; /* Ritardo di 12 secondi */
     }
 
     .hero-subtitle {
       font-size: 1.3rem;
       font-weight: 400;
       margin: 0;
-      opacity: 1; /* Opacity a 1 per l'effetto typing */
+      opacity: 0; /* Opacity iniziale a 0 */
       font-family: 'Poppins', sans-serif;
 
       /* Stili per l'effetto typewriter */
@@ -233,7 +991,8 @@ import { CommonModule } from '@angular/common';
       animation:
         type-and-vanish 7s steps(15, end) infinite,
         blink-caret-timed 1s step-end infinite;
-      animation-delay: 2.5s;
+      animation-delay: 13.5s;
+      animation-fill-mode: forwards, step-end;
     }
 
     /* RESPONSIVE - TABLET */
