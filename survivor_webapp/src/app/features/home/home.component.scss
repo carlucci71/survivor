@@ -158,6 +158,31 @@
 	}
 }
 
+/* Forza stile per il mat-chip utente evitando che il tema "primary" lo colori di viola */
+::ng-deep mat-chip.user-chip,
+::ng-deep mat-chip.user-chip.mat-primary,
+::ng-deep mat-chip.user-chip.mat-mdc-chip.mat-primary {
+	background: rgba(255, 255, 255, 0.15) !important;
+	color: #ffffff !important;
+	border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+::ng-deep mat-chip.user-chip .config-user-name {
+	color: inherit !important;
+}
+
+/* Hover: rendi il chip utente coerente con gli altri elementi interattivi */
+::ng-deep mat-chip.user-chip:hover,
+::ng-deep mat-chip.user-chip.mat-primary:hover,
+::ng-deep mat-chip.user-chip.mat-mdc-chip.mat-primary:hover {
+	background: rgba(255, 255, 255, 0.25) !important;
+	border-color: rgba(255, 255, 255, 0.5) !important;
+	transform: translateY(-2px) scale(1.02) !important;
+	box-shadow: 0 6px 14px rgba(10, 61, 145, 0.12) !important;
+	cursor: pointer !important;
+	transition: all 0.18s ease !important;
+}
+
 /* Chip utente responsive - SEMPRE INLINE */
 @media (max-width: 768px) {
 	::ng-deep .user-chip {
