@@ -32,6 +32,7 @@ public class GiocataRevisionDTO {
     private String squadraId;
     private Enumeratori.EsitoGiocata esito;
     private String forzatura;
+    private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
 
     // Explicit snapshot fields commonly used
     private String snapshotGiocatoreNome;

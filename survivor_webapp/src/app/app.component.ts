@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { LoadingOverlayComponent } from './core/components/loading-overlay.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
-import { environment } from '../environments/environment';
 import { PushService } from './core/services/push.service';
-import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -12,20 +10,10 @@ import { ThemeService } from './core/services/theme.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   title = 'survivor_webapp';
 
   constructor(
-    private pushService: PushService,
-    private themeService: ThemeService
+    private readonly pushService: PushService
   ) {}
-
-  ngOnInit() {
-    // Applica il tema dall'environment
-    document.documentElement.style.setProperty('--primary-color', environment.theme.primary);
-    document.body.classList.add(`theme-${environment.theme.name}`);
-    
-    // Il ThemeService gestisce automaticamente il tema light/dark
-    // Non è necessario fare altro qui
-  }
 }

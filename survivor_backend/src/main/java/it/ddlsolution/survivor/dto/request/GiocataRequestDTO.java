@@ -13,6 +13,7 @@ public class GiocataRequestDTO {
     private Long legaId;
     private String squadraSigla;
     private Enumeratori.EsitoGiocata esitoGiocata;
+    private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
     @JsonIgnore
     private Map<String, Object> guardReturn;
 }

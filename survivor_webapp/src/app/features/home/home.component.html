@@ -13,7 +13,6 @@
       <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
         <mat-icon>verified_user</mat-icon>
       </button>
-      <mat-icon class="settings-icon" (click)="goToMe()" matTooltip="Configura l'utente">settings</mat-icon>
     </div>
   </app-header>
 
@@ -25,13 +24,6 @@
 
   <main class="main-content">
 
-    <div class="actions">
-      @if (isAdmin()) {
-      <button mat-raised-button color="accent" (click)="goToAdmin()" class="btn-admin">
-        Area Admin
-      </button>
-      }
-    </div>
 
     <section class="leghe-section">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
@@ -85,14 +77,14 @@
           <mat-card>
             <mat-card-header>
               <mat-card-title>{{ group.name }}</mat-card-title>
-              <mat-card-subtitle>{{ group.des }}</mat-card-subtitle>
+              <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
               <div class="edizioni-list">
                 <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
                   <mat-card-header>
                     <mat-card-title>Edizione {{ edizione.edizione }} {{edizione.anno}}</mat-card-title>
-                    <mat-card-subtitle>{{ edizione.stato.descrizione }}</mat-card-subtitle>
+                    <mat-card-subtitle>{{ edizione.stato.value | translateLeagueData: 'status' }}</mat-card-subtitle>
                   </mat-card-header>
                   <mat-card-actions>
                     <button

@@ -115,6 +115,7 @@ public class GiocataRevisionService {
                 .squadraId(g.getSquadra() != null ? String.valueOf(g.getSquadra().getId()) : null)
                 .esito(g.getEsito())
                 .forzatura(g.getForzatura())
+                .pubblica(g.getPubblica())
                 .snapshotGiocatoreNome(snapshotGiocatoreNome)
                 .snapshots(snapshots)
                 .build();

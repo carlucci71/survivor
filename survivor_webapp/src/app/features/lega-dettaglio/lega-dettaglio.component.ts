@@ -15,6 +15,7 @@ import {
   StatoPartita,
 } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
+import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
@@ -38,6 +39,7 @@ import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -61,6 +63,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    TranslateLeagueDataPipe,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -111,10 +114,14 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'all';
   expandedPlayers: { [key: number]: boolean } = {};
 
+  // Sottoscrizione agli aggiornamenti del profilo
+  private giocatoreSubscription: any;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
     private campionatoService: CampionatoService,
+    private giocatoreService: GiocatoreService,
     private authService: AuthService,
     private squadraService: SquadraService,
     private utilService: UtilService,
@@ -125,6 +132,16 @@ export class LegaDettaglioComponent implements OnDestroy {
     private sospensioniService: SospensioniService,
     private translate: TranslateService,
   ) {
+    // Sottoscrivi agli aggiornamenti del profilo
+    this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
+      giocatore => {
+        if (giocatore && this.id) {
+          // Ricarica i dati della lega quando il profilo viene aggiornato
+          this.loadLegaDetails();
+        }
+      }
+    );
+
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
       if (this.id) {
@@ -969,6 +986,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   ngOnDestroy(): void {
     if (this.countdownIntervalId) {
       clearInterval(this.countdownIntervalId);
+    }
+    if (this.giocatoreSubscription) {
+      this.giocatoreSubscription.unsubscribe();
     }
   }
 

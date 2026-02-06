@@ -14,6 +14,30 @@
     "SEARCH_LEAGUES": "Cerca leghe...",
     "NO_RESULTS": "Nessuna lega trovata"
   },
+  "LEAGUE_STATUS": {
+    "DA_AVVIARE": "Da Avviare",
+    "AVVIATA": "Avviata",
+    "TERMINATA": "Terminata",
+    "ERRORE": "In errore"
+  },
+  "SPORTS": {
+    "CALCIO": "Calcio",
+    "BASKET": "Basket",
+    "TENNIS": "Tennis"
+  },
+  "CHAMPIONSHIPS": {
+    "SERIE_A": "Serie A",
+    "SERIE_B": "Serie B",
+    "LIGA": "La Liga",
+    "TENNIS_W": "Wimbledon",
+    "TENNIS_AO": "Australian Open",
+    "NBA_RS": "NBA"
+  },
+  "PLAYER_ROLES": {
+    "LEADER": "Leader",
+    "GIOCATORE": "Giocatore",
+    "NESSUNO": "Nessuno"
+  },
   "HEADER": {
     "LOGOUT": "Esci",
     "ADMIN_AREA": "Area Admin",

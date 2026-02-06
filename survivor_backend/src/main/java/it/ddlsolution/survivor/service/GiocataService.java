@@ -62,6 +62,7 @@ public class GiocataService {
         giocata.setLega(lega);
         giocata.setSquadra(squadra);
         giocata.setEsito(request.getEsitoGiocata());
+        giocata.setPubblica(request.getPubblica() != null ? request.getPubblica() : false); // Default false (nascosta)
         if (!ObjectUtils.isEmpty(request.getGuardReturn())) {
             Object guardObj = request.getGuardReturn().get(WARNING_GIOCATA_RULE);
             if (guardObj instanceof List) {
