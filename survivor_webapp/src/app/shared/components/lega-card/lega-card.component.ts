@@ -6,11 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { Lega } from '../../../core/models/interfaces.model';
 import { UtilService } from '../../../core/services/util.service';
+import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
 
 @Component({
   selector: 'app-lega-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TranslateModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, TranslateModule, TranslateLeagueDataPipe],
   templateUrl: './lega-card.component.html',
   styleUrls: ['./lega-card.component.scss'],
 })
