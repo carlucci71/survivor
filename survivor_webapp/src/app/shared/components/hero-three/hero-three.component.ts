@@ -57,6 +57,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-2" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -65,6 +67,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-3" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -73,6 +77,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-4" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -81,6 +87,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-5" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -89,6 +97,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-6" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -97,6 +107,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-7" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -105,6 +117,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-8" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -113,6 +127,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-9" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -121,6 +137,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-10" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -129,6 +147,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-11" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -137,6 +157,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-12" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -145,6 +167,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-13" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -153,6 +177,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-14" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -161,6 +187,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-15" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -169,6 +197,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-16" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -177,6 +207,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-17" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -185,6 +217,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-18" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -193,6 +227,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-19" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -201,6 +237,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-20" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -209,6 +247,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-21" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -217,6 +257,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-22" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -225,6 +267,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-23" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -233,6 +277,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-24" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -241,6 +287,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-25" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -249,6 +297,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-26" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -257,6 +307,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-27" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -265,6 +317,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-28" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -273,6 +327,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-29" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -281,6 +337,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-30" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -289,6 +347,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-31" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -297,6 +357,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-32" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -305,6 +367,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-33" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -313,6 +377,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-34" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -321,6 +387,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-35" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -329,6 +397,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-36" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -337,6 +407,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-37" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -345,6 +417,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-38" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -353,6 +427,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-39" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -361,6 +437,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-40" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -369,6 +447,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-41" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -377,6 +457,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-42" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -385,6 +467,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-43" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -393,6 +477,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-44" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -401,6 +487,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-45" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -409,6 +497,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-46" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -417,6 +507,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-47" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -425,6 +517,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-48" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -433,6 +527,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-49" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -441,6 +537,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-50" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
@@ -449,6 +547,8 @@ import { CommonModule } from '@angular/common';
           <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
+          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
       </div>
       <div class="hero-overlay">
@@ -927,6 +1027,72 @@ import { CommonModule } from '@angular/common';
       left: 66%;
       animation: stickmanDarkSync 17s ease-in-out 1 forwards;
     }
+
+    /* Red cross animation */
+    .cross {
+      opacity: 0;
+    }
+
+    @keyframes crossAppear {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Cross timing - appears at 50% of stickman duration so it's visible before fade */
+    .stickman-1 .cross { animation: crossAppear 0.5s 8s forwards; }
+    .stickman-2 .cross { animation: crossAppear 0.5s 2s forwards; }
+    .stickman-3 .cross { animation: crossAppear 0.5s 2s forwards; }
+    .stickman-4 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-5 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-6 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-7 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-8 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-9 .cross { animation: crossAppear 0.5s 6s forwards; }
+    .stickman-10 .cross { animation: crossAppear 0.5s 5.5s forwards; }
+    .stickman-11 .cross { animation: crossAppear 0.5s 6s forwards; }
+    .stickman-12 .cross { animation: crossAppear 0.5s 6s forwards; }
+    .stickman-13 .cross { animation: crossAppear 0.5s 6s forwards; }
+    .stickman-14 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-15 .cross { animation: crossAppear 0.5s 2s forwards; }
+    .stickman-16 .cross { animation: crossAppear 0.5s 4.25s forwards; }
+    .stickman-17 .cross { animation: crossAppear 0.5s 4.75s forwards; }
+    .stickman-18 .cross { animation: crossAppear 0.5s 5.25s forwards; }
+    .stickman-19 .cross { animation: crossAppear 0.5s 5.75s forwards; }
+    .stickman-20 .cross { animation: crossAppear 0.5s 7s forwards; }
+    .stickman-21 .cross { display: none; } /* Winner - no cross */
+    .stickman-22 .cross { animation: crossAppear 0.5s 7s forwards; }
+    .stickman-23 .cross { animation: crossAppear 0.5s 3.1s forwards; }
+    .stickman-24 .cross { animation: crossAppear 0.5s 3.6s forwards; }
+    .stickman-25 .cross { animation: crossAppear 0.5s 4.1s forwards; }
+    .stickman-26 .cross { animation: crossAppear 0.5s 4.6s forwards; }
+    .stickman-27 .cross { animation: crossAppear 0.5s 5.1s forwards; }
+    .stickman-28 .cross { animation: crossAppear 0.5s 5.6s forwards; }
+    .stickman-29 .cross { animation: crossAppear 0.5s 2s forwards; }
+    .stickman-30 .cross { animation: crossAppear 0.5s 6.5s forwards; }
+    .stickman-31 .cross { animation: crossAppear 0.5s 3.5s forwards; }
+    .stickman-32 .cross { animation: crossAppear 0.5s 5s forwards; }
+    .stickman-33 .cross { animation: crossAppear 0.5s 2.5s forwards; }
+    .stickman-34 .cross { animation: crossAppear 0.5s 7.5s forwards; }
+    .stickman-35 .cross { animation: crossAppear 0.5s 4.5s forwards; }
+    .stickman-36 .cross { animation: crossAppear 0.5s 5.5s forwards; }
+    .stickman-37 .cross { animation: crossAppear 0.5s 3s forwards; }
+    .stickman-38 .cross { animation: crossAppear 0.5s 7s forwards; }
+    .stickman-39 .cross { animation: crossAppear 0.5s 4s forwards; }
+    .stickman-40 .cross { animation: crossAppear 0.5s 6s forwards; }
+    .stickman-41 .cross { animation: crossAppear 0.5s 8s forwards; }
+    .stickman-42 .cross { animation: crossAppear 0.5s 2.25s forwards; }
+    .stickman-43 .cross { animation: crossAppear 0.5s 5.75s forwards; }
+    .stickman-44 .cross { animation: crossAppear 0.5s 4.75s forwards; }
+    .stickman-45 .cross { animation: crossAppear 0.5s 6.75s forwards; }
+    .stickman-46 .cross { animation: crossAppear 0.5s 3.25s forwards; }
+    .stickman-47 .cross { animation: crossAppear 0.5s 7.75s forwards; }
+    .stickman-48 .cross { animation: crossAppear 0.5s 3.75s forwards; }
+    .stickman-49 .cross { animation: crossAppear 0.5s 5.25s forwards; }
+    .stickman-50 .cross { animation: crossAppear 0.5s 8.5s forwards; }
 
     .hero-overlay {
       position: absolute;
