@@ -1708,9 +1708,9 @@
 /* Filter chips */
 .filter-chips {
 	display: flex;
-	gap: 10px;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .filter-chip {
@@ -3278,12 +3278,47 @@
 			color: #0A3D91;
 			position: relative;
 
+			.user-name-wrapper {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+
 			.user-name {
 				display: inline-block;
 				max-width: 160px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+			}
+
+			// Icona modifica accanto al nome utente
+			.edit-user-icon {
+				color: #4FC3F7;
+				font-size: 20px;
+				width: 20px;
+				height: 20px;
+				cursor: pointer;
+				opacity: 0;
+				transform: scale(0) rotate(-180deg);
+				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+				&:hover {
+					color: #0A3D91;
+					transform: scale(1.2) rotate(0deg) !important;
+					animation: wiggle 0.6s ease;
+				}
+
+				&:active {
+					transform: scale(0.9) rotate(0deg) !important;
+				}
+			}
+
+			// Mostra l'icona al hover sulla cella
+			&:hover .edit-user-icon {
+				opacity: 1;
+				transform: scale(1) rotate(0deg);
+				animation: fadeInEdit 0.4s ease forwards;
 			}
 
 			.delete-user-icon {
@@ -3409,6 +3444,41 @@
 		.empty-cell {
 				color: #BDBDBD;
 				font-size: 0.9rem;
+			}
+
+			// Container per squadra + icona modifica
+			.team-with-action {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
+				flex-wrap: wrap;
+			}
+
+			// Icona "Gioca" per leader/admin
+			.gioca-icon-leader {
+				color: #4FC3F7;
+				font-size: 24px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+
+				&:hover {
+					color: #0A3D91;
+					transform: scale(1.15);
+				}
+
+				&:active {
+					transform: scale(0.95);
+				}
+
+				// Versione piccola per modifica
+				&.gioca-icon-small {
+					font-size: 18px;
+
+					&:hover {
+						transform: scale(1.2);
+					}
+				}
 			}
 
 			.play-btn-tiny {
@@ -3724,105 +3794,29 @@
 	}
 }
 
-/* ===== INDICATORI DI STATO ANIMATI ===== */
-
-/* Container per nome utente + indicatore */
-.user-name-container {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-/* Indicatore di stato - Badge circolare animato */
-.status-indicator,
-.status-indicator-mobile {
-	display: inline-block;
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	position: relative;
-	flex-shrink: 0;
-}
-
-/* Stato ATTIVO - Verde con pulse */
-.status-indicator.active-indicator,
-.status-indicator-mobile.active-indicator {
-	background: linear-gradient(135deg, #10B981, #34D399);
-	box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-	animation: statusPulseActive 2s ease-in-out infinite;
-}
-
-/* Stato ELIMINATO - Rosso con fade */
-.status-indicator.eliminated-indicator,
-.status-indicator-mobile.eliminated-indicator {
-	background: linear-gradient(135deg, #EF4444, #F87171);
-	box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-	animation: statusFadeEliminated 2s ease-in-out infinite;
-}
-
-/* Animazione Pulse per Attivi */
-@keyframes statusPulseActive {
-	0% {
-		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-		transform: scale(1);
+/* ===== ANIMAZIONI PER ICONA EDIT ===== */
+@keyframes fadeInEdit {
+	from {
+		opacity: 0;
+		transform: scale(0) rotate(-180deg);
 	}
-	50% {
-		box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
-		transform: scale(1.1);
-	}
-	100% {
-		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-		transform: scale(1);
-	}
-}
-
-/* Animazione Fade per Eliminati */
-@keyframes statusFadeEliminated {
-	0%, 100% {
+	to {
 		opacity: 1;
-		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5);
+		transform: scale(1) rotate(0deg);
+	}
+}
+
+@keyframes wiggle {
+	0%, 100% {
+		transform: scale(1.2) rotate(0deg);
+	}
+	25% {
+		transform: scale(1.2) rotate(-10deg);
 	}
 	50% {
-		opacity: 0.4;
-		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0);
+		transform: scale(1.2) rotate(10deg);
 	}
-}
-
-/* Animazioni per i pallini di stato */
-@keyframes pulse-green {
-	0% {
-		box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
-	}
-	50% {
-		box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
-	}
-	100% {
-		box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
-	}
-}
-
-@keyframes pulse-red {
-	0% {
-		box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
-	}
-	50% {
-		box-shadow: 0 0 0 6px rgba(244, 67, 54, 0);
-	}
-	100% {
-		box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
-	}
-}
-
-/* Responsive per mobile */
-.status-indicator-mobile {
-	width: 8px;
-	height: 8px;
-	margin-left: 6px;
-}
-
-@media (max-width: 480px) {
-	.status-indicator-mobile {
-		width: 7px;
-		height: 7px;
+	75% {
+		transform: scale(1.2) rotate(-5deg);
 	}
 }

@@ -255,44 +255,50 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined ? '' : giocata.esito;
-    let ret = '';
+
+    // Controllo se è la giornata corrente
     if (giornata + giornataIniziale - 1 !== giornataCorrente) {
-      ret = 'Non visualizzo perchè non è la giornata corrente';
+      return 'Non visualizzo perchè non è la giornata corrente';
     }
-    if (
-      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
-      StatoGiocatore.ELIMINATO.value
-    ) {
-      ret = 'Non visualizzo perchè il giocatore è eliminato';
+
+    // Controllo se il giocatore è eliminato
+    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
+      return 'Non visualizzo perchè il giocatore è eliminato';
     }
+
+    // Se c'è già un esito (OK/KO), nessuno può modificare
     if (esito == 'OK' || esito == 'KO') {
-      ret = 'Non visualizzo perchè è presente un esito';
+      return 'Non visualizzo perchè è presente un esito';
     }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      (giocatore.user == null ||
-        giocatore.user.id !== this.authService.getCurrentUser()?.id)
-    ) {
-      ret = 'Non visualizzo perchè non sei leader e non sei tu';
-    }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      this.lega?.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value
-    ) {
-      ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
-    }
+
+    // Se la giornata è sospesa, nessuno può giocare
     if (this.lega?.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
-      ret = 'Non visualizzo perchè la giornata è sospesa';
+      return 'Non visualizzo perchè la giornata è sospesa';
     }
+
+    // Se la lega è terminata, nessuno può giocare
     if (this.isTerminata()) {
-      ret = 'Non visualizzo perchè la lega è terminata';
+      return 'Non visualizzo perchè la lega è terminata';
     }
-    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
-    //  ret = 'Non visualizzo perchè la giornata da giocare ' + this.lega.giornataDaGiocare + ' è inferiore alla corrente ' + this.lega.giornataCorrente;
+
+    // Se è leader o admin, può sempre giocare/modificare (anche con tempo scaduto e anche se c'è già una giocata)
+    if (this.isAdmin() || this.isLeaderLega()) {
+      return ''; // Può giocare o modificare!
     }
-    return ret;
+
+    // Per gli utenti normali, possono giocare solo se:
+    // 1. Sono loro stessi
+    // 2. Non hanno ancora una giocata
+    if (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id) {
+      return 'Non visualizzo perchè non sei leader e non sei tu';
+    }
+
+    // Se l'utente normale ha già giocato, non può modificare (solo leader/admin possono)
+    if (giocata) {
+      return 'Non visualizzo perchè hai già giocato';
+    }
+
+    return ''; // Può giocare
   }
 
   caricaTabella() {

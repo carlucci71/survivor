@@ -315,7 +315,7 @@
     "EDITION_LABEL": "Edizione",
     "STATUS": {
       "ACTIVE": "In Corso",
-      "COMPLETED": "Terminata", 
+      "COMPLETED": "Terminata",
       "UPCOMING": "Da Avviare"
     },
     "ROLE": {
@@ -341,6 +341,7 @@
     "TO_PLAY": "Da giocare",
     "SUSPENDED": "Sospesa",
     "PLAY_NOW": "Gioca Ora",
+    "PLAY_FOR_USER": "Gioca per questo utente",
     "WEEK": "Settimana",
     "DELETE_PLAYER": "Elimina giocatore",
     "DELETE_LEAGUE": "Elimina questa lega",

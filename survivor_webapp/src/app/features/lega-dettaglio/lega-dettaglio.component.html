@@ -170,11 +170,21 @@
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
-                    <span class="user-name">{{ giocatore.nickname }}</span>
-                    @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
-                      <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
-                                matTooltip="Rimuovi giocatore">close</mat-icon>
-                    }
+                    <div class="user-name-wrapper">
+                      <span class="user-name">{{ giocatore.nickname }}</span>
+                      <!-- Icona modifica per leader/admin (se può giocare per questo utente) -->
+                      @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
+                        <mat-icon class="edit-user-icon"
+                                  (click)="giocaGiornataDisponibile(giocatore)"
+                                  [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
+                          edit
+                        </mat-icon>
+                      }
+                      @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
+                        <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
+                                  matTooltip="Rimuovi giocatore">close</mat-icon>
+                      }
+                    </div>
                   </td>
 
                   <!-- STATO -->
@@ -200,7 +210,7 @@
                           {{ getDisplaySquadraNome(giocatore, giornata) }}
                         </span>
                       } @else {
-                        <!-- Cella vuota - il pulsante "Gioca Ora" principale è sopra la tabella -->
+                        <!-- Cella vuota -->
                         <span class="empty-cell">-</span>
                       }
                     </td>
@@ -279,9 +289,17 @@
 
           <!-- Header giocatore compatto - Nome + Freccia sulla stessa riga -->
           <div class="player-header-mobile" (click)="togglePlayerExpansion(giocatore.id)">
-            <!-- Sinistra: Nome + Badge stato -->
+            <!-- Sinistra: Nome + Badge stato + Icona modifica -->
             <div class="player-info-left">
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              <!-- Icona modifica per leader/admin -->
+              @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
+                <mat-icon class="edit-user-icon-mobile"
+                          (click)="$event.stopPropagation(); giocaGiornataDisponibile(giocatore)"
+                          [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
+                  edit
+                </mat-icon>
+              }
               <span class="status-indicator-mobile"
                     [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                     [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
