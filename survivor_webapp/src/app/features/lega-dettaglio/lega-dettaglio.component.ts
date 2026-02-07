@@ -34,12 +34,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
+import { RemainingTeamsDialogComponent } from '../../shared/components/remaining-teams-dialog/remaining-teams-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -59,6 +61,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
     MatDialogModule,
     MatListModule,
     MatInputModule,
+    MatSnackBarModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -131,6 +134,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private overlay: Overlay,
     private sospensioniService: SospensioniService,
     private translate: TranslateService,
+    private snackBar: MatSnackBar,
   ) {
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
@@ -428,8 +432,43 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
-    const giocateIds = (giocatore.giocate || []).map((g: any) => g.squadraId);
-    return this.squadre.filter((s) => !giocateIds.includes(s.sigla));
+    // Usa squadraSigla invece di squadraId per il confronto corretto
+    const giocateSigle = (giocatore.giocate || []).map((g: any) => g.squadraSigla);
+    return this.squadre.filter((s) => !giocateSigle.includes(s.sigla));
+  }
+
+  // Metodo per mostrare le squadre disponibili per l'utente corrente
+  showRemainingTeams(): void {
+    const currentGiocatore = this.getCurrentGiocatore();
+    if (!currentGiocatore) {
+      this.snackBar.open(this.translate.instant('ERRORS.USER_NOT_FOUND'), 'OK', {
+        duration: 3000
+      });
+      return;
+    }
+
+    // Otteniamo tutte le squadre e quelle già giocate
+    const giocateSigle = (currentGiocatore.giocate || []).map((g: any) => g.squadraSigla);
+    const tutteSquadre = this.squadre || [];
+
+    // Mappiamo tutte le squadre aggiungendo il flag 'disponibile'
+    const squadreConStato = tutteSquadre.map(squadra => ({
+      ...squadra,
+      disponibile: !giocateSigle.includes(squadra.sigla)
+    }));
+
+    // Apriamo un dialog con le squadre
+    const dialogRef = this.dialog.open(RemainingTeamsDialogComponent, {
+      width: '90vw',
+      maxWidth: '900px',
+      maxHeight: '85vh',
+      data: {
+        squadre: squadreConStato,
+        sportId: this.lega?.campionato?.sport?.id,
+        campionatoNome: this.lega?.campionato?.nome,
+        giocatoreNome: currentGiocatore.nickname
+      }
+    });
   }
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente

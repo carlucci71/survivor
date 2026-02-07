@@ -1,0 +1,349 @@
+.remaining-teams-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 80vh;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+  color: white;
+
+  .dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+
+    .title-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+
+  .info-section {
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+
+    p {
+      margin: 6px 0;
+      font-size: 0.95rem;
+
+      strong {
+        color: #0A3D91;
+      }
+    }
+
+    .player-info {
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .teams-count {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+
+      .status-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      &.available {
+        background: rgba(76, 175, 80, 0.1);
+        color: #2e7d32;
+
+        .status-icon {
+          color: #4caf50;
+        }
+
+        strong {
+          color: #2e7d32;
+        }
+      }
+
+      &.played {
+        background: rgba(244, 67, 54, 0.1);
+        color: #c62828;
+
+        .status-icon {
+          color: #f44336;
+        }
+
+        strong {
+          color: #c62828;
+        }
+      }
+    }
+  }
+
+  .no-teams-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    color: #757575;
+
+    .no-teams-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #e0e0e0;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin: 0;
+    }
+  }
+
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    padding: 4px 0;
+
+    .team-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      cursor: default;
+      position: relative;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        border-color: #0A3D91;
+      }
+
+      // Squadre non disponibili (già giocate) - sfondo rosso
+      &.unavailable {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        border-color: #e57373;
+        opacity: 0.75;
+
+        &:hover {
+          transform: none;
+          box-shadow: none;
+          border-color: #e57373;
+        }
+
+        .team-logo-container {
+          background: rgba(255, 255, 255, 0.7);
+          opacity: 0.6;
+        }
+
+        .team-name {
+          color: #c62828;
+          text-decoration: line-through;
+        }
+      }
+
+      .unavailable-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: #f44336;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .team-logo-container {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        padding: 6px;
+
+        .team-logo {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+      }
+
+      .team-name {
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #333;
+        line-height: 1.2;
+        word-break: break-word;
+      }
+    }
+  }
+}
+
+.dialog-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: center;
+  background: #fafafa;
+
+  button {
+    min-width: 120px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dialog-header {
+    padding: 16px;
+
+    .dialog-title {
+      font-size: 1.25rem;
+
+      .title-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+
+  .dialog-content {
+    padding: 12px;
+
+    .info-section {
+      padding: 10px 12px;
+
+      p {
+        font-size: 0.85rem;
+      }
+
+      .stats-row {
+        gap: 12px;
+      }
+
+      .teams-count {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+
+        .status-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    .teams-grid {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+
+      .team-card {
+        padding: 10px;
+
+        .team-logo-container {
+          width: 55px;
+          height: 55px;
+        }
+
+        .team-name {
+          font-size: 0.8rem;
+        }
+
+        .unavailable-badge {
+          width: 20px;
+          height: 20px;
+          top: 3px;
+          right: 3px;
+
+          mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-content {
+    padding: 10px;
+
+    .info-section {
+      .stats-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    .teams-grid {
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      gap: 8px;
+
+      .team-card {
+        padding: 8px;
+
+        .team-logo-container {
+          width: 45px;
+          height: 45px;
+        }
+
+        .team-name {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+}
