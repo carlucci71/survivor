@@ -30,7 +30,6 @@ public class ParametriService {
         Parametri parametri = parametriRepository
                 .findByCodice(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF)
                 .orElseThrow(() -> new RuntimeException("Parametro non trovato: " + Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF));
-//        202602081110
         if (dateString.length() != 12) {
             throw new RuntimeException("La data di riferimento deve essere di 12 caratteri");
         }

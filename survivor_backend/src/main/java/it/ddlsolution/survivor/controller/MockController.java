@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.controller;
 
+import it.ddlsolution.survivor.dto.PartitaMockDTO;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.ParametriService;
@@ -8,13 +9,15 @@ import it.ddlsolution.survivor.service.PartitaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RequestMapping("/mock")
 
@@ -36,9 +39,23 @@ public class MockController {
             , @PathVariable String implementazioneApiFrom
 
     ) {
-        partitaMockService.reset(idCampionato, anno,implementazioneApiFrom);
-        campionatoService.refreshCampionato(campionatoService.getCampionato(idCampionato),anno);
+        partitaMockService.reset(idCampionato, anno, implementazioneApiFrom);
+        campionatoService.refreshCampionato(campionatoService.getCampionato(idCampionato), anno);
         return ResponseEntity.ok("OK");
+    }
+
+    @GetMapping("/partite/{idCampionato}/{anno}/{giornata}")
+    public ResponseEntity<List<PartitaMockDTO>> partite(
+            @PathVariable String idCampionato
+            , @PathVariable Short anno
+            , @PathVariable Integer giornata
+    ) {
+        return ResponseEntity.ok(partitaMockService.getPartiteDellaGiornata(idCampionato, anno, giornata));
+    }
+
+    @GetMapping("/dataRiferimento")
+    public ResponseEntity<LocalDateTime> dataRiferimento() {
+        return ResponseEntity.ok(partitaMockService.getDataRiferimento());
     }
 
 
@@ -57,10 +74,9 @@ public class MockController {
         if (dataRif != null) {
             parametriService.aggiornaMockLocalDateRif(dataRif);
         }
-
         partitaService.resetDaGiocareGiornata(idCampionato, anno, giornata);
         if (casaSigla != null || fuoriSigla != null) {
-            if ((scoreCasa != null && scoreFuori == null) || (scoreFuori != null && scoreCasa == null)){
+            if ((scoreCasa != null && scoreFuori == null) || (scoreFuori != null && scoreCasa == null)) {
                 throw new RuntimeException("ScoreCasa e scoreFuori sono obbligatori insieme");
             }
             partitaMockService.aggiornaPartitaMockDiUnaGiornata(idCampionato, anno, giornata, casaSigla, fuoriSigla, scoreCasa, scoreFuori, orarioPartita);

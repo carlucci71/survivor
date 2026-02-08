@@ -53,6 +53,18 @@
 
         <mat-card class="section-card">
           <mat-card-header>
+            <mat-card-title>Mock</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Accesso pagina mock per test e modifica partite.</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" [disabled]="!canAccessMock" (click)="goToMock()">Gestione Mock</button>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card class="section-card">
+          <mat-card-header>
             <mat-card-title>{{ 'ADMIN.STATISTICS' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
@@ -63,11 +75,13 @@
           </mat-card-actions>
         </mat-card>
       </div>
+      <!--
       <mat-card class="section-card external-html-card">
         <mat-card-header>
           <mat-card-title>HTML statico (assets)</mat-card-title>
         </mat-card-header>
       </mat-card>
+      -->
     </div>
   </main>
 </div>

@@ -56,5 +56,7 @@ public interface PartitaMockRepository extends JpaRepository<PartitaMock, Intege
     @Query("delete from PartitaMock p where p.campionato.id = ?1 and p.anno = ?2")
     int deleteByCampionatoAndAnno(String idCampionato, short anno);
 
+    List<PartitaMock> findByCampionato_IdAndAnnoAndGiornata(String idCampionato, short anno, int giornata);
+
 
 }
