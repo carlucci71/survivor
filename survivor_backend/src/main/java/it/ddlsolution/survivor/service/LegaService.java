@@ -287,10 +287,6 @@ public class LegaService {
         return ret;
     }
 
-    public CampionatoDTO refreshCampionato(CampionatoDTO campionatoDTO, short anno) {
-        cacheableService.clearCachePartite(campionatoDTO.getId(), anno);
-        return cacheableService.elaboraCampionato(campionatoDTO, anno);
-    }
 
 
     @LoggaDispositiva(tipologia = "calcola")
@@ -299,7 +295,7 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
-        CampionatoDTO campionatoDTO = refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
+        CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
         legaDTO.setCampionato(campionatoDTO);
         int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
         if (nuovaGiornataCalcolata > campionatoDTO.getNumGiornate()) {
