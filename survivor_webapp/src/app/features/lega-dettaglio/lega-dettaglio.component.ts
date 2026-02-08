@@ -34,12 +34,14 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
+import { RemainingTeamsDialogComponent } from '../../shared/components/remaining-teams-dialog/remaining-teams-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -59,6 +61,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
     MatDialogModule,
     MatListModule,
     MatInputModule,
+    MatSnackBarModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -131,6 +134,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private overlay: Overlay,
     private sospensioniService: SospensioniService,
     private translate: TranslateService,
+    private snackBar: MatSnackBar,
   ) {
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
@@ -255,44 +259,50 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined ? '' : giocata.esito;
-    let ret = '';
+
+    // Controllo se è la giornata corrente
     if (giornata + giornataIniziale - 1 !== giornataCorrente) {
-      ret = 'Non visualizzo perchè non è la giornata corrente';
+      return 'Non visualizzo perchè non è la giornata corrente';
     }
-    if (
-      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
-      StatoGiocatore.ELIMINATO.value
-    ) {
-      ret = 'Non visualizzo perchè il giocatore è eliminato';
+
+    // Controllo se il giocatore è eliminato
+    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
+      return 'Non visualizzo perchè il giocatore è eliminato';
     }
+
+    // Se c'è già un esito (OK/KO), nessuno può modificare
     if (esito == 'OK' || esito == 'KO') {
-      ret = 'Non visualizzo perchè è presente un esito';
+      return 'Non visualizzo perchè è presente un esito';
     }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      (giocatore.user == null ||
-        giocatore.user.id !== this.authService.getCurrentUser()?.id)
-    ) {
-      ret = 'Non visualizzo perchè non sei leader e non sei tu';
-    }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      this.lega?.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value
-    ) {
-      ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
-    }
+
+    // Se la giornata è sospesa, nessuno può giocare
     if (this.lega?.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
-      ret = 'Non visualizzo perchè la giornata è sospesa';
+      return 'Non visualizzo perchè la giornata è sospesa';
     }
+
+    // Se la lega è terminata, nessuno può giocare
     if (this.isTerminata()) {
-      ret = 'Non visualizzo perchè la lega è terminata';
+      return 'Non visualizzo perchè la lega è terminata';
     }
-    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
-    //  ret = 'Non visualizzo perchè la giornata da giocare ' + this.lega.giornataDaGiocare + ' è inferiore alla corrente ' + this.lega.giornataCorrente;
+
+    // Se è leader o admin, può sempre giocare/modificare (anche con tempo scaduto e anche se c'è già una giocata)
+    if (this.isAdmin() || this.isLeaderLega()) {
+      return ''; // Può giocare o modificare!
     }
-    return ret;
+
+    // Per gli utenti normali, possono giocare solo se:
+    // 1. Sono loro stessi
+    // 2. Non hanno ancora una giocata
+    if (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id) {
+      return 'Non visualizzo perchè non sei leader e non sei tu';
+    }
+
+    // Se l'utente normale ha già giocato, non può modificare (solo leader/admin possono)
+    if (giocata) {
+      return 'Non visualizzo perchè hai già giocato';
+    }
+
+    return ''; // Può giocare
   }
 
   caricaTabella() {
@@ -422,8 +432,43 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
-    const giocateIds = (giocatore.giocate || []).map((g: any) => g.squadraId);
-    return this.squadre.filter((s) => !giocateIds.includes(s.sigla));
+    // Usa squadraSigla invece di squadraId per il confronto corretto
+    const giocateSigle = (giocatore.giocate || []).map((g: any) => g.squadraSigla);
+    return this.squadre.filter((s) => !giocateSigle.includes(s.sigla));
+  }
+
+  // Metodo per mostrare le squadre disponibili per l'utente corrente
+  showRemainingTeams(): void {
+    const currentGiocatore = this.getCurrentGiocatore();
+    if (!currentGiocatore) {
+      this.snackBar.open(this.translate.instant('ERRORS.USER_NOT_FOUND'), 'OK', {
+        duration: 3000
+      });
+      return;
+    }
+
+    // Otteniamo tutte le squadre e quelle già giocate
+    const giocateSigle = (currentGiocatore.giocate || []).map((g: any) => g.squadraSigla);
+    const tutteSquadre = this.squadre || [];
+
+    // Mappiamo tutte le squadre aggiungendo il flag 'disponibile'
+    const squadreConStato = tutteSquadre.map(squadra => ({
+      ...squadra,
+      disponibile: !giocateSigle.includes(squadra.sigla)
+    }));
+
+    // Apriamo un dialog con le squadre
+    const dialogRef = this.dialog.open(RemainingTeamsDialogComponent, {
+      width: '90vw',
+      maxWidth: '900px',
+      maxHeight: '85vh',
+      data: {
+        squadre: squadreConStato,
+        sportId: this.lega?.campionato?.sport?.id,
+        campionatoNome: this.lega?.campionato?.nome,
+        giocatoreNome: currentGiocatore.nickname
+      }
+    });
   }
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente

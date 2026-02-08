@@ -74,25 +74,20 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <p>{{ 'RULES.SECTION_6_TEXT' | translate }}</p>
         </div>
 
-        <!-- 7. Eliminazione totale ed equità del montepremi -->
+        <!-- 7. Eliminazione totale -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_7_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_7_P1' | translate }}</p>
-          <p>{{ 'RULES.SECTION_7_P2' | translate }}</p>
-          <p>{{ 'RULES.SECTION_7_P3' | translate }}</p>
         </div>
 
-        <!-- 8. Divisione anticipata del montepremi -->
+        <!-- 8. Divisione anticipata (regola standard) -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_8_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_8_P1' | translate }}</p>
           <p>{{ 'RULES.SECTION_8_P2' | translate }}</p>
-          <p><strong>{{ 'RULES.SECTION_8_EXAMPLE_TITLE' | translate }}</strong></p>
-          <p>{{ 'RULES.SECTION_8_EXAMPLE' | translate }}</p>
-          <p>{{ 'RULES.SECTION_8_P3' | translate }}</p>
         </div>
 
-        <!-- 9. Giornate con partite rinviate o sospese -->
+        <!-- 9. Eventi rinviati, sospesi o annullati -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_9_TITLE' | translate }}</h3>
 
@@ -104,7 +99,6 @@ import { Squadra } from '../../../core/models/interfaces.model';
             <li>{{ 'RULES.SECTION_9_1_L3' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_1_L4' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_1_L5' | translate }}</li>
-            <li>{{ 'RULES.SECTION_9_1_L6' | translate }}</li>
           </ul>
 
           <h4>{{ 'RULES.SECTION_9_2_TITLE' | translate }}</h4>
@@ -112,14 +106,16 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <ul>
             <li>{{ 'RULES.SECTION_9_2_L1' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_2_L2' | translate }}</li>
-          </ul>
-          <p>{{ 'RULES.SECTION_9_2_P2' | translate }}</p>
-          <ul>
             <li>{{ 'RULES.SECTION_9_2_L3' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_2_L4' | translate }}</li>
-            <li>{{ 'RULES.SECTION_9_2_L5' | translate }}</li>
           </ul>
-          <p>{{ 'RULES.SECTION_9_2_P3' | translate }}</p>
+        </div>
+
+        <!-- 10. Gestione del montepremi -->
+        <div class="regola">
+          <h3>{{ 'RULES.SECTION_10_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_10_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_10_P2' | translate }}</p>
         </div>
 
         <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
