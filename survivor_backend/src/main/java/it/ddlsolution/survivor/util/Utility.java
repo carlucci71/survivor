@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.ddlsolution.survivor.service.PartitaMockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
@@ -37,8 +39,9 @@ public class Utility {
     @Autowired
     RestTemplate restTemplate;
 
-    public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
+    public final static String dateFormatLiteWithTime = "yyyyMMddHHmm";
+    public final static String dateFormatLiteWithTimeAndSeconds = "yyyyMMddHHmmss";
     ObjectMapper mapper = null;
 
     public StopWatch startStopWatch(String nome) {
@@ -59,8 +62,13 @@ public class Utility {
     }
 
     public static String getInSeconds(LocalDateTime localDateTime){
-        return localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return localDateTime.format(DateTimeFormatter.ofPattern(dateFormatLiteWithTimeAndSeconds));
 
+    }
+
+    public static LocalDateTime toLocalDateTimeItaly(String dateString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormatLiteWithTime).withLocale(Locale.ITALY);
+        return LocalDateTime.parse(dateString, formatter);
     }
 
 
@@ -169,6 +177,7 @@ public class Utility {
                 .orElseThrow(() -> new RuntimeException("Implementazione Api External non trovata"));
         return implementationExternalApi;
     }
+
 
 
 }

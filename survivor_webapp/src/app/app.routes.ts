@@ -68,6 +68,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/public/service-unavailable.component').then(m => m.ServiceUnavailableComponent)
   },
   {
+    path: 'mock',
+    loadComponent: () => import('./features/mock/mock.component').then(m => m.MockComponent),
+    canActivate: [authGuard, adminGuard]
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }

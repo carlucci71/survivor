@@ -148,6 +148,18 @@ export interface Partita {
     aliasGiornataFuori: string;
 }
 
+export interface PartitaMock {
+    id: number;
+    campionatoId: string;
+    anno: number;
+    giornata: number;
+    orario: Date;
+    casaSigla: string;
+    fuoriSigla: string;
+    scoreCasa: number;
+    scoreFuori: number;
+}
+
 export interface Campionato {
   id: string;
   nome: string;

@@ -85,5 +85,11 @@ public class CampionatoService {
                 .orElseGet(HashMap::new);
     }
 
+    public CampionatoDTO refreshCampionato(CampionatoDTO campionatoDTO, short anno) {
+        CacheableService cacheableService = cacheableProvider.getIfAvailable();
+        cacheableService.clearCachePartite(campionatoDTO.getId(), anno);
+        return cacheableService.elaboraCampionato(campionatoDTO, anno);
+    }
+
 
 }

@@ -325,6 +325,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     const maxGiornateVisibili = 10;
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
+    
 
     // Aggiusta se siamo vicini alla fine
     if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
@@ -465,6 +466,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       data: {
         squadre: squadreConStato,
         sportId: this.lega?.campionato?.sport?.id,
+        campionatoId: this.lega?.campionato?.id,
         campionatoNome: this.lega?.campionato?.nome,
         giocatoreNome: currentGiocatore.nickname
       }
@@ -521,7 +523,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
     // SERIE A (20 squadre)
-    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
     'SERIE_A_CAG': 'CAGL.png',      // Cagliari
     'SERIE_A_COM': 'COMO.png',      // Como
@@ -1023,9 +1025,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
 
-  getStatoGiornataValue(index: number): string {
-    if (!this.lega || !this.lega.statiGiornate) return '';
-    return this.lega.statiGiornate[index]?.value || '';
+  getStatoGiornata(index: number): StatoPartita | null {
+    if (!this.lega || !this.lega.statiGiornate) return null;
+    return this.lega.statiGiornate[index] || null;
   }
 
   ngOnDestroy(): void {
