@@ -6,7 +6,9 @@ import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.service.GiocatoreService;
+import it.ddlsolution.survivor.service.PartitaMockService;
 import it.ddlsolution.survivor.service.UserService;
+import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.Optional;
 
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
 
 @Slf4j
@@ -32,6 +36,8 @@ import static it.ddlsolution.survivor.util.Constant.WARNING_GIOCATA_RULE;
 public class GiocataRule implements GuardRule {
 
     private final GiocatoreService giocatoreService;
+    private final Utility utility;
+    private final PartitaMockService partitaMockService;
 
     @Override
     public Map<String, Object> run(Map<GuardRule.PARAM, Object> args) {
@@ -41,6 +47,7 @@ public class GiocataRule implements GuardRule {
         String squadra = (String) args.get(SIGLASQUADRA);
         Integer giornata = (Integer) args.get(PARAM.GIORNATA);
         GiocatoreDTO giocatoreDTO = (GiocatoreDTO) args.get(PARAM.IDGIOCATORE);
+        Long idDelGiocatore = giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new InsufficientAuthenticationException("Utente non autenticato");
@@ -61,11 +68,15 @@ public class GiocataRule implements GuardRule {
         if (giocatoreDTO.getStatiPerLega().getOrDefault(idLega, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
         }
-        if (!userId.equals(giocatoreDTO.getUser() == null ? -1 : giocatoreDTO.getUser().getId())
+        if (!userId.equals(idDelGiocatore)
                 && !isAdmin
                 && ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER
         ) {
             throw new AccessDeniedException("Solo il leader o admin può giocare per un altro utente");
+        }
+        if (!userId.equals(idDelGiocatore)
+        ) {
+            warning.add("Giocata di " + getUser(userId).getNickname() + "[" + (isAdmin ? "ADMIN" : "LEADER") + "] UserId:" + userId + " Stato: " + statoGiornataCorrente.getDescrizione());
         }
         if (legaDTO.getGiornataCorrente() != legaDTO.getGiornataIniziale() + giornata - 1) {
             throw new AccessDeniedException("Non è la giornata corrente");
@@ -84,7 +95,11 @@ public class GiocataRule implements GuardRule {
         }
         if (statoGiornataCorrente != Enumeratori.StatoPartita.DA_GIOCARE
         ) {
-            warning.add("Giocata di " + getUser(userId).getNickname() + "[" + (isAdmin ? "ADMIN" : "LEADER") + "] UserId:" + userId + " Stato: " + statoGiornataCorrente.getDescrizione());
+            LocalDateTime dataRiferimento = LocalDateTime.now();
+            if (utility.getImplementationExternalApi().equals(CALENDARIO_MOCK)) {
+                dataRiferimento = partitaMockService.getDataRiferimento();
+            }
+            warning.add("Giocata alle " + dataRiferimento);
         }
         if (giocatoreDTO.getGiocate().stream()
                 .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))

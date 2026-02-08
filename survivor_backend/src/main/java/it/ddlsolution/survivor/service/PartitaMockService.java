@@ -41,7 +41,7 @@ public class PartitaMockService {
 
     @Transactional(readOnly = true)
     public List<PartitaMockDTO> getPartiteDellaGiornata(String idCampionato, Short anno, Integer giornata) {
-        List<PartitaMock> partiteMock = partitaMockRepository.findByCampionato_IdAndAnnoAndGiornata(idCampionato, anno, giornata);
+        List<PartitaMock> partiteMock = partitaMockRepository.findByCampionato_IdAndAnnoAndGiornataOrderByOrario(idCampionato, anno, giornata);
         return partitaMockMapper.toDTOList(partiteMock);
     }
 

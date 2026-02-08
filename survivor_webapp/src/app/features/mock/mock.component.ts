@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
 import { MockResetDialogComponent } from './mock-reset-dialog.component';
 import { SportService } from '../../core/services/sport.service';
 import { CampionatoService } from '../../core/services/campionato.service';
@@ -23,7 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-mock',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MockResetDialogComponent, HeaderComponent, MatFormFieldModule, MatInputModule, MatIconModule, MatSelectModule, MatButtonModule, MatCardModule, TranslateModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MockResetDialogComponent, HeaderComponent, MatFormFieldModule, MatInputModule, MatIconModule, MatSelectModule, MatRadioModule, MatButtonModule, MatCardModule, TranslateModule],
   templateUrl: './mock.component.html',
   styleUrls: ['./mock.component.scss']
 })
@@ -37,6 +38,7 @@ export class MockComponent implements OnInit {
   dataRiferimento: Date | null = null;
   originalDataRiferimento: Date | null = null;
   message: string | null = null;
+  clearCache = false;
   partite: PartitaMock[] = [];
   originalPartite: PartitaMock[] = [];
   saving = false;
@@ -334,6 +336,7 @@ export class MockComponent implements OnInit {
       observables.push(
         this.mockService.updateMock(
           this.campionatoSel.id,
+          this.clearCache,
           Number(this.anno),
           Number(this.giornata),
           dataRifFormatted,
@@ -348,7 +351,7 @@ export class MockComponent implements OnInit {
 
     // If no partita-specific changes but dataRiferimento changed, still call updateMock once with only dataRif
     if (observables.length === 0 && changedDataRif) {
-      observables.push(this.mockService.updateMock(this.campionatoSel.id, Number(this.anno), Number(this.giornata), dataRifFormatted));
+      observables.push(this.mockService.updateMock(this.campionatoSel.id, this.clearCache,Number(this.anno), Number(this.giornata), dataRifFormatted));
     }
 
     if (observables.length === 0) {

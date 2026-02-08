@@ -325,6 +325,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     const maxGiornateVisibili = 10;
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
+    
 
     // Aggiusta se siamo vicini alla fine
     if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
@@ -1024,9 +1025,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
 
-  getStatoGiornataValue(index: number): string {
-    if (!this.lega || !this.lega.statiGiornate) return '';
-    return this.lega.statiGiornate[index]?.value || '';
+  getStatoGiornata(index: number): StatoPartita | null {
+    if (!this.lega || !this.lega.statiGiornate) return null;
+    return this.lega.statiGiornate[index] || null;
   }
 
   ngOnDestroy(): void {

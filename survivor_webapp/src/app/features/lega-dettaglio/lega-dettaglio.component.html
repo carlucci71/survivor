@@ -167,7 +167,10 @@
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
-                    {{ getDesGiornataTitle(giornata) }}
+                      <div>{{ getDesGiornataTitle(giornata) }}</div>
+                      @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value){
+                        <div> {{getStatoGiornata(giornata)?.descrizione}} </div>
+                      }
                   </th>
                 }
               </tr>

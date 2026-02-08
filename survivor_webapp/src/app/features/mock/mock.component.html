@@ -55,7 +55,11 @@
   <div *ngIf="partite?.length">
     <div class="partite-header">
       <h3>Partite giornata {{ giornata }}</h3>
-      <div class="partite-actions">
+      <div class="partite-actions" style="display:flex;align-items:center;gap:12px;">
+        <mat-radio-group [(ngModel)]="clearCache" aria-label="clear cache" class="clear-cache-radio">
+          <mat-radio-button [value]="false">Senza riavviare cache</mat-radio-button>
+          <mat-radio-button [value]="true">Riavvia cache</mat-radio-button>
+        </mat-radio-group>
         <button mat-raised-button color="primary" (click)="applyAllChanges()" [disabled]="saving || !hasChanges()">Applica modifiche</button>
       </div>
     </div>

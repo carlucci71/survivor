@@ -17,6 +17,7 @@ export class MockService {
 
   updateMock(
     idCampionato: string,
+    clearCache: boolean,
     anno: number,
     giornata: number,
     dataRif?: string,
@@ -28,6 +29,7 @@ export class MockService {
   ): Observable<string> {
     const url = `${this.apiUrl}/updateMock/${idCampionato}/${anno}/${giornata}`;
     let params = new HttpParams();
+    params = params.set('clearCache', clearCache);
     if (dataRif != null) { params = params.set('dataRif', dataRif); }
     if (casaSigla != null) { params = params.set('casaSigla', casaSigla); }
     if (fuoriSigla != null) { params = params.set('fuoriSigla', fuoriSigla); }
