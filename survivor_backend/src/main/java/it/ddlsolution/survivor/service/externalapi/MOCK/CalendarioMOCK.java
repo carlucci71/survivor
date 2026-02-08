@@ -14,12 +14,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
+import static it.ddlsolution.survivor.util.Utility.toLocalDateTimeItaly;
 
 @Service
 @Profile(CALENDARIO_MOCK)
@@ -37,9 +36,7 @@ public class CalendarioMOCK implements ICalendario {
 
     public LocalDateTime getDataRiferimento(){
         String dateString = parametriService.valueByCodeSystem(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
-                .withLocale(Locale.ITALY);
-        return LocalDateTime.parse(dateString, formatter);
+        return toLocalDateTimeItaly(dateString);
     }
 
     @Override

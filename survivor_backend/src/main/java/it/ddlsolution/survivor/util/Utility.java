@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
@@ -37,8 +38,9 @@ public class Utility {
     @Autowired
     RestTemplate restTemplate;
 
-    public final static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
+    public final static String dateFormatLiteWithTime = "yyyyMMddHHmm";
+    public final static String dateFormatLiteWithTimeAndSeconds = "yyyyMMddHHmmss";
     ObjectMapper mapper = null;
 
     public StopWatch startStopWatch(String nome) {
@@ -59,8 +61,13 @@ public class Utility {
     }
 
     public static String getInSeconds(LocalDateTime localDateTime){
-        return localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        return localDateTime.format(DateTimeFormatter.ofPattern(dateFormatLiteWithTimeAndSeconds));
 
+    }
+
+    public static LocalDateTime toLocalDateTimeItaly(String dateString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormatLiteWithTime).withLocale(Locale.ITALY);
+        return LocalDateTime.parse(dateString, formatter);
     }
 
 

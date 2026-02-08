@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Service
 @RequiredArgsConstructor
@@ -49,21 +52,16 @@ public class PartitaService {
             return partitaMapper.toDTO(partita);
         }
     }
-/*
-    @Transactional(readOnly = true)
-    public List<PartitaDTO> getPartiteFromDb(String idCampionato, short anno){
-        List<Partita> partite = partitaRepository.findByCampionato_IdAndImplementationExternalApiAndAnno(idCampionato, utility.getImplementationExternalApi(),anno);
-        return partitaMapper.toDTOList(partite);
+
+    @Transactional
+    public void resetDaGiocareGiornata(String idCampionato, short anno, int giornata) {
+        partitaRepository.updateStatoByCampionato(Enumeratori.StatoPartita.DA_GIOCARE,idCampionato,anno,giornata,CALENDARIO_MOCK);
     }
 
-    @Transactional(readOnly = true)
-    public List<PartitaDTO> getPartiteFromDb(String idCampionato, int giornata, short anno){
-        return getPartiteFromDb(idCampionato,anno)
-                .stream()
-                .filter(p->p.getGiornata()==giornata)
-                .toList();
+    @Transactional
+    public int resetMock(String idCampionato, short anno) {
+        return partitaRepository.deleteByCampionatoAndAnnoAndImplementationExternalApi(idCampionato,anno,CALENDARIO_MOCK);
     }
-*/
 
 }
 
