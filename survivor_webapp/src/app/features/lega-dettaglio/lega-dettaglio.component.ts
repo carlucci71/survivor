@@ -465,6 +465,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       data: {
         squadre: squadreConStato,
         sportId: this.lega?.campionato?.sport?.id,
+        campionatoId: this.lega?.campionato?.id,
         campionatoNome: this.lega?.campionato?.nome,
         giocatoreNome: currentGiocatore.nickname
       }
@@ -521,7 +522,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
     // SERIE A (20 squadre)
-    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
     'SERIE_A_CAG': 'CAGL.png',      // Cagliari
     'SERIE_A_COM': 'COMO.png',      // Como
