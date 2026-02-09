@@ -3,6 +3,8 @@ import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map, filter, switchMap, take } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LegaService } from '../../core/services/lega.service';
 import {
@@ -38,6 +40,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
+import { MockService } from '../../core/services/mock.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
@@ -93,6 +96,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   error: string | null = null;
   squadre: any[] = [];
   displayedColumns: string[] = [];
+  isMock: boolean | null=null;
+  beDataRiferimento: Date | null = null;
 
   giornataIndices: number[] = [];
 
@@ -133,9 +138,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     private dialog: MatDialog,
     private overlay: Overlay,
     private sospensioniService: SospensioniService,
+    private mockService: MockService,
     private translate: TranslateService,
     private snackBar: MatSnackBar,
   ) {
+
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
       giocatore => {
@@ -146,20 +153,33 @@ export class LegaDettaglioComponent implements OnDestroy {
       }
     );
 
-    this.route.paramMap.subscribe((params) => {
-      this.id = Number(params.get('id'));
-      if (this.id) {
-        this.legaService.getLegaById(this.id).subscribe({
-          next: (lega) => {
-            this.lega = lega;
-            this.caricaTabella();
-            this.scrollTableToRight();
-            this.startCountdown();
-          },
-          error: (error) => {
-            console.error('Errore nel caricamento delle leghe:', error);
-          },
-        });
+    // Carica profilo e lega in modo concatenato (evita subscription annidate)
+    combineLatest([
+      this.utilService.profilo().pipe(take(1)),
+      this.route.paramMap.pipe(
+        map(params => Number(params.get('id'))),
+        filter(id => !!id),
+        switchMap(id => this.legaService.getLegaById(id).pipe(take(1)))
+      )
+    ]).subscribe({
+      next: ([profilo, lega]) => {
+        try {
+          const profilo1: string = profilo?.profilo || '';
+          const array = profilo1.split(',').map((item: string) => item.trim());
+          this.isMock = array.includes('CALENDARIO_MOCK');
+        } catch (e) {
+          this.isMock = false;
+        }
+
+        if (lega) {
+          this.lega = lega;
+          this.caricaTabella();
+          this.scrollTableToRight();
+          this.startCountdown();
+        }
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo o della lega:', error);
       }
     });
   }
@@ -1044,15 +1064,34 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.countdownActive = false;
       return;
     }
-
-    if (this.lega.inizioProssimaGiornata) {
-      this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
+    // Prima di avviare il countdown, carichiamo la data di riferimento dal backend
+    if (this.isMock){
+      this.mockService.dataRiferimento().subscribe({
+        next: (dataR) => {
+          this.beDataRiferimento = this.parseBackendDate(String(dataR));
+          this.goTimer();
+        },
+        error: (err) => {
+          console.error('Errore caricamento data riferimento', err);
+        }
+      });
     } else {
-      this.loadFirstMatchTimeAndStartCountdown();
+        this.beDataRiferimento = new Date();
+        this.goTimer();
     }
   }
 
-  private loadFirstMatchTimeAndStartCountdown(): void {
+  private goTimer(){
+    if (this.beDataRiferimento){
+          if (this.lega?.inizioProssimaGiornata) {
+            this.startCountdownWithTime(this.beDataRiferimento, new Date(this.lega.inizioProssimaGiornata));
+          } else {
+            this.loadFirstMatchTimeAndStartCountdown(this.beDataRiferimento);
+          }
+        }
+  }
+
+  private loadFirstMatchTimeAndStartCountdown(beFrom?: Date): void {
     if (!this.lega || !this.lega.campionato?.id) return;
 
     this.campionatoService
@@ -1071,7 +1110,7 @@ export class LegaDettaglioComponent implements OnDestroy {
               .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
 
             if (primaPartita && primaPartita.orario) {
-              this.startCountdownWithTime(new Date(primaPartita.orario));
+              this.startCountdownWithTime(beFrom ?? new Date(), new Date(primaPartita.orario));
             } else {
               this.countdownActive = false;
             }
@@ -1086,21 +1125,25 @@ export class LegaDettaglioComponent implements OnDestroy {
       });
   }
 
-  private startCountdownWithTime(matchTime: Date): void {
+  private startCountdownWithTime(from: Date, matchTime: Date): void {
+    if (this.countdownIntervalId) {
+      clearInterval(this.countdownIntervalId);
+      this.countdownIntervalId = null;
+    }
+
     const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
 
+    const retrievalLocalTime = Date.now();
 
     const updateCountdown = () => {
-        const now = new Date().getTime();
+        const dataRifInizio = from.getTime() + (Date.now() - retrievalLocalTime);
         const countdownEndTime = targetTime.getTime();
-        const distance = countdownEndTime - now;
+        const distance = countdownEndTime - dataRifInizio;
 
         if (distance < 0) {
-          // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
           this.countdown = '⏰ ' + this.translate.instant('LEAGUE.TIME_EXPIRED');
-          this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
-          this.countdownExpired = true; // Flag per applicare lo stile rosso
-          // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
+          this.countdownActive = true;
+          this.countdownExpired = true;
           return;
         }
 
@@ -1121,7 +1164,41 @@ export class LegaDettaglioComponent implements OnDestroy {
     };
 
     updateCountdown();
-    this.countdownIntervalId = setInterval(updateCountdown, 1000);
+    if (!this.isMock){
+      this.countdownIntervalId = setInterval(updateCountdown, 1000);
+    }
+    
+  }
+
+  // Copia locale di parseBackendDate (stesso comportamento del mock.component)
+  parseBackendDate(s: string | null | undefined): Date | null {
+    if (!s) return null;
+    let clean = String(s).trim();
+    if ((clean.startsWith('"') && clean.endsWith('"')) || (clean.startsWith("'") && clean.endsWith("'"))) {
+      clean = clean.slice(1, -1).trim();
+    }
+    if (/^\d{12}$/.test(clean)) {
+      const y = Number(clean.substr(0,4));
+      const M = Number(clean.substr(4,2));
+      const D = Number(clean.substr(6,2));
+      const h = Number(clean.substr(8,2));
+      const m = Number(clean.substr(10,2));
+      return new Date(y, M-1, D, h, m);
+    }
+
+    const tryParse = (str: string): Date | null => {
+      const d = new Date(str);
+      return isNaN(d.getTime()) ? null : d;
+    };
+
+    let parsed = tryParse(clean);
+    if (parsed) return parsed;
+    parsed = tryParse(clean.replace(' ', 'T'));
+    if (parsed) return parsed;
+    const withoutZone = clean.replace(/([+-]\d{2}:?\d{2})$/, '');
+    parsed = tryParse(withoutZone);
+    if (parsed) return parsed;
+    return null;
   }
 
   togglePlayerJourneys(): void {

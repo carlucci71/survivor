@@ -3,6 +3,9 @@
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
+      @if (isMock) {
+          {{beDataRiferimento}}
+      }
       @if (error) {
       <mat-card class="error-card">
         <mat-card-content>{{ error }}</mat-card-content>
