@@ -173,6 +173,7 @@ export class LegaDettaglioComponent implements OnDestroy {
 
         if (lega) {
           this.lega = lega;
+          this.id=lega.id;
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
