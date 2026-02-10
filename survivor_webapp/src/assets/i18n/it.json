@@ -345,6 +345,7 @@
     "SUSPENDED": "Sospesa",
     "PLAY_NOW": "Gioca Ora",
     "PLAY_FOR_USER": "Gioca per questo utente",
+    "FORCED_BY_LEADER": "Giocata forzata dal leader/admin",
     "VIEW_REMAINING_TEAMS": "Squadre disponibili",
     "REMAINING_TEAMS": "Squadre Disponibili",
     "PLAYER": "Giocatore",

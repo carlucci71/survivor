@@ -307,6 +307,7 @@
     "SUSPENDED": "Suspended",
     "PLAY_NOW": "Play Now",
     "PLAY_FOR_USER": "Play for this user",
+    "FORCED_BY_LEADER": "Pick forced by leader/admin",
     "VIEW_REMAINING_TEAMS": "Available teams",
     "REMAINING_TEAMS": "Available Teams",
     "PLAYER": "Player",

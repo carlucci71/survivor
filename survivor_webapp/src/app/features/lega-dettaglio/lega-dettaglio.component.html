@@ -225,12 +225,21 @@
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
-                        <span
-                          [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
-                          [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                          {{ getDisplaySquadraNome(giocatore, giornata) }}
-                        </span>
+                        <div class="giocata-cell-content">
+                          <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
+                          <span
+                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
+                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                            {{ getDisplaySquadraNome(giocatore, giornata) }}
+                          </span>
+                          <!-- Indicatore forzatura -->
+                          @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                            <mat-icon class="forced-icon"
+                                      [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                              verified_user
+                            </mat-icon>
+                          }
+                        </div>
                       } @else {
                         <!-- Cella vuota -->
                         <span class="empty-cell">-</span>

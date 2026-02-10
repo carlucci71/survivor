@@ -1034,6 +1034,14 @@ body {
 		background: rgba(244, 67, 54, 0.1);
 	}
 
+	.team-cell-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+	}
+
 	.team-logo-cell {
 		width: 32px;
 		height: 32px;
@@ -1050,6 +1058,39 @@ body {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	// Icona indicatore forzatura mobile
+	.forced-icon-mobile {
+		font-size: 14px;
+		width: 14px;
+		height: 14px;
+		color: #F59E0B;
+		flex-shrink: 0;
+		cursor: help;
+		opacity: 0.9;
+		transition: all 0.3s ease;
+		animation: pulseForcedIconMobile 2.5s ease-in-out infinite;
+		margin-top: 2px;
+
+		&:hover {
+			opacity: 1;
+			color: #D97706;
+			transform: scale(1.15);
+			animation: none;
+		}
+	}
+}
+
+// Animazione pulsante per l'icona mobile
+@keyframes pulseForcedIconMobile {
+	0%, 100% {
+		opacity: 0.9;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.08);
 	}
 }
 

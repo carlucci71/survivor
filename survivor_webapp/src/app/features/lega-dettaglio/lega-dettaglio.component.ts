@@ -193,6 +193,16 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.legaService.getLegaById(this.id).subscribe({
         next: (lega) => {
           this.lega = lega;
+
+          // Debug: verifica se le giocate hanno il campo forzatura
+          console.log('🔍 Lega caricata, verifica giocate forzate:');
+          this.lega.giocatori?.forEach((giocatore, index) => {
+            const giocateForzate = giocatore.giocate?.filter(g => g.forzatura);
+            if (giocateForzate && giocateForzate.length > 0) {
+              console.log(`✅ Giocatore ${index} (${giocatore.nickname}) ha ${giocateForzate.length} giocate forzate:`, giocateForzate);
+            }
+          });
+
           this.caricaTabella();
         },
         error: (error) => {
@@ -990,6 +1000,17 @@ export class LegaDettaglioComponent implements OnDestroy {
       .salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id, pubblica)
       .subscribe({
         next: (res: Giocatore) => {
+          // Debug: verifica se il campo forzatura arriva dal backend
+          console.log('🔍 Giocate ricevute:', res.giocate);
+          res.giocate?.forEach((g, i) => {
+            console.log(`Giocata ${i}:`, {
+              giornata: g.giornata,
+              squadra: g.squadraSigla,
+              forzatura: g.forzatura,
+              hasForzatura: !!g.forzatura
+            });
+          });
+
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
           if (res && Array.isArray(res.giocate)) {
             giocatore.giocate = res.giocate;

@@ -3609,6 +3609,15 @@
 				color: #0A3D91;
 			}
 
+		// Container per la cella giocata (team + eventuale icona forzatura)
+		.giocata-cell-content {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 4px;
+			flex-wrap: nowrap;
+		}
+
 		.team-name-compact {
 			font-size: 0.65rem;
 			font-weight: 700;
@@ -3624,6 +3633,38 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			padding: 2px 4px;
+		}
+
+		// Icona indicatore forzatura - stile elegante e coerente
+		.forced-icon {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			color: #F59E0B; // Colore ambra per distinguerla
+			flex-shrink: 0;
+			cursor: help;
+			opacity: 0.9;
+			transition: all 0.3s ease;
+			animation: pulseForcedIcon 2.5s ease-in-out infinite;
+
+			&:hover {
+				opacity: 1;
+				color: #D97706;
+				transform: scale(1.15);
+				animation: none;
+			}
+		}
+
+		// Animazione pulsante per l'icona di forzatura
+		@keyframes pulseForcedIcon {
+			0%, 100% {
+				opacity: 0.9;
+				transform: scale(1);
+			}
+			50% {
+				opacity: 1;
+				transform: scale(1.08);
+			}
 		}
 
 		// Badge per voto privato - stile elegante e minimale

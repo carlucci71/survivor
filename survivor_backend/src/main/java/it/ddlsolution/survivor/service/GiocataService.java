@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
 import org.springframework.data.history.Revisions;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -63,15 +65,40 @@ public class GiocataService {
         giocata.setSquadra(squadra);
         giocata.setEsito(request.getEsitoGiocata());
         giocata.setPubblica(request.getPubblica() != null ? request.getPubblica() : false); // Default false (nascosta)
+
+        // Gestione forzatura: popola il campo se il guard ha restituito warning
+        String forzaturaText = null;
         if (!ObjectUtils.isEmpty(request.getGuardReturn())) {
             Object guardObj = request.getGuardReturn().get(WARNING_GIOCATA_RULE);
             if (guardObj instanceof List) {
                 @SuppressWarnings("unchecked")
                 List<String> guardList = (List<String>) guardObj;
-                String forzatura = String.join(" - ", guardList);
-                giocata.setForzatura(forzatura);
+                forzaturaText = String.join(" - ", guardList);
+                log.info("✅ Forzatura dal guard: {}", forzaturaText);
             }
         }
+
+        // Se non c'è forzatura dal guard, ma l'utente corrente è diverso dal giocatore,
+        // aggiungiamo comunque un indicatore di forzatura
+        if (ObjectUtils.isEmpty(forzaturaText)) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                Long currentUserId = (Long) authentication.getPrincipal();
+                Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;
+
+                if (giocatoreUserId != null && !currentUserId.equals(giocatoreUserId)) {
+                    // È una forzatura: leader/admin sta giocando per un altro utente
+                    boolean isAdmin = authentication.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                    forzaturaText = "Giocata forzata da " + (isAdmin ? "Admin" : "Leader");
+                    log.info("✅ Forzatura rilevata: {} gioca per userId {}", currentUserId, giocatoreUserId);
+                }
+            }
+        }
+
+        giocata.setForzatura(forzaturaText);
+        log.info("💾 Salvataggio giocata - Giocatore: {}, Giornata: {}, Squadra: {}, Forzatura: {}",
+                 giocatore.getId(), request.getGiornata(), request.getSquadraSigla(), forzaturaText);
 
         Giocata saved = giocataRepository.save(giocata);
         giocate.add(giocataMapper.toDTO(saved));
