@@ -35,13 +35,18 @@
         @if (!this.isTerminata()){
         <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
         <div class="countdown-timer-section">
-          @if(countdownActive) {
+          @if(countdownActive && shouldShowExpiredCountdown()) {
           <div class="countdown-wrapper" [class.expired]="countdownExpired">
             <mat-icon class="countdown-icon">schedule</mat-icon>
             <div class="countdown-content">
-              @if(!countdownExpired) {
-                <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
-              }
+              <span class="countdown-time">{{ countdown }}</span>
+            </div>
+          </div>
+          } @else if(countdownActive && !countdownExpired) {
+          <div class="countdown-wrapper">
+            <mat-icon class="countdown-icon">schedule</mat-icon>
+            <div class="countdown-content">
+              <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
               <span class="countdown-time">{{ countdown }}</span>
             </div>
           </div>

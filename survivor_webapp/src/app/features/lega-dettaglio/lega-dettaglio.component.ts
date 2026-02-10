@@ -346,7 +346,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     const maxGiornateVisibili = 10;
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
-    
+
 
     // Aggiusta se siamo vicini alla fine
     if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
@@ -703,6 +703,41 @@ export class LegaDettaglioComponent implements OnDestroy {
     const currentUserId = this.authService.getCurrentUser()?.id;
     if (!currentUserId || !this.lega?.giocatori) return null;
     return this.lega.giocatori.find(g => g.user?.id === currentUserId) || null;
+  }
+
+  /**
+   * Verifica se l'utente corrente ha già giocato nella giornata corrente
+   */
+  hasCurrentUserPlayedCurrentRound(): boolean {
+    const currentGiocatore = this.getCurrentGiocatore();
+    if (!currentGiocatore || !this.lega?.giornataCorrente || !this.lega?.giornataIniziale) {
+      return false;
+    }
+    const giornataRelativa = this.lega.giornataCorrente - this.lega.giornataIniziale + 1;
+    const giocata = this.getGiocataByGiornata(currentGiocatore, giornataRelativa);
+    return giocata !== null;
+  }
+
+  /**
+   * Verifica se la giornata corrente è in corso
+   */
+  isCurrentRoundInProgress(): boolean {
+    return this.lega?.statoGiornataCorrente?.value === StatoPartita.IN_CORSO.value;
+  }
+
+  /**
+   * Determina se il countdown scaduto deve essere visualizzato
+   * Non mostra se: giornata in corso E utente ha già giocato
+   */
+  shouldShowExpiredCountdown(): boolean {
+    if (!this.countdownExpired) {
+      return false;
+    }
+    // Se la giornata è in corso e l'utente ha già giocato, nascondi il timeout
+    if (this.isCurrentRoundInProgress() && this.hasCurrentUserPlayedCurrentRound()) {
+      return false;
+    }
+    return true;
   }
 
   // Ottiene la squadra che ha fatto perdere il giocatore corrente
@@ -1168,7 +1203,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!this.isMock){
       this.countdownIntervalId = setInterval(updateCountdown, 1000);
     }
-    
+
   }
 
   // Copia locale di parseBackendDate (stesso comportamento del mock.component)
