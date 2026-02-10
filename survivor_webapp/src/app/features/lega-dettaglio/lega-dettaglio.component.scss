@@ -3454,33 +3454,73 @@
 				white-space: nowrap;
 			}
 
-			// Icona modifica accanto al nome utente
+			// Icona modifica accanto al nome utente - SEMPRE VISIBILE E EVIDENTE
 			.edit-user-icon {
-				color: #4FC3F7;
-				font-size: 20px;
-				width: 20px;
-				height: 20px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+				color: #FFFFFF;
+				font-size: 16px;
+				width: 28px;
+				height: 28px;
+				border-radius: 50%;
 				cursor: pointer;
-				opacity: 0;
-				transform: scale(0) rotate(-180deg);
+				opacity: 1;
+				transform: scale(1);
 				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+				box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
+				animation: pulseEdit 2s ease-in-out infinite;
+				position: relative;
+
+				// Badge testuale che appare al hover
+				&::after {
+					content: 'Gioca';
+					position: absolute;
+					left: 100%;
+					top: 50%;
+					transform: translateY(-50%);
+					margin-left: 8px;
+					background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+					color: #FFFFFF;
+					font-size: 0.75rem;
+					font-weight: 600;
+					padding: 4px 8px;
+					border-radius: 6px;
+					white-space: nowrap;
+					opacity: 0;
+					pointer-events: none;
+					transition: opacity 0.3s ease, transform 0.3s ease;
+					box-shadow: 0 2px 8px rgba(10, 61, 145, 0.3);
+				}
 
 				&:hover {
-					color: #0A3D91;
-					transform: scale(1.2) rotate(0deg) !important;
-					animation: wiggle 0.6s ease;
+					background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+					transform: scale(1.15) rotate(15deg);
+					box-shadow: 0 4px 16px rgba(79, 195, 247, 0.6);
+					animation: none;
+
+					&::after {
+						opacity: 1;
+						transform: translateY(-50%) translateX(4px);
+					}
 				}
 
 				&:active {
-					transform: scale(0.9) rotate(0deg) !important;
+					transform: scale(0.95) rotate(0deg);
 				}
 			}
 
-			// Mostra l'icona al hover sulla cella
-			&:hover .edit-user-icon {
-				opacity: 1;
-				transform: scale(1) rotate(0deg);
-				animation: fadeInEdit 0.4s ease forwards;
+			// Animazione pulsante per attirare l'attenzione
+			@keyframes pulseEdit {
+				0%, 100% {
+					transform: scale(1);
+					box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
+				}
+				50% {
+					transform: scale(1.08);
+					box-shadow: 0 4px 12px rgba(79, 195, 247, 0.6);
+				}
 			}
 
 			.delete-user-icon {
