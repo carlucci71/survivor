@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -1223,28 +1224,61 @@ export class AlboOroDialogComponent implements OnInit {
         </div>
 
         <div class="info-row">
-          <div class="label">{{ 'PROFILE.FAVORITE_TEAM' | translate }}</div>
-          <div class="value autocomplete-container">
-            <input type="text"
-              [placeholder]="'PROFILE.SEARCH_TEAM' | translate"
-              [(ngModel)]="userProfile.squadraPreferita"
-              (input)="onSearchInput()"
-              (focus)="onInputFocus()"
-              (blur)="onBlur()"
-              class="custom-input"
-              [class.has-value]="userProfile.squadraPreferita"
-              autocomplete="off">
-            <button type="button"
-              class="clear-input-btn"
-              *ngIf="userProfile.squadraPreferita && !showSuggestions"
-              (mousedown)="clearSquadra()">
-              ×
-            </button>
-            <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
-              <div class="suggestion-item"
-                *ngFor="let squadra of filteredSquadre"
-                (mousedown)="selectSquadra(squadra)">
-                {{squadra.nome}}
+          <div class="label">{{ 'PROFILE.FAVORITE_TEAMS' | translate }}</div>
+          <div class="value">
+            <!-- CHIPS INLINE - Selettore sport -->
+            <div class="sport-selector">
+              <button type="button"
+                class="sport-chip"
+                [class.selected]="selectedSport === 'calcio'"
+                (click)="selectSport('calcio')">
+                <span class="chip-icon">⚽</span>
+                <span class="chip-text">{{ 'COMMON.SOCCER' | translate }}</span>
+                <mat-icon *ngIf="userProfile.squadraCalcio" class="chip-check">check_circle</mat-icon>
+              </button>
+
+              <button type="button"
+                class="sport-chip"
+                [class.selected]="selectedSport === 'basket'"
+                (click)="selectSport('basket')">
+                <span class="chip-icon">🏀</span>
+                <span class="chip-text">{{ 'COMMON.BASKETBALL' | translate }}</span>
+                <mat-icon *ngIf="userProfile.squadraBasket" class="chip-check">check_circle</mat-icon>
+              </button>
+
+              <button type="button"
+                class="sport-chip"
+                [class.selected]="selectedSport === 'tennis'"
+                (click)="selectSport('tennis')">
+                <span class="chip-icon">🎾</span>
+                <span class="chip-text">{{ 'COMMON.TENNIS' | translate }}</span>
+                <mat-icon *ngIf="userProfile.tennista" class="chip-check">check_circle</mat-icon>
+              </button>
+            </div>
+
+            <!-- AUTOCOMPLETE DINAMICO PER LO SPORT SELEZIONATO -->
+            <div class="autocomplete-container">
+              <input type="text"
+                [placeholder]="getPlaceholder()"
+                [(ngModel)]="currentInput"
+                (input)="onSearchInput()"
+                (focus)="onFocusInput()"
+                (blur)="onBlur()"
+                class="custom-input"
+                [class.has-value]="currentInput"
+                autocomplete="off">
+              <button type="button"
+                class="clear-input-btn"
+                *ngIf="currentInput && !showSuggestions"
+                (mousedown)="clearInput()">
+                ×
+              </button>
+              <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
+                <div class="suggestion-item"
+                  *ngFor="let item of filteredSquadre"
+                  (mousedown)="selectItem(item)">
+                  {{item.nome}}
+                </div>
               </div>
             </div>
           </div>
@@ -1471,6 +1505,127 @@ export class AlboOroDialogComponent implements OnInit {
         background: #FFFFFF;
         border-color: #4FC3F7;
         font-weight: 600;
+      }
+    }
+
+    /* SPORT SELECTOR - Chips inline compatti */
+    .sport-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      width: 100%;
+
+      .sport-chip {
+        flex: 1;
+        min-width: 0;
+        background: #F4F6F8;
+        border: 2px solid #E5E7EB;
+        border-radius: 20px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-family: 'Poppins', sans-serif;
+        color: #6B7280;
+        position: relative;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        .chip-icon {
+          font-size: 1.3rem;
+          line-height: 1;
+          flex-shrink: 0;
+        }
+
+        .chip-text {
+          font-size: 0.85rem;
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .chip-check {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          color: #4FC3F7;
+          flex-shrink: 0;
+        }
+
+        &:hover {
+          background: #E5E7EB;
+          border-color: #D1D5DB;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        &.selected {
+          background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+          border-color: #0A3D91;
+          color: #FFFFFF;
+          box-shadow: 0 3px 10px rgba(10, 61, 145, 0.25);
+          transform: scale(1.02);
+
+          .chip-check {
+            color: #FFFFFF;
+          }
+
+          .chip-icon {
+            animation: chipBounce 0.4s ease;
+          }
+        }
+      }
+    }
+
+    @keyframes chipBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    /* RESPONSIVE - Mobile */
+    @media (max-width: 480px) {
+      .sport-selector {
+        gap: 6px;
+        margin-bottom: 10px;
+
+        .sport-chip {
+          padding: 8px 10px;
+
+          .chip-icon {
+            font-size: 1.2rem;
+          }
+
+          .chip-text {
+            font-size: 0.75rem;
+          }
+
+          .chip-check {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+    }
+
+    /* RESPONSIVE - Tablet */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .sport-selector {
+        .sport-chip {
+          padding: 9px 11px;
+
+          .chip-icon {
+            font-size: 1.25rem;
+          }
+
+          .chip-text {
+            font-size: 0.8rem;
+          }
+        }
       }
     }
 
@@ -1877,15 +2032,19 @@ export class AlboOroDialogComponent implements OnInit {
 export class ProfiloDialogComponent implements OnInit {
   userProfile = {
     nickname: '',
-    squadraPreferita: ''
+    squadraCalcio: '',
+    squadraBasket: '',
+    tennista: ''
   };
 
+  selectedSport: 'calcio' | 'basket' | 'tennis' = 'calcio';
+  currentInput = '';
   showSuggestions = false;
   filteredSquadre: Squadra[] = [];
+  squadrePerSport: Squadra[] = []; // Squadre filtrate per lo sport corrente
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
-  tutteLeSquadre: Squadra[]  = [];
 
   constructor(
     private dialog: MatDialog,
@@ -1901,22 +2060,72 @@ export class ProfiloDialogComponent implements OnInit {
     this.loadProfile();
   }
 
+  selectSport(sport: 'calcio' | 'basket' | 'tennis') {
+    this.selectedSport = sport;
+
+    // Carica il valore corrente per lo sport selezionato
+    if (sport === 'calcio') {
+      this.currentInput = this.userProfile.squadraCalcio;
+    } else if (sport === 'basket') {
+      this.currentInput = this.userProfile.squadraBasket;
+    } else {
+      this.currentInput = this.userProfile.tennista;
+    }
+
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+
+    // Carica le squadre filtrate per questo sport dal backend
+    this.loadSquadreForSport(sport);
+  }
+
+  private loadSquadreForSport(sport: 'calcio' | 'basket' | 'tennis') {
+    let sportId: string;
+
+    if (sport === 'calcio') {
+      sportId = '1';
+    } else if (sport === 'basket') {
+      sportId = '2';
+    } else {
+      sportId = '3';
+    }
+
+    console.log(`🔄 Caricamento squadre per sport ${sport} (id=${sportId})...`);
+
+    this.squadraService.getSquadreBySport(sportId).subscribe({
+      next: (squadre) => {
+        this.squadrePerSport = squadre;
+        console.log(`✅ Caricate ${squadre.length} squadre per ${sport}`);
+      },
+      error: (error) => {
+        console.error(`❌ Errore nel caricamento delle squadre per ${sport}:`, error);
+        this.squadrePerSport = [];
+      }
+    });
+  }
+
+  getPlaceholder(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.translate.instant('PROFILE.SEARCH_SOCCER_TEAM');
+    } else if (this.selectedSport === 'basket') {
+      return this.translate.instant('PROFILE.SEARCH_BASKET_TEAM');
+    } else {
+      return this.translate.instant('PROFILE.SEARCH_TENNIS_PLAYER');
+    }
+  }
+
   loadProfile() {
-    this.squadraService.getAllSquadre().subscribe({
-          next: (sq) => {
-              this.tutteLeSquadre=sq;
-          },
-          error: (error) => {
-            console.error('Errore nel caricamento delle squadre:', error);
-          },
-        });
-
-
-
+    // Carica il profilo dell'utente
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.userProfile.nickname = giocatore.nickname || '';
-        this.userProfile.squadraPreferita = giocatore.squadraCuore?.nome || '';
+        this.userProfile.squadraCalcio = giocatore.squadraCuore?.nome || '';
+        this.userProfile.squadraBasket = giocatore.squadraBasketCuore?.nome || '';
+        this.userProfile.tennista = giocatore.tennistaCuore?.nome || '';
+
+        // Imposta l'input corrente e carica le squadre del calcio (sport di default)
+        this.currentInput = this.userProfile.squadraCalcio;
+        this.loadSquadreForSport('calcio');
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo:', error);
@@ -1926,40 +2135,79 @@ export class ProfiloDialogComponent implements OnInit {
   }
 
   onSearchInput() {
-    const query = (this.userProfile.squadraPreferita || '').toLowerCase();
-    if (query.length >= 2) {
-      this.filteredSquadre = this.tutteLeSquadre
+    const query = (this.currentInput || '').toLowerCase();
+    console.log(`🔍 onSearchInput - sport: ${this.selectedSport}, query: "${query}", squadrePerSport: ${this.squadrePerSport.length}`);
+
+    if (query.length >= 1) {
+      // Filtra le squadre dello sport corrente per query
+      this.filteredSquadre = this.squadrePerSport
         .filter(s => s.nome.toLowerCase().includes(query))
         .slice(0, 10);
+      console.log(`✅ Filtered: ${this.filteredSquadre.length} squadre`);
       this.showSuggestions = true;
     } else {
-      this.filteredSquadre = [];
-      this.showSuggestions = false;
+      // Mostra le prime 10 dello sport corrente
+      this.filteredSquadre = this.squadrePerSport.slice(0, 10);
+      this.showSuggestions = this.filteredSquadre.length > 0;
     }
   }
 
-  onInputFocus() {
-    // Se c'è già un valore, mostra i suggerimenti
-    if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.length >= 2) {
+  onFocusInput() {
+    console.log(`👆 onFocusInput - sport: ${this.selectedSport}, currentInput: "${this.currentInput}"`);
+
+    if (this.currentInput && this.currentInput.length >= 1) {
       this.onSearchInput();
     } else {
-      this.showSuggestions = true;
+      // Mostra le prime 10 squadre dello sport corrente
+      this.filteredSquadre = this.squadrePerSport.slice(0, 10);
+      this.showSuggestions = this.filteredSquadre.length > 0;
+      console.log(`📋 Showing first 10 for ${this.selectedSport}: ${this.filteredSquadre.length}`);
     }
   }
 
-  selectSquadra(squadra: Squadra) {
-    this.userProfile.squadraPreferita = squadra.nome;
+
+  selectItem(item: Squadra) {
+    this.currentInput = item.nome;
+
+    // Salva nel campo giusto in base allo sport selezionato
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = item.nome;
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = item.nome;
+    } else {
+      this.userProfile.tennista = item.nome;
+    }
+
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
 
-  clearSquadra() {
-    this.userProfile.squadraPreferita = '';
+  clearInput() {
+    this.currentInput = '';
+
+    // Cancella il campo giusto in base allo sport selezionato
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = '';
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = '';
+    } else {
+      this.userProfile.tennista = '';
+    }
+
     this.filteredSquadre = [];
     this.showSuggestions = false;
   }
 
   onBlur() {
+    // Aggiorna il campo corretto prima di chiudere
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = this.currentInput;
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = this.currentInput;
+    } else {
+      this.userProfile.tennista = this.currentInput;
+    }
+
     setTimeout(() => {
       this.showSuggestions = false;
     }, 200);
@@ -1995,26 +2243,90 @@ export class ProfiloDialogComponent implements OnInit {
           id: giocatore.id,
           nome: giocatore.nickname,
           nickname: this.userProfile.nickname.trim(),
-          user: giocatore.user
+          user: giocatore.user,
+          squadraCuore: null,
+          squadraBasketCuore: null,
+          tennistaCuore: null
         };
 
-        // Se c'è una squadra preferita, cercala e aggiungila
-        if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.trim()) {
-          this.squadraService.searchByNome(this.userProfile.squadraPreferita.trim()).subscribe({
+        // Conta quante squadre dobbiamo cercare
+        let squadreDaCercare = 0;
+        let squadreTrovate = 0;
+
+        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
+          squadreDaCercare++;
+        }
+        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
+          squadreDaCercare++;
+        }
+        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
+          squadreDaCercare++;
+        }
+
+        // Se non ci sono squadre da cercare, salva subito
+        if (squadreDaCercare === 0) {
+          this.saveProfile(giocatoreAggiornato);
+          return;
+        }
+
+        // Cerca squadra calcio
+        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraCalcio.trim()).subscribe({
             next: (squadra) => {
               giocatoreAggiornato.squadraCuore = squadra;
-              this.saveProfile(giocatoreAggiornato);
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
             },
-            error: (error) => {
-              console.warn('Squadra non trovata, salvo senza squadra del cuore');
-              giocatoreAggiornato.squadraCuore = null;
-              this.saveProfile(giocatoreAggiornato);
+            error: () => {
+              console.warn('Squadra calcio non trovata');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
             }
           });
-        } else {
-          // Nessuna squadra preferita, salva senza
-          giocatoreAggiornato.squadraCuore = null;
-          this.saveProfile(giocatoreAggiornato);
+        }
+
+        // Cerca squadra basket
+        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraBasket.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.squadraBasketCuore = squadra;
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            },
+            error: () => {
+              console.warn('Squadra basket non trovata');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            }
+          });
+        }
+
+        // Cerca tennista
+        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
+          this.squadraService.searchByNome(this.userProfile.tennista.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.tennistaCuore = squadra;
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            },
+            error: () => {
+              console.warn('Tennista non trovato');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            }
+          });
         }
       },
       error: (error) => {

@@ -53,7 +53,11 @@
     "TITLE": "Your Profile",
     "NICKNAME": "Nickname:",
     "FAVORITE_TEAM": "Favorite Team:",
+    "FAVORITE_TEAMS": "Your Favorite Teams:",
     "SEARCH_TEAM": "Search your team...",
+    "SEARCH_SOCCER_TEAM": "Search your soccer team...",
+    "SEARCH_BASKET_TEAM": "Search your basketball team...",
+    "SEARCH_TENNIS_PLAYER": "Search your favorite tennis player...",
     "CANCEL": "Cancel",
     "SAVE": "Save Profile",
     "SAVING": "Saving...",
@@ -366,6 +370,9 @@
     "NO_PICKS_YET": "No picks made yet"
   },
   "COMMON": {
+    "SOCCER": "Soccer",
+    "BASKETBALL": "Basketball",
+    "TENNIS": "Tennis",
     "CLOSE": "Close",
     "SAVE": "Save",
     "CANCEL": "Cancel",
