@@ -787,6 +787,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Verifica se una squadra gioca in casa nella prossima partita
+   */
+  isPlayingHome(siglaSquadra: string): boolean {
+    const squadra = this.squadreConPartite.find(s => s.sigla === siglaSquadra);
+    if (!squadra || !squadra.prossimaPartita) {
+      return false;
+    }
+    return squadra.prossimaPartita.casaSigla === siglaSquadra;
+  }
+
   toggleDettagli(): void {
     if (!this.squadraSelezionata) return;
 
