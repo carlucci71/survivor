@@ -42,7 +42,7 @@ public class ScheduledPushNotifications {
     @Value("${push.notification.scheduler-enabled}")
     private boolean notificationsEnabled;
 
-    @Scheduled(cron = "0 */1 * * * ?") // Ogni 15 minuti
+    @Scheduled(cron = "0 */15 * * * ?") // Ogni 15 minuti
     public void sendUpcomingMatchNotificationsOrig() {
         if (!notificationsEnabled) {
             log.debug("Schedulazione invio notifiche push disabilitate");
@@ -51,7 +51,6 @@ public class ScheduledPushNotifications {
         for (CampionatoDTO campionatoDTO : cacheableService.allCampionati()) {
             Map<GiocatoreDTO, List<LegaDTO>> giocatoreLeghe = new HashMap<>();
             LocalDateTime prossimoInizio = campionatoDTO.getIniziGiornate().get(campionatoDTO.getGiornataDaGiocare() - 1);
-            prossimoInizio = LocalDateTime.now().plusMinutes(55);//FIXME TOGLIERE
             long diffMinutes = java.time.Duration.between(LocalDateTime.now(), prossimoInizio).toMinutes();
             if (diffMinutes >= 0 && diffMinutes <= 60) {
                 Optional<NotificheInviate> notificaInviata = notificheInviateService.cerca(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente(), campionatoDTO.getGiornataDaGiocare(), Enumeratori.TipoNotifica.INIZIO_PARTITA);
