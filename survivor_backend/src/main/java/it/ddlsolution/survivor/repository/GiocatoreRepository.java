@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface GiocatoreRepository extends JpaRepository<Giocatore, Long> {
-    @Query("SELECT g.id as id, g.nickname as nickname, sc as squadraCuore, g.user as user FROM Giocatore g LEFT JOIN g.squadraCuore sc WHERE g.user.id = :userId")
+    @Query("SELECT g.id as id, g.nickname as nickname, sc as squadraCuore, sbc as squadraBasketCuore, tc as tennistaCuore, g.user as user FROM Giocatore g LEFT JOIN g.squadraCuore sc LEFT JOIN g.squadraBasketCuore sbc LEFT JOIN g.tennistaCuore tc WHERE g.user.id = :userId")
     Optional<GiocatoreProjection> findProjectionByUserId(@Param("userId") Long userId);
 
     @Query("""

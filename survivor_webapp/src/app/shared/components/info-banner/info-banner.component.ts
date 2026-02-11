@@ -1223,36 +1223,37 @@ export class AlboOroDialogComponent implements OnInit {
           </div>
         </div>
 
-        <div class="info-row">
+        <div class="info-row" style="overflow: visible !important;">
           <div class="label">{{ 'PROFILE.FAVORITE_TEAMS' | translate }}</div>
-          <div class="value">
-            <!-- CHIPS INLINE - Selettore sport -->
-            <div class="sport-selector">
+          <div class="value" style="overflow: visible !important;">
+            <!-- SPORT SELECTOR MODERNO CON SLIDER -->
+            <div class="sport-selector-modern">
+              <div class="selector-background">
+                <div class="selector-slider"
+                  [class.pos-calcio]="selectedSport === 'calcio'"
+                  [class.pos-basket]="selectedSport === 'basket'"
+                  [class.pos-tennis]="selectedSport === 'tennis'"></div>
+              </div>
               <button type="button"
-                class="sport-chip"
-                [class.selected]="selectedSport === 'calcio'"
+                class="sport-option"
+                [class.active]="selectedSport === 'calcio'"
                 (click)="selectSport('calcio')">
-                <span class="chip-icon">⚽</span>
-                <span class="chip-text">{{ 'COMMON.SOCCER' | translate }}</span>
-                <mat-icon *ngIf="userProfile.squadraCalcio" class="chip-check">check_circle</mat-icon>
+                <span class="sport-emoji">⚽</span>
+                <span class="sport-label">{{ 'COMMON.SOCCER' | translate }}</span>
               </button>
-
               <button type="button"
-                class="sport-chip"
-                [class.selected]="selectedSport === 'basket'"
+                class="sport-option"
+                [class.active]="selectedSport === 'basket'"
                 (click)="selectSport('basket')">
-                <span class="chip-icon">🏀</span>
-                <span class="chip-text">{{ 'COMMON.BASKETBALL' | translate }}</span>
-                <mat-icon *ngIf="userProfile.squadraBasket" class="chip-check">check_circle</mat-icon>
+                <span class="sport-emoji">🏀</span>
+                <span class="sport-label">{{ 'COMMON.BASKETBALL' | translate }}</span>
               </button>
-
               <button type="button"
-                class="sport-chip"
-                [class.selected]="selectedSport === 'tennis'"
+                class="sport-option"
+                [class.active]="selectedSport === 'tennis'"
                 (click)="selectSport('tennis')">
-                <span class="chip-icon">🎾</span>
-                <span class="chip-text">{{ 'COMMON.TENNIS' | translate }}</span>
-                <mat-icon *ngIf="userProfile.tennista" class="chip-check">check_circle</mat-icon>
+                <span class="sport-emoji">🎾</span>
+                <span class="sport-label">{{ 'COMMON.TENNIS' | translate }}</span>
               </button>
             </div>
 
@@ -1267,17 +1268,13 @@ export class AlboOroDialogComponent implements OnInit {
                 class="custom-input"
                 [class.has-value]="currentInput"
                 autocomplete="off">
-              <button type="button"
-                class="clear-input-btn"
-                *ngIf="currentInput && !showSuggestions"
-                (mousedown)="clearInput()">
-                ×
-              </button>
               <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
                 <div class="suggestion-item"
                   *ngFor="let item of filteredSquadre"
-                  (mousedown)="selectItem(item)">
-                  {{item.nome}}
+                  (mousedown)="selectItem(item)"
+                  [attr.data-sport]="selectedSport">
+                  <span class="sport-icon">{{getSportEmoji()}}</span>
+                  <span class="team-name">{{item.nome}}</span>
                 </div>
               </div>
             </div>
@@ -1330,12 +1327,12 @@ export class AlboOroDialogComponent implements OnInit {
       background: #FFFFFF;
       border-radius: 20px;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      padding: 24px;
+      padding: 20px;
       width: 100%;
-      max-width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      overflow-x: hidden !important;
+      max-width: 600px;
+      height: auto;
+      max-height: none;
+      overflow: visible;
       z-index: 10000;
       font-family: 'Poppins', sans-serif;
       margin: 0 auto;
@@ -1399,8 +1396,8 @@ export class AlboOroDialogComponent implements OnInit {
     }
 
     h2 {
-      margin: 0 0 20px 0;
-      font-size: 1.3rem;
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #0A3D91;
       font-family: 'Poppins', sans-serif;
@@ -1409,15 +1406,15 @@ export class AlboOroDialogComponent implements OnInit {
       letter-spacing: 0.3px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
 
       .title-icon {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
+        font-size: 1.4rem;
+        width: 1.4rem;
+        height: 1.4rem;
         color: #4FC3F7;
         flex-shrink: 0;
       }
@@ -1442,9 +1439,9 @@ export class AlboOroDialogComponent implements OnInit {
     .info-row {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-      padding: 16px;
+      gap: 4px;
+      margin-bottom: 8px;
+      padding: 10px 14px;
       background: transparent;
       border-radius: 12px;
       border: 1px solid rgba(10, 61, 145, 0.08);
@@ -1452,13 +1449,13 @@ export class AlboOroDialogComponent implements OnInit {
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      overflow: hidden;
+      overflow: visible;
 
       .label {
         font-weight: 600;
         color: #0A3D91;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
+        font-size: 0.85rem;
+        margin-bottom: 0;
         width: 100%;
         box-sizing: border-box;
       }
@@ -1481,7 +1478,7 @@ export class AlboOroDialogComponent implements OnInit {
       border-radius: 12px;
       background: #F4F6F8;
       border: 2px solid #E0E0E0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-weight: 500;
       color: #0A3D91;
       font-family: 'Poppins', sans-serif;
@@ -1489,10 +1486,12 @@ export class AlboOroDialogComponent implements OnInit {
       box-sizing: border-box;
 
       &:focus {
-        border-color: #0A3D91;
+        border-color: #4FC3F7;
         background: #FFFFFF;
-        box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.08);
+        box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.12),
+                    0 4px 12px rgba(10, 61, 145, 0.08);
         outline: none;
+        transform: translateY(-1px);
       }
 
       &::placeholder {
@@ -1508,126 +1507,198 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
-    /* SPORT SELECTOR - Chips inline compatti */
-    .sport-selector {
+    /* SPORT SELECTOR MODERNO - Design pulito con slider */
+    .sport-selector-modern {
+      position: relative;
       display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
+      gap: 0;
+      background: #F4F6F8;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 6px;
       width: 100%;
+      box-sizing: border-box;
 
-      .sport-chip {
-        flex: 1;
-        min-width: 0;
-        background: #F4F6F8;
-        border: 2px solid #E5E7EB;
-        border-radius: 20px;
-        padding: 10px 12px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        font-family: 'Poppins', sans-serif;
-        color: #6B7280;
-        position: relative;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      .selector-background {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        right: 4px;
+        pointer-events: none;
+        z-index: 0;
 
-        .chip-icon {
-          font-size: 1.3rem;
-          line-height: 1;
-          flex-shrink: 0;
-        }
-
-        .chip-text {
-          font-size: 0.85rem;
-          font-weight: 600;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .chip-check {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-          color: #4FC3F7;
-          flex-shrink: 0;
-        }
-
-        &:hover {
-          background: #E5E7EB;
-          border-color: #D1D5DB;
-          transform: translateY(-1px);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-        }
-
-        &.selected {
+        .selector-slider {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: calc(33.333% - 2.67px);
           background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-          border-color: #0A3D91;
-          color: #FFFFFF;
-          box-shadow: 0 3px 10px rgba(10, 61, 145, 0.25);
-          transform: scale(1.02);
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2),
+                      0 2px 4px rgba(79, 195, 247, 0.15);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-          .chip-check {
-            color: #FFFFFF;
+          &.pos-calcio {
+            left: 0;
           }
 
-          .chip-icon {
-            animation: chipBounce 0.4s ease;
+          &.pos-basket {
+            left: calc(33.333% + 1.33px);
+          }
+
+          &.pos-tennis {
+            left: calc(66.666% + 2.67px);
+          }
+        }
+      }
+
+      .sport-option {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        padding: 12px 8px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 10px;
+
+        .sport-emoji {
+          font-size: 1.5rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: grayscale(0.5) opacity(0.7);
+        }
+
+        .sport-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #6B7280;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        &:hover:not(.active) {
+          .sport-emoji {
+            transform: scale(1.1);
+            filter: grayscale(0.3) opacity(0.85);
+          }
+
+          .sport-label {
+            color: #0A3D91;
+          }
+        }
+
+        &.active {
+          .sport-emoji {
+            transform: scale(1.15);
+            filter: grayscale(0) opacity(1);
+            animation: bounce 0.5s ease;
+          }
+
+          .sport-label {
+            color: #FFFFFF;
+            font-weight: 700;
           }
         }
       }
     }
 
-    @keyframes chipBounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
+    @keyframes bounce {
+      0%, 100% {
+        transform: scale(1.15);
+      }
+      50% {
+        transform: scale(1.25);
+      }
     }
 
-    /* RESPONSIVE - Mobile */
+    /* RESPONSIVE SPORT SELECTOR */
     @media (max-width: 480px) {
-      .sport-selector {
-        gap: 6px;
-        margin-bottom: 10px;
+      .sport-selector-modern {
+        margin-bottom: 4px;
+        padding: 3px;
 
-        .sport-chip {
-          padding: 8px 10px;
+        .sport-option {
+          padding: 8px 6px;
 
-          .chip-icon {
+          .sport-emoji {
             font-size: 1.2rem;
           }
 
-          .chip-text {
-            font-size: 0.75rem;
-          }
-
-          .chip-check {
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
+          .sport-label {
+            font-size: 0.6rem;
           }
         }
       }
+
+      .suggestions-list {
+        max-height: 200px;
+      }
+
+      .info-row {
+        margin-bottom: 4px;
+        padding: 6px 10px;
+        gap: 2px;
+
+        .label {
+          margin-bottom: 0;
+          font-size: 0.75rem;
+        }
+      }
+
+      .modal-container {
+        padding: 12px;
+        max-width: 96%;
+        min-height: 85vh;
+        overflow: visible;
+      }
+
+      h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+        gap: 8px;
+
+        .title-icon {
+          font-size: 1.3rem;
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+      }
+
+      .actions-section {
+        margin-top: 12px;
+        padding-top: 10px;
+        gap: 8px;
+      }
+
+      .suggestion-item {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
     }
 
-    /* RESPONSIVE - Tablet */
     @media (min-width: 481px) and (max-width: 768px) {
-      .sport-selector {
-        .sport-chip {
-          padding: 9px 11px;
+      .suggestions-list {
+        max-height: 190px;
+      }
 
-          .chip-icon {
-            font-size: 1.25rem;
-          }
+      .info-row {
+        margin-bottom: 7px;
+        padding: 9px 12px;
+      }
 
-          .chip-text {
-            font-size: 0.8rem;
-          }
-        }
+      .modal-container {
+        max-width: 550px;
+        overflow: visible;
       }
     }
+
 
     .autocomplete-container {
       position: relative;
@@ -1636,93 +1707,127 @@ export class AlboOroDialogComponent implements OnInit {
       box-sizing: border-box;
     }
 
-    .clear-input-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(10, 61, 145, 0.08);
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 16px;
-      line-height: 1;
-      color: #0A3D91;
-      transition: all 0.2s ease;
-      padding: 0;
-      z-index: 10;
-
-      &:hover {
-        background: rgba(10, 61, 145, 0.15);
-        transform: translateY(-50%) scale(1.1);
-      }
-    }
 
     .suggestions-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
+      position: relative;
       background: #FFFFFF;
-      border: 2px solid #0A3D91;
-      border-top: none;
-      border-radius: 0 0 12px 12px;
+      border: 2px solid rgba(79, 195, 247, 0.3);
+      border-radius: 12px;
       max-height: 200px;
       overflow-y: auto;
       overflow-x: hidden;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.08);
       width: 100%;
       box-sizing: border-box;
+      margin-top: 8px;
+      animation: fadeIn 0.2s ease-out;
 
       &::-webkit-scrollbar {
         width: 6px;
       }
 
       &::-webkit-scrollbar-track {
-        background: #F4F6F8;
+        background: transparent;
+        margin: 8px 0;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #0A3D91;
-        border-radius: 3px;
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        border-radius: 10px;
+
+        &:hover {
+          background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+        }
       }
     }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+
     .suggestion-item {
-      padding: 12px 16px;
+      padding: 12px 18px;
       cursor: pointer;
-      font-size: 0.9rem;
-      color: #0A3D91;
+      font-size: 0.95rem;
+      color: #334155;
       font-weight: 500;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid #F4F6F8;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 1px solid rgba(10, 61, 145, 0.06);
       width: 100%;
       box-sizing: border-box;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .sport-icon {
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: all 0.25s ease;
+        flex-shrink: 0;
+      }
+
+      .team-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &:first-child {
+        border-radius: 16px 16px 0 0;
+      }
 
       &:last-child {
         border-bottom: none;
+        border-radius: 0 0 16px 16px;
+      }
+
+      &:only-child {
+        border-radius: 16px;
       }
 
       &:hover {
-        background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.08));
-        padding-left: 20px;
+        background: linear-gradient(135deg,
+          rgba(10, 61, 145, 0.06),
+          rgba(79, 195, 247, 0.08));
+        color: #0A3D91;
+        padding-left: 24px;
+        font-weight: 600;
+        box-shadow: inset 4px 0 0 #4FC3F7;
+
+        .sport-icon {
+          transform: scale(1.2) rotate(10deg);
+          opacity: 1;
+        }
+
+        .team-name {
+          font-weight: 600;
+        }
+      }
+
+      &:active {
+        background: linear-gradient(135deg,
+          rgba(10, 61, 145, 0.12),
+          rgba(79, 195, 247, 0.15));
+        transform: scale(0.98);
       }
     }
 
     .actions-section {
       display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 20px;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 10px;
       border-top: 1px solid rgba(10, 61, 145, 0.08);
       justify-content: flex-end;
       width: 100%;
@@ -1829,8 +1934,8 @@ export class AlboOroDialogComponent implements OnInit {
     }
 
     .danger-zone {
-      margin-top: 24px;
-      padding-top: 20px;
+      margin-top: 6px;
+      padding-top: 14px;
       border-top: 1px dashed rgba(220, 38, 38, 0.3);
       text-align: center;
       width: 100%;
@@ -2065,13 +2170,14 @@ export class ProfiloDialogComponent implements OnInit {
 
     // Carica il valore corrente per lo sport selezionato
     if (sport === 'calcio') {
-      this.currentInput = this.userProfile.squadraCalcio;
+      this.currentInput = this.userProfile.squadraCalcio || '';
     } else if (sport === 'basket') {
-      this.currentInput = this.userProfile.squadraBasket;
+      this.currentInput = this.userProfile.squadraBasket || '';
     } else {
-      this.currentInput = this.userProfile.tennista;
+      this.currentInput = this.userProfile.tennista || '';
     }
 
+    // Reset suggerimenti quando si cambia sport
     this.showSuggestions = false;
     this.filteredSquadre = [];
 
@@ -2083,23 +2189,32 @@ export class ProfiloDialogComponent implements OnInit {
     let sportId: string;
 
     if (sport === 'calcio') {
-      sportId = '1';
+      sportId = 'CALCIO';
     } else if (sport === 'basket') {
-      sportId = '2';
+      sportId = 'BASKET';
     } else {
-      sportId = '3';
+      sportId = 'TENNIS';
     }
-
-    console.log(`🔄 Caricamento squadre per sport ${sport} (id=${sportId})...`);
 
     this.squadraService.getSquadreBySport(sportId).subscribe({
       next: (squadre) => {
-        this.squadrePerSport = squadre;
-        console.log(`✅ Caricate ${squadre.length} squadre per ${sport}`);
+        this.squadrePerSport = squadre || [];
+
+        // Mostra automaticamente le prime 10 squadre quando cambia sport
+        if (this.squadrePerSport.length > 0) {
+          this.filteredSquadre = this.squadrePerSport.slice(0, 10);
+          // NON mostrare i suggerimenti automaticamente, aspetta il focus
+          this.showSuggestions = false;
+        } else {
+          this.filteredSquadre = [];
+          this.showSuggestions = false;
+        }
       },
       error: (error) => {
-        console.error(`❌ Errore nel caricamento delle squadre per ${sport}:`, error);
+        console.error(`Errore caricamento squadre per sport ${sport}:`, error);
         this.squadrePerSport = [];
+        this.filteredSquadre = [];
+        this.showSuggestions = false;
       }
     });
   }
@@ -2111,6 +2226,16 @@ export class ProfiloDialogComponent implements OnInit {
       return this.translate.instant('PROFILE.SEARCH_BASKET_TEAM');
     } else {
       return this.translate.instant('PROFILE.SEARCH_TENNIS_PLAYER');
+    }
+  }
+
+  getSportEmoji(): string {
+    if (this.selectedSport === 'calcio') {
+      return '⚽';
+    } else if (this.selectedSport === 'basket') {
+      return '🏀';
+    } else {
+      return '🎾';
     }
   }
 
@@ -2135,34 +2260,28 @@ export class ProfiloDialogComponent implements OnInit {
   }
 
   onSearchInput() {
-    const query = (this.currentInput || '').toLowerCase();
-    console.log(`🔍 onSearchInput - sport: ${this.selectedSport}, query: "${query}", squadrePerSport: ${this.squadrePerSport.length}`);
+    const query = (this.currentInput || '').toLowerCase().trim();
 
-    if (query.length >= 1) {
-      // Filtra le squadre dello sport corrente per query
+    if (query.length >= 3) {
+      // Mostra suggerimenti solo dopo 3 caratteri
       this.filteredSquadre = this.squadrePerSport
         .filter(s => s.nome.toLowerCase().includes(query))
-        .slice(0, 10);
-      console.log(`✅ Filtered: ${this.filteredSquadre.length} squadre`);
-      this.showSuggestions = true;
-    } else {
-      // Mostra le prime 10 dello sport corrente
-      this.filteredSquadre = this.squadrePerSport.slice(0, 10);
+        .slice(0, 3); // Max 3 suggerimenti
+
+      // Nascondi la lista se non ci sono risultati
       this.showSuggestions = this.filteredSquadre.length > 0;
+    } else {
+      // Non mostrare suggerimenti se meno di 3 caratteri
+      this.filteredSquadre = [];
+      this.showSuggestions = false;
     }
   }
 
   onFocusInput() {
-    console.log(`👆 onFocusInput - sport: ${this.selectedSport}, currentInput: "${this.currentInput}"`);
-
-    if (this.currentInput && this.currentInput.length >= 1) {
-      this.onSearchInput();
-    } else {
-      // Mostra le prime 10 squadre dello sport corrente
-      this.filteredSquadre = this.squadrePerSport.slice(0, 10);
-      this.showSuggestions = this.filteredSquadre.length > 0;
-      console.log(`📋 Showing first 10 for ${this.selectedSport}: ${this.filteredSquadre.length}`);
-    }
+    // Non mostrare suggerimenti automaticamente al focus
+    // L'utente deve digitare almeno 2 caratteri
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
   }
 
 
@@ -2182,21 +2301,6 @@ export class ProfiloDialogComponent implements OnInit {
     this.filteredSquadre = [];
   }
 
-  clearInput() {
-    this.currentInput = '';
-
-    // Cancella il campo giusto in base allo sport selezionato
-    if (this.selectedSport === 'calcio') {
-      this.userProfile.squadraCalcio = '';
-    } else if (this.selectedSport === 'basket') {
-      this.userProfile.squadraBasket = '';
-    } else {
-      this.userProfile.tennista = '';
-    }
-
-    this.filteredSquadre = [];
-    this.showSuggestions = false;
-  }
 
   onBlur() {
     // Aggiorna il campo corretto prima di chiudere
