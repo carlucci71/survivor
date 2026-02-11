@@ -45,4 +45,8 @@ export class SquadraService {
     return this.http.get<any[]>(`${this.apiUrl}`);
   }
 
+  getSquadreBySport(sportId: string): Observable<Squadra[]> {
+    return this.http.get<Squadra[]>(`${this.apiUrl}/sport/${sportId}`);
+  }
+
 }

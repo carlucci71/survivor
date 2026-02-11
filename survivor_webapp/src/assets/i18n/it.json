@@ -53,7 +53,12 @@
     "TITLE": "Il Tuo Profilo",
     "NICKNAME": "Nickname:",
     "FAVORITE_TEAM": "Squadra del cuore:",
+    "FAVORITE_TEAMS": "I tuoi preferiti:",
     "SEARCH_TEAM": "Cerca la tua squadra...",
+    "SEARCH_SOCCER_TEAM": "Digita almeno 3 lettere...",
+    "SEARCH_BASKET_TEAM": "Digita almeno 3 lettere...",
+    "SEARCH_TENNIS_PLAYER": "Digita almeno 3 lettere...",
+    "NO_RESULTS": "Nessun risultato trovato",
     "CANCEL": "Annulla",
     "SAVE": "Salva Profilo",
     "SAVING": "Salvataggio...",
@@ -67,6 +72,13 @@
     "DELETE_DIALOG_CANCEL": "Annulla",
     "DELETE_DIALOG_DELETE": "Sì, elimina il mio account",
     "DELETE_DIALOG_DELETING": "Eliminazione..."
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifiche",
+    "NO_NOTIFICATIONS": "Nessuna notifica",
+    "VIEW_ALL": "Vedi tutte",
+    "MARK_AS_READ": "Segna come letta",
+    "NEW": "Nuova"
   },
   "TROPHIES": {
     "TITLE": "Albo d'Oro",
@@ -412,6 +424,9 @@
     "NO_PICKS_YET": "Nessuna scelta ancora effettuata"
   },
   "COMMON": {
+    "SOCCER": "Calcio",
+    "BASKETBALL": "Basket",
+    "TENNIS": "Tennis",
     "CLOSE": "Chiudi",
     "SAVE": "Salva",
     "CANCEL": "Annulla",
