@@ -815,8 +815,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             opponent: this.getTabOpponentLabel()
           }
         },
+        maxWidth: '600px',
+        width: '90vw',
+        maxHeight: '90vh',
         panelClass: 'dettagli-squadra-dialog-panel',
-        backdropClass: 'dettagli-dialog-backdrop'
+        backdropClass: 'dettagli-dialog-backdrop',
+        autoFocus: false,
+        hasBackdrop: true
       });
     });
   }
