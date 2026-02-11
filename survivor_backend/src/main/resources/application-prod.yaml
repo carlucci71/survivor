@@ -1,9 +1,9 @@
 DB_PASSWORD: ${ENV_DB_PASSWORD}
 MAIL_HOST: smtp.gmail.com
 MAIL_PORT: 587
-MAIL_USERNAME: fantasurvivorddl@gmail.com
+MAIL_USERNAME: survivorwinorgohome@gmail.com
 MAIL_PASSWORD: ${ENV_MAIL_PASSWORD}
-MAIL_FROM: fantasurvivorddl@gmail.com
+MAIL_FROM: survivorwinorgohome@gmail.com
 ADMIN_PASSWORD: ${ENV_ADMIN_PASSWORD}
 JWT_SECRET: ${ENV_JWT_SECRET}
 JWT_SECRET_TOKEN_MAGICLINK: ${ENV_JWT_SECRET_TOKEN_MAGICLINK}

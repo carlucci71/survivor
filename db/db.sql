@@ -680,7 +680,7 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 insert into sospensione_lega(id_lega,giornata) values (1,16);
 
 delete from users where id=0;
-INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'survivorwinorgohome@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
 
 insert into partita_mock(id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno)
 SELECT id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno FROM partita
