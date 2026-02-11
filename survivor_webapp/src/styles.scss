@@ -289,19 +289,41 @@ mat-dialog-actions {
   }
 }
 
-/* Dialog Dettagli Squadra */
+/* Dialog Dettagli Squadra - CENTRATO E SENZA SCROLL ORIZZONTALE */
+.cdk-overlay-pane.dettagli-squadra-dialog-panel {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 600px !important;
+  width: 90vw !important;
+  max-height: 90vh !important;
+}
+
 .dettagli-squadra-dialog-panel {
+  overflow-x: hidden !important;
+
   .mat-mdc-dialog-container {
     padding: 0 !important;
     border-radius: 16px !important;
     overflow: hidden !important;
+    overflow-x: hidden !important;
     background: transparent !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 
   .mat-mdc-dialog-surface {
     background: transparent !important;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3) !important;
     border-radius: 16px !important;
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 }
 
@@ -309,6 +331,7 @@ mat-dialog-actions {
   background: rgba(10, 61, 145, 0.4) !important;
   backdrop-filter: blur(4px) !important;
 }
+
 
 /* CLASSE CUSTOM PER DIALOG SELEZIONE GIOCATA - FORZA SCROLL */
 .seleziona-giocata-dialog {

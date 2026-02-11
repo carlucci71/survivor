@@ -40,7 +40,7 @@ import { TranslateModule } from '@ngx-translate/core';
               <div class="section">
                 <h4>{{ 'PRIVACY.SECTION_1_TITLE' | translate }}</h4>
                 <p>{{ 'PRIVACY.SECTION_1_P1' | translate }}</p>
-                <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
               </div>
 
               <div class="section">
@@ -107,7 +107,7 @@ import { TranslateModule } from '@ngx-translate/core';
                   <li>{{ 'PRIVACY.SECTION_9_L2' | translate }}</li>
                   <li>{{ 'PRIVACY.SECTION_9_L3' | translate }}</li>
                 </ul>
-                <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
               </div>
 
               <div class="section">

@@ -82,8 +82,17 @@
             <div
               class="jersey-card"
               [class.selected]="squadraSelezionata === squadra.sigla"
+              [class.playing-home]="isPlayingHome(squadra.sigla)"
               (click)="selezionaSquadra(squadra.sigla)"
             >
+              <!-- INDICATORE CASA (in alto) -->
+              @if(isPlayingHome(squadra.sigla)) {
+                <div class="home-badge">
+                  <mat-icon class="home-icon">home</mat-icon>
+                  <span class="home-label">CASA</span>
+                </div>
+              }
+
               <!-- LOGO O FALLBACK -->
               <div class="jersey-container" [class.tennis-container]="lega.campionato?.sport?.id === 'TENNIS'">
                 @if(lega.campionato?.sport?.id === 'TENNIS') {

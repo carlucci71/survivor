@@ -106,17 +106,6 @@
         </div>
       }
 
-      <!-- BOTTONE SQUADRE RIMASTE - VISUALIZZA SQUADRE DISPONIBILI -->
-      @if (getCurrentGiocatore() && getSquadreDisponibili(getCurrentGiocatore()).length > 0) {
-        <div class="remaining-teams-section">
-          <button class="btn-remaining-teams" (click)="showRemainingTeams()">
-            <mat-icon class="remaining-teams-icon">list_alt</mat-icon>
-            <span class="remaining-teams-label">{{ 'LEAGUE.VIEW_REMAINING_TEAMS' | translate }}</span>
-            <span class="remaining-teams-count">{{ getSquadreDisponibili(getCurrentGiocatore()).length }}</span>
-          </button>
-        </div>
-      }
-
       <!-- RICERCA E FILTRI PER DESKTOP/TABLET -->
       <div class="desktop-filters-section desktop-tablet-only">
         <!-- Ricerca utente -->

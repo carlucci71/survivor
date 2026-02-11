@@ -27,9 +27,9 @@ import { environment } from '../../../../environments/environment';
       </h2>
       <div class="content-section">
         <p class="intro-text">{{ 'DIALOGS.CONTACT_INTRO' | translate }}</p>
-        <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
+        <a href="mailto:survivorwinorgohome@gmail.com" class="email-link">
           <mat-icon>mail_outline</mat-icon>
-          <span>fantasurvivorddl&#64;gmail.com</span>
+          <span>survivorwinorgohome&#64;gmail.com</span>
         </a>
       </div>
     </div>
@@ -192,7 +192,7 @@ export class ContattiDialogComponent {
 
         <div class="section">
           <h4>{{ 'DIALOGS.TERMS_11_TITLE' | translate }}</h4>
-          <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
       </div>
     </div>
@@ -324,7 +324,7 @@ export class TerminiDialogComponent {
         <div class="section">
           <h4>{{ 'PRIVACY.SECTION_1_TITLE' | translate }}</h4>
           <p>{{ 'PRIVACY.SECTION_1_P1' | translate }}</p>
-          <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
@@ -391,7 +391,7 @@ export class TerminiDialogComponent {
             <li>{{ 'PRIVACY.SECTION_9_L2' | translate }}</li>
             <li>{{ 'PRIVACY.SECTION_9_L3' | translate }}</li>
           </ul>
-          <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
@@ -578,9 +578,9 @@ export class PrivacyDialogComponent {
         <!-- Contatti compatto -->
         <div class="contact-block">
           <span class="contact-label">{{ 'DIALOGS.ABOUT_CONTACT' | translate }}</span>
-          <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
+          <a href="mailto:survivorwinorgohome@gmail.com" class="email-link">
             <mat-icon>email</mat-icon>
-            <span>fantasurvivorddl&#64;gmail.com</span>
+            <span>survivorwinorgohome&#64;gmail.com</span>
           </a>
         </div>
 
