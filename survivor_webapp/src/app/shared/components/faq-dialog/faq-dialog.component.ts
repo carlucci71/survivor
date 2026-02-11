@@ -97,7 +97,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
         <div class="faq-item">
           <h4>{{ 'FAQ.Q16' | translate }}</h4>
-          <p>{{ 'FAQ.A16' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a>.</p>
+          <p>{{ 'FAQ.A16' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a>.</p>
         </div>
       </div>
     </div>

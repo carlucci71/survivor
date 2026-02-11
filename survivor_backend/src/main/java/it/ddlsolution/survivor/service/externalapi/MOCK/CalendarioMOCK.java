@@ -6,40 +6,32 @@ import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.PartitaMock;
 import it.ddlsolution.survivor.repository.PartitaMockRepository;
 import it.ddlsolution.survivor.service.ParametriService;
+import it.ddlsolution.survivor.service.PartitaMockService;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Service
 @Profile(CALENDARIO_MOCK)
 @Slf4j
-
+@RequiredArgsConstructor
 public class CalendarioMOCK implements ICalendario {
 
     private final PartitaMockRepository partitaMockRepository;
-    private final ParametriService parametriService;
-
-    public CalendarioMOCK(PartitaMockRepository partitaMockRepository, ParametriService parametriService) {
-        this.partitaMockRepository = partitaMockRepository;
-        this.parametriService = parametriService;
-    }
+    private final PartitaMockService partitaMockService;
 
     public LocalDateTime getDataRiferimento(){
-        String dateString = parametriService.valueByCodeSystem(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
-                .withLocale(Locale.ITALY);
-        return LocalDateTime.parse(dateString, formatter);
+        return partitaMockService.getDataRiferimento();
     }
 
     @Override

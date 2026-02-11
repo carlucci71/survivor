@@ -29,6 +29,9 @@ public class Squadra {
     @Column(name = "nazione", nullable = false, length = 100)
     private String nazione;
 
+    @Column(name = "id_campionato", nullable = false, length = 20, insertable = false, updatable = false)
+    private String idCampionato;
+
     @ManyToOne
     @JoinColumn(name = "id_campionato", nullable = false)
     @JsonBackReference("campionato-squadre")

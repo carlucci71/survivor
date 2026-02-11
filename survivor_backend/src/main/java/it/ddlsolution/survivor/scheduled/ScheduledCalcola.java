@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class ScheduledCalcola {
     private final LegaService legaService;
 
-    @Scheduled(cron = "0 0 */6 * * ?") //OGNI 6 ORE
+    @Scheduled(cron = "0 0 */1 * * ?") //OGNI 1 ORE
     //@Scheduled(cron = "0 0/1 * * * ?") //OGNI MINUTO
     public void calcolaCampionati() {
         legaService.allLeghe().forEach(

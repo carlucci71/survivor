@@ -2,9 +2,11 @@ package it.ddlsolution.survivor.aspect.guardlogger;
 
 import it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.GiocatoreService;
 import it.ddlsolution.survivor.service.LegaService;
-import it.ddlsolution.survivor.service.UtilCalendarioService;
+import it.ddlsolution.survivor.service.PartitaMockService;
+import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
+
 @Aspect
 @Component
 @Slf4j
@@ -33,9 +37,11 @@ import java.util.Map;
 public class GuardiaDispositivaAspect {
 
     private final LegaService legaService;
+    private final CampionatoService campionatoService;
     private final GiocatoreService giocatoreService;
     private final ApplicationContext ctx;
-    private final UtilCalendarioService utilCalendarioService;
+    private final Utility utility;
+    private final PartitaMockService partitaMockService;
 
     @Before("@annotation(guardiaDispositiva)")
     public void before(JoinPoint joinPoint, GuardiaDispositiva guardiaDispositiva) {
@@ -78,15 +84,20 @@ public class GuardiaDispositivaAspect {
                         }
                         LegaDTO legaDTO = legaService.getLegaDTO(idLega, false, userId);
 
-                        LocalDateTime now = LocalDateTime.now();
+                        LocalDateTime dataRiferimento = LocalDateTime.now();
+                        if (utility.getImplementationExternalApi().equals(CALENDARIO_MOCK)) {
+                            dataRiferimento = partitaMockService.getDataRiferimento();
+                        }
+
                         LocalDateTime inizioProssimaGiornata = legaDTO.getInizioProssimaGiornata();
                         if (inizioProssimaGiornata==null){
                             inizioProssimaGiornata=LocalDateTime.now().plusDays(1);
                         }
-                        long diffMinutes = java.time.Duration.between(now, inizioProssimaGiornata).toMinutes();
+
+                        long diffMinutes = java.time.Duration.between(dataRiferimento, inizioProssimaGiornata).toMinutes();
 
                         if (legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE &&  diffMinutes<3){
-                            legaService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
+                            campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
                             legaDTO = legaService.getLegaDTO(idLega, false, userId);
                         }
                         parametriRule.put(tipoParam, legaDTO);

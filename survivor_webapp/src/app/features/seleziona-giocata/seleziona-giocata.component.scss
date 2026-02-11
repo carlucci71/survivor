@@ -312,7 +312,7 @@ h2 {
 	overflow: hidden;
 	position: relative;
 	padding: 8px 0;
-	margin: 0 -16px;
+	margin: 0 -14px; /* Allineato al padding del modal-container mobile (14px) */
 
 	&::before,
 	&::after {
@@ -392,6 +392,31 @@ h2 {
 	.scroll-arrow {
 		display: none;
 	}
+
+	/* Badge casa più piccolo su mobile - solo icona */
+	.home-badge {
+		top: 3px;
+		right: 3px;
+		width: 20px;
+		height: 20px;
+
+		.home-icon {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+		}
+	}
+}
+
+/* Migliora posizionamento frecce per desktop/tablet */
+@media (min-width: 768px) {
+	.scroll-arrow-left {
+		left: 16px;
+	}
+
+	.scroll-arrow-right {
+		right: 16px;
+	}
 }
 
 .teams-scroll-wrapper {
@@ -399,7 +424,7 @@ h2 {
 	gap: 12px;
 	overflow-x: auto;
 	overflow-y: hidden;
-	padding: 8px 16px 8px 16px; /* Ridotto padding-bottom da 16px a 8px */
+	padding: 8px 14px 8px 14px; /* Allineato al padding del modal-container mobile */
 	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
 
@@ -427,6 +452,25 @@ h2 {
 	background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.05));
 	border: 2px solid transparent;
 	overflow: hidden;
+	position: relative;
+
+	/* Effetto speciale per squadre che giocano in casa */
+	&.playing-home {
+		background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.12));
+		border-color: rgba(10, 61, 145, 0.25);
+		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.18);
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 3px;
+			background: linear-gradient(90deg, #0A3D91, #4FC3F7, #0A3D91);
+			animation: homeBorderPulse 2s ease-in-out infinite;
+		}
+	}
 
 	&:hover {
 		transform: scale(1.02);
@@ -436,6 +480,10 @@ h2 {
 
 		.jersey-container {
 			transform: translateY(-2px);
+		}
+
+		&.playing-home {
+			box-shadow: 0 10px 28px rgba(10, 61, 145, 0.25);
 		}
 	}
 
@@ -453,6 +501,85 @@ h2 {
 			font-weight: 700;
 			color: #0A3D91;
 		}
+
+		&.playing-home {
+			box-shadow: 0 14px 36px rgba(10, 61, 145, 0.35);
+		}
+	}
+}
+
+/* BADGE CASA - Solo icona, compatto ed elegante */
+.home-badge {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	background: linear-gradient(135deg, #0A3D91, #1565C0);
+	border-radius: 50%;
+	box-shadow: 0 2px 8px rgba(10, 61, 145, 0.35);
+	z-index: 5;
+	animation: homeBadgeFadeIn 0.4s ease-out;
+
+	.home-icon {
+		font-size: 16px;
+		width: 16px;
+		height: 16px;
+		color: #FFFFFF;
+		margin: 0;
+		padding: 0;
+	}
+
+	.home-label {
+		display: none; /* Nasconde la scritta CASA */
+	}
+
+	.jersey-card:hover & {
+		background: linear-gradient(135deg, #1565C0, #4FC3F7);
+		box-shadow: 0 3px 12px rgba(10, 61, 145, 0.45);
+		transform: scale(1.1);
+	}
+
+	.jersey-card.selected & {
+		background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+		box-shadow: 0 4px 16px rgba(79, 195, 247, 0.55);
+		animation: homeBadgePulse 1.5s ease-in-out infinite;
+	}
+}
+
+/* Animazione per il bordo superiore delle card in casa */
+@keyframes homeBorderPulse {
+	0%, 100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+/* Animazione ingresso badge */
+@keyframes homeBadgeFadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.8) translateY(-4px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+/* Animazione pulsazione badge selezionato */
+@keyframes homeBadgePulse {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.08);
 	}
 }
 
@@ -652,6 +779,16 @@ h2 {
 		min-width: 900px !important;
 	}
 
+	/* Aggiusto margini e padding per allinearsi al padding del modal-container desktop (28px) */
+	.teams-scroll-container {
+		margin: 0 -28px;
+	}
+
+	.teams-scroll-wrapper {
+		padding: 8px 28px 8px 28px;
+		gap: 16px; /* Più spazio tra le card su desktop */
+	}
+
 	.jersey-card {
 		width: 120px;
 	}
@@ -678,6 +815,31 @@ h2 {
 		&.long-name {
 			font-size: 8px;
 		}
+	}
+}
+
+/* Media query per tablet medio (tra mobile e desktop) */
+@media (min-width: 481px) and (max-width: 767px) {
+	.modal-container {
+		padding: 18px 16px !important;
+	}
+
+	/* Aggiusto margini e padding per tablet medio (padding 16px) */
+	.teams-scroll-container {
+		margin: 0 -16px;
+	}
+
+	.teams-scroll-wrapper {
+		padding: 8px 16px 8px 16px;
+	}
+
+	.jersey-card {
+		width: 115px;
+	}
+
+	.jersey-container {
+		width: 88px;
+		height: 103px;
 	}
 }
 
@@ -1185,6 +1347,15 @@ h2 {
 		padding: 16px 12px;
 		width: 90vw;
 		max-width: 500px !important;
+	}
+
+	/* Aggiusto margini e padding per mobile piccolo (padding 12px) */
+	.teams-scroll-container {
+		margin: 0 -12px;
+	}
+
+	.teams-scroll-wrapper {
+		padding: 8px 12px 8px 12px;
 	}
 
 	h2 {

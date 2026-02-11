@@ -209,7 +209,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
     // SERIE A (20 squadre)
-    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
     'SERIE_A_CAG': 'CAGL.png',      // Cagliari
     'SERIE_A_COM': 'COMO.png',      // Como
@@ -787,6 +787,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Verifica se una squadra gioca in casa nella prossima partita
+   */
+  isPlayingHome(siglaSquadra: string): boolean {
+    const squadra = this.squadreConPartite.find(s => s.sigla === siglaSquadra);
+    if (!squadra || !squadra.prossimaPartita) {
+      return false;
+    }
+    return squadra.prossimaPartita.casaSigla === siglaSquadra;
+  }
+
   toggleDettagli(): void {
     if (!this.squadraSelezionata) return;
 
@@ -815,8 +826,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             opponent: this.getTabOpponentLabel()
           }
         },
+        maxWidth: '600px',
+        width: '90vw',
+        maxHeight: '90vh',
         panelClass: 'dettagli-squadra-dialog-panel',
-        backdropClass: 'dettagli-dialog-backdrop'
+        backdropClass: 'dettagli-dialog-backdrop',
+        autoFocus: false,
+        hasBackdrop: true
       });
     });
   }

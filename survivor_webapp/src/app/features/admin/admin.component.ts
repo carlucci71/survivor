@@ -19,15 +19,20 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
-  profilo: {} = {};
+  profilo: string | null = null;
   profiloFe  = environment.ambiente + " - " + environment.mobile;
   calendario: {} = {};
+  canAccessMock = false;
 
   constructor(
     private authService: AuthService,
     private utilService: UtilService,
     private router: Router,
   ) {}
+
+  goToMock(): void {
+    this.router.navigate(['/mock']);
+  }
 
   ngOnInit(): void {
     this.getProfilo();
@@ -38,6 +43,10 @@ export class AdminComponent implements OnInit {
     this.utilService.profilo().subscribe({
       next: (profilo) => {
         this.profilo = profilo.profilo;
+        if (this.profilo){
+          const array = this.profilo.split(',').map(item => item.trim());
+          this.canAccessMock = array.includes("CALENDARIO_MOCK");
+        }
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo:', error);

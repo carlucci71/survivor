@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static it.ddlsolution.survivor.util.Utility.dateFormatLiteWithTime;
+import static it.ddlsolution.survivor.util.Utility.toLocalDateTimeItaly;
+
 @Service
 @RequiredArgsConstructor
 public class ParametriService {
@@ -23,11 +26,22 @@ public class ParametriService {
     }
 
     @Transactional
-    public void aggiornaMockLocalDateRif(String valore) {
+    public void aggiornaMockLocalDateRif(String dateString) {
         Parametri parametri = parametriRepository
                 .findByCodice(Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF)
                 .orElseThrow(() -> new RuntimeException("Parametro non trovato: " + Enumeratori.CodiciParametri.MOCK_LOCALDATE_RIF));
-        parametri.setValore(valore);
+        if (dateString.length() != 12) {
+            throw new RuntimeException("La data di riferimento deve essere di 12 caratteri");
+        }
+
+        try {
+            toLocalDateTimeItaly(dateString);
+        } catch (Exception e){
+            throw new RuntimeException("La data di riferimento deve essere new formato: " + dateFormatLiteWithTime);
+        }
+
+
+        parametri.setValore(dateString);
         parametriRepository.save(parametri);
         cacheableService.clearCacheParametri();
     }

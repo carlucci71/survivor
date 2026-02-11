@@ -53,7 +53,12 @@
     "TITLE": "Your Profile",
     "NICKNAME": "Nickname:",
     "FAVORITE_TEAM": "Favorite Team:",
+    "FAVORITE_TEAMS": "Your Favorites:",
     "SEARCH_TEAM": "Search your team...",
+    "SEARCH_SOCCER_TEAM": "Type at least 3 letters...",
+    "SEARCH_BASKET_TEAM": "Type at least 3 letters...",
+    "SEARCH_TENNIS_PLAYER": "Type at least 3 letters...",
+    "NO_RESULTS": "No results found",
     "CANCEL": "Cancel",
     "SAVE": "Save Profile",
     "SAVING": "Saving...",
@@ -67,6 +72,13 @@
     "DELETE_DIALOG_CANCEL": "Cancel",
     "DELETE_DIALOG_DELETE": "Yes, delete my account",
     "DELETE_DIALOG_DELETING": "Deleting..."
+  },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "NO_NOTIFICATIONS": "No notifications",
+    "VIEW_ALL": "View all",
+    "MARK_AS_READ": "Mark as read",
+    "NEW": "New"
   },
   "TROPHIES": {
     "TITLE": "Hall of Fame",
@@ -307,6 +319,7 @@
     "SUSPENDED": "Suspended",
     "PLAY_NOW": "Play Now",
     "PLAY_FOR_USER": "Play for this user",
+    "FORCED_BY_LEADER": "Pick forced by leader/admin",
     "VIEW_REMAINING_TEAMS": "Available teams",
     "REMAINING_TEAMS": "Available Teams",
     "PLAYER": "Player",
@@ -365,6 +378,9 @@
     "NO_PICKS_YET": "No picks made yet"
   },
   "COMMON": {
+    "SOCCER": "Soccer",
+    "BASKETBALL": "Basketball",
+    "TENNIS": "Tennis",
     "CLOSE": "Close",
     "SAVE": "Save",
     "CANCEL": "Cancel",

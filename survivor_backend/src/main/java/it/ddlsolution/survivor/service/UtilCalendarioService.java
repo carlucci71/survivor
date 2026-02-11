@@ -134,7 +134,7 @@ public class UtilCalendarioService {
     private boolean partitaDaRefreshare(PartitaDTO partitaDTO) {
         return (
                 (refreshTerminate || partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA)
-                        && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(2)) < 0
+                        && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(7)) < 0
         );
     }
 

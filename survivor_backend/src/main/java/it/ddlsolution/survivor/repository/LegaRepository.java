@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,4 +46,8 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
 //    @Transactional
     @Query("DELETE FROM GiocatoreLega gl WHERE gl.lega.id = :idLega AND gl.giocatore.id = :idGiocatore")
     int deleteGiocatoreLegaByLegaIdAndGiocatoreId(@Param("idLega") Long idLega, @Param("idGiocatore") Long idGiocatore);
+
+    List<Lega> findByCampionato_IdAndAnnoAndStatoIn(String idCampionato, short anno, Collection<Enumeratori.StatoLega> statoes);
+
+
 }
