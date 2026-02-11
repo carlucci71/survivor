@@ -97,7 +97,7 @@ public class GiocatoreService {
             Squadra squadra = squadraRepository.findById(giocatoreDTO.getSquadraCuore().getId())
                 .orElse(null);
             if (squadra != null) {
-                System.out.println("✅ Squadra del cuore salvata: ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+                System.out.println("✅ Squadra del cuore (Calcio) salvata: ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
             }
             giocatore.setSquadraCuore(squadra);
         } else if (giocatoreDTO.getSquadraCuore() != null && giocatoreDTO.getSquadraCuore().getNome() != null) {
@@ -105,11 +105,49 @@ public class GiocatoreService {
             Squadra squadra = squadraRepository.findByNome(giocatoreDTO.getSquadraCuore().getNome())
                 .orElse(null);
             if (squadra != null) {
-                System.out.println("✅ Squadra del cuore salvata (da nome): ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+                System.out.println("✅ Squadra del cuore (Calcio) salvata (da nome): ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
             }
             giocatore.setSquadraCuore(squadra);
         } else {
             giocatore.setSquadraCuore(null);
+        }
+
+        // Aggiorna squadra basket del cuore (opzionale)
+        if (giocatoreDTO.getSquadraBasketCuore() != null && giocatoreDTO.getSquadraBasketCuore().getId() != null) {
+            Squadra squadra = squadraRepository.findById(giocatoreDTO.getSquadraBasketCuore().getId())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Squadra del cuore (Basket) salvata: ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setSquadraBasketCuore(squadra);
+        } else if (giocatoreDTO.getSquadraBasketCuore() != null && giocatoreDTO.getSquadraBasketCuore().getNome() != null) {
+            Squadra squadra = squadraRepository.findByNome(giocatoreDTO.getSquadraBasketCuore().getNome())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Squadra del cuore (Basket) salvata (da nome): ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setSquadraBasketCuore(squadra);
+        } else {
+            giocatore.setSquadraBasketCuore(null);
+        }
+
+        // Aggiorna tennista del cuore (opzionale)
+        if (giocatoreDTO.getTennistaCuore() != null && giocatoreDTO.getTennistaCuore().getId() != null) {
+            Squadra squadra = squadraRepository.findById(giocatoreDTO.getTennistaCuore().getId())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Tennista del cuore salvato: ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setTennistaCuore(squadra);
+        } else if (giocatoreDTO.getTennistaCuore() != null && giocatoreDTO.getTennistaCuore().getNome() != null) {
+            Squadra squadra = squadraRepository.findByNome(giocatoreDTO.getTennistaCuore().getNome())
+                .orElse(null);
+            if (squadra != null) {
+                System.out.println("✅ Tennista del cuore salvato (da nome): ID=" + squadra.getId() + ", Nome=" + squadra.getNome());
+            }
+            giocatore.setTennistaCuore(squadra);
+        } else {
+            giocatore.setTennistaCuore(null);
         }
 
         giocatoreRepository.save(giocatore);

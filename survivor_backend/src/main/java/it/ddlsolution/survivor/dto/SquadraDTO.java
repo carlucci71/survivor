@@ -8,5 +8,6 @@ public class SquadraDTO {
     private Long id;
     private String sigla;
     private String nome;
+    private String idCampionato;
 }
 

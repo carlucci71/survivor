@@ -175,12 +175,15 @@ export interface Squadra {
   id?: number;
   sigla: string;
   nome: string;
+  campionato?: Campionato;
 }
 
 export interface Giocatore {
   id: number;
   nickname: string;
   squadraCuore?: Squadra;
+  squadraBasketCuore?: Squadra;
+  tennistaCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
   giocate?: Giocata[]
