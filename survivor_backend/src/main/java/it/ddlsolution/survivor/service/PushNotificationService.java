@@ -50,16 +50,13 @@ public class PushNotificationService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    @Value("${push.fcm.enabled:false}")
+    @Value("${push.fcm.enabled}")
     private boolean fcmEnabled;
 
-    @Value("${notification.enabled:false}")
-    private boolean notificationEnabled;
-
-    @Value("${push.fcm.credentials-path:}")
+    @Value("${push.fcm.credentials-path}")
     private String fcmCredentialsPath;
 
-    @Value("${push.fcm.credentials-json:}")
+    @Value("${push.fcm.credentials-json}")
     private String fcmCredentialsJson;
 
     // Flag che indica se Firebase è stato inizializzato correttamente
@@ -172,18 +169,13 @@ public class PushNotificationService {
     }
 
     private void sendToUsers(List<Long> userIds, PushNotificationDTO pushNotificationDTO) {
-        if (!notificationEnabled) {
-            log.warn("Notification disabilitato, notifica non inviata: {}", pushNotificationDTO.getTitle());
-            return;
-        }
-
         for (Long userId : userIds) {
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setUser(userService.userById(userId));
             notificationDTO.setBody(pushNotificationDTO.getBody());
             notificationDTO.setImageUrl(pushNotificationDTO.getImageUrl());
             notificationDTO.setTitle(pushNotificationDTO.getTitle());
-            notificationDTO.setType(pushNotificationDTO.getType());
+            notificationDTO.setType(pushNotificationDTO.getTipoNotifica().name());
             notificationDTO.setExpiringAt(getInSeconds(pushNotificationDTO.getExpiringAt()));
             notificationService.createNotification(notificationDTO);
         }
@@ -298,7 +290,7 @@ public class PushNotificationService {
 
     private Map<String, String> getAllDataFromPushNotification(PushNotificationDTO dto) {
         Map ret = new HashMap();
-        ret.put("TYPE", dto.getType());
+        ret.put("TYPE", dto.getTipoNotifica().getDescrizione());
         ret.put("EXPIRING_AT", dto.getExpiringAt().toString());
         return ret;
     }

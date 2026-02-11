@@ -48,5 +48,10 @@ public class SquadraController {
         return ResponseEntity.ok(squadraService.all());
     }
 
+    @GetMapping("/sport/{sportId}")
+    public ResponseEntity<List<SquadraDTO>> getBySport(@PathVariable String sportId) {
+        return ResponseEntity.ok(squadraService.getBySport(sportId));
+    }
+
 }
 

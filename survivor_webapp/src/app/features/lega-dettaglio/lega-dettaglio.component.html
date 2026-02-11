@@ -3,6 +3,9 @@
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
+      @if (isMock) {
+          {{beDataRiferimento}}
+      }
       @if (error) {
       <mat-card class="error-card">
         <mat-card-content>{{ error }}</mat-card-content>
@@ -32,13 +35,18 @@
         @if (!this.isTerminata()){
         <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
         <div class="countdown-timer-section">
-          @if(countdownActive) {
+          @if(countdownActive && shouldShowExpiredCountdown()) {
           <div class="countdown-wrapper" [class.expired]="countdownExpired">
             <mat-icon class="countdown-icon">schedule</mat-icon>
             <div class="countdown-content">
-              @if(!countdownExpired) {
-                <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
-              }
+              <span class="countdown-time">{{ countdown }}</span>
+            </div>
+          </div>
+          } @else if(countdownActive && !countdownExpired) {
+          <div class="countdown-wrapper">
+            <mat-icon class="countdown-icon">schedule</mat-icon>
+            <div class="countdown-content">
+              <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
               <span class="countdown-time">{{ countdown }}</span>
             </div>
           </div>
@@ -94,17 +102,6 @@
           <button class="btn-play-primary" (click)="giocaGiornataDisponibile(getCurrentGiocatore())">
             <mat-icon class="play-icon-primary">{{ getGiocaIcon() }}</mat-icon>
             <span class="play-label-primary">{{ 'LEAGUE.PLAY_NOW' | translate }}</span>
-          </button>
-        </div>
-      }
-
-      <!-- BOTTONE SQUADRE RIMASTE - VISUALIZZA SQUADRE DISPONIBILI -->
-      @if (getCurrentGiocatore() && getSquadreDisponibili(getCurrentGiocatore()).length > 0) {
-        <div class="remaining-teams-section">
-          <button class="btn-remaining-teams" (click)="showRemainingTeams()">
-            <mat-icon class="remaining-teams-icon">list_alt</mat-icon>
-            <span class="remaining-teams-label">{{ 'LEAGUE.VIEW_REMAINING_TEAMS' | translate }}</span>
-            <span class="remaining-teams-count">{{ getSquadreDisponibili(getCurrentGiocatore()).length }}</span>
           </button>
         </div>
       }
@@ -217,12 +214,21 @@
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
-                        <span
-                          [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
-                          [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                          {{ getDisplaySquadraNome(giocatore, giornata) }}
-                        </span>
+                        <div class="giocata-cell-content">
+                          <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
+                          <span
+                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
+                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                            {{ getDisplaySquadraNome(giocatore, giornata) }}
+                          </span>
+                          <!-- Indicatore forzatura -->
+                          @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                            <mat-icon class="forced-icon"
+                                      [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                              verified_user
+                            </mat-icon>
+                          }
+                        </div>
                       } @else {
                         <!-- Cella vuota -->
                         <span class="empty-cell">-</span>

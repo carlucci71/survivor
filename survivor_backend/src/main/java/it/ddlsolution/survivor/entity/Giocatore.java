@@ -33,6 +33,14 @@ public class Giocatore {
     @JoinColumn(name = "squadra_cuore_id")
     private Squadra squadraCuore;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "squadra_basket_cuore_id")
+    private Squadra squadraBasketCuore;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tennista_cuore_id")
+    private Squadra tennistaCuore;
+
     @OneToMany(mappedBy = "giocatore", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     private List<GiocatoreLega> giocatoreLeghe = new ArrayList<>();

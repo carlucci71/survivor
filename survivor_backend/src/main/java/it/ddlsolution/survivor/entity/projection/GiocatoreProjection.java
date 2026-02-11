@@ -7,6 +7,8 @@ public interface GiocatoreProjection {
     Long getId();
     String getNickname();
     Squadra getSquadraCuore();
+    Squadra getSquadraBasketCuore();
+    Squadra getTennistaCuore();
     User getUser();
 }
 

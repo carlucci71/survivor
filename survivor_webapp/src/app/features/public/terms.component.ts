@@ -89,7 +89,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
               <div class="section">
                 <h4>{{ 'TERMS.SECTION_11_TITLE' | translate }}</h4>
-                <p>{{ 'TERMS.SECTION_11_TEXT' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+                <p>{{ 'TERMS.SECTION_11_TEXT' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
               </div>
             </div>
 

@@ -57,4 +57,16 @@ public class SquadraService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<SquadraDTO> getBySport(String sportId) {
+        // Filtra le squadre in base allo sport
+        return cacheableProvider.getIfAvailable().allCampionati()
+                .stream()
+                .filter(c -> sportId.equals(c.getSport().getId()))
+                .flatMap(c -> c.getSquadre().stream())
+                .distinct()
+                .sorted(Comparator.comparing(SquadraDTO::getNome))
+                .toList();
+    }
+
 }
