@@ -73,6 +73,13 @@
     "DELETE_DIALOG_DELETE": "Yes, delete my account",
     "DELETE_DIALOG_DELETING": "Deleting..."
   },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "NO_NOTIFICATIONS": "No notifications",
+    "VIEW_ALL": "View all",
+    "MARK_AS_READ": "Mark as read",
+    "NEW": "New"
+  },
   "TROPHIES": {
     "TITLE": "Hall of Fame",
     "YOUR_TROPHIES": "Your Trophies",

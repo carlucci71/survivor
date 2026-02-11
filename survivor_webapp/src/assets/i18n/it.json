@@ -73,6 +73,13 @@
     "DELETE_DIALOG_DELETE": "Sì, elimina il mio account",
     "DELETE_DIALOG_DELETING": "Eliminazione..."
   },
+  "NOTIFICATIONS": {
+    "TITLE": "Notifiche",
+    "NO_NOTIFICATIONS": "Nessuna notifica",
+    "VIEW_ALL": "Vedi tutte",
+    "MARK_AS_READ": "Segna come letta",
+    "NEW": "Nuova"
+  },
   "TROPHIES": {
     "TITLE": "Albo d'Oro",
     "YOUR_TROPHIES": "I Tuoi Trofei",

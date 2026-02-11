@@ -240,3 +240,17 @@ export function statoLegaFromCodice(codice: string): StatoLega {
       throw new Error(`Codice StatoLega sconosciuto: ${codice}`);
   }
 }
+
+// Notification Model
+export interface Notification {
+  id: number;
+  user?: User;
+  title: string;
+  body: string;
+  type: string;
+  imageUrl?: string;
+  read: boolean;
+  createdAt: string;
+  expiringAt: string;
+}
+
