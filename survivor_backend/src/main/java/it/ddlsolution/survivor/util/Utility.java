@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.ddlsolution.survivor.service.PartitaMockService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -41,6 +40,7 @@ public class Utility {
 
     public final static SimpleDateFormat dateFormatLite = new SimpleDateFormat("yyyyMMdd");
     public final static String dateFormatLiteWithTime = "yyyyMMddHHmm";
+    public final static String dateFormatReadable = "dd/MM/yyyy HH:mm";
     public final static String dateFormatLiteWithTimeAndSeconds = "yyyyMMddHHmmss";
     ObjectMapper mapper = null;
 
@@ -69,6 +69,16 @@ public class Utility {
     public static LocalDateTime toLocalDateTimeItaly(String dateString){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormatLiteWithTime).withLocale(Locale.ITALY);
         return LocalDateTime.parse(dateString, formatter);
+    }
+
+    public static LocalDateTime toLocalDateTimeItalyReadable(String dateString){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormatReadable).withLocale(Locale.ITALY);
+        return LocalDateTime.parse(dateString, formatter);
+    }
+
+    public static String toLocalDateTimeItalyReadable(LocalDateTime localDateTime){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormatReadable).withLocale(Locale.ITALY);
+        return localDateTime.format(formatter);
     }
 
 

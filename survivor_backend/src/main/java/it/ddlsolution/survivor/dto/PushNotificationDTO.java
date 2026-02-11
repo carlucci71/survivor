@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.dto;
 
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ public class PushNotificationDTO {
     private String body;
     private String imageUrl;
     private String sound;
-    private String type;
+    private Enumeratori.TipoNotifica tipoNotifica;
     private LocalDateTime expiringAt;
 
     public LocalDateTime getExpiringAt() {

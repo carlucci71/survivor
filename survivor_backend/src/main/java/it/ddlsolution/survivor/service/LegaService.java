@@ -14,6 +14,7 @@ import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
+import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
@@ -794,4 +795,10 @@ public class LegaService {
         legaRepository.delete(lega);
         log.info("Lega {} eliminata con successo dall'utente {}", idLega, userId);
     }
+
+    @Transactional(readOnly = true)
+    public List<LegaDTO> legheByCampionato(String idCampionato, short anno) {
+        return legaMapper.toDTOList(legaRepository.findByCampionato_IdAndAnnoAndStatoIn(idCampionato,anno, List.of(Enumeratori.StatoLega.AVVIATA, Enumeratori.StatoLega.DA_AVVIARE)));
+    }
+
 }

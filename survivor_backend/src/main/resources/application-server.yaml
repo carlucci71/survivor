@@ -13,7 +13,6 @@ DB_USER: survivor_user
 PORT: 8390
 SSL_ENABLED: false
 SWAGGER_SERVER_URL: ${ENV_BASEURL}:${PORT}/api/survivorBe
-
 ALLOWED_SERVERS: ${ENV_SERVER},http://localhost
 
 

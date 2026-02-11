@@ -1,8 +1,8 @@
 package it.ddlsolution.survivor.dto;
 
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @Data

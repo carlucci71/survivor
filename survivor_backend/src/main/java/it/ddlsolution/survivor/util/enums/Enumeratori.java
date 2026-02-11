@@ -156,6 +156,17 @@ public class Enumeratori {
 
     public enum CodiciParametri {MOCK_LOCALDATE_RIF}
 
+    public enum TipoNotifica {INIZIO_PARTITA("Inizio partita");
+        String descrizione;
+        TipoNotifica(String descrizione){
+            this.descrizione=descrizione;
+        }
+
+        public String getDescrizione() {
+            return descrizione;
+        }
+    }
+
 
 }
 
