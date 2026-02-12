@@ -69,6 +69,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   environmentName = environment.ambiente;
   isProd = environment.production;
   isLoadingLeghe = true;
+  private giocatoreSubscription: any;
 
   constructor(
     private authService: AuthService,
@@ -86,6 +87,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.currentUser = this.authService.getCurrentUser();
     this.loadMe();
     this.loadLeghe();
+
+    // Sottoscrivi agli aggiornamenti del profilo
+    this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
+      giocatore => {
+        if (giocatore) {
+          this.me = giocatore;
+        }
+      }
+    );
 
     // detect mobile breakpoint
     this.isMobile = window.innerWidth <= 768;
@@ -110,6 +120,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
+    }
+    if (this.giocatoreSubscription) {
+      this.giocatoreSubscription.unsubscribe();
     }
   }
 

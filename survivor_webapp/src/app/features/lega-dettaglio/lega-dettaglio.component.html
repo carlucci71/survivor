@@ -179,10 +179,9 @@
 
                   <!-- STATO -->
                   <td class="excel-cell status-cell">
-                    <span class="status-badge"
+                    <span class="status-indicator"
                           [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                           [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
-                      {{ giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value ? '❌' : '✅' }}
                     </span>
                   </td>
 
@@ -201,17 +200,8 @@
                           {{ getDisplaySquadraNome(giocatore, giornata) }}
                         </span>
                       } @else {
-                        <!-- Mostra bottone Gioca se è l'utente loggato e non ha giocato -->
-                        @if (isCurrentUserGiocatore(giocatore) && !getGiocataByGiornataAssoluta(giocatore, giornata)) {
-                          <button class="play-btn-tiny"
-                                  (click)="giocaGiornataAssoluta(giocatore, giornata)"
-                                  matTooltip="Gioca Ora">
-                            <mat-icon>sports_soccer</mat-icon>
-                          </button>
-                        } @else {
-                          <!-- Cella vuota per gli altri giocatori -->
-                          <span class="empty-cell">-</span>
-                        }
+                        <!-- Cella vuota - il pulsante "Gioca Ora" principale è sopra la tabella -->
+                        <span class="empty-cell">-</span>
                       }
                     </td>
                   }
@@ -292,9 +282,9 @@
             <!-- Sinistra: Nome + Badge stato -->
             <div class="player-info-left">
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
-              <span class="player-status-badge-mobile"
-                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value">
-                {{ giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value ? '❌' : '✅' }}
+              <span class="status-indicator-mobile"
+                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
+                    [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
               </span>
             </div>
 

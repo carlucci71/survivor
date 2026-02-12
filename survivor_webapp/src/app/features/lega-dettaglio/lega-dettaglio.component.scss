@@ -3310,21 +3310,23 @@
 		}
 
 		&.status-cell {
-			.status-badge {
+			.status-indicator {
 				display: inline-block;
-				padding: 4px 8px;
-				border-radius: 12px;
-				font-size: 1rem;
-				font-weight: 600;
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				position: relative;
 
 				&.active {
-					background: rgba(76, 175, 80, 0.15);
-					color: #4CAF50;
+					background: #4CAF50;
+					box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+					animation: pulse-green 2s infinite;
 				}
 
 				&.eliminated {
-					background: rgba(244, 67, 54, 0.15);
-					color: #f44336;
+					background: #f44336;
+					box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+					animation: pulse-red 2s infinite;
 				}
 			}
 		}
@@ -3562,9 +3564,25 @@
 		text-overflow: ellipsis;
 	}
 
-	.player-status-badge-mobile {
-		font-size: 1rem;
+	.status-indicator-mobile {
+		display: inline-block;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
 		flex-shrink: 0;
+		margin-left: 8px;
+
+		&.active {
+			background: #4CAF50;
+			box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+			animation: pulse-green 2s infinite;
+		}
+
+		&.eliminated {
+			background: #f44336;
+			box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+			animation: pulse-red 2s infinite;
+		}
 	}
 
 	.expand-icon-mobile {
@@ -3767,6 +3785,31 @@
 	50% {
 		opacity: 0.4;
 		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0);
+	}
+}
+
+/* Animazioni per i pallini di stato */
+@keyframes pulse-green {
+	0% {
+		box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba(76, 175, 80, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+	}
+}
+
+@keyframes pulse-red {
+	0% {
+		box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
+	}
+	50% {
+		box-shadow: 0 0 0 6px rgba(244, 67, 54, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
 	}
 }
 
