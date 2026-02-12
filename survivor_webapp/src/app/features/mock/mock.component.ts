@@ -24,7 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-mock',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MockResetDialogComponent, HeaderComponent, MatFormFieldModule, MatInputModule, MatIconModule, MatSelectModule, MatRadioModule, MatButtonModule, MatCardModule, TranslateModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, HeaderComponent, MatFormFieldModule, MatInputModule, MatIconModule, MatSelectModule, MatRadioModule, MatButtonModule, MatCardModule, TranslateModule],
   templateUrl: './mock.component.html',
   styleUrls: ['./mock.component.scss']
 })

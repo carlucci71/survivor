@@ -42,25 +42,39 @@ try {
     $response = Invoke-RestMethod -Uri "https://api.github.com/repos/carlucci71/survivor/pulls" -Method Post -Body $body -Headers $headers -ContentType "application/json"
     Write-Host "PR CREATA: $($response.html_url)" -ForegroundColor Green
 } catch {
-    if ($_.Exception.Response) {
-        $request = $_.Exception.Response
-        $reader = New-Object System.IO.StreamReader($request.GetResponseStream())
-        $reader.BaseStream.Position = 0
-        $reader.DiscardBufferedData()
-        $responseBody = $reader.ReadToEnd()
+    # PowerShell 7 (Mac) e Windows PS gestiscono gli errori di Invoke-RestMethod in modo differente.
+    # Questo approccio estrae il JSON di errore indipendentemente dalla piattaforma.
+    
+    $errorResponseBody = ""
+
+    if ($null -ne $_.ErrorDetails -and $null -ne $_.ErrorDetails.Message) {
+        # Su molte versioni, il corpo della risposta JSON di GitHub è già qui
+        $errorResponseBody = $_.ErrorDetails.Message
+    } elseif ($null -ne $_.Exception.Response) {
+        # Fallback per versioni di PS che non popolano ErrorDetails
+        $responseStream = $_.Exception.Response.GetResponseStream()
+        $reader = New-Object System.IO.StreamReader($responseStream)
+        $errorResponseBody = $reader.ReadToEnd()
         $reader.Close()
-        
+    }
+
+    if ($errorResponseBody) {
         try {
-            $errorJson = $responseBody | ConvertFrom-Json
-            if ($errorJson.errors -and $errorJson.errors.Count -gt 0) {
-                Write-Host "$($errorJson.errors[0].message)" -ForegroundColor Red
+            $errorJson = $errorResponseBody | ConvertFrom-Json
+            # GitHub spesso restituisce una lista di errori specifici
+            if ($errorJson.errors) {
+                $detailedError = $errorJson.errors[0].message
+                Write-Host "Errore GitHub: $detailedError" -ForegroundColor Red
             } else {
-                Write-Host "$($errorJson.message)" -ForegroundColor Red
+                Write-Host "Errore GitHub: $($errorJson.message)" -ForegroundColor Red
             }
         } catch {
-            Write-Host "Errore API: $responseBody" -ForegroundColor Red
+            # Se non è JSON, stampa il corpo grezzo
+            Write-Host "Errore API: $errorResponseBody" -ForegroundColor Red
         }
     } else {
-        Write-Host "$($_.Exception.Message)" -ForegroundColor Red
+        # Se non c'è una risposta dal server (es. timeout o DNS)
+        Write-Host "Eccezione: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
+

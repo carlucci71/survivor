@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -21,6 +22,7 @@ import { Subscription } from 'rxjs';
     MatBadgeModule,
     MatMenuModule,
     MatDividerModule,
+    MatTooltipModule,
     TranslateModule
   ],
   templateUrl: './notification-bell.component.html',
