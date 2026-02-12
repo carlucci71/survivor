@@ -38,7 +38,7 @@
     <mat-form-field appearance="fill">
       <mat-label>giornata</mat-label>
       <input matInput type="number" [(ngModel)]="giornata" (ngModelChange)="onGiornataChange($event)" />
-      <mat-hint align="end">1 - {{ campionatoSel?.numGiornate || '∞' }}</mat-hint>
+      <mat-hint align="end">1 - {{ campionatoSel.numGiornate || '∞' }}</mat-hint>
     </mat-form-field>
   </div>
 
@@ -91,7 +91,7 @@
     </table>
   </div>
 
-  
+
 
   <div class="message" *ngIf="message">{{ message }}</div>
 

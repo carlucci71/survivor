@@ -1,11 +1,11 @@
-/* Tema Celeste Moderno - FONT SPORTIVO POPPINS */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
-
 /* Importa il sistema di temi light/dark */
-@import 'themes.scss';
+@use 'themes.scss';
 
 /* Importa gli stili dei componenti con supporto temi */
-@import 'theme-components.scss';
+@use 'theme-components.scss';
+
+/* Tema Celeste Moderno - FONT SPORTIVO POPPINS */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 * {
   margin: 0;
