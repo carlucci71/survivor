@@ -251,12 +251,24 @@ import { CommonModule } from '@angular/common';
           <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-21" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
+          <!-- Versione bianca (normale) -->
+          <g class="stickman-21-white">
+            <circle cx="20" cy="10" r="6" fill="white"/>
+            <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2"/>
+          </g>
+          <!-- Versione verde (vittoria - braccia alzate) -->
+          <g class="stickman-21-green">
+            <circle cx="20" cy="10" r="6" fill="white"/>
+            <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="22" x2="12" y2="14" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="22" x2="28" y2="14" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2"/>
+            <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2"/>
+          </g>
           <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
           <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
@@ -401,146 +413,6 @@ import { CommonModule } from '@angular/common';
           <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
         </svg>
         <svg class="stickman stickman-36" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-37" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-38" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-39" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-40" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-41" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-42" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-43" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-44" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-45" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-46" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-47" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-48" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-49" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-50" viewBox="0 0 40 60">
           <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
           <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
           <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
@@ -844,12 +716,59 @@ import { CommonModule } from '@angular/common';
       animation: stickmanDarkSync 14s ease-in-out 1 forwards;
     }
 
+    /* Animazioni per stickman-21 (vittoria al 25° secondo) */
+    /* Animazione speciale che mantiene l'omino visibile fino a 25s */
+    @keyframes stickman21Stay {
+      0%, 33.33% {  /* 0-10s: rimane visibile (era 83.33% per 25s) */
+        opacity: 1;
+      }
+      100% {  /* dopo 30s: può scomparire */
+        opacity: 1;
+      }
+    }
+
+    @keyframes stickman21ScaleAndGlow {
+      0%, 33.33% {  /* 0-10s: normale (era 83.33% per 25s) */
+        transform: scale(1);
+        filter: none;
+      }
+      33.34%, 100% {  /* 10s-30s: ingrandito con glow (era 83.34% per 25s) */
+        transform: scale(1.5);
+        filter: drop-shadow(0 0 20px #00ff00) drop-shadow(0 0 30px #00ff00) brightness(1.5);
+      }
+    }
+
+    @keyframes whiteGroupHide {
+      0%, 33.33% {  /* 0-10s: visibile */
+        opacity: 0.7;
+      }
+      33.34%, 100% {  /* 10s-30s: nascosto */
+        opacity: 0;
+      }
+    }
+
+    @keyframes greenGroupShow {
+      0%, 33.33% {  /* 0-10s: nascosto */
+        opacity: 0;
+      }
+      33.34%, 100% {  /* 10s-30s: visibile */
+        opacity: 1;
+      }
+    }
+
     .stickman-21 {
       top: 78%;
       left: 38%;
-      //   width: 50px;
-      //height: 65px;
-      animation: stickmanDarkSync 30s ease-in-out 1 forwards;
+      /* Sostituisco stickmanDarkSync con stickman21Stay per mantenerlo visibile */
+      animation: stickman21Stay 30s linear 1 forwards, stickman21ScaleAndGlow 30s linear 1 forwards !important;
+    }
+
+    .stickman-21-white {
+      animation: whiteGroupHide 30s linear 1 forwards;
+    }
+
+    .stickman-21-green {
+      animation: greenGroupShow 30s linear 1 forwards;
     }
 
     .stickman-22 {
@@ -944,89 +863,6 @@ import { CommonModule } from '@angular/common';
       animation: stickmanDarkSync 11s ease-in-out 1 forwards;
     }
 
-    .stickman-37 {
-      top: 18%;
-      left: 68%;
-      animation: stickmanDarkSync 6s ease-in-out 1 forwards;
-    }
-
-    .stickman-38 {
-      top: 46%;
-      left: 94%;
-      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
-    }
-
-    .stickman-39 {
-      top: 90%;
-      left: 28%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-40 {
-      top: 32%;
-      left: 4%;
-      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
-    }
-
-    .stickman-41 {
-      top: 62%;
-      left: 62%;
-      animation: stickmanDarkSync 16s ease-in-out 1 forwards;
-    }
-
-    .stickman-42 {
-      top: 6%;
-      left: 44%;
-      animation: stickmanDarkSync 4.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-43 {
-      top: 74%;
-      left: 84%;
-      animation: stickmanDarkSync 11.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-44 {
-      top: 42%;
-      left: 22%;
-      animation: stickmanDarkSync 9.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-45 {
-      top: 86%;
-      left: 56%;
-      animation: stickmanDarkSync 13.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-46 {
-      top: 28%;
-      left: 88%;
-      animation: stickmanDarkSync 6.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-47 {
-      top: 64%;
-      left: 14%;
-      animation: stickmanDarkSync 15.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-48 {
-      top: 16%;
-      left: 74%;
-      animation: stickmanDarkSync 7.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-49 {
-      top: 50%;
-      left: 36%;
-      animation: stickmanDarkSync 10.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-50 {
-      top: 78%;
-      left: 66%;
-      animation: stickmanDarkSync 17s ease-in-out 1 forwards;
-    }
 
     /* Red cross animation */
     .cross {
@@ -1079,20 +915,6 @@ import { CommonModule } from '@angular/common';
     .stickman-34 .cross { animation: crossAppear 0.5s 7.5s forwards; }
     .stickman-35 .cross { animation: crossAppear 0.5s 4.5s forwards; }
     .stickman-36 .cross { animation: crossAppear 0.5s 5.5s forwards; }
-    .stickman-37 .cross { animation: crossAppear 0.5s 3s forwards; }
-    .stickman-38 .cross { animation: crossAppear 0.5s 7s forwards; }
-    .stickman-39 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-40 .cross { animation: crossAppear 0.5s 6s forwards; }
-    .stickman-41 .cross { animation: crossAppear 0.5s 8s forwards; }
-    .stickman-42 .cross { animation: crossAppear 0.5s 2.25s forwards; }
-    .stickman-43 .cross { animation: crossAppear 0.5s 5.75s forwards; }
-    .stickman-44 .cross { animation: crossAppear 0.5s 4.75s forwards; }
-    .stickman-45 .cross { animation: crossAppear 0.5s 6.75s forwards; }
-    .stickman-46 .cross { animation: crossAppear 0.5s 3.25s forwards; }
-    .stickman-47 .cross { animation: crossAppear 0.5s 7.75s forwards; }
-    .stickman-48 .cross { animation: crossAppear 0.5s 3.75s forwards; }
-    .stickman-49 .cross { animation: crossAppear 0.5s 5.25s forwards; }
-    .stickman-50 .cross { animation: crossAppear 0.5s 8.5s forwards; }
 
     .hero-overlay {
       position: absolute;
