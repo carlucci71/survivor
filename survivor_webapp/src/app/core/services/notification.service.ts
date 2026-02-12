@@ -75,7 +75,7 @@ export class NotificationService {
   }
 
   /**
-   * Avvia il polling automatico delle notifiche ogni 60 secondi
+   * Avvia il polling automatico delle notifiche ogni 90 secondi
    * @param userId - ID dell'utente autenticato
    */
   startPolling(userId: number): void {
@@ -88,8 +88,8 @@ export class NotificationService {
     // Carica subito le notifiche
     this.getNotifications(userId, true).subscribe();
 
-    // Poi ripeti ogni 60 secondi (aumentato da 30 per performance)
-    this.pollingSubscription = interval(60000) // 60 secondi
+    // Poi ripeti ogni 90 secondi (ottimizzato per performance)
+    this.pollingSubscription = interval(90000) // 90 secondi
       .pipe(
         switchMap(() => this.getNotifications(userId, true))
       )

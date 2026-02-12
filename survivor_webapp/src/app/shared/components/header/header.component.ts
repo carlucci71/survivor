@@ -41,7 +41,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
             ← {{ 'HEADER.BACK_TO_HOME' | translate }}
           </button>
 
-          <app-notification-bell *ngIf="visLogout === 'S'"></app-notification-bell>
+          <app-notification-bell *ngIf="visLogout === 'S'" class="notification-bell"></app-notification-bell>
 
           <mat-icon
             *ngIf="visLogout === 'S'"
@@ -116,7 +116,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       }
       .actions {
         display: flex;
-        gap: 8px;
+        gap: 12px;
         align-items: center;
       }
       .btn-back {
@@ -139,18 +139,32 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         transform: none !important;
         box-shadow: none !important;
       }
+
+      ::ng-deep .notification-bell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .logout-icon {
         color: white;
         cursor: pointer;
         font-size: 18px;
         width: 18px;
         height: 18px;
+        padding: 9px;
+        border-radius: 50%;
         transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: content-box;
       }
 
       .logout-icon:hover {
         transform: scale(1.1);
         opacity: 0.8;
+        background: rgba(255, 255, 255, 0.1);
       }
 
 
@@ -170,7 +184,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           padding: 0 16px;
         }
         .actions {
-          gap: 6px;
+          gap: 8px;
         }
         .header-logo {
           height: 22px;
@@ -188,6 +202,12 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           white-space: nowrap !important;
           min-height: 30px !important;
         }
+        .logout-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          padding: 8px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -199,7 +219,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           gap: 2px;
         }
         .actions {
-          gap: 4px;
+          gap: 0px;
         }
         .header-title {
           font-size: 0.9rem;
@@ -217,15 +237,19 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           min-height: 28px !important;
         }
         .logout-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          padding: 9px;
         }
       }
 
       @media (max-width: 360px) {
         .header {
           min-height: 685px;
+        }
+        .actions {
+          gap: 8px;
         }
         /* Logo 38px nella home (molto piccolo) */
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
