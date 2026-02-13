@@ -727,3 +727,13 @@ CREATE INDEX idx_notification_user_read
 ALTER TABLE notification
 ADD CONSTRAINT fk_notification_user
 FOREIGN KEY (user_id) REFERENCES users(id);
+
+create table notifiche_inviate(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+	anno smallint not null default 2025,
+	giornata  integer NOT NULL,
+	tipo_notifica varchar(50),
+    CONSTRAINT fk_notifiche_inviate_campionato
+        FOREIGN KEY (id_campionato) REFERENCES campionato(id)
+);
