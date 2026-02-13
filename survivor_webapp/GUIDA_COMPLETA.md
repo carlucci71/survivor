@@ -218,4 +218,5 @@ L'applicazione segue le best practices Angular 19:
 - **Functional Guards**: CanActivateFn
 - **Functional Interceptors**: HttpInterceptorFn
 - **Signals**: Pronto per l'adozione futura
-- **Lazy Loading**: Per ottimizzare le performance
+- **Lazy Loading**: Per ottimizzare le performance 
+

@@ -45,12 +45,6 @@ npm run build -- --configuration $Configuration
 Write-Host "2) Running Capacitor sync (copy plugins/resources)..."
 npx cap sync android
 
-Write-Host "--- Verifica file in Android ---"
-$androidFile = "android\app\src\main\assets\public\build_fe.html"
-Get-Content $androidFile
-$fileInfo = Get-Item $androidFile
-Write-Host "Ultima modifica: $($fileInfo.LastWriteTime)"
-
 # 3) Build with Gradle wrapper
 if (-not (Test-Path $gradleWrapper)) {
     Write-Error "Gradle wrapper not found at: $gradleWrapper"
@@ -70,6 +64,9 @@ if (-not (Test-Path $androidDir)) {
     exit 3
 }
 
+Push-Location $androidDir
+& $gradleWrapper $gradleTask
+Pop-Location
 
 # 4) Locate APK
 if ($Release.IsPresent) {
