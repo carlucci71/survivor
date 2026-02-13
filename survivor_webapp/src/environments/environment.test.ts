@@ -7,6 +7,7 @@ export const environment = {
   theme: {
     primary: '#2196F3',
     name: 'blue'
-  }
+  },
+  envTheme: 'red' // Ambiente system = rosso
 };
 

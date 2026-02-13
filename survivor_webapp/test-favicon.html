@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test Favicon Survivor - NUOVO</title>
+    <link rel="icon" type="image/png" href="src/assets/favicon-local.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .favicon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            margin: 15px 0;
+            font-size: 1.8em;
+        }
+        .card p {
+            color: #666;
+            margin: 10px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+        .green { background: linear-gradient(135deg, #1B5E20, #4CAF50); }
+        .red { background: linear-gradient(135deg, #B71C1C, #EF5350); }
+        .blue { background: linear-gradient(135deg, #0A3D91, #4FC3F7); }
+
+        .instructions {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .instructions h3 {
+            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .instructions ol {
+            line-height: 1.8;
+            color: #555;
+        }
+        .instructions li {
+            margin-bottom: 15px;
+        }
+        .instructions code {
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #d63384;
+        }
+        .success {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Favicon Multi-Ambiente - Test Visivo</h1>
+        <p class="subtitle">Verifica che i favicon abbiano i colori corretti</p>
+
+        <div class="favicon-grid">
+            <div class="card">
+                <img src="src/assets/favicon-local.png" alt="Favicon Local">
+                <h2>LOCAL</h2>
+                <p>Ambiente di sviluppo</p>
+                <span class="badge green">🟢 VERDE</span>
+                <p style="margin-top: 15px; font-size: 0.9em;">12.6 KB</p>
+            </div>
+
+            <div class="card">
+                <img src="src/assets/favicon-system.png" alt="Favicon System">
+                <h2>SYSTEM</h2>
+                <p>Ambiente di test</p>
+                <span class="badge red">🔴 ROSSO</span>
+                <p style="margin-top: 15px; font-size: 0.9em;">12.6 KB</p>
+            </div>
+
+            <div class="card">
+                <img src="src/assets/favicon-prod.png" alt="Favicon Prod">
+                <h2>PROD</h2>
+                <p>Ambiente di produzione</p>
+                <span class="badge blue">🔵 BLU</span>
+                <p style="margin-top: 15px; font-size: 0.9em;">12.7 KB</p>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>✅ Come vedere i nuovi favicon nel browser:</h3>
+            <ol>
+                <li><strong>Chiudi COMPLETAMENTE il browser</strong> (non solo la tab, ma proprio chiudi tutto il browser)</li>
+                <li><strong>Pulisci la cache:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Chrome/Edge: <code>Ctrl + Shift + Delete</code> → Seleziona "Immagini e file in cache"</li>
+                        <li>Firefox: <code>Ctrl + Shift + Delete</code> → Seleziona "Cache"</li>
+                    </ul>
+                </li>
+                <li><strong>OPPURE apri in modalità INCOGNITO:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Chrome/Edge: <code>Ctrl + Shift + N</code></li>
+                        <li>Firefox: <code>Ctrl + Shift + P</code></li>
+                    </ul>
+                </li>
+                <li><strong>Riavvia il server:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Ferma il server: <code>Ctrl + C</code> nel terminale</li>
+                        <li>Avvia di nuovo: <code>ng serve</code></li>
+                    </ul>
+                </li>
+                <li><strong>Apri l'app:</strong> <code>http://localhost:4200</code></li>
+                <li><strong>Controlla la tab del browser:</strong> Il favicon dovrebbe essere VERDE 🟢 per LOCAL</li>
+            </ol>
+        </div>
+
+        <div class="success">
+            ✨ Ho eliminato il vecchio favicon.ico (99 KB) e ora ci sono solo i 3 PNG corretti! ✨
+        </div>
+    </div>
+</body>
+</html>
+
