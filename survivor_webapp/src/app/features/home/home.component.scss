@@ -128,9 +128,9 @@
 		justify-content: center;
 		text-align: center;
 		white-space: nowrap;
-		max-width: 120px;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		max-width: 100%;
 	}
 
 	.calcola-icon {
@@ -193,7 +193,8 @@
 		gap: 8px !important;
 
 		.config-user-name {
-			max-width: 90px;
+			flex: 1;
+			min-width: 0;
 		}
 
 		.calcola-icon {
@@ -213,7 +214,8 @@
 		gap: 6px !important;
 
 		.config-user-name {
-			max-width: 70px;
+			flex: 1;
+			min-width: 0;
 		}
 
 		.calcola-icon {

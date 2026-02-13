@@ -312,7 +312,7 @@ h2 {
 	overflow: hidden;
 	position: relative;
 	padding: 8px 0;
-	margin: 0 -14px; /* Allineato al padding del modal-container mobile (14px) */
+	margin: 0; /* Rimosso il margin negativo che causava lo sforo */
 
 	&::before,
 	&::after {
@@ -424,7 +424,7 @@ h2 {
 	gap: 12px;
 	overflow-x: auto;
 	overflow-y: hidden;
-	padding: 8px 14px 8px 14px; /* Allineato al padding del modal-container mobile */
+	padding: 8px 14px; /* Padding uguale a sinistra e destra */
 	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
 
@@ -779,13 +779,13 @@ h2 {
 		min-width: 900px !important;
 	}
 
-	/* Aggiusto margini e padding per allinearsi al padding del modal-container desktop (28px) */
+	/* Aggiusto margini e padding per desktop */
 	.teams-scroll-container {
-		margin: 0 -28px;
+		margin: 0; /* Rimosso margin negativo */
 	}
 
 	.teams-scroll-wrapper {
-		padding: 8px 28px 8px 28px;
+		padding: 8px 28px; /* Padding uguale a sinistra e destra */
 		gap: 16px; /* Più spazio tra le card su desktop */
 	}
 
@@ -824,13 +824,13 @@ h2 {
 		padding: 18px 16px !important;
 	}
 
-	/* Aggiusto margini e padding per tablet medio (padding 16px) */
+	/* Aggiusto padding per tablet medio */
 	.teams-scroll-container {
-		margin: 0 -16px;
+		margin: 0; /* Rimosso margin negativo */
 	}
 
 	.teams-scroll-wrapper {
-		padding: 8px 16px 8px 16px;
+		padding: 8px 16px; /* Padding uguale a sinistra e destra */
 	}
 
 	.jersey-card {
@@ -1349,13 +1349,13 @@ h2 {
 		max-width: 500px !important;
 	}
 
-	/* Aggiusto margini e padding per mobile piccolo (padding 12px) */
+	/* Aggiusto padding per mobile piccolo */
 	.teams-scroll-container {
-		margin: 0 -12px;
+		margin: 0; /* Rimosso margin negativo */
 	}
 
 	.teams-scroll-wrapper {
-		padding: 8px 12px 8px 12px;
+		padding: 12px 16px; /* Aumentato padding laterale per mobile */
 	}
 
 	h2 {
