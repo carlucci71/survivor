@@ -101,7 +101,7 @@ export interface DettagliSquadraData {
                 <span class="match" [class.bold]="formatNome(r.casaSigla) === data.squadraSelezionata">{{ formatNome(r.casaNome) }}</span>
                 <span class="vs">vs</span>
                 <span class="match" [class.bold]="formatNome(r.fuoriSigla) === data.squadraSelezionata">{{ formatNome(r.fuoriNome) }}</span>
-                <span class="date">{{ r.orario | date: 'dd/MM' }}</span>
+                <span class="badge date-badge">{{ r.orario | date: 'dd/MM' }}</span>
               </div>
             }
           }
@@ -551,20 +551,6 @@ export interface DettagliSquadraData {
       }
     }
 
-    .date {
-      color: #9CA3AF;
-      font-size: 0.65rem;
-      min-width: 40px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 480px) {
-      .date {
-        font-size: 0.6rem;
-        min-width: 35px;
-      }
-    }
 
     .badge {
       padding: 3px 8px;
@@ -572,20 +558,24 @@ export interface DettagliSquadraData {
       font-weight: 700;
       color: #FFFFFF;
       font-size: 0.65rem;
-      min-width: 20px;
+      min-width: 40px;
       text-align: center;
       flex-shrink: 0;
 
       &.v { background: linear-gradient(135deg, #10B981, #34D399); }
       &.n { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
       &.p { background: linear-gradient(135deg, #EF4444, #F87171); }
+
+      &.date-badge {
+        background: linear-gradient(135deg, #6B7280, #9CA3AF);
+      }
     }
 
     @media (max-width: 768px) {
       .badge {
         padding: 2px 7px;
         font-size: 0.6rem;
-        min-width: 18px;
+        min-width: 38px;
       }
     }
 
@@ -593,7 +583,7 @@ export interface DettagliSquadraData {
       .badge {
         padding: 2px 6px;
         font-size: 0.55rem;
-        min-width: 16px;
+        min-width: 35px;
       }
     }
 

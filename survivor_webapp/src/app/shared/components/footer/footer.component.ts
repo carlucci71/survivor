@@ -1249,7 +1249,7 @@ export class ChiSiamoDialogComponent implements OnInit{
   styles: [`
     /* FOOTER COMPATTO ORIZZONTALE */
     .survivor-footer {
-      background: linear-gradient(135deg, #0A3D91 0%, #4FC3F7 100%);
+      background: var(--gradient-primary);
       color: #FFFFFF;
       margin-top: auto;
       font-family: 'Poppins', sans-serif;

@@ -71,3 +71,29 @@
   --transition-normal: 0.2s ease;
   --transition-slow: 0.3s ease;
 }
+
+/* ============================================
+   GRADIENTI PER AMBIENTE (Header e Footer)
+   ============================================ */
+
+/* Ambiente LOCAL (DEV) - VERDE */
+body.env-green {
+  --header-bg: linear-gradient(135deg, #1B5E20, #4CAF50) !important;
+  --gradient-primary: linear-gradient(135deg, #1B5E20, #4CAF50) !important;
+  --gradient-secondary: linear-gradient(135deg, #4CAF50, #81C784) !important;
+  --gradient-hover: linear-gradient(135deg, #145318, #43A047) !important;
+}
+
+/* Ambiente SYSTEM (TEST) - ROSSO */
+body.env-red {
+  --header-bg: linear-gradient(135deg, #B71C1C, #EF5350) !important;
+  --gradient-primary: linear-gradient(135deg, #B71C1C, #EF5350) !important;
+  --gradient-secondary: linear-gradient(135deg, #EF5350, #E57373) !important;
+  --gradient-hover: linear-gradient(135deg, #8B0000, #E53935) !important;
+}
+
+/* Ambiente PROD - BLU (default, nessuna modifica necessaria) */
+body.env-blue {
+  /* Mantiene i gradienti blu originali definiti in :root */
+}
+

@@ -19,7 +19,7 @@ function Check-Command($cmd) {
 
 Set-Location -Path $PSScriptRoot
 
-Get-Date -Format "dd/MM/yyyy HH:mm" > ..\src\assets\build_fe.html
+Get-Date -Format "dd/MM/yyyy HH:mm" > ..\public\build_fe.html
 
 Write-Host "Configuration: $Configuration; Release: $($Release.IsPresent); Install after build: $($Install.IsPresent)"
 
@@ -46,7 +46,7 @@ Write-Host "2) Running Capacitor sync (copy plugins/resources)..."
 npx cap sync android
 
 Write-Host "--- Verifica file in Android ---"
-$androidFile = "android\app\src\main\assets\public\assets\build_fe.html"
+$androidFile = "android\app\src\main\assets\public\build_fe.html"
 Get-Content $androidFile
 $fileInfo = Get-Item $androidFile
 Write-Host "Ultima modifica: $($fileInfo.LastWriteTime)"
