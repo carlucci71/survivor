@@ -145,7 +145,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
       giocatore => {
-        if (giocatore && this.id) {
+        if (giocatore && this.id>0) {
           // Ricarica i dati della lega quando il profilo viene aggiornato
           this.loadLegaDetails();
         }
