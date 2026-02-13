@@ -3390,6 +3390,17 @@
 				font-weight: 800;
 			}
 		}
+
+		&.actions-col {
+			min-width: 80px;
+			width: 80px;
+			text-align: center;
+			position: sticky;
+			right: 0;
+			z-index: 11; // Più alto dell'header (z-index: 10) per stare sopra durante lo scroll
+			// Nessun background, eredita il gradiente dalla riga excel-header-row
+			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); // Ombra più marcata per l'effetto di elevazione
+		}
 	}
 
 	// Body rows
@@ -3761,6 +3772,67 @@
 
 				&:active {
 					transform: scale(0.95);
+				}
+			}
+		}
+
+		&.actions-cell {
+			text-align: center;
+			padding: 8px;
+			position: sticky;
+			right: 0;
+			background: inherit; // Eredita il background dalla riga parent
+			z-index: 5; // Più alto delle altre celle per rimanere sopra durante lo scroll
+			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); // Ombra più marcata per enfatizzare la separazione
+
+			.actions-wrapper {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				gap: 8px;
+			}
+
+			.action-icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 18px;
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				cursor: pointer;
+				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+				&.edit-icon {
+					background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+					color: #FFFFFF;
+					box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
+
+					&:hover {
+						background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+						transform: scale(1.15) rotate(15deg);
+						box-shadow: 0 4px 16px rgba(79, 195, 247, 0.6);
+					}
+
+					&:active {
+						transform: scale(0.95) rotate(0deg);
+					}
+				}
+
+				&.delete-icon {
+					background: linear-gradient(135deg, #f44336, #d32f2f);
+					color: #FFFFFF;
+					box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+
+					&:hover {
+						background: linear-gradient(135deg, #d32f2f, #f44336);
+						transform: scale(1.15) rotate(-15deg);
+						box-shadow: 0 4px 16px rgba(244, 67, 54, 0.6);
+					}
+
+					&:active {
+						transform: scale(0.95) rotate(0deg);
+					}
 				}
 			}
 		}

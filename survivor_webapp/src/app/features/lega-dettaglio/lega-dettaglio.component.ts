@@ -226,6 +226,34 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  /**
+   * Versione abbreviata del titolo giornata per mobile
+   * Es: "Giornata 26" → "Gio. 26"
+   */
+  getDesGiornataTitleMobile(index: number): string {
+    const fullTitle = this.getDesGiornataTitle(index);
+    if (!fullTitle) return '';
+
+    // Se contiene "Giornata" lo abbrevia in "Gio."
+    if (fullTitle.includes('Giornata')) {
+      return fullTitle.replace('Giornata', 'Gio.');
+    }
+
+    // Se contiene solo un numero, ritorna così com'è
+    if (/^\d+$/.test(fullTitle)) {
+      return fullTitle;
+    }
+
+    // Per altri formati, prova a estrarre il numero e aggiungere "Gio."
+    const numero = fullTitle.match(/\d+/);
+    if (numero) {
+      return `Gio. ${numero[0]}`;
+    }
+
+    // Fallback: ritorna il titolo completo
+    return fullTitle;
+  }
+
   // Gestisce il click sull'icona gioca accanto al badge squadra
   async giocaGiornata(giocatore: Giocatore, giornata: number): Promise<void> {
     // Trova la giocata corrente (se esiste)
