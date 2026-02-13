@@ -170,6 +170,9 @@
                       }
                   </th>
                 }
+                @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                  <th class="excel-header-cell actions-col">Azioni</th>
+                }
               </tr>
             </thead>
 
@@ -183,18 +186,6 @@
                   <td class="excel-cell user-cell">
                     <div class="user-name-wrapper">
                       <span class="user-name">{{ giocatore.nickname }}</span>
-                      <!-- Icona modifica per leader/admin (se può giocare per questo utente) -->
-                      @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
-                        <mat-icon class="edit-user-icon"
-                                  (click)="giocaGiornataDisponibile(giocatore)"
-                                  [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
-                          edit
-                        </mat-icon>
-                      }
-                      @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
-                        <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
-                                  matTooltip="Rimuovi giocatore">close</mat-icon>
-                      }
                     </div>
                   </td>
 
@@ -233,6 +224,29 @@
                         <!-- Cella vuota -->
                         <span class="empty-cell">-</span>
                       }
+                    </td>
+                  }
+
+                  <!-- AZIONI (ultima colonna) -->
+                  @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                    <td class="excel-cell actions-cell">
+                      <div class="actions-wrapper">
+                        <!-- Icona modifica per leader/admin (se può giocare per questo utente) -->
+                        @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
+                          <mat-icon class="action-icon edit-icon"
+                                    (click)="giocaGiornataDisponibile(giocatore)"
+                                    [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
+                            edit
+                          </mat-icon>
+                        }
+                        @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
+                          <mat-icon class="action-icon delete-icon"
+                                    (click)="cancellaGiocatore(giocatore)"
+                                    matTooltip="Rimuovi giocatore">
+                            close
+                          </mat-icon>
+                        }
+                      </div>
                     </td>
                   }
                 </tr>
