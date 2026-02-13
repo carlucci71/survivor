@@ -778,13 +778,26 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   getAvversarioNome(partita: Partita, siglaMiaSquadra: string): string {
-    if (!partita) return '-';
-
-    if (partita.casaSigla === siglaMiaSquadra) {
-      return partita.fuoriNome || '-';
-    } else {
-      return partita.casaNome || '-';
+    if (!partita) {
+      return '-';
     }
+
+    // Determina quale squadra è l'avversario
+    let avversarioNome = '';
+    if (partita.casaSigla === siglaMiaSquadra) {
+      // Io gioco in casa, l'avversario è fuori
+      avversarioNome = partita.fuoriNome || partita.fuoriSigla || '';
+    } else if (partita.fuoriSigla === siglaMiaSquadra) {
+      // Io gioco fuori, l'avversario è in casa
+      avversarioNome = partita.casaNome || partita.casaSigla || '';
+    } else {
+      // Fallback: non dovrebbe succedere ma gestito per sicurezza
+      console.warn('getAvversarioNome: sigla non trovata in partita', { partita, siglaMiaSquadra });
+      return '-';
+    }
+
+    // Se il nome dell'avversario è vuoto, usa la sigla come fallback
+    return avversarioNome || '-';
   }
 
   /**
@@ -878,20 +891,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         prossimaPartita: null as Partita | null,
         ultimiRisultati: [] as any[]
       };
-        this.prossimaGiornata.forEach((partita) => {
-          if (partita.casaSigla == squadra.sigla || partita.fuoriSigla == squadra.sigla){
-              squadraConPartite.prossimaPartita = partita;
-        }
 
-        // Quando tutti i caricamenti sono completati, applica il filtro
-        if (isTennis) {
-          this.applicaFiltroGiocatoriAttivi();
+      // Trova la prossima partita per questa squadra
+      this.prossimaGiornata.forEach((partita) => {
+        // Confronto sia con == che con === per sicurezza (potrebbe essere string vs number)
+        if (partita.casaSigla == squadra.sigla || partita.fuoriSigla == squadra.sigla) {
+          squadraConPartite.prossimaPartita = partita;
         }
       });
 
-
       return squadraConPartite;
     });
+
+    // Quando tutti i caricamenti sono completati, applica il filtro
+    if (isTennis) {
+      this.applicaFiltroGiocatoriAttivi();
+    }
 
     // Inizializza la lista filtrata con tutte le squadre
     this.squadreFiltrate = [...this.squadreConPartite];
@@ -923,6 +938,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     if (!this.searchQuery || this.searchQuery.trim() === '') {
       this.squadreFiltrate = squadreDaFiltrare;
+      // Aggiorna le frecce dopo il filtro
+      setTimeout(() => this.updateScrollButtons(), 100);
       return;
     }
 
@@ -932,11 +949,16 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       const sigla = (squadra.sigla || '').toLowerCase();
       return nome.includes(query) || sigla.includes(query);
     });
+
+    // Aggiorna le frecce dopo il filtro
+    setTimeout(() => this.updateScrollButtons(), 100);
   }
 
   clearSearch(): void {
     this.searchQuery = '';
     this.filtraSquadre();
+    // Forza aggiornamento frecce dopo clear
+    setTimeout(() => this.updateScrollButtons(), 150);
   }
 
   // Scroll a sinistra
@@ -961,8 +983,18 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   updateScrollButtons(): void {
     if (this.scrollWrapper) {
       const container = this.scrollWrapper.nativeElement;
-      this.canScrollLeft = container.scrollLeft > 0;
-      this.canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 5);
+      const hasOverflow = container.scrollWidth > container.clientWidth;
+
+      // Se non c'è overflow, nascondi entrambe le frecce
+      if (!hasOverflow) {
+        this.canScrollLeft = false;
+        this.canScrollRight = false;
+        return;
+      }
+
+      // Altrimenti calcola normalmente
+      this.canScrollLeft = container.scrollLeft > 10; // Tolleranza di 10px
+      this.canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 10); // Tolleranza di 10px
     }
   }
 

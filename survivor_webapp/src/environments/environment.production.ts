@@ -7,6 +7,7 @@ export const environment = {
   theme: {
     primary: '#4CAF50',
     name: 'green'
-  }
+  },
+  envTheme: 'blue' // Ambiente produzione = blu (attuale)
 };
 
