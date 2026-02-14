@@ -49,6 +49,7 @@ npm run build -- --configuration $Configuration
 # 2) Capacitor copy + sync
 Write-Host "2) Running Capacitor sync (copy plugins/resources)..."
 npx cap sync android
+npx cap sync ios
 
 # 3) Build with Gradle wrapper
 if (-not (Test-Path $gradleWrapper)) {

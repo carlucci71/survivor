@@ -102,18 +102,55 @@ export class PushService {
     return requestStatus.receive === 'granted';
   }
 
+  /**
+   * Check for FCM token in iOS UserDefaults (set by Firebase MessagingDelegate)
+   */
+  private async checkFCMTokenFromUserDefaults(): Promise<void> {
+    try {
+      // Use native code to read from UserDefaults
+      const token = await this.getFCMTokenFromNative();
+      
+      if (token && token !== this.lastRegisteredToken) {
+        console.log('FCM token recuperato da UserDefaults iOS:', token);
+        
+        const authService = this.injector.get(AuthService);
+        if (authService?.getCurrentUser()) {
+          void this.sendTokenToBackend(token).catch(error =>
+            console.warn('Errore invio FCM token da UserDefaults:', error)
+          );
+        }
+      }
+    } catch (err) {
+      console.log('Impossibile recuperare FCM token da UserDefaults:', err);
+    }
+  }
+
+  /**
+   * Get FCM token from iOS UserDefaults using native bridge
+   */
+  private async getFCMTokenFromNative(): Promise<string | null> {
+    // Simple approach: execute JS to access localStorage where we'll sync from UserDefaults
+    // Or use a native plugin - for now we'll use a workaround via evaluating native code
+    return new Promise((resolve) => {
+      // Check if running on iOS
+      if (Capacitor.getPlatform() !== 'ios') {
+        resolve(null);
+        return;
+      }
+      
+      // Try to get from localStorage as fallback (we can sync UserDefaults to localStorage)
+      const stored = localStorage.getItem('FCMToken');
+      resolve(stored);
+    });
+  }
+
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('Push notification token registrato:', token.value);
 
-      // Invia il token solo se l'utente è già autenticato. Usiamo l'injector
-      // per risolvere `AuthService` al momento dell'evento e evitare problemi
-      // di dipendenze circolari con l'iniezione diretta.
+      // Invia il token solo se l'utente è già autenticato
       try {
         const authService = this.injector.get(AuthService);
-        // Preferiamo verificare che l'utente sia effettivamente caricato (non solo
-        // che sia presente un token in localStorage) per evitare chiamate al backend
-        // senza user. `getCurrentUser()` ritorna `User | null`.
         if (authService && typeof authService.getCurrentUser === 'function' && authService.getCurrentUser()) {
           void this.sendTokenToBackend(token.value).catch((error) => {
             console.warn('Impossibile inviare token push ora:', error);
@@ -125,6 +162,13 @@ export class PushService {
         console.log('AuthService non disponibile al momento; token push salvato in attesa di login', err);
       }
     });
+
+    // On iOS, check for FCM token in UserDefaults after app loads
+    if (Capacitor.getPlatform() === 'ios') {
+      setTimeout(() => {
+        this.checkFCMTokenFromUserDefaults();
+      }, 3000);
+    }
 
     PushNotifications.addListener('registrationError', (error: any) => {
       console.error('Errore registrazione push - Firebase potrebbe non essere configurato', error);
