@@ -90,9 +90,10 @@ public class PushNotificationService {
                         .setCredentials(credentials)
                         .build();
 
-                FirebaseApp.initializeApp(options);
+                FirebaseApp app = FirebaseApp.initializeApp(options);
                 firebaseInitialized = true;
-                log.info("Firebase FCM inizializzato con successo");
+                log.info("Firebase FCM inizializzato con successo per progetto: {}", 
+                        app.getOptions().getProjectId());
             } else {
                 // Se già presente almeno un'app, consideriamo Firebase inizializzato
                 firebaseInitialized = true;
@@ -149,6 +150,16 @@ public class PushNotificationService {
     public void deactivateToken(String token) {
         int updated = pushTokenRepository.deactivateByToken(token);
         log.info("Token disattivato: {}, rows: {}", token, updated);
+    }
+
+    /**
+     * Disattiva tutti i token (utile dopo cambio progetto Firebase)
+     */
+    @Transactional
+    public int deactivateAllTokens() {
+        int count = pushTokenRepository.deactivateAllTokens();
+        log.warn("Disattivati {} token in totale (cambio progetto Firebase?)", count);
+        return count;
     }
 
 
@@ -299,17 +310,22 @@ public class PushNotificationService {
         List<SendResponse> responses = response.getResponses();
         for (int i = 0; i < responses.size(); i++) {
             SendResponse sr = responses.get(i);
-            System.out.println("sr.getException() = " + sr.getException());
             if (!sr.isSuccessful() && sr.getException() != null) {
-                System.out.println("sr.getException().getMessagingErrorCode() = " + sr.getException().getMessagingErrorCode());
                 String errorCode = sr.getException().getMessagingErrorCode() != null
                         ? sr.getException().getMessagingErrorCode().name()
                         : "UNKNOWN";
+                
+                String errorMessage = sr.getException().getMessage();
+                String failedToken = tokens.get(i);
 
-                // Disattiva token non più validi
-                if ("INVALID_ARGUMENT".equals(errorCode) || "UNREGISTERED".equals(errorCode)) {
-                    String failedToken = tokens.get(i);
-                    log.warn("Token non valido, disattivo: {}", failedToken);
+                log.error("Token fallito [{}]: errorCode={}, message={}, token={}", 
+                        i, errorCode, errorMessage, failedToken.substring(0, Math.min(20, failedToken.length())) + "...");
+
+                // Disattiva token non più validi o con SenderId mismatch
+                if ("INVALID_ARGUMENT".equals(errorCode) || 
+                    "UNREGISTERED".equals(errorCode) ||
+                    (errorMessage != null && errorMessage.contains("SenderId mismatch"))) {
+                    log.warn("Disattivo token non valido (error: {}, message: {})", errorCode, errorMessage);
                     deactivateToken(failedToken);
                 }
             }
