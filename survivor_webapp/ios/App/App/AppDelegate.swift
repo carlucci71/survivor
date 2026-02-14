@@ -1,5 +1,7 @@
 import UIKit
 import Capacitor
+import FirebaseCore
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +9,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Initialize Firebase for push notifications
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        
         return true
     }
 
@@ -45,5 +50,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // tracking app url opens, make sure to keep this call
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
 
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
+        print("FCM Token: \(token)")
+        
+        // Save to UserDefaults
+        UserDefaults.standard.set(token, forKey: "FCMToken")
+        
+        // Also save to localStorage via JavaScript (safe after delay)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            if let vc = self.window?.rootViewController as? CAPBridgeViewController {
+                let js = "try { localStorage.setItem('FCMToken', '\(token)'); console.log('FCM token saved to localStorage'); } catch(e) { console.error('Error saving FCM token:', e); }"
+                vc.webView?.evaluateJavaScript(js, completionHandler: nil)
+            }
+        }
+    }
 }
