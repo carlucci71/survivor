@@ -35,7 +35,7 @@ public class PushController {
     private final NotificationService notificationService;
 
     /**
-     * Endpoint per registrare un token push dall'app mobile
+     * Endpoint per registrare un token push dall'app mobile 
      */
     @PostMapping("/register")
     public ResponseEntity<Void> registerToken(@RequestBody PushTokenDTO dto) {
