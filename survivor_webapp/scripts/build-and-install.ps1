@@ -32,7 +32,12 @@ Check-Command adb
 # are executed in the correct directory regardless of where this script is invoked.
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $projectRoot = Resolve-Path (Join-Path $scriptDir "..")
-$gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android\gradlew.bat"
+# Use correct gradle wrapper based on OS
+if ($IsMacOS -or $IsLinux) {
+    $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android/gradlew"
+} else {
+    $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android\gradlew.bat"
+}
 $locationPushed = $false
 Push-Location $projectRoot
 $locationPushed = $true
