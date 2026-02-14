@@ -299,7 +299,9 @@ public class PushNotificationService {
         List<SendResponse> responses = response.getResponses();
         for (int i = 0; i < responses.size(); i++) {
             SendResponse sr = responses.get(i);
+            System.out.println("sr.getException() = " + sr.getException());
             if (!sr.isSuccessful() && sr.getException() != null) {
+                System.out.println("sr.getException().getMessagingErrorCode() = " + sr.getException().getMessagingErrorCode());
                 String errorCode = sr.getException().getMessagingErrorCode() != null
                         ? sr.getException().getMessagingErrorCode().name()
                         : "UNKNOWN";
