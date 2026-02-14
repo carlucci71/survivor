@@ -92,7 +92,10 @@ public class PushNotificationService {
 
                 FirebaseApp app = FirebaseApp.initializeApp(options);
                 firebaseInitialized = true;
-                log.info("Firebase FCM inizializzato con successo per progetto: {}", 
+                log.info("Firebase FCM inizializzato con successo");
+                log.info("  - Project ID: {}", app.getOptions().getProjectId());
+                log.info("  - Service Account Email: {}", credentials.getAccount());
+                log.info("IMPORTANTE: Il client deve usare il google-services.json con project_id={}", 
                         app.getOptions().getProjectId());
             } else {
                 // Se già presente almeno un'app, consideriamo Firebase inizializzato
