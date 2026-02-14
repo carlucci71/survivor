@@ -122,5 +122,21 @@ public class PushController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * DELETE /push/tokens/all
+     * ADMIN: Disattiva tutti i token FCM (da usare dopo cambio progetto Firebase)
+     */
+    @DeleteMapping("/tokens/all")
+    public ResponseEntity<String> deactivateAllTokens() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        log.warn("ADMIN: Richiesta disattivazione tutti i token da user {}", userId);
+        
+        int count = pushNotificationService.deactivateAllTokens();
+        
+        return ResponseEntity.ok(String.format("Disattivati %d token", count));
+    }
+
 
 }

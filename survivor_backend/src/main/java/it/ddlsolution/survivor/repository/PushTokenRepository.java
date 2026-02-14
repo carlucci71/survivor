@@ -26,4 +26,8 @@ public interface PushTokenRepository extends JpaRepository<PushToken, Long> {
     @Modifying
     @Query("UPDATE PushToken pt SET pt.active = false WHERE pt.user.id = :userId")
     int deactivateAllByUserId(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE PushToken pt SET pt.active = false WHERE pt.active = true")
+    int deactivateAllTokens();
 }
