@@ -67,11 +67,12 @@ extension AppDelegate: MessagingDelegate {
         guard let token = fcmToken else { return }
         print("FCM Token: \(token)")
         
-        // Save to UserDefaults
+        // Save to UserDefaults immediately
         UserDefaults.standard.set(token, forKey: "FCMToken")
+        UserDefaults.standard.synchronize()
         
-        // Also save to localStorage via JavaScript (safe after delay)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+        // Also save to localStorage via JavaScript (without delay - execute immediately when webview is ready)
+        DispatchQueue.main.async {
             if let vc = self.window?.rootViewController as? CAPBridgeViewController {
                 let js = "try { localStorage.setItem('FCMToken', '\(token)'); console.log('FCM token saved to localStorage'); } catch(e) { console.error('Error saving FCM token:', e); }"
                 vc.webView?.evaluateJavaScript(js, completionHandler: nil)
