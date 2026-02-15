@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -11,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Component
+@Slf4j
 public class SignedTokenGenerator {
     private SecureRandom secureRandom = new SecureRandom();
     private SecretKey secretKey;
@@ -41,8 +43,12 @@ public class SignedTokenGenerator {
     public boolean verifyAndExtract(String token) {
         try {
             // split limitato a 3 per preservare eventuali punti in addInfo
+            log.info("verifico token {}", token);
             String[] parts = token.split("\\.", 3);
-            if (parts.length != 3) return false;
+            if (parts.length != 3){
+                log.info("Il token non ha 3 parti ma {}", parts.length);
+                return false;
+            }
 
             String payload = parts[0] + "." + parts[1];
             String receivedSignature = parts[2];
@@ -54,6 +60,7 @@ public class SignedTokenGenerator {
 
             return expectedSignaturePart.equals(receivedSignature);
         } catch (Exception e) {
+            log.error("Errore: ",e);
             throw new RuntimeException(e);
         }
     }
