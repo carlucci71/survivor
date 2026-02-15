@@ -118,17 +118,28 @@ public class PushNotificationService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato: " + userId));
 
-
             int tokenDeactivate = pushTokenRepository.dectivateTokenOfPlatformAndUserAndDeviceId(platform, user, deviceId);
             log.info("Ho disabilitato {} token per {} {} {}", tokenDeactivate, platform, user.getEmail(), deviceId);
 
-            PushToken newToken = new PushToken();
-            newToken.setToken(token);
-            newToken.setPlatform(platform);
-            newToken.setUser(user);
-            newToken.setDeviceId(deviceId);
-            newToken.setActive(true);
-            pushTokenRepository.save(newToken);
+            Optional<PushToken> existing = pushTokenRepository.findByTokenAndUser_Id(token, userId);
+
+            if (existing.isPresent()) {
+                PushToken pushToken = existing.get();
+                pushToken.setLastUsedAt(LocalDateTime.now());
+                pushToken.setActive(true);
+                pushTokenRepository.save(pushToken);
+                log.info("Token push aggiornato per user {}", userId);
+            } else {
+                PushToken newToken = new PushToken();
+                newToken.setToken(token);
+                newToken.setPlatform(platform);
+                newToken.setUser(user);
+                newToken.setDeviceId(deviceId);
+                newToken.setActive(true);
+                pushTokenRepository.save(newToken);
+                log.info("Nuovo token push registrato per user {}", userId);
+            }
+
             log.info("Nuovo token push registrato {} {} {}", platform, user.getEmail(), deviceId);
 
             log.info("******************** REGISTER OK");
