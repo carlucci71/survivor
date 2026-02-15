@@ -1124,7 +1124,8 @@ export class ChiSiamoDialogComponent implements OnInit{
 
   closeDialog() { this.dialog.closeAll(); }
   loadStaticHtmlFromAssets(): void {
-    const path = 'assets/build_fe.html';
+    const timestamp = new Date().getTime();
+    const path = `assets/build_fe.html?t=${timestamp}`;
 
     // Fetch the file as text. Some dev servers return `index.html` for unknown assets
     // (status 200) — detect that fallback by checking for HTML doctype/root and
