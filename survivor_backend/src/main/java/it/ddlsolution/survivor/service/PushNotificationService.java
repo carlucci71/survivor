@@ -95,7 +95,7 @@ public class PushNotificationService {
                 log.info("Firebase FCM inizializzato con successo");
                 log.info("  - Project ID: {}", app.getOptions().getProjectId());
 //                log.info("  - Service Account Email: {}", credentials.get
-                log.info("IMPORTANTE: Il client deve usare il google-services.json con project_id={}", 
+                log.info("IMPORTANTE: Il client deve usare il google-services.json con project_id={}",
                         app.getOptions().getProjectId());
             } else {
                 // Se già presente almeno un'app, consideriamo Firebase inizializzato
@@ -118,28 +118,19 @@ public class PushNotificationService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato: " + userId));
 
-            Optional<PushToken> existing = pushTokenRepository.findByTokenAndUser_Id(token, userId);
 
-            if (existing.isPresent()) {
-                PushToken pushToken = existing.get();
-                pushToken.setLastUsedAt(LocalDateTime.now());
-                pushToken.setActive(true);
-                pushToken.setPlatform(platform);
-                if (deviceId != null) {
-                    pushToken.setDeviceId(deviceId);
-                }
-                pushTokenRepository.save(pushToken);
-                log.info("Token push aggiornato per user {}", userId);
-            } else {
-                PushToken newToken = new PushToken();
-                newToken.setToken(token);
-                newToken.setPlatform(platform);
-                newToken.setUser(user);
-                newToken.setDeviceId(deviceId);
-                newToken.setActive(true);
-                pushTokenRepository.save(newToken);
-                log.info("Nuovo token push registrato per user {}", userId);
-            }
+            int tokenDeactivate = pushTokenRepository.dectivateTokenOfPlatformAndUserAndDeviceId(platform, user, deviceId);
+            log.info("Ho disabilitato {} token per {} {} {}", tokenDeactivate, platform, user.getEmail(), deviceId);
+
+            PushToken newToken = new PushToken();
+            newToken.setToken(token);
+            newToken.setPlatform(platform);
+            newToken.setUser(user);
+            newToken.setDeviceId(deviceId);
+            newToken.setActive(true);
+            pushTokenRepository.save(newToken);
+            log.info("Nuovo token push registrato {} {} {}", platform, user.getEmail(), deviceId);
+
             log.info("******************** REGISTER OK");
         } catch (Exception e) {
             log.error("******************** REGISTER ERROR", e);
@@ -320,17 +311,17 @@ public class PushNotificationService {
                 String errorCode = sr.getException().getMessagingErrorCode() != null
                         ? sr.getException().getMessagingErrorCode().name()
                         : "UNKNOWN";
-                
+
                 String errorMessage = sr.getException().getMessage();
                 String failedToken = tokens.get(i);
 
-                log.error("Token fallito [{}]: errorCode={}, message={}, token={}", 
+                log.error("Token fallito [{}]: errorCode={}, message={}, token={}",
                         i, errorCode, errorMessage, failedToken.substring(0, Math.min(20, failedToken.length())) + "...");
 
                 // Disattiva token non più validi o con SenderId mismatch
-                if ("INVALID_ARGUMENT".equals(errorCode) || 
-                    "UNREGISTERED".equals(errorCode) ||
-                    (errorMessage != null && errorMessage.contains("SenderId mismatch"))) {
+                if ("INVALID_ARGUMENT".equals(errorCode) ||
+                        "UNREGISTERED".equals(errorCode) ||
+                        (errorMessage != null && errorMessage.contains("SenderId mismatch"))) {
                     log.warn("Disattivo token non valido (error: {}, message: {})", errorCode, errorMessage);
                     deactivateToken(failedToken);
                 }
