@@ -284,7 +284,10 @@ public class PushNotificationService {
             ApnsConfig apnsConfig = ApnsConfig.builder()
                     .setAps(Aps.builder()
                             .setSound(dto.getSound() != null ? dto.getSound() : "default")
+                            .setContentAvailable(true)
                             .build())
+                    .putHeader("apns-priority", "10")
+                    .putHeader("apns-push-type", "alert")
                     .build();
 
             MulticastMessage message = MulticastMessage.builder()
