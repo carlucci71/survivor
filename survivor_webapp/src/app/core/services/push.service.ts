@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Capacitor } from '@capacitor/core';
+import { Device } from '@capacitor/device';
 import {
   ActionPerformed,
   PushNotificationSchema,
@@ -190,9 +191,13 @@ export class PushService {
 
     this.lastRegisteredToken = token;
 
+    // Ottieni il device ID
+    const deviceInfo = await Device.getId();
+    
     const payload = {
       token,
       platform: Capacitor.getPlatform(),
+      deviceId: deviceInfo.identifier,
     };
 
     const url = `${environment.apiUrl}/push/register`;

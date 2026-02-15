@@ -178,7 +178,7 @@ public class PushNotificationService {
             log.warn("Nessun token attivo per users {}", userIds);
             return;
         }
-        log.info("****************************************** TOKEN -> " + tokens.get(0).getUser().getEmail());
+        log.info("****************************************** PRIMO TOKEN -> {}  SIZE {}", tokens.get(0), tokens.size());
         sendToTokens(tokens, pushNotificationDTO);
     }
 
