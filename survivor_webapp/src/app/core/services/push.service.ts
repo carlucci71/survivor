@@ -148,6 +148,21 @@ export class PushService {
     });
   }
 
+  /**
+   * Get Persistent Device ID from iOS UserDefaults (set by AppDelegate at startup)
+   */
+  private async getPersistentDeviceIdFromNative(): Promise<string | null> {
+    return new Promise((resolve) => {
+      if (Capacitor.getPlatform() !== 'ios') {
+        resolve(null);
+        return;
+      }
+      
+      const stored = localStorage.getItem('PersistentDeviceId');
+      resolve(stored);
+    });
+  }
+
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('Push notification token registrato:', token.value);
@@ -176,10 +191,12 @@ export class PushService {
 
     // On iOS, check for FCM token in UserDefaults after app loads
     if (Capacitor.getPlatform() === 'ios') {
-      // Aspetta 5 secondi per dare tempo a Firebase di generare e salvare il token
+      // Aspetta 6 secondi per dare tempo a:
+      // 1. Firebase di generare e salvare il token FCM
+      // 2. AppDelegate di salvare il Persistent Device ID
       setTimeout(() => {
         this.checkFCMTokenFromUserDefaults();
-      }, 5000);
+      }, 6000);
     }
 
     PushNotifications.addListener('registrationError', (error: any) => {
@@ -202,17 +219,40 @@ export class PushService {
 
     this.lastRegisteredToken = token;
 
-    // Ottieni il device ID
-    const deviceInfo = await Device.getId();
+    // Ottieni il device ID (persistente su iOS via Keychain/UserDefaults)
+    const platform = Capacitor.getPlatform();
+    let deviceId: string;
+    
+    if (platform === 'ios') {
+      // Su iOS prova a leggere il device ID persistente da UserDefaults
+      const persistentId = await this.getPersistentDeviceIdFromNative();
+      
+      if (persistentId) {
+        deviceId = persistentId;
+        console.log('✅ Usando Persistent Device ID:', deviceId);
+      } else {
+        console.warn('⚠️ Persistent Device ID non ancora disponibile, uso fallback');
+        const deviceInfo = await Device.getId();
+        deviceId = deviceInfo.identifier;
+      }
+    } else {
+      // Su Android usa il device ID standard
+      const deviceInfo = await Device.getId();
+      deviceId = deviceInfo.identifier;
+    }
     
     const payload = {
       token,
-      platform: Capacitor.getPlatform(),
-      deviceId: deviceInfo.identifier,
+      platform,
+      deviceId,
     };
 
     const url = `${environment.apiUrl}/push/register`;
-    console.log('Invio token push al backend:', url, payload);
+    console.log('📤 Invio token push al backend:', {
+      platform: payload.platform,
+      deviceId: payload.deviceId,
+      tokenPrefix: token.substring(0, 20) + '...'
+    });
 
     try {
       await firstValueFrom(this.http.post(url, payload));
