@@ -2,7 +2,7 @@
   <h2>Completa l'accesso</h2>
   <div style="display:flex; gap:12px; margin-top:12px; flex-wrap: wrap;">
     <button mat-raised-button color="primary" (click)="openApp()">Apri app</button>
-    <a mat-stroked-button [routerLink]="['/auth/verify']" [queryParams]="{ token: token, codiceTipoMagicLink: codiceTipoMagicLink }">
+    <a mat-stroked-button (click)="continuaNelBrowser()">
       Continua nel browser
     </a>
   </div>
