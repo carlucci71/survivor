@@ -14,17 +14,19 @@ export class MagicRedirectComponent implements OnInit {
   survivorUrl = '';
   token = '';
   codiceTipoMagicLink = '';
+  sourceMobile = false;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') || '';
     this.codiceTipoMagicLink = this.route.snapshot.queryParamMap.get('codiceTipoMagicLink') || '';
+    this.sourceMobile = this.route.snapshot.queryParamMap.get('sourceMobile') === 'true';
     this.survivorUrl = `survivor://auth/verify?token=${encodeURIComponent(this.token)}&codiceTipoMagicLink=${encodeURIComponent(this.codiceTipoMagicLink)}`;
 
-    /*
-    // Try to open the app; if it fails, fall back to the web verify page
+    if (this.sourceMobile){
     this.openApp();
+    /*
     setTimeout(() => {
       this.router.navigate(['/auth/verify'], {
         queryParams: {
@@ -32,9 +34,11 @@ export class MagicRedirectComponent implements OnInit {
           codiceTipoMagicLink: this.codiceTipoMagicLink
         }
       });
-    }, 1200);
+    }, 4000);
     */
   }
+    }
+
 
   openApp(): void {
     window.location.href = this.survivorUrl;
