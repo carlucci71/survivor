@@ -53,6 +53,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
+        
+        // Log APNs token in hex format for Apple Push Notification Console
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let tokenString = tokenParts.joined()
+        print("🍎 APNs Device Token (HEX per Apple Console): \(tokenString)")
     }
 
 }
