@@ -116,9 +116,12 @@ export class PushService {
         
         const authService = this.injector.get(AuthService);
         if (authService?.getCurrentUser()) {
-          void this.sendTokenToBackend(token).catch(error =>
-            console.warn('Errore invio FCM token da UserDefaults:', error)
-          );
+          await this.sendTokenToBackend(token);
+          
+          // Cancella il token da localStorage dopo averlo inviato con successo
+          // così alla prossima apertura Firebase fornirà il token aggiornato
+          localStorage.removeItem('FCMToken');
+          console.log('✓ Token FCM inviato e rimosso da localStorage');
         }
       }
     } catch (err) {
@@ -173,9 +176,10 @@ export class PushService {
 
     // On iOS, check for FCM token in UserDefaults after app loads
     if (Capacitor.getPlatform() === 'ios') {
+      // Aspetta 5 secondi per dare tempo a Firebase di generare e salvare il token
       setTimeout(() => {
         this.checkFCMTokenFromUserDefaults();
-      }, 3000);
+      }, 5000);
     }
 
     PushNotifications.addListener('registrationError', (error: any) => {
