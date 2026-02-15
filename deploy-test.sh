@@ -1,6 +1,6 @@
 #!/bin/bash
 echo $(TZ='Europe/Rome' date '+%d/%m/%Y %H:%M') > survivor_webapp/src/assets/build_fe.html
-     
+        
 echo "🔄 Deploy Test Survivor App"
 
 # Carica variabili ambiente
