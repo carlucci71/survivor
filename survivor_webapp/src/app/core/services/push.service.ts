@@ -112,7 +112,7 @@ export class PushService {
       const token = await this.getFCMTokenFromNative();
       
       if (token && token !== this.lastRegisteredToken) {
-        console.log('FCM token recuperato da UserDefaults iOS:', token);
+        console.log('🔥 FCM Token iOS (salvato nel DB):', token);
         
         const authService = this.injector.get(AuthService);
         if (authService?.getCurrentUser()) {
@@ -148,6 +148,13 @@ export class PushService {
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
       console.log('Push notification token registrato:', token.value);
+      
+      const platform = Capacitor.getPlatform();
+      
+      // Su iOS, questo è il token APNs (per console Apple)
+      if (platform === 'ios') {
+        console.log('🍎 APNs Device Token (per Apple Push Console):', token.value);
+      }
 
       // Invia il token solo se l'utente è già autenticato
       try {
