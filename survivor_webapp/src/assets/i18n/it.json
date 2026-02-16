@@ -54,6 +54,12 @@
     "NICKNAME": "Nickname:",
     "FAVORITE_TEAM": "Squadra del cuore:",
     "FAVORITE_TEAMS": "I tuoi preferiti:",
+    "ONE_PER_SPORT_HINT": "Indica la tua squadra di calcio, la tua squadra di basket e, se vuoi, il tuo tennista preferito. Queste informazioni sono opzionali.",
+    "SELECTED": "Selezionata",
+    "CHANGE_TEAM": "Cambia squadra",
+    "SOCCER_FAVORITE": "Squadra del cuore - Calcio",
+    "BASKET_FAVORITE": "Squadra del cuore - Basket",
+    "TENNIS_FAVORITE": "Giocatore del cuore - Tennis",
     "SEARCH_TEAM": "Cerca la tua squadra...",
     "SEARCH_SOCCER_TEAM": "Digita almeno 3 lettere...",
     "SEARCH_BASKET_TEAM": "Digita almeno 3 lettere...",
@@ -88,6 +94,10 @@
     "NO_TROPHIES_SUBTITLE": "Continua a giocare e sarai tu il prossimo campione!",
     "SEASON": "Stagione",
     "FIRST_PLACE": "1° Classificato",
+    "WINNER": "Vincitore",
+    "SECOND_PLACE": "Secondo Posto",
+    "THIRD_PLACE": "Terzo Posto",
+    "NTH_PLACE": "{{position}}° Posto",
     "ROUNDS_SURVIVED": "Giornate Sopravvissute",
     "FINAL_TEAM": "Squadra Finale",
     "YOUR_STATS": "LE TUE STATISTICHE",
@@ -236,9 +246,7 @@
     "TERMS_10_TITLE": "10. Legge applicabile e foro competente",
     "TERMS_10_TEXT": "I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.",
     "TERMS_11_TITLE": "11. Contatti",
-    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE"
+    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:"
   },
   "FAQ": {
     "TITLE": "FAQ - Domande Frequenti",
@@ -449,7 +457,8 @@
     "SEND_INVITES": "Invia Inviti",
     "COPY_LINK": "Copia link",
     "COPIED": "Copiato!",
-    "REFRESH": "Aggiorna"
+    "REFRESH": "Aggiorna",
+    "BACK_HOME": "Torna alla Home"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Servizio non disponibile",

@@ -197,6 +197,13 @@
                 </div>
               </div>
             </mat-card-content>
+
+            <!-- BACK TO HOME BUTTON: aggiunto per permettere all'utente di tornare alla homepage dopo la creazione -->
+            <div class="confirmation-actions">
+              <button mat-raised-button class="back-home-btn" (click)="goBack()">
+                {{ 'COMMON.BACK_HOME' | translate }}
+              </button>
+            </div>
           </mat-card>
         </div>
       </mat-card-content>

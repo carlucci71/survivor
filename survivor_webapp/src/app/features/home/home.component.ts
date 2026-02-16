@@ -274,6 +274,11 @@ export class HomeComponent implements OnInit, OnDestroy {
             .localeCompare((b.edizione || '').toString())
         ),
       };
+    }).sort((a, b) => {
+      // Ordina i gruppi per ID massimo (lega più recente di ogni gruppo) in ordine discendente
+      const maxIdA = Math.max(...a.edizioni.map(e => e.id || 0));
+      const maxIdB = Math.max(...b.edizioni.map(e => e.id || 0));
+      return maxIdB - maxIdA;
     });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
   }
