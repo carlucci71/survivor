@@ -236,9 +236,7 @@
     "TERMS_10_TITLE": "10. Applicable Law and Competent Forum",
     "TERMS_10_TEXT": "These Terms and Conditions are governed by Italian law. For any dispute, the court of the place of residence or headquarters of the manager has exclusive jurisdiction.",
     "TERMS_11_TITLE": "11. Contact",
-    "TERMS_11_TEXT": "For information or requests, you can contact the manager at the email address:",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE"
+    "TERMS_11_TEXT": "For information or requests, you can contact the manager at the email address:"
   },
   "LEAGUE": {
     "LEAGUE_DETAILS": "League details",
@@ -353,7 +351,8 @@
     "SEND_INVITES": "Send Invites",
     "COPY_LINK": "Copy link",
     "COPIED": "Copied!",
-    "REFRESH": "Refresh"
+    "REFRESH": "Refresh",
+    "BACK_HOME": "Back to Home"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Service Unavailable",

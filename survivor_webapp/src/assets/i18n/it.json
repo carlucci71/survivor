@@ -236,9 +236,7 @@
     "TERMS_10_TITLE": "10. Legge applicabile e foro competente",
     "TERMS_10_TEXT": "I presenti Termini e Condizioni sono regolati dalla legge italiana. Per ogni controversia è competente in via esclusiva il foro del luogo di residenza o sede del gestore.",
     "TERMS_11_TITLE": "11. Contatti",
-    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE"
+    "TERMS_11_TEXT": "Per informazioni o richieste è possibile contattare il gestore all'indirizzo email:"
   },
   "FAQ": {
     "TITLE": "FAQ - Domande Frequenti",
@@ -449,7 +447,8 @@
     "SEND_INVITES": "Invia Inviti",
     "COPY_LINK": "Copia link",
     "COPIED": "Copiato!",
-    "REFRESH": "Aggiorna"
+    "REFRESH": "Aggiorna",
+    "BACK_HOME": "Torna alla Home"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Servizio non disponibile",
