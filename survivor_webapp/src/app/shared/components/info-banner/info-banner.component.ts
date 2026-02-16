@@ -1224,9 +1224,12 @@ export class AlboOroDialogComponent implements OnInit {
         </div>
 
         <div class="info-row" style="overflow: visible !important;">
-          <div class="label">{{ 'PROFILE.FAVORITE_TEAMS' | translate }}</div>
+          <div class="label">
+            {{ 'PROFILE.FAVORITE_TEAMS' | translate }}
+            <span class="info-hint">{{ 'PROFILE.ONE_PER_SPORT_HINT' | translate }}</span>
+          </div>
           <div class="value" style="overflow: visible !important;">
-            <!-- SPORT SELECTOR MODERNO CON SLIDER -->
+            <!-- SPORT SELECTOR MODERNO CON SLIDER E BADGE -->
             <div class="sport-selector-modern">
               <div class="selector-background">
                 <div class="selector-slider"
@@ -1237,28 +1240,49 @@ export class AlboOroDialogComponent implements OnInit {
               <button type="button"
                 class="sport-option"
                 [class.active]="selectedSport === 'calcio'"
+                [class.has-selection]="userProfile.squadraCalcio"
                 (click)="selectSport('calcio')">
                 <span class="sport-emoji">⚽</span>
                 <span class="sport-label">{{ 'COMMON.SOCCER' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.squadraCalcio">✓</span>
               </button>
               <button type="button"
                 class="sport-option"
                 [class.active]="selectedSport === 'basket'"
+                [class.has-selection]="userProfile.squadraBasket"
                 (click)="selectSport('basket')">
                 <span class="sport-emoji">🏀</span>
                 <span class="sport-label">{{ 'COMMON.BASKETBALL' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.squadraBasket">✓</span>
               </button>
               <button type="button"
                 class="sport-option"
                 [class.active]="selectedSport === 'tennis'"
+                [class.has-selection]="userProfile.tennista"
                 (click)="selectSport('tennis')">
                 <span class="sport-emoji">🎾</span>
                 <span class="sport-label">{{ 'COMMON.TENNIS' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.tennista">✓</span>
               </button>
             </div>
 
+            <!-- PREVIEW SQUADRA SELEZIONATA -->
+            <div class="selected-team-preview" *ngIf="getCurrentSelectedTeam()">
+              <div class="preview-header">
+                <span class="preview-label">{{ 'PROFILE.SELECTED' | translate }}:</span>
+                <button type="button" class="clear-btn" (click)="clearCurrentSelection()" title="{{ 'PROFILE.CHANGE_TEAM' | translate }}">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+              <div class="preview-team">
+                <span class="sport-icon-small">{{getSportEmoji()}}</span>
+                <span class="team-name-large">{{getCurrentSelectedTeam()}}</span>
+              </div>
+            </div>
+
             <!-- AUTOCOMPLETE DINAMICO PER LO SPORT SELEZIONATO -->
-            <div class="autocomplete-container">
+            <div class="autocomplete-container" [class.hidden]="getCurrentSelectedTeam()">
+              <div class="input-label">{{ getInputLabel() }}</div>
               <input type="text"
                 [placeholder]="getPlaceholder()"
                 [(ngModel)]="currentInput"
@@ -1606,6 +1630,39 @@ export class AlboOroDialogComponent implements OnInit {
             font-weight: 700;
           }
         }
+
+        &.has-selection {
+          background: rgba(79, 195, 247, 0.08);
+        }
+
+        .selection-badge {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          background: linear-gradient(135deg, #10B981, #34D399);
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 700;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+          animation: fadeInScale 0.3s ease;
+        }
+      }
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
       }
     }
 
@@ -1615,6 +1672,110 @@ export class AlboOroDialogComponent implements OnInit {
       }
       50% {
         transform: scale(1.25);
+      }
+    }
+
+    /* INFO HINT */
+    .info-hint {
+      display: block;
+      font-size: 0.75rem;
+      color: #64748B;
+      font-weight: 400;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* SELECTED TEAM PREVIEW */
+    .selected-team-preview {
+      background: linear-gradient(135deg, rgba(79, 195, 247, 0.08), rgba(10, 61, 145, 0.05));
+      border: 2px solid rgba(79, 195, 247, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      animation: slideIn 0.3s ease;
+
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .preview-label {
+          font-size: 0.75rem;
+          color: #64748B;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .clear-btn {
+          background: transparent;
+          border: 1px solid rgba(10, 61, 145, 0.2);
+          border-radius: 6px;
+          padding: 4px 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #0A3D91;
+          font-size: 0.75rem;
+          transition: all 0.2s ease;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+
+          &:hover {
+            background: rgba(10, 61, 145, 0.08);
+            border-color: #0A3D91;
+            transform: translateY(-1px);
+          }
+        }
+      }
+
+      .preview-team {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .sport-icon-small {
+          font-size: 1.5rem;
+        }
+
+        .team-name-large {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #0A3D91;
+        }
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* INPUT LABEL */
+    .input-label {
+      font-size: 0.8rem;
+      color: #0A3D91;
+      font-weight: 600;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* AUTOCOMPLETE CONTAINER */
+    .autocomplete-container {
+      &.hidden {
+        display: none;
       }
     }
 
@@ -2299,6 +2460,39 @@ export class ProfiloDialogComponent implements OnInit {
 
     this.showSuggestions = false;
     this.filteredSquadre = [];
+  }
+
+  getCurrentSelectedTeam(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.userProfile.squadraCalcio;
+    } else if (this.selectedSport === 'basket') {
+      return this.userProfile.squadraBasket;
+    } else {
+      return this.userProfile.tennista;
+    }
+  }
+
+  clearCurrentSelection(): void {
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = '';
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = '';
+    } else {
+      this.userProfile.tennista = '';
+    }
+    this.currentInput = '';
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+  }
+
+  getInputLabel(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.translate.instant('PROFILE.SOCCER_FAVORITE');
+    } else if (this.selectedSport === 'basket') {
+      return this.translate.instant('PROFILE.BASKET_FAVORITE');
+    } else {
+      return this.translate.instant('PROFILE.TENNIS_FAVORITE');
+    }
   }
 
 

@@ -1,0 +1,18 @@
+su xcode product/clean build folder
+/Users/bebocar/github/survivor/survivor_webapp/ios/App
+pod deintegrate
+pod install
+
+
+Seleziona Any iOS Device (arm64) come target (non simulatore). 
+Vai su Product > Archive e attendi il completamento: 
+Xcode aprirà l'Organizer con l'archive nuovo.
+Se hai errori di signing, controlla Signing & Capabilities nel target: abilita 
+Automatic Signing e verifica il Team.
+
+Nell'Organizer, seleziona l'archive, clicca Distribute App. 
+Scegli App Store Connect > Upload, conferma e invia: attende "Processing" (pochi minuti).
+
+Vai su App Store Connect > La tua app > TestFlight: la build appare. 
+Assegna a Internal Testing (per colleghi nel team) o External.
+

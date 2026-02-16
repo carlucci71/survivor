@@ -54,6 +54,12 @@
     "NICKNAME": "Nickname:",
     "FAVORITE_TEAM": "Favorite Team:",
     "FAVORITE_TEAMS": "Your Favorites:",
+    "ONE_PER_SPORT_HINT": "Indicate your soccer team, your basketball team and, if you want, your favorite tennis player. This information is optional.",
+    "SELECTED": "Selected",
+    "CHANGE_TEAM": "Change team",
+    "SOCCER_FAVORITE": "Favorite Team - Soccer",
+    "BASKET_FAVORITE": "Favorite Team - Basketball",
+    "TENNIS_FAVORITE": "Favorite Player - Tennis",
     "SEARCH_TEAM": "Search your team...",
     "SEARCH_SOCCER_TEAM": "Type at least 3 letters...",
     "SEARCH_BASKET_TEAM": "Type at least 3 letters...",
@@ -88,6 +94,10 @@
     "NO_TROPHIES_SUBTITLE": "Keep playing and you'll be the next champion!",
     "SEASON": "Season",
     "FIRST_PLACE": "1st Place",
+    "WINNER": "Winner",
+    "SECOND_PLACE": "Second Place",
+    "THIRD_PLACE": "Third Place",
+    "NTH_PLACE": "{{position}}th Place",
     "ROUNDS_SURVIVED": "Rounds Survived",
     "FINAL_TEAM": "Final Team",
     "YOUR_STATS": "YOUR STATISTICS",
@@ -236,9 +246,7 @@
     "TERMS_10_TITLE": "10. Applicable Law and Competent Forum",
     "TERMS_10_TEXT": "These Terms and Conditions are governed by Italian law. For any dispute, the court of the place of residence or headquarters of the manager has exclusive jurisdiction.",
     "TERMS_11_TITLE": "11. Contact",
-    "TERMS_11_TEXT": "For information or requests, you can contact the manager at the email address:",
-    "BUILD_FE": "Build FE",
-    "BUILD_BE": "Build BE"
+    "TERMS_11_TEXT": "For information or requests, you can contact the manager at the email address:"
   },
   "LEAGUE": {
     "LEAGUE_DETAILS": "League details",
@@ -353,7 +361,8 @@
     "SEND_INVITES": "Send Invites",
     "COPY_LINK": "Copy link",
     "COPIED": "Copied!",
-    "REFRESH": "Refresh"
+    "REFRESH": "Refresh",
+    "BACK_HOME": "Back to Home"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Service Unavailable",

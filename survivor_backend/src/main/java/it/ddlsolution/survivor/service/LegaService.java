@@ -80,6 +80,7 @@ public class LegaService {
         List<Lega> leghe = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId);
         return leghe
                 .stream()
+                .sorted((l1, l2) -> Long.compare(l2.getId(), l1.getId())) // Ordina per ID discendente (più recenti prima)
                 .map(lega -> getLegaDTO(lega.getId(), false, userId))
                 .toList();
     }

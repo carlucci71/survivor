@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { StatisticheTrofei, Trofeo } from '../models/trofei.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,10 @@ import { StatisticheTrofei, Trofeo } from '../models/trofei.model';
 export class TrofeiService {
   private apiUrl = `${environment.apiUrl}/trofei`;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private translate: TranslateService
+  ) {}
 
   /**
    * Ottiene le statistiche complete dei trofei dell'utente loggato
@@ -57,10 +61,10 @@ export class TrofeiService {
    */
   getPosizioneLabel(posizione: number): string {
     switch (posizione) {
-      case 1: return 'Vincitore';
-      case 2: return 'Secondo Posto';
-      case 3: return 'Terzo Posto';
-      default: return `${posizione}° Posto`;
+      case 1: return this.translate.instant('TROPHIES.WINNER');
+      case 2: return this.translate.instant('TROPHIES.SECOND_PLACE');
+      case 3: return this.translate.instant('TROPHIES.THIRD_PLACE');
+      default: return this.translate.instant('TROPHIES.NTH_PLACE', { position: posizione });
     }
   }
 }
