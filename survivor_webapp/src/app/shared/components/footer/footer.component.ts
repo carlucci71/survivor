@@ -10,6 +10,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
 
 // DIALOG CONTATTI
 @Component({
@@ -412,6 +413,7 @@ export class TerminiDialogComponent {
           <p>{{ 'PRIVACY.SECTION_12_P2' | translate }}</p>
         </div>
       </div>
+    </div>
   `,
   styles: [`
     .modal-container {
@@ -1109,10 +1111,11 @@ export class PrivacyDialogComponent {
 export class ChiSiamoDialogComponent implements OnInit{
   externalHtml: SafeHtml | null = null;
   versioneBEHtml: SafeHtml | null = null;
-  constructor(private dialog: MatDialog,
+  constructor(
+    private dialog: MatDialog,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
-
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -1170,12 +1173,7 @@ export class ChiSiamoDialogComponent implements OnInit{
 
   openPrivacy(event: Event) {
     event.preventDefault();
-    this.dialog.open(PrivacyDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
+    this.router.navigate(['/privacy']);
   }
 
   openChiSiamo(event: Event) {
@@ -1484,12 +1482,13 @@ export class ChiSiamoDialogComponent implements OnInit{
   `]
 })
 export class FooterComponent  {
-  currentLang: string = 'it';
+  currentLang: string;
   currentYear: number = new Date().getFullYear();
 
   constructor(
     private dialog: MatDialog,
     private languageService: LanguageService,
+    private router: Router
   ) {
     this.currentLang = this.languageService.getCurrentLanguage();
     this.languageService.currentLang$.subscribe(lang => {
@@ -1542,12 +1541,7 @@ export class FooterComponent  {
 
   openPrivacy(event: Event) {
     event.preventDefault();
-    this.dialog.open(PrivacyDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
+    this.router.navigate(['/privacy']);
   }
 
   openChiSiamo(event: Event) {

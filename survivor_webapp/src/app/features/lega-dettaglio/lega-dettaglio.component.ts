@@ -121,6 +121,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'all';
   expandedPlayers: { [key: number]: boolean } = {};
 
+  // Storico completo giocate per giocatore
+  showFullHistoryFor: { [key: number]: boolean } = {};
+  MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -410,6 +414,53 @@ export class LegaDettaglioComponent implements OnDestroy {
           },
         });
     }
+  }
+
+  /**
+   * Restituisce le giornate visibili per un giocatore (limitate o complete)
+   */
+  getVisibleGiornateForPlayer(giocatore: Giocatore): number[] {
+    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+
+    // Se lo storico completo è attivo per questo giocatore, mostra tutto
+    if (this.showFullHistoryFor[giocatore.id]) {
+      return this.giornataIndices;
+    }
+
+    // Altrimenti mostra solo le ultime N giornate
+    const totalRounds = this.giornataIndices.length;
+    if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
+      return this.giornataIndices;
+    }
+
+    // Prendi le ultime MAX_VISIBLE_ROUNDS giornate
+    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+  }
+
+  /**
+   * Verifica se il giocatore ha più giocate del limite visibile
+   */
+  hasMoreRounds(giocatore: Giocatore): boolean {
+    if (!giocatore?.giocate || !this.giornataIndices) return false;
+    return this.giornataIndices.length > this.MAX_VISIBLE_ROUNDS;
+  }
+
+  /**
+   * Conta il numero totale di giocate del giocatore
+   */
+  getTotalRoundsCount(giocatore: Giocatore): number {
+    if (!giocatore?.giocate) return 0;
+    return giocatore.giocate.length;
+  }
+
+  /**
+   * Toggle dello storico completo per un giocatore
+   */
+  toggleFullHistory(giocatore: Giocatore, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showFullHistoryFor[giocatore.id] = !this.showFullHistoryFor[giocatore.id];
   }
 
   /**

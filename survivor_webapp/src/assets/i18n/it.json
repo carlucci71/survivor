@@ -369,6 +369,8 @@
     "PLAY_NOW": "Gioca Ora",
     "PLAY_FOR_USER": "Gioca per questo utente",
     "FORCED_BY_LEADER": "Giocata forzata dal leader/admin",
+    "SHOW_FULL_HISTORY": "Visualizza storico completo",
+    "HIDE_HISTORY": "Nascondi storico",
     "VIEW_REMAINING_TEAMS": "Squadre disponibili",
     "REMAINING_TEAMS": "Squadre Disponibili",
     "PLAYER": "Giocatore",
