@@ -50,5 +50,28 @@ bootstrapApplication(AppComponent, appConfig)
         console.error('Failed to handle deep link', e);
       }
     });
+    // iOS webview sometimes calculates layout wrong on first load.
+    // Trigger a resize and update a CSS --vh variable shortly after startup
+    // to force the webview to recalculate layout (fixes initial wrong resolution).
+    try {
+      setTimeout(() => {
+        // update CSS viewport-height variable used by some layouts
+        try {
+          const appHeight = () => {
+            const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            document.documentElement.style.setProperty('--app-height', height + 'px');
+          };
+          appHeight();
+          window.addEventListener('resize', appHeight);
+          window.addEventListener('orientationchange', appHeight);
+        } catch (e) {
+          // ignore
+        }
+        // dispatch resize so components recalc sizes
+        window.dispatchEvent(new Event('resize'));
+      }, 400);
+    } catch (e) {
+      // ignore
+    }
   })
   .catch((err) => console.error(err));

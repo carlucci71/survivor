@@ -7,6 +7,33 @@
 /* Tema Celeste Moderno - FONT SPORTIVO POPPINS */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* Safe-area and viewport helpers for iOS devices (notch / home indicator)
+   - `--vh` viene aggiornata a runtime da `src/main.ts` per riflettere
+     l'altezza reale della viewport su iOS
+   - `.safe-area` applica padding usando le variabili `env()` / `constant()`
+*/
+:root {
+  --vh: 1vh; /* fallback, sovrascritto da JS */
+}
+
+.safe-area {
+  /* legacy iOS fallback (old syntax) */
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  /* standard: use env() with 0px fallback to avoid applying undefined values */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.full-height {
+  height: calc(var(--vh, 1vh) * 100) !important;
+  min-height: calc(var(--vh, 1vh) * 100) !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -66,7 +93,7 @@ mat-toolbar.header {
 
 html, body {
   height: auto !important;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   overflow-y: visible;
   overflow-x: hidden;
 }
@@ -78,8 +105,22 @@ body {
 /* Fix per Angular - app-root deve permettere scroll */
 app-root {
   display: block;
-  min-height: 100vh;
-  height: auto !important;
+  box-sizing: border-box;
+  /* Use the runtime-updated --vh to match actual viewport height on iOS */
+  min-height: calc(var(--vh, 1vh) * 100);
+  height: calc(var(--vh, 1vh) * 100) !important;
+
+  /* Apply safe-area insets so content doesn't overlap notch / home indicator */
+  /* legacy iOS fallback (old syntax) */
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  /* standard: use env() with 0px fallback to avoid applying undefined values */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 .multi-line-snackbar,
