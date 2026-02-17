@@ -13,6 +13,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'auth/magic-link-sent',
+    loadComponent: () => import('./features/auth/magic-link-sent.component').then(m => m.MagicLinkSentComponent)
+  },
+  {
     path: 'auth/verify',
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },

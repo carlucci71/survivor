@@ -34,7 +34,9 @@ export class MagicRedirectComponent implements OnInit {
 
 
   openApp(): void {
-    window.location.href = this.survivorUrl;
+    setTimeout(() => {
+      window.location.href = this.survivorUrl;
+    }, 400);
   }
 
 continuaNelBrowser() {
