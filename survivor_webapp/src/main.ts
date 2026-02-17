@@ -57,8 +57,13 @@ bootstrapApplication(AppComponent, appConfig)
       setTimeout(() => {
         // update CSS viewport-height variable used by some layouts
         try {
-          const vh = window.innerHeight * 0.01;
-          document.documentElement.style.setProperty('--vh', `${vh}px`);
+          const appHeight = () => {
+            const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            document.documentElement.style.setProperty('--app-height', height + 'px');
+          };
+          appHeight();
+          window.addEventListener('resize', appHeight);
+          window.addEventListener('orientationchange', appHeight);
         } catch (e) {
           // ignore
         }

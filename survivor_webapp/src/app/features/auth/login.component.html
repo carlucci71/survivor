@@ -16,7 +16,7 @@
     <form (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
         <label for="email">{{ 'AUTH.EMAIL_LABEL' | translate }}*</label>
-        <input type="email" id="email" name="email" [(ngModel)]="email"
+        <input #emailInput type="email" id="email" name="email" [(ngModel)]="email"
           [placeholder]="'AUTH.EMAIL_PLACEHOLDER' | translate" required autocomplete="email" />
       </div>
 
