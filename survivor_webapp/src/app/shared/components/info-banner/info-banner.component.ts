@@ -1266,18 +1266,16 @@ export class AlboOroDialogComponent implements OnInit {
               </button>
             </div>
 
-            <!-- PREVIEW SQUADRA SELEZIONATA -->
+            <!-- PREVIEW SQUADRA SELEZIONATA - COMPATTA -->
             <div class="selected-team-preview" *ngIf="getCurrentSelectedTeam()">
-              <div class="preview-header">
-                <span class="preview-label">{{ 'PROFILE.SELECTED' | translate }}:</span>
-                <button type="button" class="clear-btn" (click)="clearCurrentSelection()" title="{{ 'PROFILE.CHANGE_TEAM' | translate }}">
-                  <mat-icon>edit</mat-icon>
-                </button>
-              </div>
               <div class="preview-team">
                 <span class="sport-icon-small">{{getSportEmoji()}}</span>
                 <span class="team-name-large">{{getCurrentSelectedTeam()}}</span>
               </div>
+              <button type="button" class="clear-btn" (click)="clearCurrentSelection()" [title]="'PROFILE.CHANGE_TEAM' | translate">
+                <mat-icon>edit</mat-icon>
+                <span>{{ 'PROFILE.CHANGE' | translate }}</span>
+              </button>
             </div>
 
             <!-- AUTOCOMPLETE DINAMICO PER LO SPORT SELEZIONATO -->
@@ -1356,7 +1354,7 @@ export class AlboOroDialogComponent implements OnInit {
       max-width: 600px;
       height: auto;
       max-height: none;
-      overflow: visible;
+      overflow: visible !important;
       z-index: 10000;
       font-family: 'Poppins', sans-serif;
       margin: 0 auto;
@@ -1367,24 +1365,6 @@ export class AlboOroDialogComponent implements OnInit {
       * {
         box-sizing: border-box;
         max-width: 100%;
-      }
-
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #F4F6F8;
-        border-radius: 3px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #0A3D91;
-        border-radius: 3px;
-
-        &:hover {
-          background: #4FC3F7;
-        }
       }
     }
 
@@ -1506,8 +1486,9 @@ export class AlboOroDialogComponent implements OnInit {
       font-weight: 500;
       color: #0A3D91;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 16px; /* iOS FIX: Prevent auto-zoom on input focus */
       box-sizing: border-box;
+      -webkit-text-size-adjust: 100%; /* iOS FIX: Prevent text size adjustment */
 
       &:focus {
         border-color: #4FC3F7;
@@ -1685,72 +1666,70 @@ export class AlboOroDialogComponent implements OnInit {
       font-style: italic;
     }
 
-    /* SELECTED TEAM PREVIEW */
+    /* SELECTED TEAM PREVIEW - COMPATTA E USER FRIENDLY */
     .selected-team-preview {
-      background: linear-gradient(135deg, rgba(79, 195, 247, 0.08), rgba(10, 61, 145, 0.05));
-      border: 2px solid rgba(79, 195, 247, 0.3);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      background: linear-gradient(135deg, rgba(79, 195, 247, 0.06), rgba(10, 61, 145, 0.03));
+      border: 1px solid rgba(79, 195, 247, 0.25);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
       animation: slideIn 0.3s ease;
-
-      .preview-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-
-        .preview-label {
-          font-size: 0.75rem;
-          color: #64748B;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-
-        .clear-btn {
-          background: transparent;
-          border: 1px solid rgba(10, 61, 145, 0.2);
-          border-radius: 6px;
-          padding: 4px 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          color: #0A3D91;
-          font-size: 0.75rem;
-          transition: all 0.2s ease;
-
-          mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-          }
-
-          &:hover {
-            background: rgba(10, 61, 145, 0.08);
-            border-color: #0A3D91;
-            transform: translateY(-1px);
-          }
-        }
-      }
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
 
       .preview-team {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
 
         .sport-icon-small {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
+          flex-shrink: 0;
         }
 
         .team-name-large {
-          font-size: 1.1rem;
-          font-weight: 700;
+          font-size: 0.9rem;
+          font-weight: 600;
           color: #0A3D91;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .clear-btn {
+        background: transparent;
+        border: 1px solid rgba(10, 61, 145, 0.2);
+        border-radius: 6px;
+        padding: 4px 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: #0A3D91;
+        font-size: 0.7rem;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+
+        &:hover {
+          background: rgba(10, 61, 145, 0.08);
+          border-color: #0A3D91;
+          transform: translateY(-1px);
         }
       }
     }
+
 
     @keyframes slideIn {
       from {
@@ -1794,6 +1773,38 @@ export class AlboOroDialogComponent implements OnInit {
 
           .sport-label {
             font-size: 0.6rem;
+          }
+        }
+      }
+
+      .selected-team-preview {
+        padding: 6px 10px;
+        margin-bottom: 8px;
+
+        .preview-team {
+          gap: 6px;
+
+          .sport-icon-small {
+            font-size: 1.1rem;
+          }
+
+          .team-name-large {
+            font-size: 0.85rem;
+          }
+        }
+
+        .clear-btn {
+          padding: 3px 5px;
+          font-size: 0.65rem;
+
+          mat-icon {
+            font-size: 12px;
+            width: 12px;
+            height: 12px;
+          }
+
+          span {
+            display: none; /* Nascondi il testo "Modifica" su mobile, mostra solo l'icona */
           }
         }
       }
@@ -2235,7 +2246,7 @@ export class AlboOroDialogComponent implements OnInit {
 
       .custom-input {
         padding: 10px;
-        font-size: 0.85rem;
+        font-size: 16px; /* iOS FIX: Keep 16px to prevent auto-zoom */
       }
 
       .actions-section {
@@ -2275,7 +2286,7 @@ export class AlboOroDialogComponent implements OnInit {
 
       .custom-input {
         padding: 8px;
-        font-size: 0.8rem;
+        font-size: 16px; /* iOS FIX: Keep 16px to prevent auto-zoom */
       }
 
       .actions-section {
@@ -2641,6 +2652,9 @@ export class ProfiloDialogComponent implements OnInit {
         this.isSaving = false;
         this.showFeedback(this.translate.instant('PROFILE.SUCCESS'), 'success');
 
+        // FIX iOS: Reset dello zoom dopo il salvataggio
+        this.resetIOSZoom();
+
         setTimeout(() => {
           // Chiudi il dialog e ritorna true per indicare che il profilo è stato aggiornato
           this.dialog.closeAll();
@@ -2652,8 +2666,29 @@ export class ProfiloDialogComponent implements OnInit {
         this.isSaving = false;
         console.error('Errore nel salvataggio del profilo:', error);
         this.showFeedback(this.translate.instant('PROFILE.ERROR'), 'error');
+
+        // FIX iOS: Reset dello zoom anche in caso di errore
+        this.resetIOSZoom();
       }
     });
+  }
+
+  /**
+   * FIX iOS: Resetta lo zoom forzando un blur su tutti gli input e rimuovendo il focus
+   */
+  private resetIOSZoom(): void {
+    // Rimuovi il focus da tutti gli input
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach((input: any) => {
+      if (input && typeof input.blur === 'function') {
+        input.blur();
+      }
+    });
+
+    // Forza il reset del viewport
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   }
 
   closeDialog() {
