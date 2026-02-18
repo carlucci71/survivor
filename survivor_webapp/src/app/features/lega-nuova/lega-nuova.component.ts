@@ -73,7 +73,25 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Scrolla la pagina in alto all'apertura del componente
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  /**
+   * Reset del viewport per iOS - previene lo zoom dopo la creazione della lega
+   */
+  private resetViewportForIOS(): void {
+    // Forza un reflow del layout per iOS
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      const content = viewportMeta.getAttribute('content');
+      // Rimuovi temporaneamente e reinserisci per forzare il reset
+      viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0');
+      setTimeout(() => {
+        viewportMeta.setAttribute('content', content || 'width=device-width, initial-scale=1.0');
+        // Scrolla in alto dopo il reset
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }, 10);
+    }
   }
 
   goBack(): void {
@@ -168,6 +186,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         next: (lega) => {
           this.confirmationMessage = true;
           this.legaCreataId = lega.id;
+
+          // Reset del viewport per iOS - previene lo zoom
+          setTimeout(() => {
+            this.resetViewportForIOS();
+          }, 100);
         },
         error: (err) => {
           if (err && err.status === 499) {
