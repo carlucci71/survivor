@@ -121,6 +121,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'all';
   expandedPlayers: { [key: number]: boolean } = {};
 
+  // Storico completo giocate per giocatore
+  showFullHistoryFor: { [key: number]: boolean } = {};
+  MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -410,6 +414,85 @@ export class LegaDettaglioComponent implements OnDestroy {
           },
         });
     }
+  }
+
+  /**
+   * Restituisce le giornate visibili per un giocatore (limitate o complete)
+   */
+  getVisibleGiornateForPlayer(giocatore: Giocatore): number[] {
+    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+
+    // Se il giocatore è ELIMINATO, mostra solo le giornate fino all'ultima giocata
+    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      const ultimaGiornataGiocata = this.getUltimaGiornataGiocata(giocatore);
+      if (ultimaGiornataGiocata > 0) {
+        // Filtra le giornate fino all'ultima giocata (compresa)
+        return this.giornataIndices.filter(g => g <= ultimaGiornataGiocata);
+      }
+      // Se non ha giocate, non mostrare nulla
+      return [];
+    }
+
+    // Se lo storico completo è attivo per questo giocatore, mostra tutto
+    if (this.showFullHistoryFor[giocatore.id]) {
+      return this.giornataIndices;
+    }
+
+    // Altrimenti mostra solo le ultime N giornate
+    const totalRounds = this.giornataIndices.length;
+    if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
+      return this.giornataIndices;
+    }
+
+    // Prendi le ultime MAX_VISIBLE_ROUNDS giornate
+    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+  }
+
+  /**
+   * Restituisce l'ultima giornata assoluta in cui il giocatore ha effettuato una scelta
+   */
+  getUltimaGiornataGiocata(giocatore: Giocatore): number {
+    if (!giocatore?.giocate || giocatore.giocate.length === 0) return 0;
+
+    // Le giocate sono salvate con giornata RELATIVA (1, 2, 3...)
+    // Trova la giornata relativa massima
+    const giornataRelativaMax = Math.max(...giocatore.giocate.map((g: any) => Number(g?.giornata || 0)));
+
+    // Converti in giornata assoluta
+    const giornataIniziale = this.lega?.giornataIniziale || 1;
+    return giornataIniziale + giornataRelativaMax - 1;
+  }
+
+  /**
+   * Verifica se il giocatore ha più giocate del limite visibile
+   */
+  hasMoreRounds(giocatore: Giocatore): boolean {
+    if (!giocatore?.giocate || !this.giornataIndices) return false;
+
+    // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
+    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      return false;
+    }
+
+    return this.giornataIndices.length > this.MAX_VISIBLE_ROUNDS;
+  }
+
+  /**
+   * Conta il numero totale di giocate del giocatore
+   */
+  getTotalRoundsCount(giocatore: Giocatore): number {
+    if (!giocatore?.giocate) return 0;
+    return giocatore.giocate.length;
+  }
+
+  /**
+   * Toggle dello storico completo per un giocatore
+   */
+  toggleFullHistory(giocatore: Giocatore, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showFullHistoryFor[giocatore.id] = !this.showFullHistoryFor[giocatore.id];
   }
 
   /**
