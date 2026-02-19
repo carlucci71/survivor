@@ -19,7 +19,7 @@ function Check-Command($cmd) {
 
 Set-Location -Path $PSScriptRoot
 
-Get-Date -Format "dd/MM/yyyy HH:mm" > ..\src\assets\build_fe.html
+Get-Date -Format "dd/MM/yyyy HH:mm" > ..\public\build_fe.html
 
 Write-Host "Configuration: $Configuration; Release: $($Release.IsPresent); Install after build: $($Install.IsPresent)"
 
@@ -32,7 +32,12 @@ Check-Command adb
 # are executed in the correct directory regardless of where this script is invoked.
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $projectRoot = Resolve-Path (Join-Path $scriptDir "..")
-$gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android\gradlew.bat"
+# Use correct gradle wrapper based on OS
+if ($IsMacOS -or $IsLinux) {
+    $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android/gradlew"
+} else {
+    $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android\gradlew.bat"
+}
 $locationPushed = $false
 Push-Location $projectRoot
 $locationPushed = $true
@@ -44,6 +49,7 @@ npm run build -- --configuration $Configuration
 # 2) Capacitor copy + sync
 Write-Host "2) Running Capacitor sync (copy plugins/resources)..."
 npx cap sync android
+npx cap sync ios
 
 # 3) Build with Gradle wrapper
 if (-not (Test-Path $gradleWrapper)) {
@@ -51,10 +57,9 @@ if (-not (Test-Path $gradleWrapper)) {
     if ($locationPushed) { Pop-Location }
     exit 3
 }
-
 # Optional: ensure correct Java version by running external helper (if present)
-$changeJavaBat = 'C:\Users\D.Carlucci\Documents\almagit\digital-labs\scripts-change-java\change-java.bat'
 $gradleTask = if ($Release.IsPresent) { 'assembleRelease' } else { 'assembleDebug' }
+
 Write-Host "3) Building Android APK with Gradle: $gradleTask"
 
 # Run gradle from the android subfolder so Gradle finds settings.gradle/build.gradle
@@ -65,24 +70,9 @@ if (-not (Test-Path $androidDir)) {
     exit 3
 }
 
-if (Test-Path $changeJavaBat) {
-    Write-Host "Running change-java.bat 21 and then Gradle in the same CMD session..."
-	$cmdString = 'call "' + $changeJavaBat + '" 21 && cd /d "' + $androidDir + '" && gradlew.bat clean ' + $gradleTask + ' --no-daemon --console=plain && exit %ERRORLEVEL%'
-    $proc = Start-Process cmd.exe -ArgumentList "/c", $cmdString -NoNewWindow -Wait -PassThru
-    if ($proc.ExitCode -ne 0) {
-        Write-Error "Gradle (via cmd) failed with exit code $($proc.ExitCode)"
-        if ($locationPushed) { Pop-Location }
-        exit $proc.ExitCode
-    }
-} else {
-    Write-Host "change-java.bat not found at $changeJavaBat; running Gradle directly."
-    Push-Location $androidDir
-    try {
-        & .\gradlew.bat clean $gradleTask --no-daemon --console=plain
-    } finally {
-        Pop-Location
-    }
-}
+Push-Location $androidDir
+& $gradleWrapper $gradleTask
+Pop-Location
 
 # 4) Locate APK
 if ($Release.IsPresent) {
@@ -103,34 +93,62 @@ if (-not $apkPath -or -not (Test-Path $apkPath)) {
 
 Write-Host "Built APK: $apkPath"
 
-# 5) Optional: copy to FTP server (user's FTP server)
+# 4) Locate APK - Corretto per macOS
+if ($Release.IsPresent) {
+    $apkCandidate = "android/app/build/outputs/apk/release/app-release-unsigned.apk"
+    if (Test-Path $apkCandidate) { $apkPath = $apkCandidate }
+    else {
+        # Uso lo slash / e cerco in modo ricorsivo
+        $matches = Get-ChildItem -Path "android/app/build/outputs/apk/release" -Filter "*.apk" -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending
+        if ($matches) { $apkPath = $matches[0].FullName }
+    }
+} else {
+    $apkPath = "android/app/build/outputs/apk/debug/app-debug.apk"
+}
+
+Write-Host "APK trovato in: $apkPath"
+
+# 5) Copy to FTP server
 if ($CopyFtp.IsPresent) {
     Write-Host "6) Uploading APK via FTP"
     $ftpHost = '85.235.148.177'
     $ftpPort = 2121
     $ftpUser = $env:user_ftp_apk
     $ftpPass = $env:password_ftp_apk
+
     if ([string]::IsNullOrEmpty($ftpUser) -or [string]::IsNullOrEmpty($ftpPass)) {
-        Write-Error "Environment variables 'user_ftp_apk' and 'password_ftp_apk' must be set to use -CopyFtp."
+        Write-Error "Environment variables 'user_ftp_apk' and 'password_ftp_apk' non impostate."
         if ($locationPushed) { Pop-Location }
         exit 5
     }
+
+    # Estrae solo il nome del file (es: app-debug.apk) per l'URI remoto
     $remoteFileName = [System.IO.Path]::GetFileName($apkPath)
     $uri = "ftp://$ftpHost`:$ftpPort/$remoteFileName"
+
     try {
+        # Risolve il percorso assoluto usando lo stile Unix
         $fullApk = (Resolve-Path $apkPath).Path
         $bytes = [System.IO.File]::ReadAllBytes($fullApk)
+        
         $req = [System.Net.FtpWebRequest]::Create($uri)
         $req.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
         $req.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
+        
+        # --- MODIFICHE CRITICHE PER MAC ---
         $req.UseBinary = $true
+        $req.UsePassive = $true  # Obbligatorio su molti server/firewall moderni
+        $req.KeepAlive = $false
+        # ----------------------------------
+
         $req.ContentLength = $bytes.Length
         $stream = $req.GetRequestStream()
         $stream.Write($bytes, 0, $bytes.Length)
         $stream.Close()
+        
         $res = $req.GetResponse()
+        Write-Host "FTP upload completed: $remoteFileName (Status: $($res.StatusDescription))"
         $res.Close()
-        Write-Host "FTP upload completed: $remoteFileName"
     } catch {
         Write-Error "FTP upload failed: $_"
         if ($locationPushed) { Pop-Location }

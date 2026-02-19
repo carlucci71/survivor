@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,26 @@ import { environment } from '../../../environments/environment';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+
+export class LoginComponent implements AfterViewInit {
+  @ViewChild('emailInput') emailInput!: ElementRef<HTMLInputElement>;
+
+  ngAfterViewInit(): void {
+    if (this.emailInput) {
+      this.emailInput.nativeElement.addEventListener('blur', () => {
+        // iOS workaround: reset zoom/scale after keyboard closes
+        if (document.activeElement !== this.emailInput.nativeElement) {
+          document.body.style.transform = 'scale(1)';
+          document.body.style.zoom = 'reset';
+          setTimeout(() => {
+            document.body.style.transform = '';
+            document.body.style.zoom = '';
+          }, 100);
+        }
+      });
+    }
+  }
+
   email = '';
   message = '';
   isSuccess = false;
@@ -47,6 +67,7 @@ export class LoginComponent {
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;
+        window.location.href = '/auth/magic-link-sent';
       },
       error: (error) => {
         this.message = 'Errore durante l\'invio del magic link';

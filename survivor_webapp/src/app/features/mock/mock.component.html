@@ -1,0 +1,99 @@
+<app-header [title]="'MOCK.TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
+
+<main class="main-content">
+  <mat-card class="mock-card">
+  <div class="header-row">
+    <h2>Mock</h2>
+    <div class="actions">
+      <button *ngIf="isFormValid()" class="reset-btn" mat-raised-button color="warn" (click)="openResetDialog()">Reset campionato</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <mat-form-field appearance="fill">
+      <mat-label>sport</mat-label>
+      <mat-select [(ngModel)]="sportSel" (selectionChange)="selezionaSport()">
+        <mat-option *ngFor="let s of sportDisponibili" [value]="s.id">{{ s.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <mat-form-field appearance="fill">
+      <mat-label>campionato</mat-label>
+      <mat-select [(ngModel)]="campionatoSel" (selectionChange)="onCampionatoChange()">
+        <mat-option *ngFor="let c of campionatiDisponibili" [value]="c">{{ c.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="field">
+    <mat-form-field appearance="fill">
+      <mat-label>anno</mat-label>
+      <input matInput type="number" [(ngModel)]="anno" />
+    </mat-form-field>
+  </div>
+
+  <div class="field" *ngIf="campionatoSel">
+    <mat-form-field appearance="fill">
+      <mat-label>giornata</mat-label>
+      <input matInput type="number" [(ngModel)]="giornata" (ngModelChange)="onGiornataChange($event)" />
+      <mat-hint align="end">1 - {{ campionatoSel.numGiornate || '∞' }}</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="field" *ngIf="campionatoSel">
+    <mat-form-field appearance="fill" [class.field-changed]="dataRiferimentoChanged()">
+      <mat-label>data riferimento</mat-label>
+      <input #dataRifInput matInput type="datetime-local" [value]="formatDateForInput(dataRiferimento)" (change)="onDataRiferimentoChange($any($event.target).value)" [class.field-changed]="dataRiferimentoChanged()" />
+      <button mat-icon-button matSuffix (click)="openDataRiferimentoPicker()" tabindex="-1">
+        <mat-icon>event</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="partite?.length">
+    <div class="partite-header">
+      <h3>Partite giornata {{ giornata }}</h3>
+      <div class="partite-actions" style="display:flex;align-items:center;gap:12px;">
+        <mat-radio-group [(ngModel)]="clearCache" aria-label="clear cache" class="clear-cache-radio">
+          <mat-radio-button [value]="false">Senza riavviare cache</mat-radio-button>
+          <mat-radio-button [value]="true">Riavvia cache</mat-radio-button>
+        </mat-radio-group>
+        <button mat-raised-button color="primary" (click)="applyAllChanges()" [disabled]="saving || !hasChanges()">Applica modifiche</button>
+      </div>
+    </div>
+    <table class="partite-table">
+      <thead>
+        <tr>
+          <th>Casa</th>
+          <th>Fuori</th>
+          <th>Orario</th>
+          <th>Score Casa</th>
+          <th>Score Fuori</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of partite" [class.changed]="rowChanged(p)">
+          <td>{{ p.casaSigla }}</td>
+          <td>{{ p.fuoriSigla }}</td>
+          <td>
+            <input class="orario-input" [class.field-changed]="fieldChanged(p,'orario')" type="datetime-local" [value]="formatDateForInput(p.orario)" (change)="onPartitaChange(p, 'orario', $any($event.target).value)" />
+          </td>
+          <td>
+            <input [class.field-changed]="fieldChanged(p,'scoreCasa')" type="number" [value]="p.scoreCasa" (input)="onPartitaChange(p, 'scoreCasa', $any($event.target).value)" />
+          </td>
+          <td>
+            <input [class.field-changed]="fieldChanged(p,'scoreFuori')" type="number" [value]="p.scoreFuori" (input)="onPartitaChange(p, 'scoreFuori', $any($event.target).value)" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <div class="message" *ngIf="message">{{ message }}</div>
+
+  </mat-card>
+</main>

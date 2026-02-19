@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.mapper;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.GiocataDTO;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
@@ -17,6 +18,7 @@ import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,7 +85,10 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
                         GiocatoreDTO dto = giocatoreMapper.toDTO(gl.getGiocatore());
                         // rimuogo le info di altre leghe
                         dto.setGiocate(
-                                dto.getGiocate().stream().filter(g -> g.getLegaId().equals(lega.getId())).toList()
+                                dto.getGiocate().stream()
+                                        .filter(g -> g.getLegaId().equals(lega.getId()))
+                                        .sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                                        .toList()
                         );
                         dto.setStatiPerLega(dto.getStatiPerLega().entrySet().stream()
                                 .filter(e -> e.getKey().equals(lega.getId()))

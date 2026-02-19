@@ -13,6 +13,8 @@ public class GiocatoreDTO {
     private Long id;
     private String nickname;
     private SquadraDTO squadraCuore;
+    private SquadraDTO squadraBasketCuore;
+    private SquadraDTO tennistaCuore;
     private Map<Long, Enumeratori.StatoGiocatore> statiPerLega = new HashMap<>();
     private Map<Long, Enumeratori.RuoloGiocatoreLega> ruoliPerLega = new HashMap<>();
     private List<GiocataDTO> giocate;

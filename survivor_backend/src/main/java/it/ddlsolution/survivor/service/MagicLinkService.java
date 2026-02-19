@@ -79,11 +79,14 @@ public class MagicLinkService {
     }
 
     public String getUrlMagicLinkInvita(String token, String codiceTipoMagicLink) {
-        return baseUrl + relativeUrlSendMailMobile + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+        return baseUrl + relativeUrlSendMailMobile + URLEncoder.encode(token, StandardCharsets.UTF_8)
+                + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
     }
 
     public String getUrlMagicLink(String token, String codiceTipoMagicLink, boolean mobile) {
-        return baseUrl + (mobile ? relativeUrlSendMailMobile : relativeUrlSendMail) + URLEncoder.encode(token, StandardCharsets.UTF_8) + "&codiceTipoMagicLink=" + codiceTipoMagicLink;
+        return baseUrl + (mobile ? relativeUrlSendMailMobile : relativeUrlSendMail) + URLEncoder.encode(token, StandardCharsets.UTF_8)
+                + "&codiceTipoMagicLink=" + codiceTipoMagicLink
+                + "&sourceMobile=" + mobile;
     }
 
     private String buildEmailContent(String magicLink) {

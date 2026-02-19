@@ -3,6 +3,9 @@
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
+      @if (isMock) {
+          {{beDataRiferimento}}
+      }
       @if (error) {
       <mat-card class="error-card">
         <mat-card-content>{{ error }}</mat-card-content>
@@ -32,13 +35,18 @@
         @if (!this.isTerminata()){
         <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
         <div class="countdown-timer-section">
-          @if(countdownActive) {
+          @if(countdownActive && shouldShowExpiredCountdown()) {
           <div class="countdown-wrapper" [class.expired]="countdownExpired">
             <mat-icon class="countdown-icon">schedule</mat-icon>
             <div class="countdown-content">
-              @if(!countdownExpired) {
-                <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
-              }
+              <span class="countdown-time">{{ countdown }}</span>
+            </div>
+          </div>
+          } @else if(countdownActive && !countdownExpired) {
+          <div class="countdown-wrapper">
+            <mat-icon class="countdown-icon">schedule</mat-icon>
+            <div class="countdown-content">
+              <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
               <span class="countdown-time">{{ countdown }}</span>
             </div>
           </div>
@@ -156,8 +164,14 @@
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
-                    {{ getDesGiornataTitle(giornata) }}
+                      <div>{{ getDesGiornataTitle(giornata) }}</div>
+                      @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value){
+                        <div> {{getStatoGiornata(giornata)?.descrizione}} </div>
+                      }
                   </th>
+                }
+                @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                  <th class="excel-header-cell actions-col">Azioni</th>
                 }
               </tr>
             </thead>
@@ -170,11 +184,21 @@
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
-                    <span class="user-name">{{ giocatore.nickname }}</span>
-                    @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
-                      <mat-icon class="delete-user-icon" (click)="cancellaGiocatore(giocatore)"
-                                matTooltip="Rimuovi giocatore">close</mat-icon>
-                    }
+                    <div class="user-name-wrapper">
+                      <span class="user-name">{{ giocatore.nickname }}</span>
+                      <!-- Icona per visualizzare storico completo se ci sono più di 5 giornate -->
+                      @if(hasMoreRounds(giocatore)) {
+                        <button class="history-toggle-btn"
+                                (click)="toggleFullHistory(giocatore, $event)"
+                                [matTooltip]="showFullHistoryFor[giocatore.id] ? ('LEAGUE.HIDE_HISTORY' | translate) : ('LEAGUE.SHOW_FULL_HISTORY' | translate)"
+                                [class.active]="showFullHistoryFor[giocatore.id]">
+                          <mat-icon class="history-icon">
+                            {{ showFullHistoryFor[giocatore.id] ? 'visibility_off' : 'history' }}
+                          </mat-icon>
+                          <span class="history-count">{{ getTotalRoundsCount(giocatore) }}</span>
+                        </button>
+                      }
+                    </div>
                   </td>
 
                   <!-- STATO -->
@@ -185,24 +209,56 @@
                     </span>
                   </td>
 
-                  <!-- GIORNATE -->
-                  @for (giornata of giornataIndices; track giornata) {
+                  <!-- GIORNATE (Limitate o Complete) -->
+                  @for (giornata of getVisibleGiornateForPlayer(giocatore); track giornata) {
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
-                        <span
-                          [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
-                          [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                          {{ getDisplaySquadraNome(giocatore, giornata) }}
-                        </span>
+                        <div class="giocata-cell-content">
+                          <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
+                          <span
+                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
+                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                            {{ getDisplaySquadraNome(giocatore, giornata) }}
+                          </span>
+                          <!-- Indicatore forzatura -->
+                          @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                            <mat-icon class="forced-icon"
+                                      [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                              verified_user
+                            </mat-icon>
+                          }
+                        </div>
                       } @else {
-                        <!-- Cella vuota - il pulsante "Gioca Ora" principale è sopra la tabella -->
+                        <!-- Cella vuota -->
                         <span class="empty-cell">-</span>
                       }
+                    </td>
+                  }
+
+                  <!-- AZIONI (ultima colonna) -->
+                  @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                    <td class="excel-cell actions-cell">
+                      <div class="actions-wrapper">
+                        <!-- Icona modifica per leader/admin (se può giocare per questo utente) -->
+                        @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
+                          <mat-icon class="action-icon edit-icon"
+                                    (click)="giocaGiornataDisponibile(giocatore)"
+                                    [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
+                            edit
+                          </mat-icon>
+                        }
+                        @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
+                          <mat-icon class="action-icon delete-icon"
+                                    (click)="cancellaGiocatore(giocatore)"
+                                    matTooltip="Rimuovi giocatore">
+                            close
+                          </mat-icon>
+                        }
+                      </div>
                     </td>
                   }
                 </tr>
@@ -279,9 +335,17 @@
 
           <!-- Header giocatore compatto - Nome + Freccia sulla stessa riga -->
           <div class="player-header-mobile" (click)="togglePlayerExpansion(giocatore.id)">
-            <!-- Sinistra: Nome + Badge stato -->
+            <!-- Sinistra: Nome + Badge stato + Icona modifica -->
             <div class="player-info-left">
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              <!-- Icona modifica per leader/admin -->
+              @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
+                <mat-icon class="edit-user-icon-mobile"
+                          (click)="$event.stopPropagation(); giocaGiornataDisponibile(giocatore)"
+                          [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
+                  edit
+                </mat-icon>
+              }
               <span class="status-indicator-mobile"
                     [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                     [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
@@ -299,7 +363,7 @@
             <!-- Header settimane -->
             <div class="settimane-header">
               <div *ngFor="let giornata of mobileGiornateIndices()" class="settimana-col">
-                <span class="settimana-label">{{ getDesGiornataTitle(giornata) }}</span>
+                <span class="settimana-label">{{ getDesGiornataTitleMobile(giornata) }}</span>
               </div>
             </div>
 

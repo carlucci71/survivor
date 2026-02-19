@@ -50,16 +50,13 @@ public class PushNotificationService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    @Value("${push.fcm.enabled:false}")
+    @Value("${push.fcm.enabled}")
     private boolean fcmEnabled;
 
-    @Value("${notification.enabled:false}")
-    private boolean notificationEnabled;
-
-    @Value("${push.fcm.credentials-path:}")
+    @Value("${push.fcm.credentials-path}")
     private String fcmCredentialsPath;
 
-    @Value("${push.fcm.credentials-json:}")
+    @Value("${push.fcm.credentials-json}")
     private String fcmCredentialsJson;
 
     // Flag che indica se Firebase è stato inizializzato correttamente
@@ -93,9 +90,13 @@ public class PushNotificationService {
                         .setCredentials(credentials)
                         .build();
 
-                FirebaseApp.initializeApp(options);
+                FirebaseApp app = FirebaseApp.initializeApp(options);
                 firebaseInitialized = true;
                 log.info("Firebase FCM inizializzato con successo");
+                log.info("  - Project ID: {}", app.getOptions().getProjectId());
+//                log.info("  - Service Account Email: {}", credentials.get
+                log.info("IMPORTANTE: Il client deve usare il google-services.json con project_id={}",
+                        app.getOptions().getProjectId());
             } else {
                 // Se già presente almeno un'app, consideriamo Firebase inizializzato
                 firebaseInitialized = true;
@@ -117,16 +118,15 @@ public class PushNotificationService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Utente non trovato: " + userId));
 
+            int tokenDeactivate = pushTokenRepository.dectivateTokenOfPlatformAndUserAndDeviceId(platform, user, deviceId);
+            log.info("Ho disabilitato {} token per {} {} {}", tokenDeactivate, platform, user.getEmail(), deviceId);
+
             Optional<PushToken> existing = pushTokenRepository.findByTokenAndUser_Id(token, userId);
 
             if (existing.isPresent()) {
                 PushToken pushToken = existing.get();
                 pushToken.setLastUsedAt(LocalDateTime.now());
                 pushToken.setActive(true);
-                pushToken.setPlatform(platform);
-                if (deviceId != null) {
-                    pushToken.setDeviceId(deviceId);
-                }
                 pushTokenRepository.save(pushToken);
                 log.info("Token push aggiornato per user {}", userId);
             } else {
@@ -139,6 +139,9 @@ public class PushNotificationService {
                 pushTokenRepository.save(newToken);
                 log.info("Nuovo token push registrato per user {}", userId);
             }
+
+            log.info("Nuovo token push registrato {} {} {}", platform, user.getEmail(), deviceId);
+
             log.info("******************** REGISTER OK");
         } catch (Exception e) {
             log.error("******************** REGISTER ERROR", e);
@@ -154,6 +157,16 @@ public class PushNotificationService {
         log.info("Token disattivato: {}, rows: {}", token, updated);
     }
 
+    /**
+     * Disattiva tutti i token (utile dopo cambio progetto Firebase)
+     */
+    @Transactional
+    public int deactivateAllTokens() {
+        int count = pushTokenRepository.deactivateAllTokens();
+        log.warn("Disattivati {} token in totale (cambio progetto Firebase?)", count);
+        return count;
+    }
+
 
     /**
      * Invia una notifica push a più utenti
@@ -167,23 +180,18 @@ public class PushNotificationService {
             log.warn("Nessun token attivo per users {}", userIds);
             return;
         }
-        log.info("****************************************** TOKEN -> " + tokens.get(0).getUser().getEmail());
+        log.info("****************************************** PRIMO TOKEN -> {}  SIZE {}", tokens.get(0), tokens.size());
         sendToTokens(tokens, pushNotificationDTO);
     }
 
     private void sendToUsers(List<Long> userIds, PushNotificationDTO pushNotificationDTO) {
-        if (!notificationEnabled) {
-            log.warn("Notification disabilitato, notifica non inviata: {}", pushNotificationDTO.getTitle());
-            return;
-        }
-
         for (Long userId : userIds) {
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setUser(userService.userById(userId));
             notificationDTO.setBody(pushNotificationDTO.getBody());
             notificationDTO.setImageUrl(pushNotificationDTO.getImageUrl());
             notificationDTO.setTitle(pushNotificationDTO.getTitle());
-            notificationDTO.setType(pushNotificationDTO.getType());
+            notificationDTO.setType(pushNotificationDTO.getTipoNotifica().name());
             notificationDTO.setExpiringAt(getInSeconds(pushNotificationDTO.getExpiringAt()));
             notificationService.createNotification(notificationDTO);
         }
@@ -278,7 +286,10 @@ public class PushNotificationService {
             ApnsConfig apnsConfig = ApnsConfig.builder()
                     .setAps(Aps.builder()
                             .setSound(dto.getSound() != null ? dto.getSound() : "default")
+                            .setContentAvailable(true)
                             .build())
+                    .putHeader("apns-priority", "10")
+                    .putHeader("apns-push-type", "alert")
                     .build();
 
             MulticastMessage message = MulticastMessage.builder()
@@ -298,7 +309,7 @@ public class PushNotificationService {
 
     private Map<String, String> getAllDataFromPushNotification(PushNotificationDTO dto) {
         Map ret = new HashMap();
-        ret.put("TYPE", dto.getType());
+        ret.put("TYPE", dto.getTipoNotifica().getDescrizione());
         ret.put("EXPIRING_AT", dto.getExpiringAt().toString());
         return ret;
     }
@@ -312,10 +323,17 @@ public class PushNotificationService {
                         ? sr.getException().getMessagingErrorCode().name()
                         : "UNKNOWN";
 
-                // Disattiva token non più validi
-                if ("INVALID_ARGUMENT".equals(errorCode) || "UNREGISTERED".equals(errorCode)) {
-                    String failedToken = tokens.get(i);
-                    log.warn("Token non valido, disattivo: {}", failedToken);
+                String errorMessage = sr.getException().getMessage();
+                String failedToken = tokens.get(i);
+
+                log.error("Token fallito [{}]: errorCode={}, message={}, token={}",
+                        i, errorCode, errorMessage, failedToken.substring(0, Math.min(20, failedToken.length())) + "...");
+
+                // Disattiva token non più validi o con SenderId mismatch
+                if ("INVALID_ARGUMENT".equals(errorCode) ||
+                        "UNREGISTERED".equals(errorCode) ||
+                        (errorMessage != null && errorMessage.contains("SenderId mismatch"))) {
+                    log.warn("Disattivo token non valido (error: {}, message: {})", errorCode, errorMessage);
                     deactivateToken(failedToken);
                 }
             }

@@ -4,14 +4,14 @@
 :host {
   display: block;
   width: 100%;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
 }
 
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   background: var(--gradient-primary);
   padding: 20px;
   font-family: 'Inter', sans-serif;

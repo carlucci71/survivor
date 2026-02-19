@@ -1,0 +1,20 @@
+<mat-card class="mock-dialog-card">
+  <h3>Reset Campionato</h3>
+
+
+  <div class="field">
+    <mat-form-field appearance="fill">
+      <mat-label>implementazione</mat-label>
+      <mat-select [(ngModel)]="implementazione">
+        <mat-option value="CALENDARIO_API2">CALENDARIO_API2</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="actions">
+    <button mat-button (click)="cancel()" [disabled]="loading">Annulla</button>
+    <button mat-raised-button color="primary" (click)="reset()" [disabled]="loading || !isFormValid()">Reset</button>
+  </div>
+
+  <div class="message" *ngIf="message">{{ message }}</div>
+</mat-card>

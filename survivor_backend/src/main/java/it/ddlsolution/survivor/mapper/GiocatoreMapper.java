@@ -19,6 +19,9 @@ public abstract class GiocatoreMapper  implements DtoMapper<GiocatoreDTO, Giocat
 
     @Mapping(target = "leghe", ignore = true)
     @Mapping(target = "giocate", ignore = true)
+    @Mapping(target = "squadraCuore", source = "squadraCuore")
+    @Mapping(target = "squadraBasketCuore", source = "squadraBasketCuore")
+    @Mapping(target = "tennistaCuore", source = "tennistaCuore")
     public abstract GiocatoreDTO projectionToDTO(GiocatoreProjection projection);
 
     @InheritInverseConfiguration

@@ -1,0 +1,99 @@
+.mock-card {
+  max-width: 600px;
+  margin: 24px auto;
+  padding: 16px;
+  position: relative;
+}
+.field {
+  margin-bottom: 12px;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.actions {
+  margin-top: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.message {
+  margin-top: 12px;
+  color: #333;
+}
+
+.reset-btn {
+  min-width: 220px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 2px solid #d32f2f;
+  background: #fff;
+  color: #d32f2f;
+  box-shadow: none;
+  transition: background-color 120ms ease, color 120ms ease, transform 120ms ease;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #d32f2f;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.reset-btn:active {
+  transform: translateY(0);
+}
+
+.partite-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.partite-table th, .partite-table td {
+  border: 1px solid #e0e0e0;
+  padding: 8px;
+  text-align: left;
+}
+.partite-table input[type="number"], .partite-table input[type="datetime-local"] {
+  width: 140px;
+}
+
+/* Highlight changed rows and fields */
+.partite-table tr.changed {
+  background: #fff7e6;
+}
+.partite-table input.field-changed {
+  border: 2px solid #ffa726;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,167,38,0.12);
+}
+
+.mat-form-field.field-changed .mat-form-field-wrapper,
+.field.mat-form-field.field-changed .mat-form-field-wrapper,
+.mat-mdc-form-field.field-changed .mat-mdc-form-field-flex,
+.field.mat-mdc-form-field.field-changed .mat-mdc-form-field-flex {
+  box-shadow: 0 0 0 2px rgba(255,167,38,0.18);
+  border-radius: 4px;
+}
+
+/* generic input highlight for dataRiferimento (outside table) */
+input.field-changed {
+  border: 2px solid #ffa726;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255,167,38,0.08);
+  border-radius: 4px;
+}
+
+.partite-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.partite-actions button[disabled] {
+  opacity: 0.6;
+}

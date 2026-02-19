@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
@@ -14,29 +15,36 @@ export class MagicRedirectComponent implements OnInit {
   survivorUrl = '';
   token = '';
   codiceTipoMagicLink = '';
+  sourceMobile = false;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') || '';
     this.codiceTipoMagicLink = this.route.snapshot.queryParamMap.get('codiceTipoMagicLink') || '';
+    this.sourceMobile = this.route.snapshot.queryParamMap.get('sourceMobile') === 'true';
     this.survivorUrl = `survivor://auth/verify?token=${encodeURIComponent(this.token)}&codiceTipoMagicLink=${encodeURIComponent(this.codiceTipoMagicLink)}`;
 
-    /*
-    // Try to open the app; if it fails, fall back to the web verify page
-    this.openApp();
-    setTimeout(() => {
-      this.router.navigate(['/auth/verify'], {
-        queryParams: {
-          token: this.token,
-          codiceTipoMagicLink: this.codiceTipoMagicLink
-        }
-      });
-    }, 1200);
-    */
+    if (this.sourceMobile){
+      this.openApp();
+    } else if (!environment.production) {
+      this.continuaNelBrowser();
+    }
   }
 
+
   openApp(): void {
-    window.location.href = this.survivorUrl;
+    setTimeout(() => {
+      window.location.href = this.survivorUrl;
+    }, 400);
   }
+
+continuaNelBrowser() {
+  this.router.navigate(['/auth/verify'], { 
+    queryParams: { 
+      token: this.token, 
+      codiceTipoMagicLink: this.codiceTipoMagicLink 
+    } 
+  });
+}  
 }

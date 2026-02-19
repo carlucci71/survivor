@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -74,25 +75,20 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <p>{{ 'RULES.SECTION_6_TEXT' | translate }}</p>
         </div>
 
-        <!-- 7. Eliminazione totale ed equità del montepremi -->
+        <!-- 7. Eliminazione totale -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_7_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_7_P1' | translate }}</p>
-          <p>{{ 'RULES.SECTION_7_P2' | translate }}</p>
-          <p>{{ 'RULES.SECTION_7_P3' | translate }}</p>
         </div>
 
-        <!-- 8. Divisione anticipata del montepremi -->
+        <!-- 8. Divisione anticipata (regola standard) -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_8_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_8_P1' | translate }}</p>
           <p>{{ 'RULES.SECTION_8_P2' | translate }}</p>
-          <p><strong>{{ 'RULES.SECTION_8_EXAMPLE_TITLE' | translate }}</strong></p>
-          <p>{{ 'RULES.SECTION_8_EXAMPLE' | translate }}</p>
-          <p>{{ 'RULES.SECTION_8_P3' | translate }}</p>
         </div>
 
-        <!-- 9. Giornate con partite rinviate o sospese -->
+        <!-- 9. Eventi rinviati, sospesi o annullati -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_9_TITLE' | translate }}</h3>
 
@@ -104,7 +100,6 @@ import { Squadra } from '../../../core/models/interfaces.model';
             <li>{{ 'RULES.SECTION_9_1_L3' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_1_L4' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_1_L5' | translate }}</li>
-            <li>{{ 'RULES.SECTION_9_1_L6' | translate }}</li>
           </ul>
 
           <h4>{{ 'RULES.SECTION_9_2_TITLE' | translate }}</h4>
@@ -112,14 +107,16 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <ul>
             <li>{{ 'RULES.SECTION_9_2_L1' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_2_L2' | translate }}</li>
-          </ul>
-          <p>{{ 'RULES.SECTION_9_2_P2' | translate }}</p>
-          <ul>
             <li>{{ 'RULES.SECTION_9_2_L3' | translate }}</li>
             <li>{{ 'RULES.SECTION_9_2_L4' | translate }}</li>
-            <li>{{ 'RULES.SECTION_9_2_L5' | translate }}</li>
           </ul>
-          <p>{{ 'RULES.SECTION_9_2_P3' | translate }}</p>
+        </div>
+
+        <!-- 10. Gestione del montepremi -->
+        <div class="regola">
+          <h3>{{ 'RULES.SECTION_10_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_10_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_10_P2' | translate }}</p>
         </div>
 
         <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
@@ -1226,29 +1223,81 @@ export class AlboOroDialogComponent implements OnInit {
           </div>
         </div>
 
-        <div class="info-row">
-          <div class="label">{{ 'PROFILE.FAVORITE_TEAM' | translate }}</div>
-          <div class="value autocomplete-container">
-            <input type="text"
-              [placeholder]="'PROFILE.SEARCH_TEAM' | translate"
-              [(ngModel)]="userProfile.squadraPreferita"
-              (input)="onSearchInput()"
-              (focus)="onInputFocus()"
-              (blur)="onBlur()"
-              class="custom-input"
-              [class.has-value]="userProfile.squadraPreferita"
-              autocomplete="off">
-            <button type="button"
-              class="clear-input-btn"
-              *ngIf="userProfile.squadraPreferita && !showSuggestions"
-              (mousedown)="clearSquadra()">
-              ×
-            </button>
-            <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
-              <div class="suggestion-item"
-                *ngFor="let squadra of filteredSquadre"
-                (mousedown)="selectSquadra(squadra)">
-                {{squadra.nome}}
+        <div class="info-row" style="overflow: visible !important;">
+          <div class="label">
+            {{ 'PROFILE.FAVORITE_TEAMS' | translate }}
+            <span class="info-hint">{{ 'PROFILE.ONE_PER_SPORT_HINT' | translate }}</span>
+          </div>
+          <div class="value" style="overflow: visible !important;">
+            <!-- SPORT SELECTOR MODERNO CON SLIDER E BADGE -->
+            <div class="sport-selector-modern">
+              <div class="selector-background">
+                <div class="selector-slider"
+                  [class.pos-calcio]="selectedSport === 'calcio'"
+                  [class.pos-basket]="selectedSport === 'basket'"
+                  [class.pos-tennis]="selectedSport === 'tennis'"></div>
+              </div>
+              <button type="button"
+                class="sport-option"
+                [class.active]="selectedSport === 'calcio'"
+                [class.has-selection]="userProfile.squadraCalcio"
+                (click)="selectSport('calcio')">
+                <span class="sport-emoji">⚽</span>
+                <span class="sport-label">{{ 'COMMON.SOCCER' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.squadraCalcio">✓</span>
+              </button>
+              <button type="button"
+                class="sport-option"
+                [class.active]="selectedSport === 'basket'"
+                [class.has-selection]="userProfile.squadraBasket"
+                (click)="selectSport('basket')">
+                <span class="sport-emoji">🏀</span>
+                <span class="sport-label">{{ 'COMMON.BASKETBALL' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.squadraBasket">✓</span>
+              </button>
+              <button type="button"
+                class="sport-option"
+                [class.active]="selectedSport === 'tennis'"
+                [class.has-selection]="userProfile.tennista"
+                (click)="selectSport('tennis')">
+                <span class="sport-emoji">🎾</span>
+                <span class="sport-label">{{ 'COMMON.TENNIS' | translate }}</span>
+                <span class="selection-badge" *ngIf="userProfile.tennista">✓</span>
+              </button>
+            </div>
+
+            <!-- PREVIEW SQUADRA SELEZIONATA - COMPATTA -->
+            <div class="selected-team-preview" *ngIf="getCurrentSelectedTeam()">
+              <div class="preview-team">
+                <span class="sport-icon-small">{{getSportEmoji()}}</span>
+                <span class="team-name-large">{{getCurrentSelectedTeam()}}</span>
+              </div>
+              <button type="button" class="clear-btn" (click)="clearCurrentSelection()" [title]="'PROFILE.CHANGE_TEAM' | translate">
+                <mat-icon>edit</mat-icon>
+                <span>{{ 'PROFILE.CHANGE' | translate }}</span>
+              </button>
+            </div>
+
+            <!-- AUTOCOMPLETE DINAMICO PER LO SPORT SELEZIONATO -->
+            <div class="autocomplete-container" [class.hidden]="getCurrentSelectedTeam()">
+              <div class="input-label">{{ getInputLabel() }}</div>
+              <input type="text"
+                [placeholder]="getPlaceholder()"
+                [(ngModel)]="currentInput"
+                (input)="onSearchInput()"
+                (focus)="onFocusInput()"
+                (blur)="onBlur()"
+                class="custom-input"
+                [class.has-value]="currentInput"
+                autocomplete="off">
+              <div class="suggestions-list" *ngIf="showSuggestions && filteredSquadre.length > 0">
+                <div class="suggestion-item"
+                  *ngFor="let item of filteredSquadre"
+                  (mousedown)="selectItem(item)"
+                  [attr.data-sport]="selectedSport">
+                  <span class="sport-icon">{{getSportEmoji()}}</span>
+                  <span class="team-name">{{item.nome}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1300,12 +1349,12 @@ export class AlboOroDialogComponent implements OnInit {
       background: #FFFFFF;
       border-radius: 20px;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      padding: 24px;
+      padding: 20px;
       width: 100%;
-      max-width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      overflow-x: hidden !important;
+      max-width: 600px;
+      height: auto;
+      max-height: none;
+      overflow: visible !important;
       z-index: 10000;
       font-family: 'Poppins', sans-serif;
       margin: 0 auto;
@@ -1316,24 +1365,6 @@ export class AlboOroDialogComponent implements OnInit {
       * {
         box-sizing: border-box;
         max-width: 100%;
-      }
-
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #F4F6F8;
-        border-radius: 3px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #0A3D91;
-        border-radius: 3px;
-
-        &:hover {
-          background: #4FC3F7;
-        }
       }
     }
 
@@ -1369,8 +1400,8 @@ export class AlboOroDialogComponent implements OnInit {
     }
 
     h2 {
-      margin: 0 0 20px 0;
-      font-size: 1.3rem;
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #0A3D91;
       font-family: 'Poppins', sans-serif;
@@ -1379,15 +1410,15 @@ export class AlboOroDialogComponent implements OnInit {
       letter-spacing: 0.3px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
 
       .title-icon {
-        font-size: 1.5rem;
-        width: 1.5rem;
-        height: 1.5rem;
+        font-size: 1.4rem;
+        width: 1.4rem;
+        height: 1.4rem;
         color: #4FC3F7;
         flex-shrink: 0;
       }
@@ -1412,9 +1443,9 @@ export class AlboOroDialogComponent implements OnInit {
     .info-row {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-      padding: 16px;
+      gap: 4px;
+      margin-bottom: 8px;
+      padding: 10px 14px;
       background: transparent;
       border-radius: 12px;
       border: 1px solid rgba(10, 61, 145, 0.08);
@@ -1422,13 +1453,13 @@ export class AlboOroDialogComponent implements OnInit {
       width: 100%;
       max-width: 100%;
       box-sizing: border-box;
-      overflow: hidden;
+      overflow: visible;
 
       .label {
         font-weight: 600;
         color: #0A3D91;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
+        font-size: 0.85rem;
+        margin-bottom: 0;
         width: 100%;
         box-sizing: border-box;
       }
@@ -1451,18 +1482,21 @@ export class AlboOroDialogComponent implements OnInit {
       border-radius: 12px;
       background: #F4F6F8;
       border: 2px solid #E0E0E0;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       font-weight: 500;
       color: #0A3D91;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 16px; /* iOS FIX: Prevent auto-zoom on input focus */
       box-sizing: border-box;
+      -webkit-text-size-adjust: 100%; /* iOS FIX: Prevent text size adjustment */
 
       &:focus {
-        border-color: #0A3D91;
+        border-color: #4FC3F7;
         background: #FFFFFF;
-        box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.08);
+        box-shadow: 0 0 0 4px rgba(79, 195, 247, 0.12),
+                    0 4px 12px rgba(10, 61, 145, 0.08);
         outline: none;
+        transform: translateY(-1px);
       }
 
       &::placeholder {
@@ -1478,6 +1512,366 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
+    /* SPORT SELECTOR MODERNO - Design pulito con slider */
+    .sport-selector-modern {
+      position: relative;
+      display: flex;
+      gap: 0;
+      background: #F4F6F8;
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 6px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .selector-background {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        right: 4px;
+        pointer-events: none;
+        z-index: 0;
+
+        .selector-slider {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: calc(33.333% - 2.67px);
+          background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(10, 61, 145, 0.2),
+                      0 2px 4px rgba(79, 195, 247, 0.15);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+          &.pos-calcio {
+            left: 0;
+          }
+
+          &.pos-basket {
+            left: calc(33.333% + 1.33px);
+          }
+
+          &.pos-tennis {
+            left: calc(66.666% + 2.67px);
+          }
+        }
+      }
+
+      .sport-option {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        border: none;
+        padding: 12px 8px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 10px;
+
+        .sport-emoji {
+          font-size: 1.5rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: grayscale(0.5) opacity(0.7);
+        }
+
+        .sport-label {
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: #6B7280;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        &:hover:not(.active) {
+          .sport-emoji {
+            transform: scale(1.1);
+            filter: grayscale(0.3) opacity(0.85);
+          }
+
+          .sport-label {
+            color: #0A3D91;
+          }
+        }
+
+        &.active {
+          .sport-emoji {
+            transform: scale(1.15);
+            filter: grayscale(0) opacity(1);
+            animation: bounce 0.5s ease;
+          }
+
+          .sport-label {
+            color: #FFFFFF;
+            font-weight: 700;
+          }
+        }
+
+        &.has-selection {
+          background: rgba(79, 195, 247, 0.08);
+        }
+
+        .selection-badge {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          background: linear-gradient(135deg, #10B981, #34D399);
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 700;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+          animation: fadeInScale 0.3s ease;
+        }
+      }
+    }
+
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: scale(1.15);
+      }
+      50% {
+        transform: scale(1.25);
+      }
+    }
+
+    /* INFO HINT */
+    .info-hint {
+      display: block;
+      font-size: 0.75rem;
+      color: #64748B;
+      font-weight: 400;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* SELECTED TEAM PREVIEW - COMPATTA E USER FRIENDLY */
+    .selected-team-preview {
+      background: linear-gradient(135deg, rgba(79, 195, 247, 0.06), rgba(10, 61, 145, 0.03));
+      border: 1px solid rgba(79, 195, 247, 0.25);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      animation: slideIn 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+
+      .preview-team {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+
+        .sport-icon-small {
+          font-size: 1.2rem;
+          flex-shrink: 0;
+        }
+
+        .team-name-large {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #0A3D91;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .clear-btn {
+        background: transparent;
+        border: 1px solid rgba(10, 61, 145, 0.2);
+        border-radius: 6px;
+        padding: 4px 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        color: #0A3D91;
+        font-size: 0.7rem;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        white-space: nowrap;
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+        }
+
+        &:hover {
+          background: rgba(10, 61, 145, 0.08);
+          border-color: #0A3D91;
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* INPUT LABEL */
+    .input-label {
+      font-size: 0.8rem;
+      color: #0A3D91;
+      font-weight: 600;
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    /* AUTOCOMPLETE CONTAINER */
+    .autocomplete-container {
+      &.hidden {
+        display: none;
+      }
+    }
+
+    /* RESPONSIVE SPORT SELECTOR */
+    @media (max-width: 480px) {
+      .sport-selector-modern {
+        margin-bottom: 4px;
+        padding: 3px;
+
+        .sport-option {
+          padding: 8px 6px;
+
+          .sport-emoji {
+            font-size: 1.2rem;
+          }
+
+          .sport-label {
+            font-size: 0.6rem;
+          }
+        }
+      }
+
+      .selected-team-preview {
+        padding: 6px 10px;
+        margin-bottom: 8px;
+
+        .preview-team {
+          gap: 6px;
+
+          .sport-icon-small {
+            font-size: 1.1rem;
+          }
+
+          .team-name-large {
+            font-size: 0.85rem;
+          }
+        }
+
+        .clear-btn {
+          padding: 3px 5px;
+          font-size: 0.65rem;
+
+          mat-icon {
+            font-size: 12px;
+            width: 12px;
+            height: 12px;
+          }
+
+          span {
+            display: none; /* Nascondi il testo "Modifica" su mobile, mostra solo l'icona */
+          }
+        }
+      }
+
+      .suggestions-list {
+        max-height: 200px;
+      }
+
+      .info-row {
+        margin-bottom: 4px;
+        padding: 6px 10px;
+        gap: 2px;
+
+        .label {
+          margin-bottom: 0;
+          font-size: 0.75rem;
+        }
+      }
+
+      .modal-container {
+        padding: 12px;
+        max-width: 96%;
+        min-height: 85vh;
+        overflow: visible;
+      }
+
+      h2 {
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+        gap: 8px;
+
+        .title-icon {
+          font-size: 1.3rem;
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+      }
+
+      .actions-section {
+        margin-top: 12px;
+        padding-top: 10px;
+        gap: 8px;
+      }
+
+      .suggestion-item {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+      .suggestions-list {
+        max-height: 190px;
+      }
+
+      .info-row {
+        margin-bottom: 7px;
+        padding: 9px 12px;
+      }
+
+      .modal-container {
+        max-width: 550px;
+        overflow: visible;
+      }
+    }
+
+
     .autocomplete-container {
       position: relative;
       width: 100%;
@@ -1485,93 +1879,127 @@ export class AlboOroDialogComponent implements OnInit {
       box-sizing: border-box;
     }
 
-    .clear-input-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(10, 61, 145, 0.08);
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 16px;
-      line-height: 1;
-      color: #0A3D91;
-      transition: all 0.2s ease;
-      padding: 0;
-      z-index: 10;
-
-      &:hover {
-        background: rgba(10, 61, 145, 0.15);
-        transform: translateY(-50%) scale(1.1);
-      }
-    }
 
     .suggestions-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
+      position: relative;
       background: #FFFFFF;
-      border: 2px solid #0A3D91;
-      border-top: none;
-      border-radius: 0 0 12px 12px;
+      border: 2px solid rgba(79, 195, 247, 0.3);
+      border-radius: 12px;
       max-height: 200px;
       overflow-y: auto;
       overflow-x: hidden;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(10, 61, 145, 0.15);
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.08);
       width: 100%;
       box-sizing: border-box;
+      margin-top: 8px;
+      animation: fadeIn 0.2s ease-out;
 
       &::-webkit-scrollbar {
         width: 6px;
       }
 
       &::-webkit-scrollbar-track {
-        background: #F4F6F8;
+        background: transparent;
+        margin: 8px 0;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #0A3D91;
-        border-radius: 3px;
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        border-radius: 10px;
+
+        &:hover {
+          background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+        }
       }
     }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+
     .suggestion-item {
-      padding: 12px 16px;
+      padding: 12px 18px;
       cursor: pointer;
-      font-size: 0.9rem;
-      color: #0A3D91;
+      font-size: 0.95rem;
+      color: #334155;
       font-weight: 500;
-      transition: all 0.2s ease;
-      border-bottom: 1px solid #F4F6F8;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 1px solid rgba(10, 61, 145, 0.06);
       width: 100%;
       box-sizing: border-box;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .sport-icon {
+        font-size: 1.1rem;
+        opacity: 0.7;
+        transition: all 0.25s ease;
+        flex-shrink: 0;
+      }
+
+      .team-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &:first-child {
+        border-radius: 16px 16px 0 0;
+      }
 
       &:last-child {
         border-bottom: none;
+        border-radius: 0 0 16px 16px;
+      }
+
+      &:only-child {
+        border-radius: 16px;
       }
 
       &:hover {
-        background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.08));
-        padding-left: 20px;
+        background: linear-gradient(135deg,
+          rgba(10, 61, 145, 0.06),
+          rgba(79, 195, 247, 0.08));
+        color: #0A3D91;
+        padding-left: 24px;
+        font-weight: 600;
+        box-shadow: inset 4px 0 0 #4FC3F7;
+
+        .sport-icon {
+          transform: scale(1.2) rotate(10deg);
+          opacity: 1;
+        }
+
+        .team-name {
+          font-weight: 600;
+        }
+      }
+
+      &:active {
+        background: linear-gradient(135deg,
+          rgba(10, 61, 145, 0.12),
+          rgba(79, 195, 247, 0.15));
+        transform: scale(0.98);
       }
     }
 
     .actions-section {
       display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 20px;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 10px;
       border-top: 1px solid rgba(10, 61, 145, 0.08);
       justify-content: flex-end;
       width: 100%;
@@ -1678,8 +2106,8 @@ export class AlboOroDialogComponent implements OnInit {
     }
 
     .danger-zone {
-      margin-top: 24px;
-      padding-top: 20px;
+      margin-top: 6px;
+      padding-top: 14px;
       border-top: 1px dashed rgba(220, 38, 38, 0.3);
       text-align: center;
       width: 100%;
@@ -1818,7 +2246,7 @@ export class AlboOroDialogComponent implements OnInit {
 
       .custom-input {
         padding: 10px;
-        font-size: 0.85rem;
+        font-size: 16px; /* iOS FIX: Keep 16px to prevent auto-zoom */
       }
 
       .actions-section {
@@ -1858,7 +2286,7 @@ export class AlboOroDialogComponent implements OnInit {
 
       .custom-input {
         padding: 8px;
-        font-size: 0.8rem;
+        font-size: 16px; /* iOS FIX: Keep 16px to prevent auto-zoom */
       }
 
       .actions-section {
@@ -1881,15 +2309,19 @@ export class AlboOroDialogComponent implements OnInit {
 export class ProfiloDialogComponent implements OnInit {
   userProfile = {
     nickname: '',
-    squadraPreferita: ''
+    squadraCalcio: '',
+    squadraBasket: '',
+    tennista: ''
   };
 
+  selectedSport: 'calcio' | 'basket' | 'tennis' = 'calcio';
+  currentInput = '';
   showSuggestions = false;
   filteredSquadre: Squadra[] = [];
+  squadrePerSport: Squadra[] = []; // Squadre filtrate per lo sport corrente
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
-  tutteLeSquadre: Squadra[]  = [];
 
   constructor(
     private dialog: MatDialog,
@@ -1905,22 +2337,92 @@ export class ProfiloDialogComponent implements OnInit {
     this.loadProfile();
   }
 
+  selectSport(sport: 'calcio' | 'basket' | 'tennis') {
+    this.selectedSport = sport;
+
+    // Carica il valore corrente per lo sport selezionato
+    if (sport === 'calcio') {
+      this.currentInput = this.userProfile.squadraCalcio || '';
+    } else if (sport === 'basket') {
+      this.currentInput = this.userProfile.squadraBasket || '';
+    } else {
+      this.currentInput = this.userProfile.tennista || '';
+    }
+
+    // Reset suggerimenti quando si cambia sport
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+
+    // Carica le squadre filtrate per questo sport dal backend
+    this.loadSquadreForSport(sport);
+  }
+
+  private loadSquadreForSport(sport: 'calcio' | 'basket' | 'tennis') {
+    let sportId: string;
+
+    if (sport === 'calcio') {
+      sportId = 'CALCIO';
+    } else if (sport === 'basket') {
+      sportId = 'BASKET';
+    } else {
+      sportId = 'TENNIS';
+    }
+
+    this.squadraService.getSquadreBySport(sportId).subscribe({
+      next: (squadre) => {
+        this.squadrePerSport = squadre || [];
+
+        // Mostra automaticamente le prime 10 squadre quando cambia sport
+        if (this.squadrePerSport.length > 0) {
+          this.filteredSquadre = this.squadrePerSport.slice(0, 10);
+          // NON mostrare i suggerimenti automaticamente, aspetta il focus
+          this.showSuggestions = false;
+        } else {
+          this.filteredSquadre = [];
+          this.showSuggestions = false;
+        }
+      },
+      error: (error) => {
+        console.error(`Errore caricamento squadre per sport ${sport}:`, error);
+        this.squadrePerSport = [];
+        this.filteredSquadre = [];
+        this.showSuggestions = false;
+      }
+    });
+  }
+
+  getPlaceholder(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.translate.instant('PROFILE.SEARCH_SOCCER_TEAM');
+    } else if (this.selectedSport === 'basket') {
+      return this.translate.instant('PROFILE.SEARCH_BASKET_TEAM');
+    } else {
+      return this.translate.instant('PROFILE.SEARCH_TENNIS_PLAYER');
+    }
+  }
+
+  getSportEmoji(): string {
+    if (this.selectedSport === 'calcio') {
+      return '⚽';
+    } else if (this.selectedSport === 'basket') {
+      return '🏀';
+    } else {
+      return '🎾';
+    }
+  }
+
   loadProfile() {
-    this.squadraService.getAllSquadre().subscribe({
-          next: (sq) => {
-              this.tutteLeSquadre=sq;
-          },
-          error: (error) => {
-            console.error('Errore nel caricamento delle squadre:', error);
-          },
-        });
-
-
-
+    // Carica il profilo dell'utente
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.userProfile.nickname = giocatore.nickname || '';
-        this.userProfile.squadraPreferita = giocatore.squadraCuore?.nome || '';
+        this.userProfile.squadraCalcio = giocatore.squadraCuore?.nome || '';
+        this.userProfile.squadraBasket = giocatore.squadraBasketCuore?.nome || '';
+        this.userProfile.tennista = giocatore.tennistaCuore?.nome || '';
+
+        // Imposta l'input corrente e carica le squadre del calcio (sport di default)
+        this.currentInput = this.userProfile.squadraCalcio;
+        this.loadSquadreForSport('calcio');
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo:', error);
@@ -1930,40 +2432,91 @@ export class ProfiloDialogComponent implements OnInit {
   }
 
   onSearchInput() {
-    const query = (this.userProfile.squadraPreferita || '').toLowerCase();
-    if (query.length >= 2) {
-      this.filteredSquadre = this.tutteLeSquadre
+    const query = (this.currentInput || '').toLowerCase().trim();
+
+    if (query.length >= 3) {
+      // Mostra suggerimenti solo dopo 3 caratteri
+      this.filteredSquadre = this.squadrePerSport
         .filter(s => s.nome.toLowerCase().includes(query))
-        .slice(0, 10);
-      this.showSuggestions = true;
+        .slice(0, 3); // Max 3 suggerimenti
+
+      // Nascondi la lista se non ci sono risultati
+      this.showSuggestions = this.filteredSquadre.length > 0;
     } else {
+      // Non mostrare suggerimenti se meno di 3 caratteri
       this.filteredSquadre = [];
       this.showSuggestions = false;
     }
   }
 
-  onInputFocus() {
-    // Se c'è già un valore, mostra i suggerimenti
-    if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.length >= 2) {
-      this.onSearchInput();
+  onFocusInput() {
+    // Non mostrare suggerimenti automaticamente al focus
+    // L'utente deve digitare almeno 2 caratteri
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+  }
+
+
+  selectItem(item: Squadra) {
+    this.currentInput = item.nome;
+
+    // Salva nel campo giusto in base allo sport selezionato
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = item.nome;
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = item.nome;
     } else {
-      this.showSuggestions = true;
+      this.userProfile.tennista = item.nome;
+    }
+
+    this.showSuggestions = false;
+    this.filteredSquadre = [];
+  }
+
+  getCurrentSelectedTeam(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.userProfile.squadraCalcio;
+    } else if (this.selectedSport === 'basket') {
+      return this.userProfile.squadraBasket;
+    } else {
+      return this.userProfile.tennista;
     }
   }
 
-  selectSquadra(squadra: Squadra) {
-    this.userProfile.squadraPreferita = squadra.nome;
+  clearCurrentSelection(): void {
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = '';
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = '';
+    } else {
+      this.userProfile.tennista = '';
+    }
+    this.currentInput = '';
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
 
-  clearSquadra() {
-    this.userProfile.squadraPreferita = '';
-    this.filteredSquadre = [];
-    this.showSuggestions = false;
+  getInputLabel(): string {
+    if (this.selectedSport === 'calcio') {
+      return this.translate.instant('PROFILE.SOCCER_FAVORITE');
+    } else if (this.selectedSport === 'basket') {
+      return this.translate.instant('PROFILE.BASKET_FAVORITE');
+    } else {
+      return this.translate.instant('PROFILE.TENNIS_FAVORITE');
+    }
   }
+
 
   onBlur() {
+    // Aggiorna il campo corretto prima di chiudere
+    if (this.selectedSport === 'calcio') {
+      this.userProfile.squadraCalcio = this.currentInput;
+    } else if (this.selectedSport === 'basket') {
+      this.userProfile.squadraBasket = this.currentInput;
+    } else {
+      this.userProfile.tennista = this.currentInput;
+    }
+
     setTimeout(() => {
       this.showSuggestions = false;
     }, 200);
@@ -1999,26 +2552,90 @@ export class ProfiloDialogComponent implements OnInit {
           id: giocatore.id,
           nome: giocatore.nickname,
           nickname: this.userProfile.nickname.trim(),
-          user: giocatore.user
+          user: giocatore.user,
+          squadraCuore: null,
+          squadraBasketCuore: null,
+          tennistaCuore: null
         };
 
-        // Se c'è una squadra preferita, cercala e aggiungila
-        if (this.userProfile.squadraPreferita && this.userProfile.squadraPreferita.trim()) {
-          this.squadraService.searchByNome(this.userProfile.squadraPreferita.trim()).subscribe({
+        // Conta quante squadre dobbiamo cercare
+        let squadreDaCercare = 0;
+        let squadreTrovate = 0;
+
+        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
+          squadreDaCercare++;
+        }
+        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
+          squadreDaCercare++;
+        }
+        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
+          squadreDaCercare++;
+        }
+
+        // Se non ci sono squadre da cercare, salva subito
+        if (squadreDaCercare === 0) {
+          this.saveProfile(giocatoreAggiornato);
+          return;
+        }
+
+        // Cerca squadra calcio
+        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraCalcio.trim()).subscribe({
             next: (squadra) => {
               giocatoreAggiornato.squadraCuore = squadra;
-              this.saveProfile(giocatoreAggiornato);
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
             },
-            error: (error) => {
-              console.warn('Squadra non trovata, salvo senza squadra del cuore');
-              giocatoreAggiornato.squadraCuore = null;
-              this.saveProfile(giocatoreAggiornato);
+            error: () => {
+              console.warn('Squadra calcio non trovata');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
             }
           });
-        } else {
-          // Nessuna squadra preferita, salva senza
-          giocatoreAggiornato.squadraCuore = null;
-          this.saveProfile(giocatoreAggiornato);
+        }
+
+        // Cerca squadra basket
+        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
+          this.squadraService.searchByNome(this.userProfile.squadraBasket.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.squadraBasketCuore = squadra;
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            },
+            error: () => {
+              console.warn('Squadra basket non trovata');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            }
+          });
+        }
+
+        // Cerca tennista
+        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
+          this.squadraService.searchByNome(this.userProfile.tennista.trim()).subscribe({
+            next: (squadra) => {
+              giocatoreAggiornato.tennistaCuore = squadra;
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            },
+            error: () => {
+              console.warn('Tennista non trovato');
+              squadreTrovate++;
+              if (squadreTrovate === squadreDaCercare) {
+                this.saveProfile(giocatoreAggiornato);
+              }
+            }
+          });
         }
       },
       error: (error) => {
@@ -2035,6 +2652,9 @@ export class ProfiloDialogComponent implements OnInit {
         this.isSaving = false;
         this.showFeedback(this.translate.instant('PROFILE.SUCCESS'), 'success');
 
+        // FIX iOS: Reset dello zoom dopo il salvataggio
+        this.resetIOSZoom();
+
         setTimeout(() => {
           // Chiudi il dialog e ritorna true per indicare che il profilo è stato aggiornato
           this.dialog.closeAll();
@@ -2046,8 +2666,29 @@ export class ProfiloDialogComponent implements OnInit {
         this.isSaving = false;
         console.error('Errore nel salvataggio del profilo:', error);
         this.showFeedback(this.translate.instant('PROFILE.ERROR'), 'error');
+
+        // FIX iOS: Reset dello zoom anche in caso di errore
+        this.resetIOSZoom();
       }
     });
+  }
+
+  /**
+   * FIX iOS: Resetta lo zoom forzando un blur su tutti gli input e rimuovendo il focus
+   */
+  private resetIOSZoom(): void {
+    // Rimuovi il focus da tutti gli input
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach((input: any) => {
+      if (input && typeof input.blur === 'function') {
+        input.blur();
+      }
+    });
+
+    // Forza il reset del viewport
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   }
 
   closeDialog() {

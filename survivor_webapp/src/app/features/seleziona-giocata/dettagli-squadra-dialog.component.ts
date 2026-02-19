@@ -101,7 +101,7 @@ export interface DettagliSquadraData {
                 <span class="match" [class.bold]="formatNome(r.casaSigla) === data.squadraSelezionata">{{ formatNome(r.casaNome) }}</span>
                 <span class="vs">vs</span>
                 <span class="match" [class.bold]="formatNome(r.fuoriSigla) === data.squadraSelezionata">{{ formatNome(r.fuoriNome) }}</span>
-                <span class="date">{{ r.orario | date: 'dd/MM' }}</span>
+                <span class="badge date-badge">{{ r.orario | date: 'dd/MM' }}</span>
               </div>
             }
           }
@@ -128,25 +128,46 @@ export interface DettagliSquadraData {
   styles: [`
     .dettagli-dialog {
       border-radius: 16px;
-      padding: 16px;
-      min-width: 320px;
-      max-width: 420px;
+      padding: 20px;
+      width: 100%;
+      max-width: 600px;
       font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .dettagli-dialog {
+        max-width: 100%;
+        padding: 18px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dettagli-dialog {
+        max-width: 100%;
+        padding: 16px;
+      }
     }
 
     .dettagli-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
       border-bottom: 1px solid rgba(255,255,255,0.3);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* COUNTDOWN TIMER */
     .countdown-container {
-      margin: 0 0 12px 0;
+      margin: 0 0 16px 0;
       animation: slideDown 0.5s ease-out;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     @keyframes slideDown {
@@ -164,13 +185,23 @@ export interface DettagliSquadraData {
       position: relative;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 14px;
+      gap: 16px;
+      padding: 14px 18px;
       border-radius: 12px;
       border: 2px solid;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       animation: pulse 2s ease-in-out infinite;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      .countdown-wrapper {
+        gap: 12px;
+        padding: 12px 16px;
+        box-sizing: border-box;
+      }
     }
 
     @keyframes pulse {
@@ -208,13 +239,25 @@ export interface DettagliSquadraData {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 32px;
       animation: rotate 2s linear infinite;
 
       mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .countdown-icon {
+        font-size: 28px;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
       }
     }
 
@@ -236,7 +279,7 @@ export interface DettagliSquadraData {
     }
 
     .countdown-label {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #6B7280;
       text-transform: uppercase;
@@ -244,11 +287,31 @@ export interface DettagliSquadraData {
     }
 
     .countdown-time {
-      font-size: 1.1rem;
+      font-size: 1.4rem;
       font-weight: 800;
       font-family: 'Poppins', sans-serif;
       letter-spacing: 0.5px;
       animation: fadeIn 0.5s ease-in;
+    }
+
+    @media (max-width: 768px) {
+      .countdown-label {
+        font-size: 0.7rem;
+      }
+
+      .countdown-time {
+        font-size: 1.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .countdown-label {
+        font-size: 0.65rem;
+      }
+
+      .countdown-time {
+        font-size: 1.1rem;
+      }
     }
 
     @keyframes fadeIn {
@@ -263,26 +326,39 @@ export interface DettagliSquadraData {
     .dettagli-title {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 1rem;
+      gap: 12px;
+      font-size: 1.2rem;
       font-weight: 700;
       color: #FFFFFF;
     }
 
+    @media (max-width: 480px) {
+      .dettagli-title {
+        font-size: 1rem;
+      }
+    }
+
     .squadra-badge {
-      padding: 5px 12px;
+      padding: 6px 14px;
       background: rgba(255,255,255,0.95);
       border-radius: 16px;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 800;
+    }
+
+    @media (max-width: 480px) {
+      .squadra-badge {
+        padding: 5px 12px;
+        font-size: 0.8rem;
+      }
     }
 
     .close-btn {
       background: rgba(255,255,255,0.2);
       border: none;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -290,23 +366,26 @@ export interface DettagliSquadraData {
       transition: all 0.2s;
       color: #FFFFFF;
 
-      mat-icon { font-size: 16px; width: 16px; height: 16px; }
+      mat-icon { font-size: 20px; width: 20px; height: 20px; }
       &:hover { background: rgba(255,255,255,0.4); }
     }
 
     .tabs-container {
       display: flex;
-      gap: 6px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 14px;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .tab {
       flex: 1;
-      padding: 6px 8px;
+      padding: 10px 12px;
       background: rgba(255,255,255,0.85);
       border: none;
       border-radius: 8px;
-      font-size: 0.6rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
@@ -323,36 +402,92 @@ export interface DettagliSquadraData {
       }
     }
 
+    @media (max-width: 480px) {
+      .tab {
+        padding: 8px 10px;
+        font-size: 0.7rem;
+      }
+    }
+
     .content {
       background: rgba(255,255,255,0.95);
       border-radius: 10px;
-      padding: 8px;
-      max-height: 220px;
+      padding: 12px;
+      max-height: 380px;
       overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
 
-      &::-webkit-scrollbar { width: 3px; }
-      &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 3px; }
+      &::-webkit-scrollbar { width: 4px; }
+      &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        max-height: 340px;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .content {
+        max-height: 280px;
+        padding: 8px;
+      }
     }
 
     .row {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 5px 8px;
+      gap: 8px;
+      padding: 8px 12px;
       background: #F8FAFC;
       border-radius: 6px;
       border-left: 3px solid;
-      margin-bottom: 4px;
-      font-size: 0.55rem;
+      margin-bottom: 6px;
+      font-size: 0.7rem;
+      box-sizing: border-box;
+      max-width: 100%;
 
       &:last-child { margin-bottom: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .row {
+        gap: 7px;
+        padding: 7px 10px;
+        font-size: 0.65rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .row {
+        gap: 6px;
+        padding: 6px 8px;
+        font-size: 0.6rem;
+      }
     }
 
     .giornata {
       font-weight: 700;
       color: #6B7280;
-      min-width: 50px;
-      font-size: 0.5rem;
+      min-width: 55px;
+      font-size: 0.65rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .giornata {
+        min-width: 50px;
+        font-size: 0.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .giornata {
+        min-width: 45px;
+        font-size: 0.55rem;
+      }
     }
 
     .match {
@@ -362,49 +497,108 @@ export interface DettagliSquadraData {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-size: 0.7rem;
+      min-width: 0;
 
       &.bold { font-weight: 800; }
+    }
+
+    @media (max-width: 768px) {
+      .match {
+        font-size: 0.65rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .match {
+        font-size: 0.6rem;
+      }
     }
 
     .score {
       font-weight: 700;
       background: #FFFFFF;
-      padding: 2px 6px;
+      padding: 3px 8px;
       border-radius: 4px;
       border: 1px solid #E5E7EB;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .score {
+        padding: 2px 7px;
+        font-size: 0.65rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .score {
+        padding: 2px 6px;
+        font-size: 0.6rem;
+      }
     }
 
     .vs {
       color: #9CA3AF;
-      font-size: 0.5rem;
+      font-size: 0.65rem;
+      flex-shrink: 0;
     }
 
-    .date {
-      color: #9CA3AF;
-      font-size: 0.5rem;
-      min-width: 35px;
-      text-align: right;
+    @media (max-width: 480px) {
+      .vs {
+        font-size: 0.6rem;
+      }
     }
+
 
     .badge {
-      padding: 2px 6px;
+      padding: 3px 8px;
       border-radius: 4px;
       font-weight: 700;
       color: #FFFFFF;
-      font-size: 0.5rem;
-      min-width: 16px;
+      font-size: 0.65rem;
+      min-width: 40px;
       text-align: center;
+      flex-shrink: 0;
 
       &.v { background: linear-gradient(135deg, #10B981, #34D399); }
       &.n { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
       &.p { background: linear-gradient(135deg, #EF4444, #F87171); }
+
+      &.date-badge {
+        background: linear-gradient(135deg, #6B7280, #9CA3AF);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .badge {
+        padding: 2px 7px;
+        font-size: 0.6rem;
+        min-width: 38px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .badge {
+        padding: 2px 6px;
+        font-size: 0.55rem;
+        min-width: 35px;
+      }
     }
 
     .no-data {
       text-align: center;
       color: #6B7280;
-      padding: 20px;
-      font-size: 0.75rem;
+      padding: 30px;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 480px) {
+      .no-data {
+        padding: 20px;
+        font-size: 0.75rem;
+      }
     }
   `]
 })

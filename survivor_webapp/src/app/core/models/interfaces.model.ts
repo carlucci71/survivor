@@ -148,6 +148,18 @@ export interface Partita {
     aliasGiornataFuori: string;
 }
 
+export interface PartitaMock {
+    id: number;
+    campionatoId: string;
+    anno: number;
+    giornata: number;
+    orario: Date;
+    casaSigla: string;
+    fuoriSigla: string;
+    scoreCasa: number;
+    scoreFuori: number;
+}
+
 export interface Campionato {
   id: string;
   nome: string;
@@ -163,12 +175,15 @@ export interface Squadra {
   id?: number;
   sigla: string;
   nome: string;
+  campionato?: Campionato;
 }
 
 export interface Giocatore {
   id: number;
   nickname: string;
   squadraCuore?: Squadra;
+  squadraBasketCuore?: Squadra;
+  tennistaCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
   giocate?: Giocata[]
@@ -225,3 +240,17 @@ export function statoLegaFromCodice(codice: string): StatoLega {
       throw new Error(`Codice StatoLega sconosciuto: ${codice}`);
   }
 }
+
+// Notification Model
+export interface Notification {
+  id: number;
+  user?: User;
+  title: string;
+  body: string;
+  type: string;
+  imageUrl?: string;
+  read: boolean;
+  createdAt: string;
+  expiringAt: string;
+}
+

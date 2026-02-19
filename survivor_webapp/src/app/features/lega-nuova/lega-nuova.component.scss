@@ -178,6 +178,17 @@
       font-family: 'Poppins', sans-serif !important;
       font-weight: 500 !important;
       font-size: 1rem !important;
+      /* IMPORTANTE per iOS: font-size >= 16px previene lo zoom automatico */
+      min-font-size: 16px !important;
+      -webkit-text-size-adjust: 100% !important;
+    }
+
+    /* Placeholder - deve essere >= 16px per iOS */
+    input::placeholder,
+    textarea::placeholder {
+      color: #999 !important;
+      font-weight: 400 !important;
+      font-size: 16px !important;
     }
 
     /* Floating label */
@@ -292,11 +303,6 @@
       margin-top: 4px !important;
     }
 
-    /* Placeholder */
-    input::placeholder {
-      color: #999 !important;
-      font-weight: 400 !important;
-    }
 
     /* SELECT - Freccia posizionata DENTRO il campo */
     .mat-mdc-select-arrow-wrapper {
@@ -519,6 +525,22 @@
 
         button {
           margin-top: 8px;
+          border: 2px solid #0A3D91 !important;
+          border-radius: 8px !important;
+          padding: 10px 20px !important;
+          font-weight: 600 !important;
+          transition: all 0.2s ease !important;
+
+          &:hover:not(:disabled) {
+            border-color: #4FC3F7 !important;
+            background-color: rgba(79, 195, 247, 0.1) !important;
+            transform: translateY(-1px) !important;
+          }
+
+          &:disabled {
+            border-color: #E0E0E0 !important;
+            opacity: 0.5 !important;
+          }
         }
       }
 
@@ -551,6 +573,34 @@
         }
       }
     }
+
+    /* NEW: confirmation-actions center button */
+    .confirmation-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      width: 100%;
+
+      .back-home-btn {
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
+        color: #FFFFFF !important;
+        border-radius: 12px !important;
+        padding: 12px 36px !important;
+        font-weight: 700 !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 1rem !important;
+        box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+      }
+
+      .back-home-btn:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 28px rgba(10, 61, 145, 0.2) !important;
+      }
+    }
   }
 }
 
@@ -576,6 +626,13 @@
             width: 100%;
             margin-top: 0;
           }
+        }
+      }
+
+      .confirmation-actions {
+        .back-home-btn {
+          width: 100% !important;
+          padding: 14px 18px !important;
         }
       }
     }
@@ -643,6 +700,56 @@
       .mat-mdc-select-trigger {
         padding: 0 36px 0 0 !important;
       }
+    }
+  }
+}
+
+/* iOS SPECIFIC - Previene zoom e mantiene dimensioni consistenti */
+@supports (-webkit-touch-callout: none) {
+  /* Tutti gli input devono avere font-size >= 16px per prevenire lo zoom automatico */
+  ::ng-deep app-lega-nuova {
+    .mat-mdc-input-element,
+    .mat-mdc-select-value,
+    .mat-mdc-select-trigger,
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+      -webkit-text-size-adjust: 100% !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Mantieni le stesse dimensioni della card prima e dopo la creazione */
+  .main-content {
+    -webkit-overflow-scrolling: touch !important;
+
+    .main-panel {
+      .message-box {
+        width: 100% !important;
+        max-width: 700px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+
+        &.single-card {
+          max-width: 700px !important;
+        }
+      }
+    }
+  }
+
+  /* Previeni zoom sulla conferma */
+  .confirmation {
+    width: 100% !important;
+    max-width: 700px !important;
+
+    .confirmation-card {
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
   }
 }

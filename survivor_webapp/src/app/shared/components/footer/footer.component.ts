@@ -10,6 +10,7 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../environments/environment';
+import { Router } from '@angular/router';
 
 // DIALOG CONTATTI
 @Component({
@@ -27,9 +28,9 @@ import { environment } from '../../../../environments/environment';
       </h2>
       <div class="content-section">
         <p class="intro-text">{{ 'DIALOGS.CONTACT_INTRO' | translate }}</p>
-        <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
+        <a href="mailto:survivorwinorgohome@gmail.com" class="email-link">
           <mat-icon>mail_outline</mat-icon>
-          <span>fantasurvivorddl&#64;gmail.com</span>
+          <span>survivorwinorgohome&#64;gmail.com</span>
         </a>
       </div>
     </div>
@@ -192,7 +193,7 @@ export class ContattiDialogComponent {
 
         <div class="section">
           <h4>{{ 'DIALOGS.TERMS_11_TITLE' | translate }}</h4>
-          <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
       </div>
     </div>
@@ -324,7 +325,7 @@ export class TerminiDialogComponent {
         <div class="section">
           <h4>{{ 'PRIVACY.SECTION_1_TITLE' | translate }}</h4>
           <p>{{ 'PRIVACY.SECTION_1_P1' | translate }}</p>
-          <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'PRIVACY.SECTION_1_P2' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
@@ -391,7 +392,7 @@ export class TerminiDialogComponent {
             <li>{{ 'PRIVACY.SECTION_9_L2' | translate }}</li>
             <li>{{ 'PRIVACY.SECTION_9_L3' | translate }}</li>
           </ul>
-          <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:fantasurvivorddl@gmail.com">fantasurvivorddl&#64;gmail.com</a></p>
+          <p>{{ 'PRIVACY.SECTION_9_P' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
 
         <div class="section">
@@ -412,6 +413,7 @@ export class TerminiDialogComponent {
           <p>{{ 'PRIVACY.SECTION_12_P2' | translate }}</p>
         </div>
       </div>
+    </div>
   `,
   styles: [`
     .modal-container {
@@ -578,9 +580,9 @@ export class PrivacyDialogComponent {
         <!-- Contatti compatto -->
         <div class="contact-block">
           <span class="contact-label">{{ 'DIALOGS.ABOUT_CONTACT' | translate }}</span>
-          <a href="mailto:fantasurvivorddl@gmail.com" class="email-link">
+          <a href="mailto:survivorwinorgohome@gmail.com" class="email-link">
             <mat-icon>email</mat-icon>
-            <span>fantasurvivorddl&#64;gmail.com</span>
+            <span>survivorwinorgohome&#64;gmail.com</span>
           </a>
         </div>
 
@@ -1109,10 +1111,11 @@ export class PrivacyDialogComponent {
 export class ChiSiamoDialogComponent implements OnInit{
   externalHtml: SafeHtml | null = null;
   versioneBEHtml: SafeHtml | null = null;
-  constructor(private dialog: MatDialog,
+  constructor(
+    private dialog: MatDialog,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
-
+    private sanitizer: DomSanitizer,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -1124,7 +1127,8 @@ export class ChiSiamoDialogComponent implements OnInit{
 
   closeDialog() { this.dialog.closeAll(); }
   loadStaticHtmlFromAssets(): void {
-    const path = 'assets/build_fe.html';
+    const timestamp = new Date().getTime();
+    const path = `assets/build_fe.html?t=${timestamp}`;
 
     // Fetch the file as text. Some dev servers return `index.html` for unknown assets
     // (status 200) — detect that fallback by checking for HTML doctype/root and
@@ -1169,12 +1173,7 @@ export class ChiSiamoDialogComponent implements OnInit{
 
   openPrivacy(event: Event) {
     event.preventDefault();
-    this.dialog.open(PrivacyDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
+    this.router.navigate(['/privacy']);
   }
 
   openChiSiamo(event: Event) {
@@ -1249,7 +1248,7 @@ export class ChiSiamoDialogComponent implements OnInit{
   styles: [`
     /* FOOTER COMPATTO ORIZZONTALE */
     .survivor-footer {
-      background: linear-gradient(135deg, #0A3D91 0%, #4FC3F7 100%);
+      background: var(--gradient-primary);
       color: #FFFFFF;
       margin-top: auto;
       font-family: 'Poppins', sans-serif;
@@ -1483,12 +1482,13 @@ export class ChiSiamoDialogComponent implements OnInit{
   `]
 })
 export class FooterComponent  {
-  currentLang: string = 'it';
+  currentLang: string;
   currentYear: number = new Date().getFullYear();
 
   constructor(
     private dialog: MatDialog,
     private languageService: LanguageService,
+    private router: Router
   ) {
     this.currentLang = this.languageService.getCurrentLanguage();
     this.languageService.currentLang$.subscribe(lang => {
@@ -1541,12 +1541,7 @@ export class FooterComponent  {
 
   openPrivacy(event: Event) {
     event.preventDefault();
-    this.dialog.open(PrivacyDialogComponent, {
-      width: '90vw',
-      maxWidth: '700px',
-      maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
-    });
+    this.router.navigate(['/privacy']);
   }
 
   openChiSiamo(event: Event) {

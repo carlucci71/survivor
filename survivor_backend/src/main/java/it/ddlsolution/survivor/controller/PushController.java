@@ -5,6 +5,7 @@ import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.dto.PushTokenDTO;
 import it.ddlsolution.survivor.service.NotificationService;
 import it.ddlsolution.survivor.service.PushNotificationService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class PushController {
     private final NotificationService notificationService;
 
     /**
-     * Endpoint per registrare un token push dall'app mobile
+     * Endpoint per registrare un token push dall'app mobile 
      */
     @PostMapping("/register")
     public ResponseEntity<Void> registerToken(@RequestBody PushTokenDTO dto) {
@@ -81,7 +82,7 @@ public class PushController {
                         "GIMMI",
                         "BUBU"))
                 .sound("default")
-                .type(type)
+                .tipoNotifica(Enumeratori.TipoNotifica.INIZIO_PARTITA)
                 .expiringAt(minutesExpiring==null ? null : LocalDateTime.now(ZoneId.of("Europe/Rome")).plusMinutes(minutesExpiring))
                 .imageUrl("https://st4.depositphotos.com/1014627/26361/v/1600/depositphotos_263610928-stock-illustration-3d-gold-trophy-or-cup.jpg")
                 .build();
@@ -119,6 +120,22 @@ public class PushController {
         notificationService.markAsRead(id, userId);
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * DELETE /push/tokens/all
+     * ADMIN: Disattiva tutti i token FCM (da usare dopo cambio progetto Firebase)
+     */
+    @DeleteMapping("/tokens/all")
+    public ResponseEntity<String> deactivateAllTokens() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+
+        log.warn("ADMIN: Richiesta disattivazione tutti i token da user {}", userId);
+        
+        int count = pushNotificationService.deactivateAllTokens();
+        
+        return ResponseEntity.ok(String.format("Disattivati %d token", count));
     }
 
 

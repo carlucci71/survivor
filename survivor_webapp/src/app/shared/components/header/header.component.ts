@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatLabel } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { NotificationBellComponent } from '../notification-bell/notification-bell.component';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatLabel,
     MatTooltipModule,
     TranslateModule,
+    NotificationBellComponent,
   ],
   template: `
     <mat-toolbar color="primary" class="header">
@@ -39,6 +41,7 @@ import { TranslateModule } from '@ngx-translate/core';
             ← {{ 'HEADER.BACK_TO_HOME' | translate }}
           </button>
 
+          <app-notification-bell *ngIf="visLogout === 'S'" class="notification-bell"></app-notification-bell>
 
           <mat-icon
             *ngIf="visLogout === 'S'"
@@ -113,7 +116,7 @@ import { TranslateModule } from '@ngx-translate/core';
       }
       .actions {
         display: flex;
-        gap: 15px;
+        gap: 12px;
         align-items: center;
       }
       .btn-back {
@@ -136,18 +139,32 @@ import { TranslateModule } from '@ngx-translate/core';
         transform: none !important;
         box-shadow: none !important;
       }
+
+      ::ng-deep .notification-bell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .logout-icon {
         color: white;
         cursor: pointer;
         font-size: 18px;
         width: 18px;
         height: 18px;
+        padding: 9px;
+        border-radius: 50%;
         transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: content-box;
       }
 
       .logout-icon:hover {
         transform: scale(1.1);
         opacity: 0.8;
+        background: rgba(255, 255, 255, 0.1);
       }
 
 
@@ -166,6 +183,9 @@ import { TranslateModule } from '@ngx-translate/core';
           flex-wrap: wrap;
           padding: 0 16px;
         }
+        .actions {
+          gap: 8px;
+        }
         .header-logo {
           height: 22px;
         }
@@ -182,6 +202,12 @@ import { TranslateModule } from '@ngx-translate/core';
           white-space: nowrap !important;
           min-height: 30px !important;
         }
+        .logout-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          padding: 8px;
+        }
       }
 
       @media (max-width: 480px) {
@@ -189,7 +215,11 @@ import { TranslateModule } from '@ngx-translate/core';
           min-height: 70px;
         }
         .header-content {
-          padding: 0 12px;
+          padding: 0 8px;
+          gap: 2px;
+        }
+        .actions {
+          gap: 0px;
         }
         .header-title {
           font-size: 0.9rem;
@@ -206,11 +236,20 @@ import { TranslateModule } from '@ngx-translate/core';
           padding: 3px 8px !important;
           min-height: 28px !important;
         }
+        .logout-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          padding: 9px;
+        }
       }
 
       @media (max-width: 360px) {
         .header {
-          min-height: 65px;
+          min-height: 685px;
+        }
+        .actions {
+          gap: 8px;
         }
         /* Logo 38px nella home (molto piccolo) */
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {

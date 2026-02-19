@@ -35,7 +35,7 @@
   ```yaml
   push:
     notifications:
-      enabled: ${PUSH_NOTIFICATIONS_ENABLED:false}
+      enabled: ${NOTIFICATION_SCHEDULER_ENABLED:false}
     fcm:
       enabled: ${PUSH_FCM_ENABLED:false}
       credentials-path: ${PUSH_FCM_CREDENTIALS_PATH:}
@@ -93,7 +93,7 @@ List<Long> findUserIdsByCampionatoAndActive(@Param("campionatoId") String campio
 4. Scarica il JSON e configura:
    ```bash
    PUSH_FCM_ENABLED=true
-   PUSH_NOTIFICATIONS_ENABLED=true
+   NOTIFICATION_SCHEDULER_ENABLED=true
    PUSH_FCM_CREDENTIALS_PATH=/path/to/google-service-account.json
    ```
 
@@ -128,7 +128,7 @@ List<Long> findUserIdsByCampionatoAndActive(@Param("campionatoId") String campio
 ## 📝 Note importanti
 
 - Gli errori dell'IDE su Firebase sono **falsi positivi**: Maven ha già scaricato le dipendenze (compilazione OK)
-- Lo scheduler è disabilitato di default (usa `PUSH_NOTIFICATIONS_ENABLED=true` per attivarlo)
+- Lo scheduler è disabilitato di default (usa `NOTIFICATION_SCHEDULER_ENABLED=true` per attivarlo)
 - FCM funziona sia per iOS che Android con un unico SDK
 - Le notifiche arrivano **anche ad app chiusa** (gestite dal sistema operativo)
 - I token invalidi vengono **automaticamente disattivati** alla prima failure

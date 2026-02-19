@@ -269,11 +269,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         name,
         des: { sportId, campionatoId }, // Memorizzo gli ID per tradurli nell'HTML
         edizioni: edizioni.sort((a, b) =>
-          (a.edizione || '')
+          // Ordina in ordine decrescente: edizioni più recenti prima (Da Avviare prima di Terminate)
+          (b.edizione || '')
             .toString()
-            .localeCompare((b.edizione || '').toString())
+            .localeCompare((a.edizione || '').toString())
         ),
       };
+    }).sort((a, b) => {
+      // Ordina i gruppi per ID massimo (lega più recente di ogni gruppo) in ordine discendente
+      const maxIdA = Math.max(...a.edizioni.map(e => e.id || 0));
+      const maxIdB = Math.max(...b.edizioni.map(e => e.id || 0));
+      return maxIdB - maxIdA;
     });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
   }

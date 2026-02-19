@@ -13,6 +13,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'auth/magic-link-sent',
+    loadComponent: () => import('./features/auth/magic-link-sent.component').then(m => m.MagicLinkSentComponent)
+  },
+  {
     path: 'auth/verify',
     loadComponent: () => import('./features/auth/verify.component').then(m => m.VerifyComponent)
   },
@@ -66,6 +70,11 @@ export const routes: Routes = [
   {
     path: 'service-unavailable',
     loadComponent: () => import('./features/public/service-unavailable.component').then(m => m.ServiceUnavailableComponent)
+  },
+  {
+    path: 'mock',
+    loadComponent: () => import('./features/mock/mock.component').then(m => m.MockComponent),
+    canActivate: [authGuard, adminGuard]
   },
   {
     path: '**',

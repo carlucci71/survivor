@@ -680,7 +680,7 @@ INSERT INTO giocata (id,giornata,id_giocatore,id_squadra,esito, id_lega) VALUES 
 insert into sospensione_lega(id_lega,giornata) values (1,16);
 
 delete from users where id=0;
-INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'fantasurvivorddl@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
+INSERT INTO users (id,email,"name",enabled,created_at,"role") VALUES (0,'survivorwinorgohome@gmail.com','SYSTEM',true,CURRENT_TIMESTAMP,'ADMIN');
 
 insert into partita_mock(id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno)
 SELECT id_campionato, giornata, orario, casa_sigla, fuori_sigla,score_casa, score_fuori, anno FROM partita
@@ -715,7 +715,7 @@ CREATE TABLE notification (
     type        VARCHAR(50)  NOT NULL, -- es. MATCH_STARTING, INFO, ecc.
     read        BOOLEAN      NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    expiring_at  char(12) not  NULL
+    expiring_at  varchar(20) not  NULL
 );
 
 CREATE INDEX idx_notification_user_created
@@ -727,3 +727,13 @@ CREATE INDEX idx_notification_user_read
 ALTER TABLE notification
 ADD CONSTRAINT fk_notification_user
 FOREIGN KEY (user_id) REFERENCES users(id);
+
+create table notifiche_inviate(
+	id serial primary key,
+	id_campionato varchar(20) not null,
+	anno smallint not null default 2025,
+	giornata  integer NOT NULL,
+	tipo_notifica varchar(50),
+    CONSTRAINT fk_notifiche_inviate_campionato
+        FOREIGN KEY (id_campionato) REFERENCES campionato(id)
+);

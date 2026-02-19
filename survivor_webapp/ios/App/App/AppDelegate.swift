@@ -1,5 +1,7 @@
 import UIKit
 import Capacitor
+import FirebaseCore
+import FirebaseMessaging
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,8 +9,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Initialize Firebase for push notifications
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        
+        // Generate and save persistent device ID immediately to UserDefaults
+        let deviceId = getOrCreatePersistentDeviceId()
+        UserDefaults.standard.set(deviceId, forKey: "PersistentDeviceId")
+        UserDefaults.standard.synchronize()
+        print("📱 Persistent Device ID: \(deviceId)")
+        
         return true
+    }
+    
+    private func getOrCreatePersistentDeviceId() -> String {
+        let keychainKey = "com.survivor.app.persistentDeviceId"
+        
+        // Try to read from Keychain
+        if let existingId = readFromKeychain(key: keychainKey) {
+            return existingId
+        }
+        
+        // Generate new UUID and save to Keychain
+        let newId = UUID().uuidString
+        saveToKeychain(key: keychainKey, value: newId)
+        return newId
+    }
+    
+    private func readFromKeychain(key: String) -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        
+        guard status == errSecSuccess,
+              let data = result as? Data,
+              let value = String(data: data, encoding: .utf8) else {
+            return nil
+        }
+        
+        return value
+    }
+    
+    private func saveToKeychain(key: String, value: String) {
+        guard let data = value.data(using: .utf8) else { return }
+        
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecValueData as String: data
+        ]
+        
+        // Delete any existing item first
+        SecItemDelete(query as CFDictionary)
+        
+        // Add new item
+        SecItemAdd(query as CFDictionary, nil)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -27,6 +88,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        // Save persistent device ID to localStorage when app becomes active
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if let deviceId = UserDefaults.standard.string(forKey: "PersistentDeviceId"),
+               let vc = self.window?.rootViewController as? CAPBridgeViewController {
+                let js = "try { localStorage.setItem('PersistentDeviceId', '\(deviceId)'); console.log('📱 Persistent Device ID synced to localStorage:', '\(deviceId)'); } catch(e) { console.error('Error syncing device ID:', e); }"
+                vc.webView?.evaluateJavaScript(js, completionHandler: nil)
+            }
+        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -45,5 +115,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // tracking app url opens, make sure to keep this call
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+        
+        // Log APNs token in hex format for Apple Push Notification Console
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let tokenString = tokenParts.joined()
+        print("🍎 APNs Device Token (HEX per Apple Console): \(tokenString)")
+    }
 
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let token = fcmToken else { return }
+        print("FCM Token: \(token)")
+        
+        // Save to UserDefaults immediately
+        UserDefaults.standard.set(token, forKey: "FCMToken")
+        UserDefaults.standard.synchronize()
+        
+        // Also save to localStorage via JavaScript (without delay - execute immediately when webview is ready)
+        DispatchQueue.main.async {
+            if let vc = self.window?.rootViewController as? CAPBridgeViewController {
+                let js = "try { localStorage.setItem('FCMToken', '\(token)'); console.log('FCM token saved to localStorage'); } catch(e) { console.error('Error saving FCM token:', e); }"
+                vc.webView?.evaluateJavaScript(js, completionHandler: nil)
+            }
+        }
+    }
 }

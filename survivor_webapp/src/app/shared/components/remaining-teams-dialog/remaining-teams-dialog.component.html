@@ -1,0 +1,60 @@
+<div class="remaining-teams-dialog">
+  <div class="dialog-header">
+    <h2 class="dialog-title">
+      <mat-icon class="title-icon">sports</mat-icon>
+      {{ 'LEAGUE.REMAINING_TEAMS' | translate }}
+    </h2>
+  </div>
+
+  <div class="dialog-content">
+    <div class="info-section">
+      <p class="player-info">
+        <strong>{{ 'LEAGUE.PLAYER' | translate }}:</strong> {{ data.giocatoreNome }}
+      </p>
+      <div class="stats-row">
+        <p class="teams-count available">
+          <mat-icon class="status-icon">check_circle</mat-icon>
+          <strong>{{ 'LEAGUE.AVAILABLE_TEAMS' | translate }}:</strong> {{ getAvailableCount() }}
+        </p>
+        <p class="teams-count played">
+          <mat-icon class="status-icon">block</mat-icon>
+          <strong>{{ 'LEAGUE.PLAYED_TEAMS' | translate }}:</strong> {{ getPlayedCount() }}
+        </p>
+      </div>
+    </div>
+
+    @if (data.squadre.length === 0) {
+      <div class="no-teams-message">
+        <mat-icon class="no-teams-icon">block</mat-icon>
+        <p>{{ 'LEAGUE.NO_TEAMS_AVAILABLE' | translate }}</p>
+      </div>
+    } @else {
+      <div class="teams-grid">
+        @for (squadra of data.squadre; track squadra.sigla) {
+          <div class="team-card" [class.unavailable]="squadra.disponibile === false">
+            @if (squadra.disponibile === false) {
+              <div class="unavailable-badge">
+                <mat-icon>block</mat-icon>
+              </div>
+            }
+            <div class="team-logo-container">
+              <img
+                [src]="getTeamLogo(squadra.sigla)"
+                [alt]="squadra.nome"
+                class="team-logo"
+                (error)="onImageError($event)"
+              />
+            </div>
+            <div class="team-name">{{ squadra.nome }}</div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="dialog-footer">
+    <button mat-raised-button color="primary" (click)="close()">
+      {{ 'COMMON.CLOSE' | translate }}
+    </button>
+  </div>
+</div>

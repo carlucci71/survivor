@@ -58,7 +58,7 @@ PUSH_FCM_CREDENTIALS_JSON='{"type":"service_account","project_id":"...","private
 
 ### 3. Abilita le notifiche
 ```bash
-PUSH_NOTIFICATIONS_ENABLED=true
+NOTIFICATION_SCHEDULER_ENABLED=true
 PUSH_FCM_ENABLED=true
 ```
 
@@ -187,7 +187,7 @@ DB_USER=...
 DB_PASSWORD=...
 
 # Push notifications
-PUSH_NOTIFICATIONS_ENABLED=true
+NOTIFICATION_SCHEDULER_ENABLED=true
 PUSH_FCM_ENABLED=true
 PUSH_FCM_CREDENTIALS_PATH=/path/to/google-service-account.json
 # OPPURE

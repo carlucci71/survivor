@@ -1,11 +1,38 @@
+/* Importa il sistema di temi light/dark */
+@use 'themes.scss';
+
+/* Importa gli stili dei componenti con supporto temi */
+@use 'theme-components.scss';
+
 /* Tema Celeste Moderno - FONT SPORTIVO POPPINS */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* Importa il sistema di temi light/dark */
-@import 'themes.scss';
+/* Safe-area and viewport helpers for iOS devices (notch / home indicator)
+   - `--vh` viene aggiornata a runtime da `src/main.ts` per riflettere
+     l'altezza reale della viewport su iOS
+   - `.safe-area` applica padding usando le variabili `env()` / `constant()`
+*/
+:root {
+  --vh: 1vh; /* fallback, sovrascritto da JS */
+}
 
-/* Importa gli stili dei componenti con supporto temi */
-@import 'theme-components.scss';
+.safe-area {
+  /* legacy iOS fallback (old syntax) */
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  /* standard: use env() with 0px fallback to avoid applying undefined values */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+.full-height {
+  height: calc(var(--vh, 1vh) * 100) !important;
+  min-height: calc(var(--vh, 1vh) * 100) !important;
+}
 
 * {
   margin: 0;
@@ -66,7 +93,7 @@ mat-toolbar.header {
 
 html, body {
   height: auto !important;
-  min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   overflow-y: visible;
   overflow-x: hidden;
 }
@@ -78,8 +105,22 @@ body {
 /* Fix per Angular - app-root deve permettere scroll */
 app-root {
   display: block;
-  min-height: 100vh;
-  height: auto !important;
+  box-sizing: border-box;
+  /* Use the runtime-updated --vh to match actual viewport height on iOS */
+  min-height: calc(var(--vh, 1vh) * 100);
+  height: calc(var(--vh, 1vh) * 100) !important;
+
+  /* Apply safe-area insets so content doesn't overlap notch / home indicator */
+  /* legacy iOS fallback (old syntax) */
+  padding-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
+  padding-right: constant(safe-area-inset-right);
+  /* standard: use env() with 0px fallback to avoid applying undefined values */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
 }
 
 .multi-line-snackbar,
@@ -289,19 +330,41 @@ mat-dialog-actions {
   }
 }
 
-/* Dialog Dettagli Squadra */
+/* Dialog Dettagli Squadra - CENTRATO E SENZA SCROLL ORIZZONTALE */
+.cdk-overlay-pane.dettagli-squadra-dialog-panel {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  max-width: 600px !important;
+  width: 90vw !important;
+  max-height: 90vh !important;
+}
+
 .dettagli-squadra-dialog-panel {
+  overflow-x: hidden !important;
+
   .mat-mdc-dialog-container {
     padding: 0 !important;
     border-radius: 16px !important;
     overflow: hidden !important;
+    overflow-x: hidden !important;
     background: transparent !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 
   .mat-mdc-dialog-surface {
     background: transparent !important;
     box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3) !important;
     border-radius: 16px !important;
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 }
 
@@ -309,6 +372,7 @@ mat-dialog-actions {
   background: rgba(10, 61, 145, 0.4) !important;
   backdrop-filter: blur(4px) !important;
 }
+
 
 /* CLASSE CUSTOM PER DIALOG SELEZIONE GIOCATA - FORZA SCROLL */
 .seleziona-giocata-dialog {

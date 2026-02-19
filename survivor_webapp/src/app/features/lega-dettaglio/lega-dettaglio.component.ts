@@ -3,6 +3,8 @@ import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map, filter, switchMap, take } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LegaService } from '../../core/services/lega.service';
 import {
@@ -34,9 +36,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
+import { MockService } from '../../core/services/mock.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
@@ -59,6 +63,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
     MatDialogModule,
     MatListModule,
     MatInputModule,
+    MatSnackBarModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -90,6 +95,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   error: string | null = null;
   squadre: any[] = [];
   displayedColumns: string[] = [];
+  isMock: boolean | null=null;
+  beDataRiferimento: Date | null = null;
 
   giornataIndices: number[] = [];
 
@@ -114,6 +121,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'all';
   expandedPlayers: { [key: number]: boolean } = {};
 
+  // Storico completo giocate per giocatore
+  showFullHistoryFor: { [key: number]: boolean } = {};
+  MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -130,32 +141,49 @@ export class LegaDettaglioComponent implements OnDestroy {
     private dialog: MatDialog,
     private overlay: Overlay,
     private sospensioniService: SospensioniService,
+    private mockService: MockService,
     private translate: TranslateService,
+    private snackBar: MatSnackBar,
   ) {
+
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
       giocatore => {
-        if (giocatore && this.id) {
+        if (giocatore && this.id>0) {
           // Ricarica i dati della lega quando il profilo viene aggiornato
           this.loadLegaDetails();
         }
       }
     );
 
-    this.route.paramMap.subscribe((params) => {
-      this.id = Number(params.get('id'));
-      if (this.id) {
-        this.legaService.getLegaById(this.id).subscribe({
-          next: (lega) => {
-            this.lega = lega;
-            this.caricaTabella();
-            this.scrollTableToRight();
-            this.startCountdown();
-          },
-          error: (error) => {
-            console.error('Errore nel caricamento delle leghe:', error);
-          },
-        });
+    // Carica profilo e lega in modo concatenato (evita subscription annidate)
+    combineLatest([
+      this.utilService.profilo().pipe(take(1)),
+      this.route.paramMap.pipe(
+        map(params => Number(params.get('id'))),
+        filter(id => !!id),
+        switchMap(id => this.legaService.getLegaById(id).pipe(take(1)))
+      )
+    ]).subscribe({
+      next: ([profilo, lega]) => {
+        try {
+          const profilo1: string = profilo?.profilo || '';
+          const array = profilo1.split(',').map((item: string) => item.trim());
+          this.isMock = array.includes('CALENDARIO_MOCK');
+        } catch (e) {
+          this.isMock = false;
+        }
+
+        if (lega) {
+          this.lega = lega;
+          this.id=lega.id;
+          this.caricaTabella();
+          this.scrollTableToRight();
+          this.startCountdown();
+        }
+      },
+      error: (error) => {
+        console.error('Errore nel caricamento del profilo o della lega:', error);
       }
     });
   }
@@ -168,6 +196,16 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.legaService.getLegaById(this.id).subscribe({
         next: (lega) => {
           this.lega = lega;
+
+          // Debug: verifica se le giocate hanno il campo forzatura
+          console.log('🔍 Lega caricata, verifica giocate forzate:');
+          this.lega.giocatori?.forEach((giocatore, index) => {
+            const giocateForzate = giocatore.giocate?.filter(g => g.forzatura);
+            if (giocateForzate && giocateForzate.length > 0) {
+              console.log(`✅ Giocatore ${index} (${giocatore.nickname}) ha ${giocateForzate.length} giocate forzate:`, giocateForzate);
+            }
+          });
+
           this.caricaTabella();
         },
         error: (error) => {
@@ -190,6 +228,34 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.lega?.campionato?.id,
       index
     );
+  }
+
+  /**
+   * Versione abbreviata del titolo giornata per mobile
+   * Es: "Giornata 26" → "Gio. 26"
+   */
+  getDesGiornataTitleMobile(index: number): string {
+    const fullTitle = this.getDesGiornataTitle(index);
+    if (!fullTitle) return '';
+
+    // Se contiene "Giornata" lo abbrevia in "Gio."
+    if (fullTitle.includes('Giornata')) {
+      return fullTitle.replace('Giornata', 'Gio.');
+    }
+
+    // Se contiene solo un numero, ritorna così com'è
+    if (/^\d+$/.test(fullTitle)) {
+      return fullTitle;
+    }
+
+    // Per altri formati, prova a estrarre il numero e aggiungere "Gio."
+    const numero = fullTitle.match(/\d+/);
+    if (numero) {
+      return `Gio. ${numero[0]}`;
+    }
+
+    // Fallback: ritorna il titolo completo
+    return fullTitle;
   }
 
   // Gestisce il click sull'icona gioca accanto al badge squadra
@@ -255,44 +321,50 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataCorrente = this.lega?.giornataCorrente ?? -1;
     const giocata = this.getGiocataByGiornata(giocatore, giornata);
     const esito = giocata == undefined ? '' : giocata.esito;
-    let ret = '';
+
+    // Controllo se è la giornata corrente
     if (giornata + giornataIniziale - 1 !== giornataCorrente) {
-      ret = 'Non visualizzo perchè non è la giornata corrente';
+      return 'Non visualizzo perchè non è la giornata corrente';
     }
-    if (
-      giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value ===
-      StatoGiocatore.ELIMINATO.value
-    ) {
-      ret = 'Non visualizzo perchè il giocatore è eliminato';
+
+    // Controllo se il giocatore è eliminato
+    if (giocatore.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value) {
+      return 'Non visualizzo perchè il giocatore è eliminato';
     }
+
+    // Se c'è già un esito (OK/KO), nessuno può modificare
     if (esito == 'OK' || esito == 'KO') {
-      ret = 'Non visualizzo perchè è presente un esito';
+      return 'Non visualizzo perchè è presente un esito';
     }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      (giocatore.user == null ||
-        giocatore.user.id !== this.authService.getCurrentUser()?.id)
-    ) {
-      ret = 'Non visualizzo perchè non sei leader e non sei tu';
-    }
-    if (
-      !this.isAdmin() &&
-      !this.isLeaderLega() &&
-      this.lega?.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value
-    ) {
-      ret = 'Non visualizzo perchè la giornata corrente non è da giocare';
-    }
+
+    // Se la giornata è sospesa, nessuno può giocare
     if (this.lega?.statoGiornataCorrente?.value === StatoPartita.SOSPESA.value) {
-      ret = 'Non visualizzo perchè la giornata è sospesa';
+      return 'Non visualizzo perchè la giornata è sospesa';
     }
+
+    // Se la lega è terminata, nessuno può giocare
     if (this.isTerminata()) {
-      ret = 'Non visualizzo perchè la lega è terminata';
+      return 'Non visualizzo perchè la lega è terminata';
     }
-    if (this.lega?.giornataDaGiocare && (this.lega.giornataDaGiocare < this.lega.giornataCorrente)) {
-    //  ret = 'Non visualizzo perchè la giornata da giocare ' + this.lega.giornataDaGiocare + ' è inferiore alla corrente ' + this.lega.giornataCorrente;
+
+    // Se è leader o admin, può sempre giocare/modificare (anche con tempo scaduto e anche se c'è già una giocata)
+    if (this.isAdmin() || this.isLeaderLega()) {
+      return ''; // Può giocare o modificare!
     }
-    return ret;
+
+    // Per gli utenti normali, possono giocare solo se:
+    // 1. Sono loro stessi
+    // 2. Non hanno ancora una giocata
+    if (giocatore.user == null || giocatore.user.id !== this.authService.getCurrentUser()?.id) {
+      return 'Non visualizzo perchè non sei leader e non sei tu';
+    }
+
+    // Se l'utente normale ha già giocato, non può modificare (solo leader/admin possono)
+    if (giocata) {
+      return 'Non visualizzo perchè hai già giocato';
+    }
+
+    return ''; // Può giocare
   }
 
   caricaTabella() {
@@ -315,6 +387,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     const maxGiornateVisibili = 10;
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
+
 
     // Aggiusta se siamo vicini alla fine
     if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
@@ -341,6 +414,85 @@ export class LegaDettaglioComponent implements OnDestroy {
           },
         });
     }
+  }
+
+  /**
+   * Restituisce le giornate visibili per un giocatore (limitate o complete)
+   */
+  getVisibleGiornateForPlayer(giocatore: Giocatore): number[] {
+    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+
+    // Se il giocatore è ELIMINATO, mostra solo le giornate fino all'ultima giocata
+    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      const ultimaGiornataGiocata = this.getUltimaGiornataGiocata(giocatore);
+      if (ultimaGiornataGiocata > 0) {
+        // Filtra le giornate fino all'ultima giocata (compresa)
+        return this.giornataIndices.filter(g => g <= ultimaGiornataGiocata);
+      }
+      // Se non ha giocate, non mostrare nulla
+      return [];
+    }
+
+    // Se lo storico completo è attivo per questo giocatore, mostra tutto
+    if (this.showFullHistoryFor[giocatore.id]) {
+      return this.giornataIndices;
+    }
+
+    // Altrimenti mostra solo le ultime N giornate
+    const totalRounds = this.giornataIndices.length;
+    if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
+      return this.giornataIndices;
+    }
+
+    // Prendi le ultime MAX_VISIBLE_ROUNDS giornate
+    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+  }
+
+  /**
+   * Restituisce l'ultima giornata assoluta in cui il giocatore ha effettuato una scelta
+   */
+  getUltimaGiornataGiocata(giocatore: Giocatore): number {
+    if (!giocatore?.giocate || giocatore.giocate.length === 0) return 0;
+
+    // Le giocate sono salvate con giornata RELATIVA (1, 2, 3...)
+    // Trova la giornata relativa massima
+    const giornataRelativaMax = Math.max(...giocatore.giocate.map((g: any) => Number(g?.giornata || 0)));
+
+    // Converti in giornata assoluta
+    const giornataIniziale = this.lega?.giornataIniziale || 1;
+    return giornataIniziale + giornataRelativaMax - 1;
+  }
+
+  /**
+   * Verifica se il giocatore ha più giocate del limite visibile
+   */
+  hasMoreRounds(giocatore: Giocatore): boolean {
+    if (!giocatore?.giocate || !this.giornataIndices) return false;
+
+    // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
+    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      return false;
+    }
+
+    return this.giornataIndices.length > this.MAX_VISIBLE_ROUNDS;
+  }
+
+  /**
+   * Conta il numero totale di giocate del giocatore
+   */
+  getTotalRoundsCount(giocatore: Giocatore): number {
+    if (!giocatore?.giocate) return 0;
+    return giocatore.giocate.length;
+  }
+
+  /**
+   * Toggle dello storico completo per un giocatore
+   */
+  toggleFullHistory(giocatore: Giocatore, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.showFullHistoryFor[giocatore.id] = !this.showFullHistoryFor[giocatore.id];
   }
 
   /**
@@ -422,9 +574,11 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getSquadreDisponibili(giocatore: any): any[] {
     if (!this.squadre) return [];
-    const giocateIds = (giocatore.giocate || []).map((g: any) => g.squadraId);
-    return this.squadre.filter((s) => !giocateIds.includes(s.sigla));
+    // Usa squadraSigla invece di squadraId per il confronto corretto
+    const giocateSigle = (giocatore.giocate || []).map((g: any) => g.squadraSigla);
+    return this.squadre.filter((s) => !giocateSigle.includes(s.sigla));
   }
+
 
   // Restituisce la giocata corrispondente alla giornata (1-based) se presente
   getGiocataByGiornata(giocatore: Giocatore, giornata: number): Giocata | null {
@@ -476,7 +630,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
     // SERIE A (20 squadre)
-    'SERIE_A_ATA': 'ATA',           // Atalanta (senza estensione)
+    'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
     'SERIE_A_CAG': 'CAGL.png',      // Cagliari
     'SERIE_A_COM': 'COMO.png',      // Como
@@ -635,6 +789,41 @@ export class LegaDettaglioComponent implements OnDestroy {
     const currentUserId = this.authService.getCurrentUser()?.id;
     if (!currentUserId || !this.lega?.giocatori) return null;
     return this.lega.giocatori.find(g => g.user?.id === currentUserId) || null;
+  }
+
+  /**
+   * Verifica se l'utente corrente ha già giocato nella giornata corrente
+   */
+  hasCurrentUserPlayedCurrentRound(): boolean {
+    const currentGiocatore = this.getCurrentGiocatore();
+    if (!currentGiocatore || !this.lega?.giornataCorrente || !this.lega?.giornataIniziale) {
+      return false;
+    }
+    const giornataRelativa = this.lega.giornataCorrente - this.lega.giornataIniziale + 1;
+    const giocata = this.getGiocataByGiornata(currentGiocatore, giornataRelativa);
+    return giocata !== null;
+  }
+
+  /**
+   * Verifica se la giornata corrente è in corso
+   */
+  isCurrentRoundInProgress(): boolean {
+    return this.lega?.statoGiornataCorrente?.value === StatoPartita.IN_CORSO.value;
+  }
+
+  /**
+   * Determina se il countdown scaduto deve essere visualizzato
+   * Non mostra se: giornata in corso E utente ha già giocato
+   */
+  shouldShowExpiredCountdown(): boolean {
+    if (!this.countdownExpired) {
+      return false;
+    }
+    // Se la giornata è in corso e l'utente ha già giocato, nascondi il timeout
+    if (this.isCurrentRoundInProgress() && this.hasCurrentUserPlayedCurrentRound()) {
+      return false;
+    }
+    return true;
   }
 
   // Ottiene la squadra che ha fatto perdere il giocatore corrente
@@ -887,6 +1076,17 @@ export class LegaDettaglioComponent implements OnDestroy {
       .salvaGiocata(giornata, giocatore.id, squadraSelezionata, this.lega.id, pubblica)
       .subscribe({
         next: (res: Giocatore) => {
+          // Debug: verifica se il campo forzatura arriva dal backend
+          console.log('🔍 Giocate ricevute:', res.giocate);
+          res.giocate?.forEach((g, i) => {
+            console.log(`Giocata ${i}:`, {
+              giornata: g.giornata,
+              squadra: g.squadraSigla,
+              forzatura: g.forzatura,
+              hasForzatura: !!g.forzatura
+            });
+          });
+
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
           if (res && Array.isArray(res.giocate)) {
             giocatore.giocate = res.giocate;
@@ -978,9 +1178,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
 
-  getStatoGiornataValue(index: number): string {
-    if (!this.lega || !this.lega.statiGiornate) return '';
-    return this.lega.statiGiornate[index]?.value || '';
+  getStatoGiornata(index: number): StatoPartita | null {
+    if (!this.lega || !this.lega.statiGiornate) return null;
+    return this.lega.statiGiornate[index] || null;
   }
 
   ngOnDestroy(): void {
@@ -997,15 +1197,34 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.countdownActive = false;
       return;
     }
-
-    if (this.lega.inizioProssimaGiornata) {
-      this.startCountdownWithTime(new Date(this.lega.inizioProssimaGiornata));
+    // Prima di avviare il countdown, carichiamo la data di riferimento dal backend
+    if (this.isMock){
+      this.mockService.dataRiferimento().subscribe({
+        next: (dataR) => {
+          this.beDataRiferimento = this.parseBackendDate(String(dataR));
+          this.goTimer();
+        },
+        error: (err) => {
+          console.error('Errore caricamento data riferimento', err);
+        }
+      });
     } else {
-      this.loadFirstMatchTimeAndStartCountdown();
+        this.beDataRiferimento = new Date();
+        this.goTimer();
     }
   }
 
-  private loadFirstMatchTimeAndStartCountdown(): void {
+  private goTimer(){
+    if (this.beDataRiferimento){
+          if (this.lega?.inizioProssimaGiornata) {
+            this.startCountdownWithTime(this.beDataRiferimento, new Date(this.lega.inizioProssimaGiornata));
+          } else {
+            this.loadFirstMatchTimeAndStartCountdown(this.beDataRiferimento);
+          }
+        }
+  }
+
+  private loadFirstMatchTimeAndStartCountdown(beFrom?: Date): void {
     if (!this.lega || !this.lega.campionato?.id) return;
 
     this.campionatoService
@@ -1024,7 +1243,7 @@ export class LegaDettaglioComponent implements OnDestroy {
               .sort((a, b) => new Date(a.orario!).getTime() - new Date(b.orario!).getTime())[0];
 
             if (primaPartita && primaPartita.orario) {
-              this.startCountdownWithTime(new Date(primaPartita.orario));
+              this.startCountdownWithTime(beFrom ?? new Date(), new Date(primaPartita.orario));
             } else {
               this.countdownActive = false;
             }
@@ -1039,21 +1258,25 @@ export class LegaDettaglioComponent implements OnDestroy {
       });
   }
 
-  private startCountdownWithTime(matchTime: Date): void {
+  private startCountdownWithTime(from: Date, matchTime: Date): void {
+    if (this.countdownIntervalId) {
+      clearInterval(this.countdownIntervalId);
+      this.countdownIntervalId = null;
+    }
+
     const targetTime = new Date(matchTime.getTime() - 5 * 60 * 1000);
 
+    const retrievalLocalTime = Date.now();
 
     const updateCountdown = () => {
-        const now = new Date().getTime();
+        const dataRifInizio = from.getTime() + (Date.now() - retrievalLocalTime);
         const countdownEndTime = targetTime.getTime();
-        const distance = countdownEndTime - now;
+        const distance = countdownEndTime - dataRifInizio;
 
         if (distance < 0) {
-          // Tempo scaduto - mostra messaggio ma mantieni il countdown attivo per visualizzarlo
           this.countdown = '⏰ ' + this.translate.instant('LEAGUE.TIME_EXPIRED');
-          this.countdownActive = true; // Mantieni attivo per mostrare il messaggio
-          this.countdownExpired = true; // Flag per applicare lo stile rosso
-          // Non fermare l'interval, continua ad aggiornare per mostrare "Tempo scaduto"
+          this.countdownActive = true;
+          this.countdownExpired = true;
           return;
         }
 
@@ -1074,7 +1297,41 @@ export class LegaDettaglioComponent implements OnDestroy {
     };
 
     updateCountdown();
-    this.countdownIntervalId = setInterval(updateCountdown, 1000);
+    if (!this.isMock){
+      this.countdownIntervalId = setInterval(updateCountdown, 1000);
+    }
+
+  }
+
+  // Copia locale di parseBackendDate (stesso comportamento del mock.component)
+  parseBackendDate(s: string | null | undefined): Date | null {
+    if (!s) return null;
+    let clean = String(s).trim();
+    if ((clean.startsWith('"') && clean.endsWith('"')) || (clean.startsWith("'") && clean.endsWith("'"))) {
+      clean = clean.slice(1, -1).trim();
+    }
+    if (/^\d{12}$/.test(clean)) {
+      const y = Number(clean.substr(0,4));
+      const M = Number(clean.substr(4,2));
+      const D = Number(clean.substr(6,2));
+      const h = Number(clean.substr(8,2));
+      const m = Number(clean.substr(10,2));
+      return new Date(y, M-1, D, h, m);
+    }
+
+    const tryParse = (str: string): Date | null => {
+      const d = new Date(str);
+      return isNaN(d.getTime()) ? null : d;
+    };
+
+    let parsed = tryParse(clean);
+    if (parsed) return parsed;
+    parsed = tryParse(clean.replace(' ', 'T'));
+    if (parsed) return parsed;
+    const withoutZone = clean.replace(/([+-]\d{2}:?\d{2})$/, '');
+    parsed = tryParse(withoutZone);
+    if (parsed) return parsed;
+    return null;
   }
 
   togglePlayerJourneys(): void {

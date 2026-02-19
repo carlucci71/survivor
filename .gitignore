@@ -11,3 +11,5 @@ survivor_webapp/android/app/google-services.json
 survivor-webapp-firebase-adminsdk-fbsvc-7e5e89a47c.json
 survivor_backend/build_be.html
 survivor_webapp/src/assets/build_fe.html
+survivor_webapp/public/build_fe.html
+build_be.html
