@@ -269,9 +269,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         name,
         des: { sportId, campionatoId }, // Memorizzo gli ID per tradurli nell'HTML
         edizioni: edizioni.sort((a, b) =>
-          (a.edizione || '')
+          // Ordina in ordine decrescente: edizioni più recenti prima (Da Avviare prima di Terminate)
+          (b.edizione || '')
             .toString()
-            .localeCompare((b.edizione || '').toString())
+            .localeCompare((a.edizione || '').toString())
         ),
       };
     }).sort((a, b) => {
