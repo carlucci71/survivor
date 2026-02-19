@@ -178,6 +178,16 @@
       font-family: 'Poppins', sans-serif !important;
       font-weight: 500 !important;
       font-size: 1rem !important;
+      /* IMPORTANTE per iOS: font-size >= 16px previene lo zoom automatico */
+      -webkit-text-size-adjust: 100% !important;
+    }
+
+    /* Placeholder - deve essere >= 16px per iOS */
+    input::placeholder,
+    textarea::placeholder {
+      color: #999 !important;
+      font-weight: 400 !important;
+      font-size: 16px !important;
     }
 
     /* Floating label */
@@ -292,11 +302,6 @@
       margin-top: 4px !important;
     }
 
-    /* Placeholder */
-    input::placeholder {
-      color: #999 !important;
-      font-weight: 400 !important;
-    }
 
     /* SELECT - Freccia posizionata DENTRO il campo */
     .mat-mdc-select-arrow-wrapper {
@@ -693,6 +698,101 @@
 
       .mat-mdc-select-trigger {
         padding: 0 36px 0 0 !important;
+      }
+    }
+  }
+}
+
+/* iOS SPECIFIC - Previene zoom e mantiene dimensioni consistenti */
+@supports (-webkit-touch-callout: none) {
+  /* Tutti gli input devono avere font-size >= 16px per prevenire lo zoom automatico */
+  ::ng-deep app-lega-nuova {
+    /* Input elements - FORZARE 16px minimo */
+    .mat-mdc-input-element,
+    .mat-mdc-select-value,
+    .mat-mdc-select-trigger,
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+      -webkit-text-size-adjust: 100% !important;
+      text-size-adjust: 100% !important;
+    }
+
+    /* Placeholder - DEVE essere 16px */
+    input::placeholder,
+    textarea::placeholder {
+      font-size: 16px !important;
+    }
+
+    /* Label floating - ANCHE QUESTA 16px minimo */
+    .mat-mdc-floating-label {
+      font-size: 16px !important;
+    }
+
+    /* Label quando è in alto - può essere più piccola SOLO se il campo non è in focus */
+    .mat-mdc-floating-label.mdc-floating-label--float-above {
+      font-size: 14px !important;
+    }
+
+    /* Form field - previeni qualsiasi zoom */
+    .mat-mdc-form-field {
+      -webkit-text-size-adjust: 100% !important;
+      text-size-adjust: 100% !important;
+    }
+
+    /* Assicurati che TUTTI i text node siano >= 16px */
+    .mat-mdc-form-field-infix {
+      font-size: 16px !important;
+    }
+
+    /* Select panel options - anche nel dropdown */
+    .mat-mdc-option {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Mantieni le stesse dimensioni della card prima e dopo la creazione */
+  .main-content {
+    -webkit-overflow-scrolling: touch !important;
+    /* Previeni zoom sul container */
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+
+    .main-panel {
+      .message-box {
+        width: 100% !important;
+        max-width: 700px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        /* Previeni zoom */
+        -webkit-text-size-adjust: 100% !important;
+        text-size-adjust: 100% !important;
+
+        &.single-card {
+          max-width: 700px !important;
+        }
+      }
+    }
+  }
+
+  /* Previeni zoom sulla conferma */
+  .confirmation {
+    width: 100% !important;
+    max-width: 700px !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+
+    .confirmation-card {
+      width: 100% !important;
+      box-sizing: border-box !important;
+      -webkit-text-size-adjust: 100% !important;
+      text-size-adjust: 100% !important;
+
+      /* Tutti gli elementi di testo nella conferma */
+      p, span, a, button {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100% !important;
       }
     }
   }

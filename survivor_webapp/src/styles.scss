@@ -47,6 +47,56 @@ body {
   padding: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  /* iOS: previeni zoom automatico */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* iOS ANTI-ZOOM GLOBAL RULES */
+/* Forza 16px su TUTTI gli input per prevenire lo zoom automatico su iOS */
+input,
+textarea,
+select,
+button {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Previeni zoom su focus */
+input:focus,
+textarea:focus,
+select:focus {
+  font-size: 16px !important;
+}
+
+/* Placeholder deve essere >= 16px */
+input::placeholder,
+textarea::placeholder {
+  font-size: 16px !important;
+}
+
+/* Assicurati che il viewport non cambi dopo il focus */
+@supports (-webkit-touch-callout: none) {
+  /* iOS specific */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    /* Previeni scroll bounce su iOS */
+    overflow-x: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Forza il reset del viewport dopo blur */
+  input:not(:focus),
+  textarea:not(:focus),
+  select:not(:focus) {
+    transform: scale(1);
+  }
 }
 
 /* Titoli globali - grassetto e maiuscolo */
@@ -96,9 +146,6 @@ html, body {
   min-height: var(--app-height, 100vh);
   overflow-y: visible;
   overflow-x: hidden;
-}
-
-body {
   position: relative;
 }
 
