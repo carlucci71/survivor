@@ -59,6 +59,11 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       :host {
         display: block;
         width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        /* Safe area per iOS - evita sovrapposizione con status bar */
+        padding-top: env(safe-area-inset-top);
       }
       .header {
         display: flex;
