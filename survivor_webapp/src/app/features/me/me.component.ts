@@ -32,12 +32,21 @@ export class MeComponent {
   ) {}
 
   ngOnInit(): void {
-    this.giocatoreService.me().subscribe(
-      { next: (giocatore)=> {
-        this.me=giocatore;
-        this.nickname=giocatore.nickname;
-      }}
-    );
+    this.giocatoreService.me().subscribe({
+      next: (giocatore) => {
+        this.me = giocatore;
+        this.nickname = giocatore.nickname;
+      },
+      error: (error) => {
+        console.error('[MeComponent] Errore caricamento /me:', error);
+        const status = error?.status;
+        if (status === 401 || status === 403 || !status) {
+          console.warn('[MeComponent] Token non valido, redirect a login');
+          this.authService.logout();
+          this.router.navigate(['/auth/login']);
+        }
+      }
+    });
   }
 
   goBack(): void {
