@@ -506,10 +506,13 @@ export class LegaDettaglioComponent implements OnDestroy {
    * Apre la dialog modale con lo storico completo del giocatore
    */
   openPlayerHistoryDialog(giocatore: Giocatore): void {
+    // Ottimizzazione per mobile
+    const isMobile = window.innerWidth <= 768;
+
     const dialogRef = this.dialog.open(PlayerHistoryDialogComponent, {
-      width: '90vw',
-      maxWidth: '800px',
-      maxHeight: '90vh',
+      width: isMobile ? '95vw' : '90vw',
+      maxWidth: isMobile ? '100%' : '800px',
+      maxHeight: isMobile ? '85vh' : '90vh',
       data: {
         giocatore: giocatore,
         lega: this.lega,
@@ -518,7 +521,9 @@ export class LegaDettaglioComponent implements OnDestroy {
         getTeamLogo: this.getTeamLogo.bind(this),
         getSquadraNome: this.getSquadraNome.bind(this)
       },
-      panelClass: 'player-history-dialog'
+      panelClass: 'player-history-dialog-wrapper',  // Cambiato per evitare conflitti!
+      autoFocus: false,
+      restoreFocus: false
     });
   }
 
