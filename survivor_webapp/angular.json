@@ -40,11 +40,12 @@
           },
           "configurations": {
             "production": {
-              "optimization": true,
+
+              "optimization": false,
               "extractLicenses": false,
-              "sourceMap": false,
+              "sourceMap": true,
               "baseHref": "/survivor/",
-              "deployUrl": "/",
+              "deployUrl": "/survivor/",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
