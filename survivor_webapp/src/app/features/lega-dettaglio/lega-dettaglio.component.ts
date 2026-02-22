@@ -286,6 +286,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         squadreDisponibili: squadreDisponibili,
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega,
+        giocataCorrente: giocataCorrente  // ✅ Passa la giocata esistente per inizializzare pubblica
       },
       width: isDesktop ? '90vw' : '94vw',
       maxWidth: isDesktop ? '1100px' : '500px',
