@@ -43,7 +43,7 @@ export class PlayerHistoryDialogComponent {
    *
    * IMPORTANTE: Rimetti a false prima di fare commit/push!
    */
-  private ENABLE_MOCK = false; // ✅ MOCK DISATTIVATO
+  private ENABLE_MOCK = false; // ✅ MOCK DISATTIVATO - Pronto per produzione
 
   constructor(
     public dialogRef: MatDialogRef<PlayerHistoryDialogComponent>,
@@ -59,29 +59,51 @@ export class PlayerHistoryDialogComponent {
    * Setup dati mock per testare con 10 giornate
    */
   private setupMockData(): void {
-    // Crea 10 giornate mock
-    this.data.giornataIndices = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const giornataIniziale = this.data.lega?.giornataIniziale || 1;
 
-    // Mock delle giocate (compatibile con interfaccia Giocata)
+    this.data.giornataIndices = Array.from(
+      { length: 10 },
+      (_, i) => giornataIniziale + i
+    );
+
     const mockGiocate = [
       { giornata: 1, squadraSigla: 'INT', esito: 'OK', forzatura: undefined },
       { giornata: 2, squadraSigla: 'MIL', esito: 'OK', forzatura: undefined },
       { giornata: 3, squadraSigla: 'JUV', esito: 'KO', forzatura: undefined },
       { giornata: 4, squadraSigla: 'NAP', esito: 'OK', forzatura: undefined },
-      { giornata: 5, squadraSigla: 'ROM', esito: 'OK', forzatura: 'admin' }, // Giocata forzata
+      { giornata: 5, squadraSigla: 'ROM', esito: 'OK', forzatura: 'admin' },
       { giornata: 6, squadraSigla: 'ATA', esito: 'OK', forzatura: undefined },
       { giornata: 7, squadraSigla: 'LAZ', esito: 'KO', forzatura: undefined },
       { giornata: 8, squadraSigla: 'FIO', esito: 'OK', forzatura: undefined },
-      { giornata: 9, squadraSigla: 'BOL', esito: undefined, forzatura: undefined }, // Giocata pending
-      { giornata: 10, squadraSigla: 'TOR', esito: undefined, forzatura: undefined } // Giocata pending
+      { giornata: 9, squadraSigla: 'BOL', esito: undefined, forzatura: undefined },
+      { giornata: 10, squadraSigla: 'TOR', esito: undefined, forzatura: undefined }
     ];
 
-    // Sovrascrivi il giocatore con i dati mock
     this.data.giocatore.giocate = mockGiocate;
   }
 
   /**
-   * Restituisce le prime 5 giornate (prima riga)
+   * Restituisce tutte le giornate raggruppate in righe di 5
+   * Es: [1,2,3,4,5,6,7,8,9,10] → [[1,2,3,4,5], [6,7,8,9,10]]
+   */
+  getAllRowsRounds(): number[][] {
+    if (!this.data.giornataIndices || this.data.giornataIndices.length === 0) {
+      return [];
+    }
+
+    const rows: number[][] = [];
+    const itemsPerRow = 5;
+
+    for (let i = 0; i < this.data.giornataIndices.length; i += itemsPerRow) {
+      rows.push(this.data.giornataIndices.slice(i, i + itemsPerRow));
+    }
+
+
+    return rows;
+  }
+
+  /**
+   * Restituisce le prime 5 giornate (prima riga) - DEPRECATO, usa getAllRowsRounds()
    */
   getFirstRowRounds(): number[] {
     if (!this.data.giornataIndices) return [];
@@ -89,7 +111,7 @@ export class PlayerHistoryDialogComponent {
   }
 
   /**
-   * Restituisce le giornate dalla 6 alla 10 (seconda riga)
+   * Restituisce le giornate dalla 6 alla 10 (seconda riga) - DEPRECATO, usa getAllRowsRounds()
    */
   getSecondRowRounds(): number[] {
     if (!this.data.giornataIndices || this.data.giornataIndices.length <= 5) return [];
@@ -113,8 +135,8 @@ export class PlayerHistoryDialogComponent {
   }
 
   getGiornataLabel(giornata: number): string {
-    const giornataRelativa = giornata - (this.data.lega?.giornataIniziale || 1) + 1;
-    return `${giornataRelativa}`;
+    // Restituisco semplicemente il numero di giornata assoluto
+    return `${giornata}`;
   }
 }
 
