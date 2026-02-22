@@ -1,0 +1,111 @@
+<div class="player-history-dialog">
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="player-icon">person</mat-icon>
+      <div class="player-info">
+        <h2 class="player-name">{{ data.giocatore.nickname }}</h2>
+        <p class="dialog-subtitle">{{ 'LEAGUE.FULL_HISTORY' | translate }}</p>
+      </div>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <!-- Layout Desktop: Griglia responsive -->
+    <div class="history-grid desktop-only">
+      @for (giornata of data.giornataIndices; track giornata) {
+        @let giocata = getGiocataForRound(giornata);
+        <div class="history-card"
+             [class.card-ok]="giocata?.esito === 'OK'"
+             [class.card-ko]="giocata?.esito === 'KO'"
+             [class.card-pending]="!giocata?.esito">
+
+          <div class="card-header">
+            <span class="round-label">{{ 'LEAGUE.ROUND' | translate }} {{ getGiornataLabel(giornata) }}</span>
+            @if(giocata?.esito) {
+              <mat-icon class="result-icon" [class.icon-ok]="giocata.esito === 'OK'" [class.icon-ko]="giocata.esito === 'KO'">
+                {{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            }
+          </div>
+
+          <div class="card-body">
+            @if(giocata?.squadraSigla) {
+              <div class="team-info">
+                @if(getTeamLogo(giocata.squadraSigla)) {
+                  <div class="team-logo-wrapper">
+                    <img [src]="getTeamLogo(giocata.squadraSigla)!"
+                         [alt]="getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla"
+                         class="team-logo"
+                         (error)="$any($event.target).style.display='none'">
+                  </div>
+                }
+                <span class="team-name">{{ getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla }}</span>
+                @if(giocata.forzatura) {
+                  <mat-icon class="forced-icon" [matTooltip]="'LEAGUE.FORCED_BY_ADMIN' | translate">
+                    edit
+                  </mat-icon>
+                }
+              </div>
+            } @else {
+              <div class="no-selection">
+                <mat-icon class="no-selection-icon">remove</mat-icon>
+                <span>{{ 'LEAGUE.NO_SELECTION' | translate }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Layout Mobile: IDENTICO al dettaglio lega quando espandi -->
+    <div class="giornate-list-mobile mobile-only">
+      <!-- Header settimane -->
+      <div class="settimane-header">
+        @for (giornata of data.giornataIndices; track giornata) {
+          <div class="settimana-col">
+            <span class="settimana-label">{{ getDesGiornataTitleMobile(giornata) }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Giocate -->
+      <div class="giocate-row">
+        @for (giornata of data.giornataIndices; track giornata) {
+          @let giocata = getGiocataForRound(giornata);
+          <div class="giocata-col">
+            <!-- Team scelto -->
+            @if(giocata?.squadraSigla) {
+              <div class="team-cell-mobile"
+                   [class.cell-ok]="giocata.esito === 'OK'"
+                   [class.cell-ko]="giocata.esito === 'KO'">
+                @if(getTeamLogo(giocata.squadraSigla)) {
+                  <img class="team-logo-cell"
+                       [src]="getTeamLogo(giocata.squadraSigla)!"
+                       [alt]="getSquadraNome(giocata.squadraSigla) || ''"
+                       (error)="$any($event.target).style.display='none'" />
+                }
+                <span class="team-name-cell">{{ getSquadraNome(giocata.squadraSigla) }}</span>
+                @if(giocata.forzatura) {
+                  <mat-icon class="forced-icon-cell">edit</mat-icon>
+                }
+              </div>
+            } @else {
+              <!-- Cella vuota -->
+              <div class="empty-cell-mobile">-</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-footer">
+    <button mat-raised-button color="primary" (click)="close()">
+      {{ 'COMMON.CLOSE' | translate }}
+    </button>
+  </div>
+</div>
+

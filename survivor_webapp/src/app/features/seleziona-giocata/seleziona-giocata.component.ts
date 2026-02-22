@@ -418,6 +418,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       squadreDisponibili: any[];
       squadraCorrenteId?: string;
       lega: Lega;
+      giocataCorrente?: any;  // ✅ Giocata esistente (se presente)
     },
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -433,6 +434,16 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     this.squadraSelezionata = data.squadraCorrenteId || null;
     this.statoGiornataCorrente = data.statoGiornataCorrente;
     this.lega = data.lega;
+
+    // ✅ Inizializza giocataPubblica con il valore della giocata esistente
+    if (data.giocataCorrente && typeof data.giocataCorrente.pubblica === 'boolean') {
+      this.giocataPubblica = data.giocataCorrente.pubblica;
+      console.log('✅ Inizializzato giocataPubblica con valore esistente:', this.giocataPubblica);
+    } else {
+      // Default: false (nascosta) se non esiste una giocata precedente
+      this.giocataPubblica = false;
+      console.log('⚠️ Nessuna giocata precedente, giocataPubblica impostato a false (nascosta)');
+    }
   }
 
   ngOnInit(): void {
@@ -600,6 +611,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   salvaSquadra() {
+    console.log('💾 Salvataggio giocata - giocataPubblica:', this.giocataPubblica);
+
     if (this.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value) {
       this.dialog
         .open(ConfermaAssegnazioneDialogComponent, {
@@ -610,6 +623,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         .subscribe((result) => {
           if (result) {
             this.showEncouragementMessage();
+            console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
               pubblica: this.giocataPubblica
@@ -619,6 +633,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         });
     } else {
       this.showEncouragementMessage();
+      console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
       this.dialogRef.close({
         squadraSelezionata: this.squadraSelezionata,
         pubblica: this.giocataPubblica

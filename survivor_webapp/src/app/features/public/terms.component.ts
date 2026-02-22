@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
     selector: 'app-terms',
@@ -276,7 +277,10 @@ export class TermsComponent implements OnInit, OnDestroy {
     private lastScrollTop = 0;
     private scrollTimeout: any;
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private authService: AuthService
+    ) { }
 
     ngOnInit() {
         // Non serve più il window scroll listener
@@ -317,6 +321,12 @@ export class TermsComponent implements OnInit, OnDestroy {
     }
 
     goBack() {
-        this.router.navigate(['/auth/login']);
+        // Se l'utente è loggato, torna alla home
+        // Altrimenti vai alla pagina di login
+        if (this.authService.isAuthenticated()) {
+            this.router.navigate(['/home']);
+        } else {
+            this.router.navigate(['/auth/login']);
+        }
     }
 }

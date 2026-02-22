@@ -3492,15 +3492,6 @@
 					transform: scale(0.98);
 				}
 
-				&.active {
-					background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-					border-color: #0A3D91;
-
-					.history-icon,
-					.history-count {
-						color: #FFFFFF;
-					}
-				}
 
 				.history-icon {
 					font-size: 16px;
@@ -4017,6 +4008,44 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	.history-toggle-btn-mobile {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 4px 8px;
+		background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(21, 101, 192, 0.1));
+		border: 1px solid rgba(30, 136, 229, 0.3);
+		border-radius: 12px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		margin-left: 6px;
+		flex-shrink: 0;
+
+		&:hover {
+			background: linear-gradient(135deg, rgba(30, 136, 229, 0.15), rgba(21, 101, 192, 0.15));
+			border-color: rgba(30, 136, 229, 0.5);
+			transform: scale(1.05);
+		}
+
+		&:active {
+			transform: scale(0.98);
+		}
+
+		.history-icon-mobile {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			color: #1e88e5;
+		}
+
+		.history-count-mobile {
+			font-size: 11px;
+			font-weight: 700;
+			color: #1565c0;
+			line-height: 1;
+		}
 	}
 
 	.status-indicator-mobile {

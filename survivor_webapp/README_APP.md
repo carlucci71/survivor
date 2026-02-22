@@ -54,6 +54,7 @@ src/app/
 
 ## Come Avviare
 
+### Sviluppo Web
 1. **Installare le dipendenze:**
    ```bash
    npm install
@@ -66,6 +67,51 @@ src/app/
 
 3. **Aprire il browser:**
    Navigare su `http://localhost:4200`
+
+### Quick Start - Android Release
+
+**⚠️ ATTENZIONE**: NON usare `--configuration production` per Android! Usa `mobile`!
+
+#### Opzione 1: Script PowerShell Automatico (Consigliato)
+```bash
+# Dalla cartella survivor_webapp/
+.\build-android.ps1
+```
+
+#### Opzione 2: Script npm
+```bash
+# Dalla cartella survivor_webapp/
+npm run build:android
+
+# Poi vai in android/ per generare l'AAB:
+cd android
+.\gradlew clean
+.\gradlew bundleRelease
+```
+
+#### Opzione 3: Manuale (passo passo)
+```bash
+# Da: survivor_webapp/
+
+# 1. Build con configurazione mobile (OBBLIGATORIO per Android!)
+npm run build:mobile
+# OPPURE: npx ng build --configuration mobile
+
+# 2. Copia i file nell'app Android
+npx cap copy android
+npx cap sync android
+
+# 3. Vai nella cartella Android e genera l'AAB
+cd android
+.\gradlew clean
+.\gradlew bundleRelease
+
+# Il file AAB sarà in: android\app\build\outputs\bundle\release\app-release.aab
+```
+
+**🚨 ERRORE COMUNE**: 
+- ❌ `ng build --configuration production` → genera link sbagliati per Android
+- ✅ `ng build --configuration mobile` → genera link corretti per Android
 
 ## Configurazione Backend
 
@@ -90,11 +136,42 @@ Per modificare l'URL del backend, aggiornare le proprietà `apiUrl` nei servizi:
 
 ## Build per Produzione
 
+### Web Production
 ```bash
 ng build --configuration production
 ```
 
 I file compilati saranno disponibili nella cartella `dist/`.
+
+### Build per Android (App Mobile)
+
+**IMPORTANTE**: Per generare l'app Android con i link corretti (deep link e magic link), utilizzare **sempre** la configurazione `mobile`:
+
+1. **Build del frontend con configurazione mobile:**
+   ```bash
+   npm run build:mobile
+   ```
+   Questo comando utilizza `environment.mobile.ts` che imposta `mobile: true`, necessario per generare i magic link corretti che aprono l'app invece del browser.
+
+2. **Sincronizzare con Capacitor:**
+   ```bash
+   npx cap copy android
+   npx cap sync android
+   ```
+
+3. **Generare il bundle firmato (AAB):**
+   ```bash
+   cd android
+   .\gradlew clean
+   .\gradlew bundleRelease
+   ```
+
+4. **Il file AAB sarà disponibile in:**
+   ```
+   android\app\build\outputs\bundle\release\app-release.aab
+   ```
+
+**Nota**: Se non usi `build:mobile`, l'app genererà link con `sourceMobile=false` che apriranno il browser invece dell'app.
 
 ## Tecnologie Utilizzate
 

@@ -18,6 +18,8 @@ export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private userLoadedSubject = new BehaviorSubject<boolean>(false);
+  public userLoaded$ = this.userLoadedSubject.asObservable();
 
   constructor(private injector: Injector) {
     // Defer loading user until after DI finishes to avoid circular DI (interceptor -> AuthService -> HttpClient)
@@ -57,7 +59,7 @@ export class AuthService {
       role: response.role
     };
     this.currentUserSubject.next(user);
-    
+
     // Push registration is now started from `HomeComponent` after login,
     // so no need to send a cached token here.
   }
@@ -89,29 +91,51 @@ export class AuthService {
 
 
   private loadUserFromBE(): void {
+    const token = this.getToken();
+
+    // Se non c'è token, non fare la chiamata
+    if (!token) {
+      this.currentUserSubject.next(null);
+      this.userLoadedSubject.next(true);
+      return;
+    }
+
     this.getMyData().subscribe({
       next: (response: AuthResponse) => {
         if (!response) {
-          // myData returned null, redirect to login
-          this.currentUserSubject.next(null);
-          this.router.navigate(['/login']);
+          // myData returned null, logout e redirect to login
+          this.logout();
+          this.userLoadedSubject.next(true);
+          this.router.navigate(['/auth/login']);
           return;
         }
         // handle and store token + user via existing helper
         this.handleAuthResponse(response);
+        this.userLoadedSubject.next(true);
       },
       error: (error) => {
-        console.error('Errore :', error);
+        console.error('Errore nel caricamento utente:', error);
+
+        // Se errore 401/403, il token non è più valido → logout
+        const status = error && (error.status || (error.statusCode as any));
+        if (status === 401 || status === 403) {
+          this.logout();
+          this.userLoadedSubject.next(true);
+          this.router.navigate(['/auth/login']);
+          return;
+        }
+
         // failed to load user; ensure subject is null
         this.currentUserSubject.next(null);
+        this.userLoadedSubject.next(true);
 
         // If backend returned 503 or there was a network error (status 0),
         // show a friendly "service unavailable" page with a refresh option.
-        const status = error && (error.status || (error.statusCode as any));
         if (status === 503 || status === 0 || !status) {
           this.router.navigate(['/service-unavailable']);
         } else {
-          this.router.navigate(['/login']);
+          this.logout();
+          this.router.navigate(['/auth/login']);
         }
       }
     });
@@ -123,6 +147,10 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.getToken() !== null;
+  }
+
+  isUserLoaded(): boolean {
+    return this.userLoadedSubject.value;
   }
 
   isAdmin(): boolean {
