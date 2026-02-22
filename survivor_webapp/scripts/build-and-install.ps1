@@ -33,8 +33,9 @@ Check-Command adb
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $projectRoot = Resolve-Path (Join-Path $scriptDir "..")
 # Use correct gradle wrapper based on OS
-if ($IsMacOS -or $IsLinux) {
-    $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android/gradlew"
+if ([bool](Get-Variable 'IsMacOS' -ValueOnly -ErrorAction SilentlyContinue) -or 
+    [bool](Get-Variable 'IsLinux' -ValueOnly -ErrorAction SilentlyContinue)) {
+	$gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android/gradlew"
 } else {
     $gradleWrapper = Join-Path -Path $projectRoot -ChildPath "android\gradlew.bat"
 }
