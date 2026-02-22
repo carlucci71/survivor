@@ -469,18 +469,13 @@ export class LegaDettaglioComponent implements OnDestroy {
   hasMoreRounds(giocatore: Giocatore): boolean {
     if (!giocatore?.giocate || !this.giornataIndices) return false;
 
-    // 🧪 FORZATURA TEST: Mostra sempre l'icona storico per testare la funzionalità
-    // TODO: RIMUOVERE DOPO IL TEST
-    console.log('🧪 TEST MODE: Forzatura icona storico - Giocatore:', giocatore.nickname, 'Giocate:', giocatore.giocate?.length);
-    return true;
-
     // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
-    // if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
-    //   return false;
-    // }
+    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
+      return false;
+    }
 
     // Mostra il pulsante solo se ha effettivamente più di 5 giocate
-    // return giocatore.giocate.length > this.MAX_VISIBLE_ROUNDS;
+    return giocatore.giocate.length > this.MAX_VISIBLE_ROUNDS;
   }
 
   /**
