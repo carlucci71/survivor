@@ -44,6 +44,7 @@ import { MockService } from '../../core/services/mock.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
+import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -121,8 +122,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'all';
   expandedPlayers: { [key: number]: boolean } = {};
 
-  // Storico completo giocate per giocatore
-  showFullHistoryFor: { [key: number]: boolean } = {};
+  // Giornate visibili
   MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
 
   // Sottoscrizione agli aggiornamenti del profilo
@@ -286,6 +286,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         squadreDisponibili: squadreDisponibili,
         squadraCorrenteId: squadraCorrenteId,
         lega: this.lega,
+        giocataCorrente: giocataCorrente  // ✅ Passa la giocata esistente per inizializzare pubblica
       },
       width: isDesktop ? '90vw' : '94vw',
       maxWidth: isDesktop ? '1100px' : '500px',
@@ -417,7 +418,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Restituisce le giornate visibili per un giocatore (limitate o complete)
+   * Restituisce le giornate visibili per un giocatore (max 5)
    */
   getVisibleGiornateForPlayer(giocatore: Giocatore): number[] {
     if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
@@ -427,18 +428,17 @@ export class LegaDettaglioComponent implements OnDestroy {
       const ultimaGiornataGiocata = this.getUltimaGiornataGiocata(giocatore);
       if (ultimaGiornataGiocata > 0) {
         // Filtra le giornate fino all'ultima giocata (compresa)
-        return this.giornataIndices.filter(g => g <= ultimaGiornataGiocata);
+        const giornateElim = this.giornataIndices.filter(g => g <= ultimaGiornataGiocata);
+        // Max 5 anche per eliminati
+        return giornateElim.length > this.MAX_VISIBLE_ROUNDS
+          ? giornateElim.slice(-this.MAX_VISIBLE_ROUNDS)
+          : giornateElim;
       }
       // Se non ha giocate, non mostrare nulla
       return [];
     }
 
-    // Se lo storico completo è attivo per questo giocatore, mostra tutto
-    if (this.showFullHistoryFor[giocatore.id]) {
-      return this.giornataIndices;
-    }
-
-    // Altrimenti mostra solo le ultime N giornate
+    // Mostra sempre max 5 giornate (le ultime)
     const totalRounds = this.giornataIndices.length;
     if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
       return this.giornataIndices;
@@ -474,7 +474,8 @@ export class LegaDettaglioComponent implements OnDestroy {
       return false;
     }
 
-    return this.giornataIndices.length > this.MAX_VISIBLE_ROUNDS;
+    // Mostra il pulsante solo se ha effettivamente più di 5 giocate
+    return giocatore.giocate.length > this.MAX_VISIBLE_ROUNDS;
   }
 
   /**
@@ -486,13 +487,40 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Toggle dello storico completo per un giocatore
+   * Apre dialog con storico completo per un giocatore
    */
   toggleFullHistory(giocatore: Giocatore, event?: Event): void {
     if (event) {
       event.stopPropagation();
     }
-    this.showFullHistoryFor[giocatore.id] = !this.showFullHistoryFor[giocatore.id];
+
+    // Apri dialog con lo storico completo
+    this.openPlayerHistoryDialog(giocatore);
+  }
+
+  /**
+   * Apre la dialog modale con lo storico completo del giocatore
+   */
+  openPlayerHistoryDialog(giocatore: Giocatore): void {
+    // Ottimizzazione per mobile
+    const isMobile = window.innerWidth <= 768;
+
+    const dialogRef = this.dialog.open(PlayerHistoryDialogComponent, {
+      width: isMobile ? '95vw' : '90vw',
+      maxWidth: isMobile ? '100%' : '800px',
+      maxHeight: isMobile ? '85vh' : '90vh',
+      data: {
+        giocatore: giocatore,
+        lega: this.lega,
+        giornataIndices: this.giornataIndices,
+        getGiocataByGiornataAssoluta: this.getGiocataByGiornataAssoluta.bind(this),
+        getTeamLogo: this.getTeamLogo.bind(this),
+        getSquadraNome: this.getSquadraNome.bind(this)
+      },
+      panelClass: 'player-history-dialog-wrapper',  // Cambiato per evitare conflitti!
+      autoFocus: false,
+      restoreFocus: false
+    });
   }
 
   /**
