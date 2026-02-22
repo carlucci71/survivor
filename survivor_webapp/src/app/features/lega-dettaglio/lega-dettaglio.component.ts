@@ -89,6 +89,17 @@ import { PlayerHistoryDialogComponent } from '../../shared/components/player-his
 export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
 
+  /**
+   * 🧪 MODALITÀ TEST per testare il dialog dello storico
+   *
+   * Imposta a true per:
+   * - Forzare la visualizzazione dell'icona storico per TUTTI i giocatori
+   * - Permettere di testare il dialog dello storico anche con poche giocate
+   *
+   * ⚠️ Ricorda di rimetterlo a false prima di commit/push!
+   */
+  private TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ TEST DISATTIVATO
+
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -383,9 +394,9 @@ export class LegaDettaglioComponent implements OnDestroy {
       maxGiornata = numGg;
     }
 
-    // Calcola le giornate da visualizzare (max 10, centrate sulla giornata corrente)
+    // Calcola le giornate da visualizzare (MAX 5, centrate sulla giornata corrente)
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 10;
+    const maxGiornateVisibili = 5; // LIMITE A 5 GIORNATE VISIBILI
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
 
@@ -400,7 +411,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.displayedColumns.push('giocata' + (i - giornataIniziale));
     }
 
-    // Popola giornataIndices solo con le giornate visibili
+    // Popola giornataIndices solo con le giornate visibili (MAX 5)
     this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
@@ -464,9 +475,15 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Verifica se il giocatore ha più giocate del limite visibile
+   * Verifica se il giocatore ha più giocate del limite visibile nella tabella
+   * Mostra l'emoji dello storico se ci sono giocate oltre alle 5 visualizzate nella tabella
    */
   hasMoreRounds(giocatore: Giocatore): boolean {
+    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona storico
+    if (this.TEST_MODE_FORCE_HISTORY_ICON) {
+      return true; // Mostra sempre l'icona in modalità test
+    }
+
     if (!giocatore?.giocate || !this.giornataIndices) return false;
 
     // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
@@ -474,8 +491,15 @@ export class LegaDettaglioComponent implements OnDestroy {
       return false;
     }
 
-    // Mostra il pulsante solo se ha effettivamente più di 5 giocate
-    return giocatore.giocate.length > this.MAX_VISIBLE_ROUNDS;
+    // Conta quante giocate ha effettuato in totale
+    const totaleGiocate = giocatore.giocate.length;
+
+    // Conta quante giornate sono visualizzate nella tabella corrente
+    const giornateVisibili = this.giornataIndices.length;
+
+    // Mostra il pulsante se ha più giocate di quelle visualizzate nella tabella
+    // (cioè se ci sono giocate "nascoste" che non si vedono nella tabella)
+    return totaleGiocate > giornateVisibili;
   }
 
   /**
