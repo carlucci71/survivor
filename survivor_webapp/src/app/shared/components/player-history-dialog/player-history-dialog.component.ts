@@ -52,7 +52,51 @@ export class PlayerHistoryDialogComponent {
     // Se il mock è abilitato, sovrascrivi i dati
     if (this.ENABLE_MOCK) {
       this.setupMockData();
+    } else {
+      // ✅ SOLUZIONE: Calcola le giornate assolute dalle giocate del giocatore
+      this.calculateGiornateIndices();
     }
+  }
+
+  /**
+   * Calcola le giornate assolute dalle giocate del giocatore
+   * IMPORTANTE: Mostra TUTTE le giornate dalla prima all'ultima giocata,
+   * anche quelle saltate (vuote)!
+   *
+   * Es: Se giocatore ha giocato giornate [23, 25, 26]
+   * → giornataIndices diventa [23, 24, 25, 26] (include anche la 24 vuota)
+   */
+  private calculateGiornateIndices(): void {
+    const giornataIniziale = this.data.lega?.giornataIniziale || 1;
+    const giocate = this.data.giocatore.giocate || [];
+
+    if (giocate.length === 0) {
+      this.data.giornataIndices = [];
+      return;
+    }
+
+    // Trova la prima e l'ultima giornata assoluta giocata
+    const giornateAssolute = giocate
+      .map((giocata: any) => {
+        const giornataRelativa = Number(giocata?.giornata);
+        return giornataIniziale + giornataRelativa - 1;
+      })
+      .filter((g: number) => !isNaN(g))
+      .sort((a: number, b: number) => a - b);
+
+    if (giornateAssolute.length === 0) {
+      this.data.giornataIndices = [];
+      return;
+    }
+
+    const primaGiornata = giornateAssolute[0];
+    const ultimaGiornata = giornateAssolute[giornateAssolute.length - 1];
+
+    // Genera TUTTE le giornate dalla prima all'ultima (anche quelle non giocate)
+    this.data.giornataIndices = Array.from(
+      { length: ultimaGiornata - primaGiornata + 1 },
+      (_, i) => primaGiornata + i
+    );
   }
 
   /**
@@ -95,9 +139,9 @@ export class PlayerHistoryDialogComponent {
     const itemsPerRow = 5;
 
     for (let i = 0; i < this.data.giornataIndices.length; i += itemsPerRow) {
-      rows.push(this.data.giornataIndices.slice(i, i + itemsPerRow));
+      const row = this.data.giornataIndices.slice(i, i + itemsPerRow);
+      rows.push(row);
     }
-
 
     return rows;
   }

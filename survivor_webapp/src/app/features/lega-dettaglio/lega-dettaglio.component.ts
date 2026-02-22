@@ -494,6 +494,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   /**
    * Verifica se il giocatore ha più giocate del limite visibile nella tabella
    * Mostra l'emoji dello storico se ci sono giocate oltre alle 5 visualizzate nella tabella
+   * ANCHE per i giocatori eliminati (devono poter vedere il loro storico completo)
    */
   hasMoreRounds(giocatore: Giocatore): boolean {
     // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona storico
@@ -503,11 +504,6 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     if (!giocatore?.giocate || !this.giornataIndices) return false;
 
-    // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
-    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
-      return false;
-    }
-
     // Conta quante giocate ha effettuato in totale
     const totaleGiocate = giocatore.giocate.length;
 
@@ -516,6 +512,7 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     // Mostra il pulsante se ha più giocate di quelle visualizzate nella tabella
     // (cioè se ci sono giocate "nascoste" che non si vedono nella tabella)
+    // ✅ ANCHE per i giocatori eliminati!
     return totaleGiocate > giornateVisibili;
   }
 
@@ -546,21 +543,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Ottimizzazione per mobile
     const isMobile = window.innerWidth <= 768;
 
-    // ✅ CORREZIONE: Calcola solo le giornate che il giocatore ha EFFETTIVAMENTE giocato
-    // Non tutte le giornate della lega, ma solo quelle con giocate
-    const giornataIniziale = this.lega?.giornataIniziale || 1;
-
-    // Mappa le giocate del giocatore alle giornate assolute
-    const giornateGiocate = (giocatore.giocate || [])
-      .map((giocata: any) => {
-        // Converte giornata relativa (1, 2, 3...) in giornata assoluta (27, 28, 29...)
-        const giornataRelativa = Number(giocata?.giornata);
-        return giornataIniziale + giornataRelativa - 1;
-      })
-      .filter((g: number) => !isNaN(g)) // Rimuove valori non validi
-      .sort((a: number, b: number) => a - b); // Ordina in ordine crescente
-
-
+    // ✅ SOLUZIONE SEMPLICE: Passa tutte le giocate, il dialog le elaborerà
+    // Non calcolare le giornate assolute qui, lascia che il dialog lo faccia internamente
     const dialogRef = this.dialog.open(PlayerHistoryDialogComponent, {
       width: isMobile ? '95vw' : '90vw',
       maxWidth: isMobile ? '100%' : '800px',
@@ -568,7 +552,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       data: {
         giocatore: giocatore,
         lega: this.lega,
-        giornataIndices: giornateGiocate, // ✅ Passo solo le giornate effettivamente giocate!
+        giornataIndices: [], // ✅ Array vuoto, il dialog calcolerà le giornate internamente
         getGiocataByGiornataAssoluta: this.getGiocataByGiornataAssoluta.bind(this),
         getTeamLogo: this.getTeamLogo.bind(this),
         getSquadraNome: this.getSquadraNome.bind(this)
