@@ -9,7 +9,7 @@ import { Component } from '@angular/core';
       <div class="login-card">
         <div class="logo-container">
           <h1 class="app-title">SURVIVOR</h1>
-          <p class="app-subtitle">ONE SHOT</p>
+          <p class="app-subtitle">WIN OR GO HOME</p>
         </div>
         <div class="card-header">
           <h2>Link inviato</h2>

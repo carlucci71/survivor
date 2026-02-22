@@ -13,7 +13,8 @@
   </div>
 
   <div class="dialog-content">
-    <div class="history-grid">
+    <!-- Layout Desktop: Griglia responsive -->
+    <div class="history-grid desktop-only">
       @for (giornata of data.giornataIndices; track giornata) {
         @let giocata = getGiocataForRound(giornata);
         <div class="history-card"
@@ -57,6 +58,47 @@
           </div>
         </div>
       }
+    </div>
+
+    <!-- Layout Mobile: IDENTICO al dettaglio lega quando espandi -->
+    <div class="giornate-list-mobile mobile-only">
+      <!-- Header settimane -->
+      <div class="settimane-header">
+        @for (giornata of data.giornataIndices; track giornata) {
+          <div class="settimana-col">
+            <span class="settimana-label">{{ getDesGiornataTitleMobile(giornata) }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Giocate -->
+      <div class="giocate-row">
+        @for (giornata of data.giornataIndices; track giornata) {
+          @let giocata = getGiocataForRound(giornata);
+          <div class="giocata-col">
+            <!-- Team scelto -->
+            @if(giocata?.squadraSigla) {
+              <div class="team-cell-mobile"
+                   [class.cell-ok]="giocata.esito === 'OK'"
+                   [class.cell-ko]="giocata.esito === 'KO'">
+                @if(getTeamLogo(giocata.squadraSigla)) {
+                  <img class="team-logo-cell"
+                       [src]="getTeamLogo(giocata.squadraSigla)!"
+                       [alt]="getSquadraNome(giocata.squadraSigla) || ''"
+                       (error)="$any($event.target).style.display='none'" />
+                }
+                <span class="team-name-cell">{{ getSquadraNome(giocata.squadraSigla) }}</span>
+                @if(giocata.forzatura) {
+                  <mat-icon class="forced-icon-cell">edit</mat-icon>
+                }
+              </div>
+            } @else {
+              <!-- Cella vuota -->
+              <div class="empty-cell-mobile">-</div>
+            }
+          </div>
+        }
+      </div>
     </div>
   </div>
 

@@ -57,5 +57,14 @@ export class PlayerHistoryDialogComponent {
     const giornataRelativa = giornata - (this.data.lega?.giornataIniziale || 1) + 1;
     return `${giornataRelativa}`;
   }
+
+  /**
+   * Versione abbreviata del titolo giornata per mobile
+   * Es: "Giornata 26" → "Gio. 26"
+   */
+  getDesGiornataTitleMobile(giornata: number): string {
+    const giornataRelativa = giornata - (this.data.lega?.giornataIniziale || 1) + 1;
+    return `G.${giornataRelativa}`;
+  }
 }
 

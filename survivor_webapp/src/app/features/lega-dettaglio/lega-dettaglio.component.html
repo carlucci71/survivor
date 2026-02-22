@@ -332,9 +332,20 @@
 
           <!-- Header giocatore compatto - Nome + Freccia sulla stessa riga -->
           <div class="player-header-mobile" (click)="togglePlayerExpansion(giocatore.id)">
-            <!-- Sinistra: Nome + Badge stato + Icona modifica -->
+            <!-- Sinistra: Nome + Badge stato + Icona modifica + Icona storico -->
             <div class="player-info-left">
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+
+              <!-- Icona storico completo se ci sono più di 5 giocate -->
+              @if(hasMoreRounds(giocatore)) {
+                <button class="history-toggle-btn-mobile"
+                        (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
+                        [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
+                  <mat-icon class="history-icon-mobile">history</mat-icon>
+                  <span class="history-count-mobile">{{ getTotalRoundsCount(giocatore) }}</span>
+                </button>
+              }
+
               <!-- Icona modifica per leader/admin -->
               @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
                 <mat-icon class="edit-user-icon-mobile"
@@ -355,18 +366,18 @@
             </mat-icon>
           </div>
 
-          <!-- Storia completa giocate - ESPANDIBILE -->
+          <!-- Storia giocate limitata (MAX 5) - ESPANDIBILE -->
           <div class="giornate-list-mobile" *ngIf="expandedPlayers[giocatore.id]" [@expandCollapse]>
             <!-- Header settimane -->
             <div class="settimane-header">
-              <div *ngFor="let giornata of mobileGiornateIndices()" class="settimana-col">
+              <div *ngFor="let giornata of getVisibleGiornateForPlayer(giocatore)" class="settimana-col">
                 <span class="settimana-label">{{ getDesGiornataTitleMobile(giornata) }}</span>
               </div>
             </div>
 
             <!-- Giocate -->
             <div class="giocate-row">
-              <div *ngFor="let giornata of mobileGiornateIndices()" class="giocata-col">
+              <div *ngFor="let giornata of getVisibleGiornateForPlayer(giocatore)" class="giocata-col">
                 <!-- Team scelto -->
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
