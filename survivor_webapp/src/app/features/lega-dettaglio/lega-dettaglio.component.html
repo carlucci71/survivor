@@ -190,11 +190,8 @@
                       @if(hasMoreRounds(giocatore)) {
                         <button class="history-toggle-btn"
                                 (click)="toggleFullHistory(giocatore, $event)"
-                                [matTooltip]="showFullHistoryFor[giocatore.id] ? ('LEAGUE.HIDE_HISTORY' | translate) : ('LEAGUE.SHOW_FULL_HISTORY' | translate)"
-                                [class.active]="showFullHistoryFor[giocatore.id]">
-                          <mat-icon class="history-icon">
-                            {{ showFullHistoryFor[giocatore.id] ? 'visibility_off' : 'history' }}
-                          </mat-icon>
+                                [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
+                          <mat-icon class="history-icon">history</mat-icon>
                           <span class="history-count">{{ getTotalRoundsCount(giocatore) }}</span>
                         </button>
                       }

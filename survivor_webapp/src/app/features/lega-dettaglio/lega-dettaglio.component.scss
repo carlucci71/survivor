@@ -3492,15 +3492,6 @@
 					transform: scale(0.98);
 				}
 
-				&.active {
-					background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-					border-color: #0A3D91;
-
-					.history-icon,
-					.history-count {
-						color: #FFFFFF;
-					}
-				}
 
 				.history-icon {
 					font-size: 16px;
