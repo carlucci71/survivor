@@ -19,7 +19,7 @@ function Check-Command($cmd) {
 
 Set-Location -Path $PSScriptRoot
 
-Get-Date -Format "dd/MM/yyyy HH:mm" > ..\public\build_fe.html
+#Get-Date -Format "dd/MM/yyyy HH:mm" > ..\public\build_fe.html
 
 Write-Host "Configuration: $Configuration; Release: $($Release.IsPresent); Install after build: $($Install.IsPresent)"
 
