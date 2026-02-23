@@ -19,7 +19,13 @@ function Check-Command($cmd) {
 
 Set-Location -Path $PSScriptRoot
 
-#Get-Date -Format "dd/MM/yyyy HH:mm" > ..\public\build_fe.html
+# Create build info file
+$publicDir = Join-Path $PSScriptRoot "..\public"
+if (-not (Test-Path $publicDir)) {
+    New-Item -ItemType Directory -Path $publicDir -Force | Out-Null
+}
+$buildDate = Get-Date -Format "dd/MM/yyyy HH:mm"
+Set-Content -Path (Join-Path $publicDir "build_fe.html") -Value $buildDate -Force
 
 Write-Host "Configuration: $Configuration; Release: $($Release.IsPresent); Install after build: $($Install.IsPresent)"
 

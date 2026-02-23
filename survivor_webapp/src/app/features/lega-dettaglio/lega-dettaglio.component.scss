@@ -3294,13 +3294,12 @@
 
 .excel-table-scroll {
 	width: 100%;
-	overflow-x: auto;
+	overflow-x: hidden; // NESSUNO SCROLL ORIZZONTALE SU DESKTOP/TABLET
 	overflow-y: auto;
 	max-height: 700px;
 
-	// Custom scrollbar elegante
+	// Custom scrollbar elegante (solo verticale)
 	&::-webkit-scrollbar {
-		height: 10px; // Leggermente più alta
 		width: 10px;
 	}
 
@@ -3337,7 +3336,7 @@
 	width: 100%;
 	border-collapse: separate;
 	border-spacing: 0;
-	font-size: 0.9rem;
+	font-size: 0.82rem; // Ridotto da 0.9rem per tabella più compatta
 
 	// Header fisso
 	thead {
@@ -3354,13 +3353,13 @@
 	}
 
 	.excel-header-cell {
-		padding: 12px 8px;
+		padding: 10px 6px; // Ridotto da 12px 8px per header più compatto
 		text-align: center;
 		font-weight: 700;
 		color: #FFFFFF;
 		border-right: 1px solid rgba(255, 255, 255, 0.15); // Bordo più sottile e chiaro
 		white-space: nowrap;
-		font-size: 0.85rem;
+		font-size: 0.78rem; // Ridotto da 0.85rem
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); // Ombra testo per miglior leggibilità
 
 		&:last-child {
@@ -3380,9 +3379,9 @@
 		}
 
 		&.round-col {
-			min-width: 60px;
-			width: 70px;
-			font-size: 0.75rem;
+			min-width: 75px; // Aumentato da 60px per evitare sovrapposizioni
+			width: 85px; // Aumentato da 70px
+			font-size: 0.7rem; // Ridotto da 0.75rem
 
 			&.current-round {
 				background: rgba(79, 195, 247, 0.15);
@@ -3392,8 +3391,8 @@
 		}
 
 		&.actions-col {
-			min-width: 80px;
-			width: 80px;
+			min-width: 40px; // Ridotto da 50px - ancora più compatto
+			width: 40px;
 			text-align: center;
 			position: sticky;
 			right: 0;
@@ -3434,7 +3433,7 @@
 	}
 
 	.excel-cell {
-		padding: 10px 8px;
+		padding: 8px 6px; // Ridotto da 10px 8px per celle più compatte
 		text-align: center;
 		border-bottom: 1px solid #E8EDF3; // Bordo più chiaro e azzurrino
 		border-right: 1px solid #F0F4F8; // Bordo laterale più elegante
@@ -3836,27 +3835,29 @@
 
 		&.actions-cell {
 			text-align: center;
-			padding: 8px;
+			padding: 2px; // Ridotto da 4px per colonna ancora più stretta
 			position: sticky;
 			right: 0;
 			background: inherit; // Eredita il background dalla riga parent
 			z-index: 5; // Più alto delle altre celle per rimanere sopra durante lo scroll
 			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); // Ombra più marcata per enfatizzare la separazione
+			min-width: 40px; // Ridotto da 50px - ancora più compatto
+			width: 40px;
 
 			.actions-wrapper {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				gap: 8px;
+				gap: 2px; // Ridotto da 4px
 			}
 
 			.action-icon {
 				display: inline-flex;
 				align-items: center;
 				justify-content: center;
-				font-size: 18px;
-				width: 32px;
-				height: 32px;
+				font-size: 14px; // Ridotto da 16px per colonna più stretta
+				width: 24px; // Ridotto da 28px
+				height: 24px; // Ridotto da 28px
 				border-radius: 50%;
 				cursor: pointer;
 				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -3900,11 +3901,11 @@
 // Responsive per tablet
 @media (min-width: 768px) and (max-width: 1024px) {
 	.excel-table {
-		font-size: 0.85rem;
+		font-size: 0.8rem; // Leggermente più piccolo per tablet
 
 		.excel-header-cell {
-			padding: 10px 6px;
-			font-size: 0.8rem;
+			padding: 8px 5px; // Ridotto per tablet
+			font-size: 0.75rem; // Ridotto
 
 			&.user-col {
 				min-width: 120px;
@@ -3912,23 +3913,41 @@
 			}
 
 			&.round-col {
-				min-width: 50px;
-				width: 60px;
-				font-size: 0.7rem;
+				min-width: 65px; // Aumentato da 50px per evitare sovrapposizioni
+				width: 75px; // Aumentato da 60px
+				font-size: 0.68rem; // Ridotto
+			}
+
+			&.actions-col {
+				min-width: 40px; // Ridotto a 40px come desktop
+				width: 40px;
 			}
 		}
 
 		.excel-cell {
-			padding: 8px 6px;
+			padding: 6px 5px; // Ridotto per tablet
 
 			&.user-cell .user-name {
 				max-width: 120px;
 			}
 
-			.team-logo-tiny {
-				width: 24px;
-				height: 24px;
+			&.actions-cell {
+				min-width: 40px; // Ridotto a 40px come desktop
+				width: 40px;
+				padding: 2px; // Ridotto
 			}
+
+			.team-logo-tiny {
+				width: 22px; // Leggermente più piccolo per tablet
+				height: 22px;
+			}
+		}
+
+		// Icone più piccole su tablet
+		.action-icon {
+			font-size: 13px !important;
+			width: 22px !important;
+			height: 22px !important;
 		}
 	}
 }
