@@ -13,7 +13,7 @@
   </div>
 
   <div class="dialog-content">
-    <!-- Layout Desktop: Righe dinamiche (5 squadre per riga) -->
+    <!-- Layout Desktop/Tablet: Righe dinamiche (5 squadre per riga) con "Giornata X" -->
     <div class="history-rows-layout desktop-only">
       @for (row of getAllRowsRounds(); track $index) {
         <div class="history-row">
@@ -25,7 +25,7 @@
                  [class.item-pending]="!giocata?.esito">
 
               <div class="item-header">
-                <span class="round-number">{{ getGiornataLabel(giornata) }}</span>
+                <span class="round-number">{{ getGiornataLabelFull(giornata) }}</span>
                 @if(giocata?.esito) {
                   <mat-icon class="result-icon-small" [class.icon-ok]="giocata.esito === 'OK'" [class.icon-ko]="giocata.esito === 'KO'">
                     {{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}
@@ -60,7 +60,7 @@
       }
     </div>
 
-    <!-- Layout Mobile: Righe dinamiche (5 squadre per riga) -->
+    <!-- Layout Mobile: Righe dinamiche (5 squadre per riga) con solo numero -->
     <div class="history-rows-layout mobile-only">
       @for (row of getAllRowsRounds(); track $index) {
         <div class="history-row">

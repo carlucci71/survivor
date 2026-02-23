@@ -95,10 +95,20 @@ export class LegaDettaglioComponent implements OnDestroy {
    * Imposta a true per:
    * - Forzare la visualizzazione dell'icona storico per TUTTI i giocatori
    * - Permettere di testare il dialog dello storico anche con poche giocate
+   * - Aggiungere 10 giornate mock a tutti i giocatori
    *
-   * ⚠️ Ricorda di rimetterlo a false prima di commit/push!
+  /**
+   * 🧪 MOCK PER TESTING ICONA STORICO - DISABILITATO ✅
+   *
+   * ⚠️ ATTENZIONE: Il mock è DISABILITATO per produzione!
+   *
+   * 📋 Uso:
+   * - true: Attiva mock con 10 giornate per testare layout compatto (5 visibili + dialog storico)
+   * - false: Modalità normale produzione (✅ ATTUALE)
+   *
+   * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
    */
-  private TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ TEST DISATTIVATO - Pronto per produzione
+  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
@@ -188,6 +198,41 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (lega) {
           this.lega = lega;
           this.id=lega.id;
+
+          // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
+          // Questo mock crea 10 giornate fittizie per testare:
+          // - Layout compatto con solo 5 giornate visibili
+          // - Dialog storico completo con tutte le 10 giocate
+          // - Icona storico accanto al nome utente
+          // - NO scroll orizzontale su desktop/tablet
+          if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
+            console.log('🧪 MOCK MODE ATTIVO: Generazione 10 giornate fittizie');
+
+            // Forzo giornataIniziale e giornataFinale per avere 10 giornate
+            this.lega.giornataIniziale = 1;
+            this.lega.giornataFinale = 10;
+            this.lega.giornataCorrente = 8; // Simulo che siamo alla giornata 8
+
+            // Mock squadre Serie A per le giocate
+            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
+
+            // Aggiungi giocate mock a TUTTI i giocatori
+            this.lega.giocatori?.forEach((giocatore) => {
+              giocatore.giocate = [];
+
+              for (let i = 0; i < 10; i++) {
+                giocatore.giocate.push({
+                  giornata: i + 1,
+                  squadraSigla: mockSquadre[i],
+                  esito: mockEsiti[i] as any,
+                  forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
+                  pubblica: true
+                });
+              }
+            });
+          }
+
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
@@ -428,7 +473,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.displayedColumns.push('giocata' + (i - giornataIniziale));
     }
 
-    // Popola giornataIndices solo con le giornate visibili (MAX 5)
+    // Popola giornataIndices solo con le giornate visibili (TEMPORANEO: MAX 10 PER TEST)
     this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
