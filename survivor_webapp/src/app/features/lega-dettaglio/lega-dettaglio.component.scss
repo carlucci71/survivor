@@ -3996,56 +3996,9 @@
 	.player-info-left {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 8px; // Ridotto da 10px a 8px per maggiore compattezza
 		flex: 1;
 		min-width: 0;
-	}
-
-	.nome-giocatore-mobile {
-		font-size: 0.95rem;
-		font-weight: 700;
-		color: #0A3D91;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.history-toggle-btn-mobile {
-		display: inline-flex;
-		align-items: center;
-		gap: 4px;
-		padding: 4px 8px;
-		background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(21, 101, 192, 0.1));
-		border: 1px solid rgba(30, 136, 229, 0.3);
-		border-radius: 12px;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		margin-left: 6px;
-		flex-shrink: 0;
-
-		&:hover {
-			background: linear-gradient(135deg, rgba(30, 136, 229, 0.15), rgba(21, 101, 192, 0.15));
-			border-color: rgba(30, 136, 229, 0.5);
-			transform: scale(1.05);
-		}
-
-		&:active {
-			transform: scale(0.98);
-		}
-
-		.history-icon-mobile {
-			font-size: 16px;
-			width: 16px;
-			height: 16px;
-			color: #1e88e5;
-		}
-
-		.history-count-mobile {
-			font-size: 11px;
-			font-weight: 700;
-			color: #1565c0;
-			line-height: 1;
-		}
 	}
 
 	.status-indicator-mobile {
@@ -4054,7 +4007,7 @@
 		height: 10px;
 		border-radius: 50%;
 		flex-shrink: 0;
-		margin-left: 8px;
+		// Nessun margin, gap gestito dal parent
 
 		&.active {
 			background: #4CAF50;
@@ -4068,6 +4021,83 @@
 			animation: pulse-red 2s infinite;
 		}
 	}
+
+	.nome-giocatore-mobile {
+		font-size: 0.95rem;
+		font-weight: 700;
+		color: #0A3D91;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		flex: 1; // Occupa spazio disponibile
+		min-width: 0;
+	}
+
+	// Sezione destra: icona admin + freccia
+	.player-actions-right {
+		display: flex;
+		align-items: center;
+		gap: 6px; // Piccolo gap tra icona admin e freccia
+		flex-shrink: 0;
+	}
+
+	.edit-user-icon-mobile {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+		color: #FFFFFF;
+		font-size: 18px;
+		width: 30px; // Leggermente più piccola per equilibrio
+		height: 30px;
+		border-radius: 50%;
+		cursor: pointer;
+		transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+		box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
+		animation: pulseEdit 2s ease-in-out infinite;
+
+		&:hover {
+			transform: scale(1.15) rotate(5deg);
+			box-shadow: 0 4px 16px rgba(79, 195, 247, 0.6);
+		}
+
+		&:active {
+			transform: scale(0.95);
+		}
+	}
+
+	.history-toggle-btn-mobile {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 6px;
+		background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(21, 101, 192, 0.1));
+		border: 1px solid rgba(30, 136, 229, 0.3);
+		border-radius: 50%;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+
+		&:hover {
+			background: linear-gradient(135deg, rgba(30, 136, 229, 0.15), rgba(21, 101, 192, 0.15));
+			border-color: rgba(30, 136, 229, 0.5);
+			transform: scale(1.05);
+		}
+
+		&:active {
+			transform: scale(0.98);
+		}
+
+		.history-icon-mobile {
+			font-size: 18px;
+			width: 18px;
+			height: 18px;
+			color: #1e88e5;
+		}
+	}
+
 
 	.expand-icon-mobile {
 		color: #0A3D91;

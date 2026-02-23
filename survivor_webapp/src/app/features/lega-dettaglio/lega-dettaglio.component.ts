@@ -89,6 +89,17 @@ import { PlayerHistoryDialogComponent } from '../../shared/components/player-his
 export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
 
+  /**
+   * 🧪 MODALITÀ TEST per testare il dialog dello storico
+   *
+   * Imposta a true per:
+   * - Forzare la visualizzazione dell'icona storico per TUTTI i giocatori
+   * - Permettere di testare il dialog dello storico anche con poche giocate
+   *
+   * ⚠️ Ricorda di rimetterlo a false prima di commit/push!
+   */
+  private TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ TEST DISATTIVATO - Pronto per produzione
+
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -197,14 +208,31 @@ export class LegaDettaglioComponent implements OnDestroy {
         next: (lega) => {
           this.lega = lega;
 
-          // Debug: verifica se le giocate hanno il campo forzatura
-          console.log('🔍 Lega caricata, verifica giocate forzate:');
-          this.lega.giocatori?.forEach((giocatore, index) => {
-            const giocateForzate = giocatore.giocate?.filter(g => g.forzatura);
-            if (giocateForzate && giocateForzate.length > 0) {
-              console.log(`✅ Giocatore ${index} (${giocatore.nickname}) ha ${giocateForzate.length} giocate forzate:`, giocateForzate);
-            }
-          });
+          // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
+          if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
+            // Forzo giornataIniziale e giornataFinale per avere 10 giornate
+            this.lega.giornataIniziale = 1;
+            this.lega.giornataFinale = 10;
+
+            // Mock squadre Serie A
+            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
+
+            // Aggiungi giocate mock a TUTTI i giocatori
+            this.lega.giocatori?.forEach((giocatore) => {
+              giocatore.giocate = [];
+
+              for (let i = 0; i < 10; i++) {
+                giocatore.giocate.push({
+                  giornata: i + 1,
+                  squadraSigla: mockSquadre[i],
+                  esito: mockEsiti[i] as any,
+                  forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
+                  pubblica: true
+                });
+              }
+            });
+          }
 
           this.caricaTabella();
         },
@@ -383,9 +411,9 @@ export class LegaDettaglioComponent implements OnDestroy {
       maxGiornata = numGg;
     }
 
-    // Calcola le giornate da visualizzare (max 10, centrate sulla giornata corrente)
+    // Calcola le giornate da visualizzare (MAX 5, centrate sulla giornata corrente)
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 10;
+    const maxGiornateVisibili = 5; // LIMITE A 5 GIORNATE VISIBILI
     let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
     let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
 
@@ -400,7 +428,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.displayedColumns.push('giocata' + (i - giornataIniziale));
     }
 
-    // Popola giornataIndices solo con le giornate visibili
+    // Popola giornataIndices solo con le giornate visibili (MAX 5)
     this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
@@ -464,18 +492,28 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Verifica se il giocatore ha più giocate del limite visibile
+   * Verifica se il giocatore ha più giocate del limite visibile nella tabella
+   * Mostra l'emoji dello storico se ci sono giocate oltre alle 5 visualizzate nella tabella
+   * ANCHE per i giocatori eliminati (devono poter vedere il loro storico completo)
    */
   hasMoreRounds(giocatore: Giocatore): boolean {
-    if (!giocatore?.giocate || !this.giornataIndices) return false;
-
-    // Se il giocatore è ELIMINATO, mostra già tutto il suo storico, quindi non serve il pulsante
-    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
-      return false;
+    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona storico
+    if (this.TEST_MODE_FORCE_HISTORY_ICON) {
+      return true; // Mostra sempre l'icona in modalità test
     }
 
-    // Mostra il pulsante solo se ha effettivamente più di 5 giocate
-    return giocatore.giocate.length > this.MAX_VISIBLE_ROUNDS;
+    if (!giocatore?.giocate || !this.giornataIndices) return false;
+
+    // Conta quante giocate ha effettuato in totale
+    const totaleGiocate = giocatore.giocate.length;
+
+    // Conta quante giornate sono visualizzate nella tabella corrente
+    const giornateVisibili = this.giornataIndices.length;
+
+    // Mostra il pulsante se ha più giocate di quelle visualizzate nella tabella
+    // (cioè se ci sono giocate "nascoste" che non si vedono nella tabella)
+    // ✅ ANCHE per i giocatori eliminati!
+    return totaleGiocate > giornateVisibili;
   }
 
   /**
@@ -505,6 +543,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Ottimizzazione per mobile
     const isMobile = window.innerWidth <= 768;
 
+    // ✅ SOLUZIONE SEMPLICE: Passa tutte le giocate, il dialog le elaborerà
+    // Non calcolare le giornate assolute qui, lascia che il dialog lo faccia internamente
     const dialogRef = this.dialog.open(PlayerHistoryDialogComponent, {
       width: isMobile ? '95vw' : '90vw',
       maxWidth: isMobile ? '100%' : '800px',
@@ -512,12 +552,12 @@ export class LegaDettaglioComponent implements OnDestroy {
       data: {
         giocatore: giocatore,
         lega: this.lega,
-        giornataIndices: this.giornataIndices,
+        giornataIndices: [], // ✅ Array vuoto, il dialog calcolerà le giornate internamente
         getGiocataByGiornataAssoluta: this.getGiocataByGiornataAssoluta.bind(this),
         getTeamLogo: this.getTeamLogo.bind(this),
         getSquadraNome: this.getSquadraNome.bind(this)
       },
-      panelClass: 'player-history-dialog-wrapper',  // Cambiato per evitare conflitti!
+      panelClass: 'player-history-dialog-wrapper',
       autoFocus: false,
       restoreFocus: false
     });
@@ -538,7 +578,9 @@ export class LegaDettaglioComponent implements OnDestroy {
    * Ottiene la giocata dato il numero di giornata assoluto (non relativo)
    */
   getGiocataByGiornataAssoluta(giocatore: Giocatore, giornataAssoluta: number): any {
-    if (!giocatore?.giocate) return null;
+    if (!giocatore?.giocate) {
+      return null;
+    }
 
     // Il backend salva le giocate con giornata RELATIVA (1, 2, 3...)
     // quando chiamiamo giocaGiornata viene passata la giornata relativa
@@ -546,7 +588,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataRelativa = giornataAssoluta - (this.lega?.giornataIniziale || 1) + 1;
 
     // Cerca SOLO per giornata relativa (è così che viene salvata)
-    return giocatore.giocate.find((g: any) => Number(g?.giornata) === giornataRelativa);
+    const giocata = giocatore.giocate.find((g: any) => Number(g?.giornata) === giornataRelativa);
+    return giocata;
   }
 
   /**

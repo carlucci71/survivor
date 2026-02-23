@@ -332,8 +332,14 @@
 
           <!-- Header giocatore compatto - Nome + Freccia sulla stessa riga -->
           <div class="player-header-mobile" (click)="togglePlayerExpansion(giocatore.id)">
-            <!-- Sinistra: Nome + Badge stato + Icona modifica + Icona storico -->
+            <!-- Sinistra: Cerchietto stato + Nome + Icona storico -->
             <div class="player-info-left">
+              <!-- Cerchietto stato PRIMA del nome -->
+              <span class="status-indicator-mobile"
+                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
+                    [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
+              </span>
+
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
 
               <!-- Icona storico completo se ci sono più di 5 giocate -->
@@ -342,10 +348,12 @@
                         (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
                         [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
                   <mat-icon class="history-icon-mobile">history</mat-icon>
-                  <span class="history-count-mobile">{{ getTotalRoundsCount(giocatore) }}</span>
                 </button>
               }
+            </div>
 
+            <!-- Destra: Icona admin + Freccia -->
+            <div class="player-actions-right">
               <!-- Icona modifica per leader/admin -->
               @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
                 <mat-icon class="edit-user-icon-mobile"
@@ -354,16 +362,12 @@
                   edit
                 </mat-icon>
               }
-              <span class="status-indicator-mobile"
-                    [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
-                    [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
-              </span>
-            </div>
 
-            <!-- Destra: Freccia -->
-            <mat-icon class="expand-icon-mobile">
-              {{ expandedPlayers[giocatore.id] ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-            </mat-icon>
+              <!-- Freccia espandi/comprimi -->
+              <mat-icon class="expand-icon-mobile">
+                {{ expandedPlayers[giocatore.id] ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+              </mat-icon>
+            </div>
           </div>
 
           <!-- Storia giocate limitata (MAX 5) - ESPANDIBILE -->
