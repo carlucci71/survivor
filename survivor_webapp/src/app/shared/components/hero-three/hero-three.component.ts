@@ -59,7 +59,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
       text-transform: uppercase;
       letter-spacing: 1px;
       z-index: 10;
-      pointer-events: none;
     }
 
     .title h1 {
@@ -73,7 +72,6 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
       margin-bottom: 10px;
       color: white;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      pointer-events: none;
     }
 
     .title h1 span:nth-of-type(2) {
@@ -91,27 +89,28 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
       gap: 20px;
       padding: 0;
       margin: 0;
-      pointer-events: auto;
     }
 
     .title ul li {
       font-family: "Roboto", sans-serif;
       font-size: 16px;
-      font-weight: 400;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: white;
+      text-shadow:
+        2px 2px 4px rgba(0,0,0,0.5),
+        -1px -1px 0 rgba(0,0,0,0.3),
+        1px -1px 0 rgba(0,0,0,0.3),
+        -1px 1px 0 rgba(0,0,0,0.3),
+        1px 1px 0 rgba(0,0,0,0.3);
+      -webkit-text-stroke: 0.5px rgba(0,0,0,0.3);
     }
 
     .title ul li a {
       text-decoration: none;
       color: white;
-      transition: opacity 0.3s;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-
-    .title ul li a:hover {
-      opacity: 0.7;
+      cursor: default;
     }
 
     @media (max-width: 768px) {
@@ -177,7 +176,6 @@ export class HeroThreeComponent implements AfterViewInit, OnDestroy {
     const w = parent?.clientWidth || window.innerWidth;
     const h = parent?.clientHeight || 400;
 
-    console.log('🎨 Initializing Three.js scene - Dimensions:', { w, h });
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
@@ -201,7 +199,6 @@ export class HeroThreeComponent implements AfterViewInit, OnDestroy {
     canvas.style.left = '0';
     container.appendChild(canvas);
 
-    console.log('✅ Canvas added to container');
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
@@ -376,10 +373,6 @@ export class HeroThreeComponent implements AfterViewInit, OnDestroy {
 
     this.time += 0.016;
 
-    // Log every 2 seconds
-    if (Math.floor(this.time) % 2 === 0 && this.time % 1 < 0.016) {
-      console.log('🎬 Animating... time:', this.time.toFixed(2));
-    }
 
     if (this.floor?.material?.uniforms) {
       this.floor.material.uniforms.uTime.value = this.time;
