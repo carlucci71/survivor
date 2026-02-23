@@ -51,7 +51,16 @@ export class AuthService {
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    localStorage.setItem('tokenSurvivor', response.token);
+    const tokenVal = response && response.token ? String(response.token).trim() : null;
+    if (tokenVal) {
+      localStorage.setItem('tokenSurvivor', tokenVal);
+    } else {
+      try {
+        localStorage.removeItem('tokenSurvivor');
+      } catch (e) {
+        // noop
+      }
+    }
     const user: User = {
       id: response.id,
       email: response.email,
@@ -142,7 +151,22 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('tokenSurvivor');
+    const raw = localStorage.getItem('tokenSurvivor');
+    // If not present, return null
+    if (raw === null) {
+      return null;
+    }
+    const normalized = raw.trim();
+    // Treat empty, "null" or "undefined" strings as missing and remove them
+    if (!normalized || normalized.toLowerCase() === 'null' || normalized.toLowerCase() === 'undefined') {
+      try {
+        localStorage.removeItem('tokenSurvivor');
+      } catch (e) {
+        // noop
+      }
+      return null;
+    }
+    return normalized;
   }
 
   isAuthenticated(): boolean {
