@@ -37,7 +37,9 @@
     "@capacitor/status-bar": "^7.0.5",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
+    "@types/three": "^0.183.1",
     "rxjs": "~7.8.0",
+    "three": "^0.183.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
