@@ -67,7 +67,7 @@ export class LoginComponent implements AfterViewInit {
       next: (response) => {
         this.message = response.message;
         this.isSuccess = response.success;
-        window.location.href = '/auth/magic-link-sent';
+        window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
       },
       error: (error) => {
         this.message = 'Errore durante l\'invio del magic link';
