@@ -55,44 +55,7 @@
   }
 
   .close-btn {
-    color: white;
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    padding: 0;
-    margin: 0;
-    margin-left: 8px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    position: relative;
-
-    mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    &:active {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(0.95);
-    }
+    display: none; // ✅ NASCOSTO - Non serve perché c'è il button "Chiudi" nel footer
   }
 }
 
@@ -118,83 +81,94 @@
 .history-rows-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 36px; // ✅ MOLTO PIÙ SPAZIO tra le righe (era 28px)
   width: 100%;
+  padding: 8px 0; // ✅ Padding sopra/sotto per respirare
 }
 
 .history-row {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 16px;
+  align-items: stretch; // ✅ Tutte le card della stessa altezza
+  gap: 20px; // ✅ MOLTO PIÙ SPAZIO tra le card (era 18px)
   flex-wrap: nowrap;
 
   @media (max-width: 1024px) {
-    gap: 10px;
+    gap: 14px;
   }
 
   @media (max-width: 900px) {
-    gap: 8px;
+    gap: 12px;
   }
 }
 
 .history-item {
-  flex: 0 1 auto;
-  min-width: 90px;
-  max-width: 120px;
+  flex: 0 0 auto; // ✅ Non si espandono, dimensione fissa
+  width: 130px; // ✅ Larghezza FISSA per allineamento perfetto
   background: white;
-  border-radius: 12px;
-  padding: 12px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border-radius: 12px; // ✅ Bordi più arrotondati per eleganza
+  padding: 16px 12px; // ✅ PIÙ PADDING per card più spaziose
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); // ✅ Ombra più definita
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // ✅ Transizione più fluida
+  border: 2px solid #e0e0e0; // ✅ Bordo sempre visibile per ordine
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 14px; // ✅ PIÙ SPAZIO tra header e body
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px) scale(1.02); // ✅ Hover più evidente
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    border-color: #bdbdbd; // ✅ Bordo più scuro all'hover
   }
 
   &.item-ok {
     border-color: #4caf50;
-    background: linear-gradient(to bottom, #ffffff 0%, #f1f8f4 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #f1f8f4 100%); // ✅ Gradiente più visibile
+
+    &:hover {
+      border-color: #43a047; // ✅ Verde più scuro all'hover
+    }
   }
 
   &.item-ko {
     border-color: #f44336;
-    background: linear-gradient(to bottom, #ffffff 0%, #fef1f0 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #fef1f0 100%); // ✅ Gradiente più visibile
+
+    &:hover {
+      border-color: #e53935; // ✅ Rosso più scuro all'hover
+    }
   }
 
   &.item-pending {
     border-color: #e0e0e0;
-    background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+    background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 100%);
+
+    &:hover {
+      border-color: #bdbdbd;
+    }
   }
 
   // Tablet
   @media (max-width: 1024px) {
-    min-width: 75px;
-    max-width: 95px;
-    padding: 10px 6px;
-    gap: 8px;
+    width: 100px;
+    padding: 14px 10px;
+    gap: 12px;
   }
 
   // Tablet piccoli
   @media (max-width: 900px) {
-    min-width: 65px;
-    max-width: 85px;
-    padding: 8px 5px;
-    gap: 6px;
+    width: 88px;
+    padding: 12px 8px;
+    gap: 10px;
     border-radius: 10px;
   }
 
   // Tablet molto piccoli (768px)
   @media (max-width: 768px) {
-    min-width: 60px;
-    max-width: 75px;
-    padding: 8px 4px;
+    width: 76px;
+    padding: 10px 6px;
+    gap: 8px;
   }
 }
 
@@ -204,14 +178,18 @@
   justify-content: center;
   gap: 6px;
   width: 100%;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px; // ✅ Più padding per separare dall'immagine
+  border-bottom: 1px solid #e8e8e8; // ✅ Bordo più leggero
 
   .round-number {
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 12px; // ✅ Font leggermente più piccolo per "Giornata X"
+    font-weight: 600; // ✅ Un po' meno bold
     color: #0A3D91;
     text-align: center;
+    line-height: 1.2;
+    white-space: nowrap; // ✅ Previene a capo indesiderati
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .result-icon-small {
@@ -226,6 +204,28 @@
 
     &.icon-ko {
       color: #f44336;
+    }
+  }
+
+  // Tablet: font più piccolo
+  @media (max-width: 1024px) {
+    padding-bottom: 6px;
+
+    .round-number {
+      font-size: 11px;
+    }
+
+    .result-icon-small {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  // Tablet piccoli: font ancora più piccolo
+  @media (max-width: 900px) {
+    .round-number {
+      font-size: 10px;
     }
   }
 }
@@ -272,14 +272,27 @@
     position: absolute;
     top: -6px;
     right: -6px;
-    color: #ff9800;
+    color: #ff6f00; // ✅ Arancione PIÙ VIBRANTE (era #ff9800)
     font-size: 18px;
     width: 18px;
     height: 18px;
     background: white;
     border-radius: 50%;
     padding: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione per più enfasi
+
+    // ✅ Animazione pulsante per attirare l'attenzione
+    animation: pulseBadge 2s ease-in-out infinite;
+  }
+
+  // ✅ Animazione per badge forzatura
+  @keyframes pulseBadge {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
   }
 
   .empty-slot {
@@ -363,6 +376,8 @@
       top: -4px;
       right: -4px;
       padding: 1px;
+      color: #ff6f00; // ✅ Arancione vibrante anche su mobile
+      box-shadow: 0 1px 4px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione
     }
 
     .empty-slot mat-icon {
@@ -419,6 +434,8 @@
       font-size: 12px;
       width: 12px;
       height: 12px;
+      color: #ff6f00; // ✅ Arancione vibrante anche su mobile piccolo
+      box-shadow: 0 1px 3px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione
     }
 
     .empty-slot mat-icon {
@@ -500,24 +517,7 @@
     .dialog-subtitle {
       font-size: 11px;
     }
-
-    .close-btn {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      margin-left: 6px;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        line-height: 1;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
+    // ✅ Rimosso .close-btn perché non serve più
   }
 
   .dialog-content {
@@ -546,24 +546,7 @@
       width: 24px;
       height: 24px;
     }
-
-    .close-btn {
-      width: 28px;
-      height: 28px;
-      min-width: 28px;
-      margin-left: 6px;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        line-height: 1;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
+    // ✅ Rimosso .close-btn perché non serve più
   }
 
   .dialog-content {

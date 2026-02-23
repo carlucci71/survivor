@@ -33,17 +33,20 @@ export interface PlayerHistoryDialogData {
 export class PlayerHistoryDialogComponent {
 
   /**
-   * 🧪 MOCK PER TESTING LOCALE
+   * 🧪 MOCK PER TESTING LOCALE - DISABILITATO ✅
    *
-   * Per testare il dialog con 10 giornate complete:
-   * 1. Cambia ENABLE_MOCK da false a true
+   * ⚠️ ATTENZIONE: Il mock è DISABILITATO per produzione!
+   *
+   * Per testare il dialog con 10 giornate complete SOLO IN LOCALE:
+   * 1. Cambia temporaneamente ENABLE_MOCK da false a true
    * 2. Ricompila l'app (ng serve)
    * 3. Apri qualsiasi storico giocatore (clicca sull'icona history)
    * 4. Vedrai 10 giornate mock con squadre di Serie A
+   * 5. ⚠️ IMPORTANTE: Rimetti a false prima di fare commit/push!
    *
-   * IMPORTANTE: Rimetti a false prima di fare commit/push!
+   * 📌 STATO ATTUALE: MOCK DISATTIVATO → Pronto per produzione
    */
-  private ENABLE_MOCK = false; // ✅ MOCK DISATTIVATO - Pronto per produzione
+  private readonly ENABLE_MOCK = false; // ✅ PRODUZIONE: Mock DISABILITATO
 
   constructor(
     public dialogRef: MatDialogRef<PlayerHistoryDialogComponent>,
@@ -178,9 +181,23 @@ export class PlayerHistoryDialogComponent {
     return this.data.getGiocataByGiornataAssoluta(this.data.giocatore, giornata);
   }
 
+  /**
+   * Restituisce la label della giornata in base alla dimensione dello schermo.
+   *
+   * Desktop/Tablet (≥768px): "Giornata X" se ci sta, altrimenti solo numero
+   * Mobile (<768px): sempre solo il numero
+   *
+   * Nota: La distinzione desktop/mobile è gestita nell'HTML con classi CSS
+   */
   getGiornataLabel(giornata: number): string {
-    // Restituisco semplicemente il numero di giornata assoluto
     return `${giornata}`;
+  }
+
+  /**
+   * Versione estesa per desktop: "Giornata X"
+   */
+  getGiornataLabelFull(giornata: number): string {
+    return `Giornata ${giornata}`;
   }
 }
 

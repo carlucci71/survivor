@@ -97,13 +97,18 @@ export class LegaDettaglioComponent implements OnDestroy {
    * - Permettere di testare il dialog dello storico anche con poche giocate
    * - Aggiungere 10 giornate mock a tutti i giocatori
    *
-   * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
+  /**
+   * 🧪 MOCK PER TESTING ICONA STORICO - DISABILITATO ✅
+   *
+   * ⚠️ ATTENZIONE: Il mock è DISABILITATO per produzione!
    *
    * 📋 Uso:
    * - true: Attiva mock con 10 giornate per testare layout compatto (5 visibili + dialog storico)
-   * - false: Modalità normale produzione
+   * - false: Modalità normale produzione (✅ ATTUALE)
+   *
+   * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
    */
-  private TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock disattivato
+  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
@@ -195,13 +200,20 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.id=lega.id;
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
+          // Questo mock crea 10 giornate fittizie per testare:
+          // - Layout compatto con solo 5 giornate visibili
+          // - Dialog storico completo con tutte le 10 giocate
+          // - Icona storico accanto al nome utente
+          // - NO scroll orizzontale su desktop/tablet
           if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
+            console.log('🧪 MOCK MODE ATTIVO: Generazione 10 giornate fittizie');
+
             // Forzo giornataIniziale e giornataFinale per avere 10 giornate
             this.lega.giornataIniziale = 1;
             this.lega.giornataFinale = 10;
             this.lega.giornataCorrente = 8; // Simulo che siamo alla giornata 8
 
-            // Mock squadre Serie A
+            // Mock squadre Serie A per le giocate
             const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
             const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
 
