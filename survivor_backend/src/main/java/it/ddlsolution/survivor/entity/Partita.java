@@ -71,4 +71,8 @@ public class Partita {
     @Column(name = "anno")
     private short anno;
 
+    @Column(name = "forzata")
+    private Boolean forzata;
+
+
 }

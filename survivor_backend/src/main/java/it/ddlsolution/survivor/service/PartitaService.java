@@ -29,27 +29,29 @@ public class PartitaService {
 
     @Transactional
     public PartitaDTO aggiornaPartitaSuDB(PartitaDTO partitaDTO) {
-        Partita partita = partitaMapper.toEntity(partitaDTO);
-        partita.setImplementationExternalApi(utility.getImplementationExternalApi());
+        Partita nuovaPartita = partitaMapper.toEntity(partitaDTO);
+        nuovaPartita.setImplementationExternalApi(utility.getImplementationExternalApi());
 
-        // Verifica se esiste già una partita con gli stessi criteri
+        // Verifica se esiste già una nuovaPartita con gli stessi criteri
         Optional<Partita> partitaEsistente = partitaRepository.findByCampionato_IdAndGiornataAndImplementationExternalApiAndCasaSiglaAndFuoriSiglaAndAnno(
                 partitaDTO.getCampionatoId(), partitaDTO.getGiornata(), utility.getImplementationExternalApi(),
-                partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partita.getAnno());
+                partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), nuovaPartita.getAnno());
 
         if (partitaEsistente.isPresent()) {
             Partita esistente = partitaEsistente.get();
             if (refreshTerminate || esistente.getStato() != Enumeratori.StatoPartita.TERMINATA) {
-                partita.setId(esistente.getId());
-                partita = partitaRepository.save(partita);
-                return partitaMapper.toDTO(partita);
+                //FORZATA
+                nuovaPartita.setId(esistente.getId());
+                nuovaPartita.setForzata(esistente.getForzata());
+                nuovaPartita = partitaRepository.save(nuovaPartita);
+                return partitaMapper.toDTO(nuovaPartita);
             } else {
                 return partitaMapper.toDTO(esistente);
             }
         } else {
-            // Se non esiste, inseriamo una nuova partita
-            partita = partitaRepository.save(partita);
-            return partitaMapper.toDTO(partita);
+            // Se non esiste, inseriamo una nuova nuovaPartita
+            nuovaPartita = partitaRepository.save(nuovaPartita);
+            return partitaMapper.toDTO(nuovaPartita);
         }
     }
 
