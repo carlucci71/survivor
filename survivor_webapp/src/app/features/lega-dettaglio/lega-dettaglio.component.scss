@@ -3749,7 +3749,7 @@
 			font-size: 14px;
 			width: 14px;
 			height: 14px;
-			color: #667eea;
+			color: #0A3D91;
 			flex-shrink: 0;
 			cursor: help;
 			opacity: 0.9;
@@ -3757,7 +3757,7 @@
 
 			&:hover {
 				opacity: 1;
-				color: #5568d3;
+				color: #0A3D91;
 				transform: scale(1.15);
 			}
 		}
@@ -3767,30 +3767,16 @@
 			font-size: 14px;
 			width: 14px;
 			height: 14px;
-			color: #F59E0B;
+			color: #10B981;
 			flex-shrink: 0;
 			cursor: help;
 			opacity: 0.9;
 			transition: all 0.3s ease;
-			animation: pulseWarning 2.5s ease-in-out infinite;
 
 			&:hover {
 				opacity: 1;
-				color: #D97706;
+				color: #10B981;
 				transform: scale(1.15);
-				animation: none;
-			}
-		}
-
-		// Animazione pulsante per il badge warning
-		@keyframes pulseWarning {
-			0%, 100% {
-				opacity: 0.7;
-				transform: scale(1);
-			}
-			50% {
-				opacity: 1;
-				transform: scale(1.1);
 			}
 		}
 
@@ -4393,6 +4379,7 @@
   min-height: 50px;
   width: 100%;
   transition: background 0.2s;
+  position: relative;
 
   &.cell-ok {
     background: rgba(16, 185, 129, 0.08);
@@ -4402,6 +4389,27 @@
   &.cell-ko {
     background: rgba(239, 68, 68, 0.08);
     border-color: rgba(239, 68, 68, 0.25);
+  }
+}
+
+.badges-container-mobile {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  margin-top: 2px;
+
+  mat-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+  }
+
+  .badge-admin {
+    color: #0A3D91;
+  }
+
+  .badge-match {
+    color: #10B981;
   }
 }
 

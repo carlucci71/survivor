@@ -156,7 +156,7 @@
       <div class="excel-table-wrapper desktop-tablet-only">
 
         <!-- Link Mostra Risultati (sopra la tabella, fuori da essa) -->
-        @if (!isDaAvviare() && lega.campionato?.id) {
+        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
           <div class="show-results-bar">
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
@@ -365,7 +365,7 @@
         }
 
         <!-- Link Mostra Risultati (vista mobile/cards) -->
-        @if (!isDaAvviare() && lega.campionato?.id) {
+        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
           <div class="show-results-bar-mobile">
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
@@ -445,6 +445,21 @@
                       />
                     }
                     <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                    <!-- Badge forzatura -->
+                    <div class="badges-container-mobile">
+                      @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                        <mat-icon class="forced-icon badge-admin"
+                                  [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                          verified_user
+                        </mat-icon>
+                      }
+                      @if(isPartitaForzata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                        <mat-icon class="forced-match-icon badge-match"
+                                  [matTooltip]="'LEGEND.FORCED_MATCH' | translate">
+                          verified
+                        </mat-icon>
+                      }
+                    </div>
                   </div>
                 } @else {
                   <!-- Cella vuota -->
