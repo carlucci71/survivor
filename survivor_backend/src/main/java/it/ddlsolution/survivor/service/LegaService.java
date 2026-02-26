@@ -259,7 +259,7 @@ public class LegaService {
 
         //Se partita forzata la considero terminata
         for (PartitaDTO partitaDTO : partite) {
-            if (partitaDTO.getForzata()){
+            if (Boolean.TRUE.equals(partitaDTO.getForzata())){
                 partitaDTO.setStato(Enumeratori.StatoPartita.TERMINATA);
             }
         }
@@ -374,7 +374,7 @@ public class LegaService {
         if (optPartitaDTO.isPresent()) {
             PartitaDTO partitaDTO = optPartitaDTO.get();
             if (partitaDTO.getStato() == Enumeratori.StatoPartita.TERMINATA) {
-                if (partitaDTO.getForzata()){
+                if (Boolean.TRUE.equals(partitaDTO.getForzata())){
                     ret = true;
                 } else {
                     String casa = partitaDTO.getCasaSigla();

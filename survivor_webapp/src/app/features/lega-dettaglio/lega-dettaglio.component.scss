@@ -2813,6 +2813,17 @@
 	display: none !important; /* Nascondiamo la tabella, usiamo solo le cards */
 }
 
+/* Eccezione: la legenda desktop deve essere visibile su desktop/tablet */
+.legend-section.desktop-only {
+	display: flex !important;
+}
+
+@media (max-width: 767px) {
+	.legend-section.desktop-only {
+		display: none !important;
+	}
+}
+
 /* Responsive breakpoints */
 @media (max-width: 800px) {
 	.cards-view-responsive {
@@ -3641,7 +3652,7 @@
 			min-height: 50px;
 
 			&.current-round {
-				background: linear-gradient(135deg, rgba(79, 195, 247, 0.03), rgba(79, 195, 247, 0.08)); // Gradient sottile
+				background: rgba(79, 195, 247, 0.15);
 				border-left: 3px solid #4FC3F7; // Bordo più spesso
 				border-right: 3px solid #4FC3F7;
 				box-shadow: inset 0 0 0 1px rgba(79, 195, 247, 0.1); // Bordo interno soft
@@ -3701,9 +3712,89 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			padding: 2px 4px;
+
+			&.clickable {
+				cursor: pointer;
+				transition: all 0.2s ease;
+
+				&:hover {
+					color: #667eea;
+					transform: scale(1.05);
+					text-decoration: underline;
+				}
+			}
 		}
 
-		// Icona indicatore forzatura - stile elegante e coerente
+		// Stile generale per elementi cliccabili
+		.clickable {
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+			&:hover {
+				opacity: 0.8;
+				transform: scale(1.02);
+			}
+		}
+
+		// Container per i badges (admin + partita forzata)
+		.badges-container {
+			display: flex;
+			gap: 4px;
+			align-items: center;
+			margin-top: 2px;
+		}
+
+		// Badge giocata forzata da admin
+		.badge-admin {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+			color: #667eea;
+			flex-shrink: 0;
+			cursor: help;
+			opacity: 0.9;
+			transition: all 0.3s ease;
+
+			&:hover {
+				opacity: 1;
+				color: #5568d3;
+				transform: scale(1.15);
+			}
+		}
+
+		// Badge partita forzata
+		.badge-match {
+			font-size: 14px;
+			width: 14px;
+			height: 14px;
+			color: #F59E0B;
+			flex-shrink: 0;
+			cursor: help;
+			opacity: 0.9;
+			transition: all 0.3s ease;
+			animation: pulseWarning 2.5s ease-in-out infinite;
+
+			&:hover {
+				opacity: 1;
+				color: #D97706;
+				transform: scale(1.15);
+				animation: none;
+			}
+		}
+
+		// Animazione pulsante per il badge warning
+		@keyframes pulseWarning {
+			0%, 100% {
+				opacity: 0.7;
+				transform: scale(1);
+			}
+			50% {
+				opacity: 1;
+				transform: scale(1.1);
+			}
+		}
+
+		// Icona indicatore forzatura - stile elegante e coerente (DEPRECATO - usa badge-admin)
 		.forced-icon {
 			font-size: 16px;
 			width: 16px;
@@ -3841,7 +3932,7 @@
 			background: inherit; // Eredita il background dalla riga parent
 			z-index: 5; // Più alto delle altre celle per rimanere sopra durante lo scroll
 			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); // Ombra più marcata per enfatizzare la separazione
-			min-width: 40px; // Ridotto da 50px - ancora più compatto
+			min-width: 40px; // Ridotto a 40px come desktop
 			width: 40px;
 
 			.actions-wrapper {
@@ -3963,323 +4054,385 @@
 	}
 }
 
-// ============================================
-// NUOVO LAYOUT MOBILE - Compatto e Moderno
-// ============================================
+// Link "Mostra Risultati" - Desktop/Tablet
+.show-results-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 4px 6px;
+}
 
-// Nascondi su desktop/tablet (mostrato solo su mobile)
+// Link "Mostra Risultati" - Mobile/Cards
+.show-results-bar-mobile {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 0 8px;
+}
+
+.show-results-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: transparent;
+  border: 1px solid rgba(10, 61, 145, 0.13);
+  cursor: pointer;
+  color: #0A3D91;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 2px 7px 2px 5px;
+  border-radius: 10px;
+  transition: all 0.22s ease;
+  font-family: inherit;
+  letter-spacing: 0.1px;
+  box-shadow: none;
+
+  .results-icon {
+    font-size: 11px;
+    width: 11px;
+    height: 11px;
+    color: #4FC3F7;
+    transition: transform 0.22s ease;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(79,195,247,0.20) 0%, rgba(10,61,145,0.12) 100%);
+    border-color: rgba(10, 61, 145, 0.35);
+    box-shadow: 0 2px 8px rgba(10,61,145,0.12);
+    transform: translateY(-1px);
+
+    .results-icon {
+      transform: scale(1.15);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(10,61,145,0.08);
+  }
+}
+
+// ─── LEGENDA BADGE ───────────────────────────────────────────────────────────
+
+.legend-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border-radius: 10px;
+  margin: 8px 0 4px;
+  border: 1px solid #E5E7EB;
+
+  &.desktop-only {
+    @media (max-width: 767px) { display: none; }
+  }
+
+  &.mobile-only {
+    @media (min-width: 768px) { display: none; }
+  }
+}
+
+.legend-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: #9CA3AF;
+  }
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #6B7280;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.badge-admin {
+  color: #0A3D91;
+}
+
+.badge-match {
+  color: #10B981;
+}
+
+// ─── NUOVE CLASSI VISTA MOBILE CARDS ───────────────────────────────────────
+
 .player-card-mobile {
-	display: none; // Nascosto di default
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(10, 61, 145, 0.07);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  border-left: 4px solid rgba(10, 61, 145, 0.18);
+
+  &.eliminato-row {
+    border-left-color: #EF4444;
+    background: #FFF8F8;
+  }
+
+  &.expanded {
+    box-shadow: 0 6px 20px rgba(10, 61, 145, 0.12);
+    border-left-color: #0A3D91;
+    border-left-width: 5px;
+  }
 }
 
-// Mostra solo su mobile (<768px)
-@media (max-width: 767px) {
-	.player-card-mobile {
-		display: block; // Mostra su mobile
-		margin-bottom: 10px;
-		border-radius: 12px;
-		background: #FFFFFF;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-		transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-		overflow: hidden;
+.player-header-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 12px;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+  transition: background 0.15s ease;
 
-		&.expanded {
-			box-shadow: 0 6px 20px rgba(10, 61, 145, 0.12);
-		}
+  &:hover {
+    background: rgba(10, 61, 145, 0.03);
+  }
 
-		&.eliminato-row {
-			opacity: 0.7;
-			background: linear-gradient(135deg, #FEE2E2, #FECACA);
-		}
-	}
-
-	.player-header-mobile {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 14px;
-		cursor: pointer;
-		user-select: none;
-		transition: background 0.2s ease;
-		gap: 10px;
-
-		&:hover {
-			background: rgba(10, 61, 145, 0.03);
-		}
-
-		&:active {
-			background: rgba(10, 61, 145, 0.06);
-		}
-	}
-
-	.player-info-left {
-		display: flex;
-		align-items: center;
-		gap: 8px; // Ridotto da 10px a 8px per maggiore compattezza
-		flex: 1;
-		min-width: 0;
-	}
-
-	.status-indicator-mobile {
-		display: inline-block;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		flex-shrink: 0;
-		// Nessun margin, gap gestito dal parent
-
-		&.active {
-			background: #4CAF50;
-			box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
-			animation: pulse-green 2s infinite;
-		}
-
-		&.eliminated {
-			background: #f44336;
-			box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7);
-			animation: pulse-red 2s infinite;
-		}
-	}
-
-	.nome-giocatore-mobile {
-		font-size: 0.95rem;
-		font-weight: 700;
-		color: #0A3D91;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		flex: 1; // Occupa spazio disponibile
-		min-width: 0;
-	}
-
-	// Sezione destra: icona admin + freccia
-	.player-actions-right {
-		display: flex;
-		align-items: center;
-		gap: 6px; // Piccolo gap tra icona admin e freccia
-		flex-shrink: 0;
-	}
-
-	.edit-user-icon-mobile {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-		color: #FFFFFF;
-		font-size: 18px;
-		width: 30px; // Leggermente più piccola per equilibrio
-		height: 30px;
-		border-radius: 50%;
-		cursor: pointer;
-		transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-		box-shadow: 0 2px 8px rgba(79, 195, 247, 0.4);
-		animation: pulseEdit 2s ease-in-out infinite;
-
-		&:hover {
-			transform: scale(1.15) rotate(5deg);
-			box-shadow: 0 4px 16px rgba(79, 195, 247, 0.6);
-		}
-
-		&:active {
-			transform: scale(0.95);
-		}
-	}
-
-	.history-toggle-btn-mobile {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 6px;
-		background: linear-gradient(135deg, rgba(30, 136, 229, 0.1), rgba(21, 101, 192, 0.1));
-		border: 1px solid rgba(30, 136, 229, 0.3);
-		border-radius: 50%;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		flex-shrink: 0;
-		width: 32px;
-		height: 32px;
-
-		&:hover {
-			background: linear-gradient(135deg, rgba(30, 136, 229, 0.15), rgba(21, 101, 192, 0.15));
-			border-color: rgba(30, 136, 229, 0.5);
-			transform: scale(1.05);
-		}
-
-		&:active {
-			transform: scale(0.98);
-		}
-
-		.history-icon-mobile {
-			font-size: 18px;
-			width: 18px;
-			height: 18px;
-			color: #1e88e5;
-		}
-	}
-
-
-	.expand-icon-mobile {
-		color: #0A3D91;
-		font-size: 26px;
-		width: 26px;
-		height: 26px;
-		flex-shrink: 0;
-		transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.giornate-list-mobile {
-		padding: 0 6px 8px 6px;
-		background: #F9FAFB;
-		animation: expandMobile 0.3s ease-out;
-	}
-
-	@keyframes expandMobile {
-		from {
-			opacity: 0;
-			transform: scaleY(0.95);
-		}
-		to {
-			opacity: 1;
-			transform: scaleY(1);
-		}
-	}
-
-	.settimane-header {
-		display: flex;
-		gap: 3px;
-		padding: 6px 0;
-		border-bottom: 1.5px solid #0A3D91;
-		margin-bottom: 6px;
-	}
-
-	.settimana-col {
-		flex: 1;
-		min-width: 0;
-		text-align: center;
-	}
-
-	.settimana-label {
-		font-size: 0.6rem;
-		font-weight: 700;
-		color: #0A3D91;
-		text-transform: uppercase;
-		letter-spacing: 0.2px;
-		display: block;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.giocate-row {
-		display: flex;
-		gap: 3px;
-	}
-
-	.giocata-col {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.team-cell-mobile {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 3px;
-		padding: 6px 3px;
-		border-radius: 6px;
-		background: #FFFFFF;
-		border: 1.5px solid #E5E7EB;
-		transition: all 0.2s ease;
-
-		&.cell-ok {
-			background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-			border-color: #10B981;
-			box-shadow: 0 2px 4px rgba(16, 185, 129, 0.12);
-		}
-
-		&.cell-ko {
-			background: linear-gradient(135deg, #FEE2E2, #FECACA);
-			border-color: #EF4444;
-			box-shadow: 0 2px 4px rgba(239, 68, 68, 0.12);
-		}
-	}
-
-	.team-logo-cell {
-		width: 24px;
-		height: 24px;
-		object-fit: contain;
-		border-radius: 3px;
-	}
-
-	.team-name-cell {
-		font-size: 0.6rem;
-		font-weight: 600;
-		color: #1F2937;
-		text-align: center;
-		line-height: 1.1;
-		max-height: 2.2em;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		word-break: break-word;
-	}
-
-	.empty-cell-mobile {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 6px 3px;
-		color: #9CA3AF;
-		font-size: 0.75rem;
-		font-weight: 500;
-	}
-
-	// Responsive per schermi molto piccoli
-	@media (max-width: 360px) {
-		.nome-giocatore-mobile {
-			font-size: 0.85rem;
-		}
-
-		.settimana-label {
-			font-size: 0.65rem;
-		}
-
-		.team-name-cell {
-			font-size: 0.6rem;
-		}
-
-		.team-logo-cell {
-			width: 24px;
-			height: 24px;
-		}
-	}
+  &:active {
+    background: rgba(10, 61, 145, 0.06);
+  }
 }
 
-/* ===== ANIMAZIONI PER ICONA EDIT ===== */
-@keyframes fadeInEdit {
-	from {
-		opacity: 0;
-		transform: scale(0) rotate(-180deg);
-	}
-	to {
-		opacity: 1;
-		transform: scale(1) rotate(0deg);
-	}
+.player-info-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
-@keyframes wiggle {
-	0%, 100% {
-		transform: scale(1.2) rotate(0deg);
-	}
-	25% {
-		transform: scale(1.2) rotate(-10deg);
-	}
-	50% {
-		transform: scale(1.2) rotate(10deg);
-	}
-	75% {
-		transform: scale(1.2) rotate(-5deg);
-	}
+.status-indicator-mobile {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    animation: pulse-green 2s infinite;
+  }
+
+  &.eliminated {
+    background: #EF4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
 }
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25); }
+  50% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12); }
+}
+
+.nome-giocatore-mobile {
+  font-weight: 700;
+  color: #0A3D91;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  letter-spacing: -0.2px;
+}
+
+.eliminato-row .nome-giocatore-mobile {
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.history-toggle-btn-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(10, 61, 145, 0.08);
+  }
+
+  .history-icon-mobile {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #4FC3F7;
+  }
+}
+
+.player-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.edit-user-icon-mobile {
+  font-size: 18px;
+  width: 22px;
+  height: 22px;
+  color: #0A3D91;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 2px;
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: rgba(10, 61, 145, 0.1);
+    color: #4FC3F7;
+  }
+}
+
+.expand-icon-mobile {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: #9CA3AF;
+  transition: transform 0.25s ease, color 0.2s;
+  cursor: pointer;
+}
+
+.player-card-mobile.expanded .expand-icon-mobile {
+  transform: rotate(180deg);
+  color: #0A3D91;
+}
+
+// Corpo espanso giornate mobile
+.giornate-list-mobile {
+  padding: 0 10px 10px;
+  overflow: hidden;
+}
+
+.settimane-header {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.settimana-col {
+  flex: 1;
+  text-align: center;
+}
+
+.settimana-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.giocate-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.giocata-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Mostra risultati bar mobile
+.show-results-bar-mobile {
+  display: flex;
+  justify-content: flex-end;
+  padding: 6px 2px 10px;
+}
+
+// Celle giocate mobile
+.team-cell-mobile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 5px 3px;
+  border-radius: 8px;
+  background: #F8FAFC;
+  border: 1px solid #E5E7EB;
+  min-height: 50px;
+  width: 100%;
+  transition: background 0.2s;
+
+  &.cell-ok {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.3);
+  }
+
+  &.cell-ko {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+}
+
+.team-logo-cell {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.team-name-cell {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #0A3D91;
+  text-align: center;
+  line-height: 1.1;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.empty-cell-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  font-size: 0.8rem;
+  color: #D1D5DB;
+  border-radius: 8px;
+  background: #F9FAFB;
+  border: 1px dashed #E5E7EB;
+  width: 100%;
+}
+
+

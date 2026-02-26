@@ -59,8 +59,10 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(ConfermaJoinDialogComponent, {
       width: '380px',
       maxWidth: '95vw',
+      maxHeight: '90vh',
       disableClose: true,
-      data: { lega },
+      data: { lega }
+      // CENTRATO (nessun position)
     });
 
     dialogRef.afterClosed().subscribe((pwd: string | null) => {
@@ -79,7 +81,8 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
               messaggio = err.message;
             }
             this.dialog.open(ErrorDialogComponent, {
-              data: { message: messaggio },
+              data: { message: messaggio }
+              // CENTRATO (nessun position)
             });
           }
 

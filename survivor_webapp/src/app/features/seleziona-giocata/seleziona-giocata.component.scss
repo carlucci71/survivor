@@ -1,194 +1,184 @@
-/* Popup Selezione Squadra - DESIGN COMPATTO */
+/* Popup Selezione Squadra - DESIGN UNIFORME CON ALTRI DIALOG */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
+/* ============================================
+   CONTAINER PRINCIPALE - STILE UNIFICATO
+   ============================================ */
+.seleziona-giocata-dialog {
+  background: #FFFFFF !important; // SFONDO BIANCO SOLIDO
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  font-family: 'Poppins', sans-serif;
 
-/* CONTAINER PRINCIPALE */
-.modal-container {
-	position: relative;
-	background: #FFFFFF !important;
-	border-radius: 20px;
-	box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-	padding: 16px 14px 14px 14px;
-	max-height: 90vh;
-	overflow-y: auto;
-	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
-	overscroll-behavior: contain;
-	touch-action: pan-y !important;
-	z-index: 10000;
-	font-family: 'Poppins', sans-serif;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
+  // Header con titolo e X - IDENTICO AGLI ALTRI DIALOG
+  .dialog-header {
+    position: relative;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    .dialog-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
 
-	&::-webkit-scrollbar {
-		width: 4px;
-	}
+      @media (max-width: 480px) {
+        font-size: 16px;
+      }
+    }
 
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      min-height: 32px !important;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
 
-	&::-webkit-scrollbar-thumb {
-		background: rgba(10, 61, 145, 0.2);
-		border-radius: 10px;
-	}
-}
+      mat-icon {
+        color: white !important;
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+      }
 
-/* CLOSE BUTTON */
-.close-btn {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	left: auto;
-	z-index: 100;
-	width: 32px !important;
-	height: 32px !important;
-	background: rgba(10, 61, 145, 0.08);
-	border-radius: 50% !important;
-	transition: all 0.2s ease;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	padding: 0 !important;
-	margin: 0 !important;
-	border: none;
-	cursor: pointer;
-	min-width: 32px !important;
-	max-width: 32px !important;
-	min-height: 32px !important;
-	max-height: 32px !important;
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+      }
+    }
+  }
 
-	/* Rimuovi padding Material Button */
-	.mat-mdc-button-touch-target,
-	.mat-mdc-button-persistent-ripple,
-	.mat-mdc-button-ripple {
-		display: none !important;
-	}
+  // Body Bianco Leggibile SOLIDO
+  .dialog-body {
+    padding: 20px;
+    background: #FFFFFF !important; // SFONDO BIANCO SOLIDO
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
-	mat-icon {
-		color: #0A3D91 !important;
-		font-size: 20px !important;
-		width: 20px !important;
-		height: 20px !important;
-		line-height: 20px !important;
-		display: flex !important;
-		align-items: center !important;
-		justify-content: center !important;
-		margin: 0 !important;
-		padding: 0 !important;
-	}
+    @media (max-width: 480px) {
+      padding: 16px;
+      gap: 14px;
+    }
 
-	&:hover {
-		background: rgba(10, 61, 145, 0.15);
-		transform: scale(1.1);
-	}
-}
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
 
-/* TITOLO H2 */
-h2 {
-	margin: 0 0 6px 0;
-	font-size: 1.05rem;
-	font-weight: 800;
-	color: #0A3D91;
-	font-family: 'Poppins', sans-serif;
-	padding-right: 40px;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	text-align: center;
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-	.value {
-		background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-	}
-}
+    &::-webkit-scrollbar-thumb {
+      background: rgba(10, 61, 145, 0.2);
+      border-radius: 10px;
+    }
+  }
 
-/* INFO COMPATTA - STILE CARD ELEGANTE */
-.info-compact {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 16px;
-	margin-bottom: 10px;
-	padding: 8px 14px;
-	background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08));
-	border-radius: 16px;
-	border: 1px solid rgba(10, 61, 145, 0.1);
+  // INFO COMPATTA USER E STATO
+  .info-compact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08));
+    border-radius: 16px;
+    border: 1px solid rgba(10, 61, 145, 0.1);
 
-	.info-item {
-		display: flex;
-		align-items: center;
-		gap: 8px;
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
-		.label {
-			font-size: 1.1rem;
-		}
+      .label {
+        font-size: 1.1rem;
+      }
 
-		.value {
-			font-weight: 700;
-			font-size: 0.9rem;
-			color: #0A3D91;
-			background: rgba(255, 255, 255, 0.8);
-			padding: 4px 12px;
-			border-radius: 20px;
-			box-shadow: 0 2px 8px rgba(10, 61, 145, 0.1);
-		}
+      .value {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #0A3D91;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 4px 12px;
+        border-radius: 20px;
+        box-shadow: 0 2px 8px rgba(10, 61, 145, 0.1);
+      }
 
-		.stato-icon {
-			font-size: 20px;
-			width: 20px;
-			height: 20px;
-			color: #4FC3F7;
-		}
-	}
+      .stato-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #4FC3F7;
+      }
+    }
 
-	.info-separator {
-		color: rgba(10, 61, 145, 0.3);
-		font-size: 1.2rem;
-	}
-}
+    .info-separator {
+      color: rgba(10, 61, 145, 0.3);
+      font-size: 1.2rem;
+    }
+  }
 
-/* Versione compatta per desktop/tablet */
-@media (min-width: 768px) {
-	.info-compact {
-		padding: 8px 16px !important;
-		margin-bottom: 12px !important;
-		gap: 12px !important;
+  /* Versione compatta per desktop/tablet */
+  @media (min-width: 768px) {
+    .info-compact {
+      padding: 8px 16px !important;
+      margin-bottom: 12px !important;
+      gap: 12px !important;
 
-		.info-item {
-			gap: 6px !important;
+      .info-item {
+        gap: 6px !important;
 
-			.label {
-				font-size: 0.9rem !important;
-			}
+        .label {
+          font-size: 0.9rem !important;
+        }
 
-			.value {
-				font-size: 0.85rem !important;
-				padding: 3px 10px !important;
-			}
+        .value {
+          font-size: 0.85rem !important;
+          padding: 3px 10px !important;
+        }
 
-			.stato-icon {
-				font-size: 18px !important;
-				width: 18px !important;
-				height: 18px !important;
-			}
-		}
+        .stato-icon {
+          font-size: 18px !important;
+          width: 18px !important;
+          height: 18px !important;
+        }
+      }
 
-		.info-separator {
-			font-size: 1rem !important;
-		}
-	}
-}
+      .info-separator {
+        font-size: 1rem !important;
+      }
+    }
+  }
 
-/* CALENDARIO CONTAINER */
-.calendario-container {
-	margin: 6px 0;
-	flex: 1;
-	display: flex;
-	flex-direction: column;
+  // CALENDARIO CONTAINER
+  .calendario-container {
+    margin: 6px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 	min-height: 0;
 
 	.calendario-title {
@@ -1465,4 +1455,6 @@ h2 {
 	.actions-container {
 		margin-top: 4px; /* Ridotto da 10px a 4px per mobile */
 	}
-}
+} // Chiusura @media (max-width: 480px)
+
+} // Chiusura .seleziona-giocata-dialog

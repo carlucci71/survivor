@@ -94,7 +94,8 @@ export class LegaJoinMagicComponent implements OnInit {
               messaggio = err.message;
             }
             this.dialog.open(ErrorDialogComponent, {
-              data: { message: messaggio },
+              data: { message: messaggio }
+              // CENTRATO
             });
           }
 

@@ -49,6 +49,11 @@
     "TROPHIES": "TROFEI",
     "PROFILE": "PROFILO"
   },
+  "LEGEND": {
+    "TITLE": "Legenda",
+    "ADMIN_PLAYED": "Giocata effettuata dall'amministratore",
+    "FORCED_MATCH": "Partita considerata vincente (forzata)"
+  },
   "PROFILE": {
     "TITLE": "Il Tuo Profilo",
     "NICKNAME": "Nickname:",
@@ -613,5 +618,25 @@
   "THEME": {
     "SWITCH_TO_DARK": "Passa al tema scuro",
     "SWITCH_TO_LIGHT": "Passa al tema chiaro"
+  },
+  "MATCH_DETAIL": {
+    "TITLE": "Dettaglio Partita",
+    "STATUS": "Stato",
+    "DATE": "Data e ora",
+    "ROUND": "Giornata",
+    "CHAMPIONSHIP": "Campionato",
+    "ADMIN_SECTION": "Gestione Amministratore",
+    "FORCE_MATCH": "Forza Partita",
+    "MATCH_FORCED": "Partita Forzata ✓",
+    "FORCE_DESCRIPTION": "Considera questa partita come vinta per tutti i giocatori",
+    "FORCE_WARNING": "⚠️ Partita forzata: considerata vincente per tutti i giocatori"
+  },
+  "ROUND_RESULTS": {
+    "TITLE": "Risultati Giornata",
+    "SHOW_RESULTS": "Mostra risultati",
+    "NO_MATCHES": "Nessuna partita trovata",
+    "FORCE": "Forza",
+    "FORCED": "Forzata ✓",
+    "LEGEND_FORCED": "Partita forzata: tutti i giocatori che l'hanno scelta avanzano"
   }
 }
