@@ -632,7 +632,7 @@
     "FORCE_WARNING": "⚠️ Partita forzata: considerata vincente per tutti i giocatori"
   },
   "ROUND_RESULTS": {
-    "TITLE": "Risultati Giornata",
+    "TITLE": "Risultati",
     "SHOW_RESULTS": "Mostra risultati",
     "NO_MATCHES": "Nessuna partita trovata",
     "FORCE": "Forza",

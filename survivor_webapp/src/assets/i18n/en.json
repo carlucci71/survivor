@@ -617,7 +617,7 @@
     "FORCE_WARNING": "⚠️ Forced match: considered winning for all players"
   },
   "ROUND_RESULTS": {
-    "TITLE": "Round Results",
+    "TITLE": "Results",
     "SHOW_RESULTS": "Show results",
     "NO_MATCHES": "No matches found",
     "FORCE": "Force",

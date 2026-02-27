@@ -3464,15 +3464,17 @@
 			.user-name-wrapper {
 				display: flex;
 				align-items: center;
-				gap: 8px;
+				gap: 6px;
+				justify-content: space-between;
 			}
 
 			.user-name {
 				display: inline-block;
-				max-width: 160px;
+				max-width: 140px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+				flex: 1;
 			}
 
 			// Bottone per mostrare lo storico completo
@@ -3489,6 +3491,7 @@
 				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 				box-shadow: 0 2px 6px rgba(79, 195, 247, 0.15);
 				animation: pulseHistory 2.5s ease-in-out infinite;
+				flex-shrink: 0;
 
 				&:hover {
 					background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(10, 61, 145, 0.20));
@@ -3519,6 +3522,13 @@
 					min-width: 12px;
 					text-align: center;
 					transition: color 0.3s ease;
+				}
+			}
+
+			// Badge storico nella cella nome: visibile solo su desktop/tablet
+			.history-badge-desktop {
+				@media (max-width: 767px) {
+					display: none !important;
 				}
 			}
 
@@ -3904,14 +3914,42 @@
 			background: inherit; // Eredita il background dalla riga parent
 			z-index: 5; // Più alto delle altre celle per rimanere sopra durante lo scroll
 			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); // Ombra più marcata per enfatizzare la separazione
-			min-width: 40px; // Ridotto a 40px come desktop
-			width: 40px;
+			min-width: 60px; // Aumentato per contenere badge storico + azioni
+			width: 60px;
 
 			.actions-wrapper {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				gap: 2px; // Ridotto da 4px
+				gap: 4px;
+			}
+
+			// Badge storico dentro colonna azioni (desktop/tablet)
+			.history-toggle-btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: linear-gradient(135deg, rgba(79, 195, 247, 0.08), rgba(10, 61, 145, 0.12));
+				border: 1.5px solid rgba(79, 195, 247, 0.3);
+				border-radius: 10px;
+				padding: 3px 6px;
+				cursor: pointer;
+				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+				box-shadow: 0 2px 6px rgba(79, 195, 247, 0.15);
+
+				&:hover {
+					background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(10, 61, 145, 0.20));
+					border-color: rgba(79, 195, 247, 0.5);
+					transform: scale(1.08);
+					box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+				}
+
+				.history-icon {
+					font-size: 15px;
+					width: 15px;
+					height: 15px;
+					color: #4FC3F7;
+				}
 			}
 
 			.action-icon {
@@ -3958,7 +3996,59 @@
 				}
 			}
 		}
+
+		// Colonna storico per utenti non admin/leader
+		&.history-cell {
+			text-align: center;
+			padding: 2px;
+			position: sticky;
+			right: 0;
+			background: inherit;
+			z-index: 5;
+			box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+			min-width: 44px;
+			width: 44px;
+
+			.history-toggle-btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				background: linear-gradient(135deg, rgba(79, 195, 247, 0.08), rgba(10, 61, 145, 0.12));
+				border: 1.5px solid rgba(79, 195, 247, 0.3);
+				border-radius: 10px;
+				padding: 3px 6px;
+				cursor: pointer;
+				transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+				box-shadow: 0 2px 6px rgba(79, 195, 247, 0.15);
+				animation: pulseHistory 2.5s ease-in-out infinite;
+
+				&:hover {
+					background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(10, 61, 145, 0.20));
+					border-color: rgba(79, 195, 247, 0.5);
+					transform: scale(1.08);
+					box-shadow: 0 4px 12px rgba(79, 195, 247, 0.3);
+					animation: none;
+				}
+
+				.history-icon {
+					font-size: 15px;
+					width: 15px;
+					height: 15px;
+					color: #4FC3F7;
+				}
+			}
+		}
 	}
+}
+
+// Header colonna storico sticky a destra
+.excel-header-cell.history-col-header {
+	min-width: 44px;
+	width: 44px;
+	position: sticky;
+	right: 0;
+	background: linear-gradient(135deg, #0A3D91, #1565C0) !important;
+	z-index: 10;
 }
 
 // Responsive per tablet
