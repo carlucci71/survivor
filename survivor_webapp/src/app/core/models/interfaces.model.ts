@@ -146,6 +146,7 @@ export interface Partita {
     scoreFuori: number;
     aliasGiornataCasa: string;
     aliasGiornataFuori: string;
+    forzata?: boolean;
 }
 
 export interface PartitaMock {

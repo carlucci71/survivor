@@ -117,7 +117,8 @@ create table partita(
     score_fuori integer,
     alias_giornata_casa varchar(200),
 	anno smallint not null default 2025,
-    alias_giornata_fuori varchar(200)
+    alias_giornata_fuori varchar(200),
+    forzata        BOOLEAN      NOT NULL DEFAULT FALSE
 );
 
 create table partita_mock(

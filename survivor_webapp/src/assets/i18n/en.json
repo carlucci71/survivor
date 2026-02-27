@@ -49,6 +49,11 @@
     "TROPHIES": "TROPHIES",
     "PROFILE": "PROFILE"
   },
+  "LEGEND": {
+    "TITLE": "Legend",
+    "ADMIN_PLAYED": "Play made by administrator",
+    "FORCED_MATCH": "Match considered winning (forced)"
+  },
   "PROFILE": {
     "TITLE": "Your Profile",
     "NICKNAME": "Nickname:",
@@ -598,5 +603,25 @@
   "THEME": {
     "SWITCH_TO_DARK": "Switch to dark theme",
     "SWITCH_TO_LIGHT": "Switch to light theme"
+  },
+  "MATCH_DETAIL": {
+    "TITLE": "Match Details",
+    "STATUS": "Status",
+    "DATE": "Date and time",
+    "ROUND": "Round",
+    "CHAMPIONSHIP": "Championship",
+    "ADMIN_SECTION": "Administrator Management",
+    "FORCE_MATCH": "Force Match",
+    "MATCH_FORCED": "Match Forced ✓",
+    "FORCE_DESCRIPTION": "Consider this match as won for all players",
+    "FORCE_WARNING": "⚠️ Forced match: considered winning for all players"
+  },
+  "ROUND_RESULTS": {
+    "TITLE": "Round Results",
+    "SHOW_RESULTS": "Show results",
+    "NO_MATCHES": "No matches found",
+    "FORCE": "Force",
+    "FORCED": "Forced ✓",
+    "LEGEND_FORCED": "Forced match: all players who chose it advance"
   }
 }

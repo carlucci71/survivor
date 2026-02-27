@@ -861,6 +861,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         backdropClass: 'dettagli-dialog-backdrop',
         autoFocus: false,
         hasBackdrop: true
+        // CENTRATO (nessun position)
       });
     });
   }

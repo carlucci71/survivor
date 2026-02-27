@@ -45,6 +45,7 @@ import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
+import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -145,6 +146,9 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   // Giornate visibili
   MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
+
+  // Mappa delle partite forzate {giornata_squadraSigla: boolean}
+  partiteForzate: Map<string, boolean> = new Map();
 
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
@@ -280,10 +284,46 @@ export class LegaDettaglioComponent implements OnDestroy {
           }
 
           this.caricaTabella();
+          this.caricaPartiteForzate();
         },
         error: (error) => {
           console.error('Errore nel ricaricamento della lega:', error);
         },
+      });
+    }
+  }
+
+  caricaPartiteForzate(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+
+    const giornataIniziale = this.lega.giornataIniziale || 0;
+    const giornataCorrente = this.lega.giornataCorrente || giornataIniziale;
+    const maxGiornateVisibili = 5;
+    const startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
+    const endGiornata = Math.min(
+      this.lega.giornataFinale || giornataCorrente,
+      startGiornata + maxGiornateVisibili - 1
+    );
+
+    for (let g = startGiornata; g <= endGiornata; g++) {
+      this.campionatoService.partiteDellaGiornata(
+        this.lega.campionato.id!,
+        this.lega.anno,
+        g
+      ).subscribe({
+        next: (partite: any[]) => {
+          partite?.forEach((p: any) => {
+            if (p.forzata === true) {
+              this.partiteForzate.set(`${g}_${p.casaSigla}`, true);
+              this.partiteForzate.set(`${g}_${p.fuoriSigla}`, true);
+            } else {
+              // Assicura che venga rimosso se non forzata
+              this.partiteForzate.set(`${g}_${p.casaSigla}`, false);
+              this.partiteForzate.set(`${g}_${p.fuoriSigla}`, false);
+            }
+          });
+        },
+        error: () => {}
       });
     }
   }
@@ -361,23 +401,17 @@ export class LegaDettaglioComponent implements OnDestroy {
         lega: this.lega,
         giocataCorrente: giocataCorrente  // ✅ Passa la giocata esistente per inizializzare pubblica
       },
-      width: isDesktop ? '90vw' : '94vw',
+      width: isDesktop ? '90vw' : '95vw',
       maxWidth: isDesktop ? '1100px' : '500px',
-      maxHeight: '95vh',
+      maxHeight: '90vh',
       panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
+      // CENTRATO (nessun position)
       scrollStrategy: this.overlay.scrollStrategies.noop()
     };
 
-    console.log('🔍 Dialog Config:', {
-      isDesktop,
-      width: dialogConfig.width,
-      maxWidth: dialogConfig.maxWidth,
-      panelClass: dialogConfig.panelClass,
-      windowWidth: window.innerWidth
-    });
 
     const dialogRef = this.dialog.open(SelezionaGiocataComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((result) => {
@@ -605,6 +639,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       panelClass: 'player-history-dialog-wrapper',
       autoFocus: false,
       restoreFocus: false
+      // CENTRATO
     });
   }
 
@@ -1122,7 +1157,10 @@ export class LegaDettaglioComponent implements OnDestroy {
         }
         const dialogRef = this.dialog.open(SospensioniDialogComponent, {
           width: '420px',
-          data: data,
+          maxWidth: '95vw',
+          maxHeight: '90vh',
+          data: data
+          // CENTRATO
         });
         dialogRef.afterClosed().subscribe(() => {
           this.legaService.getLegaById(this.id).subscribe({
@@ -1591,5 +1629,36 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
     const index = this.lega.giornataDaGiocare;
     return this.lega.campionato.iniziGiornate[index] || null;
+  }
+
+  isPartitaForzata(giocata: Giocata | null, giornata: number): boolean {
+    if (!giocata?.squadraSigla) return false;
+
+    const key = `${giornata}_${giocata.squadraSigla}`;
+    return this.partiteForzate.get(key) === true;
+  }
+
+  apriRisultatiGiornata(): void {
+    if (!this.lega) return;
+    const isDesktop = window.innerWidth >= 768;
+    const dialogRef = this.dialog.open(RoundResultsDialogComponent, {
+      data: {
+        lega: this.lega,
+        giornata: this.lega.giornataCorrente,
+        isLeader: this.isLeaderLega() || this.isAdmin()
+      },
+      width: isDesktop ? '520px' : '95vw',
+      maxWidth: isDesktop ? '520px' : '95vw',
+      maxHeight: '90vh',
+      panelClass: ['round-results-dialog-container'],
+      hasBackdrop: true,
+      disableClose: false,
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      // Ricarica per aggiornare i badge forzata
+      this.loadLegaDetails();
+    });
   }
 }
