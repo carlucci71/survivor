@@ -256,6 +256,14 @@ public class LegaService {
 
     @Transactional(readOnly = true)
     public Enumeratori.StatoPartita statoGiornata(List<PartitaDTO> partite, int giornata) {
+
+        //Se partita forzata la considero terminata
+        for (PartitaDTO partitaDTO : partite) {
+            if (Boolean.TRUE.equals(partitaDTO.getForzata())){
+                partitaDTO.setStato(Enumeratori.StatoPartita.TERMINATA);
+            }
+        }
+
         Map<Enumeratori.StatoPartita, Long> mappa = partite.stream()
                 .collect(Collectors.groupingBy(PartitaDTO::getStato, Collectors.counting()));
 
@@ -366,22 +374,26 @@ public class LegaService {
         if (optPartitaDTO.isPresent()) {
             PartitaDTO partitaDTO = optPartitaDTO.get();
             if (partitaDTO.getStato() == Enumeratori.StatoPartita.TERMINATA) {
-                String casa = partitaDTO.getCasaSigla();
-                String fuori = partitaDTO.getFuoriSigla();
-                Integer scoreCasa = partitaDTO.getScoreCasa();
-                Integer scoreFuori = partitaDTO.getScoreFuori();
-                if (casa.equals(squadraSigla)) {
-                    if (scoreCasa > scoreFuori) {
-                        ret = true;
-                    } else {
-                        ret = false;
+                if (Boolean.TRUE.equals(partitaDTO.getForzata())){
+                    ret = true;
+                } else {
+                    String casa = partitaDTO.getCasaSigla();
+                    String fuori = partitaDTO.getFuoriSigla();
+                    Integer scoreCasa = partitaDTO.getScoreCasa();
+                    Integer scoreFuori = partitaDTO.getScoreFuori();
+                    if (casa.equals(squadraSigla)) {
+                        if (scoreCasa > scoreFuori) {
+                            ret = true;
+                        } else {
+                            ret = false;
+                        }
                     }
-                }
-                if (fuori.equals(squadraSigla)) {
-                    if (scoreFuori > scoreCasa) {
-                        ret = true;
-                    } else {
-                        ret = false;
+                    if (fuori.equals(squadraSigla)) {
+                        if (scoreFuori > scoreCasa) {
+                            ret = true;
+                        } else {
+                            ret = false;
+                        }
                     }
                 }
             }

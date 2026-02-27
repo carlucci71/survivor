@@ -116,13 +116,13 @@ public class UtilCalendarioService {
                     , anno);
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
-                for (PartitaDTO partitaDTO : partiteFromWeb) {
-                    //if (isFirstLoading || partitaDaRefreshare(partitaDTO)) {//FIXME
+                for (PartitaDTO partitaFromWeb : partiteFromWeb) {
+                    //if (isFirstLoading || partitaDaRefreshare(partitaFromWeb)) {//FIXME ripristinare refresh ultime giornate
                     if (true) {
-                        log.info("Aggiorno partita {} {} in stato {} in calendario {}", partitaDTO.getCasaSigla(), partitaDTO.getFuoriSigla(), partitaDTO.getStato(), partitaDTO.getOrario());
-                        partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaDTO));
+                        log.info("Aggiorno partita {} {} in stato {} in calendario {}", partitaFromWeb.getCasaSigla(), partitaFromWeb.getFuoriSigla(), partitaFromWeb.getStato(), partitaFromWeb.getOrario());
+                        partiteDiCampionatoDellaGiornata.add(partitaService.aggiornaPartitaSuDB(partitaFromWeb));
                     } else {
-                        partiteDiCampionatoDellaGiornata.add(partitaDTO);
+                        partiteDiCampionatoDellaGiornata.add(partitaFromWeb);
                     }
                 }
             }
@@ -134,7 +134,7 @@ public class UtilCalendarioService {
     private boolean partitaDaRefreshare(PartitaDTO partitaDTO) {
         return (
                 (refreshTerminate || partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA)
-                        && partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(7)) < 0
+                        //&& partitaDTO.getOrario().compareTo(LocalDateTime.now().plusDays(7)) < 0 FIXME aggiorna solo prossimi x giorni, ma se ho tutte terminate ed una in recupero tra 1 mese non la considera
         );
     }
 

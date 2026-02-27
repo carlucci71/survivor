@@ -352,10 +352,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       width: '90vw',
       maxWidth: '600px',
-      maxHeight: '85vh',
+      maxHeight: '90vh',
       panelClass: 'custom-dialog-container',
       autoFocus: false,
       restoreFocus: false
+      // CENTRATO
     });
   }
 

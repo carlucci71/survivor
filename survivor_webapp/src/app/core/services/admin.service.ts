@@ -15,5 +15,25 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
+  aggiornaForzataPartita(
+    idLega: number,
+    campionatoId: string,
+    anno: number,
+    giornata: number,
+    casaSigla: string,
+    fuoriSigla: string,
+    forzata: boolean
+  ): Observable<any> {
+    const params = {
+      campionatoId,
+      anno: anno.toString(),
+      giornata: giornata.toString(),
+      casaSigla,
+      fuoriSigla,
+      forzata: forzata.toString()
+    };
+
+    return this.http.put(`${this.apiUrl}/partita/forzata/${idLega}`, null, { params });
+  }
 
 }

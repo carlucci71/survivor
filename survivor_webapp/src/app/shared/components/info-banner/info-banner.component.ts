@@ -2701,7 +2701,8 @@ export class ProfiloDialogComponent implements OnInit {
     this.dialog.open(DeleteAccountDialogComponent, {
       width: '90vw',
       maxWidth: '450px',
-      panelClass: 'custom-dialog-container'
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 }
@@ -3110,10 +3111,10 @@ export class InfoBannerComponent {
     this.dialog.open(RegolamentoBannerDialogComponent, {
       width: '90vw',
       maxWidth: '800px',
-      maxHeight: '85vh',
+      maxHeight: '90vh',
       panelClass: 'regolamento-dialog-container',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false // CENTRATO
     });
   }
 
@@ -3121,10 +3122,10 @@ export class InfoBannerComponent {
     this.dialog.open(AlboOroDialogComponent, {
       width: '90vw',
       maxWidth: '700px',
-      maxHeight: '85vh',
+      maxHeight: '90vh',
       panelClass: 'albo-oro-dialog-container',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false // CENTRATO
     });
   }
 
@@ -3132,10 +3133,10 @@ export class InfoBannerComponent {
     this.dialog.open(ProfiloDialogComponent, {
       width: '90vw',
       maxWidth: '600px',
-      maxHeight: '85vh',
+      maxHeight: '90vh',
       panelClass: 'profilo-dialog-container',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false // CENTRATO
     });
   }
 }

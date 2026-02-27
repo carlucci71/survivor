@@ -1167,7 +1167,7 @@ export class ChiSiamoDialogComponent implements OnInit{
       width: '90vw',
       maxWidth: '700px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 
@@ -1182,7 +1182,7 @@ export class ChiSiamoDialogComponent implements OnInit{
       width: '90vw',
       maxWidth: '600px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 }
@@ -1516,7 +1516,7 @@ export class FooterComponent  {
       width: '90vw',
       maxWidth: '800px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 
@@ -1525,7 +1525,8 @@ export class FooterComponent  {
     this.dialog.open(ContattiDialogComponent, {
       width: '90vw',
       maxWidth: '500px',
-      panelClass: 'custom-dialog-container'
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 
@@ -1535,7 +1536,7 @@ export class FooterComponent  {
       width: '90vw',
       maxWidth: '700px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 
@@ -1550,7 +1551,7 @@ export class FooterComponent  {
       width: '90vw',
       maxWidth: '600px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container' // CENTRATO
     });
   }
 

@@ -154,6 +154,17 @@
 
       <!-- VISTA DESKTOP/TABLET - Tabella Compatta Tipo Excel -->
       <div class="excel-table-wrapper desktop-tablet-only">
+
+        <!-- Link Mostra Risultati (sopra la tabella, fuori da essa) -->
+        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
+          <div class="show-results-bar">
+            <button class="show-results-link" (click)="apriRisultatiGiornata()">
+              <mat-icon class="results-icon">sports_score</mat-icon>
+              <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
+            </button>
+          </div>
+        }
+
         <div class="excel-table-scroll">
           <table class="excel-table">
             <!-- HEADER FISSO -->
@@ -221,13 +232,23 @@
                             [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
                             {{ getDisplaySquadraNome(giocatore, giornata) }}
                           </span>
-                          <!-- Indicatore forzatura -->
-                          @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
-                            <mat-icon class="forced-icon"
-                                      [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
-                              verified_user
-                            </mat-icon>
-                          }
+                          <!-- Indicatori -->
+                          <div class="badges-container">
+                            <!-- Indicatore forzatura giocata (da admin) -->
+                            @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                              <mat-icon class="forced-icon badge-admin"
+                                        [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                                verified_user
+                              </mat-icon>
+                            }
+                            <!-- Indicatore partita forzata -->
+                            @if(isPartitaForzata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                              <mat-icon class="forced-match-icon badge-match"
+                                        [matTooltip]="'LEGEND.FORCED_MATCH' | translate">
+                                verified
+                              </mat-icon>
+                            }
+                          </div>
                         </div>
                       } @else {
                         <!-- Cella vuota -->
@@ -262,6 +283,24 @@
               }
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- LEGENDA BADGE - Desktop: sotto tabella, Mobile: sotto cards -->
+      <div class="legend-section desktop-only">
+        <div class="legend-title">
+          <mat-icon>info</mat-icon>
+          <span>{{ 'LEGEND.TITLE' | translate }}</span>
+        </div>
+        <div class="legend-items">
+          <div class="legend-item">
+            <mat-icon class="badge-admin">verified_user</mat-icon>
+            <span>{{ 'LEGEND.ADMIN_PLAYED' | translate }}</span>
+          </div>
+          <div class="legend-item">
+            <mat-icon class="badge-match">verified</mat-icon>
+            <span>{{ 'LEGEND.FORCED_MATCH' | translate }}</span>
+          </div>
         </div>
       </div>
 
@@ -322,6 +361,16 @@
             <div class="empty-message">
               {{ searchText ? ('LEAGUE.NO_RESULTS_SEARCH' | translate) : ('LEAGUE.NO_RESULTS_FILTER' | translate) }}
             </div>
+          </div>
+        }
+
+        <!-- Link Mostra Risultati (vista mobile/cards) -->
+        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
+          <div class="show-results-bar-mobile">
+            <button class="show-results-link" (click)="apriRisultatiGiornata()">
+              <mat-icon class="results-icon">sports_score</mat-icon>
+              <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
+            </button>
           </div>
         }
 
@@ -396,6 +445,21 @@
                       />
                     }
                     <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                    <!-- Badge forzatura -->
+                    <div class="badges-container-mobile">
+                      @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
+                        <mat-icon class="forced-icon badge-admin"
+                                  [matTooltip]="'LEAGUE.FORCED_BY_LEADER' | translate">
+                          verified_user
+                        </mat-icon>
+                      }
+                      @if(isPartitaForzata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                        <mat-icon class="forced-match-icon badge-match"
+                                  [matTooltip]="'LEGEND.FORCED_MATCH' | translate">
+                          verified
+                        </mat-icon>
+                      }
+                    </div>
                   </div>
                 } @else {
                   <!-- Cella vuota -->
@@ -429,6 +493,24 @@
         </div>
       </div>
       }
+
+      <!-- LEGENDA BADGE - Solo mobile, sotto le cards -->
+      <div class="legend-section mobile-only">
+        <div class="legend-title">
+          <mat-icon>info</mat-icon>
+          <span>{{ 'LEGEND.TITLE' | translate }}</span>
+        </div>
+        <div class="legend-items">
+          <div class="legend-item">
+            <mat-icon class="badge-admin">verified_user</mat-icon>
+            <span>{{ 'LEGEND.ADMIN_PLAYED' | translate }}</span>
+          </div>
+          <div class="legend-item">
+            <mat-icon class="badge-match">verified</mat-icon>
+            <span>{{ 'LEGEND.FORCED_MATCH' | translate }}</span>
+          </div>
+        </div>
+      </div>
 
       <!-- ELIMINA LEGA - In fondo, discreto -->
       @if (isDaAvviare() && isLeaderLega()) {

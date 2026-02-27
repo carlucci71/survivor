@@ -698,3 +698,54 @@ mat-dialog-actions {
   }
 }
 
+
+/* ============================================
+   DIALOG ANIMAZIONE DAL BASSO - GLOBALE
+   Tutti i dialog con position: bottom escono dal basso
+   ============================================ */
+.cdk-overlay-pane {
+  // Animazione entrata dal basso
+  animation: slideUpIn 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+
+  // Assicura che i dialog dal basso siano arrotondati
+  .mat-mdc-dialog-container {
+    border-radius: 20px 20px 0 0 !important; // Solo angoli superiori arrotondati
+    max-height: 90vh !important;
+    overflow: hidden !important;
+    background: #FFFFFF !important; // SFONDO BIANCO SOLIDO GLOBALE
+  }
+
+  // Mobile: bordi più piccoli
+  @media (max-width: 480px) {
+    .mat-mdc-dialog-container {
+      border-radius: 16px 16px 0 0 !important;
+      background: #FFFFFF !important; // SFONDO BIANCO SOLIDO
+    }
+  }
+}
+
+// FORZA SFONDO BIANCO SOLIDO SU TUTTE LE SURFACE MATERIAL
+.mat-mdc-dialog-surface,
+.mdc-dialog__surface {
+  background: #FFFFFF !important; // SFONDO BIANCO SOLIDO
+}
+
+// Animazione slide dal basso
+@keyframes slideUpIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Backdrop più scuro per migliore contrasto
+.cdk-overlay-backdrop {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+}
+
+
