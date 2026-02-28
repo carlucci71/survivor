@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.ddlsolution.survivor.converter.StatoPartitaConverter;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.persistence.Column;
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
@@ -72,7 +74,16 @@ public class Partita {
     private short anno;
 
     @Column(name = "forzata")
-    private boolean forzata = false;
+    @Getter(onMethod_=@JsonProperty("forzata"))
+    private boolean forzata;
+
+    public boolean getForzata() {
+        return forzata;
+    }
+
+    public void setForzata(boolean forzata) {
+        this.forzata = forzata;
+    }
 
 
 }
