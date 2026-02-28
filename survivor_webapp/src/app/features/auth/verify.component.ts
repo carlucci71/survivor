@@ -47,12 +47,12 @@ export class VerifyComponent implements OnInit {
       this.isSuccess = true;
 
       // Se è un link di JOIN, prova a estrarre il legaId dall'addInfo
-      const joinMatch = codiceTipoMagicLink.match(/JOIN/i);
+      const joinMatch = codiceTipoMagicLink.match(/J/i);
       if (joinMatch) {
         // Prova a estrarre dal token se possibile (formato addInfo: "JOIN:123")
         // Per semplicità, se il token era già nel localStorage come magicTokenSurvivor, usiamolo
         const savedToken = localStorage.getItem('magicTokenSurvivor');
-        if (savedToken === token) {
+        if (savedToken === token && false) {
           // Token già usato in precedenza, probabilmente per questa stessa lega
           // Proviamo a fare il parsing dall'URL o andiamo alla home
           this.message = 'Sei già autenticato! Reindirizzamento...';

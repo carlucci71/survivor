@@ -56,7 +56,7 @@ export class AuthService {
       localStorage.setItem('tokenSurvivor', tokenVal);
     } else {
       try {
-        localStorage.removeItem('tokenSurvivor');
+///        localStorage.removeItem('tokenSurvivor');
       } catch (e) {
         // noop
       }
@@ -160,7 +160,7 @@ export class AuthService {
     // Treat empty, "null" or "undefined" strings as missing and remove them
     if (!normalized || normalized.toLowerCase() === 'null' || normalized.toLowerCase() === 'undefined') {
       try {
-        localStorage.removeItem('tokenSurvivor');
+      ///  localStorage.removeItem('tokenSurvivor');
       } catch (e) {
         // noop
       }
