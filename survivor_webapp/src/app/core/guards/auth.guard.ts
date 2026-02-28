@@ -19,7 +19,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
       // Se non autenticato o user non valido, pulisci e vai al login
       if (!authService.getCurrentUser()) {
-        authService.logout();
+        //authService.logout();
       }
 
       router.navigate(['/auth/login']);
