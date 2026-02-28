@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -41,6 +43,43 @@ public class ScheduledPushNotifications {
 
     @Value("${push.notification.scheduler-enabled}")
     private boolean notificationsEnabled;
+
+    public void gimmi() {
+        for (CampionatoDTO campionatoDTO : cacheableService.allCampionati()) {
+            if (campionatoDTO.getId().equals("SERIE_A")) {
+                Map<GiocatoreDTO, List<LegaDTO>> giocatoreLeghe = new HashMap<>();
+                LocalDateTime prossimoInizio = campionatoDTO.getIniziGiornate().get(campionatoDTO.getGiornataDaGiocare() - 1);
+                LocalDateTime loc = LocalDateTime.now();
+                long diffMinutes = java.time.Duration.between(loc, prossimoInizio).toMinutes();
+                log.info("----->>>>>>>>>>>> Ora attuale: {}, Prossimo Inizio {}, diffMinutes {} <<<<<<<<-------", loc, prossimoInizio, diffMinutes);
+                if (diffMinutes >= 0 && diffMinutes <= 60) {
+                    log.info("Invio notifiche per campionato {}", campionatoDTO.getId());
+                    List<LegaDTO> legheAttiveDelCampionato = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
+                    for (LegaDTO legaAttiveDelCampionato : legheAttiveDelCampionato) {
+                        if (legaAttiveDelCampionato.getId()==83) {
+                            for (GiocatoreDTO giocatoreDTO : legaAttiveDelCampionato.getGiocatori()) {
+                                if (giocatoreDTO.getStatiPerLega().get(legaAttiveDelCampionato.getId()) == Enumeratori.StatoGiocatore.ATTIVO
+                                        && !ObjectUtils.isEmpty(giocatoreDTO.getUser())) {
+                                    List<LegaDTO> legheDelGiocatore = giocatoreLeghe.computeIfAbsent(giocatoreDTO, l -> new ArrayList<>());
+                                    legheDelGiocatore.add(legaAttiveDelCampionato);
+                                }
+                            }
+                        }
+                    }
+                    for (Map.Entry<GiocatoreDTO, List<LegaDTO>> giocatoreDTOListEntry : giocatoreLeghe.entrySet()) {
+                        List<LegaDTO> legaAttiveDelCampionato = giocatoreDTOListEntry.getValue();
+                        GiocatoreDTO giocatore = giocatoreDTOListEntry.getKey();
+                        String desLega = legaAttiveDelCampionato
+                                .stream()
+                                .map(l -> "la lega " + l.getId() + " " + l.getName() + " edizione " + l.getEdizione())
+                                .collect(Collectors.joining("-"));
+                        String desGiocatore = giocatore.getNickname() + " - " + giocatore.getUser();
+                        log.info("giocatore {}, in leghe {} ", desGiocatore, desLega);
+                    }
+                }
+            }
+        }
+    }
 
     @Scheduled(cron = "0 */15 * * * ?") // Ogni 15 minuti
     public void sendUpcomingMatchNotificationsOrig() {
@@ -59,7 +98,8 @@ public class ScheduledPushNotifications {
                     List<LegaDTO> legheAttiveDelCampionato = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
                     for (LegaDTO legaAttiveDelCampionato : legheAttiveDelCampionato) {
                         for (GiocatoreDTO giocatoreDTO : legaAttiveDelCampionato.getGiocatori()) {
-                            if (!ObjectUtils.isEmpty(giocatoreDTO.getUser())) {
+                            if (giocatoreDTO.getStatiPerLega().get(legaAttiveDelCampionato.getId()) == Enumeratori.StatoGiocatore.ATTIVO
+                                    && !ObjectUtils.isEmpty(giocatoreDTO.getUser())) {
                                 List<LegaDTO> legheDelGiocatore = giocatoreLeghe.computeIfAbsent(giocatoreDTO, l -> new ArrayList<>());
                                 legheDelGiocatore.add(legaAttiveDelCampionato);
                             }
