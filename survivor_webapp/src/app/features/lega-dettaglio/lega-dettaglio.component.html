@@ -183,6 +183,8 @@
                 }
                 @if(isAdmin() || isLeaderLega() || isDaAvviare()){
                   <th class="excel-header-cell actions-col">Azioni</th>
+                } @else {
+                  <th class="excel-header-cell history-col-header"></th>
                 }
               </tr>
             </thead>
@@ -197,13 +199,12 @@
                   <td class="excel-cell user-cell">
                     <div class="user-name-wrapper">
                       <span class="user-name">{{ giocatore.nickname }}</span>
-                      <!-- Icona per visualizzare storico completo se ci sono più di 5 giornate -->
+                      <!-- Badge storico - solo desktop/tablet, a destra del nome -->
                       @if(hasMoreRounds(giocatore)) {
-                        <button class="history-toggle-btn"
+                        <button class="history-toggle-btn history-badge-desktop"
                                 (click)="toggleFullHistory(giocatore, $event)"
                                 [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
                           <mat-icon class="history-icon">history</mat-icon>
-                          <span class="history-count">{{ getTotalRoundsCount(giocatore) }}</span>
                         </button>
                       }
                     </div>
@@ -278,6 +279,9 @@
                         }
                       </div>
                     </td>
+                  } @else {
+                    <!-- Colonna vuota per utenti non admin/leader -->
+                    <td class="excel-cell history-cell"></td>
                   }
                 </tr>
               }

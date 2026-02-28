@@ -1641,10 +1641,15 @@ export class LegaDettaglioComponent implements OnDestroy {
   apriRisultatiGiornata(): void {
     if (!this.lega) return;
     const isDesktop = window.innerWidth >= 768;
+    const giornataCorrente = this.lega.giornataCorrente;
+    // SEMPRE da 1: l'admin può vedere e forzare QUALSIASI giornata passata del campionato
+    const giornataIniziale = 1;
+    console.log('[LegaDettaglio v3] apriRisultatiGiornata → range:', giornataIniziale, '-', giornataCorrente);
     const dialogRef = this.dialog.open(RoundResultsDialogComponent, {
       data: {
         lega: this.lega,
-        giornata: this.lega.giornataCorrente,
+        giornata: giornataCorrente,
+        giornataIniziale: giornataIniziale,
         isLeader: this.isLeaderLega() || this.isAdmin()
       },
       width: isDesktop ? '520px' : '95vw',
@@ -1657,7 +1662,6 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      // Ricarica per aggiornare i badge forzata
       this.loadLegaDetails();
     });
   }
