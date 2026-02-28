@@ -23,5 +23,5 @@ public class PartitaDTO {
     private String aliasGiornataCasa;
     private String aliasGiornataFuori;
     private short anno;
-    private Boolean forzata;
+    private boolean forzata;
 }
