@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,7 @@ import { AdminService } from '../../../core/services/admin.service';
 export interface RoundResultsData {
   lega: any;
   giornata: number;
+  giornataIniziale?: number;
   isLeader: boolean;
 }
 
@@ -32,6 +33,36 @@ export interface RoundResultsData {
           <mat-icon>close</mat-icon>
         </button>
       </div>
+
+      <!-- Navigazione Giornate -->
+      @if (giornateDisponibili.length > 0) {
+        <div class="round-nav-bar">
+          <button class="nav-arrow-btn"
+                  [disabled]="currentRoundIndex <= 0"
+                  (click)="goToPrevRound()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <div class="rounds-chips-wrapper" #chipsWrapper>
+            <div class="rounds-chips">
+              @for (g of giornateDisponibili; track g; let i = $index) {
+                <button class="round-chip"
+                        [class.active]="i === currentRoundIndex"
+                        [class.pre-lega]="g < (data.lega?.giornataIniziale ?? 1)"
+                        (click)="goToRound(i)">
+                  {{ getRoundShortLabel(g) }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <button class="nav-arrow-btn"
+                  [disabled]="currentRoundIndex >= giornateDisponibili.length - 1"
+                  (click)="goToNextRound()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      }
 
       <!-- Barra azione leader: visibile solo se leader -->
       @if (data.isLeader && !loading && partite.length > 0) {
@@ -201,6 +232,104 @@ export interface RoundResultsData {
         font-size: 16px;
         width: 16px;
         height: 16px;
+      }
+    }
+
+    /* ── NAVIGAZIONE GIORNATE ── */
+    .round-nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 10px;
+      background: #F8FAFC;
+      border-bottom: 1px solid #E5E7EB;
+      flex-shrink: 0;
+    }
+
+    .nav-arrow-btn {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      border-radius: 50%;
+      border: 1.5px solid #DBEAFE;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #0A3D91;
+      }
+
+      &:hover:not(:disabled) {
+        background: #EFF6FF;
+        border-color: #0A3D91;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+
+    .rounds-chips-wrapper {
+      flex: 1;
+      overflow-x: auto;
+      min-width: 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+
+    .rounds-chips {
+      display: flex;
+      gap: 5px;
+      padding: 2px 2px;
+      width: max-content;
+    }
+
+    .round-chip {
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1.5px solid #DBEAFE;
+      background: white;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #374151;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      white-space: nowrap;
+      transition: all 0.2s;
+
+      &:hover:not(.active) {
+        background: #EFF6FF;
+        border-color: #93C5FD;
+        color: #0A3D91;
+      }
+
+      &.active {
+        background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 2px 6px rgba(10, 61, 145, 0.25);
+      }
+
+      &.pre-lega:not(.active) {
+        border-color: #E5E7EB;
+        color: #9CA3AF;
+        font-weight: 500;
+
+        &:hover {
+          background: #F9FAFB;
+          border-color: #D1D5DB;
+          color: #6B7280;
+        }
       }
     }
 
@@ -528,14 +657,29 @@ export interface RoundResultsData {
       .leader-bar { flex-direction: column; align-items: stretch; gap: 6px; }
       .apply-force-btn { justify-content: center; }
       .leader-hint span { white-space: normal; }
+      .round-nav-bar { padding: 6px 8px; gap: 3px; }
+      .round-chip { padding: 3px 8px; font-size: 0.63rem; }
+      .nav-arrow-btn { width: 26px; height: 26px; min-width: 26px; }
     }
   `]
 })
-export class RoundResultsDialogComponent implements OnInit {
+export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
   partite: any[] = [];
   loading = true;
   savingKey: string | null = null;
   selectedKey: string | null = null;
+
+  /** Giornate disponibili (da giornataIniziale a giornataCorrente inclusa) */
+  giornateDisponibili: number[] = [];
+  currentRoundIndex = 0;
+
+  @ViewChild('chipsWrapper') chipsWrapper?: ElementRef<HTMLElement>;
+  private needsScrollToActive = false;
+
+  /** Giornata attualmente visualizzata */
+  get currentGiornata(): number {
+    return this.giornateDisponibili[this.currentRoundIndex] ?? this.data.giornata;
+  }
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: RoundResultsData,
@@ -545,7 +689,80 @@ export class RoundResultsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // v3 - giornate da 1 a giornataCorrente
+    console.log('[RoundResults v3] data ricevuto → giornata:', this.data.giornata, '| lega.giornataCorrente:', this.data.lega?.giornataCorrente, '| lega.numGiornate:', this.data.lega?.campionato?.numGiornate);
+    this.buildGiornateDisponibili();
+    this.needsScrollToActive = true;
     this.loadPartite();
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.needsScrollToActive && this.chipsWrapper) {
+      this.scrollToActiveChip();
+      this.needsScrollToActive = false;
+    }
+  }
+
+  scrollToActiveChip(): void {
+    if (!this.chipsWrapper) return;
+    const wrapper = this.chipsWrapper.nativeElement;
+    const activeChip = wrapper.querySelector('.round-chip.active') as HTMLElement;
+    if (activeChip) {
+      const chipLeft = activeChip.offsetLeft;
+      const chipWidth = activeChip.offsetWidth;
+      const wrapperWidth = wrapper.offsetWidth;
+      wrapper.scrollLeft = chipLeft - wrapperWidth / 2 + chipWidth / 2;
+    }
+  }
+
+  buildGiornateDisponibili(): void {
+    const lega = this.data.lega;
+
+    // Partiamo sempre da 1: l'admin deve poter vedere e forzare qualsiasi giornata passata
+    const giornataIniziale = 1;
+
+    // Giornata corrente = ultima giornata disponibile da mostrare
+    const giornataCorrente = this.data.giornata
+      ?? lega?.giornataCorrente
+      ?? lega?.giornataIniziale
+      ?? 1;
+
+    // Numero massimo giornate del campionato (sanity check)
+    const maxGiornate = lega?.campionato?.numGiornate ?? giornataCorrente;
+
+    const fine = Math.min(giornataCorrente, maxGiornate);
+
+    console.log('[RoundResults] buildGiornateDisponibili → da:', giornataIniziale, 'a:', fine, '(maxGiornate campionato:', maxGiornate, ')');
+
+    this.giornateDisponibili = [];
+    for (let g = giornataIniziale; g <= fine; g++) {
+      this.giornateDisponibili.push(g);
+    }
+
+    if (this.giornateDisponibili.length === 0) {
+      this.giornateDisponibili = [fine];
+    }
+
+    // Apri sempre sull'ultima giornata (quella corrente)
+    this.currentRoundIndex = this.giornateDisponibili.length - 1;
+    console.log('[RoundResults] giornateDisponibili:', this.giornateDisponibili.length, 'chip, aperto su index:', this.currentRoundIndex);
+  }
+
+  goToRound(index: number): void {
+    if (index < 0 || index >= this.giornateDisponibili.length) return;
+    if (index === this.currentRoundIndex) return;
+    this.currentRoundIndex = index;
+    this.selectedKey = null;
+    this.needsScrollToActive = true;
+    this.loadPartite();
+  }
+
+  goToPrevRound(): void {
+    this.goToRound(this.currentRoundIndex - 1);
+  }
+
+  goToNextRound(): void {
+    this.goToRound(this.currentRoundIndex + 1);
   }
 
   loadPartite(): void {
@@ -553,10 +770,11 @@ export class RoundResultsDialogComponent implements OnInit {
       this.loading = false;
       return;
     }
+    this.loading = true;
     this.campionatoService.partiteDellaGiornata(
       this.data.lega.campionato.id,
       this.data.lega.anno,
-      this.data.giornata
+      this.currentGiornata
     ).subscribe({
       next: (partite) => {
         this.partite = partite || [];
@@ -607,11 +825,10 @@ export class RoundResultsDialogComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.savingKey = null;
-        // Ricarica tutte le partite dal backend per avere lo stato reale aggiornato
         this.campionatoService.partiteDellaGiornata(
           this.data.lega.campionato.id,
           this.data.lega.anno,
-          this.data.giornata
+          this.currentGiornata
         ).subscribe({
           next: (partiteAggiornate) => {
             this.partite = partiteAggiornate || [];
@@ -662,12 +879,25 @@ export class RoundResultsDialogComponent implements OnInit {
   }
 
   getGiornataLabel(): string {
+    return this.getRoundFullLabel(this.currentGiornata);
+  }
+
+  getRoundFullLabel(g: number): string {
     const lega = this.data.lega;
-    if (!lega) return String(this.data.giornata);
+    if (!lega) return String(g);
     const sportId = lega.campionato?.sport?.id;
-    if (sportId === 'TENNIS') return `Round ${this.data.giornata}`;
-    if (sportId === 'BASKET') return `Day ${this.data.giornata}`;
-    return `Giornata ${this.data.giornata}`;
+    if (sportId === 'TENNIS') return `Round ${g}`;
+    if (sportId === 'BASKET') return `Day ${g}`;
+    return `Giornata ${g}`;
+  }
+
+  getRoundShortLabel(g: number): string {
+    const lega = this.data.lega;
+    if (!lega) return `Giornata ${g}`;
+    const sportId = lega.campionato?.sport?.id;
+    if (sportId === 'TENNIS') return `Round ${g}`;
+    if (sportId === 'BASKET') return `Day ${g}`;
+    return `Giornata ${g}`;
   }
 
   close(): void {
