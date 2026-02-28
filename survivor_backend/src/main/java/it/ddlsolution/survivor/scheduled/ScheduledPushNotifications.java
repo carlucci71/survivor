@@ -49,10 +49,8 @@ public class ScheduledPushNotifications {
             if (campionatoDTO.getId().equals("SERIE_A")) {
                 Map<GiocatoreDTO, List<LegaDTO>> giocatoreLeghe = new HashMap<>();
                 LocalDateTime prossimoInizio = campionatoDTO.getIniziGiornate().get(campionatoDTO.getGiornataDaGiocare() - 1);
-
                 ZoneId roma = ZoneId.of("Europe/Rome");
                 LocalDateTime loc = LocalDateTime.now(roma);
-
                 long diffMinutes = java.time.Duration.between(loc, prossimoInizio).toMinutes();
                 log.info("----->>>>>>>>>>>> Ora attuale: {}, Prossimo Inizio {}, diffMinutes {} <<<<<<<<-------", loc, prossimoInizio, diffMinutes);
                 if (diffMinutes >= 0 && diffMinutes <= 60) {
@@ -93,7 +91,9 @@ public class ScheduledPushNotifications {
         for (CampionatoDTO campionatoDTO : cacheableService.allCampionati()) {
             Map<GiocatoreDTO, List<LegaDTO>> giocatoreLeghe = new HashMap<>();
             LocalDateTime prossimoInizio = campionatoDTO.getIniziGiornate().get(campionatoDTO.getGiornataDaGiocare() - 1);
-            long diffMinutes = java.time.Duration.between(LocalDateTime.now(), prossimoInizio).toMinutes();
+            ZoneId roma = ZoneId.of("Europe/Rome");
+            LocalDateTime loc = LocalDateTime.now(roma);
+            long diffMinutes = java.time.Duration.between(loc, prossimoInizio).toMinutes();
             if (diffMinutes >= 0 && diffMinutes <= 60) {
                 Optional<NotificheInviate> notificaInviata = notificheInviateService.cerca(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente(), campionatoDTO.getGiornataDaGiocare(), Enumeratori.TipoNotifica.INIZIO_PARTITA);
                 if (notificaInviata.isEmpty()) {//VERIFICO PER NON MANDARE DUE VOLTE LA STESSA NOTIFICA
