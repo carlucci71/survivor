@@ -26,7 +26,12 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       <div class="header-content">
         <div class="left-section">
           <div class="title-logo-container">
-            <mat-label class="header-title" *ngIf="title">{{ title }}</mat-label>
+            <mat-label
+              class="header-title"
+              *ngIf="title"
+              [matTooltip]="title"
+              matTooltipShowDelay="400"
+            >{{ title }}</mat-label>
             <img src="assets/survivor-logo-simple.svg" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
@@ -87,13 +92,17 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         display: flex;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: nowrap;
         gap: 12px;
+        min-width: 0;
       }
       .left-section {
         display: flex;
         align-items: center;
         gap: 16px;
-        margin-right: auto;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
       }
       .title-logo-container {
         display: flex;
@@ -102,6 +111,9 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         gap: 4px;
         margin-left: 0;
         padding-left: 0;
+        min-width: 0;
+        overflow: hidden;
+        max-width: 100%;
       }
       .header-title {
         font-size: 1.5rem;
@@ -110,6 +122,12 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        display: block;
+        cursor: default;
       }
       .header-logo {
         height: 28px;
@@ -131,6 +149,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         display: flex;
         gap: 12px;
         align-items: center;
+        flex-shrink: 0;
       }
       .btn-back {
         font-size: 0.8rem !important;
@@ -193,7 +212,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           min-height: 75px;
         }
         .header-content {
-          flex-wrap: wrap;
+          flex-wrap: nowrap;
           padding: 0 16px;
         }
         .actions {
