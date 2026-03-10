@@ -1,20 +1,43 @@
 <mat-card class="lega-card small">
-  <mat-card-header>
-    <mat-card-title
-      >{{ lega?.name }} <small>{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</small></mat-card-title
-    >
-    <mat-card-subtitle
-      >{{ (lega?.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }} —
-      {{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</mat-card-subtitle
-    >
-  </mat-card-header>
-  <mat-card-content>
-    <div class="meta">
-      <span *ngIf="lega">{{ 'LEAGUE.INITIAL_ROUND' | translate }}: {{ lega.giornataIniziale }}</span>
-      <span *ngIf="lega">{{ 'LEAGUE.NUM_MEMBERS' | translate }}: {{ lega.giocatori?.length }}</span>
-      <span *ngIf="lega?.withPwd">{{ 'LEAGUE.WITH_PASSWORD' | translate }}</span>
+  <div class="recap-header">
+    <div class="recap-title-row">
+      <span class="recap-league-name">{{ lega?.name }}</span>
+      <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</span>
     </div>
-  </mat-card-content>
+    <div class="recap-sport-row">
+      <span class="recap-sport-chip">
+        <mat-icon class="recap-sport-icon">{{ lega?.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega?.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
+        {{ (lega?.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }}
+      </span>
+      <span class="recap-dot">·</span>
+      <span class="recap-championship">{{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
+    </div>
+  </div>
+
+  <div class="recap-info-grid">
+    <div class="recap-chip" *ngIf="lega">
+      <mat-icon class="rc-icon">flag</mat-icon>
+      <div class="rc-content">
+        <span class="rc-label">{{ 'LEAGUE.INITIAL_ROUND' | translate }}</span>
+        <span class="rc-value">{{ lega.giornataIniziale }}</span>
+      </div>
+    </div>
+    <div class="recap-chip" *ngIf="lega">
+      <mat-icon class="rc-icon">group</mat-icon>
+      <div class="rc-content">
+        <span class="rc-label">{{ 'LEAGUE.NUM_MEMBERS' | translate }}</span>
+        <span class="rc-value">{{ lega.giocatori?.length }}</span>
+      </div>
+    </div>
+    <div class="recap-chip" *ngIf="lega?.withPwd">
+      <mat-icon class="rc-icon">lock</mat-icon>
+      <div class="rc-content">
+        <span class="rc-label">{{ 'LEAGUE.WITH_PASSWORD' | translate }}</span>
+        <span class="rc-value">✓</span>
+      </div>
+    </div>
+  </div>
+
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="onAction()">
       <mat-icon>{{ getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>
