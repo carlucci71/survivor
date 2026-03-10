@@ -437,6 +437,9 @@
       "19": "La tua eliminazione è arte, pura arte tragica! 🎨",
       "20": "Hai perso, ma almeno hai una bella storia da raccontare! 📖"
     },
+    "TABLE_USER": "Utente",
+    "TABLE_STATUS": "Stato",
+    "TABLE_ACTIONS": "Azioni",
     "CONFIRM_DELETE_TITLE": "Elimina Lega",
     "CONFIRM_DELETE_MESSAGE": "Sei sicuro di voler eliminare questa lega? Questa azione è irreversibile e tutti i dati della lega verranno cancellati definitivamente.",
     "CONFIRM_DELETE_CANCEL": "Annulla",
@@ -540,15 +543,21 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",
+    "NO_LEAGUES": "Nessuna lega libera disponibile.",
     "CONFIRM_TITLE": "Conferma iscrizione",
-    "CONFIRM_MESSAGE": "Ti vuoi unire alla lega <strong>{{name}}</strong>?",
+    "CONFIRM_MESSAGE": "Ti vuoi unire alla lega {{name}}?",
     "CHAMPIONSHIP": "Campionato",
     "INITIAL_ROUND": "Giornata iniziale",
     "NUM_MEMBERS": "Numero iscritti",
     "PASSWORD": "Password di accesso",
     "PASSWORD_PLACEHOLDER": "Inserisci la password della lega",
     "JOIN_BUTTON": "Unisciti",
-    "CANCEL_BUTTON": "Annulla"
+    "CANCEL_BUTTON": "Annulla",
+    "PAGE_TITLE": "Entra in Lega",
+    "LOADING": "Caricamento informazioni lega...",
+    "ERROR_INVALID_ID": "ID lega non valido",
+    "ERROR_LOAD": "Impossibile caricare i dati della lega",
+    "NO_DATA": "Informazioni lega non disponibili."
   },
   "SUSPENSIONS": {
     "TITLE": "Gestisci Sospensioni",

@@ -349,7 +349,10 @@
     "PLAYER_JOURNEY": "Player Journey",
     "VIEW_ALL_JOURNEYS": "View all players' journey",
     "HIDE_JOURNEYS": "Hide journeys",
-    "NO_PICKS_YET": "No picks made yet"
+    "NO_PICKS_YET": "No picks made yet",
+    "TABLE_USER": "User",
+    "TABLE_STATUS": "Status",
+    "TABLE_ACTIONS": "Actions"
   },
   "COMMON": {
     "SOCCER": "Soccer",
@@ -444,15 +447,21 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Join a League",
+    "NO_LEAGUES": "No free leagues available.",
     "CONFIRM_TITLE": "Confirm subscription",
-    "CONFIRM_MESSAGE": "Do you want to join the league <strong>{{name}}</strong>?",
+    "CONFIRM_MESSAGE": "Do you want to join the league {{name}}?",
     "CHAMPIONSHIP": "Championship",
     "INITIAL_ROUND": "Initial round",
     "NUM_MEMBERS": "Members",
     "PASSWORD": "Access password",
     "PASSWORD_PLACEHOLDER": "Enter league password",
     "JOIN_BUTTON": "Join",
-    "CANCEL_BUTTON": "Cancel"
+    "CANCEL_BUTTON": "Cancel",
+    "PAGE_TITLE": "Join League",
+    "LOADING": "Loading league information...",
+    "ERROR_INVALID_ID": "Invalid league ID",
+    "ERROR_LOAD": "Unable to load league data",
+    "NO_DATA": "League information not available."
   },
   "SUSPENSIONS": {
     "TITLE": "Manage Suspensions",

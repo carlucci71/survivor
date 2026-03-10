@@ -170,8 +170,8 @@
             <!-- HEADER FISSO -->
             <thead>
               <tr class="excel-header-row">
-                <th class="excel-header-cell user-col">Utente</th>
-                <th class="excel-header-cell status-col">Stato</th>
+                <th class="excel-header-cell user-col">{{ 'LEAGUE.TABLE_USER' | translate }}</th>
+                <th class="excel-header-cell status-col">{{ 'LEAGUE.TABLE_STATUS' | translate }}</th>
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
@@ -182,7 +182,7 @@
                   </th>
                 }
                 @if(isAdmin() || isLeaderLega() || isDaAvviare()){
-                  <th class="excel-header-cell actions-col">Azioni</th>
+                  <th class="excel-header-cell actions-col">{{ 'LEAGUE.TABLE_ACTIONS' | translate }}</th>
                 } @else {
                   <th class="excel-header-cell history-col-header"></th>
                 }
