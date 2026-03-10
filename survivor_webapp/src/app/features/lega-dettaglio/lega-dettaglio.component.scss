@@ -1200,11 +1200,148 @@
 	background: #fff;
 	border-radius: 16px;
 	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-	padding: 16px 24px; // Ridotto da 32px 40px per desktop/tablet
+	padding: 0;
 	width: 100%;
 	max-width: 900px;
 	text-align: left;
 	margin: 0 auto;
+	overflow: hidden;
+}
+
+/* ===== RECAP HEADER ===== */
+.recap-header {
+	background: linear-gradient(135deg, #040f2e 0%, #0A3D91 60%, #1565C0 100%);
+	padding: 10px 16px 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.recap-title-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.recap-league-name {
+	font-size: 1rem;
+	font-weight: 700;
+	color: #fff;
+	font-family: 'Poppins', sans-serif;
+	letter-spacing: 0.3px;
+}
+.recap-edition-badge {
+	font-size: 0.65rem;
+	font-weight: 600;
+	color: rgba(79, 195, 247, 0.95);
+	background: rgba(79, 195, 247, 0.12);
+	border: 1px solid rgba(79, 195, 247, 0.3);
+	border-radius: 20px;
+	padding: 1px 8px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	white-space: nowrap;
+}
+.recap-sport-row {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-wrap: wrap;
+}
+.recap-sport-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	color: rgba(255,255,255,0.85);
+	font-size: 0.78rem;
+	font-weight: 500;
+}
+.recap-sport-icon {
+	font-size: 13px !important;
+	width: 13px !important;
+	height: 13px !important;
+	color: rgba(79, 195, 247, 0.9);
+}
+.recap-dot {
+	color: rgba(255,255,255,0.35);
+	font-size: 0.8rem;
+}
+.recap-championship {
+	color: rgba(255,255,255,0.85);
+	font-size: 0.78rem;
+}
+.recap-year {
+	color: rgba(255,255,255,0.55);
+	font-size: 0.75rem;
+}
+
+/* ===== RECAP INFO GRID ===== */
+.recap-info-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1px;
+	background: #f0f4f8;
+	padding: 0;
+}
+.recap-chip {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 14px;
+	background: #fff;
+	flex: 1 1 auto;
+	min-width: 160px;
+	transition: background 0.2s;
+	&:hover {
+		background: #f8faff;
+	}
+}
+.rc-icon {
+	color: #1565C0;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
+	flex-shrink: 0;
+	opacity: 0.75;
+}
+.rc-content {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	min-width: 0;
+}
+.rc-label {
+	font-size: 0.62rem;
+	color: #9CA3AF;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+.rc-value {
+	font-size: 0.82rem;
+	color: #1f2937;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.stato-avviata {
+	color: #059669;
+}
+.stato-terminata {
+	color: #6B7280;
+}
+@media (max-width: 480px) {
+	.recap-chip {
+		min-width: 140px;
+		padding: 6px 12px;
+	}
+	.recap-header {
+		padding: 8px 12px 6px;
+	}
+	.recap-league-name {
+		font-size: 0.9rem;
+	}
 }
 
 /* Stile per l'header della card Material */

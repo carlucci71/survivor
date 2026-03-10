@@ -62,14 +62,22 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         position: sticky;
         top: 0;
         z-index: 1000;
-        /* Safe area per iOS - evita sovrapposizione con status bar */
-        padding-top: env(safe-area-inset-top);
       }
       .header {
         display: flex;
         width: 100%;
         box-sizing: border-box;
         min-height: 80px;
+        /* Safe area per notch (iOS standalone/fullscreen): applicata solo
+           in modalità app nativa, con fallback 0 per non alterare il browser */
+        padding-top: 0;
+      }
+
+      /* In modalità standalone (app installata iOS/Android con overlay statusbar) */
+      @media all and (display-mode: standalone) {
+        .header {
+          padding-top: env(safe-area-inset-top, 0px);
+        }
       }
       .header-content {
         max-width: 1200px;
@@ -251,7 +259,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
 
       @media (max-width: 360px) {
         .header {
-          min-height: 685px;
+          min-height: 65px;
         }
         .actions {
           gap: 8px;

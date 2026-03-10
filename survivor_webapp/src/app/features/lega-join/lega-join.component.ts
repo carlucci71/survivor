@@ -13,11 +13,12 @@ import { LegaCardComponent } from '../../shared/components/lega-card/lega-card.c
 import { UtilService } from '../../core/services/util.service';
 import { ConfermaJoinDialogComponent } from '../../shared/components/conferma-join-dialog.component';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-join',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, LegaCardComponent],
+  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, LegaCardComponent, TranslateModule],
   templateUrl: './lega-join.component.html',
   styleUrls: ['./lega-join.component.scss'],
 })

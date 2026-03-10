@@ -1,5 +1,5 @@
 <div class="home-container">
-	<app-header title="Entra in Lega" (back)="goBack()" (logout)="logout()"></app-header>
+	<app-header [title]="'JOIN_LEAGUE.TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
 	<main class="main-content">
 		<section class="leghe-section" *ngIf="leghe?.length; else noLeghe">
@@ -12,7 +12,7 @@
 
 		<ng-template #noLeghe>
 			<mat-card class="no-data">
-				<mat-card-content>Nessuna lega libera disponibile.</mat-card-content>
+				<mat-card-content>{{ 'JOIN_LEAGUE.NO_LEAGUES' | translate }}</mat-card-content>
 			</mat-card>
 		</ng-template>
 	</main>

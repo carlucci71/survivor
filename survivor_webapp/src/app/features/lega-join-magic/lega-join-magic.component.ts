@@ -13,6 +13,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { LegaCardComponent } from '../../shared/components/lega-card/lega-card.component';
 import { UtilService } from '../../core/services/util.service';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-join-magic',
@@ -26,6 +27,7 @@ import { ErrorDialogComponent } from '../../shared/components/error-dialog/error
     MatProgressSpinnerModule,
     MatDialogModule,
     LegaCardComponent,
+    TranslateModule,
   ],
   templateUrl: './lega-join-magic.component.html',
   styleUrls: ['./lega-join-magic.component.scss'],
@@ -41,13 +43,14 @@ export class LegaJoinMagicComponent implements OnInit {
     private authService: AuthService,
     private legaService: LegaService,
     private utilService: UtilService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     const legaId = this.route.snapshot.paramMap.get('id');
     if (!legaId) {
-      this.error = 'ID lega non valido';
+      this.error = this.translate.instant('JOIN_LEAGUE.ERROR_INVALID_ID');
       this.isLoading = false;
       return;
     }
@@ -63,7 +66,7 @@ export class LegaJoinMagicComponent implements OnInit {
       },
       error: (err) => {
         console.error('Errore caricamento lega', err);
-        this.error = 'Impossibile caricare i dati della lega';
+        this.error = this.translate.instant('JOIN_LEAGUE.ERROR_LOAD');
         this.isLoading = false;
       },
     });

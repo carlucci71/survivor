@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -7,1029 +7,469 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   template: `
     <div class="hero-container">
-      <div class="fields-container">
-        <!-- Sezione Calcio -->
-        <div class="field-section soccer-section">
-          <svg class="field-svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 267 400">
-            <g class="soccer-field">
-              <rect x="10" y="25" width="247" height="350" />
-              <line x1="133.5" y1="25" x2="133.5" y2="375" />
-              <circle cx="133.5" cy="200" r="40" fill="none" />
-              <rect x="10" y="100" width="60" height="200" />
-              <rect x="197" y="100" width="60" height="200" />
-              <rect x="10" y="150" width="30" height="100" />
-              <rect x="227" y="150" width="30" height="100" />
-            </g>
-          </svg>
-        </div>
-        <!-- Sezione Basket -->
-        <div class="field-section basketball-section">
-          <svg class="field-svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 267 400">
-            <g class="basketball-court">
-              <rect x="10" y="25" width="247" height="350" />
-              <circle cx="133.5" cy="200" r="40" fill="none" />
-              <path d="M 40 125 A 100 100 0 0 1 40 275" fill="none" />
-              <path d="M 227 125 A 100 100 0 0 0 227 275" fill="none" />
-              <rect x="10" y="140" width="70" height="120" />
-              <rect x="187" y="140" width="70" height="120" />
-            </g>
-          </svg>
-        </div>
-        <!-- Sezione Tennis -->
-        <div class="field-section tennis-section">
-          <svg class="field-svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 267 400">
-            <g class="tennis-court">
-              <rect x="10" y="25" width="247" height="350" />
-              <line x1="133.5" y1="25" x2="133.5" y2="375" />
-              <rect x="10" y="85" width="247" height="230" />
-              <line x1="65" y1="85" x2="65" y2="315" />
-              <line x1="202" y1="85" x2="202" y2="315" />
-            </g>
-          </svg>
-        </div>
+
+      <!-- Grid / scanlines overlay -->
+      <div class="hero-grid"></div>
+
+      <!-- Sfondo campo sportivo SVG ciclante -->
+      <div class="hero-fields">
+
+        <!-- Campo calcio -->
+        <svg class="field-svg field-football" [class.field-active]="activeSport === 0"
+             viewBox="0 0 800 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" x="60" y="20" width="680" height="220" rx="4"/>
+          <line class="fl" x1="400" y1="20" x2="400" y2="240"/>
+          <circle class="fl" cx="400" cy="130" r="52" fill="none"/>
+          <circle class="fl" cx="400" cy="130" r="5" fill="rgba(255,255,255,0.3)"/>
+          <rect class="fl" x="60" y="68" width="110" height="124"/>
+          <rect class="fl" x="60" y="95" width="52" height="70"/>
+          <!-- Lunetta area sinistra: solo la mezzaluna che sporge fuori dall'area grande -->
+          <path class="fl" d="M170,105 A28,28 0 0,1 170,155" fill="none"/>
+          <rect class="fl" x="630" y="68" width="110" height="124"/>
+          <rect class="fl" x="688" y="95" width="52" height="70"/>
+          <!-- Lunetta area destra: solo la mezzaluna che sporge fuori dall'area grande -->
+          <path class="fl" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
+          <path class="fl" d="M60,20 Q76,20 76,36"/>
+          <path class="fl" d="M740,20 Q724,20 724,36"/>
+          <path class="fl" d="M60,240 Q76,240 76,224"/>
+          <path class="fl" d="M740,240 Q724,240 724,224"/>
+        </svg>
+
+        <!-- Campo basket -->
+        <svg class="field-svg field-basketball" [class.field-active]="activeSport === 1"
+             viewBox="0 0 800 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" x="40" y="15" width="720" height="230" rx="4"/>
+          <line class="fl" x1="400" y1="15" x2="400" y2="245"/>
+          <circle class="fl" cx="400" cy="130" r="55" fill="none"/>
+          <circle class="fl" cx="400" cy="130" r="5" fill="rgba(255,255,255,0.3)"/>
+          <!-- Area sinistra basket -->
+          <rect class="fl" x="40" y="55" width="180" height="150"/>
+          <path class="fl" d="M220,55 A75,75 0 0,1 220,205" fill="none"/>
+          <circle class="fl" cx="150" cy="130" r="20" fill="none"/>
+          <!-- Area destra basket -->
+          <rect class="fl" x="580" y="55" width="180" height="150"/>
+          <path class="fl" d="M580,55 A75,75 0 0,0 580,205" fill="none"/>
+          <circle class="fl" cx="650" cy="130" r="20" fill="none"/>
+          <!-- Linea tre punti sinistra -->
+          <path class="fl" d="M40,48 A140,140 0 0,1 40,212" fill="none"/>
+          <!-- Linea tre punti destra -->
+          <path class="fl" d="M760,48 A140,140 0 0,0 760,212" fill="none"/>
+        </svg>
+
+        <!-- Campo tennis -->
+        <svg class="field-svg field-tennis" [class.field-active]="activeSport === 2"
+             viewBox="0 0 800 260" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" x="50" y="20" width="700" height="220" rx="2"/>
+          <!-- corsie laterali -->
+          <rect class="fl" x="50" y="20" width="60" height="220" fill="none"/>
+          <rect class="fl" x="690" y="20" width="60" height="220" fill="none"/>
+          <!-- linea di servizio sx -->
+          <line class="fl" x1="110" y1="20" x2="110" y2="240"/>
+          <!-- linea di servizio dx -->
+          <line class="fl" x1="690" y1="20" x2="690" y2="240"/>
+          <!-- rete -->
+          <line class="fl" x1="400" y1="20" x2="400" y2="240" stroke-dasharray="4 4"/>
+          <!-- linee servizio -->
+          <line class="fl" x1="110" y1="130" x2="690" y2="130"/>
+          <!-- linea T sx -->
+          <line class="fl" x1="255" y1="55" x2="255" y2="205"/>
+          <!-- linea T dx -->
+          <line class="fl" x1="545" y1="55" x2="545" y2="205"/>
+          <!-- rettangolo servizio sx -->
+          <rect class="fl" x="110" y="55" width="290" height="150" fill="none"/>
+          <!-- rettangolo servizio dx -->
+          <rect class="fl" x="400" y="55" width="290" height="150" fill="none"/>
+        </svg>
+
       </div>
-      <!-- Omini stilizzati -->
-      <div class="stickmen-container">
-        <svg class="stickman stickman-1" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-2" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-3" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-4" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-5" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-6" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-7" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-8" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-9" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-10" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-11" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-12" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-13" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-14" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-15" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-16" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-17" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-18" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-19" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-20" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-21" viewBox="0 0 40 60">
-          <!-- Versione bianca (normale) -->
-          <g class="stickman-21-white">
-            <circle cx="20" cy="10" r="6" fill="white"/>
-            <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2"/>
-          </g>
-          <!-- Versione verde (vittoria - braccia alzate) -->
-          <g class="stickman-21-green">
-            <circle cx="20" cy="10" r="6" fill="white"/>
-            <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="22" x2="12" y2="14" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="22" x2="28" y2="14" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2"/>
-            <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2"/>
-          </g>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-22" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-23" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-24" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-25" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-26" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-27" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-28" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-29" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-30" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-31" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-32" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-33" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-34" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-35" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
-        <svg class="stickman stickman-36" viewBox="0 0 40 60">
-          <circle cx="20" cy="10" r="6" fill="white" opacity="0.7"/>
-          <line x1="20" y1="16" x2="20" y2="35" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="12" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="22" x2="28" y2="30" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="12" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line x1="20" y1="35" x2="28" y2="50" stroke="white" stroke-width="2" opacity="0.7"/>
-          <line class="cross" x1="8" y1="8" x2="32" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-          <line class="cross" x1="32" y1="8" x2="8" y2="52" stroke="#ff0000" stroke-width="3" opacity="0"/>
-        </svg>
+
+      <!-- Orbs / bolle luminose di sfondo -->
+      <div class="orb orb1"></div>
+      <div class="orb orb2"></div>
+      <div class="orb orb3"></div>
+
+      <!-- Particelle flottanti sottili -->
+      <div class="particles" aria-hidden="true">
+        <span class="particle p1"></span>
+        <span class="particle p2"></span>
+        <span class="particle p3"></span>
+        <span class="particle p4"></span>
+        <span class="particle p5"></span>
+        <span class="particle p6"></span>
       </div>
-      <div class="hero-overlay">
-        <div class="hero-content">
-          <h1 class="hero-title">{{ title }}</h1>
-          <p class="hero-subtitle">{{ subtitle }}</p>
+
+      <!-- Contenuto principale -->
+      <div class="hero-content">
+
+        <!-- Riga sport attivo (pill indicatori) -->
+        <div class="sport-pills">
+          <button class="sport-pill" [class.pill-active]="activeSport === 0" (click)="setSport(0)" aria-label="Calcio">
+            <span class="pill-icon">⚽</span>
+          </button>
+          <button class="sport-pill" [class.pill-active]="activeSport === 1" (click)="setSport(1)" aria-label="Basket">
+            <span class="pill-icon">🏀</span>
+          </button>
+          <button class="sport-pill" [class.pill-active]="activeSport === 2" (click)="setSport(2)" aria-label="Tennis">
+            <span class="pill-icon">🎾</span>
+          </button>
         </div>
+
+        <!-- Titolo -->
+        <h1 class="hero-title">
+          <span class="title-sur">SUR</span><span class="title-vi">VI</span><span class="title-vor">VOR</span>
+        </h1>
+
+        <!-- Divisore con trofeo -->
+        <div class="hero-divider">
+          <span class="divider-line"></span>
+          <span class="divider-trophy">🏆</span>
+          <span class="divider-line"></span>
+        </div>
+
+        <!-- Sottotitolo -->
+        <p class="hero-subtitle">WIN OR GO HOME</p>
+
       </div>
-      <!-- Overlay oscuramento -->
-      <div class="dark-overlay"></div>
+
+      <!-- Bordi sfumati laterali -->
+      <div class="hero-edge-left"></div>
+      <div class="hero-edge-right"></div>
+
     </div>
   `,
   styles: [`
+    /* =============================================
+       CONTAINER
+    ============================================= */
     .hero-container {
       position: relative;
       width: 100%;
-      height: 250px;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+      height: 270px;
+      background: linear-gradient(135deg,
+        #040f2e 0%,
+        #071e4f 25%,
+        #0A3D91 55%,
+        #1565C0 80%,
+        #1a6bbf 100%
+      );
       overflow: hidden;
-      border-radius: 16px;
+      border-radius: 20px;
       margin-bottom: 24px;
-      display: flex;
-    }
-
-    .fields-container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
-    }
-
-    .field-section {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .field-section:last-child {
-      border-right: none;
-    }
-
-    .field-svg {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-
-    .field-svg g {
-      stroke: #FFFFFF;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      opacity: 0.3;
-    }
-
-    .soccer-field path, .soccer-field rect, .soccer-field circle, .soccer-field line,
-    .basketball-court path, .basketball-court rect, .basketball-court circle,
-    .tennis-court path, .tennis-court rect, .tennis-court line {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: draw 4s linear infinite;
-    }
-
-    .soccer-section .field-svg g { animation-delay: 0s; }
-    .basketball-section .field-svg g { animation-delay: 1s; }
-    .tennis-section .field-svg g { animation-delay: 2s; }
-
-    @keyframes draw {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-
-    /* Nuova animazione di ingresso con scala */
-    @keyframes fadeInScale {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    /* Nuova animazione di luce scintillante */
-    @keyframes shine {
-      0% {
-        background-position: -200% center;
-      }
-      100% {
-        background-position: 200% center;
-      }
-    }
-
-    /* Animazione di fluttuazione più lenta */
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-6px); /* Movimento ridotto */
-      }
-    }
-
-    /* NUOVA animazione combinata per scrivere, attendere e scomparire */
-    @keyframes type-and-vanish {
-      0% { width: 0; opacity: 1; }
-      30% { width: 100%; opacity: 1; }
-      70% { width: 100%; opacity: 1; }
-      100% { width: 100%; opacity: 0; }
-    }
-
-    /* NUOVA animazione per il cursore sincronizzato */
-    @keyframes blink-caret-timed {
-      from, to { border-color: transparent; }
-      50% { border-color: white; }
-      71%, 100% { border-color: transparent; }
-    }
-
-    /* Animazione di oscuramento che si schiarisce */
-    @keyframes lighten {
-      0% {
-        opacity: 0.5;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
-
-    .dark-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #2a80d5;
-      z-index: 10;
-      pointer-events: none;
-      animation: lighten 18s ease-out 1 forwards;
-    }
-
-    /* Omini stilizzati */
-    .stickmen-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .stickman {
-      position: absolute;
-      width: 30px;
-      height: 45px;
-    }
-
-    @keyframes stickmanDarkSync {
-      0% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
-
-    .stickman-1 {
-      top: 15%;
-      left: 10%;
-      animation: stickmanDarkSync 16s ease-in-out 1 forwards;
-    }
-
-    .stickman-2 {
-      top: 65%;
-      left: 25%;
-      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
-    }
-
-    .stickman-3 {
-      top: 35%;
-      left: 42%;
-      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
-    }
-
-    .stickman-4 {
-      top: 70%;
-      left: 55%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-5 {
-      top: 20%;
-      left: 72%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-6 {
-      top: 50%;
-      left: 88%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-7 {
-      top: 80%;
-      left: 5%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-8 {
-      top: 25%;
-      left: 18%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-9 {
-      top: 55%;
-      left: 33%;
-      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
-    }
-
-    .stickman-10 {
-      top: 10%;
-      left: 50%;
-      animation: stickmanDarkSync 11s ease-in-out 1 forwards;
-    }
-
-    .stickman-11 {
-      top: 45%;
-      left: 65%;
-      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
-    }
-
-    .stickman-12 {
-      top: 75%;
-      left: 78%;
-      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
-    }
-
-    .stickman-13 {
-      top: 30%;
-      left: 92%;
-      animation: stickmanDarkSync 12s ease-in-out 1 forwards;
-    }
-
-    .stickman-14 {
-      top: 60%;
-      left: 8%;
-      animation: stickmanDarkSync 8s ease-in-out 1 forwards;
-    }
-
-    .stickman-15 {
-      top: 12%;
-      left: 28%;
-      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
-    }
-
-    .stickman-16 {
-      top: 85%;
-      left: 45%;
-      animation: stickmanDarkSync 8.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-17 {
-      top: 40%;
-      left: 60%;
-      animation: stickmanDarkSync 9.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-18 {
-      top: 68%;
-      left: 82%;
-      animation: stickmanDarkSync 10.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-19 {
-      top: 22%;
-      left: 3%;
-      animation: stickmanDarkSync 11.5s ease-in-out 1 forwards;
-    }
-
-    .stickman-20 {
-      top: 50%;
-      left: 15%;
-      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
-    }
-
-    /* Animazioni per stickman-21 (vittoria al 25° secondo) */
-    /* Animazione speciale che mantiene l'omino visibile fino a 25s */
-    @keyframes stickman21Stay {
-      0%, 33.33% {  /* 0-10s: rimane visibile (era 83.33% per 25s) */
-        opacity: 1;
-      }
-      100% {  /* dopo 30s: può scomparire */
-        opacity: 1;
-      }
-    }
-
-    @keyframes stickman21ScaleAndGlow {
-      0%, 33.33% {  /* 0-10s: normale (era 83.33% per 25s) */
-        transform: scale(1);
-        filter: none;
-      }
-      33.34%, 100% {  /* 10s-30s: ingrandito con glow (era 83.34% per 25s) */
-        transform: scale(1.5);
-        filter: drop-shadow(0 0 20px #00ff00) drop-shadow(0 0 30px #00ff00) brightness(1.5);
-      }
-    }
-
-    @keyframes whiteGroupHide {
-      0%, 33.33% {  /* 0-10s: visibile */
-        opacity: 0.7;
-      }
-      33.34%, 100% {  /* 10s-30s: nascosto */
-        opacity: 0;
-      }
-    }
-
-    @keyframes greenGroupShow {
-      0%, 33.33% {  /* 0-10s: nascosto */
-        opacity: 0;
-      }
-      33.34%, 100% {  /* 10s-30s: visibile */
-        opacity: 1;
-      }
-    }
-
-    .stickman-21 {
-      top: 78%;
-      left: 38%;
-      /* Sostituisco stickmanDarkSync con stickman21Stay per mantenerlo visibile */
-      animation: stickman21Stay 30s linear 1 forwards, stickman21ScaleAndGlow 30s linear 1 forwards !important;
-    }
-
-    .stickman-21-white {
-      animation: whiteGroupHide 30s linear 1 forwards;
-    }
-
-    .stickman-21-green {
-      animation: greenGroupShow 30s linear 1 forwards;
-    }
-
-    .stickman-22 {
-      top: 18%;
-      left: 53%;
-      animation: stickmanDarkSync 14s ease-in-out 1 forwards;
-    }
-
-    .stickman-23 {
-      top: 42%;
-      left: 70%;
-        // width: 50px;
-      //height: 65px;
-      animation: stickmanDarkSync 6.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-24 {
-      top: 72%;
-      left: 90%;
-      animation: stickmanDarkSync 7.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-25 {
-      top: 33%;
-      left: 12%;
-      animation: stickmanDarkSync 8.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-26 {
-      top: 58%;
-      left: 48%;
-      animation: stickmanDarkSync 9.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-27 {
-      top: 88%;
-      left: 63%;
-      animation: stickmanDarkSync 10.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-28 {
-      top: 8%;
-      left: 85%;
-      animation: stickmanDarkSync 11.2s ease-in-out 1 forwards;
-    }
-
-    .stickman-29 {
-      top: 52%;
-      left: 20%;
-      animation: stickmanDarkSync 4s ease-in-out 1 forwards;
-    }
-
-    .stickman-30 {
-      top: 14%;
-      left: 35%;
-      animation: stickmanDarkSync 13s ease-in-out 1 forwards;
-    }
-
-    .stickman-31 {
-      top: 66%;
-      left: 52%;
-      animation: stickmanDarkSync 7s ease-in-out 1 forwards;
-    }
-
-    .stickman-32 {
-      top: 38%;
-      left: 76%;
-      animation: stickmanDarkSync 10s ease-in-out 1 forwards;
-    }
-
-    .stickman-33 {
-      top: 82%;
-      left: 18%;
-      animation: stickmanDarkSync 5s ease-in-out 1 forwards;
-    }
-
-    .stickman-34 {
-      top: 26%;
-      left: 58%;
-      animation: stickmanDarkSync 15s ease-in-out 1 forwards;
-    }
-
-    .stickman-35 {
-      top: 54%;
-      left: 8%;
-      animation: stickmanDarkSync 9s ease-in-out 1 forwards;
-    }
-
-    .stickman-36 {
-      top: 70%;
-      left: 42%;
-      animation: stickmanDarkSync 11s ease-in-out 1 forwards;
-    }
-
-
-    /* Red cross animation */
-    .cross {
-      opacity: 0;
-    }
-
-    @keyframes crossAppear {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    /* Cross timing - appears at 50% of stickman duration so it's visible before fade */
-    .stickman-1 .cross { animation: crossAppear 0.5s 8s forwards; }
-    .stickman-2 .cross { animation: crossAppear 0.5s 2s forwards; }
-    .stickman-3 .cross { animation: crossAppear 0.5s 2s forwards; }
-    .stickman-4 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-5 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-6 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-7 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-8 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-9 .cross { animation: crossAppear 0.5s 6s forwards; }
-    .stickman-10 .cross { animation: crossAppear 0.5s 5.5s forwards; }
-    .stickman-11 .cross { animation: crossAppear 0.5s 6s forwards; }
-    .stickman-12 .cross { animation: crossAppear 0.5s 6s forwards; }
-    .stickman-13 .cross { animation: crossAppear 0.5s 6s forwards; }
-    .stickman-14 .cross { animation: crossAppear 0.5s 4s forwards; }
-    .stickman-15 .cross { animation: crossAppear 0.5s 2s forwards; }
-    .stickman-16 .cross { animation: crossAppear 0.5s 4.25s forwards; }
-    .stickman-17 .cross { animation: crossAppear 0.5s 4.75s forwards; }
-    .stickman-18 .cross { animation: crossAppear 0.5s 5.25s forwards; }
-    .stickman-19 .cross { animation: crossAppear 0.5s 5.75s forwards; }
-    .stickman-20 .cross { animation: crossAppear 0.5s 7s forwards; }
-    .stickman-21 .cross { display: none; } /* Winner - no cross */
-    .stickman-22 .cross { animation: crossAppear 0.5s 7s forwards; }
-    .stickman-23 .cross { animation: crossAppear 0.5s 3.1s forwards; }
-    .stickman-24 .cross { animation: crossAppear 0.5s 3.6s forwards; }
-    .stickman-25 .cross { animation: crossAppear 0.5s 4.1s forwards; }
-    .stickman-26 .cross { animation: crossAppear 0.5s 4.6s forwards; }
-    .stickman-27 .cross { animation: crossAppear 0.5s 5.1s forwards; }
-    .stickman-28 .cross { animation: crossAppear 0.5s 5.6s forwards; }
-    .stickman-29 .cross { animation: crossAppear 0.5s 2s forwards; }
-    .stickman-30 .cross { animation: crossAppear 0.5s 6.5s forwards; }
-    .stickman-31 .cross { animation: crossAppear 0.5s 3.5s forwards; }
-    .stickman-32 .cross { animation: crossAppear 0.5s 5s forwards; }
-    .stickman-33 .cross { animation: crossAppear 0.5s 2.5s forwards; }
-    .stickman-34 .cross { animation: crossAppear 0.5s 7.5s forwards; }
-    .stickman-35 .cross { animation: crossAppear 0.5s 4.5s forwards; }
-    .stickman-36 .cross { animation: crossAppear 0.5s 5.5s forwards; }
-
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg,
-        rgba(10, 61, 145, 0.1) 0%,
-        rgba(79, 195, 247, 0.0) 50%,
-        rgba(10, 61, 145, 0.05) 100%);
+      box-shadow:
+        0 8px 40px rgba(10, 61, 145, 0.5),
+        0 2px 8px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.07);
     }
 
-    .hero-content {
-      text-align: center;
-      color: white;
-      z-index: 3;
-      max-width: 600px;
-      padding: 0 20px;
-      position: relative;
-      animation: float 10s ease-in-out infinite; /* Rallentata a 10s */
+    /* =============================================
+       GRID / SCANLINES
+    ============================================= */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
     }
 
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 900;
-      margin: 0 0 16px 0;
-      letter-spacing: 0.05em;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(45deg, #ffffff, #e3f2fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    /* =============================================
+       CAMPI SVG
+    ============================================= */
+    .hero-fields {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .field-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       opacity: 0;
-
-      /* Proprietà per l'effetto shine */
-      background-size: 200% auto;
-
-      /* Nuove animazioni applicate */
-      animation: fadeInScale 1.5s ease-out forwards, shine 5s linear infinite;
-      animation-delay: 12s, 13.5s; /* Ritardo di 12 secondi */
+      transition: opacity 0.9s ease;
+    }
+    .field-svg.field-active {
+      opacity: 0.14;
+    }
+    .fl {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 1.6;
+      stroke-linecap: round;
     }
 
-    .hero-subtitle {
-      font-size: 1.3rem;
-      font-weight: 400;
+    /* =============================================
+       ORB / GLOW BLOBS
+    ============================================= */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(50px);
+      z-index: 1;
+      animation: orbFloat ease-in-out infinite;
+      pointer-events: none;
+    }
+    .orb1 {
+      width: 300px; height: 300px;
+      top: -80px; left: -60px;
+      background: radial-gradient(circle, rgba(21,101,192,0.4) 0%, transparent 70%);
+      animation-duration: 8s; animation-delay: 0s;
+    }
+    .orb2 {
+      width: 250px; height: 250px;
+      top: -40px; right: -40px;
+      background: radial-gradient(circle, rgba(79,195,247,0.25) 0%, transparent 70%);
+      animation-duration: 11s; animation-delay: 2s;
+    }
+    .orb3 {
+      width: 200px; height: 200px;
+      bottom: -60px; left: 40%;
+      background: radial-gradient(circle, rgba(30,125,181,0.3) 0%, transparent 70%);
+      animation-duration: 9s; animation-delay: 4s;
+    }
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-18px) scale(1.08); }
+    }
+
+    /* =============================================
+       PARTICELLE
+    ============================================= */
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22);
+      animation: floatUp linear infinite;
+    }
+    .p1 { width: 4px;  height: 4px;  left: 10%;  bottom: -8px;  animation-duration: 8s;  animation-delay: 0s;   }
+    .p2 { width: 3px;  height: 3px;  left: 25%;  bottom: -8px;  animation-duration: 11s; animation-delay: 2s;   }
+    .p3 { width: 5px;  height: 5px;  left: 45%;  bottom: -8px;  animation-duration: 9s;  animation-delay: 1s;   }
+    .p4 { width: 3px;  height: 3px;  left: 60%;  bottom: -8px;  animation-duration: 13s; animation-delay: 3s;   }
+    .p5 { width: 4px;  height: 4px;  left: 78%;  bottom: -8px;  animation-duration: 10s; animation-delay: 0.5s; }
+    .p6 { width: 3px;  height: 3px;  left: 90%;  bottom: -8px;  animation-duration: 7s;  animation-delay: 4s;   }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) scale(1);    opacity: 0; }
+      8%   { opacity: 0.8; }
+      85%  { opacity: 0.4; }
+      100% { transform: translateY(-290px) scale(0.4); opacity: 0; }
+    }
+
+    /* =============================================
+       CONTENUTO
+    ============================================= */
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: contentIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.3s both;
+    }
+    @keyframes contentIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =============================================
+       SPORT PILLS
+    ============================================= */
+    .sport-pills {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 2px;
+    }
+    .sport-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      backdrop-filter: blur(8px);
+      outline: none;
+      animation: pillPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .sport-pill:nth-child(1) { animation-delay: 0.6s; }
+    .sport-pill:nth-child(2) { animation-delay: 0.75s; }
+    .sport-pill:nth-child(3) { animation-delay: 0.9s; }
+    .sport-pill.pill-active {
+      background: rgba(79,195,247,0.2);
+      border-color: rgba(79,195,247,0.7);
+      box-shadow: 0 0 18px rgba(79,195,247,0.4), 0 0 6px rgba(79,195,247,0.2);
+      transform: scale(1.12);
+    }
+    .sport-pill:hover:not(.pill-active) {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.3);
+      transform: scale(1.06);
+    }
+    .pill-icon { font-size: 1.25rem; line-height: 1; }
+    @keyframes pillPop {
+      from { opacity: 0; transform: scale(0.3); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* =============================================
+       TITOLO
+    ============================================= */
+    .hero-title {
+      font-size: 4.4rem;
+      font-weight: 900;
       margin: 0;
-      opacity: 0; /* Opacity iniziale a 0 */
-      font-family: 'Poppins', sans-serif;
-
-      /* Stili per l'effetto typewriter */
-      overflow: hidden;
-      white-space: nowrap;
-      border-right: .15em solid white;
-      width: 0;
-
-      /* Nuove animazioni applicate - CICLO INFINITO 7s */
-      animation:
-        type-and-vanish 7s steps(15, end) infinite,
-        blink-caret-timed 1s step-end infinite;
-      animation-delay: 13.5s;
-      animation-fill-mode: forwards, step-end;
+      line-height: 1;
+      text-transform: uppercase;
+      display: flex;
+      gap: 0.01em;
+      letter-spacing: 0.08em;
+      filter: drop-shadow(0 3px 22px rgba(79,195,247,0.5));
+    }
+    .title-sur {
+      color: #ffffff;
+      font-weight: 900;
+      animation: letterIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.8s both;
+    }
+    .title-vi {
+      color: #4FC3F7;
+      font-weight: 600;
+      animation: letterIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.95s both;
+      text-shadow:
+        0 0 28px rgba(79,195,247,0.8),
+        0 0 56px rgba(79,195,247,0.35),
+        0 0 90px rgba(79,195,247,0.15);
+    }
+    .title-vor {
+      color: #ffffff;
+      font-weight: 300;
+      animation: letterIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1.1s both;
+    }
+    @keyframes letterIn {
+      from { opacity: 0; transform: translateY(-22px) scale(0.8); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* RESPONSIVE - TABLET */
+    /* =============================================
+       DIVISORE
+    ============================================= */
+    .hero-divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 300px;
+      animation: contentIn 0.7s ease-out 1.3s both;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(79,195,247,0.55), transparent);
+    }
+    .divider-trophy {
+      font-size: 1rem;
+      filter: drop-shadow(0 0 6px rgba(79,195,247,0.5));
+      animation: trophyPulse 3s ease-in-out 1.5s infinite;
+    }
+    @keyframes trophyPulse {
+      0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 6px rgba(79,195,247,0.4)); }
+      50%       { transform: scale(1.18); filter: drop-shadow(0 0 14px rgba(79,195,247,0.8)); }
+    }
+
+    /* =============================================
+       SOTTOTITOLO
+    ============================================= */
+    .hero-subtitle {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.58);
+      animation: contentIn 0.7s ease-out 1.5s both;
+    }
+
+    /* =============================================
+       BORDI LATERALI
+    ============================================= */
+    .hero-edge-left, .hero-edge-right {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 90px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .hero-edge-left  { left: 0;  background: linear-gradient(to right, rgba(4,15,46,0.75), transparent); }
+    .hero-edge-right { right: 0; background: linear-gradient(to left,  rgba(4,15,46,0.75), transparent); }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
     @media (max-width: 768px) {
-      .hero-container {
-        height: 200px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-      }
-
-      .hero-title { font-size: 2.8rem; }
-      .hero-subtitle { font-size: 1.1rem; }
-      .hero-content { padding: 0 16px; }
+      .hero-container  { height: 230px; border-radius: 16px; margin-bottom: 20px; }
+      .hero-title      { font-size: 3.4rem; }
+      .hero-subtitle   { font-size: 0.76rem; letter-spacing: 0.3em; }
+      .sport-pill      { width: 36px; height: 36px; }
+      .pill-icon       { font-size: 1.1rem; }
     }
-
-    /* RESPONSIVE - MOBILE */
     @media (max-width: 480px) {
-      .hero-container {
-        height: 180px;
-        border-radius: 10px;
-        margin-bottom: 16px;
-      }
-
-      .hero-title {
-        font-size: 2.2rem;
-        margin-bottom: 12px;
-      }
-      .hero-subtitle { font-size: 1rem; }
-      .hero-content { padding: 0 12px; }
+      .hero-container  { height: 200px; border-radius: 14px; margin-bottom: 16px; }
+      .hero-title      { font-size: 2.7rem; letter-spacing: 0.06em; }
+      .hero-subtitle   { font-size: 0.68rem; letter-spacing: 0.25em; }
+      .sport-pill      { width: 32px; height: 32px; }
+      .pill-icon       { font-size: 1rem; }
+      .hero-edge-left, .hero-edge-right { width: 55px; }
+      .orb1            { width: 200px; height: 200px; }
+      .orb2            { width: 160px; height: 160px; }
     }
-
-    /* RESPONSIVE - MOBILE SMALL */
     @media (max-width: 360px) {
-      .hero-container { height: 160px; }
-
-
-      .hero-title {
-        font-size: 1.8rem;
-        margin-bottom: 8px;
-      }
-      .hero-subtitle { font-size: 0.9rem; }
+      .hero-container  { height: 182px; }
+      .hero-title      { font-size: 2.3rem; }
+      .hero-subtitle   { font-size: 0.62rem; letter-spacing: 0.2em; }
+      .sport-pill      { width: 30px; height: 30px; }
+      .pill-icon       { font-size: 0.9rem; }
     }
   `]
 })
-export class HeroThreeComponent implements OnInit {
-  title = 'SURVIVOR';
-  subtitle = 'WIN OR GO HOME';
+export class HeroThreeComponent implements OnInit, OnDestroy {
+  activeSport = 0;
+  private cycleInterval: any;
 
   ngOnInit(): void {
-    // Componente ora usa solo animazioni CSS
+    // Cicla automaticamente tra i sport ogni 4 secondi
+    this.cycleInterval = setInterval(() => {
+      this.activeSport = (this.activeSport + 1) % 3;
+    }, 4000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.cycleInterval) {
+      clearInterval(this.cycleInterval);
+    }
+  }
+
+  setSport(index: number): void {
+    this.activeSport = index;
+    // Resetta il timer automatico quando l'utente clicca
+    if (this.cycleInterval) {
+      clearInterval(this.cycleInterval);
+    }
+    this.cycleInterval = setInterval(() => {
+      this.activeSport = (this.activeSport + 1) % 3;
+    }, 4000);
   }
 }
