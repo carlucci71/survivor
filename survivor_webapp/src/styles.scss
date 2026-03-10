@@ -157,14 +157,14 @@ app-root {
   min-height: calc(var(--vh, 1vh) * 100);
   height: calc(var(--vh, 1vh) * 100) !important;
 
-  /* Apply safe-area insets so content doesn't overlap notch / home indicator */
-  /* legacy iOS fallback (old syntax) */
-  padding-top: constant(safe-area-inset-top);
+  /* NOTE: il padding-top safe-area NON va applicato qui perché viene già
+     gestito dall'header (mat-toolbar). Applicarlo su app-root causerebbe
+     un doppio offset che su Android con notch rende l'header sproporzionato.
+     Solo il padding-bottom e laterali restano qui per evitare che i
+     contenuti finiscano sotto la home indicator o i bordi arrotondati. */
   padding-bottom: constant(safe-area-inset-bottom);
   padding-left: constant(safe-area-inset-left);
   padding-right: constant(safe-area-inset-right);
-  /* standard: use env() with 0px fallback to avoid applying undefined values */
-  padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);

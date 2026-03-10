@@ -1,10 +1,10 @@
 <div class="home-container">
-	<app-header title="Entra in Lega" (back)="goBack()" (logout)="logout()"></app-header>
+	<app-header [title]="'JOIN_LEAGUE.PAGE_TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
 	<main class="main-content">
 		<div *ngIf="isLoading" class="loading-container">
 			<mat-spinner></mat-spinner>
-			<p>Caricamento informazioni lega...</p>
+			<p>{{ 'JOIN_LEAGUE.LOADING' | translate }}</p>
 		</div>
 
 		<div *ngIf="error" class="error-container">
@@ -29,7 +29,7 @@
 
 		<ng-template #noLega>
 			<mat-card class="no-data">
-				<mat-card-content>Informazioni lega non disponibili.</mat-card-content>
+				<mat-card-content>{{ 'JOIN_LEAGUE.NO_DATA' | translate }}</mat-card-content>
 			</mat-card>
 		</ng-template>
 	</main>
