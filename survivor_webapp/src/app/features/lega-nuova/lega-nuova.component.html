@@ -121,7 +121,7 @@
             <div class="cn-stepper-control">
               <button type="button" class="cn-step-btn"
                 (click)="decGiornataIniziale()"
-                [disabled]="!giornataIniziale || giornataIniziale <= (campionatoSel?.giornataDaGiocare ?? 1)">
+                [disabled]="!giornataIniziale || giornataIniziale <= (campionatoSel.giornataDaGiocare ?? 1)">
                 <mat-icon>remove</mat-icon>
               </button>
               <div class="cn-step-val">
@@ -134,12 +134,12 @@
               </div>
               <button type="button" class="cn-step-btn"
                 (click)="incGiornataIniziale()"
-                [disabled]="(giornataIniziale ?? 0) >= (campionatoSel?.numGiornate ?? 0)">
+                [disabled]="(giornataIniziale ?? 0) >= (campionatoSel.numGiornate ?? 0)">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
             @if (giornataTouched && !isGiornataValid()) {
-            <span class="cn-stepper-error">{{ campionatoSel?.giornataDaGiocare }} &ndash; {{ campionatoSel?.numGiornate }}</span>
+            <span class="cn-stepper-error">{{ campionatoSel.giornataDaGiocare }} &ndash; {{ campionatoSel.numGiornate }}</span>
             }
           </div>
 
@@ -159,8 +159,8 @@
                   <span class="cn-step-num">{{ giornataFinale }}</span>
                   <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, giornataFinale) }}</span>
                 } @else {
-                  <span class="cn-step-num cn-step-num--auto">{{ campionatoSel?.numGiornate }}</span>
-                  <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, campionatoSel?.numGiornate ?? null) }}</span>
+                  <span class="cn-step-num cn-step-num--auto">{{ campionatoSel.numGiornate }}</span>
+                  <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, campionatoSel.numGiornate ?? null) }}</span>
                   <span class="cn-step-auto-badge">auto</span>
                 }
               </div>
