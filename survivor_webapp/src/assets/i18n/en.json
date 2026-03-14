@@ -88,9 +88,16 @@
   "NOTIFICATIONS": {
     "TITLE": "Notifications",
     "NO_NOTIFICATIONS": "No notifications",
+    "ALL_CAUGHT_UP": "You're all caught up!",
     "VIEW_ALL": "View all",
     "MARK_AS_READ": "Mark as read",
-    "NEW": "New"
+    "NEW": "New",
+    "NEW_SINGULAR": "new",
+    "NEW_PLURAL": "new",
+    "TIME_NOW": "Just now",
+    "TIME_MINUTES": "{{value}}m ago",
+    "TIME_HOURS": "{{value}}h ago",
+    "TIME_DAYS": "{{value}}d ago"
   },
   "TROPHIES": {
     "TITLE": "Hall of Fame",
@@ -269,6 +276,7 @@
       "PLAYER": "Player"
     },
     "ROUND": "Round",
+    "ROUND_SHORT": "R.",
     "NEXT_ROUND": "Next Round",
     "CURRENT_ROUND": "Current",
     "YOUR_ROLE": "Your Role",
@@ -301,6 +309,7 @@
     "PLAYED_TEAMS": "Already played teams",
     "NO_TEAMS_AVAILABLE": "No teams available",
     "WEEK": "Week",
+    "WEEK_SHORT": "Wk.",
     "DELETE_PLAYER": "Remove player",
     "DELETE_LEAGUE": "Delete this league",
     "ENTER_LEAGUE": "Enter league",

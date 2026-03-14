@@ -351,23 +351,24 @@ export class LegaDettaglioComponent implements OnDestroy {
     const fullTitle = this.getDesGiornataTitle(index);
     if (!fullTitle) return '';
 
-    // Se contiene "Giornata" lo abbrevia in "Gio."
-    if (fullTitle.includes('Giornata')) {
-      return fullTitle.replace('Giornata', 'Gio.');
-    }
+    const roundWord = this.translate.instant('LEAGUE.ROUND');
+    const weekWord = this.translate.instant('LEAGUE.WEEK');
+    const roundShort = this.translate.instant('LEAGUE.ROUND_SHORT');
+    const weekShort = this.translate.instant('LEAGUE.WEEK_SHORT');
 
-    // Se contiene solo un numero, ritorna così com'è
+    if (fullTitle.startsWith(roundWord + ' ')) {
+      return fullTitle.replace(roundWord + ' ', roundShort + ' ');
+    }
+    if (fullTitle.startsWith(weekWord + ' ')) {
+      return fullTitle.replace(weekWord + ' ', weekShort + ' ');
+    }
     if (/^\d+$/.test(fullTitle)) {
       return fullTitle;
     }
-
-    // Per altri formati, prova a estrarre il numero e aggiungere "Gio."
     const numero = fullTitle.match(/\d+/);
     if (numero) {
-      return `Gio. ${numero[0]}`;
+      return `${roundShort} ${numero[0]}`;
     }
-
-    // Fallback: ritorna il titolo completo
     return fullTitle;
   }
 

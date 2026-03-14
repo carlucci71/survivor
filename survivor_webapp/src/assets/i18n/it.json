@@ -88,9 +88,16 @@
   "NOTIFICATIONS": {
     "TITLE": "Notifiche",
     "NO_NOTIFICATIONS": "Nessuna notifica",
+    "ALL_CAUGHT_UP": "Sei tutto aggiornato!",
     "VIEW_ALL": "Vedi tutte",
     "MARK_AS_READ": "Segna come letta",
-    "NEW": "Nuova"
+    "NEW": "Nuova",
+    "NEW_SINGULAR": "nuova",
+    "NEW_PLURAL": "nuove",
+    "TIME_NOW": "Ora",
+    "TIME_MINUTES": "{{value}}m fa",
+    "TIME_HOURS": "{{value}}h fa",
+    "TIME_DAYS": "{{value}}g fa"
   },
   "TROPHIES": {
     "TITLE": "Albo d'Oro",
@@ -357,6 +364,7 @@
       "PLAYER": "Giocatore"
     },
     "ROUND": "Giornata",
+    "ROUND_SHORT": "Gio.",
     "NEXT_ROUND": "Prossima di campionato",
     "CURRENT_ROUND": "Calcolata",
     "YOUR_ROLE": "Ruolo in Lega",
@@ -389,6 +397,7 @@
     "PLAYED_TEAMS": "Squadre già giocate",
     "NO_TEAMS_AVAILABLE": "Nessuna squadra disponibile",
     "WEEK": "Settimana",
+    "WEEK_SHORT": "Sett.",
     "DELETE_PLAYER": "Elimina giocatore",
     "DELETE_LEAGUE": "Elimina questa lega",
     "ENTER_LEAGUE": "Entra nella lega",

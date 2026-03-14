@@ -52,14 +52,14 @@
             <mat-icon class="rc-icon">person</mat-icon>
             <div class="rc-content">
               <span class="rc-label">{{ 'LEAGUE.YOUR_ROLE' | translate }}</span>
-              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? lega.ruoloGiocatoreLega.descrizione : '' }}</span>
+              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? ('PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate) : '' }}</span>
             </div>
           </div>
           <div class="recap-chip recap-chip--stato">
             <mat-icon class="rc-icon">{{ lega.stato.value === 'AVVIATA' ? 'play_circle' : lega.stato.value === 'TERMINATA' ? 'flag' : 'schedule' }}</mat-icon>
             <div class="rc-content">
               <span class="rc-label">{{ 'LEAGUE.LEAGUE_STATE' | translate }}</span>
-              <span class="rc-value rc-value--stato" [class.stato-avviata]="lega.stato.value === 'AVVIATA'" [class.stato-terminata]="lega.stato.value === 'TERMINATA'">{{ lega.stato.descrizione }}</span>
+              <span class="rc-value rc-value--stato" [class.stato-avviata]="lega.stato.value === 'AVVIATA'" [class.stato-terminata]="lega.stato.value === 'TERMINATA'">{{ 'LEAGUE_STATUS.' + lega.stato.value | translate }}</span>
             </div>
           </div>
           @if (lega.giornataFinale) {
