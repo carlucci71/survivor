@@ -35,16 +35,19 @@ export class LegaService {
     sport: string,
     campionato: string,
     giornataIniziale: number,
+    giornataFinale: number | null,
     pwd: string | null
   ): Observable<Lega> {
-    const body = {
+    const body: any = {
       name: name,
       sport: sport,
       campionato: campionato,
       giornataIniziale: giornataIniziale,
       pwd: pwd
     };
-
+    if (giornataFinale !== null) {
+      body['giornataFinale'] = giornataFinale;
+    }
     return this.http.post<Lega>(`${this.apiUrl}`, body);
   }
 

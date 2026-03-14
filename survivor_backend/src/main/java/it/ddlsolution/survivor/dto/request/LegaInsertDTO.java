@@ -16,6 +16,7 @@ public class LegaInsertDTO {
     private String campionato;
     @NotBlank @NotNull
     private int giornataIniziale;
+    private Integer giornataFinale;
     private String pwd;
 }
 

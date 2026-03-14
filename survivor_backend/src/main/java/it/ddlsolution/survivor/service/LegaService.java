@@ -640,6 +640,10 @@ public class LegaService {
         }
         Lega lega = legaMapper.toEntity(legaInsertDTO);
         lega.setEdizione(1);
+        // Se il leader ha scelto una giornata finale, la salviamo; altrimenti null (= tutto il campionato)
+        if (legaInsertDTO.getGiornataFinale() != null) {
+            lega.setGiornataFinale(legaInsertDTO.getGiornataFinale());
+        }
         List<GiocatoreLega> giocatoriLega = new ArrayList<>();
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
