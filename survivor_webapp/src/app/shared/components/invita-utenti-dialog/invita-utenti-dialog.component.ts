@@ -40,6 +40,14 @@ import { TranslateModule } from '@ngx-translate/core';
         <div class="invite-section">
           <p class="instructions">{{ 'INVITE_USERS.INSTRUCTIONS' | translate }}</p>
 
+          <div class="share-link-section" *ngIf="canShare()">
+            <button class="share-btn" (click)="shareLink()" type="button">
+              <mat-icon>share</mat-icon>
+              <span>{{ 'COMMON.SHARE_LINK' | translate }}</span>
+            </button>
+            <div class="or-divider"><span>{{ 'INVITE_USERS.OR_EMAIL' | translate }}</span></div>
+          </div>
+
           <div class="email-input-section">
             <mat-form-field appearance="outline" class="email-field">
               <input
@@ -209,6 +217,64 @@ import { TranslateModule } from '@ngx-translate/core';
         background: rgba(248, 250, 252, 0.5);
         border-radius: 12px;
         border: none;
+      }
+
+      .share-link-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 24px;
+
+        .share-btn {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          padding: 14px 24px;
+          background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+          color: #FFFFFF;
+          border: none;
+          border-radius: 12px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          justify-content: center;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 16px rgba(10, 61, 145, 0.25);
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
+          }
+
+          mat-icon {
+            font-size: 22px;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+          }
+        }
+
+        .or-divider {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          margin: 18px 0 0;
+          gap: 12px;
+          color: #9CA3AF;
+          font-size: 0.85rem;
+
+          &::before, &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+          }
+        }
       }
 
       /* SEZIONE INPUT EMAIL - COMPLETAMENTE RIDISEGNATA */
@@ -870,6 +936,19 @@ export class InvitaUtentiDialogComponent {
   ) {}
 
   // ...existing code...
+
+  canShare(): boolean {
+    return !!navigator.share;
+  }
+
+  shareLink(): void {
+    const url = environment.baseUrl + '/joinLega';
+    navigator.share({
+      title: 'Unisciti alla mia lega!',
+      text: `Entra nella lega "${this.data.legaNome}" su Survivor`,
+      url
+    }).catch(() => {});
+  }
 
   shouldEnableScroll(): boolean {
     // Attiva lo scroll solo se ci sono più di 8 email (soglia per evitare che il bottone sparisca)

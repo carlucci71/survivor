@@ -15,8 +15,13 @@
         <div class="recap-header">
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
-            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>
-          </div>
+            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <button *ngIf="isDaAvviare() && (isLeaderLega() || isAdmin()) && canShare()"
+              mat-icon-button
+              class="recap-share-btn"
+              (click)="shareLink()"
+              [matTooltip]="'COMMON.SHARE_LINK' | translate">
+              <mat-icon>share</mat-icon>
+            </button>          </div>
           <div class="recap-sport-row">
             <span class="recap-sport-chip">
               <mat-icon class="recap-sport-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>

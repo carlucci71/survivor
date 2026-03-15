@@ -1411,6 +1411,27 @@
 	gap: 8px;
 	flex-wrap: wrap;
 }
+
+.recap-share-btn {
+	margin-left: auto !important;
+	width: 32px !important;
+	height: 32px !important;
+	color: rgba(255, 255, 255, 0.85) !important;
+	background: rgba(255, 255, 255, 0.1) !important;
+	border-radius: 8px !important;
+	transition: background 0.2s ease !important;
+	flex-shrink: 0;
+
+	mat-icon {
+		font-size: 18px !important;
+		width: 18px !important;
+		height: 18px !important;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.22) !important;
+	}
+}
 .recap-league-name {
 	font-size: 1rem;
 	font-weight: 700;

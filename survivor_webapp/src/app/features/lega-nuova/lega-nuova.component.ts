@@ -369,6 +369,19 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     });
   }
 
+  canShare(): boolean {
+    return !!navigator.share;
+  }
+
+  shareLink(): void {
+    const url = this.baseUrl() + '/joinLega';
+    navigator.share({
+      title: 'Unisciti alla mia lega!',
+      text: `Entra nella lega "${this.name}" su Survivor`,
+      url
+    }).catch(() => {});
+  }
+
   copyLink(): void {
     const url = this.baseUrl() + '/joinLega';
     if (!navigator.clipboard) {
@@ -393,6 +406,12 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
       .writeText(url)
       .then(() => this.showCopiedFeedback())
       .catch((err) => console.error('Copia fallita', err));
+  }
+
+  goToLega(): void {
+    if (this.legaCreataId) {
+      this.router.navigate(['/lega', this.legaCreataId]);
+    }
   }
 
   private showCopiedFeedback(): void {

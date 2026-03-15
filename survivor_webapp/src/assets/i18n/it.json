@@ -488,6 +488,8 @@
     "ADD": "Aggiungi",
     "SEND_INVITES": "Invia Inviti",
     "COPY_LINK": "Copia link",
+    "SHARE_LINK": "Condividi",
+    "GO_TO_LEAGUE": "Vai alla lega",
     "COPIED": "Copiato!",
     "REFRESH": "Aggiorna",
     "BACK_HOME": "Torna alla Home",
@@ -574,7 +576,9 @@
     "DURATION_PREVIEW_1": "La tua lega durerà",
     "DURATION_ROUNDS": "giornate",
     "DURATION_FROM": "dalla",
-    "DURATION_TO": "alla"
+    "DURATION_TO": "alla",
+    "INVITE_FRIENDS": "Condividi la lega con i tuoi amici",
+    "OR_VIA_EMAIL": "oppure invita via email"
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",
@@ -629,7 +633,8 @@
     "INSTRUCTIONS": "Inserisci gli indirizzi email degli utenti che vuoi invitare:",
     "EMAIL_PLACEHOLDER": "Inserisci indirizzo email (es. utente@esempio.com)",
     "ADD_EMAIL": "Aggiungi indirizzo email alla lista",
-    "SUCCESS": "Inviti inviati con successo!"
+    "SUCCESS": "Inviti inviati con successo!",
+    "OR_EMAIL": "oppure invita via email"
   },
   "TERMS": {
     "TITLE": "Termini e Condizioni di Utilizzo",

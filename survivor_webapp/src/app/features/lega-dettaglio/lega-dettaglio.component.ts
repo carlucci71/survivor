@@ -44,6 +44,7 @@ import { MockService } from '../../core/services/mock.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
+import { environment } from '../../../environments/environment';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 
@@ -1166,6 +1167,19 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   isDaAvviare(): boolean {
     return this.lega!.stato.value === StatoLega.DA_AVVIARE.value;
+  }
+
+  canShare(): boolean {
+    return !!navigator.share;
+  }
+
+  shareLink(): void {
+    const url = environment.baseUrl + '/joinLega';
+    navigator.share({
+      title: 'Unisciti alla mia lega!',
+      text: `Entra nella lega "${this.lega!.name}" su Survivor`,
+      url
+    }).catch(() => {});
   }
 
   isTerminata(): boolean {

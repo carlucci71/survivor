@@ -242,64 +242,88 @@
   <div class="cn-confirmation" *ngIf="confirmationMessage">
     <div class="cn-confirm-card">
 
+      <!-- HEADER GRADIENT -->
       <div class="cn-confirm-hero">
         <div class="cn-confirm-icon-wrap">
           <mat-icon class="cn-confirm-icon">check_circle</mat-icon>
         </div>
-        <p class="cn-confirm-msg" [innerHTML]="'CREATE_LEAGUE.SUCCESS_MESSAGE' | translate: {name: name}"></p>
+        <h2 class="cn-confirm-title" [innerHTML]="'CREATE_LEAGUE.SUCCESS_MESSAGE' | translate: {name: name}"></h2>
+        <p class="cn-confirm-sub">{{ 'CREATE_LEAGUE.INVITE_FRIENDS' | translate }}</p>
       </div>
 
-      <div class="cn-confirm-link-section">
-        <p class="cn-confirm-link-label">{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
-        <div class="cn-link-row">
-          <a class="cn-share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
-          <button mat-icon-button class="cn-copy-btn" (click)="copyLink()" [attr.aria-label]="'COMMON.COPY_LINK' | translate">
-            <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
-          </button>
-          <span class="cn-copied-badge" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
+      <!-- BODY -->
+      <div class="cn-confirm-body">
+
+        <!-- Bottone condividi (mobile/tablet/desktop supportato) -->
+        <button *ngIf="canShare()" mat-raised-button class="cn-share-big-btn" (click)="shareLink()">
+          <mat-icon>share</mat-icon>
+          {{ 'COMMON.SHARE_LINK' | translate }}
+        </button>
+
+        <!-- Link + copia -->
+        <div class="cn-link-card">
+          <p class="cn-link-label">{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
+          <div class="cn-link-row">
+            <a class="cn-share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
+            <button mat-icon-button class="cn-copy-btn" (click)="copyLink()" [attr.aria-label]="'COMMON.COPY_LINK' | translate">
+              <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+            </button>
+            <span class="cn-copied-badge" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
+          </div>
         </div>
+
+        <!-- Password -->
         <div class="cn-pwd-note" *ngIf="pwd">
           <mat-icon>lock</mat-icon>
           <span>{{ 'CREATE_LEAGUE.WITH_PASSWORD_JOIN' | translate }} <strong>{{ pwd }}</strong></span>
         </div>
-      </div>
 
-      <div class="cn-invite-section">
-        <h3 class="cn-invite-title">
-          <mat-icon>mail_outline</mat-icon>
-          {{ 'CREATE_LEAGUE.INVITE_EMAIL' | translate }}
-        </h3>
-        <div class="cn-email-row">
-          <mat-form-field appearance="outline" class="cn-email-field" subscriptSizing="dynamic">
-            <input
-              matInput
-              [placeholder]="'CREATE_LEAGUE.EMAIL_PLACEHOLDER' | translate"
-              [(ngModel)]="emailInput"
-              (keyup.enter)="addEmail()"
-            />
-          </mat-form-field>
-          <button mat-raised-button class="cn-add-btn" (click)="addEmail()" [disabled]="!isValidEmail(emailInput)">
-            {{ 'COMMON.ADD' | translate }}
-          </button>
+        <!-- Divider -->
+        <div class="cn-or-divider">
+          <span>{{ 'CREATE_LEAGUE.OR_VIA_EMAIL' | translate }}</span>
         </div>
-        <div class="cn-emails-list" *ngIf="emailsList.length > 0">
-          <mat-chip-set>
-            <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
-              {{ email }}
-              <button matChipRemove><mat-icon>cancel</mat-icon></button>
-            </mat-chip>
-          </mat-chip-set>
-        </div>
-        <div class="cn-invite-actions" *ngIf="emailsList.length > 0">
-          <button mat-raised-button class="cn-send-btn" (click)="invitaUtenti()">
+
+        <!-- Email invite -->
+        <div class="cn-invite-section">
+          <div class="cn-email-row">
+            <div class="cn-email-input-wrap">
+              <mat-icon class="cn-email-icon">email</mat-icon>
+              <input
+                class="cn-email-input"
+                type="email"
+                autocomplete="off"
+                [placeholder]="'CREATE_LEAGUE.EMAIL_PLACEHOLDER' | translate"
+                [(ngModel)]="emailInput"
+                (keyup.enter)="addEmail()"
+              />
+            </div>
+            <button mat-raised-button class="cn-add-btn" (click)="addEmail()" [disabled]="!isValidEmail(emailInput)">
+              {{ 'COMMON.ADD' | translate }}
+            </button>
+          </div>
+          <div class="cn-emails-list" *ngIf="emailsList.length > 0">
+            <mat-chip-set>
+              <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
+                {{ email }}
+                <button matChipRemove><mat-icon>cancel</mat-icon></button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          <button *ngIf="emailsList.length > 0" mat-raised-button class="cn-send-btn" (click)="invitaUtenti()">
             <mat-icon>send</mat-icon>
             {{ 'COMMON.SEND_INVITES' | translate }} ({{ emailsList.length }})
           </button>
         </div>
+
       </div>
 
+      <!-- FOOTER -->
       <div class="cn-confirm-footer">
-        <button mat-raised-button class="cn-back-btn" (click)="goBack()">
+        <button mat-raised-button class="cn-go-lega-btn" (click)="goToLega()">
+          <mat-icon>sports_soccer</mat-icon>
+          {{ 'COMMON.GO_TO_LEAGUE' | translate }}
+        </button>
+        <button mat-stroked-button class="cn-back-btn" (click)="goBack()">
           <mat-icon>home</mat-icon>
           {{ 'COMMON.BACK_HOME' | translate }}
         </button>
