@@ -18,6 +18,7 @@ import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.LegaJoinRequestRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LegaService {
     private final LegaRepository legaRepository;
+    private final LegaJoinRequestRepository legaJoinRequestRepository;
     private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
     private final UtilCalendarioService utilCalendarioService;
@@ -74,6 +76,8 @@ public class LegaService {
         List<Lega> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE, userId);
         return legaMapper.toDTOList(legheDaAvviare)
                 .stream()
+                .peek(dto -> dto.setRichiesteInAttesa(
+                        legaJoinRequestRepository.countByLega_IdAndStato(dto.getId(), Enumeratori.StatoRichiesta.PENDING)))
                 .sorted(Comparator.comparingInt(LegaDTO::getNumPartecipanti).reversed())
                 .toList();
     }
@@ -129,6 +133,11 @@ public class LegaService {
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
             if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
                 offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
+            }
+
+            if (legaDTO.getId() != null) {
+                legaDTO.setRichiesteInAttesa(
+                        legaJoinRequestRepository.countByLega_IdAndStato(legaDTO.getId(), Enumeratori.StatoRichiesta.PENDING));
             }
 
         } catch (Exception e) {

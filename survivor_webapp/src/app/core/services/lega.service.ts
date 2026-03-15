@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Giocatore, Lega, Partita } from '../models/interfaces.model';
+import { Giocatore, Lega, LegaJoinRequest, Partita } from '../models/interfaces.model';
 import { map } from 'rxjs/operators';
 import { mapLegaFromBE } from '../utils/lega-mapper';
 import { environment } from '../../../environments/environment';
@@ -37,7 +37,9 @@ export class LegaService {
     giornataIniziale: number,
     giornataFinale: number | null,
     pwd: string | null,
-    pubblica: boolean = false
+    pubblica: boolean = false,
+    accessoLibero: boolean = false,
+    maxPartecipanti: number | null = null
   ): Observable<Lega> {
     const body: any = {
       name: name,
@@ -45,10 +47,14 @@ export class LegaService {
       campionato: campionato,
       giornataIniziale: giornataIniziale,
       pwd: pwd,
-      pubblica: pubblica
+      pubblica: pubblica,
+      accessoLibero: accessoLibero
     };
     if (giornataFinale !== null) {
       body['giornataFinale'] = giornataFinale;
+    }
+    if (maxPartecipanti !== null) {
+      body['maxPartecipanti'] = maxPartecipanti;
     }
     return this.http.post<Lega>(`${this.apiUrl}`, body);
   }
@@ -94,6 +100,28 @@ export class LegaService {
 
   eliminaLega(idLega: number): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${idLega}`);
+  }
+
+  // ─── Join Requests ────────────────────────────────────────────────────────
+
+  richiediIngresso(idLega: number): Observable<LegaJoinRequest> {
+    return this.http.post<LegaJoinRequest>(`${this.apiUrl}/richieste/${idLega}`, {});
+  }
+
+  richiestePendenti(idLega: number): Observable<LegaJoinRequest[]> {
+    return this.http.get<LegaJoinRequest[]>(`${this.apiUrl}/richieste/${idLega}`);
+  }
+
+  approvaRichiesta(idLega: number, requestId: number): Observable<LegaJoinRequest> {
+    return this.http.post<LegaJoinRequest>(`${this.apiUrl}/richieste/${idLega}/approva/${requestId}`, {});
+  }
+
+  rifiutaRichiesta(idLega: number, requestId: number): Observable<LegaJoinRequest> {
+    return this.http.post<LegaJoinRequest>(`${this.apiUrl}/richieste/${idLega}/rifiuta/${requestId}`, {});
+  }
+
+  annullaRichiesta(idLega: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/richieste/${idLega}`);
   }
 
 }

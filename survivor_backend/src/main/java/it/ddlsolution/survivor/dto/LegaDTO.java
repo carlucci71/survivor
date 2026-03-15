@@ -29,5 +29,8 @@ public class LegaDTO {
     private short anno;
     private boolean pubblica;
     private int numPartecipanti;
+    private Integer maxPartecipanti;
+    private boolean accessoLibero;
+    private int richiesteInAttesa;
 }
 

@@ -12,7 +12,12 @@
     "JOIN_EXISTING_LEAGUE": "Join an existing league",
     "YEAR": "Year",
     "SEARCH_LEAGUES": "Search leagues...",
-    "NO_RESULTS": "No leagues found"
+    "NO_RESULTS": "No leagues found",
+    "BADGE_NEW": "New",
+    "BADGE_GROWING": "Growing",
+    "BADGE_HOT": "Hot",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "participants"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Not Started",
@@ -280,6 +285,14 @@
     "ROUND_SHORT": "R.",
     "NEXT_ROUND": "Next Round",
     "CURRENT_ROUND": "Current",
+    "VISIBILITY": "Visibility",
+    "VISIBILITY_PUBLIC": "Public",
+    "VISIBILITY_PRIVATE": "Private",
+    "BADGE_NEW": "New",
+    "BADGE_GROWING": "Growing",
+    "BADGE_HOT": "Hot",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "participants",
     "YOUR_ROLE": "Your Role",
     "LEAGUE_STATE": "League Status",
     "FINAL_ROUND": "Final round",
@@ -394,7 +407,23 @@
     "COPY_LINK": "Copy link",
     "COPIED": "Copied!",
     "REFRESH": "Refresh",
-    "BACK_HOME": "Back to Home"
+    "BACK_HOME": "Back to Home",
+    "ERROR_GENERIC": "An error occurred. Please try again."
+  },
+  "JOIN_REQUEST": {
+    "SECTION_TITLE": "Join requests",
+    "NO_PENDING": "No pending requests",
+    "LOAD_REQUESTS": "Load requests",
+    "APPROVE": "Approve",
+    "REJECT": "Reject",
+    "APPROVED_OK": "Request approved",
+    "REJECTED_OK": "Request rejected",
+    "REQUEST_SENT": "Request sent! The leader will review your request.",
+    "REQUEST_CANCELLED": "Request cancelled",
+    "ALREADY_PENDING": "You already have a pending request for this league",
+    "LEGA_FULL": "The league is full",
+    "REQUEST_BUTTON": "Request to join",
+    "CANCEL_REQUEST_BUTTON": "Cancel request"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Service Unavailable",
@@ -477,7 +506,23 @@
     "DURATION_PREVIEW_1": "Your league will last",
     "DURATION_ROUNDS": "rounds",
     "DURATION_FROM": "from",
-    "DURATION_TO": "to"
+    "DURATION_TO": "to",
+    "INVITE_FRIENDS": "Share the league with your friends",
+    "OR_VIA_EMAIL": "or invite via email",
+    "SECTION_VISIBILITY": "Who can join?",
+    "SECTION_VISIBILITY_DESC": "Choose whether the league is visible to everyone or accessible only via invite link",
+    "VISIBILITY_PRIVATE_LABEL": "By invite only",
+    "VISIBILITY_PRIVATE_DESC": "Share the link only with who you want",
+    "VISIBILITY_PUBLIC_LABEL": "Public",
+    "VISIBILITY_PUBLIC_DESC": "Appears in the list and anyone can join",
+    "SECTION_ACCESS_APPROVAL": "Access mode",
+    "SECTION_ACCESS_APPROVAL_DESC": "How new players join the public league",
+    "ACCESS_APPROVAL_LABEL": "By approval",
+    "ACCESS_APPROVAL_DESC": "The leader approves or rejects each request",
+    "ACCESS_FREE_LABEL": "Open access",
+    "ACCESS_FREE_DESC": "Anyone can join directly without approval",
+    "MAX_PARTICIPANTS_LABEL": "Maximum participants",
+    "MAX_PARTICIPANTS_UNLIMITED": "Unlimited"
   },
   "JOIN_LEAGUE": {
     "TITLE": "Join a League",

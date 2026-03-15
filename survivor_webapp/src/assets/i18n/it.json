@@ -506,7 +506,23 @@
     "COPIED": "Copiato!",
     "REFRESH": "Aggiorna",
     "BACK_HOME": "Torna alla Home",
-    "OPTIONAL": "Opzionale"
+    "OPTIONAL": "Opzionale",
+    "ERROR_GENERIC": "Si è verificato un errore. Riprova."
+  },
+  "JOIN_REQUEST": {
+    "SECTION_TITLE": "Richieste di ingresso",
+    "NO_PENDING": "Nessuna richiesta in attesa",
+    "LOAD_REQUESTS": "Carica richieste",
+    "APPROVE": "Approva",
+    "REJECT": "Rifiuta",
+    "APPROVED_OK": "Richiesta approvata",
+    "REJECTED_OK": "Richiesta rifiutata",
+    "REQUEST_SENT": "Richiesta inviata! Il leader valuterà la tua richiesta.",
+    "REQUEST_CANCELLED": "Richiesta annullata",
+    "ALREADY_PENDING": "Hai già una richiesta in attesa per questa lega",
+    "LEGA_FULL": "La lega è al completo",
+    "REQUEST_BUTTON": "Richiedi ingresso",
+    "CANCEL_REQUEST_BUTTON": "Annulla richiesta"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Servizio non disponibile",
@@ -582,6 +598,8 @@
     "SECTION_DURATION_DESC": "Giornate disponibili: dalla {{min}} alla {{max}}",
     "SECTION_ACCESS": "Accesso",
     "SECTION_ACCESS_DESC": "Aggiungi una password per rendere la lega privata",
+    "SECTION_ACCESS_APPROVAL": "Modalità di accesso",
+    "SECTION_ACCESS_APPROVAL_DESC": "Come entrano i nuovi giocatori nella lega pubblica",
     "FINAL_ROUND_OPTIONAL": "Giornata finale (opzionale)",
     "FINAL_ROUND_HINT": "Lascia vuoto per giocare tutto il campionato",
     "FINAL_ROUND_HINT_SHORT": "Vuoto = tutto il campionato",
@@ -597,7 +615,14 @@
     "VISIBILITY_PRIVATE_LABEL": "Solo su invito",
     "VISIBILITY_PRIVATE_DESC": "Condividi il link solo con chi vuoi",
     "VISIBILITY_PUBLIC_LABEL": "Pubblica",
-    "VISIBILITY_PUBLIC_DESC": "Appare nella lista e chiunque può entrare"
+    "VISIBILITY_PUBLIC_DESC": "Appare nella lista e chiunque può entrare",
+
+    "ACCESS_APPROVAL_LABEL": "Su approvazione",
+    "ACCESS_APPROVAL_DESC": "Il leader approva o rifiuta ogni richiesta",
+    "ACCESS_FREE_LABEL": "Accesso libero",
+    "ACCESS_FREE_DESC": "Chiunque può entrare direttamente senza approvazione",
+    "MAX_PARTICIPANTS_LABEL": "Massimo partecipanti",
+    "MAX_PARTICIPANTS_UNLIMITED": "Illimitato"
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",

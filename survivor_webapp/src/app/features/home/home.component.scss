@@ -567,6 +567,25 @@ h2 {
 	}
 }
 
+// ── Badge richieste pendenti sul titolo edizione (solo leader) ───────────
+.jr-pending-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 5px;
+	background: #e53935;
+	color: #fff;
+	border-radius: 9px;
+	font-size: 0.68rem;
+	font-weight: 700;
+	margin-left: 5px;
+	vertical-align: middle;
+	line-height: 18px;
+	box-shadow: 0 1px 4px rgba(229, 57, 53, 0.4);
+}
+
 .leghe-groups {
 
 	/* CARD PRINCIPALE DI OGNI LEGA - SFONDO GRIGIO CHIARO */

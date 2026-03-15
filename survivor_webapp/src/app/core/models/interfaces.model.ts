@@ -124,6 +124,21 @@ export interface Lega {
   inizioProssimaGiornata: Date;
   pubblica?: boolean;
   numPartecipanti?: number;
+  maxPartecipanti?: number;
+  accessoLibero?: boolean;
+  richiesteInAttesa?: number;
+}
+
+export interface LegaJoinRequest {
+  id: number;
+  legaId: number;
+  legaName: string;
+  giocatoreId: number;
+  giocatoreNickname: string;
+  giocatoreEmail: string;
+  stato: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  resolvedAt?: string;
 }
 
 

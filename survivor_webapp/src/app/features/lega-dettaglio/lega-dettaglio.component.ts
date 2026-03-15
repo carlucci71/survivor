@@ -11,6 +11,7 @@ import {
   Giocata,
   Giocatore,
   Lega,
+  LegaJoinRequest,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
@@ -151,6 +152,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
+  // Join requests (solo leader)
+  richiesteInAttesa: LegaJoinRequest[] = [];
+  richiesteLoading = false;
+  richiesteLoaded = false;
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -286,6 +292,9 @@ export class LegaDettaglioComponent implements OnDestroy {
 
           this.caricaTabella();
           this.caricaPartiteForzate();
+          if (this.isLeaderLega() && this.lega.pubblica && !this.lega.accessoLibero) {
+            this.caricaRichieste();
+          }
         },
         error: (error) => {
           console.error('Errore nel ricaricamento della lega:', error);
@@ -1098,6 +1107,52 @@ export class LegaDettaglioComponent implements OnDestroy {
   isLeaderLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
+  }
+
+  caricaRichieste(): void {
+    if (!this.lega || this.richiesteLoading) return;
+    this.richiesteLoading = true;
+    this.legaService.richiestePendenti(this.lega.id).subscribe({
+      next: (list) => {
+        this.richiesteInAttesa = list;
+        this.richiesteLoaded = true;
+        this.richiesteLoading = false;
+      },
+      error: () => { this.richiesteLoading = false; }
+    });
+  }
+
+  approvaRichiesta(requestId: number): void {
+    if (!this.lega) return;
+    this.legaService.approvaRichiesta(this.lega.id, requestId).subscribe({
+      next: () => {
+        this.richiesteInAttesa = this.richiesteInAttesa.filter(r => r.id !== requestId);
+        if (this.lega) this.lega.richiesteInAttesa = (this.lega.richiesteInAttesa ?? 1) - 1;
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000 });
+        // Ricarica la lega per aggiornare la lista giocatori
+        const legaId = this.lega?.id;
+        if (legaId) this.legaService.getLegaById(legaId).subscribe(l => { this.lega = l; });
+      },
+      error: (err) => {
+        const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
+        this.snackBar.open(msg, '', { duration: 4000 });
+      }
+    });
+  }
+
+  rifiutaRichiesta(requestId: number): void {
+    if (!this.lega) return;
+    this.legaService.rifiutaRichiesta(this.lega.id, requestId).subscribe({
+      next: () => {
+        this.richiesteInAttesa = this.richiesteInAttesa.filter(r => r.id !== requestId);
+        if (this.lega) this.lega.richiesteInAttesa = (this.lega.richiesteInAttesa ?? 1) - 1;
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000 });
+      },
+      error: (err) => {
+        const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
+        this.snackBar.open(msg, '', { duration: 4000 });
+      }
+    });
   }
   isInLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;

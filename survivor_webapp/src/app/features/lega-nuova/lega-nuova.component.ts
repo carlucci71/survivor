@@ -73,6 +73,28 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   copied = false;
   showPasswordSection = false;
   pubblica = false;
+  accessoLibero = false;
+  maxPartecipanti: number | null = null;
+
+  decMaxPartecipanti(): void {
+    if (!this.maxPartecipanti) return;
+    const next = this.maxPartecipanti - 1;
+    this.maxPartecipanti = next < 2 ? null : next;
+  }
+
+  incMaxPartecipanti(): void {
+    this.maxPartecipanti = this.maxPartecipanti ? this.maxPartecipanti + 1 : 2;
+  }
+
+  onMaxPartecipantiInput(event: Event): void {
+    const val = parseInt((event.target as HTMLInputElement).value, 10);
+    if (!val || val < 2) {
+      this.maxPartecipanti = null;
+      (event.target as HTMLInputElement).value = '';
+    } else {
+      this.maxPartecipanti = val;
+    }
+  }
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -284,6 +306,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.giornataFinaleTouched = false;
     this.campionatiDisponibili = [];
     this.pubblica = false;
+    this.accessoLibero = false;
+    this.maxPartecipanti = null;
   }
 
   onSubmit(): void {
@@ -304,7 +328,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.giornataIniziale!,
         this.giornataFinale,
         this.pwd,
-        this.pubblica
+        this.pubblica,
+        this.accessoLibero,
+        this.maxPartecipanti
       )
       .subscribe({
         next: (lega) => {

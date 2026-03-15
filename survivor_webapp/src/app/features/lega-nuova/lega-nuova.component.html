@@ -197,38 +197,6 @@
       </div>
       }
 
-      <!-- â”€â”€ SEZIONE 4: ACCESSO â”€â”€ -->
-      <div class="cn-section cn-section--access">
-        <div class="cn-section-head cn-section-head--toggle" (click)="togglePassword()">
-          <div class="cn-section-icon" [class.cn-section-icon--muted]="!showPasswordSection && !pwd">
-            <mat-icon>{{ pwd ? 'lock' : 'lock_open' }}</mat-icon>
-          </div>
-          <div class="cn-section-info">
-            <h3 class="cn-section-title">
-              {{ 'CREATE_LEAGUE.SECTION_ACCESS' | translate }}
-              <span class="cn-badge-optional">{{ 'COMMON.OPTIONAL' | translate }}</span>
-            </h3>
-            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_ACCESS_DESC' | translate }}</p>
-          </div>
-          <mat-icon class="cn-chevron" [class.cn-chevron--open]="showPasswordSection">expand_more</mat-icon>
-        </div>
-
-        @if (showPasswordSection) {
-        <mat-form-field appearance="outline" class="cn-field cn-field--appear">
-          <mat-label>{{ 'CREATE_LEAGUE.PASSWORD' | translate }}</mat-label>
-          <mat-icon matPrefix class="cn-prefix-icon">key</mat-icon>
-          <input
-            matInput
-            name="pwd"
-            [(ngModel)]="pwd"
-            type="text"
-            [placeholder]="'CREATE_LEAGUE.PASSWORD_PLACEHOLDER' | translate"
-            autocomplete="off"
-          />
-        </mat-form-field>
-        }
-      </div>
-
       <!-- ── SEZIONE 5: VISIBILITÀ ── -->
       <div class="cn-section">
         <div class="cn-section-head">
@@ -251,6 +219,48 @@
             <span class="cn-vis-label">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_LABEL' | translate }}</span>
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_DESC' | translate }}</span>
           </button>
+        </div>
+      </div>
+
+      <!-- ── SEZIONE 5b: ACCESSO (solo se pubblica) ── -->
+      <div class="cn-section" *ngIf="pubblica">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>how_to_reg</mat-icon>
+          </div>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_ACCESS_APPROVAL' | translate }}</h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_ACCESS_APPROVAL_DESC' | translate }}</p>
+          </div>
+        </div>
+        <div class="cn-visibility-grid">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!accessoLibero" (click)="accessoLibero = false">
+            <mat-icon class="cn-vis-ico">approval</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.ACCESS_APPROVAL_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.ACCESS_APPROVAL_DESC' | translate }}</span>
+          </button>
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="accessoLibero" (click)="accessoLibero = true">
+            <mat-icon class="cn-vis-ico">login</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.ACCESS_FREE_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.ACCESS_FREE_DESC' | translate }}</span>
+          </button>
+        </div>
+        <!-- Max partecipanti -->
+        <div class="cn-max-parti-row">
+          <mat-icon class="cn-max-parti-icon">group</mat-icon>
+          <span class="cn-max-parti-label">{{ 'CREATE_LEAGUE.MAX_PARTICIPANTS_LABEL' | translate }}</span>
+          <div class="cn-stepper">
+            <button type="button" class="cn-step-btn" (click)="decMaxPartecipanti()" [disabled]="!maxPartecipanti">−</button>
+            <input
+              type="number"
+              class="cn-step-input"
+              [value]="maxPartecipanti ?? ''"
+              [placeholder]="'CREATE_LEAGUE.MAX_PARTICIPANTS_UNLIMITED' | translate"
+              min="2"
+              (change)="onMaxPartecipantiInput($event)"
+            />
+            <button type="button" class="cn-step-btn" (click)="incMaxPartecipanti()">+</button>
+          </div>
         </div>
       </div>
 
@@ -295,12 +305,6 @@
             </button>
             <span class="cn-copied-badge" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
           </div>
-        </div>
-
-        <!-- Password -->
-        <div class="cn-pwd-note" *ngIf="pwd">
-          <mat-icon>lock</mat-icon>
-          <span>{{ 'CREATE_LEAGUE.WITH_PASSWORD_JOIN' | translate }} <strong>{{ pwd }}</strong></span>
         </div>
 
         <!-- Divider -->
