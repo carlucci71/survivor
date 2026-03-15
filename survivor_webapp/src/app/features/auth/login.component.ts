@@ -44,6 +44,12 @@ export class LoginComponent implements AfterViewInit {
   message = '';
   isSuccess = false;
   termsAccepted = false;
+  activeTab: 'login' | 'register' = 'login';
+
+  setTab(tab: 'login' | 'register'): void {
+    this.activeTab = tab;
+    this.message = '';
+  }
 
   constructor(
     private authService: AuthService,

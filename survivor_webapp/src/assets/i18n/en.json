@@ -429,6 +429,8 @@
   "AUTH": {
     "LOGIN_TITLE": "Login",
     "LOGIN_SUBTITLE": "Enter your email to receive the magic link",
+    "REGISTER_TITLE": "Register",
+    "REGISTER_SUBTITLE": "Don't have an account? Enter your email to sign up",
     "EMAIL_LABEL": "Email",
     "EMAIL_PLACEHOLDER": "Enter email address (e.g. user@example.com)",
     "EMAIL_REQUIRED": "Email is required",
