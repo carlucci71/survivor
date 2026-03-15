@@ -6,7 +6,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Notification } from '../../../core/models/interfaces.model';
@@ -35,7 +35,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificationService: NotificationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -96,14 +97,14 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     const diffMs = now.getTime() - created.getTime();
     const diffMins = Math.floor(diffMs / 60000);
 
-    if (diffMins < 1) return 'Ora';
-    if (diffMins < 60) return `${diffMins}m fa`;
+    if (diffMins < 1) return this.translate.instant('NOTIFICATIONS.TIME_NOW');
+    if (diffMins < 60) return this.translate.instant('NOTIFICATIONS.TIME_MINUTES', { value: diffMins });
 
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h fa`;
+    if (diffHours < 24) return this.translate.instant('NOTIFICATIONS.TIME_HOURS', { value: diffHours });
 
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays}g fa`;
+    return this.translate.instant('NOTIFICATIONS.TIME_DAYS', { value: diffDays });
   }
 }
 

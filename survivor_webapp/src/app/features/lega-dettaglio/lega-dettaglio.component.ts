@@ -343,6 +343,49 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  // ── Progressione lega ─────────────────────────────────────────────────────
+
+  getEffectiveGiornataFinale(): number {
+    if (this.lega?.giornataFinale) return this.lega.giornataFinale;
+    // fallback: ultima giornata del campionato, altrimenti giornataIniziale + 9
+    if (this.lega?.campionato?.numGiornate) return this.lega.campionato.numGiornate;
+    return (this.lega?.giornataIniziale ?? 1) + 9;
+  }
+
+  getLeagueTotalRounds(): number {
+    if (this.lega?.giornataIniziale == null) return 0;
+    return this.getEffectiveGiornataFinale() - this.lega.giornataIniziale + 1;
+  }
+
+  getLeagueRoundNumber(): number {
+    if (this.lega?.giornataIniziale == null) return 1;
+    const corrente = this.lega.giornataCorrente ?? this.lega.giornataIniziale;
+    return Math.max(1, corrente - this.lega.giornataIniziale + 1);
+  }
+
+  getLegaProgressPercent(): number {
+    if (this.lega?.giornataIniziale == null) return 0;
+    const fine = this.getEffectiveGiornataFinale();
+    const total = fine - this.lega.giornataIniziale;
+    if (total <= 0) return 100;
+    const corrente = this.lega.giornataCorrente ?? this.lega.giornataIniziale;
+    const done = corrente - this.lega.giornataIniziale;
+    return Math.min(100, Math.max(0, (done / total) * 100));
+  }
+
+  /** Posizioni percentuali dei divisori tra giornate sulla barra */
+  getProgressTicks(): number[] {
+    const total = this.getLeagueTotalRounds();
+    if (total <= 2) return [];
+    const ticks: number[] = [];
+    for (let i = 1; i < total; i++) {
+      ticks.push((i / (total - 1)) * 100);
+    }
+    return ticks;
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   /**
    * Versione abbreviata del titolo giornata per mobile
    * Es: "Giornata 26" → "Gio. 26"
@@ -351,23 +394,24 @@ export class LegaDettaglioComponent implements OnDestroy {
     const fullTitle = this.getDesGiornataTitle(index);
     if (!fullTitle) return '';
 
-    // Se contiene "Giornata" lo abbrevia in "Gio."
-    if (fullTitle.includes('Giornata')) {
-      return fullTitle.replace('Giornata', 'Gio.');
-    }
+    const roundWord = this.translate.instant('LEAGUE.ROUND');
+    const weekWord = this.translate.instant('LEAGUE.WEEK');
+    const roundShort = this.translate.instant('LEAGUE.ROUND_SHORT');
+    const weekShort = this.translate.instant('LEAGUE.WEEK_SHORT');
 
-    // Se contiene solo un numero, ritorna così com'è
+    if (fullTitle.startsWith(roundWord + ' ')) {
+      return fullTitle.replace(roundWord + ' ', roundShort + ' ');
+    }
+    if (fullTitle.startsWith(weekWord + ' ')) {
+      return fullTitle.replace(weekWord + ' ', weekShort + ' ');
+    }
     if (/^\d+$/.test(fullTitle)) {
       return fullTitle;
     }
-
-    // Per altri formati, prova a estrarre il numero e aggiungere "Gio."
     const numero = fullTitle.match(/\d+/);
     if (numero) {
-      return `Gio. ${numero[0]}`;
+      return `${roundShort} ${numero[0]}`;
     }
-
-    // Fallback: ritorna il titolo completo
     return fullTitle;
   }
 

@@ -1,212 +1,311 @@
-<app-header
+﻿<app-header
   [title]="'CREATE_LEAGUE.TITLE' | translate"
   (back)="goBack()"
   (logout)="logout()"
 ></app-header>
 
-<main class="main-content">
-  <div class="main-panel">
-    <mat-card class="message-box" [class.single-card]="confirmationMessage">
-      <mat-card-content>
-        <form
-          *ngIf="!confirmationMessage"
-          class="form-vertical"
-          (ngSubmit)="onSubmit()"
-        >
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>{{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }}</mat-label>
-              <input
-                matInput
-                name="name"
-                [placeholder]="'CREATE_LEAGUE.LEAGUE_NAME_PLACEHOLDER' | translate"
-                [(ngModel)]="name"
-                (blur)="nameTouched = true"
-              />
-              <mat-error *ngIf="nameTouched && !name"
-                >{{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
-              >
-            </mat-form-field>
-          </div>
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>{{ 'CREATE_LEAGUE.SPORT' | translate }}</mat-label>
-              <mat-select
-                name="sportSel"
-                [(ngModel)]="sportSel"
-                (selectionChange)="sportTouched = true; selezionaSport()"
-              >
-                @for (sport of sportDisponibili; track sport.id) {
-                <mat-option [value]="sport.id">{{ sport.nome }}</mat-option>
-                }
-              </mat-select>
-              <mat-error *ngIf="sportTouched && !sportSel"
-                >{{ 'CREATE_LEAGUE.SPORT' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
-              >
-            </mat-form-field>
-          </div>
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>{{ 'CREATE_LEAGUE.CHAMPIONSHIP' | translate }}</mat-label>
-              <mat-select
-                name="campionatoSel"
-                [(ngModel)]="campionatoSel"
-                (selectionChange)="campionatoTouched = true"
-              >
-                @for (campionato of campionatiDisponibili; track campionato.id)
-                {
-                <mat-option [value]="campionato">{{
-                  campionato.nome
-                }}</mat-option>
-                }
-              </mat-select>
-              <mat-error *ngIf="campionatoTouched && !campionatoSel"
-                >{{ 'CREATE_LEAGUE.CHAMPIONSHIP' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
-              >
-            </mat-form-field>
-          </div>
+<main class="cn-main">
 
-          @if((campionatoSel?.giornataDaGiocare || 0) <=
-          (campionatoSel?.numGiornate|| 0)){
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label
-                >{{ 'CREATE_LEAGUE.INITIAL_ROUND' | translate }} {{ campionatoSel?.giornataDaGiocare }}-{{
-                  campionatoSel?.numGiornate
-                }}</mat-label
-              >
-              <input
-                matInput
-                name="giornataIniziale"
-                [(ngModel)]="giornataIniziale"
-                type="number"
-                (blur)="giornataTouched = true"
-                [attr.min]="campionatoSel?.giornataDaGiocare"
-                [attr.max]="campionatoSel?.numGiornate"
-              />
-              <mat-error
-                *ngIf="
-                  giornataTouched &&
-                  (giornataIniziale === null || giornataIniziale === undefined)
-                "
-                >{{ 'CREATE_LEAGUE.INITIAL_ROUND' | translate }} {{ 'COMMON.REQUIRED' | translate }}</mat-error
-              >
-              <mat-error *ngIf="giornataTouched && !isGiornataValid()"
-                >{{ 'CREATE_LEAGUE.INITIAL_ROUND_ERROR' | translate }}
-                {{ campionatoSel?.giornataDaGiocare }} {{ 'COMMON.AND' | translate }}
-                {{ campionatoSel?.numGiornate }}</mat-error
-              >
-            </mat-form-field>
+  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ FORM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <div class="cn-container" *ngIf="!confirmationMessage">
+    <form class="cn-form" (ngSubmit)="onSubmit()">
+
+      <!-- â”€â”€ SEZIONE 1: NOME â”€â”€ -->
+      <div class="cn-section">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>emoji_events</mat-icon>
           </div>
-          } @if(campionatoSel && (campionatoSel.giornataDaGiocare || 0) > (campionatoSel.numGiornate|| 0)){
-          <mat-label>{{ 'CREATE_LEAGUE.CHAMPIONSHIP_ENDED' | translate }}</mat-label>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_IDENTITY' | translate }}</h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_IDENTITY_DESC' | translate }}</p>
+          </div>
+        </div>
+        <mat-form-field appearance="outline" class="cn-field">
+          <mat-label>{{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }}</mat-label>
+          <mat-icon matPrefix class="cn-prefix-icon">edit</mat-icon>
+          <input
+            matInput
+            name="name"
+            [(ngModel)]="name"
+            (blur)="nameTouched = true"
+            [placeholder]="'CREATE_LEAGUE.LEAGUE_NAME_PLACEHOLDER' | translate"
+            autocomplete="off"
+          />
+          <mat-error *ngIf="nameTouched && !name">
+            {{ 'CREATE_LEAGUE.LEAGUE_NAME' | translate }} {{ 'COMMON.REQUIRED' | translate }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- â”€â”€ SEZIONE 2: SPORT + CAMPIONATO â”€â”€ -->
+      <div class="cn-section">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>sports</mat-icon>
+          </div>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_SPORT' | translate }}</h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_SPORT_DESC' | translate }}</p>
+          </div>
+        </div>
+
+        <!-- Sport: card-buttons -->
+        <div class="cn-sport-grid">
+          @for (sport of sportDisponibili; track sport.id) {
+          <button
+            type="button"
+            class="cn-sport-btn"
+            [class.cn-sport-btn--active]="sportSel === sport.id"
+            (click)="selectSport(sport.id)"
+          >
+            <mat-icon class="cn-sport-ico">{{ getSportIcon(sport.id) }}</mat-icon>
+            <span class="cn-sport-lbl">{{ sport.nome }}</span>
+          </button>
           }
+        </div>
+        <div class="cn-field-error" *ngIf="sportTouched && !sportSel">
+          {{ 'CREATE_LEAGUE.SPORT' | translate }} {{ 'COMMON.REQUIRED' | translate }}
+        </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>{{ 'CREATE_LEAGUE.PASSWORD' | translate }}</mat-label>
-              <input
-                matInput
-                name="pwd"
-                [placeholder]="'CREATE_LEAGUE.PASSWORD_PLACEHOLDER' | translate"
-                [(ngModel)]="pwd"
-                type="text"
-              />
-            </mat-form-field>
+        <!-- Campionato: card buttons dopo selezione sport -->
+        @if (campionatiDisponibili.length > 0) {
+        <div class="cn-camp-grid cn-field--appear">
+          @for (campionato of campionatiDisponibili; track campionato.id) {
+          <button
+            type="button"
+            class="cn-camp-btn"
+            [class.cn-camp-btn--active]="campionatoSel?.id === campionato.id"
+            (click)="selectCampionato(campionato)"
+          >
+            <span class="cn-camp-name">{{ campionato.nome }}</span>
+            @if (campionato.giornataDaGiocare && campionato.numGiornate) {
+            <span class="cn-camp-info">Gior. {{ campionato.giornataDaGiocare }}/{{ campionato.numGiornate }}</span>
+            }
+          </button>
+          }
+        </div>
+        <div class="cn-field-error" *ngIf="campionatoTouched && !campionatoSel">
+          {{ 'CREATE_LEAGUE.CHAMPIONSHIP' | translate }} {{ 'COMMON.REQUIRED' | translate }}
+        </div>
+        }
+
+        @if (campionatoSel && (campionatoSel.giornataDaGiocare || 0) > (campionatoSel.numGiornate || 0)) {
+        <div class="cn-ended-banner">
+          <mat-icon>info_outline</mat-icon>
+          <span>{{ 'CREATE_LEAGUE.CHAMPIONSHIP_ENDED' | translate }}</span>
+        </div>
+        }
+      </div>
+
+      <!-- â”€â”€ SEZIONE 3: DURATA â”€â”€ -->
+      @if (campionatoSel && (campionatoSel.giornataDaGiocare || 0) <= (campionatoSel.numGiornate || 0)) {
+      <div class="cn-section cn-section--appear">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>calendar_month</mat-icon>
           </div>
-
-          <div class="form-row actions">
-            <button
-              mat-raised-button
-              color="primary"
-              [disabled]="!isFormValid()"
-            >
-              {{ 'CREATE_LEAGUE.CREATE_BUTTON' | translate }}
-            </button>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_DURATION' | translate }}</h3>
+            <p class="cn-section-desc">
+              {{ 'CREATE_LEAGUE.SECTION_DURATION_DESC' | translate: { min: campionatoSel.giornataDaGiocare, max: campionatoSel.numGiornate } }}
+            </p>
           </div>
-        </form>
+        </div>
 
-        <div class="confirmation" *ngIf="confirmationMessage">
-          <mat-card class="confirmation-card">
-            <mat-card-content>
-              <p class="success-message" [innerHTML]="'CREATE_LEAGUE.SUCCESS_MESSAGE' | translate: {name: name}">
-              </p>
-              <p>{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
+        <div class="cn-round-row">
 
-              <div class="link-row">
-                <a class="share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
-
-                <button
-                  mat-icon-button
-                  color="primary"
-                  (click)="copyLink()"
-                  [attr.aria-label]="'COMMON.COPY_LINK' | translate"
-                >
-                  <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
-                </button>
-
-                <span class="copy-feedback" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
+          <!-- Stepper: giornata INIZIO -->
+          <div class="cn-stepper">
+            <span class="cn-stepper-label">{{ 'CREATE_LEAGUE.INITIAL_ROUND' | translate }}</span>
+            <div class="cn-stepper-control">
+              <button type="button" class="cn-step-btn"
+                (click)="decGiornataIniziale()"
+                [disabled]="!giornataIniziale || giornataIniziale <= (campionatoSel.giornataDaGiocare ?? 1)">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <div class="cn-step-val">
+                @if (giornataIniziale) {
+                  <span class="cn-step-num">{{ giornataIniziale }}</span>
+                  <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, giornataIniziale) }}</span>
+                } @else {
+                  <span class="cn-step-num cn-step-num--auto">&#8211;</span>
+                }
               </div>
-
-              <span *ngIf="pwd">{{ 'CREATE_LEAGUE.WITH_PASSWORD_JOIN' | translate }} <b>{{ pwd }}</b></span>
-
-              <div class="invite-section">
-                <h3>{{ 'CREATE_LEAGUE.INVITE_EMAIL' | translate }}</h3>
-
-                <div class="email-input-section">
-                  <mat-form-field appearance="outline" class="email-field" subscriptSizing="dynamic">
-                    <input
-                      matInput
-                      [placeholder]="'CREATE_LEAGUE.EMAIL_PLACEHOLDER' | translate"
-                      [(ngModel)]="emailInput"
-                      (keyup.enter)="addEmail()"
-                    />
-                  </mat-form-field>
-                  <button
-                    mat-raised-button
-                    color="accent"
-                    (click)="addEmail()"
-                    [disabled]="!isValidEmail(emailInput)"
-                  >
-                    {{ 'COMMON.ADD' | translate }}
-                  </button>
-                </div>
-
-                <div class="emails-list" *ngIf="emailsList.length > 0">
-                  <mat-chip-set>
-                    <mat-chip
-                      *ngFor="let email of emailsList"
-                      (removed)="removeEmail(email)"
-                    >
-                      {{ email }}
-                      <button matChipRemove>
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip>
-                  </mat-chip-set>
-                </div>
-
-                <div class="invite-actions" *ngIf="emailsList.length > 0">
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    (click)="invitaUtenti()"
-                  >
-                    {{ 'COMMON.SEND_INVITES' | translate }} ({{ emailsList.length }})
-                  </button>
-                </div>
-              </div>
-            </mat-card-content>
-
-            <!-- BACK TO HOME BUTTON: aggiunto per permettere all'utente di tornare alla homepage dopo la creazione -->
-            <div class="confirmation-actions">
-              <button mat-raised-button class="back-home-btn" (click)="goBack()">
-                {{ 'COMMON.BACK_HOME' | translate }}
+              <button type="button" class="cn-step-btn"
+                (click)="incGiornataIniziale()"
+                [disabled]="(giornataIniziale ?? 0) >= (campionatoSel.numGiornate ?? 0)">
+                <mat-icon>add</mat-icon>
               </button>
             </div>
-          </mat-card>
+            @if (giornataTouched && !isGiornataValid()) {
+            <span class="cn-stepper-error">{{ campionatoSel.giornataDaGiocare }} &ndash; {{ campionatoSel.numGiornate }}</span>
+            }
+          </div>
+
+          <!-- Stepper: giornata FINE (opzionale) -->
+          <div class="cn-stepper">
+            <span class="cn-stepper-label">
+              {{ 'CREATE_LEAGUE.FINAL_ROUND_OPTIONAL' | translate }}
+            </span>
+            <div class="cn-stepper-control">
+              <button type="button" class="cn-step-btn"
+                (click)="decGiornataFinale()"
+                [disabled]="giornataFinale !== null && giornataFinale <= (giornataIniziale ?? 0) + 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <div class="cn-step-val">
+                @if (giornataFinale !== null) {
+                  <span class="cn-step-num">{{ giornataFinale }}</span>
+                  <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, giornataFinale) }}</span>
+                } @else {
+                  <span class="cn-step-num cn-step-num--auto">{{ campionatoSel.numGiornate }}</span>
+                  <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, campionatoSel.numGiornate ?? null) }}</span>
+                  <span class="cn-step-auto-badge">auto</span>
+                }
+              </div>
+              <button type="button" class="cn-step-btn"
+                (click)="incGiornataFinale()"
+                [disabled]="giornataFinale === null">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+
         </div>
-      </mat-card-content>
-    </mat-card>
+
+        <!-- PREVIEW DURATA -->
+        @if (isGiornataValid()) {
+        <div class="cn-duration-preview">
+          <div class="cn-dp-bar-track">
+            <div class="cn-dp-bar-fill" [style.width.%]="getLeagueDurationBarPercent()"></div>
+          </div>
+          <div class="cn-dp-info">
+            <mat-icon class="cn-dp-ico">info_outline</mat-icon>
+            <span>
+              {{ 'CREATE_LEAGUE.DURATION_PREVIEW_1' | translate }}
+              <strong>{{ getLeagueDurationRounds() }} {{ 'CREATE_LEAGUE.DURATION_ROUNDS' | translate }}</strong>
+              &nbsp;&middot;&nbsp;
+              {{ 'CREATE_LEAGUE.DURATION_FROM' | translate }}
+              <strong>{{ getDesGiornataLabel(campionatoSel, giornataIniziale) }}</strong>
+              {{ 'CREATE_LEAGUE.DURATION_TO' | translate }}
+              <strong>{{ getDesGiornataLabel(campionatoSel, getEffectiveFinalRound()) }}</strong>
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- â”€â”€ SEZIONE 4: ACCESSO â”€â”€ -->
+      <div class="cn-section cn-section--access">
+        <div class="cn-section-head cn-section-head--toggle" (click)="togglePassword()">
+          <div class="cn-section-icon" [class.cn-section-icon--muted]="!showPasswordSection && !pwd">
+            <mat-icon>{{ pwd ? 'lock' : 'lock_open' }}</mat-icon>
+          </div>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">
+              {{ 'CREATE_LEAGUE.SECTION_ACCESS' | translate }}
+              <span class="cn-badge-optional">{{ 'COMMON.OPTIONAL' | translate }}</span>
+            </h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_ACCESS_DESC' | translate }}</p>
+          </div>
+          <mat-icon class="cn-chevron" [class.cn-chevron--open]="showPasswordSection">expand_more</mat-icon>
+        </div>
+
+        @if (showPasswordSection) {
+        <mat-form-field appearance="outline" class="cn-field cn-field--appear">
+          <mat-label>{{ 'CREATE_LEAGUE.PASSWORD' | translate }}</mat-label>
+          <mat-icon matPrefix class="cn-prefix-icon">key</mat-icon>
+          <input
+            matInput
+            name="pwd"
+            [(ngModel)]="pwd"
+            type="text"
+            [placeholder]="'CREATE_LEAGUE.PASSWORD_PLACEHOLDER' | translate"
+            autocomplete="off"
+          />
+        </mat-form-field>
+        }
+      </div>
+
+      <!-- â”€â”€ CTA â”€â”€ -->
+      <button type="submit" class="cn-submit-btn" [disabled]="!isFormValid()">
+        <mat-icon class="cn-submit-ico">add_circle</mat-icon>
+        {{ 'CREATE_LEAGUE.CREATE_BUTTON' | translate }}
+      </button>
+
+    </form>
   </div>
+
+  <!-- â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CONFERMA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <div class="cn-confirmation" *ngIf="confirmationMessage">
+    <div class="cn-confirm-card">
+
+      <div class="cn-confirm-hero">
+        <div class="cn-confirm-icon-wrap">
+          <mat-icon class="cn-confirm-icon">check_circle</mat-icon>
+        </div>
+        <p class="cn-confirm-msg" [innerHTML]="'CREATE_LEAGUE.SUCCESS_MESSAGE' | translate: {name: name}"></p>
+      </div>
+
+      <div class="cn-confirm-link-section">
+        <p class="cn-confirm-link-label">{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
+        <div class="cn-link-row">
+          <a class="cn-share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
+          <button mat-icon-button class="cn-copy-btn" (click)="copyLink()" [attr.aria-label]="'COMMON.COPY_LINK' | translate">
+            <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
+          </button>
+          <span class="cn-copied-badge" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
+        </div>
+        <div class="cn-pwd-note" *ngIf="pwd">
+          <mat-icon>lock</mat-icon>
+          <span>{{ 'CREATE_LEAGUE.WITH_PASSWORD_JOIN' | translate }} <strong>{{ pwd }}</strong></span>
+        </div>
+      </div>
+
+      <div class="cn-invite-section">
+        <h3 class="cn-invite-title">
+          <mat-icon>mail_outline</mat-icon>
+          {{ 'CREATE_LEAGUE.INVITE_EMAIL' | translate }}
+        </h3>
+        <div class="cn-email-row">
+          <mat-form-field appearance="outline" class="cn-email-field" subscriptSizing="dynamic">
+            <input
+              matInput
+              [placeholder]="'CREATE_LEAGUE.EMAIL_PLACEHOLDER' | translate"
+              [(ngModel)]="emailInput"
+              (keyup.enter)="addEmail()"
+            />
+          </mat-form-field>
+          <button mat-raised-button class="cn-add-btn" (click)="addEmail()" [disabled]="!isValidEmail(emailInput)">
+            {{ 'COMMON.ADD' | translate }}
+          </button>
+        </div>
+        <div class="cn-emails-list" *ngIf="emailsList.length > 0">
+          <mat-chip-set>
+            <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
+              {{ email }}
+              <button matChipRemove><mat-icon>cancel</mat-icon></button>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+        <div class="cn-invite-actions" *ngIf="emailsList.length > 0">
+          <button mat-raised-button class="cn-send-btn" (click)="invitaUtenti()">
+            <mat-icon>send</mat-icon>
+            {{ 'COMMON.SEND_INVITES' | translate }} ({{ emailsList.length }})
+          </button>
+        </div>
+      </div>
+
+      <div class="cn-confirm-footer">
+        <button mat-raised-button class="cn-back-btn" (click)="goBack()">
+          <mat-icon>home</mat-icon>
+          {{ 'COMMON.BACK_HOME' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </main>

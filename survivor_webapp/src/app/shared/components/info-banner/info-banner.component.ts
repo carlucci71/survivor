@@ -60,6 +60,7 @@ import { Squadra } from '../../../core/models/interfaces.model';
             <li>{{ 'RULES.SECTION_4_L2' | translate }}</li>
           </ul>
           <p>{{ 'RULES.SECTION_4_P2' | translate }}</p>
+          <p>{{ 'RULES.SECTION_4_P3' | translate }}</p>
         </div>
 
         <!-- 5. Tempistiche di scelta -->

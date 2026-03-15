@@ -6,10 +6,21 @@
       <p class="app-subtitle">WIN OR GO HOME</p>
     </div>
 
-    <!-- Titolo -->
+    <!-- Tab ACCEDI / REGISTRATI -->
+    <div class="auth-tabs">
+      <button class="auth-tab" [class.active]="activeTab === 'login'" (click)="setTab('login')">
+        {{ 'AUTH.LOGIN_TITLE' | translate }}
+      </button>
+      <button class="auth-tab" [class.active]="activeTab === 'register'" (click)="setTab('register')">
+        {{ 'AUTH.REGISTER_TITLE' | translate }}
+      </button>
+    </div>
+
+    <!-- Sottotitolo contestuale -->
     <div class="card-header">
-      <h2>{{ 'AUTH.LOGIN_TITLE' | translate }}</h2>
-      <p class="subtitle">{{ 'AUTH.LOGIN_SUBTITLE' | translate }}</p>
+      <p class="subtitle">
+        {{ (activeTab === 'login' ? 'AUTH.LOGIN_SUBTITLE' : 'AUTH.REGISTER_SUBTITLE') | translate }}
+      </p>
     </div>
 
     <!-- Form -->

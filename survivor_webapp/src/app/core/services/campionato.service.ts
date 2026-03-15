@@ -50,7 +50,10 @@ export class CampionatoService {
       this.desGiornate[campionato] &&
       this.desGiornate[campionato][index]
     ) {
-      return this.desGiornate[campionato][index];
+      const label = this.desGiornate[campionato][index];
+      return label
+        .replace(/^Giornata\s/, this.translate.instant('LEAGUE.ROUND') + ' ')
+        .replace(/^Settimana\s/, this.translate.instant('LEAGUE.WEEK') + ' ');
     } else {
       return this.translate.instant('LEAGUE.ROUND') + ' ' + index;
     }

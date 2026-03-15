@@ -69,15 +69,6 @@ $shadow-color: rgba(10, 61, 145, 0.15);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
 @keyframes bellShake {
   0%, 100% { transform: rotate(0deg); }
   10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
@@ -141,16 +132,16 @@ $shadow-color: rgba(10, 61, 145, 0.15);
   }
 
   .mat-mdc-menu-panel {
-    min-width: 420px;
-    max-width: 480px;
-    border-radius: 20px !important;
+    min-width: 380px;
+    max-width: 440px;
+    border-radius: 16px !important;
     box-shadow:
-      0 20px 60px rgba(10, 61, 145, 0.25),
-      0 8px 20px rgba(79, 195, 247, 0.15),
-      0 0 1px rgba(0, 0, 0, 0.1);
+      0 12px 40px rgba(10, 61, 145, 0.2),
+      0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: #ffffff;
+    border: 1px solid rgba(10, 61, 145, 0.1);
   }
 }
 
@@ -159,52 +150,35 @@ $shadow-color: rgba(10, 61, 145, 0.15);
 // ========================================
 .notification-header {
   padding: 0;
-  background: linear-gradient(135deg, $primary-blue 0%, $primary-light 50%, $accent-blue 100%);
-  background-size: 200% 200%;
-  animation: shimmer 3s linear infinite;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-light 100%);
   position: relative;
   overflow: hidden;
-
-  // Effetto glassmorphism overlay
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-    pointer-events: none;
-  }
 
   .header-content {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 20px 24px;
+    gap: 14px;
+    padding: 16px 20px;
     position: relative;
     z-index: 1;
   }
 
   .header-icon-wrapper {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .header-icon {
-      font-size: 26px;
-      width: 26px;
-      height: 26px;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
       color: white;
-      animation: pulse 2s ease-in-out infinite;
     }
   }
 
@@ -213,25 +187,24 @@ $shadow-color: rgba(10, 61, 145, 0.15);
 
     h3 {
       margin: 0;
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       font-family: 'Poppins', sans-serif;
       color: white;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
     }
 
     .notification-count {
       display: inline-block;
       margin-top: 4px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.9);
-      padding: 3px 10px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
     }
   }
 }
@@ -592,30 +565,30 @@ $shadow-color: rgba(10, 61, 145, 0.15);
 
   ::ng-deep .notification-menu {
     .mat-mdc-menu-panel {
-      min-width: 380px;
-      max-width: 420px;
-      border-radius: 18px !important;
+      min-width: 340px;
+      max-width: 400px;
+      border-radius: 14px !important;
     }
   }
 
   .notification-header {
     .header-content {
-      padding: 18px 20px;
+      padding: 14px 16px;
     }
 
     .header-icon-wrapper {
-      width: 44px;
-      height: 44px;
+      width: 36px;
+      height: 36px;
 
       .header-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
       }
     }
 
     .header-text h3 {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
     }
   }
 
@@ -670,36 +643,36 @@ $shadow-color: rgba(10, 61, 145, 0.15);
     .mat-mdc-menu-panel {
       min-width: 92vw;
       max-width: 95vw;
-      border-radius: 16px !important;
+      border-radius: 14px !important;
       max-height: 80vh;
     }
   }
 
   .notification-header {
     .header-content {
-      padding: 16px 18px;
-      gap: 12px;
+      padding: 12px 14px;
+      gap: 10px;
     }
 
     .header-icon-wrapper {
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
 
       .header-icon {
-        font-size: 22px;
-        width: 22px;
-        height: 22px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
 
     .header-text {
       h3 {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
       }
 
       .notification-count {
-        font-size: 0.7rem;
-        padding: 2px 8px;
+        font-size: 0.68rem;
+        padding: 2px 6px;
       }
     }
   }

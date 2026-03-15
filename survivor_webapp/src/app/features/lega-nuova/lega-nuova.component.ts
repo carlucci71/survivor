@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { SportService } from '../../core/services/sport.service';
 import { Campionato, Sport } from '../../core/models/interfaces.model';
 import { CampionatoService } from '../../core/services/campionato.service';
@@ -36,6 +37,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FormsModule,
     MatChipsModule,
     MatIconModule,
+    MatTooltipModule,
     TranslateModule,
   ],
   templateUrl: './lega-nuova.component.html',
@@ -54,6 +56,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   campionatoSel: Campionato | null = null;
   name!: string;
   giornataIniziale: number | null = null;
+  giornataFinale: number | null = null;
   pwd: string | null = null;
   sportDisponibili: Sport[] = [];
   campionatiDisponibili: Campionato[] = [];
@@ -62,11 +65,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   sportTouched = false;
   campionatoTouched = false;
   giornataTouched = false;
+  giornataFinaleTouched = false;
   confirmationMessage: boolean = false;
   legaCreataId: number | null = null;
   emailInput: string = '';
   emailsList: string[] = [];
   copied = false;
+  showPasswordSection = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -134,6 +139,108 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getSportIcon(id: string): string {
+    const icons: Record<string, string> = {
+      CALCIO: 'sports_soccer',
+      BASKET: 'sports_basketball',
+      TENNIS: 'sports_tennis'
+    };
+    return icons[id] ?? 'sports';
+  }
+
+  selectSport(id: string): void {
+    this.sportSel = id;
+    this.sportTouched = true;
+    this.campionatoSel = null;
+    this.giornataIniziale = null;
+    this.giornataFinale = null;
+    this.selezionaSport();
+  }
+
+  onCampionatoChange(): void {
+    this.giornataIniziale = this.campionatoSel?.giornataDaGiocare ?? null;
+    this.giornataFinale = null;
+    this.giornataTouched = false;
+    this.giornataFinaleTouched = false;
+  }
+
+  onGiornataChange(): void {
+    if (this.giornataFinale !== null && this.giornataIniziale !== null
+        && this.giornataFinale <= this.giornataIniziale) {
+      this.giornataFinale = null;
+    }
+  }
+
+  togglePassword(): void {
+    this.showPasswordSection = !this.showPasswordSection;
+    if (!this.showPasswordSection) this.pwd = null;
+  }
+
+  selectCampionato(c: Campionato): void {
+    this.campionatoSel = c;
+    this.campionatoTouched = true;
+    this.onCampionatoChange();
+  }
+
+  incGiornataIniziale(): void {
+    const max = this.campionatoSel?.numGiornate ?? 99;
+    const min = this.campionatoSel?.giornataDaGiocare ?? 1;
+    const cur = this.giornataIniziale ?? (min - 1);
+    if (cur < max) {
+      this.giornataIniziale = cur + 1;
+      this.giornataTouched = true;
+      this.onGiornataChange();
+    }
+  }
+
+  decGiornataIniziale(): void {
+    const min = this.campionatoSel?.giornataDaGiocare ?? 1;
+    if (this.giornataIniziale !== null && this.giornataIniziale > min) {
+      this.giornataIniziale--;
+      this.giornataTouched = true;
+      this.onGiornataChange();
+    }
+  }
+
+  incGiornataFinale(): void {
+    if (this.giornataFinale === null) return;
+    const max = this.campionatoSel?.numGiornate ?? 99;
+    if (this.giornataFinale < max - 1) {
+      this.giornataFinale++;
+    } else {
+      this.giornataFinale = null; // torna a "fine stagione"
+    }
+  }
+
+  decGiornataFinale(): void {
+    const max = this.campionatoSel?.numGiornate ?? 99;
+    const min = (this.giornataIniziale ?? 1) + 1;
+    const cur = this.giornataFinale ?? max;
+    if (cur > min) {
+      this.giornataFinale = cur - 1;
+    }
+  }
+
+  getEffectiveFinalRound(): number {
+    if (this.giornataFinale !== null && this.giornataFinale !== undefined) return this.giornataFinale;
+    return this.campionatoSel?.numGiornate ?? (this.giornataIniziale ?? 1);
+  }
+
+  getLeagueDurationRounds(): number {
+    if (!this.giornataIniziale) return 0;
+    return Math.max(1, this.getEffectiveFinalRound() - this.giornataIniziale + 1);
+  }
+
+  getLeagueDurationBarPercent(): number {
+    if (!this.campionatoSel?.numGiornate || !this.giornataIniziale) return 0;
+    return Math.min(100, (this.getLeagueDurationRounds() / this.campionatoSel.numGiornate) * 100);
+  }
+
+  getDesGiornataLabel(campionato: Campionato | null, round: number | null): string {
+    if (!campionato?.id || round === null || round === undefined) return '-';
+    return this.campionatoService.getDesGiornataNoAlias(campionato.id, round);
+  }
+
   isGiornataValid(): boolean {
     if (this.giornataIniziale === null || this.giornataIniziale === undefined)
       return false;
@@ -143,12 +250,22 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     return this.giornataIniziale >= min && this.giornataIniziale <= max;
   }
 
+  isGiornataFinaleValid(): boolean {
+    // Campo opzionale: se vuoto è valido
+    if (this.giornataFinale === null || this.giornataFinale === undefined) return true;
+    if (!this.campionatoSel || this.giornataIniziale === null) return false;
+    const min = this.giornataIniziale + 1;
+    const max = this.campionatoSel.numGiornate ?? Infinity;
+    return this.giornataFinale >= min && this.giornataFinale <= max;
+  }
+
   isFormValid(): boolean {
     return (
       !!this.name &&
       !!this.sportSel &&
       !!this.campionatoSel &&
-      this.isGiornataValid()
+      this.isGiornataValid() &&
+      this.isGiornataFinaleValid()
     );
   }
 
@@ -157,11 +274,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.sportSel = null;
     this.campionatoSel = null;
     this.giornataIniziale = null;
+    this.giornataFinale = null;
     this.pwd = null;
     this.nameTouched = false;
     this.sportTouched = false;
     this.campionatoTouched = false;
     this.giornataTouched = false;
+    this.giornataFinaleTouched = false;
     this.campionatiDisponibili = [];
   }
 
@@ -170,6 +289,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.sportTouched = true;
     this.campionatoTouched = true;
     this.giornataTouched = true;
+    this.giornataFinaleTouched = true;
 
     if (!this.isFormValid()) {
       return;
@@ -180,6 +300,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.sportSel!,
         this.campionatoSel!.id,
         this.giornataIniziale!,
+        this.giornataFinale,
         this.pwd
       )
       .subscribe({
