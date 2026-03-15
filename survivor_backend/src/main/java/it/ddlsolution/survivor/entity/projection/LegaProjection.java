@@ -18,4 +18,6 @@ public interface LegaProjection {
     Integer getGiornataCalcolata();
     CampionatoProjection getCampionato();
     boolean isPubblica();
+    boolean isAccessoLibero();
+    Integer getMaxPartecipanti();
 }

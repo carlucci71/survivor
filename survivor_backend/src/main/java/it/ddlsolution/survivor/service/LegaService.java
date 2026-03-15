@@ -117,6 +117,7 @@ public class LegaService {
                 giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
                 giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
                 legaDTO.setGiocatori(List.of(giocatoreDTO));
+                legaDTO.setNumPartecipanti(giocatoreLegaService.countByLegaId(id));
 
             }
             if (legaDTO.getStato()== Enumeratori.StatoLega.ERRORE){

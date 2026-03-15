@@ -24,5 +24,9 @@ public class GiocatoreLegaService {
         return giocatoreLegaRepository.save(giocatoreLega);
     }
 
+    public int countByLegaId(Long legaId) {
+        return giocatoreLegaRepository.countPartecipantiByLegaId(legaId);
+    }
+
 }
 
