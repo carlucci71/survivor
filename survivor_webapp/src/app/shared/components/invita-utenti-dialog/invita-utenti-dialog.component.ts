@@ -29,897 +29,440 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   template: `
     <div class="dialog-container">
+
+      <!-- HEADER -->
       <div class="dialog-header">
-        <h2 class="dialog-title">{{ 'INVITE_USERS.TITLE' | translate }} {{ data.legaNome }}</h2>
+        <div class="dialog-header-icon">
+          <mat-icon>group_add</mat-icon>
+        </div>
+        <div class="dialog-header-text">
+          <h2 class="dialog-title">{{ data.legaNome }}</h2>
+          <p class="dialog-subtitle">{{ 'INVITE_USERS.SUBTITLE' | translate }}</p>
+        </div>
         <button mat-icon-button class="close-btn" (click)="onCancel()">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
-      <div class="dialog-content" [class.scroll-enabled]="shouldEnableScroll()">
-        <div class="invite-section">
-          <p class="instructions">{{ 'INVITE_USERS.INSTRUCTIONS' | translate }}</p>
+      <!-- BODY -->
+      <div class="dialog-body" [class.scroll-enabled]="shouldEnableScroll()">
 
-          <div class="share-link-section" *ngIf="canShare()">
-            <button class="share-btn" (click)="shareLink()" type="button">
-              <mat-icon>share</mat-icon>
-              <span>{{ 'COMMON.SHARE_LINK' | translate }}</span>
-            </button>
-            <div class="or-divider"><span>{{ 'INVITE_USERS.OR_EMAIL' | translate }}</span></div>
-          </div>
+        <!-- Bottone condividi -->
+        <button *ngIf="canShare()" class="share-btn" (click)="shareLink()" type="button">
+          <mat-icon>share</mat-icon>
+          <span>{{ 'COMMON.SHARE_LINK' | translate }}</span>
+        </button>
 
-          <div class="email-input-section">
-            <mat-form-field appearance="outline" class="email-field">
-              <input
-                matInput
-                [placeholder]="'INVITE_USERS.EMAIL_PLACEHOLDER' | translate"
-                [(ngModel)]="emailInput"
-                (keyup.enter)="addEmail()"
-              />
-            </mat-form-field>
-            <button class="add-btn"
-                    (click)="addEmail()"
-                    [disabled]="!isValidEmail(emailInput)"
-                    type="button"
-                    [attr.aria-label]="'INVITE_USERS.ADD_EMAIL' | translate">
-              <span>{{ 'COMMON.ADD' | translate }}</span>
-            </button>
-          </div>
-
-          <div class="emails-list" *ngIf="emailsList.length > 0">
-            <mat-chip-set>
-              <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
-                {{email}}
-                <button matChipRemove>
-                  <mat-icon>cancel</mat-icon>
-                </button>
-              </mat-chip>
-            </mat-chip-set>
-          </div>
-
-          <div class="invite-success" *ngIf="inviteSuccess">
-            <div class="success-message">
-              <mat-icon>check_circle</mat-icon>
-              <span>{{ 'INVITE_USERS.SUCCESS' | translate }}</span>
-            </div>
-          </div>
-
-          <div class="invite-error" *ngIf="inviteError">
-            <div class="error-message">
-              <mat-icon>error</mat-icon>
-              <span>{{inviteError}}</span>
-            </div>
-          </div>
+        <!-- Divider -->
+        <div class="or-divider" *ngIf="canShare()">
+          <span>{{ 'INVITE_USERS.OR_EMAIL' | translate }}</span>
         </div>
+
+        <!-- Input email + aggiungi -->
+        <div class="email-row">
+          <div class="email-input-wrap">
+            <mat-icon class="email-icon">email</mat-icon>
+            <input
+              class="email-input"
+              type="email"
+              autocomplete="off"
+              [placeholder]="'INVITE_USERS.EMAIL_PLACEHOLDER' | translate"
+              [(ngModel)]="emailInput"
+              (keyup.enter)="addEmail()"
+            />
+          </div>
+          <button class="add-btn"
+                  (click)="addEmail()"
+                  [disabled]="!isValidEmail(emailInput)"
+                  type="button">
+            {{ 'COMMON.ADD' | translate }}
+          </button>
+        </div>
+
+        <!-- Chips email aggiunte -->
+        <div class="emails-list" *ngIf="emailsList.length > 0">
+          <mat-chip-set>
+            <mat-chip *ngFor="let email of emailsList" (removed)="removeEmail(email)">
+              {{email}}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <!-- Successo / Errore -->
+        <div class="feedback-message feedback-success" *ngIf="inviteSuccess">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ 'INVITE_USERS.SUCCESS' | translate }}</span>
+        </div>
+        <div class="feedback-message feedback-error" *ngIf="inviteError">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{inviteError}}</span>
+        </div>
+
       </div>
 
-      <div class="dialog-actions">
-        <button class="cancel-btn" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
+      <!-- FOOTER -->
+      <div class="dialog-footer">
+        <button class="btn-cancel" (click)="onCancel()">{{ 'COMMON.CANCEL' | translate }}</button>
         <button
-          class="send-btn"
+          class="btn-send"
           (click)="invitaUtenti()"
           [disabled]="emailsList.length === 0 || inviteSuccess"
         >
+          <mat-icon>send</mat-icon>
           {{ 'COMMON.SEND_INVITES' | translate }} ({{emailsList.length}})
         </button>
       </div>
+
     </div>
   `,
   styles: [`
-    /* DIALOG RESPONSIVE CONTAINER */
-    .dialog-container {
-      max-width: 90vw;
-      width: 100%;
-      max-height: 90vh;
-      overflow: hidden;
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.2);
-      font-family: 'Poppins', sans-serif;
-      position: relative;
+    /* ── MATERIAL DIALOG OVERRIDE ── */
+    ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+      padding: 0 !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18) !important;
+    }
+    ::ng-deep .mat-mdc-dialog-container {
+      padding: 0 !important;
     }
 
-    /* HEADER CON TITOLO E X CHIUSURA */
+    $blue: #0A3D91;
+    $cyan: #4FC3F7;
+    $white: #FFFFFF;
+    $text: #1A1A2E;
+    $muted: #6B7280;
+    $border: rgba(10, 61, 145, 0.14);
+    $radius: 16px;
+    $radius-sm: 10px;
+
+    /* ── CONTAINER ── */
+    .dialog-container {
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      background: $white;
+      border-radius: $radius;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* ── HEADER ── */
     .dialog-header {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px 60px 20px 24px; /* Più spazio a destra per la X */
-      border-bottom: none;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-      border-radius: 16px 16px 0 0;
+      gap: 14px;
+      padding: 20px 20px 20px 22px;
+      background: linear-gradient(135deg, #040f2e 0%, $blue 60%, #1565C0 100%);
       position: relative;
-      min-height: 70px;
-
-      .dialog-title {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #FFFFFF;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        text-align: center;
-        line-height: 1.3;
-        width: 100%;
-        word-wrap: break-word;
-        hyphens: auto;
-      }
-
-      .close-btn {
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.15);
-        color: #FFFFFF;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-50%) scale(1.1);
-        }
-
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-          line-height: 20px;
-        }
-      }
+      flex-shrink: 0;
     }
 
-    /* CONTENUTO PRINCIPALE */
-    .dialog-content {
-      padding: 28px;
-
-      /* Scroll dinamico - attivato solo quando necessario */
-      &.scroll-enabled {
-        max-height: 50vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-
-        /* Scrollbar personalizzata */
-        &::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-          background: #F4F6F8;
-          border-radius: 3px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background: #0A3D91;
-          border-radius: 3px;
-
-          &:hover {
-            background: #4FC3F7;
-          }
-        }
-      }
-
-      .instructions {
-        margin: 0 0 24px 0;
-        color: #6B7280;
-        font-weight: 500;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        text-align: center;
-        padding: 16px 20px;
-        background: rgba(248, 250, 252, 0.5);
-        border-radius: 12px;
-        border: none;
-      }
-
-      .share-link-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        margin-bottom: 24px;
-
-        .share-btn {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          width: 100%;
-          padding: 14px 24px;
-          background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-          color: #FFFFFF;
-          border: none;
-          border-radius: 12px;
-          font-family: 'Poppins', sans-serif;
-          font-size: 1rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          cursor: pointer;
-          justify-content: center;
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 16px rgba(10, 61, 145, 0.25);
-
-          &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
-          }
-
-          mat-icon {
-            font-size: 22px;
-            width: 22px;
-            height: 22px;
-            line-height: 22px;
-          }
-        }
-
-        .or-divider {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          margin: 18px 0 0;
-          gap: 12px;
-          color: #9CA3AF;
-          font-size: 0.85rem;
-
-          &::before, &::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #E5E7EB;
-          }
-        }
-      }
-
-      /* SEZIONE INPUT EMAIL - COMPLETAMENTE RIDISEGNATA */
-      .email-input-section {
-        display: flex;
-        gap: 20px;
-        align-items: flex-end;
-        margin-bottom: 32px;
-        flex-wrap: wrap;
-
-        .email-field {
-          flex: 1;
-          min-width: 280px;
-
-          ::ng-deep .mat-mdc-text-field-wrapper {
-            border-radius: 12px;
-            background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-            &:focus-within {
-              border-color: #0A3D91;
-              background: #FFFFFF;
-              box-shadow: 0 4px 16px rgba(10, 61, 145, 0.15);
-              transform: translateY(-1px);
-            }
-
-            &:hover:not(:focus-within) {
-              border-color: #4FC3F7;
-              box-shadow: 0 3px 12px rgba(10, 61, 145, 0.08);
-            }
-          }
-
-          ::ng-deep .mat-mdc-form-field-flex {
-            padding: 16px 20px !important;
-            min-height: 60px !important;
-          }
-
-          ::ng-deep .mat-mdc-form-field-infix {
-            padding: 14px 0 !important;
-            min-height: 28px !important;
-            border-top: none !important;
-          }
-
-          ::ng-deep input {
-            font-size: 1rem !important;
-            font-family: 'Poppins', sans-serif !important;
-            color: #1F2937 !important;
-            padding: 0 !important;
-            font-weight: 500 !important;
-
-            &::placeholder {
-              color: #9CA3AF !important;
-              font-weight: 400 !important;
-              font-size: 0.95rem !important;
-            }
-          }
-
-          /* NASCONDO COMPLETAMENTE LA LABEL FLOATING PER EVITARE SOVRAPPOSIZIONI */
-          ::ng-deep .mat-mdc-form-field-label {
-            display: none !important;
-          }
-
-          ::ng-deep .mat-mdc-floating-label {
-            display: none !important;
-          }
-
-          ::ng-deep .mat-mdc-form-field-label-wrapper {
-            display: none !important;
-          }
-        }
-
-        .add-btn {
-          background: #FFFFFF !important;
-          color: #6B7280 !important;
-          border: 2px solid #E5E7EB !important;
-          border-radius: 12px !important;
-          padding: 16px 24px !important;
-          font-weight: 600 !important;
-          font-family: 'Poppins', sans-serif !important;
-          font-size: 0.9rem !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.5px !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
-          transition: all 0.3s ease !important;
-          cursor: pointer;
-          min-width: 120px;
-          height: 60px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          &:hover:not(:disabled) {
-            border-color: #6B7280 !important;
-            color: #374151 !important;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
-          }
-
-          &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #F9FAFB !important;
-            color: #9CA3AF !important;
-            border-color: #E5E7EB !important;
-            transform: none !important;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.03) !important;
-          }
-
-          span {
-            position: relative;
-            z-index: 1;
-          }
-        }
-      }
-
-      /* LISTA EMAIL AGGIUNTE - DESIGN PULITO */
-      .emails-list {
-        margin-bottom: 24px;
-        padding: 16px;
-        background: rgba(248, 250, 252, 0.3);
-        border-radius: 12px;
-        border: none;
-
-        ::ng-deep mat-chip-set {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          min-height: auto;
-
-          mat-chip {
-            background: #FFFFFF !important;
-            color: #374151 !important;
-            border: none !important;
-            border-radius: 16px !important;
-            font-weight: 500 !important;
-            font-family: 'Poppins', sans-serif !important;
-            padding: 8px 12px !important;
-            font-size: 0.8rem !important;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
-            transition: all 0.2s ease !important;
-
-            &:hover {
-              transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
-            }
-
-            button[matChipRemove] {
-              background: rgba(220, 38, 38, 0.1) !important;
-              border: none !important;
-              border-radius: 50% !important;
-              cursor: pointer !important;
-              padding: 2px !important;
-              margin-left: 8px !important;
-              width: 16px !important;
-              height: 16px !important;
-              display: flex !important;
-              align-items: center !important;
-              justify-content: center !important;
-              transition: all 0.2s ease !important;
-
-              mat-icon {
-                font-size: 10px !important;
-                width: 10px !important;
-                height: 10px !important;
-                color: #DC2626 !important;
-                font-weight: bold !important;
-              }
-
-              &:hover {
-                background: rgba(220, 38, 38, 0.2) !important;
-                transform: scale(1.1) !important;
-
-                mat-icon {
-                  color: #B91C1C !important;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      /* MESSAGGIO SUCCESSO */
-      .invite-success {
-        margin-bottom: 20px;
-
-        .success-message {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px;
-          background: linear-gradient(135deg, #10B981, #34D399);
-          color: #FFFFFF;
-          border-radius: 12px;
-          font-weight: 600;
-
-          mat-icon {
-            font-size: 24px;
-          }
-        }
-      }
-
-      /* MESSAGGIO ERRORE */
-      .invite-error {
-        margin-bottom: 20px;
-
-        .error-message {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px;
-          background: linear-gradient(135deg, #EF4444, #F87171);
-          color: #FFFFFF;
-          border-radius: 12px;
-          font-weight: 600;
-
-          mat-icon {
-            font-size: 24px;
-          }
-        }
-      }
-    }
-
-    /* AZIONI DIALOG - BOTTONI MODERNI */
-    .dialog-actions {
+    .dialog-header-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
       display: flex;
-      justify-content: flex-end;
-      gap: 16px;
-      padding: 24px 28px;
-      border-top: none;
-      background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
-      border-radius: 0 0 16px 16px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
 
-      .cancel-btn {
-        background: #FFFFFF !important;
-        color: #6B7280 !important;
-        border: 2px solid #E5E7EB !important;
-        border-radius: 12px !important;
-        padding: 14px 28px !important;
+      mat-icon {
+        color: $white;
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    .dialog-header-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dialog-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: $white;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dialog-subtitle {
+      margin: 3px 0 0;
+      font-size: 0.73rem;
+      color: rgba(255,255,255,0.75);
+      font-weight: 400;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .close-btn {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.14) !important;
+      color: $white !important;
+      border-radius: 50% !important;
+      width: 36px !important;
+      height: 36px !important;
+      transition: background 0.2s ease !important;
+
+      &:hover { background: rgba(255,255,255,0.25) !important; }
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+
+    /* ── BODY ── */
+    .dialog-body {
+      flex: 1;
+      padding: 20px 20px 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      &.scroll-enabled {
+        max-height: 55vh;
+
+        &::-webkit-scrollbar { width: 5px; }
+        &::-webkit-scrollbar-track { background: #F4F6F8; border-radius: 3px; }
+        &::-webkit-scrollbar-thumb { background: $blue; border-radius: 3px; }
+      }
+    }
+
+    /* ── SHARE ── */
+    .share-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 20px;
+      background: linear-gradient(135deg, $blue, $cyan);
+      color: $white;
+      border: none;
+      border-radius: $radius-sm;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(10, 61, 145, 0.25);
+      transition: all 0.2s ease;
+
+      mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+      &:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(10, 61, 145, 0.35); }
+    }
+
+    /* ── DIVIDER ── */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: $muted;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+
+      &::before, &::after { content: ''; flex: 1; height: 1px; background: rgba(10, 61, 145, 0.18); }
+    }
+
+    /* ── EMAIL INPUT ── */
+    .email-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .email-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: $white;
+      border: 2px solid $border;
+      border-radius: $radius-sm;
+      padding: 0 14px;
+      height: 50px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      min-width: 0;
+
+      &:focus-within {
+        border-color: $blue;
+        box-shadow: 0 0 0 3px rgba(10, 61, 145, 0.1);
+      }
+    }
+
+    .email-icon {
+      color: $muted;
+      font-size: 18px !important;
+      width: 18px !important;
+      height: 18px !important;
+      flex-shrink: 0;
+    }
+
+    .email-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.88rem;
+      color: $text;
+      font-weight: 500;
+      min-width: 0;
+
+      &::placeholder { color: $muted; font-weight: 400; }
+    }
+
+    .add-btn {
+      flex-shrink: 0;
+      height: 50px;
+      padding: 0 20px;
+      background: $white;
+      color: $blue;
+      border: 2px solid $blue;
+      border-radius: $radius-sm;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+
+      &:hover:not(:disabled) { background: $blue; color: $white; }
+
+      &:disabled {
+        background: #F9FAFB;
+        color: #9CA3AF;
+        border-color: #E5E7EB;
+        cursor: not-allowed;
+      }
+    }
+
+    /* ── CHIPS ── */
+    .emails-list {
+      ::ng-deep mat-chip-set { display: flex; flex-wrap: wrap; gap: 6px; min-height: auto; }
+
+      ::ng-deep mat-chip {
+        background: rgba(10, 61, 145, 0.07) !important;
+        color: $blue !important;
+        font-family: 'Poppins', sans-serif !important;
+        font-size: 0.78rem !important;
         font-weight: 600 !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-size: 0.9rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
-
-        &:hover {
-          border-color: #6B7280 !important;
-          color: #374151 !important;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
-        }
-      }
-
-      .send-btn {
-        background: linear-gradient(135deg, #0A3D91, #4FC3F7) !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 14px 28px !important;
-        font-weight: 700 !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-size: 0.9rem !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        box-shadow: 0 8px 24px rgba(10, 61, 145, 0.2) !important;
-        transition: all 0.3s ease !important;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-          opacity: 0;
-          transition: all 0.3s ease;
-          transform: scale(0);
-          border-radius: inherit;
-        }
-
-        &:hover:not(:disabled) {
-          transform: translateY(-3px);
-          box-shadow: 0 12px 40px rgba(10, 61, 145, 0.3) !important;
-
-          &::before {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        &:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-          background: linear-gradient(135deg, #E5E7EB, #F3F4F6) !important;
-          color: #9CA3AF !important;
-          transform: none !important;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-
-          &::before {
-            display: none;
-          }
-        }
-
-        span {
-          position: relative;
-          z-index: 1;
-        }
+        border-radius: 20px !important;
       }
     }
 
-    /* RESPONSIVE TABLET */
-    @media (max-width: 768px) {
-      .dialog-container {
-        max-width: 95vw;
-        max-height: 90vh;
-        padding: 20px;
-      }
+    /* ── FEEDBACK ── */
+    .feedback-message {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: $radius-sm;
+      font-weight: 600;
+      font-size: 0.88rem;
 
-      .dialog-header {
-        padding: 20px 16px;
+      mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; }
+    }
 
-        .dialog-title {
-          font-size: 1.1rem;
-          max-width: calc(100% - 60px);
-          letter-spacing: 0.4px;
-        }
+    .feedback-success { background: rgba(16,185,129,0.1); color: #059669; }
+    .feedback-error   { background: rgba(239,68,68,0.1);  color: #DC2626; }
 
-        .close-btn {
-          right: 16px;
-          width: 40px;
-          height: 40px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+    /* ── FOOTER ── */
+    .dialog-footer {
+      display: flex;
+      gap: 10px;
+      padding: 14px 20px 18px;
+      border-top: 1px solid $border;
+      flex-shrink: 0;
+      background: #FAFBFD;
+    }
 
-          mat-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-          }
-        }
-      }
+    .btn-cancel {
+      flex: 1;
+      height: 46px;
+      background: $white;
+      color: $muted;
+      border: 2px solid #E5E7EB;
+      border-radius: $radius-sm;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-      .dialog-content {
-        padding: 0;
+      &:hover { border-color: $muted; color: $text; }
+    }
 
-        .instructions {
-          font-size: 0.9rem;
-          margin-bottom: 16px;
-        }
+    .btn-send {
+      flex: 2;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, $blue, $cyan);
+      color: $white;
+      border: none;
+      border-radius: $radius-sm;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(10, 61, 145, 0.22);
+      transition: all 0.2s ease;
 
-        .email-input-section {
-          flex-direction: column;
-          gap: 12px;
-          align-items: stretch;
+      mat-icon { font-size: 16px; width: 16px; height: 16px; }
 
-          .email-field {
-            min-width: auto;
-            width: 100%;
+      &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(10, 61, 145, 0.32); }
 
-            ::ng-deep .mat-mdc-form-field-flex {
-              min-height: 52px !important;
-            }
-          }
-
-          .add-btn {
-            width: 100%;
-            height: 52px;
-            font-size: 0.85rem !important;
-            padding: 12px 18px !important;
-          }
-        }
-
-        .emails-list {
-          padding: 8px;
-          margin-bottom: 16px;
-
-          ::ng-deep mat-chip-set {
-            gap: 6px;
-
-            mat-chip {
-              font-size: 0.7rem !important;
-              padding: 3px 6px !important;
-
-              button[matChipRemove] {
-                width: 12px !important;
-                height: 12px !important;
-                margin-left: 4px !important;
-
-                mat-icon {
-                  font-size: 8px !important;
-                  width: 8px !important;
-                  height: 8px !important;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .dialog-actions {
-        flex-direction: column;
-        gap: 8px;
-
-        .cancel-btn,
-        .send-btn {
-          width: 100%;
-          padding: 12px 20px !important;
-          font-size: 0.85rem !important;
-        }
+      &:disabled {
+        background: #E5E7EB;
+        color: #9CA3AF;
+        box-shadow: none;
+        cursor: not-allowed;
       }
     }
 
-    /* RESPONSIVE MOBILE */
+    /* ── RESPONSIVE ── */
     @media (max-width: 480px) {
-      .dialog-container {
-        max-width: 98vw;
-        max-height: 95vh;
-        padding: 16px;
-        margin: 0;
-        border-radius: 12px;
+      .dialog-header { padding: 16px; gap: 10px; }
+      .dialog-header-icon { width: 38px; height: 38px; border-radius: 10px;
+        mat-icon { font-size: 18px; width: 18px; height: 18px; }
       }
+      .dialog-title { font-size: 0.88rem; }
+      .dialog-subtitle { font-size: 0.7rem; }
 
-      .dialog-header {
-        padding: 16px 12px;
+      .dialog-body { padding: 14px 14px 4px; gap: 12px; }
 
-        .dialog-title {
-          font-size: 1rem;
-          max-width: calc(100% - 50px);
-          letter-spacing: 0.3px;
-          line-height: 1.2;
-        }
+      .email-row { flex-direction: column; align-items: stretch; }
+      .email-input-wrap { height: 48px; }
+      .add-btn { height: 48px; width: 100%; }
 
-        .close-btn {
-          right: 12px;
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          mat-icon {
-            font-size: 18px;
-            width: 18px;
-            height: 18px;
-            line-height: 18px;
-          }
-        }
-      }
-
-      .dialog-content {
-        padding: 0;
-
-        .instructions {
-          font-size: 0.85rem;
-          margin-bottom: 14px;
-        }
-
-        .email-input-section {
-          flex-direction: column;
-          gap: 12px;
-          align-items: stretch;
-
-          .email-field {
-            min-width: auto;
-
-            ::ng-deep .mat-mdc-form-field-flex {
-              padding: 10px 14px !important;
-              min-height: 48px !important;
-            }
-
-            ::ng-deep input {
-              font-size: 0.9rem !important;
-            }
-
-            ::ng-deep .mat-mdc-floating-label {
-              top: 22px !important;
-            }
-
-            ::ng-deep .mat-mdc-floating-label.mdc-floating-label--float-above {
-              top: 6px !important;
-            }
-          }
-
-          .add-btn {
-            width: 100%;
-            height: 48px;
-            font-size: 0.8rem !important;
-            padding: 12px 16px !important;
-          }
-        }
-
-        .emails-list {
-          padding: 8px;
-          margin-bottom: 12px;
-
-          ::ng-deep mat-chip-set {
-            gap: 6px;
-
-            mat-chip {
-              font-size: 0.65rem !important;
-              padding: 2px 6px !important;
-
-              button[matChipRemove] {
-                width: 12px !important;
-                height: 12px !important;
-                margin-left: 3px !important;
-
-                mat-icon {
-                  font-size: 7px !important;
-                  width: 7px !important;
-                  height: 7px !important;
-                }
-              }
-            }
-          }
-        }
-      }
-
-      .dialog-actions {
-        padding: 16px 0;
-        flex-direction: column;
-        gap: 8px;
-
-        .cancel-btn,
-        .send-btn {
-          width: 100%;
-          padding: 12px 16px !important;
-          font-size: 0.8rem !important;
-        }
-      }
-    }
-
-    @media (max-width: 360px) {
-      .dialog-container {
-        max-width: 100vw;
-        max-height: 100vh;
-        padding: 12px;
-        margin: 0;
-        border-radius: 0;
-      }
-
-      .dialog-content {
-        .instructions {
-          font-size: 0.8rem;
-          margin-bottom: 12px;
-        }
-
-        .email-input-section {
-          gap: 10px;
-
-          .add-btn {
-            height: 44px;
-            font-size: 0.75rem !important;
-          }
-        }
-      }
-    }
-
-    @media (max-width: 320px) {
-      .dialog-header {
-        padding: 12px 12px;
-
-        .dialog-title {
-          font-size: 0.9rem;
-          max-width: calc(100% - 45px);
-          letter-spacing: 0.2px;
-          line-height: 1.1;
-        }
-
-        .close-btn {
-          right: 12px;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-            line-height: 16px;
-          }
-        }
-      }
-
-      .dialog-content {
-        padding: 16px;
-
-        .instructions {
-          font-size: 0.9rem;
-        }
-
-        .email-input-section {
-          .email-field {
-            ::ng-deep .mat-mdc-form-field-flex {
-              padding: 8px 12px !important;
-              min-height: 40px !important;
-            }
-
-            ::ng-deep input {
-              font-size: 0.85rem !important;
-            }
-
-            ::ng-deep .mat-mdc-form-field-label {
-              font-size: 0.85rem !important;
-            }
-
-            ::ng-deep .mat-mdc-floating-label {
-              top: 20px !important;
-            }
-
-            ::ng-deep .mat-mdc-floating-label.mdc-floating-label--float-above {
-              top: 4px !important;
-            }
-          }
-
-          .add-btn {
-            width: 100px;
-            padding: 8px 16px !important;
-            font-size: 0.8rem !important;
-          }
-        }
-
-      }
-
-      .dialog-actions {
-        padding: 14px 16px;
-
-        .cancel-btn,
-        .send-btn {
-          padding: 10px 20px !important;
-          font-size: 0.85rem !important;
-        }
-      }
+      .dialog-footer { padding: 10px 14px 14px; }
+      .btn-cancel, .btn-send { height: 44px; font-size: 0.8rem !important; }
     }
   `]
 })

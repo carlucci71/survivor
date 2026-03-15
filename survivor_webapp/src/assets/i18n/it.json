@@ -630,11 +630,12 @@
   },
   "INVITE_USERS": {
     "TITLE": "Invita Utenti a",
+    "SUBTITLE": "Condividi la lega con chi vuoi o invia un invito diretto via email.",
     "INSTRUCTIONS": "Inserisci gli indirizzi email degli utenti che vuoi invitare:",
-    "EMAIL_PLACEHOLDER": "Inserisci indirizzo email (es. utente@esempio.com)",
+    "EMAIL_PLACEHOLDER": "es. amico@esempio.com",
     "ADD_EMAIL": "Aggiungi indirizzo email alla lista",
     "SUCCESS": "Inviti inviati con successo!",
-    "OR_EMAIL": "oppure invita via email"
+    "OR_EMAIL": "oppure invia un invito via email"
   },
   "TERMS": {
     "TITLE": "Termini e Condizioni di Utilizzo",
