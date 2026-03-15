@@ -124,6 +124,44 @@
   }
 }
 
+/* Tab ACCEDI / REGISTRATI */
+.auth-tabs {
+  display: flex;
+  border-bottom: 2px solid #E0E0E0;
+  margin-bottom: 28px;
+
+  .auth-tab {
+    flex: 1;
+    padding: 12px 8px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9CA3AF;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    &:hover:not(.active) {
+      color: #4FC3F7;
+    }
+
+    &.active {
+      color: #0A3D91;
+      border-bottom-color: #0A3D91;
+    }
+
+    @media (max-width: 600px) {
+      font-size: 14px;
+      padding: 10px 6px;
+    }
+  }
+}
+
 /* Form */
 .login-form {
   .form-group {

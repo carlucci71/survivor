@@ -52,14 +52,14 @@
             <mat-icon class="rc-icon">person</mat-icon>
             <div class="rc-content">
               <span class="rc-label">{{ 'LEAGUE.YOUR_ROLE' | translate }}</span>
-              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? lega.ruoloGiocatoreLega.descrizione : '' }}</span>
+              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? ('PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate) : '' }}</span>
             </div>
           </div>
           <div class="recap-chip recap-chip--stato">
             <mat-icon class="rc-icon">{{ lega.stato.value === 'AVVIATA' ? 'play_circle' : lega.stato.value === 'TERMINATA' ? 'flag' : 'schedule' }}</mat-icon>
             <div class="rc-content">
               <span class="rc-label">{{ 'LEAGUE.LEAGUE_STATE' | translate }}</span>
-              <span class="rc-value rc-value--stato" [class.stato-avviata]="lega.stato.value === 'AVVIATA'" [class.stato-terminata]="lega.stato.value === 'TERMINATA'">{{ lega.stato.descrizione }}</span>
+              <span class="rc-value rc-value--stato" [class.stato-avviata]="lega.stato.value === 'AVVIATA'" [class.stato-terminata]="lega.stato.value === 'TERMINATA'">{{ 'LEAGUE_STATUS.' + lega.stato.value | translate }}</span>
             </div>
           </div>
           @if (lega.giornataFinale) {
@@ -72,6 +72,41 @@
           </div>
           }
         </div>
+
+        <!-- BARRA AVANZAMENTO LEGA -->
+        @if (lega.giornataIniziale != null) {
+        <div class="league-progress-section">
+          <div class="league-progress-header">
+            <span class="lp-title">
+              <mat-icon class="lp-title-icon">bar_chart</mat-icon>
+              {{ 'LEAGUE.PROGRESS_LABEL' | translate }}
+            </span>
+            <span class="lp-round-badge">
+              <span class="lp-round-current">{{ getLeagueRoundNumber() }}</span>
+              <span class="lp-round-sep"> {{ 'LEAGUE.ROUND_OF' | translate }} </span>
+              <span class="lp-round-total">{{ getLeagueTotalRounds() }}</span>
+            </span>
+          </div>
+          <div class="lp-bar-track">
+            <div class="lp-bar-fill" [style.width.%]="getLegaProgressPercent()">
+              <span class="lp-bar-pulse"></span>
+            </div>
+            @for (tick of getProgressTicks(); track $index) {
+              <div class="lp-tick" [style.left.%]="tick"></div>
+            }
+          </div>
+          <div class="lp-footer">
+            <span class="lp-footer-start">{{ getDesGiornataTitle(lega.giornataIniziale) }}</span>
+            @if (lega.giornataDaGiocare && lega.giornataDaGiocare <= (lega.campionato?.numGiornate ?? 999)) {
+            <span class="lp-championship-label">
+              <mat-icon class="lp-champ-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
+              {{ 'LEAGUE.CHAMPIONSHIP_ROUND_LABEL' | translate }}: {{ getDesGiornataTitle(lega.giornataDaGiocare) }}
+            </span>
+            }
+            <span class="lp-footer-end">{{ getDesGiornataTitle(getEffectiveGiornataFinale()) }}</span>
+          </div>
+        </div>
+        }
 
         @if (!this.isTerminata()){
         <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
