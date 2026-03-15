@@ -9,16 +9,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LegaCardComponent } from '../../shared/components/lega-card/lega-card.component';
 import { UtilService } from '../../core/services/util.service';
 import { ConfermaJoinDialogComponent } from '../../shared/components/conferma-join-dialog.component';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-join',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, LegaCardComponent, TranslateModule],
+  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, MatSnackBarModule, LegaCardComponent, TranslateModule],
   templateUrl: './lega-join.component.html',
   styleUrls: ['./lega-join.component.scss'],
 })
@@ -29,8 +30,10 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
     private router: Router,
     private authService: AuthService,
     private legaService: LegaService,
-    private utilService: UtilService
-    , private dialog: MatDialog
+    private utilService: UtilService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +60,24 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
   }
   seleziona(lega: Lega | null): void {
     if (!lega) return;
+
+    // Lega pubblica con accesso su approvazione → richiedi ingresso
+    if (lega.pubblica && lega.accessoLibero === false) {
+      this.legaService.richiediIngresso(lega.id).subscribe({
+        next: () => {
+          this.snackBar.open(this.translate.instant('JOIN_REQUEST.REQUEST_SENT'), '', { duration: 4000 });
+        },
+        error: (err) => {
+          const code = err?.error?.message as string | undefined;
+          let msg = this.translate.instant('COMMON.ERROR_GENERIC');
+          if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
+          else if (code === 'REQUEST_ALREADY_EXISTS') msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
+          this.snackBar.open(msg, '', { duration: 4000 });
+        }
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(ConfermaJoinDialogComponent, {
       width: '380px',
       maxWidth: '95vw',
