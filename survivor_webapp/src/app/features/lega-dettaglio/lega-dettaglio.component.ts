@@ -1341,12 +1341,18 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataRelativa = this.lega.giornataCorrente - (this.lega.giornataIniziale || 1) + 1;
     const giocata = this.getGiocataByGiornata(giocatore, giornataRelativa);
 
-    // Leader/Admin possono SEMPRE giocare/modificare
+    // Leader/Admin possono SEMPRE giocare/modificare per qualsiasi giocatore
     if (this.isLeaderLega() || this.isAdmin()) {
       return true;
     }
 
-    // Se la giornata è DA_GIOCARE (timeout attivo), TUTTI possono giocare/modificare
+    // Gli utenti normali possono giocare SOLO per se stessi
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (giocatore.user?.id !== currentUserId) {
+      return false;
+    }
+
+    // Se la giornata è DA_GIOCARE (timeout attivo), l'utente può giocare/modificare la propria giocata
     if (this.lega.statoGiornataCorrente?.value === StatoPartita.DA_GIOCARE.value) {
       return true;
     }
