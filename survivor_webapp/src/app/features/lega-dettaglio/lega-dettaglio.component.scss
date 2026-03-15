@@ -1541,6 +1541,12 @@
 .stato-terminata {
 	color: #6B7280;
 }
+.rc-value--pubblica {
+	color: #0277BD;
+}
+.rc-value--privata {
+	color: #0A3D91;
+}
 @media (max-width: 480px) {
 	.recap-chip {
 		min-width: 140px;

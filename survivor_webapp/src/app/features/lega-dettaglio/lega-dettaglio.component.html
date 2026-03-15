@@ -76,6 +76,15 @@
             </div>
           </div>
           }
+          <div class="recap-chip">
+            <mat-icon class="rc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
+            <div class="rc-content">
+              <span class="rc-label">{{ 'LEAGUE.VISIBILITY' | translate }}</span>
+              <span class="rc-value" [class.rc-value--pubblica]="lega.pubblica" [class.rc-value--privata]="!lega.pubblica">
+                {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
+              </span>
+            </div>
+          </div>
         </div>
 
         <!-- BARRA AVANZAMENTO LEGA -->

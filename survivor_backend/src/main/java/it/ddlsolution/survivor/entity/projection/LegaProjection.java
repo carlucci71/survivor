@@ -17,4 +17,5 @@ public interface LegaProjection {
     Integer getGiornataFinale();
     Integer getGiornataCalcolata();
     CampionatoProjection getCampionato();
+    boolean isPubblica();
 }

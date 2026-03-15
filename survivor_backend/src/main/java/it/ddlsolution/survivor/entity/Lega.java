@@ -67,4 +67,7 @@ public class Lega {
 
     @Column(name = "anno")
     private short anno;
+
+    @Column(name = "pubblica", nullable = false)
+    private boolean pubblica;
 }

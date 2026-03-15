@@ -72,6 +72,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   emailsList: string[] = [];
   copied = false;
   showPasswordSection = false;
+  pubblica = false;
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -282,6 +283,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.giornataTouched = false;
     this.giornataFinaleTouched = false;
     this.campionatiDisponibili = [];
+    this.pubblica = false;
   }
 
   onSubmit(): void {
@@ -301,7 +303,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.campionatoSel!.id,
         this.giornataIniziale!,
         this.giornataFinale,
-        this.pwd
+        this.pwd,
+        this.pubblica
       )
       .subscribe({
         next: (lega) => {

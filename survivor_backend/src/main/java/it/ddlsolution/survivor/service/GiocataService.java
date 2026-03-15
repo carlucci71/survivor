@@ -107,7 +107,6 @@ public class GiocataService {
         // Se non c'è forzatura dal guard, ma l'utente corrente è diverso dal giocatore,
         // aggiungiamo comunque un indicatore di forzatura
         if (ObjectUtils.isEmpty(forzaturaText)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
                 Long currentUserId = (Long) authentication.getPrincipal();
                 Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;

@@ -36,14 +36,16 @@ export class LegaService {
     campionato: string,
     giornataIniziale: number,
     giornataFinale: number | null,
-    pwd: string | null
+    pwd: string | null,
+    pubblica: boolean = false
   ): Observable<Lega> {
     const body: any = {
       name: name,
       sport: sport,
       campionato: campionato,
       giornataIniziale: giornataIniziale,
-      pwd: pwd
+      pwd: pwd,
+      pubblica: pubblica
     };
     if (giornataFinale !== null) {
       body['giornataFinale'] = giornataFinale;

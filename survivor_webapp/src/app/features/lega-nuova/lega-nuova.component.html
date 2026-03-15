@@ -229,7 +229,32 @@
         }
       </div>
 
-      <!-- â”€â”€ CTA â”€â”€ -->
+      <!-- ── SEZIONE 5: VISIBILITÀ ── -->
+      <div class="cn-section">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>{{ pubblica ? 'public' : 'lock' }}</mat-icon>
+          </div>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_VISIBILITY' | translate }}</h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_VISIBILITY_DESC' | translate }}</p>
+          </div>
+        </div>
+        <div class="cn-visibility-grid">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!pubblica" (click)="pubblica = false">
+            <mat-icon class="cn-vis-ico">lock</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.VISIBILITY_PRIVATE_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PRIVATE_DESC' | translate }}</span>
+          </button>
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="pubblica" (click)="pubblica = true">
+            <mat-icon class="cn-vis-ico">public</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_DESC' | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── CTA ── -->
       <button type="submit" class="cn-submit-btn" [disabled]="!isFormValid()">
         <mat-icon class="cn-submit-ico">add_circle</mat-icon>
         {{ 'CREATE_LEAGUE.CREATE_BUTTON' | translate }}

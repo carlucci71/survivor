@@ -27,5 +27,6 @@ public class LegaDTO {
     private Map<Integer,Enumeratori.StatoPartita> statiGiornate;
     private LocalDateTime inizioProssimaGiornata;
     private short anno;
+    private boolean pubblica;
 }
 

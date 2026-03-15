@@ -61,14 +61,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }[] = [];
-  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }[] = [];
+  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean }[] = [];
+  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean }[] = [];
   searchText: string = '';
   private searchDebounceTimer: any;
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
   isLoadingLeghe = true;
+  activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
 
   constructor(
@@ -263,25 +264,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       map.get(key)!.push(l);
     });
     this.groupedLeghe = Array.from(map.entries()).map(([name, edizioni]) => {
-      const sportId = edizioni[0].campionato?.sport?.id || '';
-      const campionatoId = edizioni[0].campionato?.id || '';
-      return {
-        name,
-        des: { sportId, campionatoId }, // Memorizzo gli ID per tradurli nell'HTML
-        edizioni: edizioni.sort((a, b) =>
-          // Ordina in ordine decrescente: edizioni più recenti prima (Da Avviare prima di Terminate)
-          (b.edizione || '')
-            .toString()
-            .localeCompare((a.edizione || '').toString())
-        ),
-      };
+      const sorted = edizioni.sort((a, b) =>
+        (b.edizione || '').toString().localeCompare((a.edizione || '').toString())
+      );
+      const sportId = sorted[0].campionato?.sport?.id || '';
+      const campionatoId = sorted[0].campionato?.id || '';
+      const pubblica = !!sorted[0].pubblica;
+      return { name, des: { sportId, campionatoId }, edizioni: sorted, pubblica };
     }).sort((a, b) => {
-      // Ordina i gruppi per ID massimo (lega più recente di ogni gruppo) in ordine discendente
+      // Prima le leghe private, poi le pubbliche; a parità per ID discendente
+      if (a.pubblica !== b.pubblica) return a.pubblica ? 1 : -1;
       const maxIdA = Math.max(...a.edizioni.map(e => e.id || 0));
       const maxIdB = Math.max(...b.edizioni.map(e => e.id || 0));
       return maxIdB - maxIdA;
     });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
+    // Se non ci sono leghe private ma ci sono pubbliche, apri il tab pubblico
+    const hasPrivate = this.groupedLeghe.some(g => !g.pubblica);
+    if (!hasPrivate) this.activeTab = 'public';
+    else this.activeTab = 'private';
   }
 
   filterLeghe(): void {
@@ -360,8 +361,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  get filteredPrivateLeghe() {
+    return this.filteredGroupedLeghe.filter(g => !g.pubblica);
+  }
+
+  get filteredPublicLeghe() {
+    return this.filteredGroupedLeghe.filter(g => g.pubblica);
+  }
+
   // TrackBy functions per ottimizzare il rendering
-  trackByGroupName(index: number, group: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[] }): string {
+  trackByGroupName(index: number, group: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean }): string {
     return group.name;
   }
 

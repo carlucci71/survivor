@@ -122,6 +122,7 @@ export interface Lega {
   anno: number;
   statiGiornate?: Record<number, StatoPartita>;
   inizioProssimaGiornata: Date;
+  pubblica?: boolean;
 }
 
 
