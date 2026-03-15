@@ -107,8 +107,12 @@
                     <span class="lega-visibility-badge lega-visibility-badge--private">
                       <mat-icon>lock</mat-icon> Privata
                     </span>
+                    <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
+                      <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
+                      {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
+                    </span>
                   </mat-card-title>
-                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}</mat-card-subtitle>
+                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }} &middot; <strong>{{ group.numPartecipanti }}</strong> {{ 'HOME.PARTICIPANTS' | translate }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="edizioni-list">
@@ -150,8 +154,12 @@
                     <span class="lega-visibility-badge lega-visibility-badge--public">
                       <mat-icon>public</mat-icon> Pubblica
                     </span>
+                    <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
+                      <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
+                      {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
+                    </span>
                   </mat-card-title>
-                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}</mat-card-subtitle>
+                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }} &middot; <strong>{{ group.numPartecipanti }}</strong> {{ 'HOME.PARTICIPANTS' | translate }}</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="edizioni-list">

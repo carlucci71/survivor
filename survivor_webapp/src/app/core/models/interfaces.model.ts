@@ -123,6 +123,7 @@ export interface Lega {
   statiGiornate?: Record<number, StatoPartita>;
   inizioProssimaGiornata: Date;
   pubblica?: boolean;
+  numPartecipanti?: number;
 }
 
 

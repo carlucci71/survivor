@@ -518,6 +518,55 @@ h2 {
 	}
 }
 
+// ── Badge popolarità (4 tier) ────────────────────────────────────────────
+.popolarita-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	border-radius: 20px;
+	padding: 2px 9px;
+	font-size: 0.6rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	vertical-align: middle;
+	margin-left: 6px;
+
+	::ng-deep mat-icon {
+		font-size: 11px;
+		width: 11px;
+		height: 11px;
+	}
+
+	// 🆕 Nuova — grigio neutro
+	&--new {
+		background: rgba(107, 114, 128, 0.12);
+		color: #6B7280;
+		::ng-deep mat-icon { color: #6B7280; }
+	}
+
+	// 🌱 In crescita — verde menta
+	&--growing {
+		background: rgba(16, 185, 129, 0.12);
+		color: #065F46;
+		::ng-deep mat-icon { color: #059669; }
+	}
+
+	// 🔥 Popolare — arancio caldo
+	&--hot {
+		background: rgba(251, 146, 60, 0.15);
+		color: #C2410C;
+		::ng-deep mat-icon { color: #EA580C; }
+	}
+
+	// 👑 Top League — oro
+	&--top {
+		background: rgba(245, 158, 11, 0.15);
+		color: #92400E;
+		::ng-deep mat-icon { color: #D97706; }
+	}
+}
+
 .leghe-groups {
 
 	/* CARD PRINCIPALE DI OGNI LEGA - SFONDO GRIGIO CHIARO */

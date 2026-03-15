@@ -28,5 +28,6 @@ public class LegaDTO {
     private LocalDateTime inizioProssimaGiornata;
     private short anno;
     private boolean pubblica;
+    private int numPartecipanti;
 }
 

@@ -12,7 +12,12 @@
     "JOIN_EXISTING_LEAGUE": "Unisciti ad una lega esistente",
     "YEAR": "Anno",
     "SEARCH_LEAGUES": "Cerca leghe...",
-    "NO_RESULTS": "Nessuna lega trovata"
+    "NO_RESULTS": "Nessuna lega trovata",
+    "BADGE_NEW": "Nuova",
+    "BADGE_GROWING": "In crescita",
+    "BADGE_HOT": "Popolare",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "partecipanti"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Da Avviare",
@@ -374,6 +379,11 @@
     "VISIBILITY": "Visibilità",
     "VISIBILITY_PUBLIC": "Pubblica",
     "VISIBILITY_PRIVATE": "Privata",
+    "BADGE_NEW": "Nuova",
+    "BADGE_GROWING": "In crescita",
+    "BADGE_HOT": "Popolare",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "partecipanti",
     "CALCULATED_ROUND": "Giornata Calcolata",
     "NEXT_CHAMPIONSHIP_ROUND": "Prossima di campionato",
     "TIME_EXPIRED": "Tempo scaduto",

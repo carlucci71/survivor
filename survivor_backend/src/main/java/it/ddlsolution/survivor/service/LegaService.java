@@ -72,7 +72,10 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         List<Lega> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE, userId);
-        return legaMapper.toDTOList(legheDaAvviare);
+        return legaMapper.toDTOList(legheDaAvviare)
+                .stream()
+                .sorted(Comparator.comparingInt(LegaDTO::getNumPartecipanti).reversed())
+                .toList();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
