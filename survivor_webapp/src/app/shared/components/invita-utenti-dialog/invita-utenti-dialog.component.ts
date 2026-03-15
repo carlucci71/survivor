@@ -48,13 +48,13 @@ import { TranslateModule } from '@ngx-translate/core';
       <div class="dialog-body" [class.scroll-enabled]="shouldEnableScroll()">
 
         <!-- Bottone condividi -->
-        <button *ngIf="canShare()" class="share-btn" (click)="shareLink()" type="button">
+        <button class="share-btn" (click)="shareLink()" type="button">
           <mat-icon>share</mat-icon>
           <span>{{ 'COMMON.SHARE_LINK' | translate }}</span>
         </button>
 
         <!-- Divider -->
-        <div class="or-divider" *ngIf="canShare()">
+        <div class="or-divider">
           <span>{{ 'INVITE_USERS.OR_EMAIL' | translate }}</span>
         </div>
 
@@ -486,11 +486,15 @@ export class InvitaUtentiDialogComponent {
 
   shareLink(): void {
     const url = environment.baseUrl + '/joinLega';
-    navigator.share({
-      title: 'Unisciti alla mia lega!',
-      text: `Entra nella lega "${this.data.legaNome}" su Survivor`,
-      url
-    }).catch(() => {});
+    const text = `Entra nella lega "${this.data.legaNome}" su Survivor`;
+    import('@capacitor/share').then(({ Share }) => {
+      Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' }).catch(() => {});
+    }).catch(() => {
+      // Fallback web puro (no Capacitor)
+      if (navigator.share) {
+        navigator.share({ title: 'Unisciti alla mia lega!', text, url }).catch(() => {});
+      }
+    });
   }
 
   shouldEnableScroll(): boolean {

@@ -15,7 +15,7 @@
         <div class="recap-header">
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
-            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <button *ngIf="isDaAvviare() && (isLeaderLega() || isAdmin()) && canShare()"
+            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <button *ngIf="isDaAvviare() && (isLeaderLega() || isAdmin())"
               mat-icon-button
               class="recap-share-btn"
               (click)="shareLink()"

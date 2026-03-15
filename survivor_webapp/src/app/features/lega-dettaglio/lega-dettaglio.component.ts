@@ -1228,13 +1228,18 @@ export class LegaDettaglioComponent implements OnDestroy {
     return !!navigator.share;
   }
 
-  shareLink(): void {
+  async shareLink(): Promise<void> {
     const url = environment.baseUrl + '/joinLega';
-    navigator.share({
-      title: 'Unisciti alla mia lega!',
-      text: `Entra nella lega "${this.lega!.name}" su Survivor`,
-      url
-    }).catch(() => {});
+    const text = `Entra nella lega "${this.lega!.name}" su Survivor`;
+    try {
+      const { Share } = await import('@capacitor/share');
+      await Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' });
+    } catch {
+      // Su web puro, fallback navigator.share
+      if (navigator.share) {
+        navigator.share({ title: 'Unisciti alla mia lega!', text, url }).catch(() => {});
+      }
+    }
   }
 
   isTerminata(): boolean {
