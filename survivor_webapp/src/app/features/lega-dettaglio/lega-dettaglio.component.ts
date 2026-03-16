@@ -1359,6 +1359,16 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.activeGiocata = giocata;
   }
 
+  /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
+   *  che il document:click lo richiuda subito. */
+  openReactionPopupClick(key: string, giocata: Giocata | null, event: MouseEvent | TouchEvent): void {
+    if (!giocata) return;
+    event.stopPropagation();
+    this.openReactionPopup(key, giocata, event.currentTarget as HTMLElement);
+    this.popupJustOpened = true;
+    setTimeout(() => { this.popupJustOpened = false; }, 400);
+  }
+
   cancelClosePopup(): void {
     if (this.closePopupTimer) {
       clearTimeout(this.closePopupTimer);

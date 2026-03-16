@@ -550,7 +550,8 @@
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
+                       (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
                       <img
                         class="team-logo-cell"
@@ -575,6 +576,19 @@
                         </mat-icon>
                       }
                     </div>
+                    <!-- Reaction pills mobile -->
+                    @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                      @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
+                        <div class="reaction-summary-mobile">
+                          @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
+                            <span class="reaction-pill-mobile"
+                              [class.reaction-pill-mobile--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
+                              {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
+                            </span>
+                          }
+                        </div>
+                      }
+                    }
                   </div>
                 } @else {
                   <!-- Cella vuota -->
