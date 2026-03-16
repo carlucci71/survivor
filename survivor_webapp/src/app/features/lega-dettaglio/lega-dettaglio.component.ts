@@ -36,6 +36,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
+import { ReactionService } from '../../core/services/reaction.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
@@ -113,6 +114,8 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
+  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂'];
+
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -168,6 +171,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private authService: AuthService,
     private squadraService: SquadraService,
     private utilService: UtilService,
+    private reactionService: ReactionService,
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
@@ -1226,6 +1230,51 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   canShare(): boolean {
     return !!navigator.share;
+  }
+
+  /**
+   * Aggiunge, cambia o rimuove la reaction dell'utente su una giocata.
+   * Se l'utente clicca sulla stessa emoji già scelta → rimuove la reaction.
+   */
+  toggleReaction(giocata: Giocata, emoji: string): void {
+    if (!giocata.id) return;
+    // Le reactions sono visibili solo quando il voto non è nascosto
+    if (this.shouldHideGiocata(giocata, giocata.giornata ?? 0)) return;
+
+    const stessaEmoji = giocata.miaReaction === emoji;
+    const giocataId = giocata.id;
+
+    // Aggiornamento ottimistico
+    if (stessaEmoji) {
+      // Rimuovi
+      if (giocata.reactions) {
+        giocata.reactions = { ...giocata.reactions, [emoji]: (giocata.reactions[emoji] ?? 1) - 1 };
+        if (giocata.reactions[emoji] <= 0) {
+          const { [emoji]: _, ...rest } = giocata.reactions;
+          giocata.reactions = rest;
+        }
+      }
+      giocata.miaReaction = null;
+      this.reactionService.rimuovi(giocataId).subscribe({ error: () => this.loadLegaDetails() });
+    } else {
+      // Aggiungi o sostituisci
+      const newReactions: Record<string, number> = { ...(giocata.reactions ?? {}) };
+      if (giocata.miaReaction) {
+        newReactions[giocata.miaReaction] = Math.max(0, (newReactions[giocata.miaReaction] ?? 1) - 1);
+        if (newReactions[giocata.miaReaction] <= 0) delete newReactions[giocata.miaReaction];
+      }
+      newReactions[emoji] = (newReactions[emoji] ?? 0) + 1;
+      giocata.reactions = newReactions;
+      giocata.miaReaction = emoji;
+      this.reactionService.reagisci(giocataId, emoji).subscribe({ error: () => this.loadLegaDetails() });
+    }
+  }
+
+  getReactionEntries(giocata: Giocata): { emoji: string; count: number }[] {
+    if (!giocata.reactions) return [];
+    return Object.entries(giocata.reactions)
+      .filter(([, count]) => count > 0)
+      .map(([emoji, count]) => ({ emoji, count }));
   }
 
   async shareLink(): Promise<void> {

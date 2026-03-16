@@ -60,6 +60,7 @@ public class LegaService {
     private final Utility utility;
     private final CacheableService cacheableService;
     private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
+    private final ReactionGiocataService reactionGiocataService;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -134,6 +135,11 @@ public class LegaService {
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
             if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
                 offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
+            }
+
+            // Popola reactions sulle giocate (solo quando si carica la lega completa)
+            if (completo) {
+                popolaReactions(legaDTO);
             }
 
             if (legaDTO.getId() != null) {
@@ -414,6 +420,34 @@ public class LegaService {
             return false;
         }
         return ret;
+    }
+
+    /**
+     * Popola reactions e miaReaction su ogni GiocataDTO della lega.
+     */
+    private void popolaReactions(LegaDTO legaDTO) {
+        if (legaDTO.getGiocatori() == null) return;
+        List<Long> giocataIds = legaDTO.getGiocatori().stream()
+                .filter(g -> g.getGiocate() != null)
+                .flatMap(g -> g.getGiocate().stream())
+                .map(GiocataDTO::getId)
+                .filter(id -> id != null)
+                .toList();
+        if (giocataIds.isEmpty()) return;
+
+        Map<Long, ReactionGiocataService.ReactionSummary> summary = reactionGiocataService.getReactionsSummary(giocataIds);
+
+        legaDTO.getGiocatori().forEach(g -> {
+            if (g.getGiocate() == null) return;
+            g.getGiocate().forEach(giocata -> {
+                if (giocata.getId() == null) return;
+                ReactionGiocataService.ReactionSummary s = summary.get(giocata.getId());
+                if (s != null) {
+                    giocata.setReactions(s.reactions());
+                    giocata.setMiaReaction(s.miaReaction());
+                }
+            });
+        });
     }
 
     private void addInfoCalcolate(LegaDTO legaDTO, Long userId) {

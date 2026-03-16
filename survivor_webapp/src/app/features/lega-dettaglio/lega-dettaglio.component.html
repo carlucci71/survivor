@@ -340,6 +340,21 @@
                               </mat-icon>
                             }
                           </div>
+                          <!-- Reactions (visibili solo se il voto è visibile) -->
+                          @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                            <div class="reaction-bar">
+                              @for(emoji of REACTION_EMOJIS; track emoji) {
+                                <button type="button" class="reaction-btn"
+                                  [class.reaction-btn--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === emoji"
+                                  (click)="toggleReaction(getGiocataByGiornataAssoluta(giocatore, giornata)!, emoji); $event.stopPropagation()">
+                                  <span class="reaction-emoji">{{ emoji }}</span>
+                                  @if((getGiocataByGiornataAssoluta(giocatore, giornata)?.reactions?.[emoji] ?? 0) > 0) {
+                                    <span class="reaction-count">{{ getGiocataByGiornataAssoluta(giocatore, giornata)?.reactions?.[emoji] }}</span>
+                                  }
+                                </button>
+                              }
+                            </div>
+                          }
                         </div>
                       } @else {
                         <!-- Cella vuota -->

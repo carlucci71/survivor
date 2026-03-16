@@ -215,6 +215,8 @@ export interface Giocata {
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
+  reactions?: Record<string, number>; // emoji -> conteggio
+  miaReaction?: string | null; // emoji scelta dall'utente corrente
 }
 
 export interface StatiPerLega {
