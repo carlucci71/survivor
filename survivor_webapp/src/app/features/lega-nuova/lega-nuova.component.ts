@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -50,7 +50,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     private sportService: SportService,
     private legaService: LegaService,
     private campionatoService: CampionatoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
@@ -200,12 +202,20 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   setPubblica(value: boolean): void {
-    this.pubblica = value;
-    if (!value) this.accessoLibero = false;
+    this.ngZone.run(() => {
+      this.pubblica = value;
+      if (!value) this.accessoLibero = false;
+      this.cdr.detectChanges();
+      console.log('[LegaNuova] setPubblica ->', value, '| pubblica now:', this.pubblica);
+    });
   }
 
   setAccessoLibero(value: boolean): void {
-    this.accessoLibero = value;
+    this.ngZone.run(() => {
+      this.accessoLibero = value;
+      this.cdr.detectChanges();
+      console.log('[LegaNuova] setAccessoLibero ->', value);
+    });
   }
 
   selectCampionato(c: Campionato): void {
@@ -329,6 +339,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     if (!this.isFormValid()) {
       return;
     }
+    console.log('[LegaNuova] onSubmit - pubblica:', this.pubblica, '| accessoLibero:', this.accessoLibero);
     this.legaService
       .inserisciLega(
         this.name!,
