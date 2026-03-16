@@ -125,7 +125,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/home']);
+    if (this.legaCreataId && this.pubblica) {
+      this.router.navigate(['/home'], { state: { activeTab: 'public' } });
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
   caricaSport(): void {
     this.sportService.getSport().subscribe({

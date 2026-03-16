@@ -87,7 +87,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.loadMe();
-    this.loadLeghe();
+    const navState = (window.history.state) as { activeTab?: 'private' | 'public' };
+    this.loadLeghe(navState?.activeTab);
 
     // Sottoscrivi agli aggiornamenti del profilo
     this.giocatoreSubscription = this.giocatoreService.giocatoreAggiornato.subscribe(
@@ -239,12 +240,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadLeghe(): void {
+  loadLeghe(preferredTab?: 'private' | 'public'): void {
     this.isLoadingLeghe = true;
     this.legaService.mieLeghe().subscribe({
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
+        if (preferredTab) {
+          this.activeTab = preferredTab;
+        }
         this.isLoadingLeghe = false;
       },
       error: (error) => {
