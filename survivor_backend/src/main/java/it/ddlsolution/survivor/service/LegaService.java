@@ -137,11 +137,6 @@ public class LegaService {
                 offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
             }
 
-            // Popola reactions sulle giocate (solo quando si carica la lega completa)
-            if (completo) {
-                popolaReactions(legaDTO);
-            }
-
             if (legaDTO.getId() != null) {
                 legaDTO.setRichiesteInAttesa(
                         legaJoinRequestRepository.countByLega_IdAndStato(legaDTO.getId(), Enumeratori.StatoRichiesta.PENDING));
@@ -151,6 +146,17 @@ public class LegaService {
             log.error("Errore in info calcolate", e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
+
+        // Popola reactions fuori dal try/catch principale: un errore qui non deve
+        // compromettere il caricamento della lega
+        if (completo) {
+            try {
+                popolaReactions(legaDTO);
+            } catch (Exception e) {
+                log.warn("Errore nel caricamento reactions (ignorato): {}", e.getMessage());
+            }
+        }
+
         return legaDTO;
     }
 

@@ -354,7 +354,7 @@
                                 @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
                                   <span class="reaction-pill"
                                     [class.reaction-pill--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
-                                    {{ entry.emoji }}@if(entry.count > 1){<span class="pill-count">{{ entry.count }}</span>}
+                                    {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
                                   </span>
                                 }
                               </div>
