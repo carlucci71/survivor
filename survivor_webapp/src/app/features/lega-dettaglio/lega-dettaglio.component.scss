@@ -4357,30 +4357,37 @@
 
 		// Reaction summary: pills sempre visibili quando ci sono reaction
 		.reaction-summary {
-			display: inline-flex;
+			display: flex;
 			align-items: center;
-			gap: 1px;
-			flex-shrink: 0;
+			gap: 2px;
+			flex-wrap: wrap;
+			margin-top: 2px;
 		}
 
 		.reaction-pill {
 			display: inline-flex;
 			align-items: center;
-			font-size: 0.8rem;
+			gap: 2px;
+			font-size: 0.75rem;
 			line-height: 1;
 			user-select: none;
 			cursor: default;
+			background: rgba(0, 0, 0, 0.06);
+			border-radius: 8px;
+			padding: 1px 4px;
+			border: 1px solid transparent;
+			transition: background 0.15s, border-color 0.15s;
 
 			&--mine {
-				filter: drop-shadow(0 0 3px rgba(10, 61, 145, 0.55));
+				background: rgba(10, 61, 145, 0.12);
+				border-color: rgba(10, 61, 145, 0.35);
 			}
 
 			.pill-count {
-				font-size: 0.55rem;
+				font-size: 0.6rem;
 				font-weight: 700;
-				color: #555;
-				margin-left: 1px;
-				vertical-align: super;
+				color: #444;
+				line-height: 1;
 			}
 		}
 
@@ -5102,21 +5109,63 @@
   width: 100%;
 }
 
+// Reaction pills nella vista mobile cards
+.reaction-summary-mobile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 3px;
+}
+
+.reaction-pill-mobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.7rem;
+  line-height: 1;
+  user-select: none;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 1px 4px;
+  border: 1px solid transparent;
+
+  &--mine {
+    background: rgba(10, 61, 145, 0.12);
+    border-color: rgba(10, 61, 145, 0.35);
+  }
+
+  .pill-count {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #444;
+    line-height: 1;
+  }
+}
+
+// Rende la cella mobile cliccabile visivamente
+.team-cell-mobile {
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.75;
+  }
+}
+
 // ── Reaction picker globale (position:fixed per bypassare overflow:hidden della tabella) ──
 .reaction-picker-global {
   position: fixed;
-  transform: translate(-50%, calc(-100% - 2px));
+  transform: translate(-50%, calc(-100% - 6px));
   z-index: 9999;
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 14px;
-  padding: 6px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  // 4 bottoni × 32px + 3 gap × 3px + 2 padding × 6px = 149px
-  width: 149px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.10);
+  border-radius: 16px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 34px);
+  gap: 4px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.20), 0 2px 8px rgba(0, 0, 0, 0.10);
   -webkit-touch-callout: none;
   user-select: none;
 
@@ -5150,29 +5199,29 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border: 2px solid transparent;
-  border-radius: 50%;
+  border-radius: 10px;
   background: transparent;
   cursor: pointer;
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   line-height: 1;
   padding: 0;
-  transition: background 0.1s ease, transform 0.12s ease;
+  transition: background 0.1s ease, transform 0.12s ease, border-color 0.1s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.07);
-    transform: scale(1.3);
+    transform: scale(1.25);
   }
 
   &:active {
-    transform: scale(0.9);
+    transform: scale(0.88);
   }
 
   &--mine {
-    background: rgba(10, 61, 145, 0.13);
-    border-color: rgba(10, 61, 145, 0.4);
+    background: rgba(10, 61, 145, 0.12);
+    border-color: rgba(10, 61, 145, 0.45);
   }
 }
 

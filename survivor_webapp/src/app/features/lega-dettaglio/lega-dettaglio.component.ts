@@ -122,6 +122,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   private longPressTimer: any = null;
   private closePopupTimer: any = null;
   private popupJustOpened = false;
+  // Tiene traccia di reaction ottimistiche ancora in volo (giocataId → emoji o null se rimossa)
+  private pendingReactions = new Map<number, string | null>();
 
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
@@ -273,6 +275,49 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.id) {
       this.legaService.getLegaById(this.id).subscribe({
         next: (lega) => {
+          // Se ci sono reaction ottimistiche ancora in volo, le re-applica sul nuovo lega
+          // per evitare che un reload intermedio le faccia sparire prima del salvataggio
+          if (this.pendingReactions.size > 0) {
+            lega.giocatori?.forEach(giocatore => {
+              giocatore.giocate?.forEach(giocata => {
+                if (giocata.id != null && this.pendingReactions.has(giocata.id)) {
+                  const pendingEmoji = this.pendingReactions.get(giocata.id);
+                  if (pendingEmoji === null) {
+                    // reaction rimossa in modo ottimistico: cancella dal reload
+                    if (giocata.reactions) {
+                      const oldEmoji = giocata.miaReaction;
+                      if (oldEmoji) {
+                        giocata.reactions = { ...giocata.reactions };
+                        (giocata.reactions[oldEmoji] as number)--;
+                        if ((giocata.reactions[oldEmoji] as number) <= 0) {
+                          delete giocata.reactions[oldEmoji];
+                        }
+                      }
+                    }
+                    giocata.miaReaction = null;
+                  } else {
+                    // reaction aggiunta/cambiata in modo ottimistico
+                    // pendingEmoji è string (non null/undefined) in questo ramo: il caso null
+                    // è già gestito nel ramo if sopra, e Map.get restituisce undefined solo
+                    // se la chiave non esiste (ma qui la chiave esiste dato l'has())
+                    const emoji = pendingEmoji as string;
+                    const newReactions: Record<string, number> = { ...(giocata.reactions ?? {}) };
+                    const oldEmoji = giocata.miaReaction;
+                    if (oldEmoji && oldEmoji !== emoji) {
+                      newReactions[oldEmoji] = Math.max(0, (newReactions[oldEmoji] ?? 1) - 1);
+                      if (newReactions[oldEmoji] <= 0) delete newReactions[oldEmoji];
+                    }
+                    if (!oldEmoji || oldEmoji !== emoji) {
+                      newReactions[emoji] = (newReactions[emoji] ?? 0) + 1;
+                    }
+                    giocata.reactions = newReactions;
+                    giocata.miaReaction = emoji;
+                  }
+                }
+              });
+            });
+          }
+
           this.lega = lega;
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
@@ -1262,7 +1307,11 @@ export class LegaDettaglioComponent implements OnDestroy {
         }
       }
       giocata.miaReaction = null;
-      this.reactionService.rimuovi(giocataId).subscribe({ error: () => this.loadLegaDetails() });
+      this.pendingReactions.set(giocataId, null);
+      this.reactionService.rimuovi(giocataId).subscribe({
+        next: () => this.pendingReactions.delete(giocataId),
+        error: () => { this.pendingReactions.delete(giocataId); this.loadLegaDetails(); }
+      });
     } else {
       // Aggiungi o sostituisci
       const newReactions: Record<string, number> = { ...(giocata.reactions ?? {}) };
@@ -1273,7 +1322,11 @@ export class LegaDettaglioComponent implements OnDestroy {
       newReactions[emoji] = (newReactions[emoji] ?? 0) + 1;
       giocata.reactions = newReactions;
       giocata.miaReaction = emoji;
-      this.reactionService.reagisci(giocataId, emoji).subscribe({ error: () => this.loadLegaDetails() });
+      this.pendingReactions.set(giocataId, emoji);
+      this.reactionService.reagisci(giocataId, emoji).subscribe({
+        next: () => this.pendingReactions.delete(giocataId),
+        error: () => { this.pendingReactions.delete(giocataId); this.loadLegaDetails(); }
+      });
     }
   }
 
@@ -1304,6 +1357,16 @@ export class LegaDettaglioComponent implements OnDestroy {
     };
     this.activeReactionKey = key;
     this.activeGiocata = giocata;
+  }
+
+  /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
+   *  che il document:click lo richiuda subito. */
+  openReactionPopupClick(key: string, giocata: Giocata | null, event: MouseEvent | TouchEvent): void {
+    if (!giocata) return;
+    event.stopPropagation();
+    this.openReactionPopup(key, giocata, event.currentTarget as HTMLElement);
+    this.popupJustOpened = true;
+    setTimeout(() => { this.popupJustOpened = false; }, 400);
   }
 
   cancelClosePopup(): void {
