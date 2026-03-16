@@ -18,6 +18,7 @@ import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.LegaMapper;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
+import it.ddlsolution.survivor.repository.LegaJoinRequestRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class LegaService {
     private final LegaRepository legaRepository;
+    private final LegaJoinRequestRepository legaJoinRequestRepository;
     private final CampionatoService campionatoService;
     private final LegaMapper legaMapper;
     private final UtilCalendarioService utilCalendarioService;
@@ -58,6 +60,7 @@ public class LegaService {
     private final Utility utility;
     private final CacheableService cacheableService;
     private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
+    private final ReactionGiocataService reactionGiocataService;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -72,7 +75,12 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         List<Lega> legheDaAvviare = legaRepository.findByStatoAndGiocatoreLeghe_Giocatore_UserNot(Enumeratori.StatoLega.DA_AVVIARE, userId);
-        return legaMapper.toDTOList(legheDaAvviare);
+        return legaMapper.toDTOList(legheDaAvviare)
+                .stream()
+                .peek(dto -> dto.setRichiesteInAttesa(
+                        legaJoinRequestRepository.countByLega_IdAndStato(dto.getId(), Enumeratori.StatoRichiesta.PENDING)))
+                .sorted(Comparator.comparingInt(LegaDTO::getNumPartecipanti).reversed())
+                .toList();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
@@ -110,6 +118,7 @@ public class LegaService {
                 giocatoreDTO.setStatiPerLega(Map.of(idLega, giocatoreDTO.getStatiPerLega().get(idLega)));
                 giocatoreDTO.setRuoliPerLega(Map.of(idLega, giocatoreDTO.getRuoliPerLega().get(idLega)));
                 legaDTO.setGiocatori(List.of(giocatoreDTO));
+                legaDTO.setNumPartecipanti(giocatoreLegaService.countByLegaId(id));
 
             }
             if (legaDTO.getStato()== Enumeratori.StatoLega.ERRORE){
@@ -128,10 +137,26 @@ public class LegaService {
                 offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
             }
 
+            if (legaDTO.getId() != null) {
+                legaDTO.setRichiesteInAttesa(
+                        legaJoinRequestRepository.countByLega_IdAndStato(legaDTO.getId(), Enumeratori.StatoRichiesta.PENDING));
+            }
+
         } catch (Exception e) {
             log.error("Errore in info calcolate", e);
             legaDTO.setStato(Enumeratori.StatoLega.ERRORE);
         }
+
+        // Popola reactions fuori dal try/catch principale: un errore qui non deve
+        // compromettere il caricamento della lega
+        if (completo) {
+            try {
+                popolaReactions(legaDTO);
+            } catch (Exception e) {
+                log.warn("Errore nel caricamento reactions (ignorato): {}", e.getMessage());
+            }
+        }
+
         return legaDTO;
     }
 
@@ -401,6 +426,34 @@ public class LegaService {
             return false;
         }
         return ret;
+    }
+
+    /**
+     * Popola reactions e miaReaction su ogni GiocataDTO della lega.
+     */
+    private void popolaReactions(LegaDTO legaDTO) {
+        if (legaDTO.getGiocatori() == null) return;
+        List<Long> giocataIds = legaDTO.getGiocatori().stream()
+                .filter(g -> g.getGiocate() != null)
+                .flatMap(g -> g.getGiocate().stream())
+                .map(GiocataDTO::getId)
+                .filter(id -> id != null)
+                .toList();
+        if (giocataIds.isEmpty()) return;
+
+        Map<Long, ReactionGiocataService.ReactionSummary> summary = reactionGiocataService.getReactionsSummary(giocataIds);
+
+        legaDTO.getGiocatori().forEach(g -> {
+            if (g.getGiocate() == null) return;
+            g.getGiocate().forEach(giocata -> {
+                if (giocata.getId() == null) return;
+                ReactionGiocataService.ReactionSummary s = summary.get(giocata.getId());
+                if (s != null) {
+                    giocata.setReactions(s.reactions());
+                    giocata.setMiaReaction(s.miaReaction());
+                }
+            });
+        });
     }
 
     private void addInfoCalcolate(LegaDTO legaDTO, Long userId) {

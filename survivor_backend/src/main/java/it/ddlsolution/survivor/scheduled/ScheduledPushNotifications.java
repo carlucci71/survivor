@@ -90,8 +90,14 @@ public class ScheduledPushNotifications {
             return;
         }
         for (CampionatoDTO campionatoDTO : cacheableService.allCampionati()) {
+            List<LocalDateTime> iniziGiornate = campionatoDTO.getIniziGiornate();
+            int giornataDaGiocare = campionatoDTO.getGiornataDaGiocare();
+            if (ObjectUtils.isEmpty(iniziGiornate) || giornataDaGiocare < 1 || giornataDaGiocare > iniziGiornate.size()) {
+                log.debug("Campionato {} senza date giornate configurate, skip notifiche", campionatoDTO.getId());
+                continue;
+            }
             Map<GiocatoreDTO, List<LegaDTO>> giocatoreLeghe = new HashMap<>();
-            LocalDateTime prossimoInizio = campionatoDTO.getIniziGiornate().get(campionatoDTO.getGiornataDaGiocare() - 1);
+            LocalDateTime prossimoInizio = iniziGiornate.get(giornataDaGiocare - 1);
             ZoneId roma = ZoneId.of("Europe/Rome");
             LocalDateTime loc = LocalDateTime.now(roma);
             long diffMinutes = java.time.Duration.between(loc, prossimoInizio).toMinutes();

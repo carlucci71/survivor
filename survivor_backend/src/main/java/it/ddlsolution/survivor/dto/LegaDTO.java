@@ -27,5 +27,10 @@ public class LegaDTO {
     private Map<Integer,Enumeratori.StatoPartita> statiGiornate;
     private LocalDateTime inizioProssimaGiornata;
     private short anno;
+    private boolean pubblica;
+    private int numPartecipanti;
+    private Integer maxPartecipanti;
+    private boolean accessoLibero;
+    private int richiesteInAttesa;
 }
 

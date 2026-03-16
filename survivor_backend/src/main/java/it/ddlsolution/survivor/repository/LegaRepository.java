@@ -16,7 +16,7 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     List<Lega> findByGiocatoreLeghe_Giocatore_User_Id(Long id);
 
     @Query("SELECT l.id as id, l.name as name, l.anno as anno, l.edizione as edizione, l.stato as stato,l.giornataIniziale as giornataIniziale,l.giornataFinale as giornataFinale, " +
-           "l.giornataCalcolata as giornataCalcolata, l.campionato as campionato " +
+           "l.giornataCalcolata as giornataCalcolata, l.campionato as campionato, l.pubblica as pubblica, l.accessoLibero as accessoLibero, l.maxPartecipanti as maxPartecipanti " +
            "FROM Lega l LEFT JOIN l.campionato c LEFT JOIN c.sport s WHERE l.id = :id")
     Optional<LegaProjection> findProjectionById(@Param("id") Long id);
 
@@ -31,6 +31,7 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
     @Query("""
         SELECT l FROM Lega l
         WHERE l.stato = :stato
+        AND l.pubblica = true
         AND NOT EXISTS (
             SELECT 1 FROM GiocatoreLega gl
             WHERE gl.lega.id = l.id

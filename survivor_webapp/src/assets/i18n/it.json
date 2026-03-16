@@ -12,7 +12,12 @@
     "JOIN_EXISTING_LEAGUE": "Unisciti ad una lega esistente",
     "YEAR": "Anno",
     "SEARCH_LEAGUES": "Cerca leghe...",
-    "NO_RESULTS": "Nessuna lega trovata"
+    "NO_RESULTS": "Nessuna lega trovata",
+    "BADGE_NEW": "Nuova",
+    "BADGE_GROWING": "In crescita",
+    "BADGE_HOT": "Popolare",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "partecipanti"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Da Avviare",
@@ -371,6 +376,14 @@
     "YOUR_ROLE": "Ruolo in Lega",
     "LEAGUE_STATE": "Stato Lega",
     "FINAL_ROUND": "Giornata finale",
+    "VISIBILITY": "Visibilità",
+    "VISIBILITY_PUBLIC": "Pubblica",
+    "VISIBILITY_PRIVATE": "Privata",
+    "BADGE_NEW": "Nuova",
+    "BADGE_GROWING": "In crescita",
+    "BADGE_HOT": "Popolare",
+    "BADGE_TOP": "Top League",
+    "PARTICIPANTS": "partecipanti",
     "CALCULATED_ROUND": "Giornata Calcolata",
     "NEXT_CHAMPIONSHIP_ROUND": "Prossima di campionato",
     "TIME_EXPIRED": "Tempo scaduto",
@@ -488,10 +501,28 @@
     "ADD": "Aggiungi",
     "SEND_INVITES": "Invia Inviti",
     "COPY_LINK": "Copia link",
+    "SHARE_LINK": "Condividi",
+    "GO_TO_LEAGUE": "Vai alla lega",
     "COPIED": "Copiato!",
     "REFRESH": "Aggiorna",
     "BACK_HOME": "Torna alla Home",
-    "OPTIONAL": "Opzionale"
+    "OPTIONAL": "Opzionale",
+    "ERROR_GENERIC": "Si è verificato un errore. Riprova."
+  },
+  "JOIN_REQUEST": {
+    "SECTION_TITLE": "Richieste di ingresso",
+    "NO_PENDING": "Nessuna richiesta in attesa",
+    "LOAD_REQUESTS": "Carica richieste",
+    "APPROVE": "Approva",
+    "REJECT": "Rifiuta",
+    "APPROVED_OK": "Richiesta approvata",
+    "REJECTED_OK": "Richiesta rifiutata",
+    "REQUEST_SENT": "Richiesta inviata! Il leader valuterà la tua richiesta.",
+    "REQUEST_CANCELLED": "Richiesta annullata",
+    "ALREADY_PENDING": "Hai già una richiesta in attesa per questa lega",
+    "LEGA_FULL": "La lega è al completo",
+    "REQUEST_BUTTON": "Richiedi ingresso",
+    "CANCEL_REQUEST_BUTTON": "Annulla richiesta"
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Servizio non disponibile",
@@ -567,6 +598,8 @@
     "SECTION_DURATION_DESC": "Giornate disponibili: dalla {{min}} alla {{max}}",
     "SECTION_ACCESS": "Accesso",
     "SECTION_ACCESS_DESC": "Aggiungi una password per rendere la lega privata",
+    "SECTION_ACCESS_APPROVAL": "Modalità di accesso",
+    "SECTION_ACCESS_APPROVAL_DESC": "Come entrano i nuovi giocatori nella lega pubblica",
     "FINAL_ROUND_OPTIONAL": "Giornata finale (opzionale)",
     "FINAL_ROUND_HINT": "Lascia vuoto per giocare tutto il campionato",
     "FINAL_ROUND_HINT_SHORT": "Vuoto = tutto il campionato",
@@ -574,11 +607,26 @@
     "DURATION_PREVIEW_1": "La tua lega durerà",
     "DURATION_ROUNDS": "giornate",
     "DURATION_FROM": "dalla",
-    "DURATION_TO": "alla"
+    "DURATION_TO": "alla",
+    "INVITE_FRIENDS": "Condividi la lega con i tuoi amici",
+    "OR_VIA_EMAIL": "oppure invita via email",
+    "SECTION_VISIBILITY": "Chi può unirsi?",
+    "SECTION_VISIBILITY_DESC": "Scegli se la lega è visibile a tutti o accessibile solo tramite link d'invito",
+    "VISIBILITY_PRIVATE_LABEL": "Solo su invito",
+    "VISIBILITY_PRIVATE_DESC": "Condividi il link solo con chi vuoi",
+    "VISIBILITY_PUBLIC_LABEL": "Pubblica",
+    "VISIBILITY_PUBLIC_DESC": "Appare nella lista e chiunque può entrare",
+
+    "ACCESS_APPROVAL_LABEL": "Su approvazione",
+    "ACCESS_APPROVAL_DESC": "Il leader approva o rifiuta ogni richiesta",
+    "ACCESS_FREE_LABEL": "Accesso libero",
+    "ACCESS_FREE_DESC": "Chiunque può entrare direttamente senza approvazione",
+    "MAX_PARTICIPANTS_LABEL": "Massimo partecipanti",
+    "MAX_PARTICIPANTS_UNLIMITED": "Illimitato"
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",
-    "NO_LEAGUES": "Nessuna lega libera disponibile.",
+    "NO_LEAGUES": "Nessuna lega pubblica disponibile al momento.",
     "CONFIRM_TITLE": "Conferma iscrizione",
     "CONFIRM_MESSAGE": "Ti vuoi unire alla lega {{name}}?",
     "CHAMPIONSHIP": "Campionato",
@@ -626,10 +674,12 @@
   },
   "INVITE_USERS": {
     "TITLE": "Invita Utenti a",
+    "SUBTITLE": "Condividi la lega con chi vuoi o invia un invito diretto via email.",
     "INSTRUCTIONS": "Inserisci gli indirizzi email degli utenti che vuoi invitare:",
-    "EMAIL_PLACEHOLDER": "Inserisci indirizzo email (es. utente@esempio.com)",
+    "EMAIL_PLACEHOLDER": "es. amico@esempio.com",
     "ADD_EMAIL": "Aggiungi indirizzo email alla lista",
-    "SUCCESS": "Inviti inviati con successo!"
+    "SUCCESS": "Inviti inviati con successo!",
+    "OR_EMAIL": "oppure invia un invito via email"
   },
   "TERMS": {
     "TITLE": "Termini e Condizioni di Utilizzo",

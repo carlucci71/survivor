@@ -1,6 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
-import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -11,6 +11,7 @@ import {
   Giocata,
   Giocatore,
   Lega,
+  LegaJoinRequest,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
@@ -35,6 +36,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
+import { ReactionService } from '../../core/services/reaction.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
@@ -44,6 +46,7 @@ import { MockService } from '../../core/services/mock.service';
 import { SospensioniDialogComponent } from './sospensioni-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
+import { environment } from '../../../environments/environment';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 
@@ -111,6 +114,17 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
+  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂', '💀', '🤣', '😤', '🤦', '❤️', '😬', '🥶', '🤌', '🎉', '😈', '💪', '🤔'];
+
+  activeReactionKey: string | null = null;
+  activeGiocata: Giocata | null = null;
+  reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  private longPressTimer: any = null;
+  private closePopupTimer: any = null;
+  private popupJustOpened = false;
+  // Tiene traccia di reaction ottimistiche ancora in volo (giocataId → emoji o null se rimossa)
+  private pendingReactions = new Map<number, string | null>();
+
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
   id: number = -1;
@@ -150,6 +164,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
+  // Join requests (solo leader)
+  richiesteInAttesa: LegaJoinRequest[] = [];
+  richiesteLoading = false;
+  richiesteLoaded = false;
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -161,6 +180,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private authService: AuthService,
     private squadraService: SquadraService,
     private utilService: UtilService,
+    private reactionService: ReactionService,
     private router: Router,
     private giocataService: GiocataService,
     private dialog: MatDialog,
@@ -255,6 +275,49 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.id) {
       this.legaService.getLegaById(this.id).subscribe({
         next: (lega) => {
+          // Se ci sono reaction ottimistiche ancora in volo, le re-applica sul nuovo lega
+          // per evitare che un reload intermedio le faccia sparire prima del salvataggio
+          if (this.pendingReactions.size > 0) {
+            lega.giocatori?.forEach(giocatore => {
+              giocatore.giocate?.forEach(giocata => {
+                if (giocata.id != null && this.pendingReactions.has(giocata.id)) {
+                  const pendingEmoji = this.pendingReactions.get(giocata.id);
+                  if (pendingEmoji === null) {
+                    // reaction rimossa in modo ottimistico: cancella dal reload
+                    if (giocata.reactions) {
+                      const oldEmoji = giocata.miaReaction;
+                      if (oldEmoji) {
+                        giocata.reactions = { ...giocata.reactions };
+                        (giocata.reactions[oldEmoji] as number)--;
+                        if ((giocata.reactions[oldEmoji] as number) <= 0) {
+                          delete giocata.reactions[oldEmoji];
+                        }
+                      }
+                    }
+                    giocata.miaReaction = null;
+                  } else {
+                    // reaction aggiunta/cambiata in modo ottimistico
+                    // pendingEmoji è string (non null/undefined) in questo ramo: il caso null
+                    // è già gestito nel ramo if sopra, e Map.get restituisce undefined solo
+                    // se la chiave non esiste (ma qui la chiave esiste dato l'has())
+                    const emoji = pendingEmoji as string;
+                    const newReactions: Record<string, number> = { ...(giocata.reactions ?? {}) };
+                    const oldEmoji = giocata.miaReaction;
+                    if (oldEmoji && oldEmoji !== emoji) {
+                      newReactions[oldEmoji] = Math.max(0, (newReactions[oldEmoji] ?? 1) - 1);
+                      if (newReactions[oldEmoji] <= 0) delete newReactions[oldEmoji];
+                    }
+                    if (!oldEmoji || oldEmoji !== emoji) {
+                      newReactions[emoji] = (newReactions[emoji] ?? 0) + 1;
+                    }
+                    giocata.reactions = newReactions;
+                    giocata.miaReaction = emoji;
+                  }
+                }
+              });
+            });
+          }
+
           this.lega = lega;
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
@@ -285,6 +348,9 @@ export class LegaDettaglioComponent implements OnDestroy {
 
           this.caricaTabella();
           this.caricaPartiteForzate();
+          if (this.isLeaderLega() && this.lega.pubblica && !this.lega.accessoLibero) {
+            this.caricaRichieste();
+          }
         },
         error: (error) => {
           console.error('Errore nel ricaricamento della lega:', error);
@@ -1098,6 +1164,52 @@ export class LegaDettaglioComponent implements OnDestroy {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
+
+  caricaRichieste(): void {
+    if (!this.lega || this.richiesteLoading) return;
+    this.richiesteLoading = true;
+    this.legaService.richiestePendenti(this.lega.id).subscribe({
+      next: (list) => {
+        this.richiesteInAttesa = list;
+        this.richiesteLoaded = true;
+        this.richiesteLoading = false;
+      },
+      error: () => { this.richiesteLoading = false; }
+    });
+  }
+
+  approvaRichiesta(requestId: number): void {
+    if (!this.lega) return;
+    this.legaService.approvaRichiesta(this.lega.id, requestId).subscribe({
+      next: () => {
+        this.richiesteInAttesa = this.richiesteInAttesa.filter(r => r.id !== requestId);
+        if (this.lega) this.lega.richiesteInAttesa = (this.lega.richiesteInAttesa ?? 1) - 1;
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000 });
+        // Ricarica la lega per aggiornare la lista giocatori
+        const legaId = this.lega?.id;
+        if (legaId) this.legaService.getLegaById(legaId).subscribe(l => { this.lega = l; });
+      },
+      error: (err) => {
+        const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
+        this.snackBar.open(msg, '', { duration: 4000 });
+      }
+    });
+  }
+
+  rifiutaRichiesta(requestId: number): void {
+    if (!this.lega) return;
+    this.legaService.rifiutaRichiesta(this.lega.id, requestId).subscribe({
+      next: () => {
+        this.richiesteInAttesa = this.richiesteInAttesa.filter(r => r.id !== requestId);
+        if (this.lega) this.lega.richiesteInAttesa = (this.lega.richiesteInAttesa ?? 1) - 1;
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000 });
+      },
+      error: (err) => {
+        const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
+        this.snackBar.open(msg, '', { duration: 4000 });
+      }
+    });
+  }
   isInLega(): boolean {
     const ruolo = this.lega?.ruoloGiocatoreLega;
     return !!ruolo && ruolo.value != RuoloGiocatore.NESSUNO.value;
@@ -1166,6 +1278,158 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   isDaAvviare(): boolean {
     return this.lega!.stato.value === StatoLega.DA_AVVIARE.value;
+  }
+
+  canShare(): boolean {
+    return !!navigator.share;
+  }
+
+  /**
+   * Aggiunge, cambia o rimuove la reaction dell'utente su una giocata.
+   * Se l'utente clicca sulla stessa emoji già scelta → rimuove la reaction.
+   */
+  toggleReaction(giocata: Giocata, emoji: string): void {
+    if (!giocata.id) return;
+    // Le reactions sono visibili solo quando il voto non è nascosto
+    if (this.shouldHideGiocata(giocata, giocata.giornata ?? 0)) return;
+
+    const stessaEmoji = giocata.miaReaction === emoji;
+    const giocataId = giocata.id;
+
+    // Aggiornamento ottimistico
+    if (stessaEmoji) {
+      // Rimuovi
+      if (giocata.reactions) {
+        giocata.reactions = { ...giocata.reactions, [emoji]: (giocata.reactions[emoji] ?? 1) - 1 };
+        if (giocata.reactions[emoji] <= 0) {
+          const { [emoji]: _, ...rest } = giocata.reactions;
+          giocata.reactions = rest;
+        }
+      }
+      giocata.miaReaction = null;
+      this.pendingReactions.set(giocataId, null);
+      this.reactionService.rimuovi(giocataId).subscribe({
+        next: () => this.pendingReactions.delete(giocataId),
+        error: () => { this.pendingReactions.delete(giocataId); this.loadLegaDetails(); }
+      });
+    } else {
+      // Aggiungi o sostituisci
+      const newReactions: Record<string, number> = { ...(giocata.reactions ?? {}) };
+      if (giocata.miaReaction) {
+        newReactions[giocata.miaReaction] = Math.max(0, (newReactions[giocata.miaReaction] ?? 1) - 1);
+        if (newReactions[giocata.miaReaction] <= 0) delete newReactions[giocata.miaReaction];
+      }
+      newReactions[emoji] = (newReactions[emoji] ?? 0) + 1;
+      giocata.reactions = newReactions;
+      giocata.miaReaction = emoji;
+      this.pendingReactions.set(giocataId, emoji);
+      this.reactionService.reagisci(giocataId, emoji).subscribe({
+        next: () => this.pendingReactions.delete(giocataId),
+        error: () => { this.pendingReactions.delete(giocataId); this.loadLegaDetails(); }
+      });
+    }
+  }
+
+  getReactionEntries(giocata: Giocata): { emoji: string; count: number }[] {
+    if (!giocata.reactions) return [];
+    return Object.entries(giocata.reactions)
+      .filter(([, count]) => count > 0)
+      .map(([emoji, count]) => ({ emoji, count }));
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    if (this.popupJustOpened) return;
+    this.activeReactionKey = null;
+    this.activeGiocata = null;
+  }
+
+  openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {
+    if (!giocata || !el) return;
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+    const rect = (el as HTMLElement).getBoundingClientRect();
+    this.reactionPopupStyle = {
+      top: `${rect.top}px`,
+      left: `${rect.left + rect.width / 2}px`
+    };
+    this.activeReactionKey = key;
+    this.activeGiocata = giocata;
+  }
+
+  /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
+   *  che il document:click lo richiuda subito. */
+  openReactionPopupClick(key: string, giocata: Giocata | null, event: MouseEvent | TouchEvent): void {
+    if (!giocata) return;
+    event.stopPropagation();
+    this.openReactionPopup(key, giocata, event.currentTarget as HTMLElement);
+    this.popupJustOpened = true;
+    setTimeout(() => { this.popupJustOpened = false; }, 400);
+  }
+
+  cancelClosePopup(): void {
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+  }
+
+  closeReactionPopupDelayed(): void {
+    this.closePopupTimer = setTimeout(() => {
+      this.activeReactionKey = null;
+      this.activeGiocata = null;
+      this.closePopupTimer = null;
+    }, 600);
+  }
+
+  closeReactionPopup(): void {
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+    this.activeReactionKey = null;
+    this.activeGiocata = null;
+  }
+
+  startLongPress(key: string, giocata: Giocata | null, event: TouchEvent): void {
+    if (!giocata) return;
+    this.cancelLongPress();
+    const el = event.currentTarget as HTMLElement;
+    this.longPressTimer = setTimeout(() => {
+      this.longPressTimer = null;
+      const rect = el.getBoundingClientRect();
+      this.reactionPopupStyle = {
+        top: `${rect.top}px`,
+        left: `${rect.left + rect.width / 2}px`
+      };
+      this.activeReactionKey = key;
+      this.activeGiocata = giocata;
+      this.popupJustOpened = true;
+      setTimeout(() => { this.popupJustOpened = false; }, 400);
+    }, 500);
+  }
+
+  cancelLongPress(): void {
+    if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer);
+      this.longPressTimer = null;
+    }
+  }
+
+  async shareLink(): Promise<void> {
+    const url = environment.baseUrl + '/joinLega';
+    const text = `Entra nella lega "${this.lega!.name}" su Survivor`;
+    try {
+      const { Share } = await import('@capacitor/share');
+      await Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' });
+    } catch {
+      // Su web puro, fallback navigator.share
+      if (navigator.share) {
+        navigator.share({ title: 'Unisciti alla mia lega!', text, url }).catch(() => {});
+      }
+    }
   }
 
   isTerminata(): boolean {
@@ -1327,12 +1591,18 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataRelativa = this.lega.giornataCorrente - (this.lega.giornataIniziale || 1) + 1;
     const giocata = this.getGiocataByGiornata(giocatore, giornataRelativa);
 
-    // Leader/Admin possono SEMPRE giocare/modificare
+    // Leader/Admin possono SEMPRE giocare/modificare per qualsiasi giocatore
     if (this.isLeaderLega() || this.isAdmin()) {
       return true;
     }
 
-    // Se la giornata è DA_GIOCARE (timeout attivo), TUTTI possono giocare/modificare
+    // Gli utenti normali possono giocare SOLO per se stessi
+    const currentUserId = this.authService.getCurrentUser()?.id;
+    if (giocatore.user?.id !== currentUserId) {
+      return false;
+    }
+
+    // Se la giornata è DA_GIOCARE (timeout attivo), l'utente può giocare/modificare la propria giocata
     if (this.lega.statoGiornataCorrente?.value === StatoPartita.DA_GIOCARE.value) {
       return true;
     }

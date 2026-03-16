@@ -15,8 +15,13 @@
         <div class="recap-header">
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
-            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>
-          </div>
+            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <button *ngIf="isDaAvviare() && (isLeaderLega() || isAdmin())"
+              mat-icon-button
+              class="recap-share-btn"
+              (click)="shareLink()"
+              [matTooltip]="'COMMON.SHARE_LINK' | translate">
+              <mat-icon>share</mat-icon>
+            </button>          </div>
           <div class="recap-sport-row">
             <span class="recap-sport-chip">
               <mat-icon class="recap-sport-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
@@ -71,6 +76,15 @@
             </div>
           </div>
           }
+          <div class="recap-chip">
+            <mat-icon class="rc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
+            <div class="rc-content">
+              <span class="rc-label">{{ 'LEAGUE.VISIBILITY' | translate }}</span>
+              <span class="rc-value" [class.rc-value--pubblica]="lega.pubblica" [class.rc-value--privata]="!lega.pubblica">
+                {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
+              </span>
+            </div>
+          </div>
         </div>
 
         <!-- BARRA AVANZAMENTO LEGA -->
@@ -302,7 +316,13 @@
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <div class="giocata-cell-content">
+                        <div class="giocata-cell-content"
+                          (mouseenter)="openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
+                          (mouseleave)="closeReactionPopupDelayed()"
+                          (touchstart)="startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
+                          (touchend)="cancelLongPress()"
+                          (touchmove)="cancelLongPress()"
+                          (contextmenu)="$event.preventDefault()">
                           <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
                           <span
                             [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
@@ -326,6 +346,21 @@
                               </mat-icon>
                             }
                           </div>
+                          <!-- Reactions (visibili solo se il voto è visibile) -->
+                          @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                            <!-- Pills sempre visibili per reaction già date -->
+                            @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
+                              <div class="reaction-summary">
+                                @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
+                                  <span class="reaction-pill"
+                                    [class.reaction-pill--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
+                                    {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
+                                  </span>
+                                }
+                              </div>
+                            }
+
+                          }
                         </div>
                       } @else {
                         <!-- Cella vuota -->
@@ -515,7 +550,8 @@
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
+                       (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
                       <img
                         class="team-logo-cell"
@@ -540,6 +576,19 @@
                         </mat-icon>
                       }
                     </div>
+                    <!-- Reaction pills mobile -->
+                    @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                      @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
+                        <div class="reaction-summary-mobile">
+                          @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
+                            <span class="reaction-pill-mobile"
+                              [class.reaction-pill-mobile--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
+                              {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
+                            </span>
+                          }
+                        </div>
+                      }
+                    }
                   </div>
                 } @else {
                   <!-- Cella vuota -->
@@ -592,6 +641,61 @@
         </div>
       </div>
 
+      <!-- SEZIONE RICHIESTE DI INGRESSO (solo leader, lega pubblica con accesso su approvazione, solo se ci sono richieste) -->
+      @if (isLeaderLega() && lega.pubblica && !lega.accessoLibero && (richiesteLoading || richiesteInAttesa.length > 0)) {
+      <div class="join-requests-section">
+        <div class="jr-header">
+          <div class="jr-title-row">
+            <mat-icon class="jr-icon">how_to_reg</mat-icon>
+            <span class="jr-title">{{ 'JOIN_REQUEST.SECTION_TITLE' | translate }}</span>
+            @if ((lega.richiesteInAttesa ?? 0) > 0) {
+            <span class="jr-badge">{{ lega.richiesteInAttesa }}</span>
+            }
+          </div>
+          <button type="button" class="jr-load-btn" (click)="$event.stopPropagation(); caricaRichieste()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+
+        @if (richiesteLoading) {
+        <div class="jr-loading">
+          <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+        </div>
+        }
+
+        @if (richiesteLoaded && !richiesteLoading) {
+          @if (richiesteInAttesa.length === 0) {
+          <p class="jr-empty">{{ 'JOIN_REQUEST.NO_PENDING' | translate }}</p>
+          } @else {
+          <div class="jr-list">
+            @for (req of richiesteInAttesa; track req.id) {
+            <div class="jr-card">
+              <div class="jr-player-info">
+                <mat-icon class="jr-player-icon">person</mat-icon>
+                <div class="jr-player-details">
+                  <span class="jr-nickname">{{ req.giocatoreNickname }}</span>
+                  <span class="jr-email">{{ req.giocatoreEmail }}</span>
+                </div>
+              </div>
+              <div class="jr-actions">
+                <button class="jr-btn jr-btn--approve" (click)="approvaRichiesta(req.id)" [title]="'JOIN_REQUEST.APPROVE' | translate">
+                  <mat-icon>check_circle</mat-icon>
+                  {{ 'JOIN_REQUEST.APPROVE' | translate }}
+                </button>
+                <button class="jr-btn jr-btn--reject" (click)="rifiutaRichiesta(req.id)" [title]="'JOIN_REQUEST.REJECT' | translate">
+                  <mat-icon>cancel</mat-icon>
+                  {{ 'JOIN_REQUEST.REJECT' | translate }}
+                </button>
+              </div>
+            </div>
+            }
+          </div>
+          }
+        }
+
+      </div>
+      }
+
       <!-- ELIMINA LEGA - In fondo, discreto -->
       @if (isDaAvviare() && isLeaderLega()) {
       <div class="delete-lega-footer">
@@ -628,4 +732,22 @@
     }
 </div>
 </main>
+
+<!-- Global reaction picker overlay (position:fixed, fuori dalla tabella per evitare overflow:hidden) -->
+@if(activeReactionKey !== null && activeGiocata !== null) {
+  <div class="reaction-picker-global"
+    [style.top]="reactionPopupStyle.top"
+    [style.left]="reactionPopupStyle.left"
+    (mouseenter)="cancelClosePopup()"
+    (mouseleave)="closeReactionPopupDelayed()"
+    (click)="$event.stopPropagation()">
+    @for(emoji of REACTION_EMOJIS; track emoji) {
+      <button type="button" class="reaction-btn-global"
+        [class.reaction-btn-global--mine]="activeGiocata!.miaReaction === emoji"
+        (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
+        {{ emoji }}
+      </button>
+    }
+  </div>
+}
 </div>
