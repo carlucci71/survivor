@@ -61,6 +61,9 @@ public class LegaService {
     private final CacheableService cacheableService;
     private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
     private final ReactionGiocataService reactionGiocataService;
+    private final OddsService oddsService;
+    private final it.ddlsolution.survivor.repository.GiocataRepository giocataRepository;
+    private final it.ddlsolution.survivor.repository.PartitaRepository partitaRepository;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -162,6 +165,19 @@ public class LegaService {
 
     private List<GiocatoreDTO> getGiocatoriOrdinati(List<GiocatoreDTO> giocatori, Long idLega) {
         if (!ObjectUtils.isEmpty(giocatori)) {
+            // Calcola totalePunti per ogni giocatore
+            giocatori.forEach(g -> {
+                if (g.getGiocate() != null) {
+                    java.math.BigDecimal tot = g.getGiocate().stream()
+                            .filter(gk -> idLega.equals(gk.getLegaId())
+                                    && Enumeratori.EsitoGiocata.OK == gk.getEsito()
+                                    && gk.getPunti() != null)
+                            .map(GiocataDTO::getPunti)
+                            .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+                    g.setTotalePunti(tot.compareTo(java.math.BigDecimal.ZERO) == 0 ? null : tot);
+                }
+            });
+
             giocatori = giocatori.stream().sorted((g1, g2) ->
             {
                 Enumeratori.StatoGiocatore statoGiocatore1 = g1.getStatiPerLega().entrySet().stream()
@@ -176,6 +192,11 @@ public class LegaService {
                         .getValue();
                 if (statoGiocatore1 == statoGiocatore2) {
                     if (g1.getGiocate().size() == g2.getGiocate().size()) {
+                        // Tiebreaker: più punti è meglio
+                        java.math.BigDecimal p1 = g1.getTotalePunti() != null ? g1.getTotalePunti() : java.math.BigDecimal.ZERO;
+                        java.math.BigDecimal p2 = g2.getTotalePunti() != null ? g2.getTotalePunti() : java.math.BigDecimal.ZERO;
+                        int cmp = p2.compareTo(p1); // desc
+                        if (cmp != 0) return cmp;
                         return g1.getNickname().compareTo(g2.getNickname());
                     }
                     return g2.getGiocate().size() - g1.getGiocate().size();
@@ -384,9 +405,52 @@ public class LegaService {
             }
         }
         salva(legaDTO, null);
+
+        // Calcola punti per le giocate vincenti e pre-scarica le quote della prossima giornata
+        if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
+            calcolaPuntiGiornata(legaDTO, nuovaGiornataCalcolata);
+            int prossimaGiornata = nuovaGiornataCalcolata + 1;
+            if (prossimaGiornata <= campionatoDTO.getNumGiornate()) {
+                try {
+                    oddsService.aggiornaQuoteGiornata(
+                            legaDTO.getCampionato().getId(),
+                            legaDTO.getAnno(),
+                            prossimaGiornata,
+                            utility.getImplementationExternalApi());
+                } catch (Exception e) {
+                    log.warn("[LegaService] Errore fetch quote prossima giornata {}: {}", prossimaGiornata, e.getMessage());
+                }
+            }
+        }
+
         return getLegaDTO(legaDTO.getId(), true, userId);
     }
 
+    /**
+     * Per ogni giocata vincente (esito=OK) della giornata appena calcolata,
+     * imposta punti = quota_bloccata sull'entità Giocata e la persiste.
+     */
+    private void calcolaPuntiGiornata(LegaDTO legaDTO, int nuovaGiornataCalcolata) {
+        final int giornataRelativa = nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1;
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+            if (giocatoreDTO.getGiocate() == null) continue;
+            giocatoreDTO.getGiocate().stream()
+                    .filter(g -> g.getLegaId().equals(legaDTO.getId())
+                            && Integer.valueOf(giornataRelativa).equals(g.getGiornata())
+                            && Enumeratori.EsitoGiocata.OK == g.getEsito())
+                    .forEach(giocataDTO -> {
+                        if (giocataDTO.getId() == null) return;
+                        giocataRepository.findById(giocataDTO.getId()).ifPresent(entity -> {
+                            if (entity.getQuotaBloccata() != null) {
+                                entity.setPunti(entity.getQuotaBloccata());
+                                giocataRepository.save(entity);
+                                log.info("[LegaService] Punti {} assegnati a giocatore {} gio{}",
+                                        entity.getQuotaBloccata(), giocatoreDTO.getId(), nuovaGiornataCalcolata);
+                            }
+                        });
+                    });
+        }
+    }
 
     private Boolean vincente(String squadraSigla, List<PartitaDTO> partite) {
         Boolean ret = null;

@@ -15,10 +15,10 @@ public class GiocataDTO {
     private String squadraSigla;
     private Enumeratori.EsitoGiocata esito;
     private String forzatura;
-    private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
-    // reactions: emoji -> conteggio (es. {"👏": 2, "🔥": 1})
+    private Boolean pubblica;
+    private java.math.BigDecimal quotaBloccata;
+    private java.math.BigDecimal punti;
     private Map<String, Integer> reactions;
-    // emoji scelta dall'utente corrente (null se non ha reagito)
     private String miaReaction;
 }
 

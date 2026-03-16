@@ -85,5 +85,13 @@ public class Partita {
         this.forzata = forzata;
     }
 
+    @Column(name = "quota_casa", precision = 6, scale = 2)
+    private java.math.BigDecimal quotaCasa;
+
+    @Column(name = "quota_pareggio", precision = 6, scale = 2)
+    private java.math.BigDecimal quotaPareggio;
+
+    @Column(name = "quota_trasferta", precision = 6, scale = 2)
+    private java.math.BigDecimal quotaTrasf;
 
 }

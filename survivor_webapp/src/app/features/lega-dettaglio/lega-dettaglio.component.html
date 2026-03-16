@@ -262,6 +262,7 @@
               <tr class="excel-header-row">
                 <th class="excel-header-cell user-col">{{ 'LEAGUE.TABLE_USER' | translate }}</th>
                 <th class="excel-header-cell status-col">{{ 'LEAGUE.TABLE_STATUS' | translate }}</th>
+                <th class="excel-header-cell punti-col" title="Punti accumulati (somma quote giocate vinte)">Punti</th>
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
@@ -306,6 +307,15 @@
                           [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                           [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
                     </span>
+                  </td>
+
+                  <!-- PUNTI -->
+                  <td class="excel-cell punti-cell">
+                    @if(giocatore.totalePunti) {
+                      <span class="punti-badge">{{ giocatore.totalePunti | number:'1.2-2' }}</span>
+                    } @else {
+                      <span class="punti-empty">-</span>
+                    }
                   </td>
 
                   <!-- GIORNATE (Limitate o Complete) -->
@@ -505,6 +515,9 @@
               </span>
 
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              @if(giocatore.totalePunti) {
+                <span class="punti-badge-mobile" title="Punti accumulati">{{ giocatore.totalePunti | number:'1.2-2' }}</span>
+              }
 
               <!-- Icona storico completo se ci sono più di 5 giocate -->
               @if(hasMoreRounds(giocatore)) {

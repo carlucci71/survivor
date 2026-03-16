@@ -816,6 +816,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   /**
+   * Ritorna la quota bookmaker per la squadra nella prossima partita, null se non disponibile.
+   */
+  getQuotaSquadra(squadra: any): number | null {
+    const p: Partita | null = squadra?.prossimaPartita ?? null;
+    if (!p) return null;
+    if (p.casaSigla === squadra.sigla) return p.quotaCasa ?? null;
+    if (p.fuoriSigla === squadra.sigla) return p.quotaTrasf ?? null;
+    return null;
+  }
+
+  /**
    * Verifica se una squadra gioca in casa nella prossima partita
    */
   isPlayingHome(siglaSquadra: string): boolean {

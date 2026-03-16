@@ -725,6 +725,18 @@
 	max-width: 100%;
 }
 
+.jersey-quota {
+	display: inline-block;
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: #fff;
+	background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+	padding: 1px 5px;
+	border-radius: 8px;
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
 /* RESPONSIVE - Mobile first */
 @media (max-width: 480px) {
 	.jersey-card {

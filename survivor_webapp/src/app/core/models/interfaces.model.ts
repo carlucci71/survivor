@@ -164,6 +164,9 @@ export interface Partita {
     aliasGiornataCasa: string;
     aliasGiornataFuori: string;
     forzata?: boolean;
+    quotaCasa?: number;
+    quotaPareggio?: number;
+    quotaTrasf?: number;
 }
 
 export interface PartitaMock {
@@ -204,7 +207,8 @@ export interface Giocatore {
   tennistaCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
   user?: User;
-  giocate?: Giocata[]
+  giocate?: Giocata[];
+  totalePunti?: number; // Somma punti da giocate vincenti nella lega corrente
 }
 
 export interface Giocata {
@@ -215,6 +219,8 @@ export interface Giocata {
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
+  quotaBloccata?: number; // Quota bookmaker bloccata al momento della giocata
+  punti?: number;         // Punti assegnati a giornata calcolata (= quotaBloccata se vincente)
   reactions?: Record<string, number>; // emoji -> conteggio
   miaReaction?: string | null; // emoji scelta dall'utente corrente
 }

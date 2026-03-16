@@ -53,6 +53,8 @@ external-api:
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal
+  odds:
+    api-key: ${ENV_ODDS_API_KEY:}
 
 springdoc:
   api-docs:

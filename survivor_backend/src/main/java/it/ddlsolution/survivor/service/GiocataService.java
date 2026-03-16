@@ -16,6 +16,7 @@ import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocataRevisionRepository;
 import it.ddlsolution.survivor.repository.GiocataSnapshotRepository;
+import it.ddlsolution.survivor.repository.PartitaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
@@ -45,6 +46,8 @@ public class GiocataService {
     private final GiocataRevisionRepository giocataRevisionRepository;
     private final LegaService legaService;
     private final SquadraService squadraService;
+    private final OddsService oddsService;
+    private final PartitaRepository partitaRepository;
 
 
     @Transactional
@@ -122,6 +125,23 @@ public class GiocataService {
         }
 
         giocata.setForzatura(forzaturaText);
+
+        // Blocca la quota al momento della giocata (per il calcolo punti a fine giornata)
+        if (squadra != null && !ObjectUtils.isEmpty(request.getSquadraSigla())) {
+            try {
+                int absoluteGiornata = lega.getGiornataIniziale() + request.getGiornata() - 1;
+                partitaRepository.findByGiornataAndSquadra(
+                        lega.getCampionato().getId(), lega.getAnno(), absoluteGiornata, request.getSquadraSigla()
+                ).ifPresent(p -> {
+                    java.math.BigDecimal quota = oddsService.getQuotaForSquadra(p, request.getSquadraSigla());
+                    giocata.setQuotaBloccata(quota);
+                    log.info("[GiocataService] Quota bloccata {} per {} gio{}", quota, request.getSquadraSigla(), absoluteGiornata);
+                });
+            } catch (Exception e) {
+                log.warn("[GiocataService] Impossibile bloccare quota per {}: {}", request.getSquadraSigla(), e.getMessage());
+            }
+        }
+
         log.info("💾 Salvataggio giocata - Giocatore: {}, Giornata: {}, Squadra: {}, Forzatura: {}",
                  giocatore.getId(), request.getGiornata(), request.getSquadraSigla(), forzaturaText);
 

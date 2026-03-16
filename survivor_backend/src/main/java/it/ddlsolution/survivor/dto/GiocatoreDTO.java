@@ -20,6 +20,8 @@ public class GiocatoreDTO {
     private List<GiocataDTO> giocate;
     private UserDTO user;
     private List<LegaDTO> leghe = new ArrayList<>();
+    /** Somma dei punti da giocate vincenti in questa lega (calcolato lato backend). */
+    private java.math.BigDecimal totalePunti;
 
 }
 

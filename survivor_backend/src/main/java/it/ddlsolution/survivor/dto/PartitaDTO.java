@@ -36,4 +36,8 @@ public class PartitaDTO {
     public void setForzata(boolean forzata) {
         this.forzata = forzata;
     }
+
+    private java.math.BigDecimal quotaCasa;
+    private java.math.BigDecimal quotaPareggio;
+    private java.math.BigDecimal quotaTrasf;
 }

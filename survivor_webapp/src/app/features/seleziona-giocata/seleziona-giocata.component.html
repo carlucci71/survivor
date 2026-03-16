@@ -133,6 +133,9 @@
               <!-- INFO SQUADRA -->
               <div class="jersey-info">
                 <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
+                @if(getQuotaSquadra(squadra) !== null) {
+                  <span class="jersey-quota">{{ getQuotaSquadra(squadra)! | number:'1.2-2' }}</span>
+                }
                 @if(squadra.prossimaPartita) {
                   <span class="jersey-vs">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
                 }
