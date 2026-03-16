@@ -1,6 +1,6 @@
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
-import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
@@ -114,7 +114,14 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
-  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂'];
+  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂', '💀', '🤣', '😤', '🤦', '❤️', '😬', '🥶', '🤌', '🎉', '😈', '💪', '🤔'];
+
+  activeReactionKey: string | null = null;
+  activeGiocata: Giocata | null = null;
+  reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  private longPressTimer: any = null;
+  private closePopupTimer: any = null;
+  private popupJustOpened = false;
 
   public StatoGiocatore = StatoGiocatore;
   public StatoPartita = StatoPartita;
@@ -1275,6 +1282,77 @@ export class LegaDettaglioComponent implements OnDestroy {
     return Object.entries(giocata.reactions)
       .filter(([, count]) => count > 0)
       .map(([emoji, count]) => ({ emoji, count }));
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    if (this.popupJustOpened) return;
+    this.activeReactionKey = null;
+    this.activeGiocata = null;
+  }
+
+  openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {
+    if (!giocata || !el) return;
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+    const rect = (el as HTMLElement).getBoundingClientRect();
+    this.reactionPopupStyle = {
+      top: `${rect.top}px`,
+      left: `${rect.left + rect.width / 2}px`
+    };
+    this.activeReactionKey = key;
+    this.activeGiocata = giocata;
+  }
+
+  cancelClosePopup(): void {
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+  }
+
+  closeReactionPopupDelayed(): void {
+    this.closePopupTimer = setTimeout(() => {
+      this.activeReactionKey = null;
+      this.activeGiocata = null;
+      this.closePopupTimer = null;
+    }, 600);
+  }
+
+  closeReactionPopup(): void {
+    if (this.closePopupTimer) {
+      clearTimeout(this.closePopupTimer);
+      this.closePopupTimer = null;
+    }
+    this.activeReactionKey = null;
+    this.activeGiocata = null;
+  }
+
+  startLongPress(key: string, giocata: Giocata | null, event: TouchEvent): void {
+    if (!giocata) return;
+    this.cancelLongPress();
+    const el = event.currentTarget as HTMLElement;
+    this.longPressTimer = setTimeout(() => {
+      this.longPressTimer = null;
+      const rect = el.getBoundingClientRect();
+      this.reactionPopupStyle = {
+        top: `${rect.top}px`,
+        left: `${rect.left + rect.width / 2}px`
+      };
+      this.activeReactionKey = key;
+      this.activeGiocata = giocata;
+      this.popupJustOpened = true;
+      setTimeout(() => { this.popupJustOpened = false; }, 400);
+    }, 500);
+  }
+
+  cancelLongPress(): void {
+    if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer);
+      this.longPressTimer = null;
+    }
   }
 
   async shareLink(): Promise<void> {

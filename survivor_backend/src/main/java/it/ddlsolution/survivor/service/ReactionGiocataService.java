@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReactionGiocataService {
 
-    private static final Set<String> EMOJI_VALIDE = Set.of("👏", "😱", "🔥", "😂");
+    private static final Set<String> EMOJI_VALIDE = Set.of("👏", "😱", "🔥", "😂", "💀", "🤣", "😤", "🤦", "❤️", "😬", "🥶", "🤌", "🎉", "😈", "💪", "🤔");
 
     private final ReactionGiocataRepository reactionRepository;
     private final GiocataRepository giocataRepository;

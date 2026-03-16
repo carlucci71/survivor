@@ -316,7 +316,13 @@
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
-                        <div class="giocata-cell-content">
+                        <div class="giocata-cell-content"
+                          (mouseenter)="openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
+                          (mouseleave)="closeReactionPopupDelayed()"
+                          (touchstart)="startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
+                          (touchend)="cancelLongPress()"
+                          (touchmove)="cancelLongPress()"
+                          (contextmenu)="$event.preventDefault()">
                           <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
                           <span
                             [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
@@ -342,18 +348,18 @@
                           </div>
                           <!-- Reactions (visibili solo se il voto è visibile) -->
                           @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
-                            <div class="reaction-bar">
-                              @for(emoji of REACTION_EMOJIS; track emoji) {
-                                <button type="button" class="reaction-btn"
-                                  [class.reaction-btn--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === emoji"
-                                  (click)="toggleReaction(getGiocataByGiornataAssoluta(giocatore, giornata)!, emoji); $event.stopPropagation()">
-                                  <span class="reaction-emoji">{{ emoji }}</span>
-                                  @if((getGiocataByGiornataAssoluta(giocatore, giornata)?.reactions?.[emoji] ?? 0) > 0) {
-                                    <span class="reaction-count">{{ getGiocataByGiornataAssoluta(giocatore, giornata)?.reactions?.[emoji] }}</span>
-                                  }
-                                </button>
-                              }
-                            </div>
+                            <!-- Pills sempre visibili per reaction già date -->
+                            @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
+                              <div class="reaction-summary">
+                                @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
+                                  <span class="reaction-pill"
+                                    [class.reaction-pill--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
+                                    {{ entry.emoji }}@if(entry.count > 1){<span class="pill-count">{{ entry.count }}</span>}
+                                  </span>
+                                }
+                              </div>
+                            }
+
                           }
                         </div>
                       } @else {
@@ -712,4 +718,22 @@
     }
 </div>
 </main>
+
+<!-- Global reaction picker overlay (position:fixed, fuori dalla tabella per evitare overflow:hidden) -->
+@if(activeReactionKey !== null && activeGiocata !== null) {
+  <div class="reaction-picker-global"
+    [style.top]="reactionPopupStyle.top"
+    [style.left]="reactionPopupStyle.left"
+    (mouseenter)="cancelClosePopup()"
+    (mouseleave)="closeReactionPopupDelayed()"
+    (click)="$event.stopPropagation()">
+    @for(emoji of REACTION_EMOJIS; track emoji) {
+      <button type="button" class="reaction-btn-global"
+        [class.reaction-btn-global--mine]="activeGiocata!.miaReaction === emoji"
+        (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
+        {{ emoji }}
+      </button>
+    }
+  </div>
+}
 </div>
