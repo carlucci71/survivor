@@ -199,6 +199,15 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     if (!this.showPasswordSection) this.pwd = null;
   }
 
+  setPubblica(value: boolean): void {
+    this.pubblica = value;
+    if (!value) this.accessoLibero = false;
+  }
+
+  setAccessoLibero(value: boolean): void {
+    this.accessoLibero = value;
+  }
+
   selectCampionato(c: Campionato): void {
     this.campionatoSel = c;
     this.campionatoTouched = true;

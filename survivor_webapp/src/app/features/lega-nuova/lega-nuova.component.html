@@ -209,12 +209,12 @@
           </div>
         </div>
         <div class="cn-visibility-grid">
-          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!pubblica" (click)="pubblica = false">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!pubblica" (click)="setPubblica(false)">
             <mat-icon class="cn-vis-ico">lock</mat-icon>
             <span class="cn-vis-label">{{ 'CREATE_LEAGUE.VISIBILITY_PRIVATE_LABEL' | translate }}</span>
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PRIVATE_DESC' | translate }}</span>
           </button>
-          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="pubblica" (click)="pubblica = true">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="pubblica" (click)="setPubblica(true)">
             <mat-icon class="cn-vis-ico">public</mat-icon>
             <span class="cn-vis-label">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_LABEL' | translate }}</span>
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_DESC' | translate }}</span>
@@ -234,12 +234,12 @@
           </div>
         </div>
         <div class="cn-visibility-grid">
-          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!accessoLibero" (click)="accessoLibero = false">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="!accessoLibero" (click)="setAccessoLibero(false)">
             <mat-icon class="cn-vis-ico">approval</mat-icon>
             <span class="cn-vis-label">{{ 'CREATE_LEAGUE.ACCESS_APPROVAL_LABEL' | translate }}</span>
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.ACCESS_APPROVAL_DESC' | translate }}</span>
           </button>
-          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="accessoLibero" (click)="accessoLibero = true">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="accessoLibero" (click)="setAccessoLibero(true)">
             <mat-icon class="cn-vis-ico">login</mat-icon>
             <span class="cn-vis-label">{{ 'CREATE_LEAGUE.ACCESS_FREE_LABEL' | translate }}</span>
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.ACCESS_FREE_DESC' | translate }}</span>
