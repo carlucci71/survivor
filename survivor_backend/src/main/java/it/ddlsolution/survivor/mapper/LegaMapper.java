@@ -104,6 +104,7 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
                     })
                     .toList());
         }
+        legaDTO.setNumPartecipanti(lega.getGiocatoreLeghe() != null ? lega.getGiocatoreLeghe().size() : 0);
     }
 
     @Named("valorizzaStatoDaAvviare")

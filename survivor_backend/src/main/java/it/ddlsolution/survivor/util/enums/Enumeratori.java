@@ -156,7 +156,12 @@ public class Enumeratori {
 
     public enum CodiciParametri {MOCK_LOCALDATE_RIF}
 
-    public enum TipoNotifica {INIZIO_PARTITA("Inizio partita");
+    public enum TipoNotifica {
+        INIZIO_PARTITA("Inizio partita"),
+        JOIN_REQUEST_RICEVUTA("Richiesta di ingresso"),
+        JOIN_REQUEST_APPROVATA("Richiesta approvata"),
+        JOIN_REQUEST_RIFIUTATA("Richiesta rifiutata");
+
         String descrizione;
         TipoNotifica(String descrizione){
             this.descrizione=descrizione;
@@ -167,6 +172,9 @@ public class Enumeratori {
         }
     }
 
+    public enum StatoRichiesta {
+        PENDING, APPROVED, REJECTED
+    }
 
 }
 

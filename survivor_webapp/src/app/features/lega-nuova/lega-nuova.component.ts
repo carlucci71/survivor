@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -50,7 +50,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     private sportService: SportService,
     private legaService: LegaService,
     private campionatoService: CampionatoService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
@@ -72,6 +74,29 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   emailsList: string[] = [];
   copied = false;
   showPasswordSection = false;
+  pubblica = false;
+  accessoLibero = false;
+  maxPartecipanti: number | null = null;
+
+  decMaxPartecipanti(): void {
+    if (!this.maxPartecipanti) return;
+    const next = this.maxPartecipanti - 1;
+    this.maxPartecipanti = next < 2 ? null : next;
+  }
+
+  incMaxPartecipanti(): void {
+    this.maxPartecipanti = this.maxPartecipanti ? this.maxPartecipanti + 1 : 2;
+  }
+
+  onMaxPartecipantiInput(event: Event): void {
+    const val = parseInt((event.target as HTMLInputElement).value, 10);
+    if (!val || val < 2) {
+      this.maxPartecipanti = null;
+      (event.target as HTMLInputElement).value = '';
+    } else {
+      this.maxPartecipanti = val;
+    }
+  }
   ngOnInit(): void {
     this.caricaSport();
   }
@@ -174,6 +199,23 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   togglePassword(): void {
     this.showPasswordSection = !this.showPasswordSection;
     if (!this.showPasswordSection) this.pwd = null;
+  }
+
+  setPubblica(value: boolean): void {
+    this.ngZone.run(() => {
+      this.pubblica = value;
+      if (!value) this.accessoLibero = false;
+      this.cdr.detectChanges();
+      console.log('[LegaNuova] setPubblica ->', value, '| pubblica now:', this.pubblica);
+    });
+  }
+
+  setAccessoLibero(value: boolean): void {
+    this.ngZone.run(() => {
+      this.accessoLibero = value;
+      this.cdr.detectChanges();
+      console.log('[LegaNuova] setAccessoLibero ->', value);
+    });
   }
 
   selectCampionato(c: Campionato): void {
@@ -282,6 +324,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.giornataTouched = false;
     this.giornataFinaleTouched = false;
     this.campionatiDisponibili = [];
+    this.pubblica = false;
+    this.accessoLibero = false;
+    this.maxPartecipanti = null;
   }
 
   onSubmit(): void {
@@ -294,6 +339,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     if (!this.isFormValid()) {
       return;
     }
+    console.log('[LegaNuova] onSubmit - pubblica:', this.pubblica, '| accessoLibero:', this.accessoLibero);
     this.legaService
       .inserisciLega(
         this.name!,
@@ -301,7 +347,10 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.campionatoSel!.id,
         this.giornataIniziale!,
         this.giornataFinale,
-        this.pwd
+        this.pwd,
+        this.pubblica,
+        this.accessoLibero,
+        this.maxPartecipanti
       )
       .subscribe({
         next: (lega) => {
@@ -369,6 +418,22 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     });
   }
 
+  shareLink(): void {
+    const url = this.baseUrl() + '/joinLega';
+    const shareData = {
+      title: 'Unisciti alla mia lega!',
+      text: `Entra nella lega "${this.name}" su Survivor`,
+      url
+    };
+    import('@capacitor/share').then(({ Share }) => {
+      Share.share({ ...shareData, dialogTitle: 'Condividi la lega' }).catch(() => {});
+    }).catch(() => {
+      if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+      }
+    });
+  }
+
   copyLink(): void {
     const url = this.baseUrl() + '/joinLega';
     if (!navigator.clipboard) {
@@ -393,6 +458,12 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
       .writeText(url)
       .then(() => this.showCopiedFeedback())
       .catch((err) => console.error('Copia fallita', err));
+  }
+
+  goToLega(): void {
+    if (this.legaCreataId) {
+      this.router.navigate(['/lega', this.legaCreataId]);
+    }
   }
 
   private showCopiedFeedback(): void {

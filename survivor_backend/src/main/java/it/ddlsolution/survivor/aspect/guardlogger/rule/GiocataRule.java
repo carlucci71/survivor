@@ -62,17 +62,17 @@ public class GiocataRule implements GuardRule {
                 .filter(g -> g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega))
                 .findFirst();
 
-        if (ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
+        if (ruoloGiocatoreLega == null || ruoloGiocatoreLega == Enumeratori.RuoloGiocatoreLega.NESSUNO) {
             throw new AccessDeniedException("Non partecipi alla lega " + legaDTO.getName() + "-" + legaDTO.getEdizione());
+        }
+        // Controllo anticipato: solo il leader o admin può giocare per un altro utente
+        if (!userId.equals(idDelGiocatore)) {
+            if (!isAdmin && ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER) {
+                throw new AccessDeniedException("Solo il leader o admin può giocare per un altro utente");
+            }
         }
         if (giocatoreDTO.getStatiPerLega().getOrDefault(idLega, Enumeratori.StatoGiocatore.ELIMINATO) != Enumeratori.StatoGiocatore.ATTIVO) {
             throw new AccessDeniedException("Il giocatore " + giocatoreDTO.getId() + " non è attivo ");
-        }
-        if (!userId.equals(idDelGiocatore)
-                && !isAdmin
-                && ruoloGiocatoreLega != Enumeratori.RuoloGiocatoreLega.LEADER
-        ) {
-            throw new AccessDeniedException("Solo il leader o admin può giocare per un altro utente");
         }
         if (!userId.equals(idDelGiocatore)
         ) {

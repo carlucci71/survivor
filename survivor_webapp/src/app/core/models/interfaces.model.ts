@@ -122,6 +122,23 @@ export interface Lega {
   anno: number;
   statiGiornate?: Record<number, StatoPartita>;
   inizioProssimaGiornata: Date;
+  pubblica?: boolean;
+  numPartecipanti?: number;
+  maxPartecipanti?: number;
+  accessoLibero?: boolean;
+  richiesteInAttesa?: number;
+}
+
+export interface LegaJoinRequest {
+  id: number;
+  legaId: number;
+  legaName: string;
+  giocatoreId: number;
+  giocatoreNickname: string;
+  giocatoreEmail: string;
+  stato: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  resolvedAt?: string;
 }
 
 
@@ -198,6 +215,8 @@ export interface Giocata {
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
+  reactions?: Record<string, number>; // emoji -> conteggio
+  miaReaction?: string | null; // emoji scelta dall'utente corrente
 }
 
 export interface StatiPerLega {

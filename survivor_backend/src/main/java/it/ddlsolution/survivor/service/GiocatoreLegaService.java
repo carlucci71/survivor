@@ -19,6 +19,14 @@ public class GiocatoreLegaService {
         return giocatoreLegaRepository.findByLega_IdAndGiocatore_User_Id(idLega, userId);
     }
 
+    @Transactional
+    public GiocatoreLega save(GiocatoreLega giocatoreLega) {
+        return giocatoreLegaRepository.save(giocatoreLega);
+    }
+
+    public int countByLegaId(Long legaId) {
+        return giocatoreLegaRepository.countPartecipantiByLegaId(legaId);
+    }
 
 }
 

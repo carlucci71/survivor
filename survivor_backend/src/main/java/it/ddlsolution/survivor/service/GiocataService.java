@@ -6,8 +6,11 @@ import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.entity.Giocata;
 import it.ddlsolution.survivor.entity.GiocataSnapshot;
 import it.ddlsolution.survivor.entity.Giocatore;
+import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.Squadra;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
+import org.springframework.security.access.AccessDeniedException;
 import it.ddlsolution.survivor.mapper.GiocataMapper;
 import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
@@ -48,6 +51,29 @@ public class GiocataService {
     public GiocatoreDTO inserisciGiocata(GiocataRequestDTO request) {
         Giocatore giocatore = giocatoreService.findByIdEntity(request.getGiocatoreId());
         Lega lega = legaService.findByIdEntity(request.getLegaId());
+
+        // Defense-in-depth: verifica che l'utente autenticato abbia il diritto
+        // di inserire la giocata per questo giocatore, indipendentemente dal guard AOP.
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Long currentUserId = (Long) authentication.getPrincipal();
+            Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+            if (giocatoreUserId != null && !currentUserId.equals(giocatoreUserId) && !isAdmin) {
+                boolean isLeader = lega.getGiocatoreLeghe().stream()
+                        .filter(gl -> gl.getGiocatore() != null
+                                && gl.getGiocatore().getUser() != null
+                                && gl.getGiocatore().getUser().getId().equals(currentUserId))
+                        .map(GiocatoreLega::getRuolo)
+                        .anyMatch(r -> r == Enumeratori.RuoloGiocatoreLega.LEADER);
+                if (!isLeader) {
+                    throw new AccessDeniedException("Non sei autorizzato a giocare per un altro utente");
+                }
+            }
+        }
+
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
             squadra = squadraService.findBySiglaAndNazione(request.getSquadraSigla(), lega.getCampionato().getNazione());
@@ -81,7 +107,6 @@ public class GiocataService {
         // Se non c'è forzatura dal guard, ma l'utente corrente è diverso dal giocatore,
         // aggiungiamo comunque un indicatore di forzatura
         if (ObjectUtils.isEmpty(forzaturaText)) {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
                 Long currentUserId = (Long) authentication.getPrincipal();
                 Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;

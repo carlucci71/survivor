@@ -67,4 +67,13 @@ public class Lega {
 
     @Column(name = "anno")
     private short anno;
+
+    @Column(name = "pubblica", nullable = false)
+    private boolean pubblica;
+
+    @Column(name = "max_partecipanti")
+    private Integer maxPartecipanti;
+
+    @Column(name = "accesso_libero", nullable = false)
+    private boolean accessoLibero = false;
 }

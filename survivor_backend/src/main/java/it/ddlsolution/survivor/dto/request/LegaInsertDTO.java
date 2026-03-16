@@ -18,5 +18,8 @@ public class LegaInsertDTO {
     private int giornataIniziale;
     private Integer giornataFinale;
     private String pwd;
+    private boolean pubblica;
+    private Integer maxPartecipanti;
+    private boolean accessoLibero;
 }
 
