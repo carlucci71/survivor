@@ -1859,6 +1859,9 @@ export class LegaDettaglioComponent implements OnDestroy {
       );
     }
 
+    // Ordine alfabetico per nickname
+    filtered.sort((a, b) => (a.nickname ?? '').localeCompare(b.nickname ?? ''));
+
     return filtered;
   }
 

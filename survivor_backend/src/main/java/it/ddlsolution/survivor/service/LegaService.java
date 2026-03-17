@@ -175,10 +175,7 @@ public class LegaService {
                         .get()
                         .getValue();
                 if (statoGiocatore1 == statoGiocatore2) {
-                    if (g1.getGiocate().size() == g2.getGiocate().size()) {
-                        return g1.getNickname().compareTo(g2.getNickname());
-                    }
-                    return g2.getGiocate().size() - g1.getGiocate().size();
+                    return g1.getNickname().compareTo(g2.getNickname());
                 }
                 return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
             }).toList();
