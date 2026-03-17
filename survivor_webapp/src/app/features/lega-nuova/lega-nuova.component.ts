@@ -102,8 +102,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Scrolla la pagina in alto all'apertura del componente
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    // Scrolla in alto all'apertura — setTimeout garantisce che avvenga dopo
+    // il rendering completo e dopo qualsiasi auto-focus/keyboard resize su mobile
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 0);
   }
 
   /**
