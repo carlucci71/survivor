@@ -1547,6 +1547,17 @@
 .rc-value--privata {
 	color: #0A3D91;
 }
+.rc-value--iscritti {
+	color: #1565C0;
+	display: flex;
+	align-items: baseline;
+	gap: 2px;
+}
+.rc-max {
+	font-size: 0.72rem;
+	color: #9CA3AF;
+	font-weight: 500;
+}
 @media (max-width: 480px) {
 	.recap-chip {
 		min-width: 140px;

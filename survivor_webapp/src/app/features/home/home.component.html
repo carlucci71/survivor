@@ -112,7 +112,13 @@
                       {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
                     </span>
                   </mat-card-title>
-                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }} &middot; <strong>{{ group.numPartecipanti }}</strong> {{ 'HOME.PARTICIPANTS' | translate }}</mat-card-subtitle>
+                  <mat-card-subtitle class="group-subtitle">
+                    {{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}
+                    <span class="max-partecipanti-chip">
+                      <mat-icon class="mp-icon">group</mat-icon>
+                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : 'Senza limite' }}
+                    </span>
+                  </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="edizioni-list">
@@ -162,7 +168,13 @@
                       {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
                     </span>
                   </mat-card-title>
-                  <mat-card-subtitle>{{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }} &middot; <strong>{{ group.numPartecipanti }}</strong> {{ 'HOME.PARTICIPANTS' | translate }}</mat-card-subtitle>
+                  <mat-card-subtitle class="group-subtitle">
+                    {{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}
+                    <span class="max-partecipanti-chip">
+                      <mat-icon class="mp-icon">group</mat-icon>
+                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : 'Senza limite' }}
+                    </span>
+                  </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="edizioni-list">

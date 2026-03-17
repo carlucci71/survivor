@@ -564,6 +564,30 @@ h2 {
 	}
 }
 
+// ── Max partecipanti chip nella subtitle del gruppo ─────────────────────
+.max-partecipanti-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: 8px;
+	padding: 2px 8px;
+	background: rgba(10, 61, 145, 0.08);
+	color: #0A3D91;
+	border-radius: 12px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	vertical-align: middle;
+	line-height: 1.4;
+
+	.mp-icon {
+		font-size: 12px !important;
+		width: 12px !important;
+		height: 12px !important;
+		color: #0A3D91;
+		opacity: 0.7;
+	}
+}
+
 // ── Badge richieste pendenti sul titolo edizione (solo leader) ───────────
 .jr-pending-badge {
 	display: inline-flex;

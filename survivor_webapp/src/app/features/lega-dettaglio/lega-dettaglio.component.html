@@ -77,6 +77,16 @@
           </div>
           }
           <div class="recap-chip">
+            <mat-icon class="rc-icon">group</mat-icon>
+            <div class="rc-content">
+              <span class="rc-label">{{ 'LEAGUE.NUM_MEMBERS' | translate }}</span>
+              <span class="rc-value rc-value--iscritti">
+                {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}
+                @if (lega.maxPartecipanti) {<span class="rc-max"> / {{ lega.maxPartecipanti }}</span>}
+              </span>
+            </div>
+          </div>
+          <div class="recap-chip">
             <mat-icon class="rc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
             <div class="rc-content">
               <span class="rc-label">{{ 'LEAGUE.VISIBILITY' | translate }}</span>

@@ -22,13 +22,6 @@
         <span class="rc-value">{{ lega.giornataIniziale }}</span>
       </div>
     </div>
-    <div class="recap-chip" *ngIf="lega">
-      <mat-icon class="rc-icon">group</mat-icon>
-      <div class="rc-content">
-        <span class="rc-label">{{ 'LEAGUE.NUM_MEMBERS' | translate }}</span>
-        <span class="rc-value">{{ lega.numPartecipanti ?? lega.giocatori?.length }}</span>
-      </div>
-    </div>
     <div class="recap-chip" *ngIf="lega?.withPwd">
       <mat-icon class="rc-icon">lock</mat-icon>
       <div class="rc-content">

@@ -61,8 +61,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number }[] = [];
-  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number }[] = [];
+  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
+  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
   searchText: string = '';
   private searchDebounceTimer: any;
   me: Giocatore | null = null;
@@ -275,7 +275,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       const campionatoId = sorted[0].campionato?.id || '';
       const pubblica = !!sorted[0].pubblica;
       const numPartecipanti = sorted[0].numPartecipanti ?? sorted[0].giocatori?.length ?? 0;
-      return { name, des: { sportId, campionatoId }, edizioni: sorted, pubblica, numPartecipanti };
+      const maxPartecipanti = sorted[0].maxPartecipanti;
+      return { name, des: { sportId, campionatoId }, edizioni: sorted, pubblica, numPartecipanti, maxPartecipanti };
     }).sort((a, b) => {
       // Prima le leghe private, poi le pubbliche; a parità per ID discendente
       if (a.pubblica !== b.pubblica) return a.pubblica ? 1 : -1;
