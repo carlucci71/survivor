@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LegaService } from '../../../core/services/lega.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
@@ -475,7 +476,8 @@ export class InvitaUtentiDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<InvitaUtentiDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { legaId: number; legaNome: string },
-    private legaService: LegaService
+    private legaService: LegaService,
+    private authService: AuthService
   ) {}
 
   // ...existing code...
@@ -486,7 +488,13 @@ export class InvitaUtentiDialogComponent {
 
   shareLink(): void {
     const url = environment.baseUrl + '/joinLega';
-    const text = `Entra nella lega "${this.data.legaNome}" su Survivor`;
+    const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
+    const messaggi = [
+      `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.data.legaNome}" e dimostra chi è il vero campione! 💪`,
+      `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.data.legaNome}" su Survivor. Chi sopravvive di più? 😈`,
+      `⚽ ${nomeUtente} ti aspetta nella lega "${this.data.legaNome}" su Survivor. Ti unisci alla sfida? 🔥`,
+    ];
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
     import('@capacitor/share').then(({ Share }) => {
       Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' }).catch(() => {});
     }).catch(() => {

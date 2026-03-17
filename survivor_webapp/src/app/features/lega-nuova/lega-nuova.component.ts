@@ -424,9 +424,16 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
 
   shareLink(): void {
     const url = this.baseUrl() + '/joinLega';
+    const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
+    const messaggi = [
+      `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.name}" e dimostra chi è il vero campione! 💪`,
+      `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.name}" su Survivor. Chi sopravvive di più? 😈`,
+      `⚽ ${nomeUtente} ti aspetta nella lega "${this.name}" su Survivor. Ti unisci alla sfida? 🔥`,
+    ];
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
     const shareData = {
       title: 'Unisciti alla mia lega!',
-      text: `Entra nella lega "${this.name}" su Survivor`,
+      text,
       url
     };
     import('@capacitor/share').then(({ Share }) => {
