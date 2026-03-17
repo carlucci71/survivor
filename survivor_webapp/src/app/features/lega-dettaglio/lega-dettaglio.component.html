@@ -356,20 +356,14 @@
                               </mat-icon>
                             }
                           </div>
-                          <!-- Reactions (visibili solo se il voto è visibile) -->
+                          <!-- Reaction badge (non occupa spazio nel layout) -->
                           @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
-                            <!-- Pills sempre visibili per reaction già date -->
                             @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                              <div class="reaction-summary">
-                                @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
-                                  <span class="reaction-pill"
-                                    [class.reaction-pill--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
-                                    {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
-                                  </span>
-                                }
-                              </div>
+                              <span class="reaction-badge"
+                                [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction != null">
+                                {{ getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!)[0].emoji }}
+                              </span>
                             }
-
                           }
                         </div>
                       } @else {
@@ -586,17 +580,13 @@
                         </mat-icon>
                       }
                     </div>
-                    <!-- Reaction pills mobile -->
+                    <!-- Reaction badge mobile -->
                     @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
                       @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                        <div class="reaction-summary-mobile">
-                          @for(entry of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track entry.emoji) {
-                            <span class="reaction-pill-mobile"
-                              [class.reaction-pill-mobile--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === entry.emoji">
-                              {{ entry.emoji }}<span class="pill-count">{{ entry.count }}</span>
-                            </span>
-                          }
-                        </div>
+                        <span class="reaction-badge"
+                          [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction != null">
+                          {{ getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!)[0].emoji }}
+                        </span>
                       }
                     }
                   </div>
