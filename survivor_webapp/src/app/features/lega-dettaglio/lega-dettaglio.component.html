@@ -253,7 +253,8 @@
       </div>
 
       <!-- VISTA DESKTOP/TABLET - Tabella Compatta Tipo Excel -->
-      <div class="excel-table-wrapper desktop-tablet-only">
+      <div class="table-alpha-layout desktop-tablet-only">
+        <div class="excel-table-wrapper desktop-tablet-only">
 
         <!-- Link Mostra Risultati (sopra la tabella, fuori da essa) -->
         @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
@@ -265,7 +266,7 @@
           </div>
         }
 
-        <div class="excel-table-scroll">
+        <div class="excel-table-scroll" #excelTableScroll>
           <table class="excel-table">
             <!-- HEADER FISSO -->
             <thead>
@@ -293,7 +294,8 @@
             <tbody>
               @for (giocatore of getFilteredPlayers(); track giocatore.id) {
                 <tr class="excel-data-row"
-                    [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
+                    [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
+                    [attr.data-alpha]="giocatore.nickname.charAt(0).toUpperCase()">
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
@@ -407,6 +409,14 @@
             </tbody>
           </table>
         </div>
+        </div>
+        @if(getAlphaLetters().length > 1) {
+          <nav class="alpha-index">
+            @for(letter of getAlphaLetters(); track letter) {
+              <button class="alpha-btn" (click)="scrollToLetter(letter)">{{ letter }}</button>
+            }
+          </nav>
+        }
       </div>
 
       <!-- LEGENDA BADGE - Desktop: sotto tabella, Mobile: sotto cards -->

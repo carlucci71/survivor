@@ -92,6 +92,7 @@ import { RoundResultsDialogComponent } from '../../shared/components/round-resul
 })
 export class LegaDettaglioComponent implements OnDestroy {
   @ViewChild('tableWrapper') tableWrapper?: ElementRef<HTMLDivElement>;
+  @ViewChild('excelTableScroll') excelTableScroll?: ElementRef<HTMLDivElement>;
 
   /**
    * 🧪 MODALITÀ TEST per testare il dialog dello storico
@@ -1860,9 +1861,28 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
 
     // Ordine alfabetico per nickname
-    filtered.sort((a, b) => (a.nickname ?? '').localeCompare(b.nickname ?? ''));
+    filtered.sort((a, b) => a.nickname.localeCompare(b.nickname));
 
     return filtered;
+  }
+
+  getAlphaLetters(): string[] {
+    const letters = new Set<string>();
+    for (const p of this.getFilteredPlayers()) {
+      const l = p.nickname.charAt(0).toUpperCase();
+      if (l) letters.add(l);
+    }
+    return Array.from(letters).sort();
+  }
+
+  scrollToLetter(letter: string): void {
+    const container = this.excelTableScroll?.nativeElement;
+    if (!container) return;
+    const target = container.querySelector<HTMLElement>(`[data-alpha="${letter}"]`);
+    if (!target) return;
+    const containerRect = container.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    container.scrollTop += targetRect.top - containerRect.top - 4;
   }
 
   getTotalPlayersCount(): number {
