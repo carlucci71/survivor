@@ -128,7 +128,13 @@
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
                           <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
-                        <mat-card-subtitle>{{ edizione.stato.value | translateLeagueData: 'status' }}</mat-card-subtitle>
+                        <mat-card-subtitle>
+                          {{ edizione.stato.value | translateLeagueData: 'status' }}
+                          <span class="partecipanti-chip" *ngIf="edizione.numPartecipanti != null">
+                            <mat-icon class="part-icon">group</mat-icon>
+                            {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
+                          </span>
+                        </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>
                         <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">
@@ -184,7 +190,13 @@
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
                           <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
-                        <mat-card-subtitle>{{ edizione.stato.value | translateLeagueData: 'status' }}</mat-card-subtitle>
+                        <mat-card-subtitle>
+                          {{ edizione.stato.value | translateLeagueData: 'status' }}
+                          <span class="partecipanti-chip" *ngIf="edizione.numPartecipanti != null">
+                            <mat-icon class="part-icon">group</mat-icon>
+                            {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
+                          </span>
+                        </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>
                         <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">
