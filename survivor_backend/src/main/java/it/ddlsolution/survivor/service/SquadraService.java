@@ -6,8 +6,10 @@ import it.ddlsolution.survivor.mapper.SquadraMapper;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
@@ -43,7 +45,7 @@ public class SquadraService {
     @Transactional(readOnly = true)
     public SquadraDTO findByNome(String nome) {
         Squadra squadra = squadraRepository.findByNome(nome)
-                .orElseThrow(() -> new RuntimeException("Squadra non trovata: " + nome));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Squadra non trovata: " + nome));
         return squadraMapper.toDTO(squadra);
     }
 

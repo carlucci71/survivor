@@ -1300,6 +1300,11 @@ export class AlboOroDialogComponent implements OnInit {
                   <span class="team-name">{{item.nome}}</span>
                 </div>
               </div>
+              <!-- BANNER ERRORE SQUADRA NON TROVATA -->
+              <div class="team-not-found-banner" *ngIf="teamNotFoundError">
+                <span class="team-error-emoji">{{ teamNotFoundError.emoji }}</span>
+                <span class="team-error-msg">{{ teamNotFoundError.msg }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -2056,6 +2061,31 @@ export class AlboOroDialogComponent implements OnInit {
       }
     }
 
+    .team-not-found-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      border: 1px solid #FFB74D;
+      color: #E65100;
+      font-size: 0.88rem;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
+      box-shadow: 0 2px 8px rgba(230, 81, 0, 0.15);
+
+      .team-error-emoji {
+        font-size: 1.4rem;
+        flex-shrink: 0;
+      }
+
+      .team-error-msg {
+        line-height: 1.4;
+      }
+    }
+
     .feedback-message {
       display: flex;
       align-items: center;
@@ -2323,6 +2353,18 @@ export class ProfiloDialogComponent implements OnInit {
   isSaving = false;
   feedbackMessage: string | null = null;
   feedbackType: 'success' | 'error' | null = null;
+  teamNotFoundError: { emoji: string; msg: string } | null = null;
+
+  private readonly teamNotFoundEmojis = [
+    '🤡', '😂', '🧠', '😐', '🕵️', '🦗', '🤦', '🎭',
+    '🧩', '🚫', '🤔', '😅', '🎪', '🔍', '🤨', '💀',
+    '🤯', '🦆', '📖', '🏆'
+  ];
+
+  // Cache delle squadre selezionate (con ID) per evitare chiamate al backend al salvataggio
+  private squadreSelezionate: { calcio: Squadra | null; basket: Squadra | null; tennis: Squadra | null } = {
+    calcio: null, basket: null, tennis: null
+  };
 
   constructor(
     private dialog: MatDialog,
@@ -2340,6 +2382,7 @@ export class ProfiloDialogComponent implements OnInit {
 
   selectSport(sport: 'calcio' | 'basket' | 'tennis') {
     this.selectedSport = sport;
+    this.teamNotFoundError = null;
 
     // Carica il valore corrente per lo sport selezionato
     if (sport === 'calcio') {
@@ -2421,6 +2464,11 @@ export class ProfiloDialogComponent implements OnInit {
         this.userProfile.squadraBasket = giocatore.squadraBasketCuore?.nome || '';
         this.userProfile.tennista = giocatore.tennistaCuore?.nome || '';
 
+        // Salva gli oggetti completi (con ID) nella cache
+        this.squadreSelezionate.calcio = giocatore.squadraCuore || null;
+        this.squadreSelezionate.basket = giocatore.squadraBasketCuore || null;
+        this.squadreSelezionate.tennis = giocatore.tennistaCuore || null;
+
         // Imposta l'input corrente e carica le squadre del calcio (sport di default)
         this.currentInput = this.userProfile.squadraCalcio;
         this.loadSquadreForSport('calcio');
@@ -2432,7 +2480,26 @@ export class ProfiloDialogComponent implements OnInit {
     });
   }
 
+  private showTeamNotFoundError(): void {
+    const idx = Math.floor(Math.random() * this.teamNotFoundEmojis.length);
+    const msgKey = `PROFILE.TEAM_NOT_FOUND.MSG_${idx + 1}`;
+    this.teamNotFoundError = {
+      emoji: this.teamNotFoundEmojis[idx],
+      msg: this.translate.instant(msgKey)
+    };
+    this.isSaving = false;
+    // Invalida la selezione corrente perché il testo non corrisponde a nessuna squadra
+    if (this.selectedSport === 'calcio') {
+      this.squadreSelezionate.calcio = null;
+    } else if (this.selectedSport === 'basket') {
+      this.squadreSelezionate.basket = null;
+    } else {
+      this.squadreSelezionate.tennis = null;
+    }
+  }
+
   onSearchInput() {
+    this.teamNotFoundError = null;
     const query = (this.currentInput || '').toLowerCase().trim();
 
     if (query.length >= 3) {
@@ -2441,10 +2508,31 @@ export class ProfiloDialogComponent implements OnInit {
         .filter(s => s.nome.toLowerCase().includes(query))
         .slice(0, 3); // Max 3 suggerimenti
 
-      // Nascondi la lista se non ci sono risultati
-      this.showSuggestions = this.filteredSquadre.length > 0;
+      if (this.filteredSquadre.length > 0) {
+        this.showSuggestions = true;
+        this.teamNotFoundError = null;
+      } else {
+        // 3+ caratteri ma nessun risultato -> errore immediato
+        this.showSuggestions = false;
+        this.showTeamNotFoundError();
+      }
+    } else if (query.length === 0) {
+      // Campo svuotato dall'utente: rimuovi selezione e banner
+      this.teamNotFoundError = null;
+      this.filteredSquadre = [];
+      this.showSuggestions = false;
+      if (this.selectedSport === 'calcio') {
+        this.userProfile.squadraCalcio = '';
+        this.squadreSelezionate.calcio = null;
+      } else if (this.selectedSport === 'basket') {
+        this.userProfile.squadraBasket = '';
+        this.squadreSelezionate.basket = null;
+      } else {
+        this.userProfile.tennista = '';
+        this.squadreSelezionate.tennis = null;
+      }
     } else {
-      // Non mostrare suggerimenti se meno di 3 caratteri
+      // 1-2 caratteri: troppo pochi, nessun errore
       this.filteredSquadre = [];
       this.showSuggestions = false;
     }
@@ -2460,14 +2548,18 @@ export class ProfiloDialogComponent implements OnInit {
 
   selectItem(item: Squadra) {
     this.currentInput = item.nome;
+    this.teamNotFoundError = null;
 
     // Salva nel campo giusto in base allo sport selezionato
     if (this.selectedSport === 'calcio') {
       this.userProfile.squadraCalcio = item.nome;
+      this.squadreSelezionate.calcio = item;
     } else if (this.selectedSport === 'basket') {
       this.userProfile.squadraBasket = item.nome;
+      this.squadreSelezionate.basket = item;
     } else {
       this.userProfile.tennista = item.nome;
+      this.squadreSelezionate.tennis = item;
     }
 
     this.showSuggestions = false;
@@ -2487,12 +2579,16 @@ export class ProfiloDialogComponent implements OnInit {
   clearCurrentSelection(): void {
     if (this.selectedSport === 'calcio') {
       this.userProfile.squadraCalcio = '';
+      this.squadreSelezionate.calcio = null;
     } else if (this.selectedSport === 'basket') {
       this.userProfile.squadraBasket = '';
+      this.squadreSelezionate.basket = null;
     } else {
       this.userProfile.tennista = '';
+      this.squadreSelezionate.tennis = null;
     }
     this.currentInput = '';
+    this.teamNotFoundError = null;
     this.showSuggestions = false;
     this.filteredSquadre = [];
   }
@@ -2509,22 +2605,14 @@ export class ProfiloDialogComponent implements OnInit {
 
 
   onBlur() {
-    // Aggiorna il campo corretto prima di chiudere
-    if (this.selectedSport === 'calcio') {
-      this.userProfile.squadraCalcio = this.currentInput;
-    } else if (this.selectedSport === 'basket') {
-      this.userProfile.squadraBasket = this.currentInput;
-    } else {
-      this.userProfile.tennista = this.currentInput;
-    }
-
     setTimeout(() => {
       this.showSuggestions = false;
     }, 200);
   }
 
   isFormValid(): boolean {
-    return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0);
+    return !!(this.userProfile.nickname && this.userProfile.nickname.trim().length > 0)
+      && !this.teamNotFoundError;
   }
 
   showFeedback(message: string, type: 'success' | 'error') {
@@ -2544,100 +2632,21 @@ export class ProfiloDialogComponent implements OnInit {
 
     this.isSaving = true;
     this.feedbackMessage = null;
+    this.teamNotFoundError = null;
 
     // Prima ottieni i dati del giocatore corrente
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
-        // Prepara l'oggetto aggiornato
         const giocatoreAggiornato: any = {
           id: giocatore.id,
           nome: giocatore.nickname,
           nickname: this.userProfile.nickname.trim(),
           user: giocatore.user,
-          squadraCuore: null,
-          squadraBasketCuore: null,
-          tennistaCuore: null
+          squadraCuore: this.squadreSelezionate.calcio || null,
+          squadraBasketCuore: this.squadreSelezionate.basket || null,
+          tennistaCuore: this.squadreSelezionate.tennis || null
         };
-
-        // Conta quante squadre dobbiamo cercare
-        let squadreDaCercare = 0;
-        let squadreTrovate = 0;
-
-        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
-          squadreDaCercare++;
-        }
-        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
-          squadreDaCercare++;
-        }
-        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
-          squadreDaCercare++;
-        }
-
-        // Se non ci sono squadre da cercare, salva subito
-        if (squadreDaCercare === 0) {
-          this.saveProfile(giocatoreAggiornato);
-          return;
-        }
-
-        // Cerca squadra calcio
-        if (this.userProfile.squadraCalcio && this.userProfile.squadraCalcio.trim()) {
-          this.squadraService.searchByNome(this.userProfile.squadraCalcio.trim()).subscribe({
-            next: (squadra) => {
-              giocatoreAggiornato.squadraCuore = squadra;
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            },
-            error: () => {
-              console.warn('Squadra calcio non trovata');
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            }
-          });
-        }
-
-        // Cerca squadra basket
-        if (this.userProfile.squadraBasket && this.userProfile.squadraBasket.trim()) {
-          this.squadraService.searchByNome(this.userProfile.squadraBasket.trim()).subscribe({
-            next: (squadra) => {
-              giocatoreAggiornato.squadraBasketCuore = squadra;
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            },
-            error: () => {
-              console.warn('Squadra basket non trovata');
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            }
-          });
-        }
-
-        // Cerca tennista
-        if (this.userProfile.tennista && this.userProfile.tennista.trim()) {
-          this.squadraService.searchByNome(this.userProfile.tennista.trim()).subscribe({
-            next: (squadra) => {
-              giocatoreAggiornato.tennistaCuore = squadra;
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            },
-            error: () => {
-              console.warn('Tennista non trovato');
-              squadreTrovate++;
-              if (squadreTrovate === squadreDaCercare) {
-                this.saveProfile(giocatoreAggiornato);
-              }
-            }
-          });
-        }
+        this.saveProfile(giocatoreAggiornato);
       },
       error: (error) => {
         this.isSaving = false;
