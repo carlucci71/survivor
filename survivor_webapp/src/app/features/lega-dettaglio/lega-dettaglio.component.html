@@ -359,9 +359,13 @@
                           <!-- Reaction badge (non occupa spazio nel layout) -->
                           @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
                             @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                              <span class="reaction-badge"
-                                [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction != null">
-                                {{ getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!)[0].emoji }}
+                              <span class="reaction-badges">
+                                @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
+                                  <span class="reaction-badge"
+                                    [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji">
+                                    {{ r.emoji }}
+                                  </span>
+                                }
                               </span>
                             }
                           }
@@ -583,9 +587,13 @@
                     <!-- Reaction badge mobile -->
                     @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
                       @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                        <span class="reaction-badge"
-                          [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction != null">
-                          {{ getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!)[0].emoji }}
+                        <span class="reaction-badges">
+                          @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
+                            <span class="reaction-badge"
+                              [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji">
+                              {{ r.emoji }}
+                            </span>
+                          }
                         </span>
                       }
                     }
