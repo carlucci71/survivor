@@ -198,6 +198,7 @@ public class LegaService {
                             && giocataDTO.getGiornata().equals(giornata)
                             && giocataDTO.getLegaId().equals(idLega)
                             && !giocataDTO.getGiocatoreId().equals(giocatoreId)
+                            && !Boolean.TRUE.equals(giocataDTO.getPubblica()) // Non offuscare le giocate esplicitamente pubbliche
                     ) {
                         giocataDTO.setSquadraId("***");
                         giocataDTO.setSquadraSigla("***");

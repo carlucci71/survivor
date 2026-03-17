@@ -102,8 +102,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Scrolla la pagina in alto all'apertura del componente
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    // Scrolla in alto all'apertura — setTimeout garantisce che avvenga dopo
+    // il rendering completo e dopo qualsiasi auto-focus/keyboard resize su mobile
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 0);
   }
 
   /**
@@ -125,7 +130,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/home']);
+    if (this.legaCreataId && this.pubblica) {
+      this.router.navigate(['/home'], { state: { activeTab: 'public' } });
+    } else {
+      this.router.navigate(['/home']);
+    }
   }
   caricaSport(): void {
     this.sportService.getSport().subscribe({
@@ -420,9 +429,16 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
 
   shareLink(): void {
     const url = this.baseUrl() + '/joinLega';
+    const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
+    const messaggi = [
+      `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.name}" e dimostra chi è il vero campione! 💪`,
+      `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.name}" su Survivor. Chi sopravvive di più? 😈`,
+      `⚽ ${nomeUtente} ti aspetta nella lega "${this.name}" su Survivor. Ti unisci alla sfida? 🔥`,
+    ];
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
     const shareData = {
       title: 'Unisciti alla mia lega!',
-      text: `Entra nella lega "${this.name}" su Survivor`,
+      text,
       url
     };
     import('@capacitor/share').then(({ Share }) => {

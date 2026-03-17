@@ -88,7 +88,29 @@
     "DELETE_DIALOG_CONFIRM": "Are you sure you want to proceed?",
     "DELETE_DIALOG_CANCEL": "Cancel",
     "DELETE_DIALOG_DELETE": "Yes, delete my account",
-    "DELETE_DIALOG_DELETING": "Deleting..."
+    "DELETE_DIALOG_DELETING": "Deleting...",
+    "TEAM_NOT_FOUND": {
+      "MSG_1": "Don't be silly! That team doesn't even exist on Google.",
+      "MSG_2": "Nice try, you invented a team! Are you the new Florentino Pérez?",
+      "MSG_3": "Hmm... that name rings no bells. Were you dreaming?",
+      "MSG_4": "What you typed is not a team. It's a typo and you know it.",
+      "MSG_5": "We searched everywhere. That team simply doesn't exist.",
+      "MSG_6": "Dead silence from the database. That team is a ghost.",
+      "MSG_7": "Seriously? You actually typed that? Try something real.",
+      "MSG_8": "Nice fantasy, but we play with real teams here!",
+      "MSG_9": "That name doesn't match any piece of our puzzle.",
+      "MSG_10": "Access denied. That team does not exist in our universe.",
+      "MSG_11": "Interesting choice... too bad it doesn't exist.",
+      "MSG_12": "You almost had us. But no, nobody knows that team.",
+      "MSG_13": "Welcome to the circus! But even here teams need to exist.",
+      "MSG_14": "Search complete: zero results. Try a real team.",
+      "MSG_15": "We raised one eyebrow. Then the other. Then we gave up.",
+      "MSG_16": "R.I.P. to your imaginary favorite team.",
+      "MSG_17": "The database just blew its mind trying to find that.",
+      "MSG_18": "Quack? Even the ducks have no idea what you're talking about.",
+      "MSG_19": "We checked every league in the world. Nothing.",
+      "MSG_20": "Winner of the \"most invented team of the year\" award. Congratulations!"
+    }
   },
   "NOTIFICATIONS": {
     "TITLE": "Notifications",

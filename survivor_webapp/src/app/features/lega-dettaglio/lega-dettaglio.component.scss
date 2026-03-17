@@ -1547,6 +1547,17 @@
 .rc-value--privata {
 	color: #0A3D91;
 }
+.rc-value--iscritti {
+	color: #1565C0;
+	display: flex;
+	align-items: baseline;
+	gap: 2px;
+}
+.rc-max {
+	font-size: 0.72rem;
+	color: #9CA3AF;
+	font-weight: 500;
+}
 @media (max-width: 480px) {
 	.recap-chip {
 		min-width: 140px;
@@ -4355,39 +4366,19 @@
 				font-size: 0.9rem;
 			}
 
-		// Reaction summary: pills sempre visibili quando ci sono reaction
-		.reaction-summary {
-			display: flex;
-			align-items: center;
-			gap: 2px;
-			flex-wrap: wrap;
-			margin-top: 2px;
-		}
-
-		.reaction-pill {
-			display: inline-flex;
-			align-items: center;
-			gap: 2px;
+		// Reaction badge: piccolo flag assoluto in alto a destra della cella
+		.reaction-badge {
+			position: absolute;
+			top: -4px;
+			right: -3px;
 			font-size: 0.75rem;
 			line-height: 1;
-			user-select: none;
-			cursor: default;
-			background: rgba(0, 0, 0, 0.06);
-			border-radius: 8px;
-			padding: 1px 4px;
-			border: 1px solid transparent;
-			transition: background 0.15s, border-color 0.15s;
+			pointer-events: none;
+			filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
+			transition: transform 0.15s;
 
 			&--mine {
-				background: rgba(10, 61, 145, 0.12);
-				border-color: rgba(10, 61, 145, 0.35);
-			}
-
-			.pill-count {
-				font-size: 0.6rem;
-				font-weight: 700;
-				color: #444;
-				line-height: 1;
+				filter: drop-shadow(0 0 3px rgba(10, 61, 145, 0.5));
 			}
 		}
 
@@ -5109,38 +5100,18 @@
   width: 100%;
 }
 
-// Reaction pills nella vista mobile cards
-.reaction-summary-mobile {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2px;
-  margin-top: 3px;
-}
-
-.reaction-pill-mobile {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 0.7rem;
+// Reaction badge nella vista mobile cards
+.reaction-badge {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  font-size: 0.85rem;
   line-height: 1;
-  user-select: none;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  padding: 1px 4px;
-  border: 1px solid transparent;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
 
   &--mine {
-    background: rgba(10, 61, 145, 0.12);
-    border-color: rgba(10, 61, 145, 0.35);
-  }
-
-  .pill-count {
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: #444;
-    line-height: 1;
+    filter: drop-shadow(0 0 3px rgba(10, 61, 145, 0.5));
   }
 }
 

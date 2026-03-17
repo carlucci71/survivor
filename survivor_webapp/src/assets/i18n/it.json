@@ -88,7 +88,29 @@
     "DELETE_DIALOG_CONFIRM": "Sei sicuro di voler procedere?",
     "DELETE_DIALOG_CANCEL": "Annulla",
     "DELETE_DIALOG_DELETE": "Sì, elimina il mio account",
-    "DELETE_DIALOG_DELETING": "Eliminazione..."
+    "DELETE_DIALOG_DELETING": "Eliminazione...",
+    "TEAM_NOT_FOUND": {
+      "MSG_1": "Non fare il pagliaccio! Quella squadra non esiste neanche su Google.",
+      "MSG_2": "Bravo, hai inventato una squadra! Sei il nuovo Florentino Pérez?",
+      "MSG_3": "Mmm... questo nome non ci risulta. Forse stavi sognando?",
+      "MSG_4": "Quello che hai scritto non è una squadra. È un errore di battitura e lo sai.",
+      "MSG_5": "Abbiamo cercato ovunque. Questa squadra non esiste, punto.",
+      "MSG_6": "Silenzio totale dal database. Quella squadra è un fantasma.",
+      "MSG_7": "Sul serio? Hai proprio scritto quello? Riprova con qualcosa di reale.",
+      "MSG_8": "Bella fantasia, ma qui giochiamo con squadre vere!",
+      "MSG_9": "Questo nome non combacia con nessun pezzo del nostro puzzle.",
+      "MSG_10": "Accesso negato. La squadra non esiste nel nostro universo.",
+      "MSG_11": "Interessante scelta... peccato che non esista.",
+      "MSG_12": "Quasi ci hai convinto. Ma no, questa squadra non la conosce nessuno.",
+      "MSG_13": "Benvenuto al circo! Ma pure qui le squadre devono esistere.",
+      "MSG_14": "Ricerca completata: zero risultati. Prova con una squadra vera.",
+      "MSG_15": "Abbiamo alzato un sopracciglio. Poi l'altro. Poi abbiamo rinunciato.",
+      "MSG_16": "R.I.P. alla tua squadra del cuore immaginaria.",
+      "MSG_17": "Il database ha esploso la testa cercando quella roba.",
+      "MSG_18": "Quack? Neanche le anatre sanno di cosa stai parlando.",
+      "MSG_19": "Abbiamo controllato tutti i campionati del mondo. Niente.",
+      "MSG_20": "Vincitore del premio \"squadra più inventata dell'anno\". Complimenti!"
+    }
   },
   "NOTIFICATIONS": {
     "TITLE": "Notifiche",

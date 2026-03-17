@@ -1420,7 +1420,13 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   async shareLink(): Promise<void> {
     const url = environment.baseUrl + '/joinLega';
-    const text = `Entra nella lega "${this.lega!.name}" su Survivor`;
+    const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
+    const messaggi = [
+      `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,
+      `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.lega!.name}" su Survivor. Chi sopravvive di più? 😈`,
+      `⚽ ${nomeUtente} ti aspetta nella lega "${this.lega!.name}" su Survivor. Ti unisci alla sfida? 🔥`,
+    ];
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
     try {
       const { Share } = await import('@capacitor/share');
       await Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' });
