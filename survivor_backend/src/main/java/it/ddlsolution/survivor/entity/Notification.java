@@ -40,6 +40,9 @@ public class Notification {
     @Column(name = "expiring_at",nullable = false)
     private String expiringAt;
 
+    @Column(name = "lega_id", nullable = true)
+    private Long legaId;
+
     @PrePersist
     protected void onCreate() {
         if (createdAt == null) {

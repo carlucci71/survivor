@@ -216,6 +216,7 @@ public class LegaJoinRequestService {
                         dto.setBody(richiedente.getNickname() + " vuole entrare nella lega \"" + lega.getName() + "\"");
                         dto.setTipoNotifica(Enumeratori.TipoNotifica.JOIN_REQUEST_RICEVUTA);
                         dto.setExpiringAt(LocalDateTime.now().plusDays(2));
+                        dto.setLegaId(lega.getId());
                         pushNotificationService.sendNotificationToUsers(List.of(leaderId), dto);
                     });
         } catch (Exception e) {

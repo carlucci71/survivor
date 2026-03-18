@@ -32,9 +32,16 @@
   </div>
 
   <mat-card-actions>
-    <button mat-raised-button [color]="lega?.accessoLibero === false ? 'accent' : 'primary'" (click)="onAction()">
-      <mat-icon>{{ lega?.accessoLibero === false ? 'how_to_reg' : getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>
-      {{ lega?.accessoLibero === false ? ('JOIN_REQUEST.REQUEST_BUTTON' | translate) : ('LEAGUE.ENTER_LEAGUE' | translate) }}
-    </button>
+    @if (lega?.accessoLibero === false) {
+      <button class="join-request-btn" (click)="onAction()">
+        <mat-icon>how_to_reg</mat-icon>
+        <span>{{ 'JOIN_REQUEST.REQUEST_BUTTON' | translate }}</span>
+      </button>
+    } @else {
+      <button mat-raised-button color="primary" (click)="onAction()">
+        <mat-icon>{{ getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>
+        {{ 'LEAGUE.ENTER_LEAGUE' | translate }}
+      </button>
+    }
   </mat-card-actions>
 </mat-card>

@@ -272,5 +272,6 @@ export interface Notification {
   read: boolean;
   createdAt: string;
   expiringAt: string;
+  legaId?: number;
 }
 
