@@ -262,6 +262,9 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
+          if (this.isLeaderLega() && this.lega.pubblica && !this.lega.accessoLibero) {
+            this.caricaRichieste();
+          }
         }
       },
       error: (error) => {

@@ -671,7 +671,7 @@
       </div>
 
       <!-- SEZIONE RICHIESTE DI INGRESSO (solo leader, lega pubblica con accesso su approvazione, solo se ci sono richieste) -->
-      @if (isLeaderLega() && lega.pubblica && !lega.accessoLibero && (richiesteLoading || richiesteInAttesa.length > 0)) {
+      @if (isLeaderLega() && lega.pubblica && !lega.accessoLibero && (richiesteLoading || richiesteLoaded || (lega.richiesteInAttesa ?? 0) > 0)) {
       <div class="join-requests-section">
         <div class="jr-header">
           <div class="jr-title-row">
