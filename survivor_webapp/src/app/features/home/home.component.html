@@ -13,6 +13,11 @@
       <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
         <mat-icon>verified_user</mat-icon>
       </button>
+
+      <button *ngIf="isLeaderConRichieste()" mat-icon-button class="richieste-button" (click)="goToRichieste()" [matTooltip]="'RICHIESTE.TOOLTIP' | translate" aria-label="Richieste ingresso">
+        <mat-icon>how_to_reg</mat-icon>
+        <span class="richieste-badge" *ngIf="totalRichiesteInAttesa > 0">{{ totalRichiesteInAttesa }}</span>
+      </button>
     </div>
   </app-header>
 

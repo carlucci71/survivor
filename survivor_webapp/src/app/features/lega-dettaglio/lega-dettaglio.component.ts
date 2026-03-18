@@ -264,6 +264,13 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.startCountdown();
           if (this.isLeaderLega() && this.lega.pubblica && !this.lega.accessoLibero) {
             this.caricaRichieste();
+            // Se arrivato da notifica, scrolla alla sezione richieste
+            const fragment = this.route.snapshot.fragment;
+            if (fragment === 'richieste') {
+              setTimeout(() => {
+                document.getElementById('richieste')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 600);
+            }
           }
         }
       },

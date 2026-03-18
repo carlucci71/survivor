@@ -438,6 +438,15 @@
     "BACK_HOME": "Back to Home",
     "ERROR_GENERIC": "An error occurred. Please try again."
   },
+  "RICHIESTE": {
+    "PAGE_TITLE": "Join requests",
+    "EMPTY": "No requests for your leagues",
+    "PENDING": "Pending",
+    "RESOLVED": "History",
+    "STATO_APPROVATA": "Approved",
+    "STATO_RIFIUTATA": "Rejected",
+    "TOOLTIP": "Join requests"
+  },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Join requests",
     "NO_PENDING": "No pending requests",
@@ -464,6 +473,7 @@
     "PROFILE": "Profile",
     "PROFILE_FE_MOBILE": "FE / Mobile Profile",
     "CALENDAR_URL": "Calendar URL",
+    "JOIN_REQUESTS": "Join requests",
     "LEAGUES_MANAGEMENT": "Leagues Management",
     "LEAGUES_DESCRIPTION": "Create and manage system leagues",
     "USERS_MANAGEMENT": "Users Management",

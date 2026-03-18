@@ -63,6 +63,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'richieste',
+    loadComponent: () => import('./features/richieste-leader/richieste-leader.component').then(m => m.RichiesteLeaderComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'join/:id',
     loadComponent: () => import('./features/lega-join-magic/lega-join-magic.component').then(m => m.LegaJoinMagicComponent),
     canActivate: [authGuard]

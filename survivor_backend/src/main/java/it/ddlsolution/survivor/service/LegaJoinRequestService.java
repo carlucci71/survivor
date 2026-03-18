@@ -83,6 +83,40 @@ public class LegaJoinRequestService {
         return toDTO(req);
     }
 
+    // ─── LEADER: tutte le richieste di tutte le mie leghe ───────────────────
+
+    @Transactional(readOnly = true)
+    public List<LegaJoinRequestDTO> mieRichieste() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) auth.getPrincipal();
+
+        Giocatore giocatore = giocatoreRepository.findByUser_Id(userId)
+                .orElseThrow(() -> new RuntimeException("Giocatore non trovato per userId: " + userId));
+
+        // Trova tutte le leghe dove questo giocatore è LEADER con approvazione attiva
+        List<Lega> mieLegheDaLeader = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId)
+                .stream()
+                .filter(lega -> lega.getGiocatoreLeghe().stream()
+                        .anyMatch(gl -> gl.getGiocatore().getId().equals(giocatore.getId())
+                                && gl.getRuolo() == Enumeratori.RuoloGiocatoreLega.LEADER))
+                .filter(lega -> lega.isPubblica() && !lega.isAccessoLibero())
+                .toList();
+
+        if (mieLegheDaLeader.isEmpty()) return List.of();
+
+        List<Long> idLeghe = mieLegheDaLeader.stream().map(Lega::getId).toList();
+        return joinRequestRepository.findByLega_IdIn(idLeghe)
+                .stream()
+                .sorted((a, b) -> {
+                    // PENDING prima, poi per data decrescente
+                    if (a.getStato() == Enumeratori.StatoRichiesta.PENDING && b.getStato() != Enumeratori.StatoRichiesta.PENDING) return -1;
+                    if (a.getStato() != Enumeratori.StatoRichiesta.PENDING && b.getStato() == Enumeratori.StatoRichiesta.PENDING) return 1;
+                    return b.getCreatedAt().compareTo(a.getCreatedAt());
+                })
+                .map(this::toDTO)
+                .toList();
+    }
+
     // ─── LEADER: lista richieste pendenti ───────────────────────────────────
 
     @Transactional(readOnly = true)

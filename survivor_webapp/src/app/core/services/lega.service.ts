@@ -108,6 +108,10 @@ export class LegaService {
     return this.http.post<LegaJoinRequest>(`${this.apiUrl}/richieste/${idLega}`, {});
   }
 
+  mieRichieste(): Observable<LegaJoinRequest[]> {
+    return this.http.get<LegaJoinRequest[]>(`${this.apiUrl}/richieste/mie`);
+  }
+
   richiestePendenti(idLega: number): Observable<LegaJoinRequest[]> {
     return this.http.get<LegaJoinRequest[]>(`${this.apiUrl}/richieste/${idLega}`);
   }

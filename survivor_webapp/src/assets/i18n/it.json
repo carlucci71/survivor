@@ -537,6 +537,15 @@
     "OPTIONAL": "Opzionale",
     "ERROR_GENERIC": "Si è verificato un errore. Riprova."
   },
+  "RICHIESTE": {
+    "PAGE_TITLE": "Richieste di ingresso",
+    "EMPTY": "Nessuna richiesta per le tue leghe",
+    "PENDING": "In attesa",
+    "RESOLVED": "Storico",
+    "STATO_APPROVATA": "Approvata",
+    "STATO_RIFIUTATA": "Rifiutata",
+    "TOOLTIP": "Richieste di ingresso"
+  },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Richieste di ingresso",
     "NO_PENDING": "Nessuna richiesta in attesa",
@@ -563,6 +572,7 @@
     "PROFILE": "Profilo",
     "PROFILE_FE_MOBILE": "Profilo fe / mobile",
     "CALENDAR_URL": "Url calendario",
+    "JOIN_REQUESTS": "Richieste di ingresso",
     "LEAGUES_MANAGEMENT": "Gestione Leghe",
     "LEAGUES_DESCRIPTION": "Crea e gestisci le leghe del sistema",
     "USERS_MANAGEMENT": "Gestione Utenti",

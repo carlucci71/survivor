@@ -32,6 +32,13 @@ public class LegaJoinRequestController {
         return ResponseEntity.ok(dto);
     }
 
+    /** Leader: tutte le richieste di tutte le leghe dove sono leader */
+    @GetMapping("/mie")
+    public ResponseEntity<List<LegaJoinRequestDTO>> mieRichieste() {
+        List<LegaJoinRequestDTO> list = legaJoinRequestService.mieRichieste();
+        return ResponseEntity.ok(list);
+    }
+
     /** Leader: lista delle richieste in attesa */
     @GetMapping("/{idLega}")
     @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)

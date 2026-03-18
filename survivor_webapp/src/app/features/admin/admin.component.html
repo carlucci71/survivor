@@ -1,87 +1,111 @@
 <div class="admin-container">
   <app-header [title]="'ADMIN.TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
-  <main class="main-content">
-    <div class="admin-panel">
-      <h2>{{ 'ADMIN.DASHBOARD' | translate }}</h2>
+  <main class="admin-main">
 
-
-        <mat-card class="message-box">
-          <mat-card-content>
-            <p>{{ 'ADMIN.PROFILE' | translate }}: <strong>{{ profilo }}</strong></p>
-            <p>{{ 'ADMIN.PROFILE_FE_MOBILE' | translate }}: <strong>{{ profiloFe }}</strong></p>
-            <p>{{ 'ADMIN.CALENDAR_URL' | translate }}: <strong>{{ calendario }}</strong></p>
-          </mat-card-content>
-        </mat-card>
-
-      <div class="admin-sections">
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'ADMIN.LEAGUES_MANAGEMENT' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ 'ADMIN.LEAGUES_DESCRIPTION' | translate }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'ADMIN.USERS_MANAGEMENT' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ 'ADMIN.USERS_DESCRIPTION' | translate }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'ADMIN.CHAMPIONSHIPS_MANAGEMENT' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ 'ADMIN.CHAMPIONSHIPS_DESCRIPTION' | translate }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>Mock</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Accesso pagina mock per test e modifica partite.</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" [disabled]="!canAccessMock" (click)="goToMock()">Gestione Mock</button>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card class="section-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'ADMIN.STATISTICS' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p>{{ 'ADMIN.STATISTICS_DESCRIPTION' | translate }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" disabled>{{ 'COMMON.COMING_SOON' | translate }}</button>
-          </mat-card-actions>
-        </mat-card>
+    <!-- ═══ SEZIONE RICHIESTE DI INGRESSO ═══ -->
+    <section id="richieste" class="admin-section">
+      <div class="admin-section-header">
+        <div class="admin-section-title">
+          <mat-icon class="section-icon">how_to_reg</mat-icon>
+          <h2>{{ 'ADMIN.JOIN_REQUESTS' | translate }}</h2>
+          @if (totalPending > 0) {
+            <span class="section-badge">{{ totalPending }}</span>
+          }
+        </div>
+        <button class="refresh-btn" (click)="caricaRichieste()" [title]="'COMMON.REFRESH' | translate">
+          <mat-icon>refresh</mat-icon>
+        </button>
       </div>
-      <!--
-      <mat-card class="section-card external-html-card">
-        <mat-card-header>
-          <mat-card-title>HTML statico (assets)</mat-card-title>
-        </mat-card-header>
-      </mat-card>
-      -->
-    </div>
+
+      <!-- Loading -->
+      @if (isLoadingRichieste) {
+        <div class="section-loading">
+          <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        </div>
+      }
+
+      <!-- Empty -->
+      @if (!isLoadingRichieste && groups.length === 0) {
+        <div class="section-empty">
+          <mat-icon>check_circle_outline</mat-icon>
+          <p>{{ 'RICHIESTE.EMPTY' | translate }}</p>
+        </div>
+      }
+
+      <!-- Gruppi per lega -->
+      @if (!isLoadingRichieste && groups.length > 0) {
+        <div class="req-groups">
+          @for (group of groups; track group.legaId) {
+            <div class="req-group">
+
+              <!-- Header lega -->
+              <div class="req-group-header" (click)="goToLega(group.legaId)">
+                <mat-icon>emoji_events</mat-icon>
+                <span class="req-group-name">{{ group.legaName }}</span>
+                @if (group.pending.length > 0) {
+                  <span class="req-pending-pill">{{ group.pending.length }} {{ 'RICHIESTE.PENDING' | translate }}</span>
+                }
+                <mat-icon class="req-arrow">chevron_right</mat-icon>
+              </div>
+
+              <!-- PENDING -->
+              @if (group.pending.length > 0) {
+                <div class="req-sublabel req-sublabel--pending">
+                  <mat-icon>schedule</mat-icon>{{ 'RICHIESTE.PENDING' | translate }}
+                </div>
+                @for (req of group.pending; track req.id) {
+                  <div class="req-card req-card--pending">
+                    <div class="req-player">
+                      <div class="req-avatar">{{ req.giocatoreNickname.charAt(0).toUpperCase() }}</div>
+                      <div class="req-info">
+                        <span class="req-nick">{{ req.giocatoreNickname }}</span>
+                        <span class="req-email">{{ req.giocatoreEmail }}</span>
+                        <span class="req-date">{{ req.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                      </div>
+                    </div>
+                    <div class="req-actions">
+                      <button class="req-btn req-btn--approve" (click)="approva(req)">
+                        <mat-icon>check_circle</mat-icon>
+                        <span>{{ 'JOIN_REQUEST.APPROVE' | translate }}</span>
+                      </button>
+                      <button class="req-btn req-btn--reject" (click)="rifiuta(req)">
+                        <mat-icon>cancel</mat-icon>
+                        <span>{{ 'JOIN_REQUEST.REJECT' | translate }}</span>
+                      </button>
+                    </div>
+                  </div>
+                }
+              }
+
+              <!-- STORICO -->
+              @if (group.resolved.length > 0) {
+                <div class="req-sublabel req-sublabel--resolved">
+                  <mat-icon>history</mat-icon>{{ 'RICHIESTE.RESOLVED' | translate }}
+                </div>
+                @for (req of group.resolved; track req.id) {
+                  <div class="req-card" [class.req-card--approved]="req.stato === 'APPROVED'" [class.req-card--rejected]="req.stato === 'REJECTED'">
+                    <div class="req-player">
+                      <div class="req-avatar req-avatar--resolved">{{ req.giocatoreNickname.charAt(0).toUpperCase() }}</div>
+                      <div class="req-info">
+                        <span class="req-nick">{{ req.giocatoreNickname }}</span>
+                        <span class="req-email">{{ req.giocatoreEmail }}</span>
+                        <span class="req-date">{{ req.createdAt | date:'dd/MM/yyyy' }}</span>
+                      </div>
+                    </div>
+                    <div class="req-status" [class.req-status--approved]="req.stato === 'APPROVED'" [class.req-status--rejected]="req.stato === 'REJECTED'">
+                      <mat-icon>{{ req.stato === 'APPROVED' ? 'check_circle' : 'cancel' }}</mat-icon>
+                      <span>{{ (req.stato === 'APPROVED' ? 'RICHIESTE.STATO_APPROVATA' : 'RICHIESTE.STATO_RIFIUTATA') | translate }}</span>
+                    </div>
+                  </div>
+                }
+              }
+
+            </div>
+          }
+        </div>
+      }
+    </section>
+
   </main>
 </div>

@@ -1,0 +1,101 @@
+<div class="rl-container">
+  <app-header [title]="'RICHIESTE.PAGE_TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
+
+  <main class="rl-main">
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="rl-loading">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+      </div>
+    }
+
+    <!-- Empty -->
+    @if (!isLoading && groups.length === 0) {
+      <div class="rl-empty">
+        <mat-icon class="rl-empty-icon">how_to_reg</mat-icon>
+        <p>{{ 'RICHIESTE.EMPTY' | translate }}</p>
+      </div>
+    }
+
+    <!-- Lista gruppi per lega -->
+    @if (!isLoading && groups.length > 0) {
+      <div class="rl-groups">
+        @for (group of groups; track group.legaId) {
+          <div class="rl-group">
+
+            <!-- Lega header -->
+            <div class="rl-group-header" (click)="goToLega(group.legaId)">
+              <mat-icon class="rl-group-icon">emoji_events</mat-icon>
+              <span class="rl-group-name">{{ group.legaName }}</span>
+              @if (group.pending.length > 0) {
+                <span class="rl-pending-count">{{ group.pending.length }}</span>
+              }
+              <mat-icon class="rl-group-arrow">chevron_right</mat-icon>
+            </div>
+
+            <!-- Richieste PENDING -->
+            @if (group.pending.length > 0) {
+              <div class="rl-section-label rl-section-label--pending">
+                <mat-icon>schedule</mat-icon>
+                {{ 'RICHIESTE.PENDING' | translate }}
+              </div>
+              <div class="rl-cards">
+                @for (req of group.pending; track req.id) {
+                  <div class="rl-card rl-card--pending">
+                    <div class="rl-card-player">
+                      <div class="rl-avatar">{{ req.giocatoreNickname.charAt(0).toUpperCase() }}</div>
+                      <div class="rl-card-info">
+                        <span class="rl-nickname">{{ req.giocatoreNickname }}</span>
+                        <span class="rl-email">{{ req.giocatoreEmail }}</span>
+                        <span class="rl-date">{{ req.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                      </div>
+                    </div>
+                    <div class="rl-card-actions">
+                      <button class="rl-btn rl-btn--approve" (click)="approva(req)">
+                        <mat-icon>check_circle</mat-icon>
+                        <span>{{ 'JOIN_REQUEST.APPROVE' | translate }}</span>
+                      </button>
+                      <button class="rl-btn rl-btn--reject" (click)="rifiuta(req)">
+                        <mat-icon>cancel</mat-icon>
+                        <span>{{ 'JOIN_REQUEST.REJECT' | translate }}</span>
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Richieste risolte -->
+            @if (group.resolved.length > 0) {
+              <div class="rl-section-label rl-section-label--resolved">
+                <mat-icon>history</mat-icon>
+                {{ 'RICHIESTE.RESOLVED' | translate }}
+              </div>
+              <div class="rl-cards">
+                @for (req of group.resolved; track req.id) {
+                  <div class="rl-card" [class.rl-card--approved]="req.stato === 'APPROVED'" [class.rl-card--rejected]="req.stato === 'REJECTED'">
+                    <div class="rl-card-player">
+                      <div class="rl-avatar rl-avatar--resolved">{{ req.giocatoreNickname.charAt(0).toUpperCase() }}</div>
+                      <div class="rl-card-info">
+                        <span class="rl-nickname">{{ req.giocatoreNickname }}</span>
+                        <span class="rl-email">{{ req.giocatoreEmail }}</span>
+                        <span class="rl-date">{{ req.createdAt | date:'dd/MM/yyyy' }}</span>
+                      </div>
+                    </div>
+                    <div class="rl-status-badge" [class.rl-status-badge--approved]="req.stato === 'APPROVED'" [class.rl-status-badge--rejected]="req.stato === 'REJECTED'">
+                      <mat-icon>{{ req.stato === 'APPROVED' ? 'check_circle' : 'cancel' }}</mat-icon>
+                      <span>{{ (req.stato === 'APPROVED' ? 'RICHIESTE.STATO_APPROVATA' : 'RICHIESTE.STATO_RIFIUTATA') | translate }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+    }
+
+  </main>
+</div>
