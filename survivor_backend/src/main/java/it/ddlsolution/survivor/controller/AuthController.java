@@ -60,7 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody MagicLinkRequestDTO request) {
+    public ResponseEntity<MagicLinkResponseDTO> login(@RequestBody MagicLinkRequestDTO request) {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO("Inserisci un indirizzo email valido", false));
         }
@@ -69,15 +69,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MagicLinkResponseDTO(
                     "Email non trovata. Devi prima registrarti.", false));
         }
-        User user = userOpt.get();
-        String jwtToken = jwtService.generateToken(user.getId().toString(), user.getRole().name());
-        return ResponseEntity.ok(new AuthResponseDTO(
-                jwtToken,
-                user.getId(),
-                user.getName(),
-                user.getRole().name(),
-                ""
-        ));
+        try {
+            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim(), request.getMobile());
+            return ResponseEntity.ok(new MagicLinkResponseDTO(
+                    "Magic link inviato con successo. Controlla la tua email.", true));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
+                    "Errore nell'invio del magic link: " + e.getMessage(), false));
+        }
     }
 
     @GetMapping("/verify")

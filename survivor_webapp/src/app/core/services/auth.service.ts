@@ -42,12 +42,10 @@ export class AuthService {
     );
   }
 
-  login(email: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
+  login(email: string, mobile: boolean): Observable<MagicLinkResponse> {
+    return this.http.post<MagicLinkResponse>(
       `${this.apiUrl}/login`,
-      { email }
-    ).pipe(
-      tap(response => this.handleAuthResponse(response))
+      { email, mobile }
     );
   }
 

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -52,8 +51,7 @@ export class LoginComponent implements AfterViewInit {
   }
 
   constructor(
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) { }
 
   onSubmit(): void {
@@ -82,17 +80,17 @@ export class LoginComponent implements AfterViewInit {
         }
       });
     } else {
-      this.authService.login(this.email).subscribe({
+      this.authService.login(this.email, environment.mobile).subscribe({
         next: (response) => {
-          this.message = 'Accesso effettuato con successo!';
-          this.isSuccess = true;
-          this.router.navigate(['/home']);
+          this.message = response.message;
+          this.isSuccess = response.success;
+          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
         },
         error: (error) => {
           if (error.status === 404) {
             this.message = 'Email non trovata. Devi prima registrarti.';
           } else {
-            this.message = 'Errore durante l\'accesso';
+            this.message = error.error?.message || 'Errore durante l\'accesso';
           }
           this.isSuccess = false;
         }
