@@ -852,6 +852,53 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             ultimi: this.getTabLabel('ultimi'),
             prossime: this.getTabLabel('prossime'),
             opponent: this.getTabOpponentLabel()
+          },
+          allSquadre: this.squadreConPartite.map(s => ({
+            sigla: s.sigla,
+            nome: s.nome ? this.formatNomeSquadra(s.nome) : this.formatNomeSquadra(s.sigla)
+          })),
+          loadStats: (sigla: string, callback: (result: any) => void) => {
+            const campionatoId = this.lega.campionato!.id;
+            const anno = this.lega.anno;
+            const giornata = this.lega.giornataCorrente;
+            const squadraObj = this.squadreConPartite.find(s => s.sigla === sigla);
+            const nome = squadraObj?.nome
+              ? this.formatNomeSquadra(squadraObj.nome)
+              : this.formatNomeSquadra(sigla);
+            const colors = this.getTeamColors(sigla);
+            const formattedSigla = this.formatNomeSquadra(sigla);
+
+            this.campionatoService.calendario(campionatoId, sigla, anno, giornata - 1, false).subscribe({
+              next: (ultimi) => {
+                this.campionatoService.calendario(campionatoId, sigla, anno, giornata, true).subscribe({
+                  next: (prossime) => {
+                    let opponentSiglaRaw: string | null = null;
+                    if (prossime.length > 0) {
+                      const next = prossime[0] as any;
+                      opponentSiglaRaw = next.casaSigla === sigla ? (next.fuoriSigla || null) : (next.casaSigla || null);
+                    }
+                    if (opponentSiglaRaw) {
+                      this.campionatoService.calendario(campionatoId, opponentSiglaRaw, anno, giornata - 1, false).subscribe({
+                        next: (ultimiOpp) => {
+                          callback({ squadraSigla: formattedSigla, squadraNome: nome, ultimi, prossime, opponentSigla: this.formatNomeSquadra(opponentSiglaRaw!), ultimiOpponent: ultimiOpp, colors });
+                        },
+                        error: () => {
+                          callback({ squadraSigla: formattedSigla, squadraNome: nome, ultimi, prossime, opponentSigla: this.formatNomeSquadra(opponentSiglaRaw!), ultimiOpponent: [], colors });
+                        }
+                      });
+                    } else {
+                      callback({ squadraSigla: formattedSigla, squadraNome: nome, ultimi, prossime, opponentSigla: null, ultimiOpponent: [], colors });
+                    }
+                  },
+                  error: () => {
+                    callback({ squadraSigla: formattedSigla, squadraNome: nome, ultimi, prossime: [], opponentSigla: null, ultimiOpponent: [], colors });
+                  }
+                });
+              },
+              error: () => {
+                callback({ squadraSigla: formattedSigla, squadraNome: nome, ultimi: [], prossime: [], opponentSigla: null, ultimiOpponent: [], colors });
+              }
+            });
           }
         },
         maxWidth: '600px',

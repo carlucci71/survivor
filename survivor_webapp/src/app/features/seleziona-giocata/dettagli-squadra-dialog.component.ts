@@ -1,5 +1,6 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,19 +20,59 @@ export interface DettagliSquadraData {
     prossime: string;
     opponent: string;
   };
+  allSquadre?: { sigla: string; nome: string }[];
+  loadStats?: (sigla: string, callback: (result: {
+    squadraSigla: string;
+    squadraNome: string;
+    ultimi: any[];
+    prossime: any[];
+    opponentSigla: string | null;
+    ultimiOpponent: any[];
+    colors: { primary: string; secondary: string };
+  }) => void) => void;
 }
 
 @Component({
   selector: 'app-dettagli-squadra-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatIconModule],
   template: `
-    <div class="dettagli-dialog" [style.background]="'linear-gradient(135deg, ' + data.teamColors.primary + ', ' + data.teamColors.secondary + ')'">
+    <div class="dettagli-dialog" [style.background]="'linear-gradient(135deg, ' + localColors.primary + ', ' + localColors.secondary + ')'">
       <div class="dettagli-header">
         <div class="dettagli-title">
           <span>📊</span>
-          <span class="squadra-badge" [style.color]="data.teamColors.primary">{{ data.squadraSelezionata }}</span>
+          <span class="squadra-badge" [style.color]="localColors.primary">{{ localSigla }}</span>
         </div>
+
+        <!-- Search bar -->
+        <div class="sq-search-wrap" (click)="$event.stopPropagation()">
+          <div class="sq-search-bar">
+            <mat-icon class="sq-search-icon">search</mat-icon>
+            <input class="sq-search-input"
+                   [(ngModel)]="searchTerm"
+                   (input)="onSearchInput()"
+                   (focus)="onSearchFocus()"
+                   (blur)="closeDropdownDelayed()"
+                   placeholder="Cerca squadra..."
+                   autocomplete="off">
+            @if(searchTerm) {
+              <button class="sq-clear-btn" (mousedown)="clearSearch()">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </div>
+          @if(showDropdown && filteredSquadre.length > 0) {
+            <div class="sq-dropdown">
+              @for(sq of filteredSquadre; track sq.sigla) {
+                <div class="sq-dropdown-item" (mousedown)="selectTeam(sq.sigla, sq.nome)">
+                  <span class="sq-item-sigla">{{ sq.sigla }}</span>
+                  <span class="sq-item-nome">{{ sq.nome }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
         <button class="close-btn" (click)="dialogRef.close()">
           <mat-icon>close</mat-icon>
         </button>
@@ -40,24 +81,28 @@ export interface DettagliSquadraData {
       @if(countdownActive) {
       <div class="countdown-container">
         <div class="countdown-wrapper"
-             [style.borderColor]="data.teamColors.primary"
+             [style.borderColor]="localColors.primary"
              [style.background]="'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85))'">
-          <div class="countdown-icon" [style.color]="data.teamColors.primary">
+          <div class="countdown-icon" [style.color]="localColors.primary">
             <mat-icon>schedule</mat-icon>
           </div>
           <div class="countdown-content">
             <span class="countdown-label">Prossima partita tra</span>
             <span class="countdown-time"
-                  [style.background]="'linear-gradient(135deg, ' + data.teamColors.primary + ', ' + data.teamColors.secondary + ')'"
+                  [style.background]="'linear-gradient(135deg, ' + localColors.primary + ', ' + localColors.secondary + ')'"
                   [style.webkitBackgroundClip]="'text'"
                   [style.webkitTextFillColor]="'transparent'"
                   [style.backgroundClip]="'text'">
               {{ countdown }}
             </span>
           </div>
-          <div class="countdown-pulse" [style.background]="data.teamColors.primary"></div>
+          <div class="countdown-pulse" [style.background]="localColors.primary"></div>
         </div>
       </div>
+      }
+
+      @if(loading) {
+        <div class="loading-overlay"><span class="loading-spinner"></span></div>
       }
 
       <div class="tabs-container">
@@ -67,40 +112,40 @@ export interface DettagliSquadraData {
         <button class="tab" [class.active]="activeTab === 'prossime'" (click)="activeTab = 'prossime'">
           {{ data.tabLabels?.prossime || 'Prossime' }}
         </button>
-        @if(data.opponentSigla) {
+        @if(localOpponentSigla) {
         <button class="tab" [class.active]="activeTab === 'opponent'" (click)="activeTab = 'opponent'">
-          {{ data.tabLabels?.opponent || data.opponentSigla }}
+          {{ data.tabLabels?.opponent || localOpponentSigla }}
         </button>
         }
       </div>
 
       <div class="content">
         @if(activeTab === 'ultimi') {
-          @if(data.ultimiRisultati.length === 0) {
+          @if(localUltimi.length === 0) {
             <div class="no-data">Nessun risultato</div>
           } @else {
-            @for(r of data.ultimiRisultati.slice(0, 6); track r.giornata) {
-              <div class="row" [style.borderLeftColor]="data.teamColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === data.squadraSelezionata) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === data.squadraSelezionata">{{ formatNome(r.casaNome) }}</span>
+            @for(r of localUltimi.slice(0, 6); track r.giornata) {
+              <div class="row" [style.borderLeftColor]="localColors.primary">
+                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === localSigla) }}</span>
+                <span class="match" [class.bold]="formatNome(r.casaSigla) === localSigla">{{ formatNome(r.casaNome) }}</span>
                 <span class="score">{{ r.scoreCasa }}-{{ r.scoreFuori }}</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === data.squadraSelezionata">{{ formatNome(r.fuoriNome) }}</span>
-                <span class="badge" [class.v]="getEsito(r) === 'V'" [class.n]="getEsito(r) === 'N'" [class.p]="getEsito(r) === 'P'">{{ getEsito(r) }}</span>
+                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localSigla">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="badge" [class.v]="getEsitoFor(r, localSigla) === 'V'" [class.n]="getEsitoFor(r, localSigla) === 'N'" [class.p]="getEsitoFor(r, localSigla) === 'P'">{{ getEsitoFor(r, localSigla) }}</span>
               </div>
             }
           }
         }
 
         @if(activeTab === 'prossime') {
-          @if(data.prossimePartite.length === 0) {
+          @if(localProssime.length === 0) {
             <div class="no-data">Nessuna partita</div>
           } @else {
-            @for(r of data.prossimePartite.slice(0, 6); track r.giornata) {
-              <div class="row" [style.borderLeftColor]="data.teamColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === data.squadraSelezionata) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === data.squadraSelezionata">{{ formatNome(r.casaNome) }}</span>
+            @for(r of localProssime.slice(0, 6); track r.giornata) {
+              <div class="row" [style.borderLeftColor]="localColors.primary">
+                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === localSigla) }}</span>
+                <span class="match" [class.bold]="formatNome(r.casaSigla) === localSigla">{{ formatNome(r.casaNome) }}</span>
                 <span class="vs">vs</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === data.squadraSelezionata">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localSigla">{{ formatNome(r.fuoriNome) }}</span>
                 <span class="badge date-badge">{{ r.orario | date: 'dd/MM' }}</span>
               </div>
             }
@@ -108,16 +153,16 @@ export interface DettagliSquadraData {
         }
 
         @if(activeTab === 'opponent') {
-          @if(data.ultimiRisultatiOpponent.length === 0) {
+          @if(localUltimiOpponent.length === 0) {
             <div class="no-data">Nessun risultato</div>
           } @else {
-            @for(r of data.ultimiRisultatiOpponent.slice(0, 6); track r.giornata) {
-              <div class="row" [style.borderLeftColor]="data.teamColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, formatNome(r.casaSigla) === data.opponentSigla) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === data.opponentSigla">{{ formatNome(r.casaNome) }}</span>
+            @for(r of localUltimiOpponent.slice(0, 6); track r.giornata) {
+              <div class="row" [style.borderLeftColor]="localColors.primary">
+                <span class="giornata">{{ data.getDesGiornata(r, formatNome(r.casaSigla) === localOpponentSigla) }}</span>
+                <span class="match" [class.bold]="formatNome(r.casaSigla) === localOpponentSigla">{{ formatNome(r.casaNome) }}</span>
                 <span class="score">{{ r.scoreCasa }}-{{ r.scoreFuori }}</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === data.opponentSigla">{{ formatNome(r.fuoriNome) }}</span>
-                <span class="badge" [class.v]="getEsitoOpponent(r) === 'V'" [class.n]="getEsitoOpponent(r) === 'N'" [class.p]="getEsitoOpponent(r) === 'P'">{{ getEsitoOpponent(r) }}</span>
+                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localOpponentSigla">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="badge" [class.v]="getEsitoFor(r, localOpponentSigla) === 'V'" [class.n]="getEsitoFor(r, localOpponentSigla) === 'N'" [class.p]="getEsitoFor(r, localOpponentSigla) === 'P'">{{ getEsitoFor(r, localOpponentSigla) }}</span>
               </div>
             }
           }
@@ -154,12 +199,135 @@ export interface DettagliSquadraData {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-bottom: 16px;
       padding-bottom: 14px;
       border-bottom: 1px solid rgba(255,255,255,0.3);
       width: 100%;
       box-sizing: border-box;
     }
+
+    /* SEARCH */
+    .sq-search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sq-search-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 5px 10px;
+      transition: background 0.15s;
+
+      &:focus-within {
+        background: rgba(255,255,255,0.35);
+        border-color: rgba(255,255,255,0.7);
+      }
+    }
+
+    .sq-search-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: rgba(255,255,255,0.85);
+      flex-shrink: 0;
+    }
+
+    .sq-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.75rem;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      min-width: 0;
+
+      &::placeholder { color: rgba(255,255,255,0.6); }
+    }
+
+    .sq-clear-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: rgba(255,255,255,0.7);
+      flex-shrink: 0;
+
+      mat-icon { font-size: 15px; width: 15px; height: 15px; }
+    }
+
+    .sq-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      z-index: 100;
+      overflow: hidden;
+      max-height: 220px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar { width: 4px; }
+      &::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+    }
+
+    .sq-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: background 0.1s;
+
+      &:hover { background: #EFF6FF; }
+      &:not(:last-child) { border-bottom: 1px solid #F3F4F6; }
+    }
+
+    .sq-item-sigla {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #0A3D91;
+      min-width: 30px;
+      flex-shrink: 0;
+    }
+
+    .sq-item-nome {
+      font-size: 0.75rem;
+      color: #374151;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* LOADING */
+    .loading-overlay {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 0 4px;
+    }
+
+    .loading-spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* COUNTDOWN TIMER */
     .countdown-container {
@@ -608,11 +776,33 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
   countdownActive: boolean = false;
   private intervalId: any;
 
+  // Local mutable state (changes when user searches a different team)
+  localSigla: string;
+  localNome: string;
+  localUltimi: any[];
+  localProssime: any[];
+  localOpponentSigla: string | null;
+  localUltimiOpponent: any[];
+  localColors: { primary: string; secondary: string };
+  loading = false;
+
+  // Search state
+  searchTerm = '';
+  showDropdown = false;
+  filteredSquadre: { sigla: string; nome: string }[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<DettagliSquadraDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DettagliSquadraData
   ) {
-    this.startCountdown();
+    this.localSigla = data.squadraSelezionata;
+    this.localNome = data.squadraNome;
+    this.localUltimi = [...data.ultimiRisultati];
+    this.localProssime = [...data.prossimePartite];
+    this.localOpponentSigla = data.opponentSigla;
+    this.localUltimiOpponent = [...data.ultimiRisultatiOpponent];
+    this.localColors = { ...data.teamColors };
+    this.startCountdownFromPartite(data.prossimePartite);
   }
 
   ngOnDestroy(): void {
@@ -621,12 +811,60 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     }
   }
 
-  private startCountdown(): void {
-    // Trova la prossima partita
-    const prossimaPartita = this.data.prossimePartite && this.data.prossimePartite.length > 0
-      ? this.data.prossimePartite[0]
-      : null;
+  // ── Search methods ──────────────────────────────────────────────
 
+  onSearchInput(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+    if (!term) {
+      this.filteredSquadre = [];
+      this.showDropdown = false;
+      return;
+    }
+    this.filteredSquadre = (this.data.allSquadre || [])
+      .filter(s => s.nome.toLowerCase().includes(term) || s.sigla.toLowerCase().includes(term))
+      .slice(0, 8);
+    this.showDropdown = this.filteredSquadre.length > 0;
+  }
+
+  onSearchFocus(): void {
+    if (this.searchTerm.trim() && this.filteredSquadre.length > 0) {
+      this.showDropdown = true;
+    }
+  }
+
+  closeDropdownDelayed(): void {
+    setTimeout(() => { this.showDropdown = false; }, 200);
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.filteredSquadre = [];
+    this.showDropdown = false;
+  }
+
+  selectTeam(sigla: string, nome: string): void {
+    this.clearSearch();
+    if (!this.data.loadStats) return;
+    this.loading = true;
+    this.data.loadStats(sigla, (result) => {
+      this.localSigla = result.squadraSigla;
+      this.localNome = result.squadraNome;
+      this.localUltimi = result.ultimi;
+      this.localProssime = result.prossime;
+      this.localOpponentSigla = result.opponentSigla;
+      this.localUltimiOpponent = result.ultimiOpponent;
+      this.localColors = result.colors;
+      this.loading = false;
+      this.activeTab = 'ultimi';
+      if (this.intervalId) clearInterval(this.intervalId);
+      this.startCountdownFromPartite(result.prossime);
+    });
+  }
+
+  // ── Countdown ───────────────────────────────────────────────────
+
+  private startCountdownFromPartite(partite: any[]): void {
+    const prossimaPartita = partite && partite.length > 0 ? partite[0] : null;
     if (!prossimaPartita || !prossimaPartita.orario) {
       this.countdownActive = false;
       return;
@@ -640,9 +878,7 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
       if (distance < 0) {
         this.countdown = 'Partita in corso';
         this.countdownActive = false;
-        if (this.intervalId) {
-          clearInterval(this.intervalId);
-        }
+        if (this.intervalId) clearInterval(this.intervalId);
         return;
       }
 
@@ -658,7 +894,6 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
       } else {
         this.countdown = `${minutes}m ${seconds}s`;
       }
-
       this.countdownActive = true;
     };
 
@@ -666,20 +901,22 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     this.intervalId = setInterval(updateCountdown, 1000);
   }
 
+  // ── Helpers ─────────────────────────────────────────────────────
+
   formatNome(nome: string | null | undefined): string {
     if (!nome) return '';
     return nome.replace(/_/g, ' ');
   }
 
-  getEsito(r: any): string {
-    const casaSiglaFormatted = this.formatNome(r.casaSigla);
-    const fuoriSiglaFormatted = this.formatNome(r.fuoriSigla);
-
-    if (this.data.squadraSelezionata === casaSiglaFormatted) {
+  getEsitoFor(r: any, sigla: string | null): string {
+    if (!sigla) return 'N';
+    const casa = this.formatNome(r.casaSigla);
+    const fuori = this.formatNome(r.fuoriSigla);
+    if (sigla === casa) {
       if (r.scoreCasa > r.scoreFuori) return 'V';
       if (r.scoreCasa === r.scoreFuori) return 'N';
       return 'P';
-    } else if (this.data.squadraSelezionata === fuoriSiglaFormatted) {
+    } else if (sigla === fuori) {
       if (r.scoreFuori > r.scoreCasa) return 'V';
       if (r.scoreFuori === r.scoreCasa) return 'N';
       return 'P';
@@ -687,19 +924,7 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     return 'N';
   }
 
-  getEsitoOpponent(r: any): string {
-    const casaSiglaFormatted = this.formatNome(r.casaSigla);
-    const fuoriSiglaFormatted = this.formatNome(r.fuoriSigla);
-
-    if (this.data.opponentSigla === casaSiglaFormatted) {
-      if (r.scoreCasa > r.scoreFuori) return 'V';
-      if (r.scoreCasa === r.scoreFuori) return 'N';
-      return 'P';
-    } else if (this.data.opponentSigla === fuoriSiglaFormatted) {
-      if (r.scoreFuori > r.scoreCasa) return 'V';
-      if (r.scoreFuori === r.scoreCasa) return 'N';
-      return 'P';
-    }
-    return 'N';
-  }
+  // Keep old methods for backward compat (not used in template anymore)
+  getEsito(r: any): string { return this.getEsitoFor(r, this.localSigla); }
+  getEsitoOpponent(r: any): string { return this.getEsitoFor(r, this.localOpponentSigla); }
 }
