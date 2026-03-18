@@ -88,10 +88,12 @@ public class LegaJoinRequestService {
     @Transactional(readOnly = true)
     public List<LegaJoinRequestDTO> mieRichieste() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) auth.getPrincipal();
+        Object principal = auth.getPrincipal();
+        Long userId = (principal instanceof Long l) ? l : Long.parseLong(principal.toString());
 
-        Giocatore giocatore = giocatoreRepository.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Giocatore non trovato per userId: " + userId));
+        // Se l'utente non ha un Giocatore (es. admin di sistema) restituiamo lista vuota
+        Giocatore giocatore = giocatoreRepository.findByUser_Id(userId).orElse(null);
+        if (giocatore == null) return List.of();
 
         // Trova tutte le leghe dove questo giocatore è LEADER con approvazione attiva
         List<Lega> mieLegheDaLeader = legaRepository.findByGiocatoreLeghe_Giocatore_User_Id(userId)

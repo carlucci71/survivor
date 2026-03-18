@@ -26,7 +26,7 @@ public class LegaJoinRequestController {
     private final LegaJoinRequestService legaJoinRequestService;
 
     /** Utente: richiedi ingresso alla lega */
-    @PostMapping("/{idLega}")
+    @PostMapping("/{idLega:[0-9]+}")
     public ResponseEntity<LegaJoinRequestDTO> richiediIngresso(@PathVariable Long idLega) {
         LegaJoinRequestDTO dto = legaJoinRequestService.richiediIngresso(idLega);
         return ResponseEntity.ok(dto);
@@ -40,7 +40,7 @@ public class LegaJoinRequestController {
     }
 
     /** Leader: lista delle richieste in attesa */
-    @GetMapping("/{idLega}")
+    @GetMapping("/{idLega:[0-9]+}")
     @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
     public ResponseEntity<List<LegaJoinRequestDTO>> richiestePendenti(@PathVariable Long idLega) {
         List<LegaJoinRequestDTO> list = legaJoinRequestService.richiestePendenti(idLega);
@@ -48,7 +48,7 @@ public class LegaJoinRequestController {
     }
 
     /** Leader: approva una richiesta */
-    @PostMapping("/{idLega}/approva/{requestId}")
+    @PostMapping("/{idLega:[0-9]+}/approva/{requestId:[0-9]+}")
     @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
     public ResponseEntity<LegaJoinRequestDTO> approva(
             @PathVariable Long idLega,
@@ -58,7 +58,7 @@ public class LegaJoinRequestController {
     }
 
     /** Leader: rifiuta una richiesta */
-    @PostMapping("/{idLega}/rifiuta/{requestId}")
+    @PostMapping("/{idLega:[0-9]+}/rifiuta/{requestId:[0-9]+}")
     @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
     public ResponseEntity<LegaJoinRequestDTO> rifiuta(
             @PathVariable Long idLega,
@@ -68,7 +68,7 @@ public class LegaJoinRequestController {
     }
 
     /** Utente: annulla la propria richiesta */
-    @DeleteMapping("/{idLega}")
+    @DeleteMapping("/{idLega:[0-9]+}")
     public ResponseEntity<Map<String, String>> annullaRichiesta(@PathVariable Long idLega) {
         legaJoinRequestService.annullaRichiesta(idLega);
         return ResponseEntity.ok(Map.of("ESITO", "OK"));
