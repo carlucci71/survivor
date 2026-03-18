@@ -59,6 +59,26 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<MagicLinkResponseDTO> login(@RequestBody MagicLinkRequestDTO request) {
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(new MagicLinkResponseDTO("Inserisci un indirizzo email valido", false));
+        }
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail().trim());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MagicLinkResponseDTO(
+                    "Email non trovata. Devi prima registrarti.", false));
+        }
+        try {
+            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim(), request.getMobile());
+            return ResponseEntity.ok(new MagicLinkResponseDTO(
+                    "Magic link inviato con successo. Controlla la tua email.", true));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
+                    "Errore nell'invio del magic link: " + e.getMessage(), false));
+        }
+    }
+
     @GetMapping("/verify")
     public ResponseEntity<?> verifyMagicLink(@RequestParam String token, @RequestParam String codiceTipoMagicLink) {
         boolean setUsed = true;

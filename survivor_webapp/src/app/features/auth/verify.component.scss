@@ -1,69 +1,148 @@
-.verify-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.verify-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--primary-light, #667eea) 0%, var(--primary-color, #764ba2) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #020c24 0%, #0A3D91 55%, #1565C0 100%);
   padding: 20px;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 .verify-card {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  max-width: 450px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px 32px 36px;
   width: 100%;
+  max-width: 400px;
   text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
 }
 
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.vc-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.message {
-  .icon {
-    font-size: 64px;
-    margin-bottom: 20px;
-  }
+.vc-logo-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
 
-  p {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
+.vc-logo-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0A3D91;
+  letter-spacing: -0.3px;
+}
 
-  &.success {
-    .icon {
-      color: #28a745;
-    }
-    p {
-      color: #155724;
-    }
-  }
+.vc-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vcPop 0.45s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
 
-  &.error {
-    .icon {
-      color: #dc3545;
-    }
-    p {
-      color: #721c24;
-    }
-  }
+.vc-icon-wrap--loading { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
+.vc-icon-wrap--success { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); }
+.vc-icon-wrap--info    { background: linear-gradient(135deg, #FFF7ED, #FED7AA); }
+.vc-icon-wrap--error   { background: linear-gradient(135deg, #FEF2F2, #FECACA); }
 
-  .btn-link {
-    display: inline-block;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--primary-light, #667eea) 0%, var(--primary-color, #764ba2) 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: transform 0.2s;
+@keyframes vcPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
 
-    &:hover {
-      transform: translateY(-2px);
-    }
+.vc-emoji {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.vc-spinner {
+  width: 36px;
+  height: 36px;
+  border: 4px solid #DBEAFE;
+  border-top-color: #0A3D91;
+  border-radius: 50%;
+  animation: vcSpin 0.75s linear infinite;
+}
+
+@keyframes vcSpin { to { transform: rotate(360deg); } }
+
+.vc-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.vc-subtitle {
+  font-size: 0.88rem;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+.vc-loader-bar {
+  width: 100%;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.vc-loader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0A3D91, #1565C0);
+  border-radius: 4px;
+  animation: vcFill 2s ease-in-out forwards;
+}
+
+@keyframes vcFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+.vc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  border-radius: 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.15s;
+  border: none;
+  cursor: pointer;
+}
+
+.vc-btn--primary {
+  background: linear-gradient(135deg, #0A3D91, #1565C0);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(10,61,145,0.35);
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(10,61,145,0.5);
+    transform: translateY(-1px);
   }
+}
+
+@media (max-width: 480px) {
+  .verify-card  { padding: 32px 20px 28px; gap: 16px; border-radius: 20px; }
+  .vc-title     { font-size: 1.15rem; }
+  .vc-icon-wrap { width: 70px; height: 70px; }
+  .vc-emoji     { font-size: 2rem; }
 }

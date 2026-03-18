@@ -1,9 +1,163 @@
-<mat-card>
-  <h2>Completa l'accesso</h2>
-  <div style="display:flex; gap:12px; margin-top:12px; flex-wrap: wrap;">
-    <button mat-raised-button color="primary" (click)="openApp()">Apri app</button>
-    <a mat-stroked-button (click)="continuaNelBrowser()">
-      Continua nel browser
-    </a>
+<div class="mr-container">
+  <div class="mr-card">
+
+    <div class="mr-logo">
+      <img src="assets/icons/icon-192x192.png" alt="Survivor" class="mr-logo-img" onerror="this.style.display='none'" />
+      <span class="mr-logo-text">Survivor</span>
+    </div>
+
+    <div class="mr-icon-wrap">
+      <span class="mr-icon">&#128272;</span>
+    </div>
+
+    <h2 class="mr-title">Completa l'accesso</h2>
+    <p class="mr-subtitle">Scegli come vuoi accedere a Survivor</p>
+
+    <div class="mr-actions">
+      <button class="mr-btn mr-btn--primary" (click)="openApp()">
+        <span class="mr-btn-icon">&#128241;</span>
+        <span>Apri nell'app</span>
+      </button>
+      <button class="mr-btn mr-btn--secondary" (click)="continuaNelBrowser()">
+        <span class="mr-btn-icon">&#127760;</span>
+        <span>Continua nel browser</span>
+      </button>
+    </div>
+
+    <p class="mr-hint">Se hai già l'app installata, ti consigliamo di aprirla per la migliore esperienza.</p>
   </div>
-</mat-card>
+</div>
+
+<style>
+  .mr-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #020c24 0%, #0A3D91 55%, #1565C0 100%);
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .mr-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px 32px 36px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .mr-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mr-logo-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .mr-logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0A3D91;
+    letter-spacing: -0.3px;
+  }
+
+  .mr-icon-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: mrPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes mrPop {
+    from { transform: scale(0.3); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+
+  .mr-icon { font-size: 2.4rem; line-height: 1; }
+
+  .mr-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .mr-subtitle {
+    font-size: 0.88rem;
+    color: #6B7280;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .mr-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .mr-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-size: 0.93rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+
+  .mr-btn:hover  { transform: translateY(-2px); }
+  .mr-btn:active { transform: translateY(0); }
+
+  .mr-btn--primary {
+    background: linear-gradient(135deg, #0A3D91, #1565C0);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(10,61,145,0.35);
+  }
+
+  .mr-btn--secondary {
+    background: #F3F4F6;
+    color: #374151;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+
+  .mr-btn-icon { font-size: 1.1rem; }
+
+  .mr-hint {
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin: 0;
+    line-height: 1.5;
+    max-width: 300px;
+  }
+
+  @media (max-width: 480px) {
+    .mr-card  { padding: 32px 20px 28px; gap: 16px; border-radius: 20px; }
+    .mr-title { font-size: 1.15rem; }
+    .mr-icon-wrap { width: 70px; height: 70px; }
+    .mr-icon  { font-size: 2rem; }
+  }
+</style>

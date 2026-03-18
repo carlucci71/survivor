@@ -1,11 +1,49 @@
-<div class="verify-container">
-  <mat-card class="verify-card">
-      <mat-card-content class="message" [class.success]="isSuccess" [class.error]="!isSuccess">
-        <mat-icon class="icon">{{ isSuccess ? 'check_circle' : 'error' }}</mat-icon>
-        <p>{{ message }}</p>
-        <ng-container *ngIf="!isSuccess">
-          <button mat-raised-button color="primary" routerLink="/auth/login">Torna al login</button>
-        </ng-container>
-      </mat-card-content>
-  </mat-card>
+<div class="verify-page">
+  <div class="verify-card">
+
+    <div class="vc-logo">
+      <img src="assets/icons/icon-192x192.png" alt="Survivor" class="vc-logo-img" onerror="this.style.display='none'" />
+      <span class="vc-logo-text">Survivor</span>
+    </div>
+
+    <!-- LOADING -->
+    @if (!message) {
+      <div class="vc-icon-wrap vc-icon-wrap--loading">
+        <div class="vc-spinner"></div>
+      </div>
+      <h2 class="vc-title">Verifica in corso...</h2>
+      <p class="vc-subtitle">Stiamo autenticando il tuo accesso, un momento.</p>
+    }
+
+    <!-- SUCCESS -->
+    @if (message && isSuccess) {
+      <div class="vc-icon-wrap vc-icon-wrap--success">
+        <span class="vc-emoji">&#10003;</span>
+      </div>
+      <h2 class="vc-title">Accesso riuscito!</h2>
+      <p class="vc-subtitle">{{ message }}</p>
+      <div class="vc-loader-bar"><div class="vc-loader-fill"></div></div>
+    }
+
+    <!-- ALREADY LOGGED IN -->
+    @if (message && isAlreadyLogged) {
+      <div class="vc-icon-wrap vc-icon-wrap--info">
+        <span class="vc-emoji">&#128075;</span>
+      </div>
+      <h2 class="vc-title">Sei già dentro!</h2>
+      <p class="vc-subtitle">Sei già autenticato. Questo link è già stato usato.</p>
+      <a class="vc-btn vc-btn--primary" routerLink="/home">Vai alla home</a>
+    }
+
+    <!-- ERROR -->
+    @if (message && !isSuccess && !isAlreadyLogged) {
+      <div class="vc-icon-wrap vc-icon-wrap--error">
+        <span class="vc-emoji">&#10060;</span>
+      </div>
+      <h2 class="vc-title">Link non valido</h2>
+      <p class="vc-subtitle">{{ message }}</p>
+      <a class="vc-btn vc-btn--primary" routerLink="/auth/login">Torna al login</a>
+    }
+
+  </div>
 </div>

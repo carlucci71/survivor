@@ -128,13 +128,16 @@ export class ContattiDialogComponent {
   imports: [CommonModule, MatIconModule, TranslateModule],
   template: `
     <div class="modal-container">
-      <button class="close-btn" (click)="closeDialog()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <h2>
-        <mat-icon class="title-icon">gavel</mat-icon>
-        <span class="value">{{ 'DIALOGS.TERMS_TITLE' | translate }}</span>
-      </h2>
+      <div class="modal-header">
+        <button class="close-btn" (click)="closeDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <h2>
+          <mat-icon class="title-icon">gavel</mat-icon>
+          <span class="value">{{ 'DIALOGS.TERMS_TITLE' | translate }}</span>
+        </h2>
+      </div>
+      <div class="modal-body">
       <div class="content-section">
         <h3>{{ 'DIALOGS.TERMS_HEADING' | translate }}</h3>
         <p class="subtitle">{{ 'DIALOGS.TERMS_SUBTITLE' | translate }}</p>
@@ -196,20 +199,33 @@ export class ContattiDialogComponent {
           <p>{{ 'DIALOGS.TERMS_11_TEXT' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a></p>
         </div>
       </div>
+      </div>
     </div>
   `,
   styles: [`
     .modal-container {
-      position: relative;
+      display: flex;
+      flex-direction: column;
       background: #FFFFFF;
       border-radius: 20px;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      padding: 24px;
       width: 90vw;
       max-width: 700px;
       max-height: 85vh;
-      overflow-y: auto;
+      overflow: hidden;
       font-family: 'Poppins', sans-serif;
+    }
+    .modal-header {
+      position: relative;
+      flex-shrink: 0;
+      padding: 20px 24px 16px;
+      background: #fff;
+      border-bottom: 1px solid rgba(10, 61, 145, 0.08);
+    }
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 20px 24px 24px;
       &::-webkit-scrollbar { width: 6px; }
       &::-webkit-scrollbar-track { background: #F4F6F8; border-radius: 3px; }
       &::-webkit-scrollbar-thumb { background: #0A3D91; border-radius: 3px; }
@@ -232,7 +248,7 @@ export class ContattiDialogComponent {
       &:hover { background: rgba(10, 61, 145, 0.15); transform: scale(1.1); }
     }
     h2 {
-      margin: 0 0 20px 0;
+      margin: 0;
       font-size: 1.3rem;
       font-weight: 700;
       color: #0A3D91;
@@ -290,7 +306,8 @@ export class ContattiDialogComponent {
       }
     }
     @media (max-width: 480px) {
-      .modal-container { padding: 16px; }
+      .modal-header { padding: 16px 16px 12px; }
+      .modal-body { padding: 16px; }
       h2 { font-size: 1.1rem; }
       .section h4 { font-size: 0.9rem; }
       .section p { font-size: 0.85rem; }
@@ -1167,7 +1184,7 @@ export class ChiSiamoDialogComponent implements OnInit{
       width: '90vw',
       maxWidth: '700px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container' // CENTRATO
+      panelClass: ['custom-dialog-container', 'termini-dialog']
     });
   }
 
@@ -1536,7 +1553,7 @@ export class FooterComponent  {
       width: '90vw',
       maxWidth: '700px',
       maxHeight: '90vh',
-      panelClass: 'custom-dialog-container' // CENTRATO
+      panelClass: ['custom-dialog-container', 'termini-dialog']
     });
   }
 

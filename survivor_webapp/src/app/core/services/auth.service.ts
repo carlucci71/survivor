@@ -42,6 +42,13 @@ export class AuthService {
     );
   }
 
+  login(email: string, mobile: boolean): Observable<MagicLinkResponse> {
+    return this.http.post<MagicLinkResponse>(
+      `${this.apiUrl}/login`,
+      { email, mobile }
+    );
+  }
+
   verifyMagicLink(token: string,codiceTipoMagicLink :string): Observable<AuthResponse> {
     return this.http.get<AuthResponse>(`${this.apiUrl}/verify`, {
       params: { token,codiceTipoMagicLink }

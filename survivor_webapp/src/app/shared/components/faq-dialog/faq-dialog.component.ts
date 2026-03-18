@@ -12,13 +12,16 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   template: `
     <div class="modal-container">
-      <button class="close-btn" (click)="closeDialog()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <h2>
-        <mat-icon class="title-icon">help</mat-icon>
-        <span class="value">{{ 'FAQ.TITLE' | translate }}</span>
-      </h2>
+      <div class="modal-header">
+        <button class="close-btn" (click)="closeDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <h2>
+          <mat-icon class="title-icon">help</mat-icon>
+          <span class="value">{{ 'FAQ.TITLE' | translate }}</span>
+        </h2>
+      </div>
+      <div class="modal-body">
       <div class="content-section">
         <div class="faq-item">
           <h4>{{ 'FAQ.Q1' | translate }}</h4>
@@ -100,20 +103,35 @@ import { TranslateModule } from '@ngx-translate/core';
           <p>{{ 'FAQ.A16' | translate }} <a href="mailto:survivorwinorgohome@gmail.com">survivorwinorgohome&#64;gmail.com</a>.</p>
         </div>
       </div>
+      </div>
     </div>
   `,
   styles: [`
     .modal-container {
-      position: relative;
+      display: flex;
+      flex-direction: column;
       background: #FFFFFF;
       border-radius: 20px;
       box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      padding: 24px;
       width: 90vw;
       max-width: 700px;
       max-height: 85vh;
-      overflow-y: auto;
+      overflow: hidden;
       font-family: 'Poppins', sans-serif;
+    }
+
+    .modal-header {
+      position: relative;
+      flex-shrink: 0;
+      padding: 20px 24px 16px;
+      background: #fff;
+      border-bottom: 1px solid rgba(10, 61, 145, 0.08);
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      flex: 1;
+      padding: 20px 24px 24px;
 
       &::-webkit-scrollbar {
         width: 6px;
@@ -159,7 +177,7 @@ import { TranslateModule } from '@ngx-translate/core';
     }
 
     h2 {
-      margin: 0 0 20px 0;
+      margin: 0;
       font-size: 1.3rem;
       font-weight: 700;
       color: #0A3D91;
@@ -183,7 +201,6 @@ import { TranslateModule } from '@ngx-translate/core';
     }
 
     .content-section {
-      padding-top: 8px;
     }
 
     .faq-item {
@@ -222,7 +239,11 @@ import { TranslateModule } from '@ngx-translate/core';
     }
 
     @media (max-width: 480px) {
-      .modal-container {
+      .modal-header {
+        padding: 16px 16px 12px;
+      }
+
+      .modal-body {
         padding: 16px;
       }
 

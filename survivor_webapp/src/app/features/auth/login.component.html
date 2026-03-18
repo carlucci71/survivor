@@ -51,7 +51,7 @@
       </p>
 
       <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
-        {{ 'AUTH.SEND_MAGIC_LINK' | translate }}
+        {{ (activeTab === 'login' ? 'AUTH.LOGIN_TITLE' : 'AUTH.SEND_MAGIC_LINK') | translate }}
       </button>
     </form>
 
