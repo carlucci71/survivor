@@ -69,16 +69,34 @@ export class LoginComponent implements AfterViewInit {
       return;
     }
 
-    this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
-      next: (response) => {
-        this.message = response.message;
-        this.isSuccess = response.success;
-        window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
-      },
-      error: (error) => {
-        this.message = 'Errore durante l\'invio del magic link';
-        this.isSuccess = false;
-      }
-    });
+    if (this.activeTab === 'register') {
+      this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
+        next: (response) => {
+          this.message = response.message;
+          this.isSuccess = response.success;
+          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
+        },
+        error: (error) => {
+          this.message = 'Errore durante l\'invio del magic link';
+          this.isSuccess = false;
+        }
+      });
+    } else {
+      this.authService.login(this.email).subscribe({
+        next: (response) => {
+          this.message = 'Accesso effettuato con successo!';
+          this.isSuccess = true;
+          this.router.navigate(['/home']);
+        },
+        error: (error) => {
+          if (error.status === 404) {
+            this.message = 'Email non trovata. Devi prima registrarti.';
+          } else {
+            this.message = 'Errore durante l\'accesso';
+          }
+          this.isSuccess = false;
+        }
+      });
+    }
   }
 }
