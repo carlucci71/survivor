@@ -4438,26 +4438,9 @@
 				font-size: 0.9rem;
 			}
 
-		// Reaction badges: contenitore assoluto in alto a destra della cella
+		// Reaction badges: nascoste nella vista tabella desktop/tablet
 		.reaction-badges {
-			position: absolute;
-			top: -4px;
-			right: -3px;
-			display: flex;
-			flex-direction: row;
-			gap: 1px;
-			pointer-events: none;
-		}
-
-		.reaction-badge {
-			font-size: 0.75rem;
-			line-height: 1;
-			filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
-			transition: transform 0.15s;
-
-			&--mine {
-				filter: drop-shadow(0 0 3px rgba(10, 61, 145, 0.5));
-			}
+			display: none;
 		}
 
 

@@ -82,7 +82,7 @@
             (click)="activeTab = 'private'"
           >
             <mat-icon class="leghe-tab-icon">lock</mat-icon>
-            <span>Private</span>
+            <span>{{ 'HOME.TAB_PRIVATE' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPrivateLeghe.length }}</span>
           </button>
           <button
@@ -91,7 +91,7 @@
             (click)="activeTab = 'public'"
           >
             <mat-icon class="leghe-tab-icon">public</mat-icon>
-            <span>Pubbliche</span>
+            <span>{{ 'HOME.TAB_PUBLIC' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPublicLeghe.length }}</span>
           </button>
         </div>

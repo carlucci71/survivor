@@ -562,6 +562,41 @@ h2 {
 		color: #92400E;
 		::ng-deep mat-icon { color: #D97706; }
 	}
+
+	// ⭐ Elite — azzurro intenso
+	&--elite {
+		background: rgba(59, 130, 246, 0.15);
+		color: #1E40AF;
+		::ng-deep mat-icon { color: #2563EB; }
+	}
+
+	// 👑 Leggenda — viola regale
+	&--leggenda {
+		background: rgba(139, 92, 246, 0.15);
+		color: #5B21B6;
+		::ng-deep mat-icon { color: #7C3AED; }
+	}
+
+	// ⚡ Fenomeno — rosso fuoco
+	&--fenomeno {
+		background: rgba(239, 68, 68, 0.15);
+		color: #991B1B;
+		::ng-deep mat-icon { color: #DC2626; }
+	}
+
+	// 💎 Hall of Fame — diamante con shimmer
+	&--hall-of-fame {
+		background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(236,72,153,0.18));
+		color: #4C1D95;
+		border: 1px solid rgba(139, 92, 246, 0.35);
+		animation: hof-shimmer 2.5s ease-in-out infinite;
+		::ng-deep mat-icon { color: #7C3AED; }
+	}
+}
+
+@keyframes hof-shimmer {
+	0%, 100% { box-shadow: 0 0 0px rgba(139, 92, 246, 0); }
+	50%       { box-shadow: 0 0 8px rgba(139, 92, 246, 0.5); }
 }
 
 // ── Max partecipanti chip nella subtitle del gruppo ─────────────────────

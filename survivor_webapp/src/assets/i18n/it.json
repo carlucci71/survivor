@@ -17,7 +17,13 @@
     "BADGE_GROWING": "In crescita",
     "BADGE_HOT": "Popolare",
     "BADGE_TOP": "Top League",
-    "PARTICIPANTS": "partecipanti"
+    "BADGE_ELITE": "Elite",
+    "BADGE_LEGGENDA": "Leggendaria",
+    "BADGE_FENOMENO": "Fenomenale",
+    "BADGE_HALL_OF_FAME": "Iconica",
+    "PARTICIPANTS": "partecipanti",
+    "TAB_PRIVATE": "Private",
+    "TAB_PUBLIC": "Pubbliche"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Da Avviare",

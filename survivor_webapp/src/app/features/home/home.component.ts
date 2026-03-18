@@ -378,10 +378,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getPopolarityBadge(n: number): { icon: string; key: string; tier: string } {
-    if (n >= 30) return { icon: 'emoji_events',        key: 'HOME.BADGE_TOP',     tier: 'top' };
-    if (n >= 15) return { icon: 'local_fire_department', key: 'HOME.BADGE_HOT',   tier: 'hot' };
-    if (n >= 5)  return { icon: 'trending_up',          key: 'HOME.BADGE_GROWING', tier: 'growing' };
-    return             { icon: 'fiber_new',             key: 'HOME.BADGE_NEW',    tier: 'new' };
+    if (n >= 100) return { icon: 'diamond',               key: 'HOME.BADGE_HALL_OF_FAME', tier: 'hall-of-fame' };
+    if (n >= 90)  return { icon: 'bolt',                  key: 'HOME.BADGE_FENOMENO',     tier: 'fenomeno' };
+    if (n >= 70)  return { icon: 'workspace_premium',     key: 'HOME.BADGE_LEGGENDA',     tier: 'leggenda' };
+    if (n >= 50)  return { icon: 'military_tech',         key: 'HOME.BADGE_ELITE',        tier: 'elite' };
+    if (n >= 30)  return { icon: 'emoji_events',          key: 'HOME.BADGE_TOP',          tier: 'top' };
+    if (n >= 15)  return { icon: 'local_fire_department', key: 'HOME.BADGE_HOT',          tier: 'hot' };
+    if (n >= 5)   return { icon: 'trending_up',           key: 'HOME.BADGE_GROWING',      tier: 'growing' };
+    return              { icon: 'fiber_new',              key: 'HOME.BADGE_NEW',          tier: 'new' };
   }
 
   // TrackBy functions per ottimizzare il rendering
