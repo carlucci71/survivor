@@ -62,7 +62,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
     if (!lega) return;
 
     // Lega con accesso su approvazione (pubblica o privata) → mostra dialog di conferma
-    if (lega.accessoLibero === false) {
+    if (!lega.accessoLibero) {
       import('../../shared/components/richiedi-ingresso-dialog.component').then(m => {
         const ref = this.dialog.open(m.RichiediIngressoDialogComponent, {
           width: '400px',

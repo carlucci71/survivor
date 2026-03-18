@@ -762,6 +762,11 @@ public class LegaService {
             throw new RuntimeException("Impossibile unirsi, la lega è già avviata");
         }
 
+        // Se la lega richiede approvazione, il join diretto non è consentito senza token
+        if (!lega.isAccessoLibero() && ObjectUtils.isEmpty(tokenOriginal)) {
+            throw new ManagedException("Questa lega richiede approvazione del leader", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
+        }
+
         if (!ObjectUtils.isEmpty(lega.getPwd())) {
             if (ObjectUtils.isEmpty(tokenOriginal) && !lega.getPwd().equals(legaJoinDTO.getPwd())) {
                 throw new ManagedException("Password errata", ManagedException.InternalCode.PWD_LEGA_ERRATA);

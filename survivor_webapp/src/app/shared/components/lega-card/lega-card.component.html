@@ -32,7 +32,7 @@
   </div>
 
   <mat-card-actions>
-    @if (lega?.accessoLibero === false) {
+    @if (!lega?.accessoLibero) {
       <button class="join-request-btn" (click)="onAction()">
         <mat-icon>how_to_reg</mat-icon>
         <span>{{ 'JOIN_REQUEST.REQUEST_BUTTON' | translate }}</span>
