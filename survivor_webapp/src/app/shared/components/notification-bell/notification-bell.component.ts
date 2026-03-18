@@ -11,6 +11,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { AuthService } from '../../../core/services/auth.service';
 import { Notification } from '../../../core/models/interfaces.model';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notification-bell',
@@ -36,7 +37,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   constructor(
     private notificationService: NotificationService,
     private authService: AuthService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,12 +74,24 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       this.notificationService.markAsRead(notification.id).subscribe();
     }
 
-    // TODO: Naviga al dettaglio in base al tipo di notifica
-    console.log('Notifica cliccata:', notification);
+    if (notification.type === 'JOIN_REQUEST_RICEVUTA' && notification.legaId) {
+      this.router.navigate(['/lega', notification.legaId]);
+      return;
+    }
+    if ((notification.type === 'JOIN_REQUEST_APPROVATA' || notification.type === 'JOIN_REQUEST_RIFIUTATA') && notification.legaId) {
+      this.router.navigate(['/lega', notification.legaId]);
+      return;
+    }
   }
 
   getNotificationIcon(type: string): string {
     switch (type) {
+      case 'JOIN_REQUEST_RICEVUTA':
+        return 'how_to_reg';
+      case 'JOIN_REQUEST_APPROVATA':
+        return 'check_circle';
+      case 'JOIN_REQUEST_RIFIUTATA':
+        return 'cancel';
       case 'MATCH_STARTING':
         return 'sports_soccer';
       case 'MATCH_REMINDER':

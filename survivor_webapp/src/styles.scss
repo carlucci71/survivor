@@ -325,6 +325,50 @@ mat-dialog-actions {
   }
 }
 
+/* Termini e Condizioni - sticky header */
+.termini-dialog {
+  .mat-mdc-dialog-surface,
+  .mat-dialog-surface {
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+  }
+
+  app-termini-dialog {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    height: 100%;
+  }
+
+  .modal-container {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    height: 100% !important;
+    max-height: none !important;
+    background: #fff;
+    border-radius: 20px;
+  }
+
+  .modal-header {
+    flex-shrink: 0 !important;
+    position: relative;
+    padding: 20px 24px 16px;
+    background: #fff;
+    border-bottom: 1px solid rgba(10, 61, 145, 0.08);
+  }
+
+  .modal-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 20px 24px 24px;
+    min-height: 0 !important;
+  }
+}
+
 /* REGOLE AGGRESSIVE PER ELIMINARE SPAZI BIANCHI NEI DIALOG */
 .mat-mdc-dialog-container *,
 .mat-dialog-container * {

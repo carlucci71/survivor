@@ -193,6 +193,7 @@ public class PushNotificationService {
             notificationDTO.setTitle(pushNotificationDTO.getTitle());
             notificationDTO.setType(pushNotificationDTO.getTipoNotifica().name());
             notificationDTO.setExpiringAt(getInSeconds(pushNotificationDTO.getExpiringAt()));
+            notificationDTO.setLegaId(pushNotificationDTO.getLegaId());
             notificationService.createNotification(notificationDTO);
         }
 

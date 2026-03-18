@@ -3871,6 +3871,71 @@
 	}
 }
 
+// ── Layout tabella + indice alfabetico laterale ────────────────────────────
+.table-alpha-layout {
+	display: none;
+	margin-top: 24px;
+}
+
+@media (min-width: 768px) {
+	.table-alpha-layout.desktop-tablet-only {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.table-alpha-layout .excel-table-wrapper.desktop-tablet-only {
+		flex: 1;
+		min-width: 0;
+		margin-top: 0;
+	}
+}
+
+// indice alfabetico a destra della tabella
+.alpha-index {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1px;
+	background: #F8FAFC;
+	border: 1px solid rgba(79, 195, 247, 0.30);
+	border-radius: 12px;
+	padding: 6px 3px;
+	position: sticky;
+	top: 80px;
+	min-width: 28px;
+	align-self: flex-start;
+	box-shadow: 0 2px 8px rgba(10, 61, 145, 0.08);
+
+	.alpha-btn {
+		width: 22px;
+		height: 22px;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		font-size: 0.65rem;
+		font-weight: 700;
+		color: #0A3D91;
+		border-radius: 6px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.15s, color 0.15s;
+		padding: 0;
+		line-height: 1;
+
+		&:hover {
+			background: #0A3D91;
+			color: #fff;
+		}
+
+		&:active {
+			background: #4FC3F7;
+			color: #fff;
+		}
+	}
+}
+
 .excel-table {
 	width: 100%;
 	border-collapse: separate;
@@ -3992,8 +4057,15 @@
 			.user-name-wrapper {
 				display: flex;
 				align-items: center;
-				gap: 6px;
+				gap: 4px;
 				justify-content: space-between;
+			}
+
+			.user-icons-group {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				flex-shrink: 0;
 			}
 
 			.user-name {
@@ -4366,14 +4438,20 @@
 				font-size: 0.9rem;
 			}
 
-		// Reaction badge: piccolo flag assoluto in alto a destra della cella
-		.reaction-badge {
+		// Reaction badges: contenitore assoluto in alto a destra della cella
+		.reaction-badges {
 			position: absolute;
 			top: -4px;
 			right: -3px;
+			display: flex;
+			flex-direction: row;
+			gap: 1px;
+			pointer-events: none;
+		}
+
+		.reaction-badge {
 			font-size: 0.75rem;
 			line-height: 1;
-			pointer-events: none;
 			filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
 			transition: transform 0.15s;
 
@@ -5100,14 +5178,20 @@
   width: 100%;
 }
 
-// Reaction badge nella vista mobile cards
-.reaction-badge {
+// Reaction badges nella vista mobile cards
+.reaction-badges {
   position: absolute;
   top: -4px;
   right: -3px;
+  display: flex;
+  flex-direction: row;
+  gap: 1px;
+  pointer-events: none;
+}
+
+.reaction-badge {
   font-size: 0.85rem;
   line-height: 1;
-  pointer-events: none;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
 
   &--mine {
@@ -5121,6 +5205,43 @@
 
   &:active {
     opacity: 0.75;
+  }
+}
+
+// ── Pulsante "🤝 Chi ha votato come me" nella riga dell'utente ────────────────
+.same-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(10, 61, 145, 0.07), rgba(79, 195, 247, 0.12));
+  border: 1.5px solid rgba(79, 195, 247, 0.35);
+  border-radius: 10px;
+  padding: 3px 8px;
+  font-size: 0.92rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(79, 195, 247, 0.12);
+  animation: pulseHistory 2.5s ease-in-out infinite;
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(10, 61, 145, 0.14), rgba(79, 195, 247, 0.20));
+    border-color: rgba(79, 195, 247, 0.55);
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.28);
+    animation: none;
+  }
+
+  &:active { transform: scale(0.96); }
+
+  // Versione mobile: tondo, più tapable
+  &--mobile {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1rem;
   }
 }
 

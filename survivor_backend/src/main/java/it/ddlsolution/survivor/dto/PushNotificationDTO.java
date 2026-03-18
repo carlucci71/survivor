@@ -20,6 +20,7 @@ public class PushNotificationDTO {
     private String sound;
     private Enumeratori.TipoNotifica tipoNotifica;
     private LocalDateTime expiringAt;
+    private Long legaId;
 
     public LocalDateTime getExpiringAt() {
         if (expiringAt==null){

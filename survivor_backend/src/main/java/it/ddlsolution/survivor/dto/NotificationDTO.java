@@ -16,4 +16,5 @@ public class NotificationDTO {
     private Boolean read = false;
     private OffsetDateTime createdAt;
     private String expiringAt;
+    private Long legaId;
 }

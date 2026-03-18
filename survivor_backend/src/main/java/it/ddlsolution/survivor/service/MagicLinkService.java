@@ -48,15 +48,31 @@ public class MagicLinkService {
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new IllegalArgumentException("Formato email non valido");
         }
+        // findByEmail crea l'utente se non esiste (flusso registrazione)
         User user = userService.findByEmail(email);
-        // Genera un nuovo token
+        sendMagicLinkForUser(user, email, mobile);
+    }
+
+    @Transactional
+    public void sendMagicLinkToExistingUser(String email, boolean mobile) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("L'email è obbligatoria");
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new IllegalArgumentException("Formato email non valido");
+        }
+        // findByEmail without creating — caller must have already verified user exists
+        User user = userService.findByEmailExisting(email);
+        sendMagicLinkForUser(user, email, mobile);
+    }
+
+    private void sendMagicLinkForUser(User user, String email, boolean mobile) {
         String tipo = Enumeratori.TipoMagicToken.LOG.getCodice();
         magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
         String token = salvaMagicToken(user, expirationMinutes, null, tipo, "");
         String subject = "Il tuo Magic Link per accedere a Survivor";
         String magicLink = getUrlMagicLink(token, tipo, mobile);
         emailService.send(email, subject, buildEmailContent(magicLink));
-
         log.info("Magic link inviato a: {}", email);
     }
 

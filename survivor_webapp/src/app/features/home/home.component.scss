@@ -588,6 +588,30 @@ h2 {
 	}
 }
 
+// ── Chip numero partecipanti nella subtitle dell'edizione ─────────────────
+.partecipanti-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: 8px;
+	padding: 2px 8px;
+	background: rgba(76, 175, 80, 0.12);
+	color: #2e7d32;
+	border-radius: 12px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	vertical-align: middle;
+	line-height: 1.4;
+
+	.part-icon {
+		font-size: 12px !important;
+		width: 12px !important;
+		height: 12px !important;
+		color: #2e7d32;
+		opacity: 0.8;
+	}
+}
+
 // ── Badge richieste pendenti sul titolo edizione (solo leader) ───────────
 .jr-pending-badge {
 	display: inline-flex;

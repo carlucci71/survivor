@@ -299,10 +299,7 @@
         <div class="cn-link-card">
           <p class="cn-link-label">{{ 'CREATE_LEAGUE.SHARE_URL' | translate }}</p>
           <div class="cn-link-row">
-            <a class="cn-share-link" [href]="baseUrl() + '/joinLega'">{{ baseUrl() }}/joinLega</a>
-            <button mat-icon-button class="cn-copy-btn" (click)="copyLink()" [attr.aria-label]="'COMMON.COPY_LINK' | translate">
-              <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
-            </button>
+            <a class="cn-share-link" [href]="getShareUrl()">{{ getShareUrl() }}</a>
             <span class="cn-copied-badge" *ngIf="copied">{{ 'COMMON.COPIED' | translate }}</span>
           </div>
         </div>

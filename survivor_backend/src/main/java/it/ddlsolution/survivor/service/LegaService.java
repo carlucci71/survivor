@@ -175,10 +175,7 @@ public class LegaService {
                         .get()
                         .getValue();
                 if (statoGiocatore1 == statoGiocatore2) {
-                    if (g1.getGiocate().size() == g2.getGiocate().size()) {
-                        return g1.getNickname().compareTo(g2.getNickname());
-                    }
-                    return g2.getGiocate().size() - g1.getGiocate().size();
+                    return g1.getNickname().compareTo(g2.getNickname());
                 }
                 return statoGiocatore1.ordinal() - statoGiocatore2.ordinal();
             }).toList();
@@ -763,6 +760,11 @@ public class LegaService {
         Lega lega = legaRepository.findById(idLega).orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
         if (lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
             throw new RuntimeException("Impossibile unirsi, la lega è già avviata");
+        }
+
+        // Se la lega richiede approvazione, il join diretto non è consentito senza token
+        if (!lega.isAccessoLibero() && ObjectUtils.isEmpty(tokenOriginal)) {
+            throw new ManagedException("Questa lega richiede approvazione del leader", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
         }
 
         if (!ObjectUtils.isEmpty(lega.getPwd())) {

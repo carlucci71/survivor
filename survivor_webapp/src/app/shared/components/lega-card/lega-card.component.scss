@@ -146,4 +146,38 @@
   }
 }
 
+/* BOTTONE RICHIEDI INGRESSO */
+.join-request-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #0A3D91, #1565C0);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(10, 61, 145, 0.35);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(10, 61, 145, 0.5);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 

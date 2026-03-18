@@ -61,19 +61,35 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
   seleziona(lega: Lega | null): void {
     if (!lega) return;
 
-    // Lega pubblica con accesso su approvazione → richiedi ingresso
-    if (lega.pubblica && lega.accessoLibero === false) {
-      this.legaService.richiediIngresso(lega.id).subscribe({
-        next: () => {
-          this.snackBar.open(this.translate.instant('JOIN_REQUEST.REQUEST_SENT'), '', { duration: 4000 });
-        },
-        error: (err) => {
-          const code = err?.error?.message as string | undefined;
-          let msg = this.translate.instant('COMMON.ERROR_GENERIC');
-          if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
-          else if (code === 'REQUEST_ALREADY_EXISTS') msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
-          this.snackBar.open(msg, '', { duration: 4000 });
-        }
+    // Lega con accesso su approvazione (pubblica o privata) → mostra dialog di conferma
+    if (!lega.accessoLibero) {
+      import('../../shared/components/richiedi-ingresso-dialog.component').then(m => {
+        const ref = this.dialog.open(m.RichiediIngressoDialogComponent, {
+          width: '400px',
+          maxWidth: '95vw',
+          data: { lega },
+          autoFocus: false
+        });
+        ref.afterClosed().subscribe((confirmed: boolean) => {
+          if (!confirmed) return;
+          this.legaService.richiediIngresso(lega.id).subscribe({
+            next: () => {
+              this.dialog.open(m.RichiediIngressoDialogComponent, {
+                width: '400px',
+                maxWidth: '95vw',
+                data: { lega, success: true },
+                autoFocus: false
+              });
+            },
+            error: (err) => {
+              const code = err?.error?.message as string | undefined;
+              let msg = this.translate.instant('COMMON.ERROR_GENERIC');
+              if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
+              else if (code === 'REQUEST_ALREADY_EXISTS') msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
+              this.snackBar.open(msg, '', { duration: 4000 });
+            }
+          });
+        });
       });
       return;
     }

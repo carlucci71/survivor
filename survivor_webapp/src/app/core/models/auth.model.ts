@@ -3,6 +3,10 @@ export interface MagicLinkRequest {
   mobile: boolean;
 }
 
+export interface LoginRequest {
+  email: string;
+}
+
 export interface MagicLinkResponse {
   message: string;
   success: boolean;
