@@ -104,6 +104,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((pwd: string | null) => {
+      if (pwd === null) return; // utente ha annullato il dialog
 
       this.legaService.join(lega.id!, pwd,'').subscribe({
         next: (updated) => {
