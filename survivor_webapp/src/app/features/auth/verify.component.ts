@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class VerifyComponent implements OnInit {
   message = '';
   isSuccess = false;
+  isAlreadyLogged = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -125,8 +126,13 @@ export class VerifyComponent implements OnInit {
         }, 2000);
       },
       error: (error) => {
-        this.isSuccess = false;
-        this.message = 'Token non valido o scaduto';
+        if (this.authService.isAuthenticated()) {
+          this.isAlreadyLogged = true;
+          this.message = 'già loggato';
+        } else {
+          this.isSuccess = false;
+          this.message = 'Token non valido o scaduto';
+        }
       },
     });
   }

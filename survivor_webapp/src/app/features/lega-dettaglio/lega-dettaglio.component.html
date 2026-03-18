@@ -282,10 +282,8 @@
                       }
                   </th>
                 }
-                @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                @if(isAdmin() || isLeaderLega()){
                   <th class="excel-header-cell actions-col">{{ 'LEAGUE.TABLE_ACTIONS' | translate }}</th>
-                } @else {
-                  <th class="excel-header-cell history-col-header"></th>
                 }
               </tr>
             </thead>
@@ -389,7 +387,7 @@
                   }
 
                   <!-- AZIONI (ultima colonna) -->
-                  @if(isAdmin() || isLeaderLega() || isDaAvviare()){
+                  @if(isAdmin() || isLeaderLega()){
                     <td class="excel-cell actions-cell">
                       <div class="actions-wrapper">
                         <!-- Icona modifica per leader/admin (se può giocare per questo utente) -->
@@ -409,9 +407,6 @@
                         }
                       </div>
                     </td>
-                  } @else {
-                    <!-- Colonna vuota per utenti non admin/leader -->
-                    <td class="excel-cell history-cell"></td>
                   }
                 </tr>
               }
