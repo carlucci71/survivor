@@ -49,6 +49,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 import { environment } from '../../../environments/environment';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
+import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -1979,6 +1980,72 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     const key = `${giornata}_${giocata.squadraSigla}`;
     return this.partiteForzate.get(key) === true;
+  }
+
+  /**
+   * Restituisce i nickname degli ALTRI giocatori che hanno scelto la stessa squadra
+   * nella giornata indicata. Mostra solo pick visibili (non nascosti).
+   */
+  getSamePickNicknames(giocatore: Giocatore, giornataAssoluta: number): string[] {
+    const myGiocata = this.getGiocataByGiornataAssoluta(giocatore, giornataAssoluta);
+    if (!myGiocata?.squadraSigla) return [];
+    if (this.shouldHideGiocata(myGiocata, giornataAssoluta)) return [];
+
+    const result: string[] = [];
+    for (const other of (this.lega?.giocatori ?? [])) {
+      if (other.id === giocatore.id) continue;
+      const otherGiocata = this.getGiocataByGiornataAssoluta(other, giornataAssoluta);
+      if (!otherGiocata?.squadraSigla) continue;
+      if (this.shouldHideGiocata(otherGiocata, giornataAssoluta)) continue;
+      if (otherGiocata.squadraSigla === myGiocata.squadraSigla) {
+        result.push(other.nickname);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Per la card dedicata: restituisce squadra + nickname degli altri
+   * per il giocatore dell'utente loggato nella giornata corrente.
+   * Restituisce null se non si vede nulla (voto nascosto, nessun compagno, non in lega).
+   */
+  getSamePickForCurrentUser(): { squadraNome: string; nicknames: string[] } | null {
+    const me = this.getCurrentGiocatore();
+    if (!me || !this.lega?.giornataCorrente) return null;
+
+    const giornataCorrente = this.lega.giornataCorrente;
+    const myGiocata = this.getGiocataByGiornataAssoluta(me, giornataCorrente);
+    if (!myGiocata?.squadraSigla) return null;
+    if (this.shouldHideGiocata(myGiocata, giornataCorrente)) return null;
+
+    const nicknames: string[] = [];
+    for (const other of (this.lega.giocatori ?? [])) {
+      if (other.id === me.id) continue;
+      const otherGiocata = this.getGiocataByGiornataAssoluta(other, giornataCorrente);
+      if (!otherGiocata?.squadraSigla) continue;
+      if (this.shouldHideGiocata(otherGiocata, giornataCorrente)) continue;
+      if (otherGiocata.squadraSigla === myGiocata.squadraSigla) {
+        nicknames.push(other.nickname);
+      }
+    }
+
+    return {
+      squadraNome: this.getSquadraNome(myGiocata.squadraSigla) || myGiocata.squadraSigla,
+      nicknames
+    };
+  }
+
+  openSamePickDialog(): void {
+    const data = this.getSamePickForCurrentUser();
+    if (!data || data.nicknames.length === 0) return;
+    const isMobile = window.innerWidth < 600;
+    this.dialog.open(SamePickDialogComponent, {
+      data,
+      width: isMobile ? '92vw' : '380px',
+      maxWidth: '92vw',
+      panelClass: 'same-pick-dialog-panel',
+      autoFocus: false
+    });
   }
 
   apriRisultatiGiornata(): void {

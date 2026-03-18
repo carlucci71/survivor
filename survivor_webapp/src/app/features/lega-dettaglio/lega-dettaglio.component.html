@@ -301,14 +301,23 @@
                   <td class="excel-cell user-cell">
                     <div class="user-name-wrapper">
                       <span class="user-name">{{ giocatore.nickname }}</span>
-                      <!-- Badge storico - solo desktop/tablet, a destra del nome -->
-                      @if(hasMoreRounds(giocatore)) {
-                        <button class="history-toggle-btn history-badge-desktop"
-                                (click)="toggleFullHistory(giocatore, $event)"
-                                [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                          <mat-icon class="history-icon">history</mat-icon>
-                        </button>
-                      }
+                      <!-- Gruppo icone a destra del nome -->
+                      <div class="user-icons-group">
+                        @if(hasMoreRounds(giocatore)) {
+                          <button class="history-toggle-btn history-badge-desktop"
+                                  (click)="toggleFullHistory(giocatore, $event)"
+                                  [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
+                            <mat-icon class="history-icon">history</mat-icon>
+                          </button>
+                        }
+                        @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
+                          <button class="same-pick-btn"
+                                  (click)="$event.stopPropagation(); openSamePickDialog()"
+                                  matTooltip="Chi ha votato come te?">
+                            🤝
+                          </button>
+                        }
+                      </div>
                     </div>
                   </td>
 
@@ -530,6 +539,13 @@
                         (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
                         [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
                   <mat-icon class="history-icon-mobile">history</mat-icon>
+                </button>
+              }
+              <!-- Pulsante "Chi ha votato come me" - solo per il tuo utente (mobile) -->
+              @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
+                <button class="same-pick-btn same-pick-btn--mobile"
+                        (click)="$event.stopPropagation(); openSamePickDialog()">
+                  🤝
                 </button>
               }
             </div>
