@@ -64,30 +64,9 @@ public class LegaJoinRequestService {
             throw new ManagedException("Hai già una richiesta in attesa", ManagedException.InternalCode.REQUEST_ALREADY_EXISTS);
         }
 
-        // accesso libero → entra direttamente tramite LegaJoinService esistente
+        // Se la lega è ad accesso libero non si può usare questo endpoint
         if (lega.isAccessoLibero()) {
-            // Controllo posti
-            if (lega.getMaxPartecipanti() != null && lega.getGiocatoreLeghe().size() >= lega.getMaxPartecipanti()) {
-                throw new ManagedException("Lega al completo", ManagedException.InternalCode.LEGA_FULL);
-            }
-            GiocatoreLega gl = new GiocatoreLega();
-            gl.getId().setIdLega(idLega);
-            gl.getId().setIdGiocatore(giocatore.getId());
-            gl.setGiocatore(giocatore);
-            gl.setLega(lega);
-            gl.setStato(Enumeratori.StatoGiocatore.ATTIVO);
-            gl.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
-            giocatoreLegaService.save(gl);
-
-            // Crea una richiesta già approvata per tracciabilità
-            LegaJoinRequest req = new LegaJoinRequest();
-            req.setLega(lega);
-            req.setGiocatore(giocatore);
-            req.setStato(Enumeratori.StatoRichiesta.APPROVED);
-            req.setResolvedAt(LocalDateTime.now());
-            joinRequestRepository.save(req);
-
-            return toDTO(req);
+            throw new ManagedException("La lega non richiede approvazione, usa l'endpoint join", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
         }
 
         // accesso su approvazione → crea richiesta PENDING

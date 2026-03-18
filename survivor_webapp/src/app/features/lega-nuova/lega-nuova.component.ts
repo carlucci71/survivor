@@ -156,6 +156,15 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     return environment.baseUrl;
   }
 
+  getShareUrl(): string {
+    // Pubblica ad accesso libero → lista pubblica
+    // Privata o con approvazione → link diretto alla lega
+    if (this.pubblica && this.accessoLibero) {
+      return this.baseUrl() + '/joinLega';
+    }
+    return this.baseUrl() + '/join/' + this.legaCreataId;
+  }
+
   selezionaSport() {
     if (this.sportSel) {
       this.campionatoService.getCampionatoBySport(this.sportSel).subscribe({
@@ -428,7 +437,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   shareLink(): void {
-    const url = this.baseUrl() + '/joinLega';
+    const url = this.getShareUrl();
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.name}" e dimostra chi è il vero campione! 💪`,
@@ -451,7 +460,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   copyLink(): void {
-    const url = this.baseUrl() + '/joinLega';
+    const url = this.getShareUrl();
     if (!navigator.clipboard) {
       // fallback
       const textarea = document.createElement('textarea');
