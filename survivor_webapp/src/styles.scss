@@ -792,4 +792,59 @@ mat-dialog-actions {
   backdrop-filter: blur(4px);
 }
 
+/* ── Notification Bell Panel (CDK overlay – must live in global styles) ── */
+.nb-menu.mat-mdc-menu-panel,
+.nb-menu .mat-mdc-menu-panel {
+  min-width: 360px !important;
+  max-width: 420px !important;
+  max-height: 82dvh !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  border: none !important;
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 4px 6px rgba(15, 23, 42, 0.04),
+    0 20px 48px rgba(15, 23, 42, 0.14) !important;
+}
+
+.nb-menu .mat-mdc-menu-content {
+  padding: 0 !important;
+  /* Allow the list inside to scroll, not the panel itself */
+  overflow: visible !important;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .nb-menu.mat-mdc-menu-panel,
+  .nb-menu .mat-mdc-menu-panel {
+    min-width: 300px !important;
+    max-width: 340px !important;
+    max-height: 80dvh !important;
+    border-radius: 18px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .nb-menu.mat-mdc-menu-panel,
+  .nb-menu .mat-mdc-menu-panel {
+    min-width: 260px !important;
+    max-width: 300px !important;
+    max-height: 56dvh !important;
+    border-radius: 16px !important;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 360px) {
+  .nb-menu.mat-mdc-menu-panel,
+  .nb-menu .mat-mdc-menu-panel {
+    min-width: 240px !important;
+    max-width: 280px !important;
+    max-height: 52dvh !important;
+    border-radius: 14px !important;
+  }
+}
+
 
