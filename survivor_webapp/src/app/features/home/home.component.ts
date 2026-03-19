@@ -68,6 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
+  readonly currentYear = new Date().getFullYear();
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
