@@ -32,7 +32,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
               [matTooltip]="title"
               matTooltipShowDelay="400"
             >{{ title }}</mat-label>
-            <img src="assets/survivor-logo-simple.svg" alt="Survivor Logo" class="header-logo" />
+            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
@@ -130,16 +130,16 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         cursor: default;
       }
       .header-logo {
-        height: 28px;
+        height: 48px;
         width: auto;
-        filter: brightness(0) invert(1);
-        opacity: 0.85;
+        filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+        opacity: 0.95;
       }
 
 
-      /* Logo SURVIVOR 90px nella home quando title è vuoto */
+      /* Logo nella home quando title è vuoto */
       :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-        height: 90px;
+        height: 100px;
       }
 
       .header-content ::ng-deep .config-user {
@@ -203,7 +203,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       /* RESPONSIVE - Breakpoint intermedio tablet */
       @media (max-width: 1024px) {
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 55px;
+          height: 82px;
         }
       }
 
@@ -219,11 +219,11 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           gap: 8px;
         }
         .header-logo {
-          height: 22px;
+          height: 38px;
         }
-        /* Logo 50px nella home (tablet/mobile) */
+        /* Logo nella home (tablet/mobile) */
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 50px;
+          height: 76px;
         }
         .header-title {
           font-size: 1.1rem;
@@ -257,11 +257,11 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           font-size: 0.9rem;
         }
         .header-logo {
-          height: 18px;
+          height: 34px;
         }
-        /* Logo 42px nella home (mobile piccolo) */
+        /* Logo nella home (mobile piccolo) */
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 42px;
+          height: 68px;
         }
         .btn-back {
           font-size: 0.65rem !important;
@@ -283,9 +283,9 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         .actions {
           gap: 8px;
         }
-        /* Logo 38px nella home (molto piccolo) */
+        /* Logo nella home (molto piccolo) */
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 38px;
+          height: 62px;
         }
       }
     `,

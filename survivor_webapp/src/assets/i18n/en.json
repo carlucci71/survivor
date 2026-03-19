@@ -17,7 +17,13 @@
     "BADGE_GROWING": "Growing",
     "BADGE_HOT": "Hot",
     "BADGE_TOP": "Top League",
-    "PARTICIPANTS": "participants"
+    "BADGE_ELITE": "Elite",
+    "BADGE_LEGGENDA": "Legendary",
+    "BADGE_FENOMENO": "Phenomenal",
+    "BADGE_HALL_OF_FAME": "Iconic",
+    "PARTICIPANTS": "participants",
+    "TAB_PRIVATE": "Private",
+    "TAB_PUBLIC": "Public"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Not Started",
@@ -432,8 +438,20 @@
     "BACK_HOME": "Back to Home",
     "ERROR_GENERIC": "An error occurred. Please try again."
   },
+  "RICHIESTE": {
+    "PAGE_TITLE": "Join requests",
+    "EMPTY": "No requests for your leagues",
+    "PENDING": "Pending",
+    "RESOLVED": "History",
+    "STATO_APPROVATA": "Approved",
+    "STATO_RIFIUTATA": "Rejected",
+    "TOOLTIP": "Join requests",
+    "ALL_DONE_TITLE": "All caught up!",
+    "ALL_DONE_SUB": "All requests have already been handled. See the history below."
+  },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Join requests",
+    "PENDING_BANNER": "pending join requests",
     "NO_PENDING": "No pending requests",
     "LOAD_REQUESTS": "Load requests",
     "APPROVE": "Approve",
@@ -458,6 +476,7 @@
     "PROFILE": "Profile",
     "PROFILE_FE_MOBILE": "FE / Mobile Profile",
     "CALENDAR_URL": "Calendar URL",
+    "JOIN_REQUESTS": "Join requests",
     "LEAGUES_MANAGEMENT": "Leagues Management",
     "LEAGUES_DESCRIPTION": "Create and manage system leagues",
     "USERS_MANAGEMENT": "Users Management",

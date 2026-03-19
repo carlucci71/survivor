@@ -10,8 +10,9 @@
         </ng-template>
       </mat-chip>
 
-      <button *ngIf="isAdmin()" mat-icon-button class="admin-emoji admin-button" (click)="goToAdmin()" matTooltip="Area Admin" aria-label="Area Admin">
-        <mat-icon>verified_user</mat-icon>
+      <button *ngIf="isLeaderConRichieste() && totalRichiesteInAttesa > 0" mat-icon-button class="richieste-button" (click)="goToRichieste()" [matTooltip]="'RICHIESTE.TOOLTIP' | translate" aria-label="Richieste ingresso">
+        <mat-icon>how_to_reg</mat-icon>
+        <span class="richieste-badge">{{ totalRichiesteInAttesa }}</span>
       </button>
     </div>
   </app-header>
@@ -82,7 +83,7 @@
             (click)="activeTab = 'private'"
           >
             <mat-icon class="leghe-tab-icon">lock</mat-icon>
-            <span>Private</span>
+            <span>{{ 'HOME.TAB_PRIVATE' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPrivateLeghe.length }}</span>
           </button>
           <button
@@ -91,7 +92,7 @@
             (click)="activeTab = 'public'"
           >
             <mat-icon class="leghe-tab-icon">public</mat-icon>
-            <span>Pubbliche</span>
+            <span>{{ 'HOME.TAB_PUBLIC' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPublicLeghe.length }}</span>
           </button>
         </div>
@@ -279,4 +280,10 @@
       </div>
     </section>
   </main>
+
+  <footer class="home-footer">
+    <img src="assets/logo.png" alt="Survivor" class="footer-logo" />
+    <p class="footer-tagline">WIN OR GO HOME</p>
+    <p class="footer-copy">&copy; {{ currentYear }} Survivor. All rights reserved.</p>
+  </footer>
 </div>
