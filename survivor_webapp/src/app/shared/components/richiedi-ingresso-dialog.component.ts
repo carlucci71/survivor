@@ -9,7 +9,8 @@ export interface RichiediIngressoData {
     name: string;
     giornataIniziale: number;
     campionato?: { nome?: string };
-    giocatori: any[];
+    giocatori?: any[];
+    numPartecipanti?: number;
   };
   success?: boolean;
 }
@@ -48,7 +49,7 @@ export interface RichiediIngressoData {
             </span>
             <span class="ri-meta-chip">
               <mat-icon>group</mat-icon>
-              {{ data.lega.giocatori.length }} partecipanti
+              {{ (data.lega.numPartecipanti ?? data.lega.giocatori?.length ?? 0) }} partecipanti
             </span>
           </div>
         </div>

@@ -68,9 +68,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   me: Giocatore | null = null;
   environmentName = environment.ambiente;
   isProd = environment.production;
+  readonly currentYear = new Date().getFullYear();
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
+  totalRichiesteInAttesa = 0;
 
   constructor(
     private authService: AuthService,
@@ -246,6 +248,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
+        this.aggiornaContatorRichieste();
         if (preferredTab) {
           this.activeTab = preferredTab;
         }
@@ -326,6 +329,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     return this.authService.isAdmin();
   }
 
+  isLeaderConRichieste(): boolean {
+    return this.leghe.some(
+      l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER'
+    );
+  }
+
+  goToRichieste(): void {
+    this.router.navigate(['/richieste']);
+  }
+
+  private aggiornaContatorRichieste(): void {
+    this.totalRichiesteInAttesa = this.leghe
+      .filter(l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER')
+      .reduce((sum, l) => sum + (l.richiesteInAttesa ?? 0), 0);
+  }
+
   logout(): void {
     this.authService.logout();
     // Naviga solo se non già su login
@@ -378,10 +397,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getPopolarityBadge(n: number): { icon: string; key: string; tier: string } {
-    if (n >= 30) return { icon: 'emoji_events',        key: 'HOME.BADGE_TOP',     tier: 'top' };
-    if (n >= 15) return { icon: 'local_fire_department', key: 'HOME.BADGE_HOT',   tier: 'hot' };
-    if (n >= 5)  return { icon: 'trending_up',          key: 'HOME.BADGE_GROWING', tier: 'growing' };
-    return             { icon: 'fiber_new',             key: 'HOME.BADGE_NEW',    tier: 'new' };
+    if (n >= 100) return { icon: 'diamond',               key: 'HOME.BADGE_HALL_OF_FAME', tier: 'hall-of-fame' };
+    if (n >= 90)  return { icon: 'bolt',                  key: 'HOME.BADGE_FENOMENO',     tier: 'fenomeno' };
+    if (n >= 70)  return { icon: 'workspace_premium',     key: 'HOME.BADGE_LEGGENDA',     tier: 'leggenda' };
+    if (n >= 50)  return { icon: 'military_tech',         key: 'HOME.BADGE_ELITE',        tier: 'elite' };
+    if (n >= 30)  return { icon: 'emoji_events',          key: 'HOME.BADGE_TOP',          tier: 'top' };
+    if (n >= 15)  return { icon: 'local_fire_department', key: 'HOME.BADGE_HOT',          tier: 'hot' };
+    if (n >= 5)   return { icon: 'trending_up',           key: 'HOME.BADGE_GROWING',      tier: 'growing' };
+    return              { icon: 'fiber_new',              key: 'HOME.BADGE_NEW',          tier: 'new' };
   }
 
   // TrackBy functions per ottimizzare il rendering

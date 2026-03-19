@@ -1,803 +1,510 @@
+﻿// ========================================
+// NOTIFICATION BELL — PREMIUM REDESIGN
 // ========================================
-// NOTIFICATION BELL - MODERN ANIMATED DESIGN
-// ========================================
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-// COLORS - Coerenti con l'app
-$primary-blue: #0A3D91;
-$primary-light: #1565C0;
-$accent-blue: #4FC3F7;
-$text-dark: #1F2937;
-$text-gray: #6B7280;
-$text-light: #9CA3AF;
-$bg-light: #F9FAFB;
-$border-color: rgba(79, 195, 247, 0.2);
-$shadow-color: rgba(10, 61, 145, 0.15);
+$navy:       #1a3a6b;
+$blue:       #2563EB;
+$blue-light: #60A5FA;
+$green:      #22C55E;
+$red:        #EF4444;
+$amber:      #F59E0B;
+$text-dark:  #0F172A;
+$text-mid:   #475569;
+$text-soft:  #94A3B8;
+$divider:    rgba(226, 232, 240, 0.8);
+$unread-bg:  rgba(37, 99, 235, 0.055);
 
-// ANIMATIONS
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+// ── Animations ────────────────────────────────────────────────
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)     scale(1);    }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes ringShake {
+  0%,100% { transform: rotate(0);      }
+  15%      { transform: rotate(-16deg); }
+  30%      { transform: rotate(12deg);  }
+  45%      { transform: rotate(-8deg);  }
+  60%      { transform: rotate(5deg);   }
+  75%      { transform: rotate(-3deg);  }
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 0 0   rgba(239,68,68,0.6); }
+  60%      { box-shadow: 0 0 0 6px rgba(239,68,68,0);   }
+}
+@keyframes liveDot {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.4; }
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.8;
-  }
-}
-
-@keyframes pulseRing {
-  0% {
-    transform: scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes bellShake {
-  0%, 100% { transform: rotate(0deg); }
-  10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg); }
-  20%, 40%, 60%, 80% { transform: rotate(10deg); }
-}
-
-// ========================================
-// NOTIFICATION BELL BUTTON
-// ========================================
+// ── Bell button ───────────────────────────────────────────────
 :host {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.notification-bell-btn {
-  color: white !important;
+.nb-btn {
+  position: relative !important;
+  color: rgba(255,255,255,0.8) !important;
   padding: 0 !important;
   min-width: 0 !important;
-  width: 36px !important;
-  height: 36px !important;
-  line-height: 1 !important;
-  position: relative;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  transition: background 0.2s, transform 0.2s !important;
 
-  .bell-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: white !important;
-    line-height: 1 !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .nb-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    transition: color 0.2s;
+  }
+
+  .nb-badge {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: $red;
+    color: #fff;
+    font-size: 0.58rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    line-height: 17px;
+    text-align: center;
+    pointer-events: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+
+  &.nb-btn--live .nb-icon {
+    color: #FCD34D;
+    animation: ringShake 3.5s ease-in-out infinite;
   }
 
   &:hover {
-    .bell-icon {
-      animation: bellShake 0.5s ease-in-out;
-      transform: scale(1.1);
-    }
-  }
-
-  // Badge personalizzato
-  ::ng-deep .mat-badge-content {
-    background: linear-gradient(135deg, #FF4757, #FF6348) !important;
-    font-weight: 700 !important;
-    font-size: 10px !important;
-    font-family: 'Poppins', sans-serif !important;
-    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-    animation: pulse 2s ease-in-out infinite;
+    background: rgba(255,255,255,0.18) !important;
+    transform: scale(1.1) !important;
+    .nb-icon { color: #fff; }
   }
 }
 
-// ========================================
-// MENU CONTAINER
-// ========================================
-::ng-deep .notification-menu {
-  .mat-mdc-menu-content {
-    padding: 0 !important;
-  }
+// ── Panel ─────────────────────────────────────────────────────
+::ng-deep .nb-menu {
+  .mat-mdc-menu-content { padding: 0 !important; }
 
   .mat-mdc-menu-panel {
-    min-width: 380px;
-    max-width: 440px;
-    border-radius: 16px !important;
+    min-width: 370px !important;
+    max-width: 430px !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    border: none !important;
     box-shadow:
-      0 12px 40px rgba(10, 61, 145, 0.2),
-      0 4px 12px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    animation: slideDown 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #ffffff;
-    border: 1px solid rgba(10, 61, 145, 0.1);
+      0 0 0 1px rgba(15,23,42,0.06),
+      0 4px 6px  rgba(15,23,42,0.04),
+      0 20px 48px rgba(15,23,42,0.14) !important;
+    animation: popIn 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
-// ========================================
-// HEADER
-// ========================================
-.notification-header {
-  padding: 0;
-  background: linear-gradient(135deg, $primary-blue 0%, $primary-light 100%);
+// ── Header ────────────────────────────────────────────────────
+.nb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 16px;
+  background: linear-gradient(135deg, $navy 0%, #1e4db7 100%);
   position: relative;
   overflow: hidden;
 
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 20px;
-    position: relative;
-    z-index: 1;
+  // shimmer decorativo
+  &::after {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    pointer-events: none;
   }
 
-  .header-icon-wrapper {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
+  .nb-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nb-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 
-    .header-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      color: white;
-    }
-  }
-
-  .header-text {
-    flex: 1;
-
-    h3 {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-      font-family: 'Poppins', sans-serif;
-      color: white;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-    }
-
-    .notification-count {
-      display: inline-block;
-      margin-top: 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
-      padding: 2px 8px;
-      background: rgba(255, 255, 255, 0.18);
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-  }
-}
-
-// ========================================
-// NOTIFICATIONS LIST
-// ========================================
-.notifications-list {
-  max-height: 420px;
-  overflow-y: auto;
-  background: #ffffff;
-
-  // Custom scrollbar
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(10, 61, 145, 0.05);
-    border-radius: 10px;
-    margin: 8px 0;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, $accent-blue, $primary-blue);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-
-    &:hover {
-      background: linear-gradient(135deg, $primary-blue, $accent-blue);
-      box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
-    }
-  }
-
-  &.has-notifications {
-    padding: 8px 0;
-  }
-}
-
-// ========================================
-// EMPTY STATE
-// ========================================
-.no-notifications {
-  padding: 60px 20px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-
-  .empty-state-icon {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 8px;
-
-    mat-icon {
-      font-size: 64px;
-      width: 64px;
-      height: 64px;
-      color: #C1C9D2;
-      position: relative;
-      z-index: 2;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .icon-circle {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(79, 195, 247, 0.1), rgba(10, 61, 145, 0.05));
-      z-index: 1;
-    }
-  }
-
-  .empty-state-title {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: $text-dark;
-    font-family: 'Poppins', sans-serif;
-  }
-
-  .empty-state-subtitle {
-    margin: 0;
-    font-size: 0.9rem;
-    color: $text-gray;
-  }
-}
-
-// ========================================
-// NOTIFICATION ITEM
-// ========================================
-.notification-item {
-  padding: 0 !important;
-  height: auto !important;
-  line-height: normal !important;
-  white-space: normal !important;
-  border: none !important;
-  background: transparent !important;
-  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin: 0 8px 8px 8px;
-  border-radius: 12px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(135deg, $accent-blue, $primary-blue);
-    transform: scaleY(0);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 0 4px 4px 0;
-  }
-
-  &:hover {
-    background: linear-gradient(90deg, rgba(79, 195, 247, 0.08) 0%, rgba(79, 195, 247, 0.02) 100%) !important;
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(10, 61, 145, 0.08);
-
-    &::before {
-      transform: scaleY(1);
-    }
-
-    .notification-icon-wrapper {
-      transform: scale(1.05) rotate(5deg);
-    }
-  }
-
-  &.unread {
-    background: linear-gradient(90deg, rgba(79, 195, 247, 0.12) 0%, rgba(79, 195, 247, 0.04) 100%) !important;
-
-    &::before {
-      transform: scaleY(1);
-    }
-
-    .notification-title {
-      font-weight: 700;
-      color: $primary-blue;
-    }
-  }
-
-  .notification-content {
-    display: flex;
-    gap: 14px;
-    padding: 14px 16px;
-    align-items: flex-start;
-    position: relative;
-  }
-}
-
-// ========================================
-// NOTIFICATION ICON
-// ========================================
-.notification-icon-wrapper {
-  flex-shrink: 0;
-  width: 46px;
-  height: 46px;
-  border-radius: 13px;
-  background: linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(10, 61, 145, 0.08));
-  border: 1.5px solid rgba(79, 195, 247, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(79, 195, 247, 0.1);
-
-  .icon-bg {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &.unread-wrapper {
-    background: linear-gradient(135deg, rgba(79, 195, 247, 0.25), rgba(10, 61, 145, 0.15));
-    border-color: rgba(79, 195, 247, 0.4);
-    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
-
-    .notification-icon {
-      color: $primary-blue;
-      font-weight: 600;
-    }
-  }
-
-  .notification-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
-    color: $accent-blue;
-    position: relative;
-    z-index: 1;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-}
-
-// ========================================
-// NOTIFICATION TEXT
-// ========================================
-.notification-text {
-  flex: 1;
-  min-width: 0;
-
-  .notification-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: $text-dark;
-    margin-bottom: 6px;
-    line-height: 1.4;
-    font-family: 'Poppins', sans-serif;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .notification-body {
-    font-size: 0.85rem;
-    color: $text-gray;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .notification-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    .notification-time {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.75rem;
-      color: $text-light;
-      font-weight: 500;
-
-      .time-icon {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
-        color: $accent-blue;
-      }
-    }
-  }
-}
-
-// ========================================
-// UNREAD INDICATOR
-// ========================================
-.unread-indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #FF4757, #FF6348);
-  flex-shrink: 0;
-  margin-top: 6px;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
-
-  .pulse-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 2px solid #FF4757;
-    animation: pulseRing 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-}
-
-// ========================================
-// FOOTER
-// ========================================
-.notification-footer {
-  padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(10, 61, 145, 0.03), rgba(79, 195, 247, 0.02));
-  border-top: 1px solid rgba(79, 195, 247, 0.15);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 24px;
-    right: 24px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(79, 195, 247, 0.3), transparent);
-  }
-
-  .view-all-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-weight: 600;
-    font-family: 'Poppins', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.85rem;
-    color: $primary-blue !important;
-    border-radius: 10px;
-    padding: 10px 20px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: transparent;
-
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      transition: transform 0.3s ease;
+      color: rgba(255,255,255,0.9);
     }
+  }
 
-    &:hover {
-      background: linear-gradient(135deg, rgba(79, 195, 247, 0.12), rgba(10, 61, 145, 0.08));
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+  .nb-header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
 
-      mat-icon {
-        transform: translateX(4px);
-      }
+  .nb-header-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    letter-spacing: 0.2px;
+    line-height: 1;
+  }
+
+  .nb-header-sub {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+  }
+
+  .nb-header-count {
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: $navy;
+    background: #FCD34D;
+    border-radius: 999px;
+    padding: 3px 9px;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+  }
+}
+
+// ── List ──────────────────────────────────────────────────────
+.nb-list {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 6px 0;
+  background: #fff;
+
+  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(148,163,184,0.35);
+    border-radius: 999px;
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────
+.nb-empty {
+  padding: 44px 24px 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .nb-empty-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #CBD5E1;
+    margin-bottom: 6px;
+  }
+
+  .nb-empty-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: $text-mid;
+  }
+
+  .nb-empty-sub {
+    margin: 0;
+    font-size: 0.78rem;
+    color: $text-soft;
+    line-height: 1.5;
+  }
+}
+
+// ── Item ──────────────────────────────────────────────────────
+.nb-item {
+  width: 100% !important;
+  padding: 0 !important;
+  height: auto !important;
+  line-height: normal !important;
+  white-space: normal !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  animation: fadeUp 0.3s ease backwards;
+  position: relative;
+
+  // divisore sottile tra item
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 68px;
+    right: 16px;
+    height: 1px;
+    background: $divider;
+  }
+
+  &:hover { background: #F8FAFC !important; }
+
+  &.nb-item--unread {
+    background: $unread-bg !important;
+
+    &:hover { background: rgba(37,99,235,0.09) !important; }
+
+    .nb-item-title {
+      font-weight: 700;
+      color: $navy;
+    }
+  }
+
+  .nb-item-inner {
+    display: flex;
+    gap: 14px;
+    padding: 13px 18px 13px 16px;
+    align-items: flex-start;
+  }
+}
+
+// ── Avatar ────────────────────────────────────────────────────
+.nb-item-avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+
+  // colori per tipo — verranno settati via classe sul wrapper
+  background: rgba(37,99,235,0.09);
+  border: 1.5px solid rgba(37,99,235,0.15);
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: $blue;
+  }
+
+  &--unread {
+    background: rgba(37,99,235,0.14);
+    border-color: rgba(37,99,235,0.28);
+    mat-icon { color: $navy; }
+  }
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.nb-item-body {
+  flex: 1;
+  min-width: 0;
+
+  .nb-item-title {
+    font-size: 0.86rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: $text-dark;
+    margin: 0 0 4px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .nb-item-text {
+    font-size: 0.77rem;
+    color: $text-mid;
+    margin: 0 0 6px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .nb-item-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.68rem;
+    color: $text-soft;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+
+    mat-icon {
+      font-size: 11px;
+      width: 11px;
+      height: 11px;
+      color: $blue-light;
     }
   }
 }
 
-// ========================================
-// RESPONSIVE - TABLET
-// ========================================
+// ── Unread dot ────────────────────────────────────────────────
+.nb-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $blue;
+  flex-shrink: 0;
+  margin-top: 6px;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  animation: liveDot 2s ease-in-out infinite;
+}
+
+// ── Responsive: tablet (≤768px) ──────────────────────────────
 @media (max-width: 768px) {
-  .notification-bell-btn {
-    width: 32px !important;
-    height: 32px !important;
-
-    .bell-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
+  .nb-btn {
+    width: 34px !important;
+    height: 34px !important;
+    .nb-icon { font-size: 20px; width: 20px; height: 20px; }
   }
 
-  ::ng-deep .notification-menu {
-    .mat-mdc-menu-panel {
-      min-width: 340px;
-      max-width: 400px;
-      border-radius: 14px !important;
-    }
-  }
+  .nb-header { padding: 14px 16px 13px; }
 
-  .notification-header {
-    .header-content {
-      padding: 14px 16px;
-    }
+  .nb-list { max-height: 300px; }
 
-    .header-icon-wrapper {
-      width: 36px;
-      height: 36px;
+  .nb-item .nb-item-inner { padding: 11px 16px; gap: 12px; }
 
-      .header-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .header-text h3 {
-      font-size: 0.95rem;
-    }
-  }
-
-  .notifications-list {
-    max-height: 380px;
-  }
-
-  .notification-item {
-    .notification-icon-wrapper {
-      width: 42px;
-      height: 42px;
-
-      .notification-icon {
-        font-size: 22px;
-        width: 22px;
-        height: 22px;
-      }
-    }
-
-    .notification-text {
-      .notification-title {
-        font-size: 0.9rem;
-      }
-
-      .notification-body {
-        font-size: 0.82rem;
-      }
-    }
+  .nb-item-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
   }
 }
 
-// ========================================
-// RESPONSIVE - MOBILE
-// ========================================
+// ── Responsive: mobile (≤480px) ──────────────────────────────
 @media (max-width: 480px) {
-  .notification-bell-btn {
-    width: 38px !important;
-    height: 38px !important;
-
-    .bell-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-    }
-
-    ::ng-deep .mat-badge-content {
-      font-size: 9px !important;
-    }
+  .nb-header {
+    padding: 10px 12px 9px;
+    gap: 8px;
   }
 
-  ::ng-deep .notification-menu {
-    .mat-mdc-menu-panel {
-      min-width: 92vw;
-      max-width: 95vw;
-      border-radius: 14px !important;
-      max-height: 80vh;
-    }
+  .nb-header-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    mat-icon { font-size: 14px; width: 14px; height: 14px; }
   }
 
-  .notification-header {
-    .header-content {
-      padding: 12px 14px;
-      gap: 10px;
-    }
+  .nb-header-title { font-size: 0.83rem; }
+  .nb-header-sub   { font-size: 0.63rem; }
+  .nb-header-count { font-size: 0.64rem; padding: 2px 6px; }
 
-    .header-icon-wrapper {
-      width: 34px;
-      height: 34px;
-
-      .header-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    .header-text {
-      h3 {
-        font-size: 0.9rem;
-      }
-
-      .notification-count {
-        font-size: 0.68rem;
-        padding: 2px 6px;
-      }
-    }
+  .nb-list {
+    max-height: 180px;
+    min-height: 60px;
   }
 
-  .notifications-list {
-    max-height: calc(80vh - 180px);
+  .nb-item .nb-item-inner {
+    padding: 9px 12px;
+    gap: 9px;
   }
 
-  .no-notifications {
-    padding: 40px 20px;
-
-    .empty-state-icon {
-      width: 60px;
-      height: 60px;
-
-      mat-icon {
-        font-size: 48px;
-        width: 48px;
-        height: 48px;
-      }
-
-      .icon-circle {
-        width: 50px;
-        height: 50px;
-      }
-    }
-
-    .empty-state-title {
-      font-size: 0.95rem;
-    }
-
-    .empty-state-subtitle {
-      font-size: 0.85rem;
-    }
-  }
-
-  .notification-item {
-    margin: 0 6px 6px 6px;
+  .nb-item-avatar {
+    width: 34px;
+    height: 34px;
     border-radius: 10px;
-
-    .notification-content {
-      padding: 12px 14px;
-      gap: 12px;
-    }
-
-    .notification-icon-wrapper {
-      width: 38px;
-      height: 38px;
-      border-radius: 11px;
-
-      .notification-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .notification-text {
-      .notification-title {
-        font-size: 0.88rem;
-        margin-bottom: 5px;
-      }
-
-      .notification-body {
-        font-size: 0.8rem;
-        margin-bottom: 6px;
-      }
-
-      .notification-meta {
-        .notification-time {
-          font-size: 0.72rem;
-
-          .time-icon {
-            font-size: 12px;
-            width: 12px;
-            height: 12px;
-          }
-        }
-      }
-    }
-
-    .unread-indicator {
-      width: 8px;
-      height: 8px;
-      margin-top: 4px;
-    }
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
   }
 
-  .notification-footer {
-    padding: 10px 14px;
+  .nb-item-body {
+    .nb-item-title { font-size: 0.8rem; margin-bottom: 2px; }
+    .nb-item-text  { font-size: 0.72rem; margin-bottom: 3px; }
+    .nb-item-time  { font-size: 0.62rem; }
+  }
 
-    .view-all-btn {
-      font-size: 0.8rem;
-      padding: 8px 16px;
+  .nb-unread-dot { width: 7px; height: 7px; margin-top: 5px; }
 
-      mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-      }
-    }
+  // Empty state molto compatto su mobile
+  .nb-empty {
+    padding: 16px 16px 14px;
+    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    .nb-empty-icon { font-size: 28px; width: 28px; height: 28px; margin-bottom: 0; flex-shrink: 0; }
+    .nb-empty-title { font-size: 0.82rem; }
+    .nb-empty-sub   { font-size: 0.72rem; display: none; }
+  }
+
+  .nb-header::after {
+    width: 70px;
+    height: 70px;
+    top: -18px;
+    right: -18px;
   }
 }
 
-// ========================================
-// VERY SMALL DEVICES
-// ========================================
+// ── Very small (≤360px) ───────────────────────────────────────
 @media (max-width: 360px) {
-  ::ng-deep .notification-menu {
-    .mat-mdc-menu-panel {
-      min-width: 94vw;
-      max-width: 96vw;
-    }
+  .nb-header {
+    padding: 10px 12px 9px;
+    gap: 7px;
   }
 
-  .notification-header {
-    .header-content {
-      padding: 14px 16px;
-    }
+  .nb-header-icon {
+    width: 26px;
+    height: 26px;
+    mat-icon { font-size: 13px; width: 13px; height: 13px; }
   }
 
-  .notification-item {
-    .notification-content {
-      padding: 10px 12px;
-    }
+  .nb-header-title { font-size: 0.8rem; }
+  .nb-header-sub   { font-size: 0.6rem; }
+
+  .nb-item .nb-item-inner {
+    padding: 8px 11px;
+    gap: 8px;
+  }
+
+  .nb-item-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    mat-icon { font-size: 15px; width: 15px; height: 15px; }
+  }
+
+  .nb-item-body {
+    .nb-item-title { font-size: 0.78rem; }
+    .nb-item-text  { font-size: 0.7rem; }
+  }
+
+  .nb-list { max-height: calc(56dvh - 60px); min-height: 70px; }
+
+  .nb-empty {
+    padding: 24px 16px 20px;
+    .nb-empty-icon { font-size: 34px; width: 34px; height: 34px; }
+    .nb-empty-title { font-size: 0.8rem; }
+    .nb-empty-sub   { font-size: 0.7rem; }
   }
 }
 

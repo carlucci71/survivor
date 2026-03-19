@@ -18,4 +18,6 @@ public interface LegaJoinRequestRepository extends JpaRepository<LegaJoinRequest
     int countByLega_IdAndStato(Long legaId, Enumeratori.StatoRichiesta stato);
 
     List<LegaJoinRequest> findByGiocatore_Id(Long giocatoreId);
+
+    List<LegaJoinRequest> findByLega_IdIn(List<Long> legaIds);
 }

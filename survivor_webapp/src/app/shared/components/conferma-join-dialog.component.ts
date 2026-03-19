@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
       <div style="display: grid; gap: 6px; margin-top: 12px; font-size: 0.9rem; color: #666;">
         <div><strong>{{ 'JOIN_LEAGUE.CHAMPIONSHIP' | translate }}:</strong> {{data.lega.campionato?.nome || '-'}}</div>
         <div><strong>{{ 'JOIN_LEAGUE.INITIAL_ROUND' | translate }}:</strong> {{data.lega.giornataIniziale}}</div>
-        <div><strong>{{ 'JOIN_LEAGUE.NUM_MEMBERS' | translate }}:</strong> {{data.lega.giocatori.length}}</div>
+        <div><strong>{{ 'JOIN_LEAGUE.NUM_MEMBERS' | translate }}:</strong> {{data.lega.numPartecipanti ?? data.lega.giocatori?.length ?? 0}}</div>
       </div>
       <div *ngIf="data.lega.withPwd" style="margin-top: 16px;">
         <mat-form-field appearance="outline" style="width:100%;" subscriptSizing="dynamic">
@@ -47,6 +47,6 @@ export class ConfermaJoinDialogComponent {
   }
 
   onYes(): void {
-    this.dialogRef.close(this.password);
+    this.dialogRef.close(this.password ?? '');
   }
 }

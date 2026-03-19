@@ -1,83 +1,65 @@
+<!-- Bell trigger -->
 <button
   mat-icon-button
   [matMenuTriggerFor]="notificationMenu"
-  class="notification-bell-btn"
+  class="nb-btn"
+  [class.nb-btn--live]="unreadCount > 0"
   #menuTrigger="matMenuTrigger"
   [matTooltip]="'NOTIFICATIONS.TITLE' | translate">
-  <mat-icon [matBadge]="unreadCount" [matBadgeHidden]="unreadCount === 0" matBadgeColor="warn" matBadgeSize="small" class="bell-icon">
-    notifications
-  </mat-icon>
+  <mat-icon class="nb-icon">{{ unreadCount > 0 ? 'notifications_active' : 'notifications' }}</mat-icon>
+  <span *ngIf="unreadCount > 0" class="nb-badge">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
 </button>
 
-<mat-menu #notificationMenu="matMenu" class="notification-menu" xPosition="before">
-  <!-- Header con Gradiente Elegante -->
-  <div class="notification-header" (click)="$event.stopPropagation()">
-    <div class="header-content">
-      <div class="header-icon-wrapper">
-        <mat-icon class="header-icon">notifications_active</mat-icon>
+<mat-menu #notificationMenu="matMenu" class="nb-menu" xPosition="before">
+
+  <!-- Header -->
+  <div class="nb-header" (click)="$event.stopPropagation()">
+    <div class="nb-header-left">
+      <div class="nb-header-icon">
+        <mat-icon>{{ unreadCount > 0 ? 'notifications_active' : 'notifications' }}</mat-icon>
       </div>
-      <div class="header-text">
-        <h3>{{ 'NOTIFICATIONS.TITLE' | translate }}</h3>
-        @if (unreadCount > 0) {
-          <span class="notification-count">{{ unreadCount }} {{ unreadCount === 1 ? ('NOTIFICATIONS.NEW_SINGULAR' | translate) : ('NOTIFICATIONS.NEW_PLURAL' | translate) }}</span>
-        }
+      <div class="nb-header-text">
+        <span class="nb-header-title">{{ 'NOTIFICATIONS.TITLE' | translate }}</span>
+        <span class="nb-header-sub">{{ unreadCount > 0 ? (unreadCount + ' ' + (unreadCount === 1 ? ('NOTIFICATIONS.NEW_SINGULAR' | translate) : ('NOTIFICATIONS.NEW_PLURAL' | translate))) : ('NOTIFICATIONS.ALL_CAUGHT_UP' | translate) }}</span>
       </div>
     </div>
+    @if (unreadCount > 0) {
+      <span class="nb-header-count">{{ unreadCount }}</span>
+    }
   </div>
 
-  <!-- Lista Notifiche con Animazioni -->
-  <div class="notifications-list" [class.has-notifications]="notifications.length > 0">
+  <!-- Lista -->
+  <div class="nb-list">
     @if (notifications.length === 0) {
-      <div class="no-notifications">
-        <div class="empty-state-icon">
-          <mat-icon>notifications_off</mat-icon>
-          <div class="icon-circle"></div>
-        </div>
-        <p class="empty-state-title">{{ 'NOTIFICATIONS.NO_NOTIFICATIONS' | translate }}</p>
-        <p class="empty-state-subtitle">{{ 'NOTIFICATIONS.ALL_CAUGHT_UP' | translate }}</p>
+      <div class="nb-empty" (click)="$event.stopPropagation()">
+        <mat-icon class="nb-empty-icon">notifications_off</mat-icon>
+        <p class="nb-empty-title">{{ 'NOTIFICATIONS.NO_NOTIFICATIONS' | translate }}</p>
+        <p class="nb-empty-sub">{{ 'NOTIFICATIONS.ALL_CAUGHT_UP' | translate }}</p>
       </div>
     }
 
     @for (notification of notifications; track notification.id; let i = $index) {
-      <button mat-menu-item class="notification-item" [class.unread]="!notification.read" (click)="onNotificationClick(notification)" [style.animation-delay.ms]="i * 50">
-        <div class="notification-content">
-          <!-- Icona con Background Colorato -->
-          <div class="notification-icon-wrapper" [class.unread-wrapper]="!notification.read">
-            <div class="icon-bg"></div>
-            <mat-icon class="notification-icon">{{ getNotificationIcon(notification.type) }}</mat-icon>
+      <button mat-menu-item class="nb-item" [class.nb-item--unread]="!notification.read"
+        (click)="onNotificationClick(notification)" [style.animation-delay.ms]="i * 40">
+        <div class="nb-item-inner">
+          <div class="nb-item-avatar" [class.nb-item-avatar--unread]="!notification.read">
+            <mat-icon>{{ getNotificationIcon(notification.type) }}</mat-icon>
           </div>
-
-          <!-- Contenuto Notifica -->
-          <div class="notification-text">
-            <div class="notification-title">{{ notification.title }}</div>
-            <div class="notification-body">{{ notification.body }}</div>
-            <div class="notification-meta">
-              <span class="notification-time">
-                <mat-icon class="time-icon">access_time</mat-icon>
-                {{ getTimeAgo(notification.createdAt) }}
-              </span>
-            </div>
+          <div class="nb-item-body">
+            <p class="nb-item-title">{{ notification.title }}</p>
+            <p class="nb-item-text">{{ notification.body }}</p>
+            <span class="nb-item-time">
+              <mat-icon>schedule</mat-icon>
+              {{ getTimeAgo(notification.createdAt) }}
+            </span>
           </div>
-
-          <!-- Indicatore Non Letta -->
           @if (!notification.read) {
-            <div class="unread-indicator">
-              <div class="pulse-ring"></div>
-            </div>
+            <span class="nb-unread-dot"></span>
           }
         </div>
       </button>
     }
   </div>
 
-  <!-- Footer Elegante -->
-  @if (notifications.length > 0) {
-    <div class="notification-footer">
-      <button mat-button class="view-all-btn">
-        <span>{{ 'NOTIFICATIONS.VIEW_ALL' | translate }}</span>
-        <mat-icon>arrow_forward</mat-icon>
-      </button>
-    </div>
-  }
 </mat-menu>
 

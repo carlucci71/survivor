@@ -17,7 +17,13 @@
     "BADGE_GROWING": "In crescita",
     "BADGE_HOT": "Popolare",
     "BADGE_TOP": "Top League",
-    "PARTICIPANTS": "partecipanti"
+    "BADGE_ELITE": "Elite",
+    "BADGE_LEGGENDA": "Leggendaria",
+    "BADGE_FENOMENO": "Fenomenale",
+    "BADGE_HALL_OF_FAME": "Iconica",
+    "PARTICIPANTS": "partecipanti",
+    "TAB_PRIVATE": "Private",
+    "TAB_PUBLIC": "Pubbliche"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Da Avviare",
@@ -531,8 +537,20 @@
     "OPTIONAL": "Opzionale",
     "ERROR_GENERIC": "Si è verificato un errore. Riprova."
   },
+  "RICHIESTE": {
+    "PAGE_TITLE": "Richieste di ingresso",
+    "EMPTY": "Nessuna richiesta per le tue leghe",
+    "PENDING": "In attesa",
+    "RESOLVED": "Storico",
+    "STATO_APPROVATA": "Approvata",
+    "STATO_RIFIUTATA": "Rifiutata",
+    "TOOLTIP": "Richieste di ingresso",
+    "ALL_DONE_TITLE": "Tutto in ordine!",
+    "ALL_DONE_SUB": "Tutte le richieste sono già state gestite. Qui sotto trovi lo storico."
+  },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Richieste di ingresso",
+    "PENDING_BANNER": "richieste di ingresso in attesa",
     "NO_PENDING": "Nessuna richiesta in attesa",
     "LOAD_REQUESTS": "Carica richieste",
     "APPROVE": "Approva",
@@ -557,6 +575,7 @@
     "PROFILE": "Profilo",
     "PROFILE_FE_MOBILE": "Profilo fe / mobile",
     "CALENDAR_URL": "Url calendario",
+    "JOIN_REQUESTS": "Richieste di ingresso",
     "LEAGUES_MANAGEMENT": "Gestione Leghe",
     "LEAGUES_DESCRIPTION": "Crea e gestisci le leghe del sistema",
     "USERS_MANAGEMENT": "Gestione Utenti",
