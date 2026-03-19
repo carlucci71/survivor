@@ -3,6 +3,53 @@
 	background: #F8FAFC;
 }
 
+/* ── All done banner ─────────────────────────────────── */
+.rl-all-done {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 8px;
+	padding: 28px 20px 24px;
+	margin-bottom: 8px;
+	background: linear-gradient(135deg, rgba(34,197,94,0.07), rgba(34,197,94,0.03));
+	border: 1.5px solid rgba(34,197,94,0.2);
+	border-radius: 16px;
+
+	.rl-all-done-icon {
+		width: 52px;
+		height: 52px;
+		border-radius: 50%;
+		background: rgba(34,197,94,0.12);
+		border: 1.5px solid rgba(34,197,94,0.25);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 4px;
+
+		mat-icon {
+			font-size: 28px;
+			width: 28px;
+			height: 28px;
+			color: #16A34A;
+		}
+	}
+
+	.rl-all-done-title {
+		margin: 0;
+		font-size: 1rem;
+		font-weight: 700;
+		color: #15803D;
+		font-family: 'Poppins', sans-serif;
+	}
+
+	.rl-all-done-sub {
+		margin: 0;
+		font-size: 0.82rem;
+		color: #4B7C5E;
+	}
+}
+
 .rl-main {
 	max-width: 720px;
 	margin: 0 auto;

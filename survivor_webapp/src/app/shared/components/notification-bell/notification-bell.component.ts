@@ -75,7 +75,7 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     }
 
     if (notification.type === 'JOIN_REQUEST_RICEVUTA' && notification.legaId) {
-      this.router.navigate(['/admin'], { fragment: 'richieste' });
+      this.router.navigate(['/richieste']);
       return;
     }
     if ((notification.type === 'JOIN_REQUEST_APPROVATA' || notification.type === 'JOIN_REQUEST_RIFIUTATA') && notification.legaId) {

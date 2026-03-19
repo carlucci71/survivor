@@ -544,10 +544,13 @@
     "RESOLVED": "Storico",
     "STATO_APPROVATA": "Approvata",
     "STATO_RIFIUTATA": "Rifiutata",
-    "TOOLTIP": "Richieste di ingresso"
+    "TOOLTIP": "Richieste di ingresso",
+    "ALL_DONE_TITLE": "Tutto in ordine!",
+    "ALL_DONE_SUB": "Tutte le richieste sono già state gestite. Qui sotto trovi lo storico."
   },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Richieste di ingresso",
+    "PENDING_BANNER": "richieste di ingresso in attesa",
     "NO_PENDING": "Nessuna richiesta in attesa",
     "LOAD_REQUESTS": "Carica richieste",
     "APPROVE": "Approva",

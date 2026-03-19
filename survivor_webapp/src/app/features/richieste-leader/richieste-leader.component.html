@@ -18,6 +18,17 @@
       </div>
     }
 
+    <!-- Banner: tutte gestite (storico presente ma nessuna pending) -->
+    @if (!isLoading && groups.length > 0 && totalPending === 0) {
+      <div class="rl-all-done">
+        <div class="rl-all-done-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <p class="rl-all-done-title">{{ 'RICHIESTE.ALL_DONE_TITLE' | translate }}</p>
+        <p class="rl-all-done-sub">{{ 'RICHIESTE.ALL_DONE_SUB' | translate }}</p>
+      </div>
+    }
+
     <!-- Lista gruppi per lega -->
     @if (!isLoading && groups.length > 0) {
       <div class="rl-groups">

@@ -445,10 +445,13 @@
     "RESOLVED": "History",
     "STATO_APPROVATA": "Approved",
     "STATO_RIFIUTATA": "Rejected",
-    "TOOLTIP": "Join requests"
+    "TOOLTIP": "Join requests",
+    "ALL_DONE_TITLE": "All caught up!",
+    "ALL_DONE_SUB": "All requests have already been handled. See the history below."
   },
   "JOIN_REQUEST": {
     "SECTION_TITLE": "Join requests",
+    "PENDING_BANNER": "pending join requests",
     "NO_PENDING": "No pending requests",
     "LOAD_REQUESTS": "Load requests",
     "APPROVE": "Approve",
