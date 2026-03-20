@@ -82,17 +82,13 @@ export interface DettagliSquadraData {
       <div class="countdown-container">
         <div class="countdown-wrapper"
              [style.borderColor]="localColors.primary"
-             [style.background]="'linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85))'">
+             [style.background]="'#ffffff'">
           <div class="countdown-icon" [style.color]="localColors.primary">
             <mat-icon>schedule</mat-icon>
           </div>
           <div class="countdown-content">
             <span class="countdown-label">Prossima partita tra</span>
-            <span class="countdown-time"
-                  [style.background]="'linear-gradient(135deg, ' + localColors.primary + ', ' + localColors.secondary + ')'"
-                  [style.webkitBackgroundClip]="'text'"
-                  [style.webkitTextFillColor]="'transparent'"
-                  [style.backgroundClip]="'text'">
+            <span class="countdown-time">
               {{ countdown }}
             </span>
           </div>
@@ -460,6 +456,7 @@ export interface DettagliSquadraData {
       font-family: 'Poppins', sans-serif;
       letter-spacing: 0.5px;
       animation: fadeIn 0.5s ease-in;
+      color: #1F2937;
     }
 
     @media (max-width: 768px) {
