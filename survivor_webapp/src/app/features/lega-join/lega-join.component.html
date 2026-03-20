@@ -1,5 +1,5 @@
 <div class="home-container">
-	<app-header [title]="'JOIN_LEAGUE.TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
+	<app-header [title]="'JOIN_LEAGUE.TITLE' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
 
 	<main class="main-content">
 		<section class="leghe-section" *ngIf="leghe?.length; else noLeghe">
