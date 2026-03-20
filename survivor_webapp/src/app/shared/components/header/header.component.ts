@@ -32,7 +32,10 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
               [matTooltip]="title"
               matTooltipShowDelay="400"
             >{{ title }}</mat-label>
-            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
+            <div class="logo-row">
+              <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
+              <span *ngIf="showSlogan" class="glitch-text" [attr.data-text]="sloganFull">{{ sloganFull }}</span>
+            </div>
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
@@ -112,6 +115,76 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         min-width: 0;
         overflow: hidden;
         max-width: 100%;
+      }
+      .logo-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 2px;
+      }
+      @keyframes glitch-skew {
+        0%, 100% { transform: skew(0deg); }
+        2%  { transform: skew(1.5deg); }
+        4%  { transform: skew(-1.5deg); }
+        6%  { transform: skew(0.7deg); }
+        8%  { transform: skew(-0.7deg); }
+        10%, 90% { transform: skew(0deg); }
+      }
+      @keyframes glitch-1 {
+        0%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); opacity: 0.8; }
+        10% { clip-path: inset(20% 0 30% 0); transform: translate(-2px, 1px); opacity: 1; }
+        20% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); opacity: 0.6; }
+        30% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); opacity: 1; }
+        40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); opacity: 0.7; }
+        50% { clip-path: inset(30% 0 50% 0); transform: translate(-1px, 1px); opacity: 0.9; }
+        60% { clip-path: inset(50% 0 30% 0); transform: translate(1px, -1px); opacity: 0.5; }
+        70% { clip-path: inset(80% 0 10% 0); transform: translate(-2px, 2px); opacity: 0.8; }
+        80% { clip-path: inset(15% 0 70% 0); transform: translate(2px, -2px); opacity: 1; }
+      }
+      @keyframes glitch-2 {
+        0%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); opacity: 0.8; }
+        10% { clip-path: inset(60% 0 20% 0); transform: translate(2px, -1px); opacity: 0.6; }
+        20% { clip-path: inset(30% 0 50% 0); transform: translate(-2px, 1px); opacity: 1; }
+        30% { clip-path: inset(10% 0 70% 0); transform: translate(2px, -2px); opacity: 0.7; }
+        40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); opacity: 0.9; }
+        50% { clip-path: inset(70% 0 10% 0); transform: translate(1px, -1px); opacity: 0.5; }
+        60% { clip-path: inset(20% 0 60% 0); transform: translate(-1px, 1px); opacity: 1; }
+        70% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -2px); opacity: 0.8; }
+        80% { clip-path: inset(80% 0 10% 0); transform: translate(-2px, 2px); opacity: 0.6; }
+      }
+      .glitch-text {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.92);
+        letter-spacing: 2px;
+        white-space: nowrap;
+        text-transform: uppercase;
+        position: relative;
+        display: inline-block;
+        animation: glitch-skew 4s infinite;
+        text-shadow: 0 0 8px rgba(255,255,255,0.3);
+      }
+      .glitch-text::before,
+      .glitch-text::after {
+        content: attr(data-text);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .glitch-text::before {
+        animation: glitch-1 0.9s infinite linear alternate-reverse;
+        color: #e94560;
+        text-shadow: 1px 0 0 #4e9eff;
+        z-index: -1;
+      }
+      .glitch-text::after {
+        animation: glitch-2 0.9s infinite linear alternate-reverse;
+        color: #4e9eff;
+        text-shadow: -1px 0 0 #e94560;
+        z-index: -2;
       }
       .header-title {
         font-size: 1rem;
@@ -225,6 +298,14 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         .title-logo-container:has(.header-title) .header-logo {
           height: 30px;
         }
+        .header-svg-anim {
+          height: 22px;
+          min-width: 120px;
+        }
+        .glitch-text {
+          font-size: 0.6rem;
+          letter-spacing: 1.5px;
+        }
         .btn-back {
           font-size: 0.7rem !important;
           padding: 4px 10px !important;
@@ -254,6 +335,14 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         .title-logo-container:has(.header-title) .header-logo {
           height: 26px;
         }
+        .header-svg-anim {
+          height: 18px;
+          min-width: 100px;
+        }
+        .glitch-text {
+          font-size: 0.55rem;
+          letter-spacing: 1px;
+        }
         .btn-back {
           font-size: 0.65rem !important;
           padding: 3px 8px !important;
@@ -274,6 +363,9 @@ export class HeaderComponent {
   @Input() visHome = 'S';
   @Input() visLogout = 'N';
   @Input() hideActions = false;
+  @Input() showSlogan = false;
   @Output() back = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
+
+  readonly sloganFull = 'WIN OR GO HOME';
 }
