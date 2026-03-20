@@ -1817,25 +1817,6 @@ export class LegaDettaglioComponent implements OnDestroy {
     return filtered;
   }
 
-  getAlphaLetters(): string[] {
-    const letters = new Set<string>();
-    for (const p of this.getFilteredPlayers()) {
-      const l = p.nickname.charAt(0).toUpperCase();
-      if (l) letters.add(l);
-    }
-    return Array.from(letters).sort();
-  }
-
-  scrollToLetter(letter: string): void {
-    const container = this.excelTableScroll?.nativeElement;
-    if (!container) return;
-    const target = container.querySelector<HTMLElement>(`[data-alpha="${letter}"]`);
-    if (!target) return;
-    const containerRect = container.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    container.scrollTop += targetRect.top - containerRect.top - 4;
-  }
-
   getTotalPlayersCount(): number {
     return this.lega?.giocatori?.length || 0;
   }
