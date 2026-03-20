@@ -26,13 +26,13 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       <div class="header-content">
         <div class="left-section">
           <div class="title-logo-container">
-            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
             <mat-label
               class="header-title"
               *ngIf="title"
               [matTooltip]="title"
               matTooltipShowDelay="400"
             >{{ title }}</mat-label>
+            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
@@ -72,7 +72,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         display: flex;
         width: 100%;
         box-sizing: border-box;
-        min-height: 80px;
+        min-height: 72px;
         /* Safe area per notch (iOS standalone/fullscreen): applicata solo
            in modalità app nativa, con fallback 0 per non alterare il browser */
         padding-top: 0;
@@ -109,26 +109,27 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
-        margin-left: 0;
-        padding-left: 0;
         min-width: 0;
         overflow: hidden;
         max-width: 100%;
       }
       .header-title {
-        font-size: 1.5rem;
+        font-size: 1rem;
         font-weight: 700;
         color: white;
         font-family: 'Poppins', sans-serif;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 100%;
         display: block;
         cursor: default;
-        padding: 10px 0 10px 16px;
+        padding: 0;
+        text-align: left;
+        line-height: 1.2;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.18);
       }
       .header-logo {
         height: 100px;
@@ -137,16 +138,10 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         opacity: 0.95;
       }
 
-      /* Pagine interne con titolo: logo + titolo su riga */
-      .title-logo-container:has(.header-title) {
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-      }
-      /* Logo più piccolo quando affiancato al titolo */
-      .header-logo:has(+ .header-title),
+      /* Pagine con titolo: logo piccolo e lasciato */
       .title-logo-container:has(.header-title) .header-logo {
-        height: 62px;
+        height: 36px;
+        opacity: 0.85;
       }
 
       ::ng-deep .mat-toolbar-row,
@@ -224,7 +219,11 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           gap: 8px;
         }
         .header-title {
-          font-size: 1.1rem;
+          font-size: 0.9rem;
+          letter-spacing: 0.8px;
+        }
+        .title-logo-container:has(.header-title) .header-logo {
+          height: 30px;
         }
         .btn-back {
           font-size: 0.7rem !important;
@@ -243,13 +242,17 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       @media (max-width: 480px) {
         .header-content {
           padding: 0 8px;
-          gap: 2px;
+          gap: 4px;
         }
         .actions {
           gap: 0px;
         }
         .header-title {
-          font-size: 0.9rem;
+          font-size: 0.8rem;
+          letter-spacing: 0.6px;
+        }
+        .title-logo-container:has(.header-title) .header-logo {
+          height: 26px;
         }
         .btn-back {
           font-size: 0.65rem !important;
