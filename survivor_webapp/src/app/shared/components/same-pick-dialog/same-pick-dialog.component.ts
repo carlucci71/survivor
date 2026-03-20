@@ -20,11 +20,10 @@ export interface SamePickDialogData {
         <mat-icon>close</mat-icon>
       </button>
 
-      <div class="sp-emoji">🤝</div>
+      <div class="sp-emoji">🎯</div>
 
       <div class="sp-sentence">
-        <span class="sp-names-inline">{{ formattedNames }}</span>
-        <span class="sp-verb">{{ lang === 'it' ? (data.nicknames.length === 1 ? ' ha votato come te!' : ' hanno votato come te!') : (data.nicknames.length === 1 ? ' voted like you!' : ' voted like you!') }}</span>
+        <span [innerHTML]="sentenceText"></span>
       </div>
 
       <p class="sp-phrase">{{ phrase }}</p>
@@ -194,6 +193,36 @@ export class SamePickDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: SamePickDialogData,
     private translate: TranslateService
   ) {}
+
+  get sentenceText(): string {
+    const nicks = this.data.nicknames;
+    const it = this.lang === 'it';
+    const MAX_NAMES = 3;
+
+    if (nicks.length > MAX_NAMES) {
+      const count = nicks.length;
+      return it
+        ? `<span class="sp-names-inline">Altre ${count} persone</span> hanno votato come te!`
+        : `<span class="sp-names-inline">${count} others</span> voted like you!`;
+    }
+
+    let names: string;
+    if (nicks.length === 1) {
+      names = nicks[0];
+    } else if (nicks.length === 2) {
+      names = it ? `${nicks[0]} e ${nicks[1]}` : `${nicks[0]} and ${nicks[1]}`;
+    } else {
+      names = it
+        ? `${nicks[0]}, ${nicks[1]} e ${nicks[2]}`
+        : `${nicks[0]}, ${nicks[1]} and ${nicks[2]}`;
+    }
+
+    const verb = nicks.length === 1
+      ? (it ? ' ha votato come te!' : ' voted like you!')
+      : (it ? ' hanno votato come te!' : ' voted like you!');
+
+    return `<span class="sp-names-inline">${names}</span>${verb}`;
+  }
 
   get formattedNames(): string {
     const nicks = this.data.nicknames;

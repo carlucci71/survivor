@@ -30,6 +30,9 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 
 
+import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
+
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -51,13 +54,15 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    TranslateLeagueDataPipe
+    TranslateLeagueDataPipe,
+    OnboardingComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isMobile = false;
+  showOnboarding = !localStorage.getItem('survivor_onboarding_seen');
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];

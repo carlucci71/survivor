@@ -312,7 +312,8 @@
                           <button class="same-pick-btn"
                                   (click)="$event.stopPropagation(); openSamePickDialog()"
                                   matTooltip="Chi ha votato come te?">
-                            🤝
+                            <mat-icon class="same-pick-icon">group</mat-icon>
+                            <span class="same-pick-count">{{ getSamePickForCurrentUser()!.nicknames.length }}</span>
                           </button>
                         }
                       </div>
@@ -414,13 +415,7 @@
           </table>
         </div>
         </div>
-        @if(getAlphaLetters().length > 1) {
-          <nav class="alpha-index">
-            @for(letter of getAlphaLetters(); track letter) {
-              <button class="alpha-btn" (click)="scrollToLetter(letter)">{{ letter }}</button>
-            }
-          </nav>
-        }
+
       </div>
 
       <!-- LEGENDA BADGE - Desktop: sotto tabella, Mobile: sotto cards -->
@@ -540,7 +535,8 @@
               @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
                 <button class="same-pick-btn same-pick-btn--mobile"
                         (click)="$event.stopPropagation(); openSamePickDialog()">
-                  🤝
+                  <mat-icon class="same-pick-icon">group</mat-icon>
+                  <span class="same-pick-count">{{ getSamePickForCurrentUser()!.nicknames.length }}</span>
                 </button>
               }
             </div>

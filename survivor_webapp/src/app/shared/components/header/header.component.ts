@@ -26,13 +26,13 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       <div class="header-content">
         <div class="left-section">
           <div class="title-logo-container">
+            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
             <mat-label
               class="header-title"
               *ngIf="title"
               [matTooltip]="title"
               matTooltipShowDelay="400"
             >{{ title }}</mat-label>
-            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
@@ -128,18 +128,32 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         max-width: 100%;
         display: block;
         cursor: default;
+        padding: 10px 0 10px 16px;
       }
       .header-logo {
-        height: 48px;
+        height: 100px;
         width: auto;
         filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
         opacity: 0.95;
       }
 
+      /* Pagine interne con titolo: logo + titolo su riga */
+      .title-logo-container:has(.header-title) {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+      }
+      /* Logo più piccolo quando affiancato al titolo */
+      .header-logo:has(+ .header-title),
+      .title-logo-container:has(.header-title) .header-logo {
+        height: 62px;
+      }
 
-      /* Logo nella home quando title è vuoto */
-      :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-        height: 100px;
+      ::ng-deep .mat-toolbar-row,
+      ::ng-deep .mat-toolbar-single-row {
+        padding: 0 0px;
+        height: auto !important;
+        min-height: 64px;
       }
 
       .header-content ::ng-deep .config-user {
@@ -200,30 +214,14 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       }
 
 
-      /* RESPONSIVE - Breakpoint intermedio tablet */
-      @media (max-width: 1024px) {
-        :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 82px;
-        }
-      }
-
+      /* RESPONSIVE */
       @media (max-width: 768px) {
-        .header {
-          min-height: 75px;
-        }
         .header-content {
           flex-wrap: nowrap;
           padding: 0 16px;
         }
         .actions {
           gap: 8px;
-        }
-        .header-logo {
-          height: 38px;
-        }
-        /* Logo nella home (tablet/mobile) */
-        :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 76px;
         }
         .header-title {
           font-size: 1.1rem;
@@ -243,9 +241,6 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       }
 
       @media (max-width: 480px) {
-        .header {
-          min-height: 70px;
-        }
         .header-content {
           padding: 0 8px;
           gap: 2px;
@@ -255,13 +250,6 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         }
         .header-title {
           font-size: 0.9rem;
-        }
-        .header-logo {
-          height: 34px;
-        }
-        /* Logo nella home (mobile piccolo) */
-        :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 68px;
         }
         .btn-back {
           font-size: 0.65rem !important;
@@ -273,19 +261,6 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           width: 20px;
           height: 20px;
           padding: 9px;
-        }
-      }
-
-      @media (max-width: 360px) {
-        .header {
-          min-height: 65px;
-        }
-        .actions {
-          gap: 8px;
-        }
-        /* Logo nella home (molto piccolo) */
-        :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 62px;
         }
       }
     `,
