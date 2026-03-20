@@ -1,4 +1,7 @@
 <div class="home-container">
+  @if(showOnboarding) {
+    <app-onboarding (dismissed)="showOnboarding = false"></app-onboarding>
+  }
   <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
       <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nickname)?.length || 0) <= 6">
