@@ -26,13 +26,13 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       <div class="header-content">
         <div class="left-section">
           <div class="title-logo-container">
+            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
             <mat-label
               class="header-title"
               *ngIf="title"
               [matTooltip]="title"
               matTooltipShowDelay="400"
             >{{ title }}</mat-label>
-            <img src="assets/logo.png" alt="Survivor Logo" class="header-logo" />
           </div>
         </div>
         <ng-content select=".config-user"></ng-content>
@@ -128,6 +128,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         max-width: 100%;
         display: block;
         cursor: default;
+        padding: 10px 0 10px 16px;
       }
       .header-logo {
         height: 100px;
@@ -136,9 +137,23 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         opacity: 0.95;
       }
 
+      /* Pagine interne con titolo: logo + titolo su riga */
+      .title-logo-container:has(.header-title) {
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+      }
+      /* Logo più piccolo quando affiancato al titolo */
+      .header-logo:has(+ .header-title),
+      .title-logo-container:has(.header-title) .header-logo {
+        height: 62px;
+      }
+
       ::ng-deep .mat-toolbar-row,
       ::ng-deep .mat-toolbar-single-row {
         padding: 0 0px;
+        height: auto !important;
+        min-height: 64px;
       }
 
       .header-content ::ng-deep .config-user {
