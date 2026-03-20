@@ -1371,7 +1371,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   async shareLink(): Promise<void> {
-    const url = environment.baseUrl + '/joinLega';
+    const url = (this.lega!.pubblica && this.lega!.accessoLibero)
+      ? environment.baseUrl + '/joinLega'
+      : environment.baseUrl + '/join/' + this.lega!.id;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,
