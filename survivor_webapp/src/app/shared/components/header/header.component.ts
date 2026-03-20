@@ -136,7 +136,6 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         opacity: 0.95;
       }
 
-
       /* Logo nella home quando title è vuoto */
       :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
         height: 100px;
@@ -209,7 +208,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
 
       @media (max-width: 768px) {
         .header {
-          min-height: 75px;
+          min-height: 90px;
         }
         .header-content {
           flex-wrap: nowrap;
@@ -219,11 +218,22 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           gap: 8px;
         }
         .header-logo {
-          height: 38px;
+          height: 52px;
         }
         /* Logo nella home (tablet/mobile) */
+        :host-context(.home-container) .header {
+          min-height: 110px;
+        }
+        :host-context(.home-container) .header-content {
+          padding: 0 8px;
+          align-items: center;
+        }
+        :host-context(.home-container) .left-section {
+          align-items: flex-start;
+          padding-top: 10px;
+        }
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 76px;
+          height: 90px;
         }
         .header-title {
           font-size: 1.1rem;
@@ -244,7 +254,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
 
       @media (max-width: 480px) {
         .header {
-          min-height: 70px;
+          min-height: 84px;
         }
         .header-content {
           padding: 0 8px;
@@ -257,11 +267,21 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           font-size: 0.9rem;
         }
         .header-logo {
-          height: 34px;
+          height: 52px;
         }
         /* Logo nella home (mobile piccolo) */
+        :host-context(.home-container) .header {
+          min-height: 100px;
+        }
+        :host-context(.home-container) .header-content {
+          padding: 0 4px;
+        }
+        :host-context(.home-container) .left-section {
+          align-items: flex-start;
+          padding-top: 8px;
+        }
         :host-context(.home-container) .title-logo-container:not(:has(.header-title:not(:empty))) .header-logo {
-          height: 68px;
+          height: 80px;
         }
         .btn-back {
           font-size: 0.65rem !important;
