@@ -1215,7 +1215,7 @@ export class ChiSiamoDialogComponent implements OnInit{
           <!-- LOGO SURVIVOR -->
           <div class="footer-brand">
             <div class="footer-logo">
-              <span class="logo-text">SURVIVOR</span>
+              <img src="assets/logo.png" alt="Survivor" class="footer-logo-img" />
               <span class="subtitle">WIN OR GO HOME</span>
             </div>
           </div>
@@ -1292,21 +1292,23 @@ export class ChiSiamoDialogComponent implements OnInit{
     /* LOGO COMPATTO */
     .footer-brand {
       .footer-logo {
-        .logo-text {
-          font-size: 1.2rem;
-          font-weight: 800;
-          color: #FFFFFF;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .footer-logo-img {
+          height: 36px;
+          width: auto;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+          opacity: 0.92;
         }
 
         .subtitle {
           font-size: 0.7rem;
-          font-weight: 500;
+          font-weight: 700;
           color: rgba(255, 255, 255, 0.8);
           text-transform: uppercase;
-          letter-spacing: 1px;
-          margin-left: 8px;
+          letter-spacing: 0.2em;
         }
       }
     }

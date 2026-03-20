@@ -1,4 +1,7 @@
 <div class="home-container">
+  @if(showOnboarding) {
+    <app-onboarding (dismissed)="showOnboarding = false"></app-onboarding>
+  }
   <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
       <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nickname)?.length || 0) <= 6">
@@ -281,9 +284,5 @@
     </section>
   </main>
 
-  <footer class="home-footer">
-    <img src="assets/logo.png" alt="Survivor" class="footer-logo" />
-    <p class="footer-tagline">WIN OR GO HOME</p>
-    <p class="footer-copy">&copy; {{ currentYear }} Survivor. All rights reserved.</p>
-  </footer>
+
 </div>

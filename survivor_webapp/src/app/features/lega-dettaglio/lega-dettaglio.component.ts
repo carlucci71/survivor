@@ -1371,7 +1371,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   async shareLink(): Promise<void> {
-    const url = environment.baseUrl + '/joinLega';
+    const url = (this.lega!.pubblica && this.lega!.accessoLibero)
+      ? environment.baseUrl + '/joinLega'
+      : environment.baseUrl + '/join/' + this.lega!.id;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,
@@ -1815,25 +1817,6 @@ export class LegaDettaglioComponent implements OnDestroy {
     filtered.sort((a, b) => a.nickname.localeCompare(b.nickname));
 
     return filtered;
-  }
-
-  getAlphaLetters(): string[] {
-    const letters = new Set<string>();
-    for (const p of this.getFilteredPlayers()) {
-      const l = p.nickname.charAt(0).toUpperCase();
-      if (l) letters.add(l);
-    }
-    return Array.from(letters).sort();
-  }
-
-  scrollToLetter(letter: string): void {
-    const container = this.excelTableScroll?.nativeElement;
-    if (!container) return;
-    const target = container.querySelector<HTMLElement>(`[data-alpha="${letter}"]`);
-    if (!target) return;
-    const containerRect = container.getBoundingClientRect();
-    const targetRect = target.getBoundingClientRect();
-    container.scrollTop += targetRect.top - containerRect.top - 4;
   }
 
   getTotalPlayersCount(): number {
