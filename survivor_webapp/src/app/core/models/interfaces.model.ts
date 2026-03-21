@@ -127,6 +127,7 @@ export interface Lega {
   maxPartecipanti?: number;
   accessoLibero?: boolean;
   richiesteInAttesa?: number;
+  miaGiocataCorrente?: Giocata;
 }
 
 export interface LegaJoinRequest {
@@ -210,6 +211,7 @@ export interface Giocatore {
 export interface Giocata {
   id?: number;
   giornata?: number;
+  legaId?: number;
   squadraId?: number;
   squadraSigla: string;
   esito?: string;

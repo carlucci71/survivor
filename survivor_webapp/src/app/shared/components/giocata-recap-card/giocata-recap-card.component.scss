@@ -1,0 +1,327 @@
+:host {
+  display: block;
+}
+
+.recap-section {
+  padding: 0 16px 8px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ─── League pills ────────────────────────────────────────── */
+.league-pills {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.league-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-color, #E2E8F0);
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-family, 'Poppins', sans-serif);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary, #4A5568);
+  transition: all 0.18s ease;
+  position: relative;
+
+  .pill-sport { font-size: 13px; }
+  .pill-name  { max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+  .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FB8C00;
+    flex-shrink: 0;
+  }
+
+  &.active {
+    background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(10, 61, 145, 0.35);
+
+    .pill-dot { background: #FFF176; }
+  }
+
+  &:hover:not(.active) {
+    border-color: var(--primary-color, #4FC3F7);
+    color: var(--primary-dark, #0A3D91);
+  }
+}
+
+/* ─── Card ────────────────────────────────────────────────── */
+.giocata-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #040f2e 0%, #0A3D91 60%, #1565C0 100%);
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(10, 61, 145, 0.4);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  min-height: 88px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(79, 195, 247, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  &:hover, &:active {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(10, 61, 145, 0.55);
+  }
+
+  &.no-pick {
+    background: linear-gradient(135deg, #0f1a3a 0%, #1a2e5a 100%);
+    border: 1.5px dashed rgba(79, 195, 247, 0.4);
+    box-shadow: 0 4px 20px rgba(10, 61, 145, 0.25);
+
+    &:hover { box-shadow: 0 8px 28px rgba(10, 61, 145, 0.4); }
+  }
+}
+
+/* corner decorations */
+.card-corner-tl {
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px; height: 40px;
+  border-top: 2px solid rgba(79, 195, 247, 0.4);
+  border-left: 2px solid rgba(79, 195, 247, 0.4);
+  border-radius: 16px 0 0 0;
+  pointer-events: none;
+}
+.card-corner-br {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 40px; height: 40px;
+  border-bottom: 2px solid rgba(79, 195, 247, 0.2);
+  border-right: 2px solid rgba(79, 195, 247, 0.2);
+  border-radius: 0 0 16px 0;
+  pointer-events: none;
+}
+
+/* ─── Floating particles (like hero) ─────────────────────── */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.p {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(79, 195, 247, 0.45);
+  animation: float-up linear infinite;
+}
+
+.p1 { width: 4px; height: 4px; left: 12%;  animation-duration: 6s;  animation-delay: 0s;    bottom: -6px; }
+.p2 { width: 3px; height: 3px; left: 28%;  animation-duration: 8s;  animation-delay: 1.5s;  bottom: -4px; background: rgba(129, 212, 250, 0.35); }
+.p3 { width: 5px; height: 5px; left: 47%;  animation-duration: 7s;  animation-delay: 0.8s;  bottom: -6px; }
+.p4 { width: 3px; height: 3px; left: 63%;  animation-duration: 9s;  animation-delay: 2.2s;  bottom: -4px; background: rgba(255,255,255,0.2); }
+.p5 { width: 4px; height: 4px; left: 78%;  animation-duration: 6.5s; animation-delay: 0.3s; bottom: -6px; }
+.p6 { width: 3px; height: 3px; left: 90%;  animation-duration: 8.5s; animation-delay: 3.1s; bottom: -4px; background: rgba(79, 195, 247, 0.3); }
+
+@keyframes float-up {
+  0%   { transform: translateY(0)   scale(1);   opacity: 0; }
+  10%  { opacity: 1; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateY(-96px) scale(0.6); opacity: 0; }
+}
+
+/* ─── Logo ────────────────────────────────────────────────── */
+.card-left { flex-shrink: 0; }
+
+.logo-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.team-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.logo-fallback {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #4FC3F7;
+}
+
+/* ─── Center text ─────────────────────────────────────────── */
+.card-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sport-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #4FC3F7;
+  opacity: 0.9;
+}
+
+.giornata-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.team-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lega-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Right: esito + arrow ────────────────────────────────── */
+.card-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.esito-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+
+  &.win  { background: rgba(67, 160, 71, 0.25); color: #66BB6A; border: 1px solid rgba(67,160,71,0.4); }
+  &.loss { background: rgba(229, 57, 53, 0.25); color: #EF5350; border: 1px solid rgba(229,57,53,0.4); }
+  &.live { background: rgba(251, 140, 0, 0.25); color: #FFA726; border: 1px solid rgba(251,140,0,0.4); animation: pulse-live 1.5s ease-in-out infinite; }
+  &.wait { background: rgba(255,255,255,0.08);  color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.12); }
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+.arrow-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(79, 195, 247, 0.6);
+}
+
+/* ─── No-pick state ───────────────────────────────────────── */
+.no-pick-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.no-pick-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.no-pick-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.no-pick-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.no-pick-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.no-pick-cta {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #4FC3F7;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (max-width: 400px) {
+  .team-name { font-size: 16px; }
+  .logo-wrapper { width: 48px; height: 48px; }
+  .team-logo { width: 36px; height: 36px; }
+  .no-pick-cta { display: none; }
+}

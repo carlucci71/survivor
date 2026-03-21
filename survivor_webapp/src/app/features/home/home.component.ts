@@ -31,6 +31,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 
 
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
+import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 
 
 @Component({
@@ -55,7 +56,8 @@ import { OnboardingComponent } from '../../shared/components/onboarding/onboardi
     MatFormFieldModule,
     MatInputModule,
     TranslateLeagueDataPipe,
-    OnboardingComponent
+    OnboardingComponent,
+    GiocataRecapCardComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
