@@ -127,6 +127,7 @@ export interface Lega {
   maxPartecipanti?: number;
   accessoLibero?: boolean;
   richiesteInAttesa?: number;
+  miaGiocataCorrente?: Giocata;
 }
 
 export interface LegaJoinRequest {
@@ -210,8 +211,10 @@ export interface Giocatore {
 export interface Giocata {
   id?: number;
   giornata?: number;
+  legaId?: number;
   squadraId?: number;
   squadraSigla: string;
+  squadraNome?: string;
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
