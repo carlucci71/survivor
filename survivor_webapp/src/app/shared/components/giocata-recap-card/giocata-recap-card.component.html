@@ -1,6 +1,13 @@
 @if (legheAttive.length > 0 && selected) {
   <div class="recap-section">
 
+    <!-- Section label -->
+    <div class="section-header">
+      <span class="sh-line"></span>
+      <span class="sh-text">IL TUO PRONOSTICO</span>
+      <span class="sh-line"></span>
+    </div>
+
     <!-- League pills switcher (solo se >1 lega) -->
     @if (legheAttive.length > 1) {
       <div class="league-pills" role="tablist" aria-label="Seleziona lega">
@@ -31,7 +38,11 @@
       role="button"
       aria-label="Vai alla lega"
     >
-      <!-- Decorazioni -->
+      <!-- Top accent + glow + shimmer -->
+      <div class="card-top-accent"></div>
+      <div class="card-glow-blob"></div>
+      <div class="shine"></div>
+      <!-- Corner decorations -->
       <div class="card-corner-tl"></div>
       <div class="card-corner-br"></div>
       <!-- Pallini animati -->
@@ -42,6 +53,8 @@
         <span class="p p4"></span>
         <span class="p p5"></span>
         <span class="p p6"></span>
+        <span class="p p7"></span>
+        <span class="p p8"></span>
       </div>
 
       @if (selected.lega.miaGiocataCorrente) {
@@ -51,7 +64,7 @@
             @if (selected.logoUrl) {
               <img
                 [src]="selected.logoUrl"
-                [alt]="selected.lega.miaGiocataCorrente.squadraSigla"
+                [alt]="selected.lega.miaGiocataCorrente.squadraNome || selected.lega.miaGiocataCorrente.squadraSigla"
                 class="team-logo"
                 (error)="onLogoError($event)"
               />
@@ -66,7 +79,7 @@
             <span class="sport-badge">{{ selected.sportEmoji }} {{ selected.lega.campionato?.nome }}</span>
             <span class="giornata-badge">GIR. {{ selected.lega.giornataDaGiocare }}</span>
           </div>
-          <div class="team-name">{{ selected.lega.miaGiocataCorrente.squadraSigla }}</div>
+          <div class="team-name">{{ selected.lega.miaGiocataCorrente.squadraNome || selected.lega.miaGiocataCorrente.squadraSigla }}</div>
           <div class="lega-label">{{ selected.lega.name }} · Ed. {{ selected.lega.edizione }}</div>
         </div>
 

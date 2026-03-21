@@ -214,6 +214,7 @@ export interface Giocata {
   legaId?: number;
   squadraId?: number;
   squadraSigla: string;
+  squadraNome?: string;
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
