@@ -16,7 +16,9 @@ import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
+import it.ddlsolution.survivor.mapper.GiocataMapper;
 import it.ddlsolution.survivor.mapper.LegaMapper;
+import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LegaJoinRequestRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
@@ -61,6 +63,8 @@ public class LegaService {
     private final CacheableService cacheableService;
     private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
     private final ReactionGiocataService reactionGiocataService;
+    private final GiocataRepository giocataRepository;
+    private final GiocataMapper giocataMapper;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -126,6 +130,24 @@ public class LegaService {
             }
 
             addInfoCalcolate(legaDTO, userId);
+
+            // Popola la giocata corrente DOPO addInfoCalcolate (che setta giornataDaGiocare)
+            if (!completo) {
+                Giocatore giocatoreEntity = giocatoreRepository.findByUser_Id(userId).orElse(null);
+                int giornataDaGiocare = legaDTO.getGiornataDaGiocare();
+                int giornataIniziale = legaDTO.getGiornataIniziale();
+                // Il frontend salva con giornata relativa: giornataDaGiocare - giornataIniziale + 1
+                int giornataRelativa = giornataDaGiocare - giornataIniziale + 1;
+                if (giocatoreEntity != null && giornataRelativa > 0) {
+                    LegaDTO finalLegaDTO = legaDTO;
+                    giocataRepository
+                            .findByGiornataAndGiocatore_IdAndLega_Id(
+                                    giornataRelativa,
+                                    giocatoreEntity.getId(),
+                                    legaDTO.getId())
+                            .ifPresent(g -> finalLegaDTO.setMiaGiocataCorrente(giocataMapper.toDTO(g)));
+                }
+            }
 
 
             if (legaDTO.getStato()== Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE){

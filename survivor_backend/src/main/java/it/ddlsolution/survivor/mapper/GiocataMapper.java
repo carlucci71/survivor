@@ -14,9 +14,11 @@ public interface GiocataMapper  extends DtoMapper<GiocataDTO, Giocata> {
     @Mapping(source = "lega.id", target = "legaId")
     @Mapping(source = "squadra.id", target = "squadraId")
     @Mapping(source = "squadra.sigla", target = "squadraSigla")
+    @Mapping(source = "squadra.nome", target = "squadraNome")
     GiocataDTO toDTO(Giocata giocata);
 
     @InheritInverseConfiguration
+    @Mapping(target = "squadra.nome", ignore = true)
     Giocata toEntity(GiocataDTO giocataDTO);
 }
 

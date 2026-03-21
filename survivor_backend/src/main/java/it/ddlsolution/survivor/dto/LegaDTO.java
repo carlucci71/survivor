@@ -32,5 +32,7 @@ public class LegaDTO {
     private Integer maxPartecipanti;
     private boolean accessoLibero;
     private int richiesteInAttesa;
+    /** Giocata dell'utente corrente per la giornata in corso (null se non ancora effettuata) */
+    private GiocataDTO miaGiocataCorrente;
 }
 

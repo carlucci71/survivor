@@ -29,12 +29,17 @@ public class NotificheInviateService {
 
     @Transactional
     public NotificheInviateDTO salva(CampionatoDTO campionatoDTO) {
-        NotificheInviate notificheInviate=new NotificheInviate();
+        return salva(campionatoDTO, Enumeratori.TipoNotifica.INIZIO_PARTITA);
+    }
+
+    @Transactional
+    public NotificheInviateDTO salva(CampionatoDTO campionatoDTO, Enumeratori.TipoNotifica tipoNotifica) {
+        NotificheInviate notificheInviate = new NotificheInviate();
         notificheInviate.setAnno(campionatoDTO.getAnnoCorrente());
         notificheInviate.setCampionato(campionatoMapper.toEntity(campionatoDTO));
         notificheInviate.setGiornata(campionatoDTO.getGiornataDaGiocare());
-        notificheInviate.setTipoNotifica(Enumeratori.TipoNotifica.INIZIO_PARTITA);
-        return notificheInviateMapper.toDTO( notificheInviateRepository.save(notificheInviate));
+        notificheInviate.setTipoNotifica(tipoNotifica);
+        return notificheInviateMapper.toDTO(notificheInviateRepository.save(notificheInviate));
     }
 
 
