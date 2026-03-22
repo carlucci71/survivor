@@ -12,7 +12,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,7 +46,6 @@ import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    MatTooltip,
     MatDialogModule,
     MatIconModule,
     TranslateModule,
