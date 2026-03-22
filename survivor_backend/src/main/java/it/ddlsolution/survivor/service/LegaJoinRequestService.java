@@ -45,7 +45,7 @@ public class LegaJoinRequestService {
         if (!lega.isPubblica()) {
             throw new ManagedException("Lega non pubblica", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
         }
-        if (lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
+        if (lega.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new ManagedException("La lega non accetta più iscrizioni", ManagedException.InternalCode.LEGA_NOT_FOUND);
         }
 

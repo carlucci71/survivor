@@ -120,8 +120,9 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
               messaggio = err.message;
             }
             this.dialog.open(ErrorDialogComponent, {
+              width: '380px',
+              maxWidth: '95vw',
               data: { message: messaggio }
-              // CENTRATO (nessun position)
             });
           }
 
