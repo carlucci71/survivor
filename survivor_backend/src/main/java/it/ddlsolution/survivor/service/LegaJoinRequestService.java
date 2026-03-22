@@ -98,7 +98,7 @@ public class LegaJoinRequestService {
                 .filter(lega -> lega.getGiocatoreLeghe().stream()
                         .anyMatch(gl -> gl.getGiocatore().getId().equals(giocatore.getId())
                                 && gl.getRuolo() == Enumeratori.RuoloGiocatoreLega.LEADER))
-                .filter(lega -> lega.isPubblica() && !lega.isAccessoLibero())
+                .filter(lega -> !lega.isAccessoLibero())
                 .toList();
 
         if (mieLegheDaLeader.isEmpty()) return List.of();

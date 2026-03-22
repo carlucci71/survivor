@@ -56,10 +56,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Avvia polling se utente autenticato
+    // Avvia polling se utente autenticato (userId gestito dal JWT lato server)
     const user = this.authService.getCurrentUser();
-    if (user && user.id) {
-      this.notificationService.startPolling(user.id);
+    if (user) {
+      this.notificationService.startPolling();
     }
   }
 
