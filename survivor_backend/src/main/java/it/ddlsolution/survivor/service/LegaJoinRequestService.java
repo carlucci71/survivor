@@ -42,9 +42,6 @@ public class LegaJoinRequestService {
         Lega lega = legaRepository.findById(idLega)
                 .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
 
-        if (!lega.isPubblica()) {
-            throw new ManagedException("Lega non pubblica", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
-        }
         if (lega.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new ManagedException("La lega non accetta più iscrizioni", ManagedException.InternalCode.LEGA_NOT_FOUND);
         }
