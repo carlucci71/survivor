@@ -79,7 +79,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
-  totalRichiesteInAttesa = 0;
 
   constructor(
     private authService: AuthService,
@@ -255,7 +254,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
-        this.aggiornaContatorRichieste();
         if (preferredTab) {
           this.activeTab = preferredTab;
         }
@@ -334,22 +332,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
-  }
-
-  isLeaderConRichieste(): boolean {
-    return this.leghe.some(
-      l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER'
-    );
-  }
-
-  goToRichieste(): void {
-    this.router.navigate(['/richieste']);
-  }
-
-  private aggiornaContatorRichieste(): void {
-    this.totalRichiesteInAttesa = this.leghe
-      .filter(l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER')
-      .reduce((sum, l) => sum + (l.richiesteInAttesa ?? 0), 0);
   }
 
   logout(): void {

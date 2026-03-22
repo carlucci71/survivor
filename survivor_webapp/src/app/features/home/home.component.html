@@ -13,10 +13,6 @@
         </ng-template>
       </mat-chip>
 
-      <button *ngIf="isLeaderConRichieste() && totalRichiesteInAttesa > 0" mat-icon-button class="richieste-button" (click)="goToRichieste()" [matTooltip]="'RICHIESTE.TOOLTIP' | translate" aria-label="Richieste ingresso">
-        <mat-icon>how_to_reg</mat-icon>
-        <span class="richieste-badge">{{ totalRichiesteInAttesa }}</span>
-      </button>
     </div>
   </app-header>
 
@@ -133,7 +129,6 @@
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
-                          <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
                         <mat-card-subtitle>
                           {{ edizione.stato.value | translateLeagueData: 'status' }}
@@ -195,7 +190,6 @@
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
-                          <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
                         <mat-card-subtitle>
                           {{ edizione.stato.value | translateLeagueData: 'status' }}
