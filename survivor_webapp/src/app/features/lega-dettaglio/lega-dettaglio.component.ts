@@ -1066,6 +1066,15 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
+   * Restituisce true solo se inizioProssimaGiornata è nel futuro rispetto alla data di riferimento
+   */
+  isProssimaGiornataFutura(): boolean {
+    if (!this.lega?.inizioProssimaGiornata) return false;
+    const now = this.beDataRiferimento ?? new Date();
+    return new Date(this.lega.inizioProssimaGiornata).getTime() > now.getTime();
+  }
+
+  /**
    * Determina se il countdown scaduto deve essere visualizzato
    * Non mostra se: giornata in corso E utente ha già giocato
    */
