@@ -215,9 +215,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     return lega!.stato.value === StatoLega.TERMINATA.value;
   }
 
-  getMioStatoInLega(edizione: Lega): StatoGiocatore | null {
+  getMioStatoInLega(edizione: Lega): string | null {
     if (edizione.stato.value === StatoLega.DA_AVVIARE.value) return null;
-    return this.me?.statiPerLega?.[edizione.id] ?? null;
+    const stato = this.me?.statiPerLega?.[edizione.id] as any;
+    if (!stato) return null;
+    // Il backend serializza l'enum come stringa: "ATTIVO", "ELIMINATO", "PENDING"
+    return typeof stato === 'string' ? stato : (stato.value ?? null);
   }
 
   notExistsNuovaEdizione(lega: Lega): boolean {

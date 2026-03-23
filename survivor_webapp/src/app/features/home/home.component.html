@@ -137,9 +137,9 @@
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
                           <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.value.toLowerCase() }}">
-                              <mat-icon class="ssb-icon">{{ statoMe.value === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                              {{ statoMe.value === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
+                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
                             </span>
                           </ng-container>
                         </mat-card-subtitle>
@@ -204,9 +204,9 @@
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
                           <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.value.toLowerCase() }}">
-                              <mat-icon class="ssb-icon">{{ statoMe.value === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                              {{ statoMe.value === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
+                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
                             </span>
                           </ng-container>
                         </mat-card-subtitle>
