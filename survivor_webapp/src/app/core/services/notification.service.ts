@@ -73,6 +73,23 @@ export class NotificationService {
   }
 
   /**
+   * Marca tutte le notifiche dell'utente autenticato come lette
+   */
+  markAllAsRead(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/read-all`, {}).pipe(
+      tap(() => {
+        const updated = this.notificationsSubject.value.map(n => ({ ...n, read: true }));
+        this.notificationsSubject.next(updated);
+        this.unreadCountSubject.next(0);
+      }),
+      catchError(error => {
+        console.error('Errore nel marcare tutte le notifiche come lette:', error);
+        throw error;
+      })
+    );
+  }
+
+  /**
    * Avvia il polling automatico delle notifiche ogni 90 secondi
    */
   startPolling(): void {

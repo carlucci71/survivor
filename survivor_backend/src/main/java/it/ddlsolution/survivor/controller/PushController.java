@@ -124,6 +124,19 @@ public class PushController {
     }
 
     /**
+     * POST /push/read-all
+     * Marca tutte le notifiche dell'utente autenticato come lette.
+     */
+    @PostMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        log.info("POST /push/read-all userId={}", userId);
+        notificationService.markAllAsRead(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * DELETE /push/tokens/all
      * ADMIN: Disattiva tutti i token FCM (da usare dopo cambio progetto Firebase)
      */

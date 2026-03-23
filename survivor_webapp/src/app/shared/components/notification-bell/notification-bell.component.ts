@@ -45,7 +45,7 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     // Sottoscrivi alle notifiche
     this.subscriptions.push(
       this.notificationService.notifications$.subscribe(notifications => {
-        this.notifications = notifications.slice(0, 5); // Mostra solo le prime 5
+        this.notifications = notifications.slice(0, 8); // Mostra le prime 8
       })
     );
 
@@ -92,6 +92,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
         return 'check_circle';
       case 'JOIN_REQUEST_RIFIUTATA':
         return 'cancel';
+      case 'INIZIO_PARTITA':
+        return 'sports_soccer';
+      case 'REMINDER_GIORNATA':
+        return 'alarm';
       case 'MATCH_STARTING':
         return 'sports_soccer';
       case 'MATCH_REMINDER':
@@ -103,6 +107,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       default:
         return 'notifications';
     }
+  }
+
+  markAllAsRead(): void {
+    this.notificationService.markAllAsRead().subscribe();
   }
 
   getTimeAgo(createdAt: string): string {
