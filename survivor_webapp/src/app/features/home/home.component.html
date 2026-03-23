@@ -23,7 +23,7 @@
   <app-hero-three></app-hero-three>
 
   <!-- GIOCATA RECAP CARD -->
-  <app-giocata-recap-card [leghe]="leghe"></app-giocata-recap-card>
+  <app-giocata-recap-card [leghe]="leghe" (refreshRequired)="loadLeghe()"></app-giocata-recap-card>
 
   <main class="main-content">
 
