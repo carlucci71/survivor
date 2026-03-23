@@ -625,6 +625,50 @@ h2 {
 	}
 }
 
+// ── Badge stato survivor nella subtitle dell'edizione ─────────────────────
+.survivor-status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: 8px;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	vertical-align: middle;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+
+	.ssb-icon {
+		font-size: 11px !important;
+		width: 11px !important;
+		height: 11px !important;
+		opacity: 0.85;
+	}
+
+	&--attivo {
+		background: rgba(34, 197, 94, 0.13);
+		color: #15803d;
+		border: 1px solid rgba(34, 197, 94, 0.3);
+		.ssb-icon { color: #15803d; }
+	}
+
+	&--eliminato {
+		background: rgba(239, 68, 68, 0.10);
+		color: #b91c1c;
+		border: 1px solid rgba(239, 68, 68, 0.25);
+		.ssb-icon { color: #b91c1c; }
+	}
+
+	&--pending {
+		background: rgba(245, 158, 11, 0.12);
+		color: #92400e;
+		border: 1px solid rgba(245, 158, 11, 0.28);
+		.ssb-icon { color: #92400e; }
+	}
+}
+
 // ── Chip numero partecipanti nella subtitle dell'edizione ─────────────────
 .partecipanti-chip {
 	display: inline-flex;

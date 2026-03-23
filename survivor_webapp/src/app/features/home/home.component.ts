@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega, StatoGiocatore, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -213,6 +213,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   isTerminata(lega: Lega): boolean {
     return lega!.stato.value === StatoLega.TERMINATA.value;
+  }
+
+  getMioStatoInLega(edizione: Lega): StatoGiocatore | null {
+    if (edizione.stato.value === StatoLega.DA_AVVIARE.value) return null;
+    return this.me?.statiPerLega?.[edizione.id] ?? null;
   }
 
   notExistsNuovaEdizione(lega: Lega): boolean {
