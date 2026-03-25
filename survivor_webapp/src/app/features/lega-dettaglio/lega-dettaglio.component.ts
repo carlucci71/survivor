@@ -49,6 +49,7 @@ import { environment } from '../../../environments/environment';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
+import { RecapService } from '../../core/services/recap.service';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -144,6 +145,27 @@ export class LegaDettaglioComponent implements OnDestroy {
   countdownExpired: boolean = false;
   private countdownIntervalId: any;
 
+  // ─── Recap CTA ────────────────────────────────────────────────────────────
+  /** Giornata relativa dell'ultimo recap disponibile (null se nessuna calcolata). */
+  get recapGiornataRelativa(): number | null {
+    if (!this.lega?.giornataCalcolata) return null;
+    return this.lega.giornataCalcolata - this.lega.giornataIniziale + 1;
+  }
+
+  /** True se il recap per l'ultima giornata calcolata non è ancora stato visto. */
+  get recapNonVisto(): boolean {
+    const g = this.recapGiornataRelativa;
+    if (!this.lega || g === null) return false;
+    return !this.recapService.isSeen(this.lega.id, g);
+  }
+
+  goToRecap(): void {
+    const g = this.recapGiornataRelativa;
+    if (this.lega && g !== null) {
+      this.router.navigate(['/recap', this.lega.id, g]);
+    }
+  }
+
   // Elimina lega
   showDeleteConfirm = false;
   isDeleting = false;
@@ -185,6 +207,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     private mockService: MockService,
     private translate: TranslateService,
     private snackBar: MatSnackBar,
+    private recapService: RecapService,
   ) {
 
     // Sottoscrivi agli aggiornamenti del profilo

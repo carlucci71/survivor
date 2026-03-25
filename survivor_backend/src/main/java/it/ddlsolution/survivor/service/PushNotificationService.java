@@ -308,9 +308,16 @@ public class PushNotificationService {
     }
 
     private Map<String, String> getAllDataFromPushNotification(PushNotificationDTO dto) {
-        Map ret = new HashMap();
+        Map<String, String> ret = new HashMap<>();
         ret.put("TYPE", dto.getTipoNotifica().getDescrizione());
+        ret.put("tipoNotifica", dto.getTipoNotifica().name());
         ret.put("EXPIRING_AT", dto.getExpiringAt().toString());
+        if (dto.getLegaId() != null) {
+            ret.put("legaId", dto.getLegaId().toString());
+        }
+        if (dto.getGiornata() != null) {
+            ret.put("giornata", dto.getGiornata().toString());
+        }
         return ret;
     }
 

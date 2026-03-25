@@ -404,7 +404,8 @@ public class LegaService {
             }
         }
         salva(legaDTO, null);
-        return getLegaDTO(legaDTO.getId(), true, userId);
+        LegaDTO legaDTOAggiornata = getLegaDTO(legaDTO.getId(), true, userId);
+        return legaDTOAggiornata;
     }
 
 
