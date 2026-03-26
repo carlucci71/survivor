@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
@@ -39,6 +40,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   legheAttive: LegaConGiocata[] = [];
   selectedIndex = 0;
+  isProd = environment.production;
 
   // Flash overlay: aggiunto/rimosso dal DOM via @if → l'animazione CSS parte sempre
   showFlash = false;
@@ -173,18 +175,11 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       .filter(l => {
         const statoVal = l.stato?.value;
         const isAttiva = statoVal === StatoLega.AVVIATA.value || statoVal === StatoLega.DA_AVVIARE.value;
-        const isTerminata = statoVal === StatoLega.TERMINATA.value;
         if (isAttiva) {
           return l.giornataDaGiocare > 0 ||
             l.miaGiocataCorrente?.esito === 'KO' ||
             this.lastKnownGiocata.has(l.id ?? 0) ||
             !!l.miaUltimaGiocataConEsito;
-        }
-        if (isTerminata) {
-          // Mostra la lega terminata solo se c'è un risultato da mostrare
-          return !!l.miaUltimaGiocataConEsito ||
-            !!l.miaGiocataCorrente ||
-            this.lastKnownGiocata.has(l.id ?? 0);
         }
         return false;
       })
@@ -290,6 +285,22 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   selectLega(index: number): void {
     this.selectedIndex = index;
+  }
+
+  testFlash(type: 'win' | 'loss'): void {
+    if (this.legheAttive.length > 0) {
+      this.legheAttive[this.selectedIndex] = { ...this.legheAttive[this.selectedIndex], animationState: type };
+      this.legheAttive = [...this.legheAttive];
+    }
+    this.generateConfetti(type);
+    this.showFlash = true;
+    this.flashType = type;
+    this.cdr.detectChanges();
+    if (this.flashTimeout) clearTimeout(this.flashTimeout);
+    this.flashTimeout = setTimeout(() => {
+      this.showFlash = false;
+      this.cdr.detectChanges();
+    }, 3200);
   }
 
   goToLega(): void {

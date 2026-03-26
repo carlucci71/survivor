@@ -801,6 +801,39 @@
     "WARRIORS_SUFFIX": "guerrieri in gara.",
     "NEXT_CHALLENGE": "La prossima sfida ti aspetta.",
     "SCROLL_HINT": "Scorri per i risultati",
-    "RIVIVI_LINK": "Rivivi la Giornata"
+    "RIVIVI_LINK": "Rivivi la Giornata",
+    "STILL_ALIVE_ONE": "ancora vivo",
+    "STILL_ALIVE_OTHER": "ancora vivi",
+    "ELIMINATED_ONE": "eliminato",
+    "ELIMINATED_OTHER": "eliminati"
+  },
+  "VINCITORI_DIALOG": {
+    "TITLE": "Lega Terminata!",
+    "SUBTITLE_ONE": "Ha resistito fino alla fine",
+    "SUBTITLE_MANY": "Loro hanno resistito fino alla fine",
+    "SHARE_TITLE": "Condividi immagine",
+    "SHARE_CARD_SUB": "SURVIVOR \u2022 Lega Terminata",
+    "FRASI": [
+      "Ok ok, lo sappiamo già 😎",
+      "Chiudi e vai a brindare! 🍾",
+      "Sì sì, siamo i migliori 👑",
+      "Ricevuto, andiamo a festeggiare! 🥂",
+      "Tappa il vino, è ora di festa! 🎉",
+      "Basta, mi fate arrossire… 😳",
+      "Ok campioni, ora andate a dormire 😴",
+      "Screenshot e manda a tutti! 📸",
+      "Il Survivor parla chiaro 🗣️",
+      "Chi se ne va per ultimo spenga la luce 💡",
+      "Avete sopravvissuto persino a questo 💪",
+      "Meritato! (forse) 😅",
+      "I numeri non mentono, voi sì 😂",
+      "Statisticamente improbabile, eppure… 📊",
+      "Il miglior click di sempre 🖱️",
+      "Forza, via! Non ho tutto il giorno 😤",
+      "La storia è scritta, chiudi 📜",
+      "Salva lo screenshot prima che passa 🏃",
+      "Sei famoso, almeno in questa lega 🌟",
+      "Ok basta, anche i campioni vanno a letto 🛌"
+    ]
   }
 }

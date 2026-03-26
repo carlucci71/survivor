@@ -1,3 +1,11 @@
+<!-- @if (!isProd && legheAttive.length > 0) {
+  <div class="dev-test-bar">
+    <span class="dev-label">DEV TEST</span>
+    <button class="dev-btn dev-btn--win" (click)="testFlash('win')">WIN</button>
+    <button class="dev-btn dev-btn--loss" (click)="testFlash('loss')">LOSS</button>
+  </div>
+} -->
+
 @if (legheAttive.length > 0 && selected) {
   <div class="recap-section">
 
@@ -15,6 +23,7 @@
           <button
             class="league-pill"
             [class.active]="i === selectedIndex"
+            [class.da-avviare]="item.lega.stato.value === 'DA_AVVIARE'"
             [attr.aria-selected]="i === selectedIndex"
             role="tab"
             (click)="selectLega(i)"
@@ -36,7 +45,7 @@
       [class.no-pick]="!selected.lega.miaGiocataCorrente"
       [class.anim-win]="selected.animationState === 'win'"
       [class.anim-loss]="selected.animationState === 'loss'"
-      [class.flash-shake]="showFlash && flashType === 'loss'"
+      [class.loss-desaturate]="showFlash && flashType === 'loss'"
       matRipple
       (click)="goToLega()"
       role="button"
@@ -46,60 +55,32 @@
       @if (showFlash) {
         <div class="flash-container" aria-hidden="true">
           @if (flashType === 'win') {
-            <!-- Sweep aurora sul fondo -->
-            <div class="win-aurora"></div>
-            <!-- Supernova centrale -->
-            <div class="win-core"></div>
-            <!-- Halo intorno al core -->
-            <div class="win-halo wh1"></div>
-            <div class="win-halo wh2"></div>
-            <!-- Onde di espansione -->
-            <div class="win-ripple wpr1"></div>
-            <div class="win-ripple wpr2"></div>
-            <div class="win-ripple wpr3"></div>
-            <div class="win-ripple wpr4"></div>
-            <!-- Raggi a 360° -->
-            <div class="win-ray wr0"></div>
-            <div class="win-ray wr1"></div>
-            <div class="win-ray wr2"></div>
-            <div class="win-ray wr3"></div>
-            <div class="win-ray wr4"></div>
-            <div class="win-ray wr5"></div>
-            <div class="win-ray wr6"></div>
-            <div class="win-ray wr7"></div>
-            <!-- Scintille verticali -->
-            <div class="win-spark wsp1"></div>
-            <div class="win-spark wsp2"></div>
-            <div class="win-spark wsp3"></div>
-            <div class="win-spark wsp4"></div>
-            <div class="win-spark wsp5"></div>
-            <div class="win-spark wsp6"></div>
-            <div class="win-spark wsp7"></div>
-            <div class="win-spark wsp8"></div>
-            <!-- Scintille diagonali -->
-            <div class="win-spark-d wsd1"></div>
-            <div class="win-spark-d wsd2"></div>
-            <div class="win-spark-d wsd3"></div>
-            <div class="win-spark-d wsd4"></div>
-            <div class="win-spark-d wsd5"></div>
-            <div class="win-spark-d wsd6"></div>
-            <!-- Shimmer sweep finale -->
-            <div class="win-sweep"></div>
+            <!-- Flash dorato di sfondo -->
+            <div class="win-burst"></div>
+            <!-- Fuochi d'artificio -->
+            <div class="firework fw1"></div>
+            <div class="firework fw2"></div>
+            <div class="firework fw3"></div>
+            <div class="firework fw4"></div>
+            <div class="firework fw5"></div>
+            <div class="firework fw6"></div>
+            <div class="firework fw7"></div>
+            <div class="firework fw8"></div>
+            <div class="firework fw9"></div>
+            <div class="firework fw10"></div>
+            <!-- Confetti -->
+            @for (piece of confettiPieces; track $index) {
+              <div
+                class="confetti-piece"
+                [class.round]="piece.round"
+                [ngClass]="piece.animClass"
+                [ngStyle]="piece.styles"
+              ></div>
+            }
           }
           @if (flashType === 'loss') {
-            <!-- Velo scuro progressivo -->
-            <div class="loss-veil"></div>
-            <!-- Onde che implodono -->
-            <div class="loss-ripple lpr1"></div>
-            <div class="loss-ripple lpr2"></div>
-            <div class="loss-ripple lpr3"></div>
-            <!-- Linee glitch orizzontali -->
-            <div class="loss-glitch lg1"></div>
-            <div class="loss-glitch lg2"></div>
-            <div class="loss-glitch lg3"></div>
-            <div class="loss-glitch lg4"></div>
-            <!-- Drain verticale (colore drena verso il basso) -->
-            <div class="loss-drain"></div>
+            <!-- Overlay grigio per sconfitta -->
+            <div class="loss-overlay"></div>
           }
         </div>
       }
