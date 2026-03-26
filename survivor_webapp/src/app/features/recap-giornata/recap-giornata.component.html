@@ -67,12 +67,12 @@
           <div class="cover__teaser">
             <div class="teaser-chip teaser-chip--vivi">
               <span class="teaser-chip__num">{{ recap.sopravvissuti }}</span>
-              <span class="teaser-chip__lbl">ancora viv{{ recap.sopravvissuti === 1 ? 'o' : 'i' }}</span>
+              <span class="teaser-chip__lbl">{{ recap.sopravvissuti === 1 ? ('RECAP.STILL_ALIVE_ONE' | translate) : ('RECAP.STILL_ALIVE_OTHER' | translate) }}</span>
             </div>
             @if (recap.eliminatiQuestaGiornata > 0) {
               <div class="teaser-chip teaser-chip--out">
                 <span class="teaser-chip__num">{{ recap.eliminatiQuestaGiornata }}</span>
-                <span class="teaser-chip__lbl">eliminat{{ recap.eliminatiQuestaGiornata === 1 ? 'o' : 'i' }}</span>
+                <span class="teaser-chip__lbl">{{ recap.eliminatiQuestaGiornata === 1 ? ('RECAP.ELIMINATED_ONE' | translate) : ('RECAP.ELIMINATED_OTHER' | translate) }}</span>
               </div>
             }
           </div>
@@ -246,7 +246,7 @@
 
     <!-- ── SLIDE 6: FINE ──────────────────────────────────────────────── -->
     @if (currentSlide === 'fine') {
-      <div class="slide slide--fine" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+      <div #fineSlide class="slide slide--fine" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
         <div class="fine__bg"></div>
         <div class="slide__inner fine__inner">
           <div class="fine__trophy">🏆</div>

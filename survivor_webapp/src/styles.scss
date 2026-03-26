@@ -459,6 +459,23 @@ mat-dialog-actions {
   }
 }
 
+/* Dialog Vincitori */
+.vincitori-dialog-panel {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    background: transparent !important;
+    border-radius: 20px !important;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6) !important;
+    overflow: hidden !important;
+  }
+}
+
 .dettagli-dialog-backdrop {
   background: rgba(10, 61, 145, 0.4) !important;
   backdrop-filter: blur(4px) !important;

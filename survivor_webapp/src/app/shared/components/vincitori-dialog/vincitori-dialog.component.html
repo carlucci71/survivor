@@ -1,0 +1,82 @@
+<div class="vd-backdrop">
+
+  <!-- Confetti -->
+  @for (i of confettiPieces; track i) {
+    <div class="vd-cf" [class]="'vd-cf-' + i"></div>
+  }
+
+  <!-- Fuochi d'artificio -->
+  <div class="vd-fw vd-fw-1"></div>
+  <div class="vd-fw vd-fw-2"></div>
+  <div class="vd-fw vd-fw-3"></div>
+  <div class="vd-fw vd-fw-4"></div>
+  <div class="vd-fw vd-fw-5"></div>
+  <div class="vd-fw vd-fw-6"></div>
+  <div class="vd-fw vd-fw-7"></div>
+  <div class="vd-fw vd-fw-8"></div>
+  <div class="vd-fw vd-fw-9"></div>
+  <div class="vd-fw vd-fw-10"></div>
+
+  <!-- Contenuto -->
+  <div class="vd-content">
+
+    <div class="vd-trophy-wrap">
+      <span class="vd-trophy">🏆</span>
+    </div>
+
+    <h1 class="vd-title">{{ 'VINCITORI_DIALOG.TITLE' | translate }}</h1>
+
+    <p class="vd-subtitle">
+      @if (data.vincitori.length === 1) {
+        {{ 'VINCITORI_DIALOG.SUBTITLE_ONE' | translate }}
+      } @else {
+        {{ 'VINCITORI_DIALOG.SUBTITLE_MANY' | translate }}
+      }
+    </p>
+
+    <div class="vd-list">
+      @for (v of data.vincitori; track v.id; let i = $index) {
+        <div class="vd-row" [style.animation-delay]="(0.3 + i * 0.12) + 's'">
+          <span class="vd-crown">👑</span>
+          <span class="vd-nickname">{{ v.nickname }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="vd-actions">
+      <div class="vd-close-row">
+        <button class="vd-close-btn" (click)="close()">
+          {{ frase }}
+        </button>
+        <button class="vd-share-icon-btn" (click)="shareImage()" [disabled]="sharing" [title]="'VINCITORI_DIALOG.SHARE_TITLE' | translate">
+          @if (sharing) {
+            <span class="vd-share-spinner"></span>
+          } @else {
+            <mat-icon>share</mat-icon>
+          }
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Card nascosta usata da html2canvas per generare l'immagine -->
+<div #shareCard class="vd-share-card">
+  <div class="vd-sc-header">
+    <span class="vd-sc-trophy">🏆</span>
+    <div>
+      <div class="vd-sc-lega">{{ data.lega.name }}</div>
+      <div class="vd-sc-sub">{{ 'VINCITORI_DIALOG.SHARE_CARD_SUB' | translate }}</div>
+    </div>
+  </div>
+  <div class="vd-sc-list">
+    @for (v of data.vincitori; track v.id) {
+      <div class="vd-sc-row">
+        <span class="vd-sc-crown">👑</span>
+        <span class="vd-sc-name">{{ v.nickname }}</span>
+      </div>
+    }
+  </div>
+  <div class="vd-sc-footer">survivor-app.it</div>
+</div>

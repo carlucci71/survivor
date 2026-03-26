@@ -782,6 +782,39 @@
     "WARRIORS_SUFFIX": "warriors still standing.",
     "NEXT_CHALLENGE": "The next challenge awaits.",
     "SCROLL_HINT": "Swipe for results",
-    "RIVIVI_LINK": "Relive Round"
+    "RIVIVI_LINK": "Relive Round",
+    "STILL_ALIVE_ONE": "still alive",
+    "STILL_ALIVE_OTHER": "still alive",
+    "ELIMINATED_ONE": "eliminated",
+    "ELIMINATED_OTHER": "eliminated"
+  },
+  "VINCITORI_DIALOG": {
+    "TITLE": "League Ended!",
+    "SUBTITLE_ONE": "They survived till the end",
+    "SUBTITLE_MANY": "They all survived till the end",
+    "SHARE_TITLE": "Share image",
+    "SHARE_CARD_SUB": "SURVIVOR \u2022 League Ended",
+    "FRASI": [
+      "Ok ok, we already know 😎",
+      "Close and go celebrate! 🍾",
+      "Yeah yeah, we're the best 👑",
+      "Got it, time to party! 🥂",
+      "Pop the champagne, party time! 🎉",
+      "Stop, you're making us blush… 😳",
+      "Ok champs, time to sleep 😴",
+      "Screenshot and send to everyone! 📸",
+      "Survivor speaks loud and clear 🗣️",
+      "Last one out, turn off the lights 💡",
+      "You survived even this 💪",
+      "Well deserved! (maybe) 😅",
+      "Numbers don't lie, but you do 😂",
+      "Statistically improbable, yet… 📊",
+      "Best click ever 🖱️",
+      "Come on, move along! 😤",
+      "History is written, close it 📜",
+      "Save the screenshot before it's gone 🏃",
+      "You're famous, at least in this league 🌟",
+      "Ok enough, even champs need sleep 🛌"
+    ]
   }
 }
