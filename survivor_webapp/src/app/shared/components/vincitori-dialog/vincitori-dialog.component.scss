@@ -20,6 +20,16 @@
   z-index: 2;
 }
 
+/* ─── Logo ──────────────────────────────────────────────────── */
+.vd-logo {
+  display: block;
+  width: 72px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 4px;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
+}
+
 /* ─── Trofeo ────────────────────────────────────────────────── */
 .vd-trophy-wrap {
   margin-bottom: 12px;
@@ -450,6 +460,15 @@ $vd-cf-colors:
   font-size: 1rem;
   font-weight: 600;
   color: #fff;
+}
+
+.vd-sc-logo {
+  display: block;
+  width: 64px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 20px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
 }
 
 .vd-sc-footer {
