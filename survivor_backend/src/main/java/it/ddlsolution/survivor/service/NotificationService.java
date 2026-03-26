@@ -63,6 +63,19 @@ public class NotificationService {
     }
 
     @Transactional
+    public void markAllAsRead(Long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found: " + userId);
+        }
+        User user = userOpt.get();
+        List<Notification> unread = notificationRepository.findByUserAndReadOrderByCreatedAtDesc(user, false);
+        unread.forEach(n -> n.setRead(true));
+        notificationRepository.saveAll(unread);
+        log.info("Marcate tutte come lette: {} notifiche per userId={}", unread.size(), userId);
+    }
+
+    @Transactional
     public NotificationDTO createNotification(NotificationDTO dto) {
         if (dto == null) {
             throw new IllegalArgumentException("NotificationDTO cannot be null");

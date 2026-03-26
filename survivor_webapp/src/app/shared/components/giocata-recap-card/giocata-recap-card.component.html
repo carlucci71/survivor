@@ -32,20 +32,49 @@
     <!-- Card principale -->
     <div
       class="giocata-card"
+      [style.background]="selected.teamBgRaw"
       [class.no-pick]="!selected.lega.miaGiocataCorrente"
+      [class.anim-win]="selected.animationState === 'win'"
+      [class.anim-loss]="selected.animationState === 'loss'"
       matRipple
       (click)="goToLega()"
       role="button"
       aria-label="Vai alla lega"
     >
-      <!-- Top accent + glow + shimmer -->
+      <!-- Confetti + fuochi d'artificio: elemento inserito via @if ==> animation CSS garantita -->
+      @if (showFlash) {
+        <div class="confetti-container" aria-hidden="true">
+          <!-- Flash di sfondo rapido -->
+          <div class="bg-flash"
+            [class.flash-win]="flashType === 'win'"
+            [class.flash-loss]="flashType === 'loss'"
+          ></div>
+          <!-- Anelli esplosivi (solo WIN) -->
+          @if (flashType === 'win') {
+            <div class="burst-ring br1"></div>
+            <div class="burst-ring br2"></div>
+            <div class="burst-ring br3"></div>
+          }
+          <!-- Croce di sconfitta (solo LOSS) -->
+          @if (flashType === 'loss') {
+            <div class="loss-x-bar lx1"></div>
+            <div class="loss-x-bar lx2"></div>
+            <div class="loss-ring lr1"></div>
+            <div class="loss-ring lr2"></div>
+          }
+          <!-- Coriandoli -->
+          @for (p of confettiPieces; track $index) {
+            <div class="confetti-piece" [class.round]="p.round" [ngClass]="p.animClass" [ngStyle]="p.styles"></div>
+          }
+        </div>
+      }
+
+      <!-- Decorazioni fisse -->
       <div class="card-top-accent"></div>
       <div class="card-glow-blob"></div>
       <div class="shine"></div>
-      <!-- Corner decorations -->
       <div class="card-corner-tl"></div>
       <div class="card-corner-br"></div>
-      <!-- Pallini animati -->
       <div class="particles">
         <span class="p p1"></span>
         <span class="p p2"></span>
@@ -57,19 +86,19 @@
         <span class="p p8"></span>
       </div>
 
-      @if (selected.lega.miaGiocataCorrente) {
-        <!-- STATO: ha già giocato -->
+      @if (selected.displayGiocata && !selected.isLastResult) {
+        <!-- STATO A: pick attiva per la giornata corrente — layout 3 colonne con colori squadra -->
         <div class="card-left">
           <div class="logo-wrapper">
             @if (selected.logoUrl) {
               <img
                 [src]="selected.logoUrl"
-                [alt]="selected.lega.miaGiocataCorrente.squadraNome || selected.lega.miaGiocataCorrente.squadraSigla"
+                [alt]="selected.displayGiocata.squadraNome || selected.displayGiocata.squadraSigla"
                 class="team-logo"
                 (error)="onLogoError($event)"
               />
             } @else {
-              <span class="logo-fallback">{{ selected.lega.miaGiocataCorrente.squadraSigla }}</span>
+              <span class="logo-fallback">{{ selected.displayGiocata.squadraSigla }}</span>
             }
           </div>
         </div>
@@ -77,31 +106,51 @@
         <div class="card-center">
           <div class="meta-row">
             <span class="sport-badge">{{ selected.sportEmoji }} {{ selected.lega.campionato?.nome }}</span>
-            <span class="giornata-badge">GIR. {{ selected.lega.giornataDaGiocare }}</span>
+            <span class="giornata-badge">GIR. {{ selected.displayGiornata }}</span>
           </div>
-          <div class="team-name">{{ selected.lega.miaGiocataCorrente.squadraNome || selected.lega.miaGiocataCorrente.squadraSigla }}</div>
+          <div class="team-name">{{ selected.displayGiocata.squadraNome || selected.displayGiocata.squadraSigla }}</div>
           <div class="lega-label">{{ selected.lega.name }} · Ed. {{ selected.lega.edizione }}</div>
         </div>
 
         <div class="card-right">
-          <div class="esito-badge" [ngClass]="selected.esitoClass">
+          <div class="esito-badge" [ngClass]="selected.esitoClass" [class.badge-reveal]="selected.animationState !== 'none'">
             {{ selected.esitoLabel }}
           </div>
           <mat-icon class="arrow-icon">chevron_right</mat-icon>
         </div>
 
       } @else {
-        <!-- STATO: nessuna giocata ancora -->
-        <div class="no-pick-content">
-          <span class="no-pick-icon">🎯</span>
-          <div class="no-pick-text">
-            <span class="no-pick-title">Giornata {{ selected.lega.giornataDaGiocare }} — nessun pronostico</span>
-            <span class="no-pick-sub">{{ selected.sportEmoji }} {{ selected.lega.name }}</span>
+        <!-- STATO B/C: nessuna pick attiva per la giornata corrente -->
+        <div class="no-pick-main">
+          <div class="no-pick-content">
+            <span class="no-pick-icon">🎯</span>
+            <div class="no-pick-text">
+              @if (selected.lega.giornataDaGiocare > 0) {
+                <span class="no-pick-title">Giornata {{ selected.lega.giornataDaGiocare }} — nessun pronostico</span>
+              } @else {
+                <span class="no-pick-title">In attesa della prossima giornata</span>
+              }
+              <span class="no-pick-sub">{{ selected.sportEmoji }} {{ selected.lega.name }}</span>
+            </div>
+            @if (selected.lega.giornataDaGiocare > 0) {
+              <div class="no-pick-cta">
+                Gioca ora
+                <mat-icon>chevron_right</mat-icon>
+              </div>
+            }
           </div>
-          <div class="no-pick-cta">
-            Gioca ora
-            <mat-icon>chevron_right</mat-icon>
-          </div>
+
+          <!-- Chip ultimo risultato: visibile solo se abbiamo un esito dalla giornata precedente -->
+          @if (selected.isLastResult && selected.displayGiocata) {
+            <div class="last-result-chip" [ngClass]="'lrc-' + selected.esitoClass">
+              <span class="lrc-icon">{{ selected.esitoClass === 'win' ? '✅' : '❌' }}</span>
+              <span class="lrc-text">
+                Gir. {{ selected.displayGiornata }}
+                · {{ selected.displayGiocata.squadraNome || selected.displayGiocata.squadraSigla }}
+              </span>
+              <span class="lrc-badge" [ngClass]="selected.esitoClass">{{ selected.esitoLabel }}</span>
+            </div>
+          }
         </div>
       }
     </div>

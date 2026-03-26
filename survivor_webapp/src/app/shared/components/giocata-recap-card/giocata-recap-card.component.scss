@@ -38,9 +38,9 @@
 /* ─── League pills ────────────────────────────────────────── */
 .league-pills {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   overflow-x: auto;
-  padding: 4px 0 14px;
+  padding: 0 0 12px;
   scrollbar-width: none;
 
   &::-webkit-scrollbar { display: none; }
@@ -49,54 +49,48 @@
 .league-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 24px;
-  border: 1.5px solid rgba(10, 61, 145, 0.14);
-  background: #fff;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
   cursor: pointer;
   white-space: nowrap;
   font-family: var(--font-family, 'Poppins', sans-serif);
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 600;
-  color: #4B5563;
-  transition: all 0.2s ease;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(10, 61, 145, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: rgba(10, 61, 145, 0.38);
+  transition: color 0.15s ease, background 0.15s ease;
+  letter-spacing: 0.3px;
 
-  .pill-sport { font-size: 14px; line-height: 1; }
-  .pill-name  { max-width: 130px; overflow: hidden; text-overflow: ellipsis; }
+  .pill-sport { font-size: 12px; line-height: 1; }
+  .pill-name  { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
 
   .pill-dot {
-    width: 7px;
-    height: 7px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: #F59E0B;
     flex-shrink: 0;
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
     animation: pulse-dot 2s ease-in-out infinite;
   }
 
   &.active {
-    background: linear-gradient(135deg, #0A3D91, #1565C0);
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(10, 61, 145, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-    .pill-dot { background: #FDE68A; box-shadow: 0 0 0 2px rgba(253, 230, 138, 0.3); }
+    background: rgba(10, 61, 145, 0.08);
+    color: #0A3D91;
+    font-weight: 700;
+    .pill-dot { background: #F59E0B; }
   }
 
   &:hover:not(.active) {
-    border-color: rgba(10, 61, 145, 0.28);
-    background: #EFF6FF;
-    color: #0A3D91;
-    box-shadow: 0 4px 14px rgba(10, 61, 145, 0.12);
+    color: rgba(10, 61, 145, 0.6);
+    background: rgba(10, 61, 145, 0.04);
   }
 }
 
 @keyframes pulse-dot {
-  0%, 100% { transform: scale(1);   opacity: 1;    }
-  50%       { transform: scale(1.3); opacity: 0.8; }
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%       { transform: scale(1.5); opacity: 0.6; }
 }
 
 /* ─── Card ────────────────────────────────────────────────── */
@@ -116,7 +110,7 @@
     0 10px 40px rgba(4, 14, 36, 0.55),
     0 2px 8px rgba(79, 195, 247, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.3s ease;
   min-height: 88px;
 
   &:hover, &:active {
@@ -245,7 +239,7 @@
 }
 
 /* ─── Logo ────────────────────────────────────────────────── */
-.card-left { flex-shrink: 0; }
+.card-left { flex-shrink: 0; position: relative; }
 
 .logo-wrapper {
   width: 62px;
@@ -441,12 +435,227 @@
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 480px) {
   .recap-section { padding: 0 12px 10px; }
-  .sh-text { font-size: 8px; letter-spacing: 2px; }
-  .league-pill { font-size: 12px; padding: 6px 12px; }
+  .sh-text     { font-size: 8px; letter-spacing: 2px; }
+  .league-pill { font-size: 10.5px; padding: 3px 8px; }
+  .pill-name   { max-width: 80px; }
   .logo-wrapper { width: 54px; height: 54px; border-radius: 12px; }
   .team-logo    { width: 42px; height: 42px; }
   .team-name    { font-size: 16px; }
   .no-pick-cta  { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STATI RISULTATO — colori permanenti per tutta la sessione
+   ═══════════════════════════════════════════════════════════ */
+
+.giocata-card.anim-win {
+  border: 2px solid rgba(255, 193, 7, 0.9);
+  box-shadow:
+    0 0 0 4px rgba(255, 193, 7, 0.14),
+    0 0 48px rgba(255, 193, 7, 0.36),
+    0 12px 44px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 215, 0, 0.08);
+
+  .card-top-accent {
+    background: linear-gradient(90deg,
+      transparent 0%, #FFD700 20%, #fff 50%, #FFB300 80%, transparent 100%
+    );
+    opacity: 0.95;
+  }
+
+  .logo-wrapper {
+    border: 2px solid rgba(255, 193, 7, 0.75);
+    box-shadow:
+      0 0 22px rgba(255, 193, 7, 0.5),
+      0 4px 14px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.giocata-card.anim-loss {
+  border: 2px solid rgba(229, 57, 53, 0.85);
+  box-shadow:
+    0 0 0 4px rgba(229, 57, 53, 0.16),
+    0 0 40px rgba(229, 57, 53, 0.38),
+    0 12px 44px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 82, 82, 0.06);
+
+  .card-top-accent {
+    background: linear-gradient(90deg,
+      transparent 0%, #FF5252 20%, #fff 50%, #E53935 80%, transparent 100%
+    );
+    opacity: 0.8;
+  }
+
+  .logo-wrapper {
+    border: 2px solid rgba(229, 57, 53, 0.7);
+    box-shadow:
+      0 0 0 4px rgba(229, 57, 53, 0.15),
+      0 0 24px rgba(229, 57, 53, 0.48),
+      0 4px 14px rgba(0, 0, 0, 0.5);
+    filter: grayscale(30%);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CORIANDOLI & FUOCHI D'ARTIFICIO
+   ═══════════════════════════════════════════════════════════ */
+
+/* Contenitore: clip ai bordi della card */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* Flash di sfondo rapido */
+.bg-flash {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  animation: bg-flash-anim 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  &.flash-win  { background: rgba(255, 220, 50, 0.38); }
+  &.flash-loss { background: rgba(255, 50, 50, 0.45); }
+}
+
+@keyframes bg-flash-anim {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Anelli esplosivi (fuochi d'artificio) */
+.burst-ring {
+  position: absolute;
+  top: 50%;
+  left: 40%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 215, 0, 0.95);
+  transform: translate(-50%, -50%) scale(0);
+  animation: ring-burst 0.8s ease-out forwards;
+}
+
+.br2 {
+  animation-delay: 0.12s;
+  border-color: rgba(105, 240, 174, 0.9);
+  left: 60%;
+}
+
+.br3 {
+  animation-delay: 0.24s;
+  border-color: rgba(255, 150, 255, 0.85);
+  left: 50%;
+  top: 40%;
+}
+
+@keyframes ring-burst {
+  0%   { transform: translate(-50%, -50%) scale(0);  opacity: 1; border-width: 3px; }
+  50%  { opacity: 0.75; }
+  100% { transform: translate(-50%, -50%) scale(10); opacity: 0; border-width: 1px; }
+}
+
+/* Coriandoli base: position + clip */
+.confetti-piece {
+  position: absolute;
+  top: 2px;
+  border-radius: 2px;
+  transform-origin: 50% 50%;
+  opacity: 0; // nascosti; ogni variante .cf-vX avvia la propria animation
+  &.round { border-radius: 50%; }
+}
+
+/* Due keyframe: senso orario e antiorario */
+@keyframes cf-cw {
+  0%   { transform: translateY(0)    rotate(0deg)    scale(1);   opacity: 0; }
+  7%   {                                                          opacity: 1; }
+  85%  {                                                          opacity: 0.8; }
+  100% { transform: translateY(130px) rotate(620deg)  scale(0.4); opacity: 0; }
+}
+@keyframes cf-ccw {
+  0%   { transform: translateY(0)    rotate(0deg)    scale(1);   opacity: 0; }
+  7%   {                                                          opacity: 1; }
+  85%  {                                                          opacity: 0.8; }
+  100% { transform: translateY(130px) rotate(-620deg) scale(0.4); opacity: 0; }
+}
+
+/* 10 varianti con durate e delay diversi (~2-3 s totali) */
+.confetti-piece.cf-v0 { animation: cf-cw  2.4s ease-in 0.00s forwards; }
+.confetti-piece.cf-v1 { animation: cf-ccw 2.9s ease-in 0.08s forwards; }
+.confetti-piece.cf-v2 { animation: cf-cw  2.6s ease-in 0.18s forwards; }
+.confetti-piece.cf-v3 { animation: cf-ccw 3.0s ease-in 0.30s forwards; }
+.confetti-piece.cf-v4 { animation: cf-cw  2.2s ease-in 0.42s forwards; }
+.confetti-piece.cf-v5 { animation: cf-ccw 2.8s ease-in 0.12s forwards; }
+.confetti-piece.cf-v6 { animation: cf-cw  2.5s ease-in 0.50s forwards; }
+.confetti-piece.cf-v7 { animation: cf-ccw 2.7s ease-in 0.05s forwards; }
+.confetti-piece.cf-v8 { animation: cf-cw  2.3s ease-in 0.35s forwards; }
+.confetti-piece.cf-v9 { animation: cf-ccw 2.1s ease-in 0.22s forwards; }
+
+/* Croce di sconfitta — barre che formano una X e svaniscono */
+.loss-x-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 55%;
+  height: 4px;
+  background: rgba(229, 57, 53, 0.95);
+  border-radius: 2px;
+  box-shadow: 0 0 14px rgba(229, 57, 53, 0.8), 0 0 28px rgba(229, 57, 53, 0.4);
+}
+
+.lx1 { animation: lx1-anim 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.0s forwards; }
+.lx2 { animation: lx2-anim 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
+
+@keyframes lx1-anim {
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(45deg)  scaleX(0.1); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) rotate(45deg)  scaleX(1);   }
+  65%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg)  scaleX(1.3); }
+}
+@keyframes lx2-anim {
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scaleX(0.1); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);   }
+  65%  { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scaleX(1.3); }
+}
+
+/* Cerchi che implodono (sconfitta — contrario dei burst rings) */
+.loss-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 2px solid rgba(229, 57, 53, 0.85);
+}
+
+.lr1 {
+  width: 80px; height: 80px;
+  animation: lr-implode 1.4s ease-in 0.0s forwards;
+}
+.lr2 {
+  width: 120px; height: 120px;
+  animation: lr-implode 1.4s ease-in 0.2s forwards;
+  border-color: rgba(180, 30, 30, 0.6);
+}
+
+@keyframes lr-implode {
+  0%   { transform: translate(-50%, -50%) scale(2.0); opacity: 0; }
+  20%  { opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+}
+
+/* Badge risultato */
+.esito-badge.badge-reveal {
+  animation: badge-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+@keyframes badge-in {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.85); }
+  100% { opacity: 1; transform: translateY(0)   scale(1);    }
 }
 
 @media (max-width: 360px) {
@@ -454,4 +663,70 @@
   .logo-wrapper { width: 48px; height: 48px; }
   .team-logo    { width: 36px; height: 36px; }
   .team-name    { font-size: 15px; }
+}
+
+/* ─── Stato B: nessuna pick per la giornata corrente ─────── */
+
+/* Wrapper colonna: no-pick row + chip risultato precedente */
+.no-pick-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Chip recap ultima giocata */
+.last-result-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  .lrc-icon {
+    font-size: 12px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .lrc-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.42);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lrc-badge {
+    flex-shrink: 0;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    text-transform: uppercase;
+
+    &.win {
+      color: #69F0AE;
+      background: rgba(67, 160, 71, 0.14);
+      border: 1px solid rgba(67, 160, 71, 0.28);
+    }
+    &.loss {
+      color: #FF5252;
+      background: rgba(229, 57, 53, 0.14);
+      border: 1px solid rgba(229, 57, 53, 0.28);
+    }
+  }
+
+  &.lrc-win  { border-color: rgba(67, 160, 71, 0.2); }
+  &.lrc-loss { border-color: rgba(229, 57, 53, 0.2); }
+}
+
+@media (max-width: 480px) {
+  .last-result-chip { gap: 6px; padding: 6px 8px; }
+  .lrc-text         { font-size: 10px; }
 }

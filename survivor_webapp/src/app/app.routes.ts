@@ -82,6 +82,11 @@ export const routes: Routes = [
     canActivate: [authGuard, adminGuard]
   },
   {
+    path: 'recap/:legaId/:giornata',
+    loadComponent: () => import('./features/recap-giornata/recap-giornata.component').then(m => m.RecapGiornataComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: '**',
     redirectTo: '/home'
   }

@@ -207,8 +207,25 @@ export class PushService {
       // Already shown by the OS; keep listener to avoid silent failures.
     });
 
-    PushNotifications.addListener('pushNotificationActionPerformed', (_action: ActionPerformed) => {
-      // TODO: handle deep-link navigation if needed (e.g., apri lega specifica).
+    PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
+      const data = action.notification.data ?? {};
+      const tipoNotifica: string = data['tipoNotifica'] ?? data['type'] ?? '';
+      const legaId: string | undefined = data['legaId'] ?? data['legaid'];
+
+      if (!legaId) return;
+
+      const router = this.injector.get(Router);
+
+      if (tipoNotifica === 'RECAP_GIORNATA') {
+        const giornata: string | undefined = data['giornata'];
+        if (giornata) {
+          router.navigate(['/recap', legaId, giornata]);
+        } else {
+          router.navigate(['/lega', legaId]);
+        }
+      } else {
+        router.navigate(['/lega', legaId]);
+      }
     });
   }
 

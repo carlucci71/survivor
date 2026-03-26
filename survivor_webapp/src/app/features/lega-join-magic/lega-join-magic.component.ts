@@ -108,7 +108,7 @@ export class LegaJoinMagicComponent implements OnInit {
               let msg = this.translate.instant('COMMON.ERROR_GENERIC');
               if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
               else if (code === 'REQUEST_ALREADY_EXISTS') msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
-              this.dialog.open(ErrorDialogComponent, { data: { message: msg } });
+              this.dialog.open(ErrorDialogComponent, { width: '380px', maxWidth: '95vw', data: { message: msg } });
             }
           });
         });
@@ -126,7 +126,7 @@ export class LegaJoinMagicComponent implements OnInit {
       error: (err) => {
         if (err && err.status === 499) {
           let messaggio = err?.error?.message ? String(err.error.message) : err.message;
-          this.dialog.open(ErrorDialogComponent, { data: { message: messaggio } });
+          this.dialog.open(ErrorDialogComponent, { width: '380px', maxWidth: '95vw', data: { message: messaggio } });
         }
         console.error('Errore join lega', err);
       },
