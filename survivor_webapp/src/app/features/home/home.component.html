@@ -32,7 +32,7 @@
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
 
       <!-- Barra di ricerca -->
-      <div class="search-container" *ngIf="!isLoadingLeghe && leghe.length > 0">
+      <div class="search-container" *ngIf="!isLoadingLeghe && groupedLeghe.length > 0">
         <mat-form-field appearance="outline" class="search-field">
           <mat-icon matPrefix>search</mat-icon>
           <input
@@ -61,14 +61,14 @@
         <app-lega-card-skeleton></app-lega-card-skeleton>
       </div>
 
-      <mat-card *ngIf="!isLoadingLeghe && leghe.length === 0" class="no-data">
+      <mat-card *ngIf="!isLoadingLeghe && groupedLeghe.length === 0" class="no-data">
         <mat-card-content>
           <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
         </mat-card-content>
       </mat-card>
 
       <!-- Nessun risultato dalla ricerca -->
-      <mat-card *ngIf="!isLoadingLeghe && leghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
+      <mat-card *ngIf="!isLoadingLeghe && groupedLeghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
         <mat-card-content>
           <mat-icon class="search-empty-icon">search_off</mat-icon>
           <p>{{ 'HOME.NO_RESULTS' | translate }}</p>

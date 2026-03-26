@@ -128,6 +128,8 @@ export interface Lega {
   accessoLibero?: boolean;
   richiesteInAttesa?: number;
   miaGiocataCorrente?: Giocata;
+  /** Ultima giocata con esito definitivo: popolata dal backend quando non c'è ancora una pick per la giornata corrente */
+  miaUltimaGiocataConEsito?: Giocata;
 }
 
 export interface LegaJoinRequest {

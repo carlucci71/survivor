@@ -34,5 +34,7 @@ public class LegaDTO {
     private int richiesteInAttesa;
     /** Giocata dell'utente corrente per la giornata in corso (null se non ancora effettuata) */
     private GiocataDTO miaGiocataCorrente;
+    /** Ultima giocata con esito definitivo (OK/KO): usata dalla home per mostrare il risultato precedente quando non c'è ancora una pick per la giornata corrente */
+    private GiocataDTO miaUltimaGiocataConEsito;
 }
 

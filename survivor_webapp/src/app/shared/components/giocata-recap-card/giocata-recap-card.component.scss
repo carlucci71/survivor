@@ -8,6 +8,44 @@
   margin: 0 auto;
 }
 
+/* ─── Dev test bar (non-prod only) ────────────────────────── */
+.dev-test-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  background: rgba(255, 200, 0, 0.07);
+  border: 1px dashed rgba(255, 200, 0, 0.3);
+  border-radius: 8px;
+}
+
+.dev-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 200, 0, 0.55);
+  flex: 1;
+}
+
+.dev-btn {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.8; }
+  &:active { transform: scale(0.96); }
+
+  &--win  { background: rgba(255, 215, 0, 0.2);  color: #FFD700; border: 1px solid rgba(255,215,0,0.4); }
+  &--loss { background: rgba(100, 100, 100, 0.2); color: #aaa;    border: 1px solid rgba(150,150,150,0.35); }
+}
+
 /* ─── Section header ───────────────────────────────────────── */
 .section-header {
   display: flex;
@@ -444,64 +482,81 @@
   .no-pick-cta  { display: none; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   STATI RISULTATO — colori permanenti per tutta la sessione
-   ═══════════════════════════════════════════════════════════ */
+/* -----------------------------------------------------------
+   STATI RISULTATO � senza bordi colorati, solo luce e forma
+   ----------------------------------------------------------- */
 
 .giocata-card.anim-win {
-  border: 2px solid rgba(255, 193, 7, 0.9);
-  box-shadow:
-    0 0 0 4px rgba(255, 193, 7, 0.14),
-    0 0 48px rgba(255, 193, 7, 0.36),
-    0 12px 44px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 215, 0, 0.08);
-
   .card-top-accent {
     background: linear-gradient(90deg,
-      transparent 0%, #FFD700 20%, #fff 50%, #FFB300 80%, transparent 100%
+      transparent 0%,
+      rgba(255,215,0,0) 0%,
+      rgba(255,215,0,0.9) 40%,
+      rgba(255,255,255,1) 50%,
+      rgba(255,215,0,0.9) 60%,
+      rgba(255,215,0,0) 100%
     );
-    opacity: 0.95;
+    background-size: 200% 100%;
+    animation: win-accent-sweep 2.4s ease-in-out infinite 0.3s;
+    opacity: 0.9;
   }
-
   .logo-wrapper {
-    border: 2px solid rgba(255, 193, 7, 0.75);
-    box-shadow:
-      0 0 22px rgba(255, 193, 7, 0.5),
-      0 4px 14px rgba(0, 0, 0, 0.5);
+    animation: logo-win-pulse 3s ease-in-out infinite 0.5s;
   }
+}
+
+@keyframes win-accent-sweep {
+  0%   { background-position: -100% 0; opacity: 0.7; }
+  50%  { background-position: 200%  0; opacity: 1; }
+  100% { background-position: 200%  0; opacity: 0.7; }
+}
+
+@keyframes logo-win-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(255,200,30,0.18), 0 4px 14px rgba(0,0,0,0.45); }
+  50%       { box-shadow: 0 0 32px rgba(255,200,30,0.55), 0 4px 14px rgba(0,0,0,0.45); }
 }
 
 .giocata-card.anim-loss {
-  border: 2px solid rgba(229, 57, 53, 0.85);
-  box-shadow:
-    0 0 0 4px rgba(229, 57, 53, 0.16),
-    0 0 40px rgba(229, 57, 53, 0.38),
-    0 12px 44px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 82, 82, 0.06);
-
+  .logo-wrapper {
+    filter: grayscale(60%) brightness(0.7);
+    transition: filter 1.2s ease;
+  }
   .card-top-accent {
     background: linear-gradient(90deg,
-      transparent 0%, #FF5252 20%, #fff 50%, #E53935 80%, transparent 100%
+      transparent 0%, rgba(180,40,40,0.4) 35%,
+      rgba(255,100,80,0.5) 50%,
+      rgba(180,40,40,0.4) 65%, transparent 100%
     );
-    opacity: 0.8;
-  }
-
-  .logo-wrapper {
-    border: 2px solid rgba(229, 57, 53, 0.7);
-    box-shadow:
-      0 0 0 4px rgba(229, 57, 53, 0.15),
-      0 0 24px rgba(229, 57, 53, 0.48),
-      0 4px 14px rgba(0, 0, 0, 0.5);
-    filter: grayscale(30%);
+    opacity: 0.5;
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CORIANDOLI & FUOCHI D'ARTIFICIO
-   ═══════════════════════════════════════════════════════════ */
+/* -----------------------------------------------------------
+   SHAKE
+   ----------------------------------------------------------- */
 
-/* Contenitore: clip ai bordi della card */
-.confetti-container {
+@keyframes card-shake {
+  0%   { transform: translateX(0)    rotate(0deg); }
+  8%   { transform: translateX(-9px) rotate(-0.7deg); }
+  18%  { transform: translateX(9px)  rotate(0.7deg); }
+  28%  { transform: translateX(-7px) rotate(-0.5deg); }
+  38%  { transform: translateX(7px)  rotate(0.5deg); }
+  50%  { transform: translateX(-4px) rotate(-0.2deg); }
+  62%  { transform: translateX(4px)  rotate(0.2deg); }
+  74%  { transform: translateX(-2px) rotate(0deg); }
+  86%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.giocata-card.flash-shake {
+  animation: card-shake 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* -----------------------------------------------------------
+   OVERLAY ANIMAZIONE FLASH
+   ----------------------------------------------------------- */
+
+.flash-container {
   position: absolute;
   inset: 0;
   border-radius: 18px;
@@ -510,142 +565,286 @@
   overflow: hidden;
 }
 
-/* Flash di sfondo rapido */
-.bg-flash {
+/* -- WIN: aurora di sfondo ---------------------------------- */
+
+.win-aurora {
   position: absolute;
   inset: 0;
-  border-radius: 16px;
-  animation: bg-flash-anim 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-
-  &.flash-win  { background: rgba(255, 220, 50, 0.38); }
-  &.flash-loss { background: rgba(255, 50, 50, 0.45); }
+  background: radial-gradient(ellipse 80% 60% at 50% 50%,
+    rgba(255,230,60,0.32) 0%,
+    rgba(105,240,174,0.20) 40%,
+    transparent 75%
+  );
+  animation: win-aurora-anim 2.8s ease-out forwards;
 }
 
-@keyframes bg-flash-anim {
+@keyframes win-aurora-anim {
+  0%   { opacity: 0; transform: scale(0.5); }
+  18%  { opacity: 1; transform: scale(1.05); }
+  70%  { opacity: 0.55; }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+/* -- WIN: core supernova ------------------------------------ */
+
+.win-core {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0   6px rgba(255,255,255,0.8),
+    0 0 20px 10px rgba(255,230,60,0.9),
+    0 0 50px 20px rgba(255,180,20,0.5);
+  transform: translate(-50%,-50%) scale(0);
+  animation: win-core-burst 0.65s cubic-bezier(0.15, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes win-core-burst {
+  0%   { transform: translate(-50%,-50%) scale(0);  opacity: 1; }
+  35%  { transform: translate(-50%,-50%) scale(14); opacity: 1; }
+  100% { transform: translate(-50%,-50%) scale(26); opacity: 0; }
+}
+
+/* -- WIN: halo luminoso ------------------------------------- */
+
+.win-halo {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  animation: win-halo-anim 1.8s ease-out forwards;
+}
+
+.wh1 {
+  width: 40px; height: 40px;
+  background: radial-gradient(circle, rgba(255,230,60,0.5) 0%, transparent 70%);
+  animation-delay: 0.08s;
+}
+
+.wh2 {
+  width: 90px; height: 90px;
+  background: radial-gradient(circle, rgba(105,240,174,0.3) 0%, transparent 70%);
+  animation-delay: 0.2s;
+}
+
+@keyframes win-halo-anim {
+  0%   { transform: translate(-50%,-50%) scale(0); opacity: 1; }
+  50%  { opacity: 0.7; }
+  100% { transform: translate(-50%,-50%) scale(4); opacity: 0; }
+}
+
+/* -- WIN: onde di espansione -------------------------------- */
+
+.win-ripple {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,230,80,0.95);
+  transform: translate(-50%,-50%) scale(0);
+  animation: win-ripple-out 1.8s cubic-bezier(0.1, 0.6, 0.3, 1) forwards;
+}
+
+.wpr1 { animation-delay: 0.04s; border-color: rgba(255,230,80,0.95); }
+.wpr2 { animation-delay: 0.22s; border-color: rgba(255,255,200,0.65); }
+.wpr3 { animation-delay: 0.42s; border-color: rgba(105,240,174,0.50); }
+.wpr4 { animation-delay: 0.62s; border-color: rgba(79,195,247,0.38); }
+
+@keyframes win-ripple-out {
+  0%   { transform: translate(-50%,-50%) scale(0);  opacity: 1; }
+  75%  { opacity: 0.35; }
+  100% { transform: translate(-50%,-50%) scale(24); opacity: 0; }
+}
+
+/* -- WIN: raggi radiali a 360� ------------------------------- */
+
+.win-ray {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px;
+  height: 48%;
+  transform-origin: 50% 100%;
+  margin-left: -1px;
+  border-radius: 1px 1px 0 0;
+  transform: rotate(var(--ray-rot)) scaleY(0);
+  animation: win-ray-shoot 1.1s ease-out forwards;
+}
+
+.wr0 { --ray-rot:   0deg; background: linear-gradient(to top, rgba(255,215,0,0.95), transparent); animation-delay: 0.06s; }
+.wr1 { --ray-rot:  45deg; background: linear-gradient(to top, rgba(255,240,100,0.8), transparent); animation-delay: 0.03s; }
+.wr2 { --ray-rot:  90deg; background: linear-gradient(to top, rgba(255,215,0,0.95), transparent); animation-delay: 0.09s; }
+.wr3 { --ray-rot: 135deg; background: linear-gradient(to top, rgba(105,240,174,0.85), transparent); animation-delay: 0.05s; }
+.wr4 { --ray-rot: 180deg; background: linear-gradient(to top, rgba(255,215,0,0.95), transparent); animation-delay: 0.11s; }
+.wr5 { --ray-rot: 225deg; background: linear-gradient(to top, rgba(255,240,100,0.8), transparent); animation-delay: 0.02s; }
+.wr6 { --ray-rot: 270deg; background: linear-gradient(to top, rgba(255,215,0,0.95), transparent); animation-delay: 0.08s; }
+.wr7 { --ray-rot: 315deg; background: linear-gradient(to top, rgba(79,195,247,0.75), transparent); animation-delay: 0.04s; }
+
+@keyframes win-ray-shoot {
+  0%   { transform: rotate(var(--ray-rot)) scaleY(0); opacity: 0; }
+  18%  { opacity: 1;   transform: rotate(var(--ray-rot)) scaleY(1); }
+  80%  { opacity: 0.5; }
+  100% { opacity: 0;   transform: rotate(var(--ray-rot)) scaleY(1.15); }
+}
+
+/* -- WIN: scintille verticali ------------------------------- */
+
+.win-spark {
+  position: absolute;
+  border-radius: 50%;
+  animation: win-spark-rise var(--sp-dur, 2.5s) ease-out forwards var(--sp-delay, 0s);
+  bottom: 10%;
+  opacity: 0;
+}
+
+.wsp1 { left:  6%; width: 5px; height: 5px; background: #FFD700; --sp-delay: 0.04s; --sp-dur: 2.6s; }
+.wsp2 { left: 16%; width: 4px; height: 4px; background: #69F0AE; --sp-delay: 0.26s; --sp-dur: 3.0s; }
+.wsp3 { left: 28%; width: 6px; height: 6px; background: #FF8AE2; --sp-delay: 0.10s; --sp-dur: 2.8s; }
+.wsp4 { left: 41%; width: 4px; height: 4px; background: #4FC3F7; --sp-delay: 0.38s; --sp-dur: 2.4s; }
+.wsp5 { left: 55%; width: 5px; height: 5px; background: #FFD700; --sp-delay: 0.14s; --sp-dur: 2.9s; }
+.wsp6 { left: 67%; width: 4px; height: 4px; background: #E040FB; --sp-delay: 0.48s; --sp-dur: 2.6s; }
+.wsp7 { left: 79%; width: 5px; height: 5px; background: #69F0AE; --sp-delay: 0.20s; --sp-dur: 2.7s; }
+.wsp8 { left: 91%; width: 4px; height: 4px; background: #FFB300; --sp-delay: 0.34s; --sp-dur: 3.1s; }
+
+@keyframes win-spark-rise {
+  0%   { transform: translateY(0)      scale(1);    opacity: 0; }
+  7%   { opacity: 1; }
+  55%  { opacity: 0.75; }
+  100% { transform: translateY(-130px) scale(0.12); opacity: 0; }
+}
+
+/* -- WIN: scintille diagonali ------------------------------- */
+
+.win-spark-d {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  animation: win-spark-diag var(--sd-dur, 2.5s) ease-out forwards var(--sd-delay, 0s);
+}
+
+.wsd1 { left: 10%; top: 50%; width: 5px; height: 5px; background: #FFD700; --sd-delay: 0.08s; --sd-dur: 2.3s; --sd-tx: -90px; --sd-ty: -80px; }
+.wsd2 { left: 25%; top: 55%; width: 4px; height: 4px; background: #FF8AE2; --sd-delay: 0.30s; --sd-dur: 2.7s; --sd-tx: -60px; --sd-ty: -110px; }
+.wsd3 { left: 42%; top: 60%; width: 5px; height: 5px; background: #4FC3F7; --sd-delay: 0.15s; --sd-dur: 2.5s; --sd-tx:  20px; --sd-ty: -120px; }
+.wsd4 { left: 60%; top: 55%; width: 4px; height: 4px; background: #69F0AE; --sd-delay: 0.42s; --sd-dur: 2.6s; --sd-tx:  70px; --sd-ty:  -90px; }
+.wsd5 { left: 75%; top: 50%; width: 6px; height: 6px; background: #FFB300; --sd-delay: 0.12s; --sd-dur: 2.4s; --sd-tx:  90px; --sd-ty: -105px; }
+.wsd6 { left: 88%; top: 58%; width: 4px; height: 4px; background: #E040FB; --sd-delay: 0.50s; --sd-dur: 2.9s; --sd-tx:  50px; --sd-ty:  -80px; }
+
+@keyframes win-spark-diag {
+  0%   { transform: translate(0, 0)                       scale(1);    opacity: 0; }
+  8%   { opacity: 1; }
+  60%  { opacity: 0.7; }
+  100% { transform: translate(var(--sd-tx), var(--sd-ty)) scale(0.1); opacity: 0; }
+}
+
+/* -- WIN: sweep luminoso ------------------------------------ */
+
+.win-sweep {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(105deg,
+    transparent 20%,
+    rgba(255,255,255,0.18) 48%,
+    rgba(255,230,80,0.12) 52%,
+    transparent 80%
+  );
+  animation: win-sweep-anim 1.0s cubic-bezier(0.4, 0, 0.2, 1) 0.35s forwards;
+}
+
+@keyframes win-sweep-anim {
+  0%   { transform: translateX(0)    skewX(-12deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateX(250%) skewX(-12deg); opacity: 0.6; }
+}
+
+/* -- LOSS: velo scuro progressivo --------------------------- */
+
+.loss-veil {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg,
+    rgba(0,0,0,0.1) 0%,
+    rgba(0,0,0,0.65) 50%,
+    rgba(0,0,0,0.4) 100%
+  );
+  animation: loss-veil-anim 2.2s ease-out forwards;
+}
+
+@keyframes loss-veil-anim {
   0%   { opacity: 0; }
   20%  { opacity: 1; }
   100% { opacity: 0; }
 }
 
-/* Anelli esplosivi (fuochi d'artificio) */
-.burst-ring {
+/* -- LOSS: onde che implodono ------------------------------- */
+
+.loss-ripple {
   position: absolute;
-  top: 50%;
-  left: 40%;
-  width: 20px;
-  height: 20px;
+  top: 50%; left: 50%;
   border-radius: 50%;
-  border: 3px solid rgba(255, 215, 0, 0.95);
-  transform: translate(-50%, -50%) scale(0);
-  animation: ring-burst 0.8s ease-out forwards;
+  border: 2px solid rgba(180,40,40,0.85);
+  animation: loss-ripple-impl 1.6s ease-in forwards;
 }
 
-.br2 {
-  animation-delay: 0.12s;
-  border-color: rgba(105, 240, 174, 0.9);
-  left: 60%;
+.lpr1 { width:  50px; height:  50px; animation-delay: 0.00s; }
+.lpr2 { width: 100px; height: 100px; animation-delay: 0.20s; border-color: rgba(150,30,30,0.55); }
+.lpr3 { width: 160px; height: 160px; animation-delay: 0.38s; border-color: rgba(120,20,20,0.30); }
+
+@keyframes loss-ripple-impl {
+  0%   { transform: translate(-50%,-50%) scale(3.5); opacity: 0; }
+  22%  { opacity: 0.95; }
+  100% { transform: translate(-50%,-50%) scale(0.05); opacity: 0; }
 }
 
-.br3 {
-  animation-delay: 0.24s;
-  border-color: rgba(255, 150, 255, 0.85);
-  left: 50%;
-  top: 40%;
-}
+/* -- LOSS: glitch lines ------------------------------------- */
 
-@keyframes ring-burst {
-  0%   { transform: translate(-50%, -50%) scale(0);  opacity: 1; border-width: 3px; }
-  50%  { opacity: 0.75; }
-  100% { transform: translate(-50%, -50%) scale(10); opacity: 0; border-width: 1px; }
-}
-
-/* Coriandoli base: position + clip */
-.confetti-piece {
+.loss-glitch {
   position: absolute;
-  top: 2px;
-  border-radius: 2px;
-  transform-origin: 50% 50%;
-  opacity: 0; // nascosti; ogni variante .cf-vX avvia la propria animation
-  &.round { border-radius: 50%; }
+  left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,80,80,0.7);
+  mix-blend-mode: screen;
+  animation: loss-glitch-anim var(--gl-dur, 0.25s) ease-out var(--gl-delay, 0s) forwards;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
-/* Due keyframe: senso orario e antiorario */
-@keyframes cf-cw {
-  0%   { transform: translateY(0)    rotate(0deg)    scale(1);   opacity: 0; }
-  7%   {                                                          opacity: 1; }
-  85%  {                                                          opacity: 0.8; }
-  100% { transform: translateY(130px) rotate(620deg)  scale(0.4); opacity: 0; }
-}
-@keyframes cf-ccw {
-  0%   { transform: translateY(0)    rotate(0deg)    scale(1);   opacity: 0; }
-  7%   {                                                          opacity: 1; }
-  85%  {                                                          opacity: 0.8; }
-  100% { transform: translateY(130px) rotate(-620deg) scale(0.4); opacity: 0; }
+.lg1 { top: 22%; --gl-delay: 0.10s; --gl-dur: 0.22s; }
+.lg2 { top: 47%; --gl-delay: 0.18s; --gl-dur: 0.18s; height: 3px; background: rgba(200,60,60,0.55); }
+.lg3 { top: 68%; --gl-delay: 0.28s; --gl-dur: 0.20s; }
+.lg4 { top: 80%; --gl-delay: 0.08s; --gl-dur: 0.14s; height: 1px; background: rgba(255,100,80,0.4); }
+
+@keyframes loss-glitch-anim {
+  0%   { transform: scaleX(0) translateX(-4px);   opacity: 0; }
+  15%  { transform: scaleX(1) translateX(0);       opacity: 1; }
+  50%  { transform: scaleX(1) translateX(6px);     opacity: 0.7; }
+  85%  { transform: scaleX(0.4) translateX(12px);  opacity: 0.3; }
+  100% { transform: scaleX(0) translateX(20px);    opacity: 0; }
 }
 
-/* 10 varianti con durate e delay diversi (~2-3 s totali) */
-.confetti-piece.cf-v0 { animation: cf-cw  2.4s ease-in 0.00s forwards; }
-.confetti-piece.cf-v1 { animation: cf-ccw 2.9s ease-in 0.08s forwards; }
-.confetti-piece.cf-v2 { animation: cf-cw  2.6s ease-in 0.18s forwards; }
-.confetti-piece.cf-v3 { animation: cf-ccw 3.0s ease-in 0.30s forwards; }
-.confetti-piece.cf-v4 { animation: cf-cw  2.2s ease-in 0.42s forwards; }
-.confetti-piece.cf-v5 { animation: cf-ccw 2.8s ease-in 0.12s forwards; }
-.confetti-piece.cf-v6 { animation: cf-cw  2.5s ease-in 0.50s forwards; }
-.confetti-piece.cf-v7 { animation: cf-ccw 2.7s ease-in 0.05s forwards; }
-.confetti-piece.cf-v8 { animation: cf-cw  2.3s ease-in 0.35s forwards; }
-.confetti-piece.cf-v9 { animation: cf-ccw 2.1s ease-in 0.22s forwards; }
+/* -- LOSS: drain verso il basso ----------------------------- */
 
-/* Croce di sconfitta — barre che formano una X e svaniscono */
-.loss-x-bar {
+.loss-drain {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 55%;
-  height: 4px;
-  background: rgba(229, 57, 53, 0.95);
-  border-radius: 2px;
-  box-shadow: 0 0 14px rgba(229, 57, 53, 0.8), 0 0 28px rgba(229, 57, 53, 0.4);
+  bottom: 0; left: 0; right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.0) 20%,
+    rgba(0,0,0,0.45) 70%,
+    rgba(0,0,0,0.70) 100%
+  );
+  transform-origin: bottom;
+  animation: loss-drain-anim 2.0s ease-out forwards;
 }
 
-.lx1 { animation: lx1-anim 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.0s forwards; }
-.lx2 { animation: lx2-anim 2.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards; }
-
-@keyframes lx1-anim {
-  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(45deg)  scaleX(0.1); }
-  18%  { opacity: 1; transform: translate(-50%, -50%) rotate(45deg)  scaleX(1);   }
-  65%  { opacity: 0.7; }
-  100% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg)  scaleX(1.3); }
-}
-@keyframes lx2-anim {
-  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scaleX(0.1); }
-  18%  { opacity: 1; transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);   }
-  65%  { opacity: 0.7; }
-  100% { opacity: 0; transform: translate(-50%, -50%) rotate(-45deg) scaleX(1.3); }
-}
-
-/* Cerchi che implodono (sconfitta — contrario dei burst rings) */
-.loss-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  border: 2px solid rgba(229, 57, 53, 0.85);
-}
-
-.lr1 {
-  width: 80px; height: 80px;
-  animation: lr-implode 1.4s ease-in 0.0s forwards;
-}
-.lr2 {
-  width: 120px; height: 120px;
-  animation: lr-implode 1.4s ease-in 0.2s forwards;
-  border-color: rgba(180, 30, 30, 0.6);
-}
-
-@keyframes lr-implode {
-  0%   { transform: translate(-50%, -50%) scale(2.0); opacity: 0; }
-  20%  { opacity: 0.9; }
-  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+@keyframes loss-drain-anim {
+  0%   { transform: scaleY(0); opacity: 0; }
+  25%  { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 0; transform: scaleY(1); }
 }
 
 /* Badge risultato */
@@ -656,77 +855,4 @@
 @keyframes badge-in {
   0%   { opacity: 0; transform: translateY(6px) scale(0.85); }
   100% { opacity: 1; transform: translateY(0)   scale(1);    }
-}
-
-@media (max-width: 360px) {
-  .league-pill  { padding: 5px 10px; font-size: 11.5px; }
-  .logo-wrapper { width: 48px; height: 48px; }
-  .team-logo    { width: 36px; height: 36px; }
-  .team-name    { font-size: 15px; }
-}
-
-/* ─── Stato B: nessuna pick per la giornata corrente ─────── */
-
-/* Wrapper colonna: no-pick row + chip risultato precedente */
-.no-pick-main {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-/* Chip recap ultima giocata */
-.last-result-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  .lrc-icon {
-    font-size: 12px;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-
-  .lrc-text {
-    flex: 1;
-    min-width: 0;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.42);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .lrc-badge {
-    flex-shrink: 0;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.2px;
-    padding: 2px 8px;
-    border-radius: 5px;
-    text-transform: uppercase;
-
-    &.win {
-      color: #69F0AE;
-      background: rgba(67, 160, 71, 0.14);
-      border: 1px solid rgba(67, 160, 71, 0.28);
-    }
-    &.loss {
-      color: #FF5252;
-      background: rgba(229, 57, 53, 0.14);
-      border: 1px solid rgba(229, 57, 53, 0.28);
-    }
-  }
-
-  &.lrc-win  { border-color: rgba(67, 160, 71, 0.2); }
-  &.lrc-loss { border-color: rgba(229, 57, 53, 0.2); }
-}
-
-@media (max-width: 480px) {
-  .last-result-chip { gap: 6px; padding: 6px 8px; }
-  .lrc-text         { font-size: 10px; }
 }

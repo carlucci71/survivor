@@ -41,8 +41,8 @@
     "SERIE_B": "Serie B",
     "LIGA": "La Liga",
     "TENNIS_W": "Wimbledon",
-    "TENNIS_AO": "Australian Open",
-    "NBA_RS": "NBA"
+    "TENNIS_AO": "Aus. Open",
+    "NBA_RS": "NBA Reg. Season"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",

@@ -184,6 +184,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Giornate visibili
   MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
 
+  // ─── Voti per squadra (chips mobile) ─────────────────────────────────────
+  votiSheet: { nome: string; sigla: string; nicknames: string[] } | null = null;
+
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
@@ -543,6 +546,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.squadraSelezionata) {
         this.salvaSquadra(giocatore, giornata, result.squadraSelezionata, result.pubblica);
+      } else if (result && result.eliminata) {
+        this.loadLegaDetails();
       }
     });
   }
@@ -651,34 +656,29 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Restituisce le giornate visibili per un giocatore (max 5)
+   * Restituisce le giornate visibili per un giocatore (max 5).
+   * Tutti i giocatori — attivi ed eliminati — ricevono lo stesso array di colonne
+   * in modo che il numero di <td> corrisponda sempre al numero di <th> dell'header.
    */
-  getVisibleGiornateForPlayer(giocatore: Giocatore): number[] {
+  getVisibleGiornateForPlayer(_giocatore: Giocatore): number[] {
     if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
 
-    // Se il giocatore è ELIMINATO, mostra solo le giornate fino all'ultima giocata
-    if (this.lega && giocatore.statiPerLega?.[this.lega.id]?.value === StatoGiocatore.ELIMINATO.value) {
-      const ultimaGiornataGiocata = this.getUltimaGiornataGiocata(giocatore);
-      if (ultimaGiornataGiocata > 0) {
-        // Filtra le giornate fino all'ultima giocata (compresa)
-        const giornateElim = this.giornataIndices.filter(g => g <= ultimaGiornataGiocata);
-        // Max 5 anche per eliminati
-        return giornateElim.length > this.MAX_VISIBLE_ROUNDS
-          ? giornateElim.slice(-this.MAX_VISIBLE_ROUNDS)
-          : giornateElim;
-      }
-      // Se non ha giocate, non mostrare nulla
-      return [];
-    }
-
-    // Mostra sempre max 5 giornate (le ultime)
     const totalRounds = this.giornataIndices.length;
     if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
       return this.giornataIndices;
     }
-
-    // Prendi le ultime MAX_VISIBLE_ROUNDS giornate
     return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+  }
+
+  /**
+   * True se la cella è "post-eliminazione" per un giocatore eliminato:
+   * usato nel template per applicare uno stile visivo diverso.
+   */
+  isCellPostElim(giocatore: Giocatore, giornataAssoluta: number): boolean {
+    if (!this.lega) return false;
+    if (giocatore.statiPerLega?.[this.lega.id]?.value !== StatoGiocatore.ELIMINATO.value) return false;
+    const ultimaGiocata = this.getUltimaGiornataGiocata(giocatore);
+    return ultimaGiocata > 0 && giornataAssoluta > ultimaGiocata;
   }
 
   /**
@@ -1086,6 +1086,12 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   isCurrentRoundInProgress(): boolean {
     return this.lega?.statoGiornataCorrente?.value === StatoPartita.IN_CORSO.value;
+  }
+
+  /** True quando la giornata è in fase attiva di scelta (DA_GIOCARE o IN_CORSO) */
+  isRoundPickPhaseActive(): boolean {
+    const stato = this.lega?.statoGiornataCorrente?.value;
+    return stato === StatoPartita.DA_GIOCARE.value || stato === StatoPartita.IN_CORSO.value;
   }
 
   /**
@@ -1556,6 +1562,22 @@ export class LegaDettaglioComponent implements OnDestroy {
       });
   }
 
+  eliminaGiocata(giocatore: Giocatore, giornata: number): void {
+    if (!this.lega) return;
+    this.giocataService.eliminaGiocata(giornata, giocatore.id, this.lega.id)
+      .subscribe({
+        next: (res: Giocatore) => {
+          if (res && Array.isArray(res.giocate)) {
+            giocatore.giocate = res.giocate;
+          }
+          this.loadLegaDetails();
+        },
+        error: (err: any) => {
+          console.error('Errore nell\'eliminazione della giocata', err);
+        },
+      });
+  }
+
   /**
    * Controlla se il giocatore corrente può giocare/modificare la giornata corrente
    *
@@ -2000,8 +2022,45 @@ export class LegaDettaglioComponent implements OnDestroy {
     };
   }
 
-  openSamePickDialog(): void {
-    const data = this.getSamePickForCurrentUser();
+  /**
+   * Raggruppa i voti visibili della giornata corrente per squadra.
+   * Usato dalle chips mobili. Restituisce array ordinato per count desc.
+   */
+  getVotiPerSquadra(): { nome: string; sigla: string; count: number; nicknames: string[] }[] {
+    if (!this.lega?.giornataCorrente || !this.lega?.giocatori) return [];
+    const giornataCorrente = this.lega.giornataCorrente;
+    const map = new Map<string, { nome: string; sigla: string; count: number; nicknames: string[] }>();
+
+    const roundInCorso = this.lega.statoGiornataCorrente?.value === StatoPartita.IN_CORSO.value;
+
+    for (const giocatore of this.lega.giocatori) {
+      const giocata = this.getGiocataByGiornataAssoluta(giocatore, giornataCorrente);
+      if (!giocata?.squadraSigla) continue;
+      if (this.shouldHideGiocata(giocata, giornataCorrente)) continue;
+      // I voti privati (pubblica !== true) si svelano solo quando la giornata è IN_CORSO
+      if (!roundInCorso && giocata.pubblica !== true) continue;
+      const sigla: string = giocata.squadraSigla;
+      const nome = this.getSquadraNome(sigla) || sigla;
+      if (!map.has(sigla)) {
+        map.set(sigla, { nome, sigla, count: 0, nicknames: [] });
+      }
+      const entry = map.get(sigla)!;
+      entry.count++;
+      entry.nicknames.push(giocatore.nickname);
+    }
+
+    return Array.from(map.values()).sort((a, b) => b.count - a.count);
+  }
+
+  openVotiSheet(entry: { nome: string; sigla: string; count: number; nicknames: string[] }): void {
+    this.votiSheet = { nome: entry.nome, sigla: entry.sigla, nicknames: entry.nicknames };
+  }
+
+  closeVotiSheet(): void {
+    this.votiSheet = null;
+  }
+
+  openSamePickDialog(): void {    const data = this.getSamePickForCurrentUser();
     if (!data || data.nicknames.length === 0) return;
     const isMobile = window.innerWidth < 600;
     this.dialog.open(SamePickDialogComponent, {

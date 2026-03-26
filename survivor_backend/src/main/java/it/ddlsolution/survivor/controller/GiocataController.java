@@ -7,6 +7,7 @@ import it.ddlsolution.survivor.aspect.guardlogger.rule.GiocataRule;
 import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.service.InserisciGiocataService;
+import it.ddlsolution.survivor.service.GiocataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -15,6 +16,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -25,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class GiocataController {
     private final ObjectProvider<InserisciGiocataService> inserisciGiocataServiceProvider;
+    private final GiocataService giocataService;
 
     @PostMapping
     @LoggaDispositiva(tipologia = "gioca")
@@ -39,6 +43,15 @@ public class GiocataController {
         }
 
         GiocatoreDTO result = inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(request);
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<GiocatoreDTO> eliminaGiocata(
+            @RequestParam Integer giornata,
+            @RequestParam Long giocatoreId,
+            @RequestParam Long legaId) {
+        GiocatoreDTO result = giocataService.eliminaGiocata(giornata, giocatoreId, legaId);
         return ResponseEntity.ok(result);
     }
 }

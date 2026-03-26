@@ -20,6 +20,12 @@ public interface GiocataRepository extends JpaRepository<Giocata, Long> {
     Optional<Giocata> findTopByGiocatore_IdAndLega_IdOrderByGiornataDesc(Long giocatoreId, Long legaId);
 
     /**
+     * Trova l'ultima giocata con esito definitivo (non null) di un giocatore in una lega.
+     * Usata per mostrare il risultato precedente nella home quando non esiste ancora una pick per la giornata corrente.
+     */
+    Optional<Giocata> findTopByGiocatore_IdAndLega_IdAndEsitoIsNotNullOrderByGiornataDesc(Long giocatoreId, Long legaId);
+
+    /**
      * Tutte le giocate di una lega per una specifica giornata (relativa)
      */
     List<Giocata> findByGiornataAndLega_Id(Integer giornata, Long legaId);

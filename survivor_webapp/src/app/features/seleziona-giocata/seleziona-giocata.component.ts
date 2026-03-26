@@ -24,6 +24,7 @@ import {
 import { LegaService } from '../../core/services/lega.service';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { SquadraService } from '../../core/services/squadra.service';
+import { GiocataService } from '../../core/services/giocata.service';
 
 @Component({
   selector: 'app-seleziona-giocata',
@@ -423,6 +424,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
+    private giocataService: GiocataService,
   ) {
     this.currentLang = this.translate.currentLang || this.translate.getDefaultLang() || 'it';
     this.translate.onLangChange.subscribe((event) => {
@@ -915,9 +917,55 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   selezionaSquadra(sigla: string): void {
+    // Click sulla squadra già selezionata → mostra popup di conferma
+    if (this.squadraSelezionata === sigla) {
+      this.showConfirmRemove = true;
+      return;
+    }
     this.squadraSelezionata = sigla;
     this.mostraUltimiRisultati(this.squadraSelezionata);
     this.mostraProssimePartite();
+  }
+
+  annullaRimozione(): void {
+    this.showConfirmRemove = false;
+  }
+
+  confermaRimozione(): void {
+    if (this._eliminaLoading) return;
+    this._eliminaLoading = true;
+    console.log('🗑️ Elimina giocata - giornata:', this.data.giornata, 'giocatoreId:', this.data.giocatore.id, 'legaId:', this.data.lega.id);
+    this.giocataService.eliminaGiocata(
+      this.data.giornata,
+      this.data.giocatore.id,
+      this.data.lega.id
+    ).subscribe({
+      next: (res) => {
+        console.log('✅ Giocata eliminata con successo', res);
+        this._eliminaLoading = false;
+        this.showConfirmRemove = false;
+        this.squadraSelezionata = null;
+        this.dialogRef.close({ eliminata: true });
+      },
+      error: (err: any) => {
+        this._eliminaLoading = false;
+        this.showConfirmRemove = false;
+        console.error('❌ Errore eliminazione giocata - status:', err?.status, 'message:', err?.error?.message || err?.message, err);
+      }
+    });
+  }
+
+  _giocataEliminata = false;
+  showConfirmRemove = false;  // mostra overlay di conferma rimozione
+  _eliminaLoading = false;   // spinner durante la chiamata
+
+  /** Intercetta la chiusura (es. click X) per notificare al padre se la giocata è stata eliminata */
+  chiudi(): void {
+    if (this._giocataEliminata) {
+      this.dialogRef.close({ eliminata: true });
+    } else {
+      this.dialogRef.close();
+    }
   }
 
   caricaProssimaGiornata(): void {
