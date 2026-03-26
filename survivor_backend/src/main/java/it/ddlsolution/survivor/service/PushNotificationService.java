@@ -189,7 +189,6 @@ public class PushNotificationService {
             NotificationDTO notificationDTO = new NotificationDTO();
             notificationDTO.setUser(userService.userById(userId));
             notificationDTO.setBody(pushNotificationDTO.getBody());
-            notificationDTO.setImageUrl(pushNotificationDTO.getImageUrl());
             notificationDTO.setTitle(pushNotificationDTO.getTitle());
             notificationDTO.setType(pushNotificationDTO.getTipoNotifica().name());
             notificationDTO.setExpiringAt(getInSeconds(pushNotificationDTO.getExpiringAt()));
@@ -246,7 +245,7 @@ public class PushNotificationService {
             Notification notification = Notification.builder()
                     .setTitle(dto.getTitle())
                     .setBody(dto.getBody())
-                    .setImage(dto.getImageUrl())
+                    // imageUrl non passato: evita notifica "grande con foto" sullo smartphone
                     .build();
 
             AndroidConfig androidConfig = AndroidConfig.builder()
@@ -281,7 +280,7 @@ public class PushNotificationService {
             Notification notification = Notification.builder()
                     .setTitle(dto.getTitle())
                     .setBody(dto.getBody())
-                    .setImage(dto.getImageUrl())
+                    // imageUrl non passato: evita notifica "grande con foto" sullo smartphone
                     .build();
 
             ApnsConfig apnsConfig = ApnsConfig.builder()
@@ -309,9 +308,16 @@ public class PushNotificationService {
     }
 
     private Map<String, String> getAllDataFromPushNotification(PushNotificationDTO dto) {
-        Map ret = new HashMap();
+        Map<String, String> ret = new HashMap<>();
         ret.put("TYPE", dto.getTipoNotifica().getDescrizione());
+        ret.put("tipoNotifica", dto.getTipoNotifica().name());
         ret.put("EXPIRING_AT", dto.getExpiringAt().toString());
+        if (dto.getLegaId() != null) {
+            ret.put("legaId", dto.getLegaId().toString());
+        }
+        if (dto.getGiornata() != null) {
+            ret.put("giornata", dto.getGiornata().toString());
+        }
         return ret;
     }
 

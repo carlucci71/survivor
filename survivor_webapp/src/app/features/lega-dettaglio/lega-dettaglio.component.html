@@ -1,5 +1,5 @@
 <div class="lega-dettaglio-container">
-  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" (back)="goBack()" (logout)="logout()"></app-header>
+  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content">
     <div class="lega-dettaglio-container">
@@ -21,7 +21,15 @@
               (click)="shareLink()"
               [matTooltip]="'COMMON.SHARE_LINK' | translate">
               <mat-icon>share</mat-icon>
-            </button>          </div>
+            </button>
+          </div>
+          @if (lega.giornataCalcolata && recapGiornataRelativa !== null) {
+            <button class="recap-mini-link" (click)="goToRecap()">
+              <span class="recap-mini-link__icon">🎬</span>
+              <span class="recap-mini-link__text">{{ 'RECAP.RIVIVI_LINK' | translate }} {{ recapGiornataRelativa }}</span>
+              <span class="recap-mini-link__arrow">›</span>
+            </button>
+          }
           <div class="recap-sport-row">
             <span class="recap-sport-chip">
               <mat-icon class="recap-sport-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
@@ -150,8 +158,11 @@
               <span class="countdown-time">{{ countdown }}</span>
             </div>
           </div>
-          } @else if(lega.inizioProssimaGiornata) {
-          <div class="prossimo-inizio">{{ 'LEAGUE.NEXT_START' | translate }}: {{ lega.inizioProssimaGiornata }}</div>
+          } @else if(lega.inizioProssimaGiornata && isProssimaGiornataFutura()) {
+          <div class="prossimo-inizio">
+            <mat-icon class="prossimo-inizio-icon">event</mat-icon>
+            {{ 'LEAGUE.NEXT_START' | translate }}: {{ lega.inizioProssimaGiornata | date:'dd/MM/yyyy HH:mm' }}
+          </div>
           }
         </div>
       }
@@ -192,9 +203,10 @@
         }
       </div>
       }
+      }
 
 
-      } @if (lega.giocatori?.length) {
+      @if (lega.giocatori?.length) {
 
       <!-- BOTTONE GIOCA PRINCIPALE - IN PRIMO PIANO -->
       @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore())) {

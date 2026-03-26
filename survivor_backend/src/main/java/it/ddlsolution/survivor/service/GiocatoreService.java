@@ -25,21 +25,8 @@ public class GiocatoreService {
 
     @Transactional
     public GiocatoreDTO me() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal();
-        return giocatoreMapper.projectionToDTO(giocatoreRepository.findProjectionByUserId(userId).orElseGet(
-                () -> {
-                    //Se non esiste ancora un giocatore associato allo user, lo creo e glielo associo
-                    Giocatore giocatore = new Giocatore();
-                    User user = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
-                    giocatore.setUser(user);
-                    giocatore.setNickname(user.getName());
-                    giocatoreRepository.save(giocatore);
-                    return giocatoreRepository.findProjectionByUserId(userId)
-                        .orElseThrow(() -> new RuntimeException("Errore creazione giocatore per userId: " + userId));
-                }
-        ));
+        // Usa l'entity completa (non la projection) per popolare statiPerLega e ruoliPerLega via @AfterMapping
+        return giocatoreMapper.toDTO(findMe());
     }
 
 

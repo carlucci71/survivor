@@ -127,6 +127,7 @@ export interface Lega {
   maxPartecipanti?: number;
   accessoLibero?: boolean;
   richiesteInAttesa?: number;
+  miaGiocataCorrente?: Giocata;
 }
 
 export interface LegaJoinRequest {
@@ -210,8 +211,10 @@ export interface Giocatore {
 export interface Giocata {
   id?: number;
   giornata?: number;
+  legaId?: number;
   squadraId?: number;
   squadraSigla: string;
+  squadraNome?: string;
   esito?: string;
   forzatura?: string;
   pubblica?: boolean; // Se true, la giocata è visibile a tutti; se false/undefined, è nascosta fino all'inizio della giornata
@@ -273,5 +276,40 @@ export interface Notification {
   createdAt: string;
   expiringAt: string;
   legaId?: number;
+}
+
+// ─── Recap Giornata ────────────────────────────────────────────────────────────
+
+export interface RecapPickEntry {
+  nickname: string;
+  squadraNome: string | null;
+  squadraSigla: string | null;
+  esito: 'OK' | 'KO' | null;
+  statoDopoGiornata: 'ATTIVO' | 'ELIMINATO' | 'PENDING';
+  eliminatoQuestaGiornata: boolean;
+  forzata: boolean;
+}
+
+export interface RecapStatGiornata {
+  squadraPiuScelta: string | null;
+  quanti: number;
+  pickPiuReagito: string | null;
+  reazioni: number;
+}
+
+export interface RecapGiornata {
+  legaId: number;
+  legaNome: string;
+  edizione: number;
+  giornata: number;           // assoluta
+  giornataRelativa: number;   // progressiva nella lega
+  campionatoNome: string | null;
+  sport: string | null;
+  totaleMembri: number;
+  sopravvissuti: number;
+  eliminatiQuestaGiornata: number;
+  totaleEliminati: number;
+  picks: RecapPickEntry[];
+  stats: RecapStatGiornata;
 }
 

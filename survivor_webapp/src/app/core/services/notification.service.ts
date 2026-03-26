@@ -25,14 +25,12 @@ export class NotificationService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Recupera le notifiche per l'utente autenticato
-   * @param userId - ID dell'utente
+   * Recupera le notifiche per l'utente autenticato (userId estratto dal JWT lato server)
    * @param activeOnly - true = solo notifiche attive (non lette e non scadute)
    */
-  getNotifications(userId: number, activeOnly: boolean = true): Observable<Notification[]> {
+  getNotifications(activeOnly: boolean = true): Observable<Notification[]> {
     return this.http.get<Notification[]>(`${this.apiUrl}`, {
       params: {
-        userId: userId.toString(),
         active: activeOnly.toString()
       }
     }).pipe(
@@ -75,10 +73,26 @@ export class NotificationService {
   }
 
   /**
-   * Avvia il polling automatico delle notifiche ogni 90 secondi
-   * @param userId - ID dell'utente autenticato
+   * Marca tutte le notifiche dell'utente autenticato come lette
    */
-  startPolling(userId: number): void {
+  markAllAsRead(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/read-all`, {}).pipe(
+      tap(() => {
+        const updated = this.notificationsSubject.value.map(n => ({ ...n, read: true }));
+        this.notificationsSubject.next(updated);
+        this.unreadCountSubject.next(0);
+      }),
+      catchError(error => {
+        console.error('Errore nel marcare tutte le notifiche come lette:', error);
+        throw error;
+      })
+    );
+  }
+
+  /**
+   * Avvia il polling automatico delle notifiche ogni 90 secondi
+   */
+  startPolling(): void {
     // Ferma il polling precedente se esiste
     if (this.pollingSubscription) {
       this.pollingSubscription.unsubscribe();
@@ -86,12 +100,12 @@ export class NotificationService {
     }
 
     // Carica subito le notifiche
-    this.getNotifications(userId, true).subscribe();
+    this.getNotifications(true).subscribe();
 
     // Poi ripeti ogni 90 secondi (ottimizzato per performance)
     this.pollingSubscription = interval(90000) // 90 secondi
       .pipe(
-        switchMap(() => this.getNotifications(userId, true))
+        switchMap(() => this.getNotifications(true))
       )
       .subscribe();
   }

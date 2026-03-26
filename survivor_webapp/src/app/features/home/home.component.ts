@@ -10,9 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Giocatore, Lega, StatoLega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega, StatoGiocatore, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
-import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +30,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 
 
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
+import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 
 
 @Component({
@@ -46,7 +46,6 @@ import { OnboardingComponent } from '../../shared/components/onboarding/onboardi
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
-    MatTooltip,
     MatDialogModule,
     MatIconModule,
     TranslateModule,
@@ -55,7 +54,8 @@ import { OnboardingComponent } from '../../shared/components/onboarding/onboardi
     MatFormFieldModule,
     MatInputModule,
     TranslateLeagueDataPipe,
-    OnboardingComponent
+    OnboardingComponent,
+    GiocataRecapCardComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -77,7 +77,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
-  totalRichiesteInAttesa = 0;
 
   constructor(
     private authService: AuthService,
@@ -216,6 +215,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     return lega!.stato.value === StatoLega.TERMINATA.value;
   }
 
+  getMioStatoInLega(edizione: Lega): string | null {
+    if (edizione.stato.value === StatoLega.DA_AVVIARE.value) return null;
+    const stato = this.me?.statiPerLega?.[edizione.id] as any;
+    if (!stato) return null;
+    // Il backend serializza l'enum come stringa: "ATTIVO", "ELIMINATO", "PENDING"
+    return typeof stato === 'string' ? stato : (stato.value ?? null);
+  }
+
   notExistsNuovaEdizione(lega: Lega): boolean {
     if (!lega) {
       return true;
@@ -253,7 +260,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (leghe) => {
         this.leghe = leghe;
         this.groupLegheByName(leghe);
-        this.aggiornaContatorRichieste();
         if (preferredTab) {
           this.activeTab = preferredTab;
         }
@@ -332,22 +338,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
-  }
-
-  isLeaderConRichieste(): boolean {
-    return this.leghe.some(
-      l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER'
-    );
-  }
-
-  goToRichieste(): void {
-    this.router.navigate(['/richieste']);
-  }
-
-  private aggiornaContatorRichieste(): void {
-    this.totalRichiesteInAttesa = this.leghe
-      .filter(l => l.pubblica && !l.accessoLibero && l.ruoloGiocatoreLega?.value === 'LEADER')
-      .reduce((sum, l) => sum + (l.richiesteInAttesa ?? 0), 0);
   }
 
   logout(): void {

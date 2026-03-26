@@ -158,9 +158,11 @@ public class Enumeratori {
 
     public enum TipoNotifica {
         INIZIO_PARTITA("Inizio partita"),
+        REMINDER_GIORNATA("Promemoria giornata"),
         JOIN_REQUEST_RICEVUTA("Richiesta di ingresso"),
         JOIN_REQUEST_APPROVATA("Richiesta approvata"),
-        JOIN_REQUEST_RIFIUTATA("Richiesta rifiutata");
+        JOIN_REQUEST_RIFIUTATA("Richiesta rifiutata"),
+        RECAP_GIORNATA("Recap giornata");
 
         String descrizione;
         TipoNotifica(String descrizione){

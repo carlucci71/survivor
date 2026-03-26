@@ -42,10 +42,7 @@ public class LegaJoinRequestService {
         Lega lega = legaRepository.findById(idLega)
                 .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
 
-        if (!lega.isPubblica()) {
-            throw new ManagedException("Lega non pubblica", ManagedException.InternalCode.LEGA_NOT_PUBBLICA);
-        }
-        if (lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
+        if (lega.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new ManagedException("La lega non accetta più iscrizioni", ManagedException.InternalCode.LEGA_NOT_FOUND);
         }
 
@@ -101,7 +98,7 @@ public class LegaJoinRequestService {
                 .filter(lega -> lega.getGiocatoreLeghe().stream()
                         .anyMatch(gl -> gl.getGiocatore().getId().equals(giocatore.getId())
                                 && gl.getRuolo() == Enumeratori.RuoloGiocatoreLega.LEADER))
-                .filter(lega -> lega.isPubblica() && !lega.isAccessoLibero())
+                .filter(lega -> !lega.isAccessoLibero())
                 .toList();
 
         if (mieLegheDaLeader.isEmpty()) return List.of();

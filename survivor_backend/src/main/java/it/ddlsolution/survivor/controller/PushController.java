@@ -94,15 +94,16 @@ public class PushController {
 
 
     /**
-     * GET /api/notifications?userId=123&unreadOnly=true
-     * Scheletro dell'endpoint: riceve userId e unreadOnly come query params.
+     * GET /api/notifications?active=true
+     * Recupera le notifiche dell'utente autenticato (userId estratto dal JWT).
      */
     @GetMapping
     public ResponseEntity<List<NotificationDTO>> getNotifications(
-            @RequestParam Long userId,
             @RequestParam(required = false, defaultValue = "false") boolean active
     ) {
-        log.info("GET /api/notifications userId={} unreadOnly={}", userId, active);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        log.info("GET /api/notifications userId={} active={}", userId, active);
 
         List<NotificationDTO> notifications = notificationService.listNotifications(userId, active);
         return ResponseEntity.ok(notifications);
@@ -119,6 +120,19 @@ public class PushController {
 
         notificationService.markAsRead(id, userId);
 
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * POST /push/read-all
+     * Marca tutte le notifiche dell'utente autenticato come lette.
+     */
+    @PostMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        log.info("POST /push/read-all userId={}", userId);
+        notificationService.markAllAsRead(userId);
         return ResponseEntity.ok().build();
     }
 
