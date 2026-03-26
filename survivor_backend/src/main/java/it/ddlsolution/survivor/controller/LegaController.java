@@ -3,10 +3,12 @@ package it.ddlsolution.survivor.controller;
 import it.ddlsolution.survivor.aspect.guardlogger.GuardiaDispositiva;
 import it.ddlsolution.survivor.aspect.guardlogger.rule.LeaderRule;
 import it.ddlsolution.survivor.dto.LegaDTO;
+import it.ddlsolution.survivor.dto.RecapGiornataDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
 import it.ddlsolution.survivor.service.LegaService;
+import it.ddlsolution.survivor.service.RecapGiornataService;
 import it.ddlsolution.survivor.util.Utility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +35,7 @@ import java.util.Map;
 public class LegaController {
 
     private final LegaService legaService;
+    private final RecapGiornataService recapGiornataService;
     private final Utility utility;
 
 
@@ -121,6 +124,17 @@ public class LegaController {
     public ResponseEntity<Map<String, Object>> eliminaLega(@PathVariable Long idLega) {
         legaService.eliminaLega(idLega);
         return ResponseEntity.ok(Map.of("success", true, "message", "Lega eliminata con successo"));
+    }
+
+    /**
+     * Restituisce il recap di una giornata (relativa alla lega).
+     * Accessibile da tutti i membri della lega, attivi e non.
+     */
+    @GetMapping("/{idLega}/recap/{giornata}")
+    public ResponseEntity<RecapGiornataDTO> getRecap(
+            @PathVariable Long idLega,
+            @PathVariable Integer giornata) {
+        return ResponseEntity.ok(recapGiornataService.getRecap(idLega, giornata));
     }
 
 }

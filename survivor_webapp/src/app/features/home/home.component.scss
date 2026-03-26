@@ -291,81 +291,6 @@
 	}
 }
 
-/* RICHIESTE INGRESSO - bottone leader header */
-::ng-deep .richieste-button {
-	position: relative !important;
-	width: 36px !important;
-	height: 36px !important;
-	padding: 0 !important;
-	background: rgba(251, 191, 36, 0.25) !important;
-	color: #ffffff !important;
-	border: 2px solid rgba(251, 191, 36, 0.6) !important;
-	border-radius: 50% !important;
-	cursor: pointer !important;
-	transition: all 0.22s ease !important;
-	margin-left: 8px !important;
-	display: inline-flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	box-sizing: border-box !important;
-	z-index: 1000 !important;
-
-	mat-icon {
-		font-size: 18px !important;
-		width: 18px !important;
-		height: 18px !important;
-		line-height: 1 !important;
-	}
-
-	&:hover {
-		background: rgba(251, 191, 36, 0.4) !important;
-		transform: scale(1.08) !important;
-	}
-}
-
-.richieste-badge {
-	position: absolute !important;
-	top: -4px !important;
-	right: -4px !important;
-	background: #EF4444 !important;
-	color: #fff !important;
-	font-size: 0.65rem !important;
-	font-weight: 700 !important;
-	min-width: 16px !important;
-	height: 16px !important;
-	border-radius: 999px !important;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
-	padding: 0 3px !important;
-	line-height: 1 !important;
-	pointer-events: none !important;
-	animation: badge-pulse 2s ease-in-out infinite;
-}
-
-@keyframes badge-pulse {
-	0%, 100% { transform: scale(1); }
-	50% { transform: scale(1.15); }
-}
-
-@media (max-width: 768px) {
-	::ng-deep .richieste-button {
-		width: 32px !important;
-		height: 32px !important;
-		margin-left: 6px !important;
-		mat-icon { font-size: 16px !important; width: 16px !important; height: 16px !important; }
-	}
-}
-
-@media (max-width: 480px) {
-	::ng-deep .richieste-button {
-		width: 38px !important;
-		height: 38px !important;
-		margin-left: 8px !important;
-		mat-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; }
-	}
-}
-
 /* SETTINGS ICON - STACCATA DAL CHIP UTENTE (DEPRECATO) */
 ::ng-deep .settings-icon {
 	background: rgba(255, 255, 255, 0.25) !important; /* Più visibile */
@@ -700,6 +625,50 @@ h2 {
 	}
 }
 
+// ── Badge stato survivor nella subtitle dell'edizione ─────────────────────
+.survivor-status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	margin-left: 8px;
+	padding: 2px 8px;
+	border-radius: 12px;
+	font-size: 0.72rem;
+	font-weight: 700;
+	vertical-align: middle;
+	line-height: 1.4;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+
+	.ssb-icon {
+		font-size: 11px !important;
+		width: 11px !important;
+		height: 11px !important;
+		opacity: 0.85;
+	}
+
+	&--attivo {
+		background: rgba(34, 197, 94, 0.13);
+		color: #15803d;
+		border: 1px solid rgba(34, 197, 94, 0.3);
+		.ssb-icon { color: #15803d; }
+	}
+
+	&--eliminato {
+		background: rgba(239, 68, 68, 0.10);
+		color: #b91c1c;
+		border: 1px solid rgba(239, 68, 68, 0.25);
+		.ssb-icon { color: #b91c1c; }
+	}
+
+	&--pending {
+		background: rgba(245, 158, 11, 0.12);
+		color: #92400e;
+		border: 1px solid rgba(245, 158, 11, 0.28);
+		.ssb-icon { color: #92400e; }
+	}
+}
+
 // ── Chip numero partecipanti nella subtitle dell'edizione ─────────────────
 .partecipanti-chip {
 	display: inline-flex;
@@ -722,25 +691,6 @@ h2 {
 		color: #2e7d32;
 		opacity: 0.8;
 	}
-}
-
-// ── Badge richieste pendenti sul titolo edizione (solo leader) ───────────
-.jr-pending-badge {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 18px;
-	height: 18px;
-	padding: 0 5px;
-	background: #e53935;
-	color: #fff;
-	border-radius: 9px;
-	font-size: 0.68rem;
-	font-weight: 700;
-	margin-left: 5px;
-	vertical-align: middle;
-	line-height: 18px;
-	box-shadow: 0 1px 4px rgba(229, 57, 53, 0.4);
 }
 
 .leghe-groups {

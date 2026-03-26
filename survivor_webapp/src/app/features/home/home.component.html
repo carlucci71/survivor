@@ -13,10 +13,6 @@
         </ng-template>
       </mat-chip>
 
-      <button *ngIf="isLeaderConRichieste() && totalRichiesteInAttesa > 0" mat-icon-button class="richieste-button" (click)="goToRichieste()" [matTooltip]="'RICHIESTE.TOOLTIP' | translate" aria-label="Richieste ingresso">
-        <mat-icon>how_to_reg</mat-icon>
-        <span class="richieste-badge">{{ totalRichiesteInAttesa }}</span>
-      </button>
     </div>
   </app-header>
 
@@ -27,7 +23,7 @@
   <app-hero-three></app-hero-three>
 
   <!-- GIOCATA RECAP CARD -->
-  <app-giocata-recap-card [leghe]="leghe"></app-giocata-recap-card>
+  <app-giocata-recap-card [leghe]="leghe" (refreshRequired)="loadLeghe()"></app-giocata-recap-card>
 
   <main class="main-content">
 
@@ -133,7 +129,6 @@
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
-                          <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
                         <mat-card-subtitle>
                           {{ edizione.stato.value | translateLeagueData: 'status' }}
@@ -141,6 +136,12 @@
                             <mat-icon class="part-icon">group</mat-icon>
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
+                          <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
+                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
+                            </span>
+                          </ng-container>
                         </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>
@@ -195,7 +196,6 @@
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
-                          <span class="jr-pending-badge" *ngIf="edizione.pubblica && !edizione.accessoLibero && edizione.ruoloGiocatoreLega?.value === 'LEADER' && (edizione.richiesteInAttesa ?? 0) > 0">{{ edizione.richiesteInAttesa }}</span>
                         </mat-card-title>
                         <mat-card-subtitle>
                           {{ edizione.stato.value | translateLeagueData: 'status' }}
@@ -203,6 +203,12 @@
                             <mat-icon class="part-icon">group</mat-icon>
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
+                          <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
+                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
+                            </span>
+                          </ng-container>
                         </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>

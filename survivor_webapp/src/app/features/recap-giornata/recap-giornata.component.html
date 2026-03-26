@@ -1,0 +1,296 @@
+<!-- ═══════════════════════════════════════════════════════════════════════
+     RECAP GIORNATA — Fullscreen Story Overlay
+     ═══════════════════════════════════════════════════════════════════════ -->
+
+<div class="recap-root"
+     (touchstart)="onTouchStart($event)"
+     (touchend)="onTouchEnd($event)"
+     (touchcancel)="onTouchCancel()">
+  <div class="recap-card">
+
+  <!-- ── Loading ────────────────────────────────────────────────────────── -->
+  @if (loading) {
+    <div class="recap-loading">
+      <div class="pulse-ring"></div>
+      <span>Caricamento risultati…</span>
+    </div>
+  }
+
+  <!-- ── Error ──────────────────────────────────────────────────────────── -->
+  @if (error) {
+    <div class="recap-error">
+      <span class="recap-error__icon">😕</span>
+      <p>Impossibile caricare il recap</p>
+      @if (errorDetail) {
+        <p class="recap-error__detail">{{ errorDetail }}</p>
+      }
+      <button class="btn-outline" (click)="close()">Torna alla lega</button>
+    </div>
+  }
+
+  <!-- ── Main content ───────────────────────────────────────────────────── -->
+  @if (!loading && !error && recap) {
+
+    <!-- Progress bar top -->
+    <div class="progress-bar-row">
+      @for (slide of slides; track slide.id; let i = $index) {
+        <div class="progress-seg"
+             [class.active]="i <= currentIdx"
+             (click)="goTo(i)">
+        </div>
+      }
+    </div>
+
+    <!-- Header controls -->
+    <div class="recap-header">
+      <span class="recap-lega-label">{{ recap.legaNome }}</span>
+      <button class="btn-close" (click)="close()" aria-label="Chiudi">✕</button>
+    </div>
+
+    <!-- ════════════════════ SLIDES ════════════════════ -->
+
+    <!-- ── SLIDE 1: COVER ─────────────────────────────────────────────── -->
+    @if (currentSlide === 'cover') {
+      <div class="slide slide--cover" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="cover__bg-overlay"></div>
+        <div class="cover__content">
+          <div class="cover__sport-emoji">{{ sportEmoji(recap.sport) }}</div>
+          <div class="cover__giornata-badge">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }}</div>
+          <h1 class="cover__title">{{ 'RECAP.RESULTS_READY_1' | translate }}<br>{{ 'RECAP.RESULTS_READY_2' | translate }}</h1>
+          <div class="cover__lega">
+            <span class="badge-edition">Ed. {{ recap.edizione }}</span>
+            <span class="cover__lega-name">{{ recap.legaNome }}</span>
+          </div>
+          @if (recap.campionatoNome) {
+            <p class="cover__camp">{{ recap.campionatoNome }}</p>
+          }
+          <div class="cover__teaser">
+            <div class="teaser-chip teaser-chip--vivi">
+              <span class="teaser-chip__num">{{ recap.sopravvissuti }}</span>
+              <span class="teaser-chip__lbl">ancora viv{{ recap.sopravvissuti === 1 ? 'o' : 'i' }}</span>
+            </div>
+            @if (recap.eliminatiQuestaGiornata > 0) {
+              <div class="teaser-chip teaser-chip--out">
+                <span class="teaser-chip__num">{{ recap.eliminatiQuestaGiornata }}</span>
+                <span class="teaser-chip__lbl">eliminat{{ recap.eliminatiQuestaGiornata === 1 ? 'o' : 'i' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="cover__scroll-hint" (click)="next()">
+          <span>{{ 'RECAP.SCROLL_HINT' | translate }}</span>
+          <span class="chevron-down">⌄</span>
+        </div>
+      </div>
+    }
+
+    <!-- ── SLIDE 2: LE SCELTE ─────────────────────────────────────────── -->
+    @if (currentSlide === 'scelte') {
+      <div class="slide slide--scelte" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="slide__inner">
+          <h2 class="slide__title">{{ 'RECAP.PICKS_TITLE' | translate }}</h2>
+          <p class="slide__subtitle">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }} · {{ recap.totaleMembri }} {{ 'RECAP.PLAYERS' | translate }}</p>
+          <div class="picks-list" [@staggerCards]="recap.picks.length">
+            @for (pick of recap.picks; track pick.nickname) {
+              <div class="pick-row" [class.pick-row--ok]="pick.esito === 'OK'" [class.pick-row--ko]="pick.esito === 'KO'">
+                <div class="pick-row__left">
+                  <span class="pick-row__esito-icon">
+                    @if (pick.esito === 'OK') { ✅ }
+                    @else if (pick.esito === 'KO') { ❌ }
+                    @else { ⏳ }
+                  </span>
+                  <span class="pick-row__nickname">{{ pick.nickname }}</span>
+                </div>
+                <div class="pick-row__right">
+                  @if (pick.squadraNome) {
+                    <span class="pick-row__team">{{ pick.squadraNome }}</span>
+                  } @else {
+                    <span class="pick-row__team pick-row__team--none">{{ 'RECAP.NO_PICK' | translate }}</span>
+                  }
+                  @if (pick.forzata) {
+                    <span class="pick-badge pick-badge--forzata">F</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ── SLIDE 3: SOPRAVVISSUTI ─────────────────────────────────────── -->
+    @if (currentSlide === 'sopravvissuti') {
+      <div class="slide slide--vivi" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="slide__inner">
+          <div class="vivi__counter">
+            <span class="vivi__num">{{ animatedSopravvissuti }}</span>
+            <span class="vivi__label">{{ 'RECAP.IN_GAME' | translate }}</span>
+          </div>
+          <div class="vivi__progress-bar">
+            <div class="vivi__progress-fill" [style.width.%]="progressPct"></div>
+          </div>
+          <p class="vivi__sub">{{ progressPct }}% {{ 'RECAP.SURVIVORS_PCT' | translate }}</p>
+
+          @if (sopravvissuti.length > 0) {
+            <div class="vivi__grid" [@staggerCards]="sopravvissuti.length">
+              @for (p of sopravvissuti; track p.nickname) {
+                <div class="vivi-card">
+                  <span class="vivi-card__avatar">{{ p.nickname.charAt(0).toUpperCase() }}</span>
+                  <span class="vivi-card__name">{{ p.nickname }}</span>
+                  @if (p.squadraNome) {
+                    <span class="vivi-card__team">{{ p.squadraNome }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── SLIDE 4: ELIMINATI ─────────────────────────────────────────── -->
+    @if (currentSlide === 'eliminati') {
+      <div class="slide slide--out" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="slide__inner">
+          @if (eliminatiQuesta.length === 0) {
+            <div class="out__vuoto">
+              <span class="out__vuoto-emoji">🎉</span>
+              <h2>{{ 'RECAP.NO_ELIMINATED_TITLE' | translate }}</h2>
+              <p>{{ 'RECAP.NO_ELIMINATED' | translate }}</p>
+            </div>
+          } @else {
+              <h2 class="slide__title slide__title--dark">💀 {{ 'RECAP.ELIMINATED_TITLE' | translate }}</h2>
+            <p class="slide__subtitle slide__subtitle--dark">{{ eliminatiQuesta.length }} uscit{{ eliminatiQuesta.length === 1 ? 'o' : 'i' }} questa giornata</p>
+            <div class="out__list" [@staggerCards]="eliminatiQuesta.length">
+              @for (p of eliminatiQuesta; track p.nickname) {
+                <div class="out-card">
+                  <span class="out-card__skull">💀</span>
+                  <div class="out-card__info">
+                    <span class="out-card__name">{{ p.nickname }}</span>
+                    @if (p.squadraNome) {
+                      <span class="out-card__team">{{ p.squadraNome }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+            @if (tuttiEliminati.length > 0) {
+              <p class="out__totale">{{ 'RECAP.OTHERS_ELIMINATED' | translate:{ count: tuttiEliminati.length } }}</p>
+            }
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── SLIDE 5: STATS ─────────────────────────────────────────────── -->
+    @if (currentSlide === 'stats') {
+      <div class="slide slide--stats" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="slide__inner">
+          <h2 class="slide__title">{{ 'RECAP.STATS_TITLE' | translate }}</h2>
+          <div class="stats-grid">
+
+            <!-- stat: sopravvissuti -->
+            <div class="stat-card stat-card--primary">
+              <span class="stat-card__icon">🛡️</span>
+              <span class="stat-card__value">{{ recap.sopravvissuti }}/{{ recap.totaleMembri }}</span>
+              <span class="stat-card__label">{{ 'RECAP.SURVIVORS' | translate }}</span>
+            </div>
+
+            <!-- stat: eliminati questa giornata -->
+            <div class="stat-card stat-card--danger">
+              <span class="stat-card__icon">💀</span>
+              <span class="stat-card__value">{{ recap.eliminatiQuestaGiornata }}</span>
+              <span class="stat-card__label">{{ 'RECAP.ELIMINATED_TODAY' | translate }}</span>
+            </div>
+
+            <!-- stat: pick vincenti -->
+            @if (okCount > 0 || koCount > 0) {
+              <div class="stat-card stat-card--green">
+                <span class="stat-card__icon">✅</span>
+                <span class="stat-card__value">{{ okCount }}</span>
+                <span class="stat-card__label">{{ 'RECAP.WINNING_PICKS' | translate }}</span>
+              </div>
+              <div class="stat-card stat-card--red-soft">
+                <span class="stat-card__icon">❌</span>
+                <span class="stat-card__value">{{ koCount }}</span>
+                <span class="stat-card__label">{{ 'RECAP.LOSING_PICKS' | translate }}</span>
+              </div>
+            }
+
+            <!-- stat: squadra più scelta -->
+            @if (recap.stats.squadraPiuScelta) {
+              <div class="stat-card stat-card--accent stat-card--wide">
+                <span class="stat-card__icon">🔥</span>
+                <div class="stat-card__text-block">
+                  <span class="stat-card__value">{{ recap.stats.squadraPiuScelta }}</span>
+                  <span class="stat-card__label">{{ 'RECAP.CHOSEN_BY' | translate:{ n: recap.stats.quanti } }}</span>
+                </div>
+              </div>
+            }
+
+            <!-- stat: pick più reazionato -->
+            @if (recap.stats.pickPiuReagito) {
+              <div class="stat-card stat-card--gold stat-card--wide">
+                <span class="stat-card__icon">😱</span>
+                <div class="stat-card__text-block">
+                  <span class="stat-card__value">{{ recap.stats.pickPiuReagito }}</span>
+                  <span class="stat-card__label">{{ 'RECAP.REACTIONS' | translate:{ n: recap.stats.reazioni } }}</span>
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ── SLIDE 6: FINE ──────────────────────────────────────────────── -->
+    @if (currentSlide === 'fine') {
+      <div class="slide slide--fine" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="fine__bg"></div>
+        <div class="slide__inner fine__inner">
+          <div class="fine__trophy">🏆</div>
+          <h2 class="fine__title">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }} {{ 'RECAP.ROUND_CONCLUDED' | translate }}</h2>
+          <p class="fine__text">
+            {{ 'RECAP.WARRIORS_PREFIX' | translate }} <strong>{{ recap.sopravvissuti }}</strong> {{ 'RECAP.WARRIORS_SUFFIX' | translate }}<br>
+            {{ 'RECAP.NEXT_CHALLENGE' | translate }}
+          </p>
+          <div class="fine__actions">
+            <button class="btn-primary-recap" (click)="close()">
+              {{ 'COMMON.CLOSE' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ════════════════════ NAV CONTROLS ════════════════════ -->
+    <div class="recap-nav">
+      <button class="nav-btn nav-btn--prev"
+              [class.nav-btn--hidden]="currentIdx === 0"
+              (click)="prev()"
+              aria-label="Precedente">‹</button>
+
+      <div class="nav-dots">
+        @for (slide of slides; track slide.id; let i = $index) {
+          <button class="nav-dot"
+                  [class.nav-dot--active]="i === currentIdx"
+                  (click)="goTo(i)"
+                  [attr.aria-label]="slide.label"></button>
+        }
+      </div>
+
+      @if (currentSlide !== 'fine') {
+        <button class="nav-btn nav-btn--next"
+                (click)="next()"
+                aria-label="Successivo">›</button>
+      } @else {
+        <button class="nav-btn nav-btn--share"
+                (click)="share()"
+                aria-label="Condividi"><mat-icon style="font-size:1.1rem;width:1.1rem;height:1.1rem">ios_share</mat-icon></button>
+      }
+    </div>
+
+  }
+  </div>
+</div>

@@ -21,6 +21,7 @@ public class PushNotificationDTO {
     private Enumeratori.TipoNotifica tipoNotifica;
     private LocalDateTime expiringAt;
     private Long legaId;
+    private Integer giornata;
 
     public LocalDateTime getExpiringAt() {
         if (expiringAt==null){

@@ -15,4 +15,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByUserAndReadAndExpiringAtGreaterThanOrderByCreatedAtDesc(User user, Boolean read, String expiringAt);
 
+    List<Notification> findByUserAndReadOrderByCreatedAtDesc(User user, Boolean read);
+
 }

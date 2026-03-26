@@ -616,7 +616,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (this.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value) {
       this.dialog
         .open(ConfermaAssegnazioneDialogComponent, {
-          width: '400px',
+          width: '380px',
+          maxWidth: '95vw',
           disableClose: true,
         })
         .afterClosed()

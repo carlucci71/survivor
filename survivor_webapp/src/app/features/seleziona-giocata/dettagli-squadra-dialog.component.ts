@@ -110,7 +110,7 @@ export interface DettagliSquadraData {
         </button>
         @if(localOpponentSigla) {
         <button class="tab" [class.active]="activeTab === 'opponent'" (click)="activeTab = 'opponent'">
-          {{ data.tabLabels?.opponent || localOpponentSigla }}
+          {{ localOpponentSigla || data.tabLabels?.opponent }}
         </button>
         }
       </div>
