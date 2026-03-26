@@ -1,6 +1,15 @@
 @if (legheAttive.length > 0 && selected) {
   <div class="recap-section">
 
+    <!-- Dev-only test buttons -->
+    @if (!isProd) {
+      <div class="dev-test-bar">
+        <span class="dev-label">🛠 TEST ANIM</span>
+        <button class="dev-btn dev-btn--win" (click)="testAnim('win')">⚡ WIN</button>
+        <button class="dev-btn dev-btn--loss" (click)="testAnim('loss')">💀 LOSS</button>
+      </div>
+    }
+
     <!-- Section label -->
     <div class="section-header">
       <span class="sh-line"></span>
@@ -36,35 +45,70 @@
       [class.no-pick]="!selected.lega.miaGiocataCorrente"
       [class.anim-win]="selected.animationState === 'win'"
       [class.anim-loss]="selected.animationState === 'loss'"
+      [class.flash-shake]="showFlash && flashType === 'loss'"
       matRipple
       (click)="goToLega()"
       role="button"
       aria-label="Vai alla lega"
     >
-      <!-- Confetti + fuochi d'artificio: elemento inserito via @if ==> animation CSS garantita -->
+      <!-- Overlay animazione risultato -->
       @if (showFlash) {
-        <div class="confetti-container" aria-hidden="true">
-          <!-- Flash di sfondo rapido -->
-          <div class="bg-flash"
-            [class.flash-win]="flashType === 'win'"
-            [class.flash-loss]="flashType === 'loss'"
-          ></div>
-          <!-- Anelli esplosivi (solo WIN) -->
+        <div class="flash-container" aria-hidden="true">
           @if (flashType === 'win') {
-            <div class="burst-ring br1"></div>
-            <div class="burst-ring br2"></div>
-            <div class="burst-ring br3"></div>
+            <!-- Sweep aurora sul fondo -->
+            <div class="win-aurora"></div>
+            <!-- Supernova centrale -->
+            <div class="win-core"></div>
+            <!-- Halo intorno al core -->
+            <div class="win-halo wh1"></div>
+            <div class="win-halo wh2"></div>
+            <!-- Onde di espansione -->
+            <div class="win-ripple wpr1"></div>
+            <div class="win-ripple wpr2"></div>
+            <div class="win-ripple wpr3"></div>
+            <div class="win-ripple wpr4"></div>
+            <!-- Raggi a 360° -->
+            <div class="win-ray wr0"></div>
+            <div class="win-ray wr1"></div>
+            <div class="win-ray wr2"></div>
+            <div class="win-ray wr3"></div>
+            <div class="win-ray wr4"></div>
+            <div class="win-ray wr5"></div>
+            <div class="win-ray wr6"></div>
+            <div class="win-ray wr7"></div>
+            <!-- Scintille verticali -->
+            <div class="win-spark wsp1"></div>
+            <div class="win-spark wsp2"></div>
+            <div class="win-spark wsp3"></div>
+            <div class="win-spark wsp4"></div>
+            <div class="win-spark wsp5"></div>
+            <div class="win-spark wsp6"></div>
+            <div class="win-spark wsp7"></div>
+            <div class="win-spark wsp8"></div>
+            <!-- Scintille diagonali -->
+            <div class="win-spark-d wsd1"></div>
+            <div class="win-spark-d wsd2"></div>
+            <div class="win-spark-d wsd3"></div>
+            <div class="win-spark-d wsd4"></div>
+            <div class="win-spark-d wsd5"></div>
+            <div class="win-spark-d wsd6"></div>
+            <!-- Shimmer sweep finale -->
+            <div class="win-sweep"></div>
           }
-          <!-- Croce di sconfitta (solo LOSS) -->
           @if (flashType === 'loss') {
-            <div class="loss-x-bar lx1"></div>
-            <div class="loss-x-bar lx2"></div>
-            <div class="loss-ring lr1"></div>
-            <div class="loss-ring lr2"></div>
-          }
-          <!-- Coriandoli -->
-          @for (p of confettiPieces; track $index) {
-            <div class="confetti-piece" [class.round]="p.round" [ngClass]="p.animClass" [ngStyle]="p.styles"></div>
+            <!-- Velo scuro progressivo -->
+            <div class="loss-veil"></div>
+            <!-- Onde che implodono -->
+            <div class="loss-ripple lpr1"></div>
+            <div class="loss-ripple lpr2"></div>
+            <div class="loss-ripple lpr3"></div>
+            <!-- Linee glitch orizzontali -->
+            <div class="loss-glitch lg1"></div>
+            <div class="loss-glitch lg2"></div>
+            <div class="loss-glitch lg3"></div>
+            <div class="loss-glitch lg4"></div>
+            <!-- Drain verticale (colore drena verso il basso) -->
+            <div class="loss-drain"></div>
           }
         </div>
       }
@@ -105,7 +149,7 @@
 
         <div class="card-center">
           <div class="meta-row">
-            <span class="sport-badge">{{ selected.sportEmoji }} {{ selected.lega.campionato?.nome }}</span>
+            <span class="sport-badge">{{ selected.sportEmoji }} {{ (selected.lega.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
             <span class="giornata-badge">GIR. {{ selected.displayGiornata }}</span>
           </div>
           <div class="team-name">{{ selected.displayGiocata.squadraNome || selected.displayGiocata.squadraSigla }}</div>

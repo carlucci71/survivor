@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
+import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
+import { environment } from '../../../../environments/environment';
 
 interface ConfettiPiece {
   styles: { [key: string]: string };
@@ -28,13 +30,15 @@ interface LegaConGiocata {
 @Component({
   selector: 'app-giocata-recap-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatRippleModule],
+  imports: [CommonModule, MatIconModule, MatRippleModule, TranslateLeagueDataPipe],
   templateUrl: './giocata-recap-card.component.html',
   styleUrls: ['./giocata-recap-card.component.scss'],
 })
 export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
   @Input() leghe: Lega[] = [];
   @Output() refreshRequired = new EventEmitter<void>();
+
+  readonly isProd = environment.production;
 
   legheAttive: LegaConGiocata[] = [];
   selectedIndex = 0;
@@ -366,4 +370,26 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     const team  = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
     return `${scrim}, ${team}`;
   }
+
+  /** Solo sviluppo: testa l'animazione senza aspettare un vero risultato */
+  testAnim(type: 'win' | 'loss'): void {
+    if (environment.production) return;
+    this.generateConfetti(type);
+    this.showFlash = true;
+    this.flashType = type;
+    if (this.legheAttive.length > 0) {
+      this.legheAttive[this.selectedIndex] = {
+        ...this.legheAttive[this.selectedIndex],
+        animationState: type,
+      };
+      this.legheAttive = [...this.legheAttive];
+    }
+    this.cdr.detectChanges();
+    if (this.flashTimeout) clearTimeout(this.flashTimeout);
+    this.flashTimeout = setTimeout(() => {
+      this.showFlash = false;
+      this.cdr.detectChanges();
+    }, 3200);
+  }
 }
+
