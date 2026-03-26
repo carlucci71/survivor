@@ -275,6 +275,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private groupLegheByName(leghe: Lega[]): void {
     const map = new Map<string, Lega[]>();
     (leghe || []).forEach((l) => {
+      // Nascondi le leghe terminate dalla home
+      if (l.stato?.value === StatoLega.TERMINATA.value) return;
       const key = l.name || '';
       if (!map.has(key)) {
         map.set(key, []);

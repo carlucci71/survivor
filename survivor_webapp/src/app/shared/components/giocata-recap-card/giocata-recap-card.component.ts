@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
 import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
+import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
 
 interface ConfettiPiece {
   styles: { [key: string]: string };
@@ -28,7 +29,7 @@ interface LegaConGiocata {
 @Component({
   selector: 'app-giocata-recap-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatRippleModule],
+  imports: [CommonModule, MatIconModule, MatRippleModule, TranslateLeagueDataPipe],
   templateUrl: './giocata-recap-card.component.html',
   styleUrls: ['./giocata-recap-card.component.scss'],
 })
@@ -172,11 +173,20 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       .filter(l => {
         const statoVal = l.stato?.value;
         const isAttiva = statoVal === StatoLega.AVVIATA.value || statoVal === StatoLega.DA_AVVIARE.value;
-        return isAttiva && (
-          l.giornataDaGiocare > 0 ||
-          l.miaGiocataCorrente?.esito === 'KO' ||
-          this.lastKnownGiocata.has(l.id ?? 0)
-        );
+        const isTerminata = statoVal === StatoLega.TERMINATA.value;
+        if (isAttiva) {
+          return l.giornataDaGiocare > 0 ||
+            l.miaGiocataCorrente?.esito === 'KO' ||
+            this.lastKnownGiocata.has(l.id ?? 0) ||
+            !!l.miaUltimaGiocataConEsito;
+        }
+        if (isTerminata) {
+          // Mostra la lega terminata solo se c'è un risultato da mostrare
+          return !!l.miaUltimaGiocataConEsito ||
+            !!l.miaGiocataCorrente ||
+            this.lastKnownGiocata.has(l.id ?? 0);
+        }
+        return false;
       })
       .map(l => {
         const legaId = l.id ?? 0;
@@ -186,6 +196,13 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
         // Aggiorna la cache ogni volta che arriva un risultato definitivo
         if (mia && (esitoMia === 'OK' || esitoMia === 'KO')) {
           this.lastKnownGiocata.set(legaId, mia);
+          this.saveLastKnownCache();
+        }
+        // Il backend fornisce direttamente l'ultima giocata con esito quando mia è null:
+        // usiamola per aggiornare la cache così le animazioni win/loss funzionano anche
+        // al primo load dopo il calcolo della giornata.
+        if (!mia && l.miaUltimaGiocataConEsito) {
+          this.lastKnownGiocata.set(legaId, l.miaUltimaGiocataConEsito);
           this.saveLastKnownCache();
         }
 
@@ -199,13 +216,16 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
           ? displayGiocata.giornata + (l.giornataIniziale ?? 1) - 1
           : l.giornataDaGiocare;
 
+        const isDaAvviare = l.stato?.value === StatoLega.DA_AVVIARE.value;
         let animationState: 'win' | 'loss' | 'none' = 'none';
-        if (this.shownAnimations.has(legaId)) {
-          if (displayEsito === 'OK') animationState = 'win';
-          else if (displayEsito === 'KO') animationState = 'loss';
-        } else if (displayEsito === 'OK' || displayEsito === 'KO') {
-          toAnimate.push({ legaId, state: displayEsito === 'OK' ? 'win' : 'loss' });
-          this.shownAnimations.add(legaId);
+        if (!isDaAvviare) {
+          if (this.shownAnimations.has(legaId)) {
+            if (displayEsito === 'OK') animationState = 'win';
+            else if (displayEsito === 'KO') animationState = 'loss';
+          } else if (displayEsito === 'OK' || displayEsito === 'KO') {
+            toAnimate.push({ legaId, state: displayEsito === 'OK' ? 'win' : 'loss' });
+            this.shownAnimations.add(legaId);
+          }
         }
 
         return {
@@ -350,4 +370,6 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     const team  = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
     return `${scrim}, ${team}`;
   }
+
 }
+

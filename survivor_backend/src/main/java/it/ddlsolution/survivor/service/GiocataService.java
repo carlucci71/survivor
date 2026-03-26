@@ -16,6 +16,7 @@ import it.ddlsolution.survivor.mapper.GiocatoreMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocataRevisionRepository;
 import it.ddlsolution.survivor.repository.GiocataSnapshotRepository;
+import it.ddlsolution.survivor.repository.ReactionGiocataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.history.Revision;
@@ -45,6 +46,7 @@ public class GiocataService {
     private final GiocataRevisionRepository giocataRevisionRepository;
     private final LegaService legaService;
     private final SquadraService squadraService;
+    private final ReactionGiocataRepository reactionGiocataRepository;
 
 
     @Transactional
@@ -178,5 +180,57 @@ public class GiocataService {
                 .toList();
     }
 
+    /**
+     * Elimina la giocata di un giocatore per una specifica giornata in una lega.
+     * Consentito solo quando la giornata è ancora in stato DA_GIOCARE (nessun esito calcolato).
+     * Restituisce il GiocatoreDTO aggiornato senza la giocata eliminata.
+     */
+    @Transactional
+    public GiocatoreDTO eliminaGiocata(Integer giornata, Long giocatoreId, Long legaId) {
+        Giocatore giocatore = giocatoreService.findByIdEntity(giocatoreId);
+        Lega lega = legaService.findByIdEntity(legaId);
+
+        // Verifica che l'utente autenticato sia il giocatore stesso (o admin/leader)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Long currentUserId = (Long) authentication.getPrincipal();
+            Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (giocatoreUserId != null && !currentUserId.equals(giocatoreUserId) && !isAdmin) {
+                boolean isLeader = lega.getGiocatoreLeghe().stream()
+                        .filter(gl -> gl.getGiocatore() != null
+                                && gl.getGiocatore().getUser() != null
+                                && gl.getGiocatore().getUser().getId().equals(currentUserId))
+                        .map(GiocatoreLega::getRuolo)
+                        .anyMatch(r -> r == Enumeratori.RuoloGiocatoreLega.LEADER);
+                if (!isLeader) {
+                    throw new AccessDeniedException("Non sei autorizzato a eliminare la giocata di un altro utente");
+                }
+            }
+        }
+
+        Giocata giocata = giocataRepository
+                .findByGiornataAndGiocatore_IdAndLega_Id(giornata, giocatoreId, legaId)
+                .orElseThrow(() -> new IllegalArgumentException("Giocata non trovata"));
+
+        // Blocca l'eliminazione se la giocata ha già un esito
+        if (giocata.getEsito() != null) {
+            throw new IllegalStateException("Non è possibile eliminare una giocata con esito calcolato");
+        }
+
+        // Elimina prima le reaction collegate (FK constraint)
+        reactionGiocataRepository.deleteByGiocata_Id(giocata.getId());
+
+        giocataRepository.delete(giocata);
+        log.info("🗑️ Eliminata giocata - Giocatore: {}, Giornata: {}, Lega: {}", giocatoreId, giornata, legaId);
+
+        // Restituisce il DTO aggiornato senza la giocata eliminata
+        GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
+        dto.setGiocate(dto.getGiocate().stream()
+                .filter(g -> !(g.getGiornata().equals(giornata) && g.getLegaId().equals(legaId)))
+                .toList());
+        return dto;
+    }
 
 }

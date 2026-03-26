@@ -2,10 +2,36 @@
   <!-- Header Colorato Uniforme -->
   <div class="dialog-header">
     <h2 class="dialog-title">{{ getDesGiornataTitle(data.giornata) }}</h2>
-    <button mat-icon-button class="close-btn" (click)="dialogRef.close()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+    <button mat-icon-button class="close-btn" (click)="chiudi()" [attr.aria-label]="'COMMON.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
+
+  <!-- Overlay conferma rimozione scelta -->
+  @if (showConfirmRemove) {
+    <div class="remove-confirm-overlay" (click)="annullaRimozione()">
+      <div class="remove-confirm-card" (click)="$event.stopPropagation()">
+        <div class="remove-confirm-icon-wrap">
+          <mat-icon class="remove-confirm-icon">remove_circle_outline</mat-icon>
+        </div>
+        <h3 class="remove-confirm-title">Annulla la tua scelta?</h3>
+        <p class="remove-confirm-msg">La tua selezione verrà rimossa e potrai scegliere un’altra squadra.</p>
+        <div class="remove-confirm-actions">
+          <button class="remove-btn remove-btn--cancel" (click)="annullaRimozione()">
+            No, tieni
+          </button>
+          <button class="remove-btn remove-btn--confirm" (click)="confermaRimozione()" [disabled]="_eliminaLoading">
+            @if (_eliminaLoading) {
+              <span class="remove-spinner"></span>
+            } @else {
+              <mat-icon>delete_outline</mat-icon>
+            }
+            Sì, rimuovi
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 
   <!-- Body Bianco Leggibile -->
   <div class="dialog-body">

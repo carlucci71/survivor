@@ -25,4 +25,14 @@ export class GiocataService {
       return this.http.post<Giocatore>(`${this.apiUrl}`, body);
     }
 
+    eliminaGiocata(giornata: number, giocatoreId: number, legaId: number): Observable<Giocatore> {
+      return this.http.delete<Giocatore>(`${this.apiUrl}`, {
+        params: {
+          giornata: giornata.toString(),
+          giocatoreId: giocatoreId.toString(),
+          legaId: legaId.toString(),
+        }
+      });
+    }
+
 }
