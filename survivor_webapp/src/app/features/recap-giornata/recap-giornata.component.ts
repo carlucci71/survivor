@@ -55,6 +55,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   recap: RecapGiornata | null = null;
   loading = true;
   error = false;
+  errorDetail: string | null = null;
 
   slides = SLIDES;
   currentIdx = 0;
@@ -104,6 +105,17 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     const legaId = Number(this.route.snapshot.paramMap.get('legaId'));
     const giornata = Number(this.route.snapshot.paramMap.get('giornata'));
 
+    console.log('[RecapGiornata] ngOnInit → legaId:', legaId, 'giornata:', giornata);
+
+    if (!legaId || !giornata || isNaN(legaId) || isNaN(giornata)) {
+      console.error('[RecapGiornata] Parametri rotta non validi', { legaId, giornata });
+      this.errorDetail = `Parametri non validi: legaId=${legaId}, giornata=${giornata}`;
+      this.error = true;
+      this.loading = false;
+      this.cdr.detectChanges();
+      return;
+    }
+
     this.recapService.getRecap(legaId, giornata).subscribe({
       next: (data) => {
         this.recap = data;
@@ -111,7 +123,11 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
         this.recapService.markAsSeen(legaId, giornata);
         this.cdr.detectChanges();
       },
-      error: () => {
+      error: (err: any) => {
+        const status = err?.status ?? 'N/A';
+        const message = err?.error?.message ?? err?.message ?? 'Unknown error';
+        console.error('[RecapGiornata] Errore caricamento recap', { status, message, legaId, giornata, err });
+        this.errorDetail = `HTTP ${status}: ${message}`;
         this.error = true;
         this.loading = false;
         this.cdr.detectChanges();

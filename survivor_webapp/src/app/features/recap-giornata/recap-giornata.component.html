@@ -21,6 +21,9 @@
     <div class="recap-error">
       <span class="recap-error__icon">😕</span>
       <p>Impossibile caricare il recap</p>
+      @if (errorDetail) {
+        <p class="recap-error__detail">{{ errorDetail }}</p>
+      }
       <button class="btn-outline" (click)="close()">Torna alla lega</button>
     </div>
   }

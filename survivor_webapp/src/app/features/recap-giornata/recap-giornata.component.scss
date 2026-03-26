@@ -99,6 +99,15 @@ $slide-transition: 420ms cubic-bezier(0.4, 0, 0.2, 1);
 
 .recap-error__icon { font-size: 3rem; }
 
+.recap-error__detail {
+  font-size: .75rem;
+  color: rgba($white, .5);
+  font-family: monospace;
+  word-break: break-all;
+  max-width: 280px;
+  text-align: center;
+}
+
 .pulse-ring {
   width: 52px; height: 52px;
   border-radius: 50%;
