@@ -345,7 +345,8 @@
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'">
+                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
+                        [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"
@@ -496,6 +497,21 @@
             </button>
           </div>
         </div>
+
+        <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
+        @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
+          <div class="voti-chips-row">
+            <span class="voti-chips-label">Chi ha votato:</span>
+            <div class="voti-chips-scroll">
+              @for (entry of getVotiPerSquadra(); track entry.sigla) {
+                <button class="voti-chip" (click)="openVotiSheet(entry)">
+                  <span class="voti-chip__nome">{{ entry.nome }}</span>
+                  <span class="voti-chip__badge">{{ entry.count }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
 
         <!-- EMPTY STATE - Nessun risultato -->
         @if (getFilteredPlayers().length === 0) {
@@ -725,6 +741,29 @@
     }
 </div>
 </main>
+
+<!-- BOTTOM SHEET VOTI PER SQUADRA -->
+@if (votiSheet) {
+  <div class="voti-sheet-overlay" (click)="closeVotiSheet()"></div>
+  <div class="voti-sheet" (click)="$event.stopPropagation()">
+    <div class="voti-sheet-handle"></div>
+    <div class="voti-sheet-header">
+      <span class="voti-sheet-title">{{ votiSheet.nome }}</span>
+      <button class="voti-sheet-close" (click)="closeVotiSheet()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="voti-sheet-body">
+      <p class="voti-sheet-count">{{ votiSheet.nicknames.length }} giocator{{ votiSheet.nicknames.length === 1 ? 'e' : 'i' }}</p>
+      @for (nick of votiSheet.nicknames; track nick) {
+        <div class="voti-sheet-row">
+          <span class="voti-sheet-dot"></span>
+          <span class="voti-sheet-nick">{{ nick }}</span>
+        </div>
+      }
+    </div>
+  </div>
+}
 
 <!-- Global reaction picker overlay (position:fixed, fuori dalla tabella per evitare overflow:hidden) -->
 @if(activeReactionKey !== null && activeGiocata !== null) {

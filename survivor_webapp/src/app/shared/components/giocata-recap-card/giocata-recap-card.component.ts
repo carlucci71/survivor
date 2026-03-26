@@ -172,11 +172,20 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       .filter(l => {
         const statoVal = l.stato?.value;
         const isAttiva = statoVal === StatoLega.AVVIATA.value || statoVal === StatoLega.DA_AVVIARE.value;
-        return isAttiva && (
-          l.giornataDaGiocare > 0 ||
-          l.miaGiocataCorrente?.esito === 'KO' ||
-          this.lastKnownGiocata.has(l.id ?? 0)
-        );
+        const isTerminata = statoVal === StatoLega.TERMINATA.value;
+        if (isAttiva) {
+          return l.giornataDaGiocare > 0 ||
+            l.miaGiocataCorrente?.esito === 'KO' ||
+            this.lastKnownGiocata.has(l.id ?? 0) ||
+            !!l.miaUltimaGiocataConEsito;
+        }
+        if (isTerminata) {
+          // Mostra la lega terminata solo se c'è un risultato da mostrare
+          return !!l.miaUltimaGiocataConEsito ||
+            !!l.miaGiocataCorrente ||
+            this.lastKnownGiocata.has(l.id ?? 0);
+        }
+        return false;
       })
       .map(l => {
         const legaId = l.id ?? 0;
@@ -186,6 +195,13 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
         // Aggiorna la cache ogni volta che arriva un risultato definitivo
         if (mia && (esitoMia === 'OK' || esitoMia === 'KO')) {
           this.lastKnownGiocata.set(legaId, mia);
+          this.saveLastKnownCache();
+        }
+        // Il backend fornisce direttamente l'ultima giocata con esito quando mia è null:
+        // usiamola per aggiornare la cache così le animazioni win/loss funzionano anche
+        // al primo load dopo il calcolo della giornata.
+        if (!mia && l.miaUltimaGiocataConEsito) {
+          this.lastKnownGiocata.set(legaId, l.miaUltimaGiocataConEsito);
           this.saveLastKnownCache();
         }
 

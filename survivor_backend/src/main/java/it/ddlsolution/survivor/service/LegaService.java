@@ -146,6 +146,16 @@ public class LegaService {
                                     giocatoreEntity.getId(),
                                     legaDTO.getId())
                             .ifPresent(g -> finalLegaDTO.setMiaGiocataCorrente(giocataMapper.toDTO(g)));
+
+                    // Se non c'è ancora una pick per la giornata corrente, porta l'ultimo risultato
+                    // definitivo (esito OK/KO) così la home può mostrare win/loss animation.
+                    if (legaDTO.getMiaGiocataCorrente() == null) {
+                        giocataRepository
+                                .findTopByGiocatore_IdAndLega_IdAndEsitoIsNotNullOrderByGiornataDesc(
+                                        giocatoreEntity.getId(),
+                                        legaDTO.getId())
+                                .ifPresent(g -> finalLegaDTO.setMiaUltimaGiocataConEsito(giocataMapper.toDTO(g)));
+                    }
                 }
             }
 

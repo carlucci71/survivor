@@ -18,6 +18,8 @@ public interface ReactionGiocataRepository extends JpaRepository<ReactionGiocata
 
     void deleteByGiocata_IdAndGiocatore_Id(Long giocataId, Long giocatoreId);
 
+    void deleteByGiocata_Id(Long giocataId);
+
     @Query("SELECT r FROM ReactionGiocata r WHERE r.giocata.id IN :giocataIds")
     List<ReactionGiocata> findByGiocataIds(@Param("giocataIds") List<Long> giocataIds);
 }
