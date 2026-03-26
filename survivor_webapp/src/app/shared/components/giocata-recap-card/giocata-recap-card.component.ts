@@ -6,7 +6,6 @@ import { MatRippleModule } from '@angular/material/core';
 import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
 import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
-import { environment } from '../../../../environments/environment';
 
 interface ConfettiPiece {
   styles: { [key: string]: string };
@@ -37,8 +36,6 @@ interface LegaConGiocata {
 export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
   @Input() leghe: Lega[] = [];
   @Output() refreshRequired = new EventEmitter<void>();
-
-  readonly isProd = environment.production;
 
   legheAttive: LegaConGiocata[] = [];
   selectedIndex = 0;
@@ -219,13 +216,16 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
           ? displayGiocata.giornata + (l.giornataIniziale ?? 1) - 1
           : l.giornataDaGiocare;
 
+        const isDaAvviare = l.stato?.value === StatoLega.DA_AVVIARE.value;
         let animationState: 'win' | 'loss' | 'none' = 'none';
-        if (this.shownAnimations.has(legaId)) {
-          if (displayEsito === 'OK') animationState = 'win';
-          else if (displayEsito === 'KO') animationState = 'loss';
-        } else if (displayEsito === 'OK' || displayEsito === 'KO') {
-          toAnimate.push({ legaId, state: displayEsito === 'OK' ? 'win' : 'loss' });
-          this.shownAnimations.add(legaId);
+        if (!isDaAvviare) {
+          if (this.shownAnimations.has(legaId)) {
+            if (displayEsito === 'OK') animationState = 'win';
+            else if (displayEsito === 'KO') animationState = 'loss';
+          } else if (displayEsito === 'OK' || displayEsito === 'KO') {
+            toAnimate.push({ legaId, state: displayEsito === 'OK' ? 'win' : 'loss' });
+            this.shownAnimations.add(legaId);
+          }
         }
 
         return {
@@ -371,25 +371,5 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     return `${scrim}, ${team}`;
   }
 
-  /** Solo sviluppo: testa l'animazione senza aspettare un vero risultato */
-  testAnim(type: 'win' | 'loss'): void {
-    if (environment.production) return;
-    this.generateConfetti(type);
-    this.showFlash = true;
-    this.flashType = type;
-    if (this.legheAttive.length > 0) {
-      this.legheAttive[this.selectedIndex] = {
-        ...this.legheAttive[this.selectedIndex],
-        animationState: type,
-      };
-      this.legheAttive = [...this.legheAttive];
-    }
-    this.cdr.detectChanges();
-    if (this.flashTimeout) clearTimeout(this.flashTimeout);
-    this.flashTimeout = setTimeout(() => {
-      this.showFlash = false;
-      this.cdr.detectChanges();
-    }, 3200);
-  }
 }
 

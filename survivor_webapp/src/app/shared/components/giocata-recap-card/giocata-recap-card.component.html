@@ -1,15 +1,6 @@
 @if (legheAttive.length > 0 && selected) {
   <div class="recap-section">
 
-    <!-- Dev-only test buttons -->
-    @if (!isProd) {
-      <div class="dev-test-bar">
-        <span class="dev-label">🛠 TEST ANIM</span>
-        <button class="dev-btn dev-btn--win" (click)="testAnim('win')">⚡ WIN</button>
-        <button class="dev-btn dev-btn--loss" (click)="testAnim('loss')">💀 LOSS</button>
-      </div>
-    }
-
     <!-- Section label -->
     <div class="section-header">
       <span class="sh-line"></span>
