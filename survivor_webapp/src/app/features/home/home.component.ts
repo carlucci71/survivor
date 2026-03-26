@@ -275,8 +275,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private groupLegheByName(leghe: Lega[]): void {
     const map = new Map<string, Lega[]>();
     (leghe || []).forEach((l) => {
-      // Nascondi le leghe terminate dalla home
-      if (l.stato?.value === StatoLega.TERMINATA.value) return;
       const key = l.name || '';
       if (!map.has(key)) {
         map.set(key, []);
@@ -294,11 +292,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       const maxPartecipanti = sorted[0].maxPartecipanti;
       return { name, des: { sportId, campionatoId }, edizioni: sorted, pubblica, numPartecipanti, maxPartecipanti };
     }).sort((a, b) => {
-      // Prima le leghe private, poi le pubbliche; a parità per ID discendente
+      // Prima le leghe private, poi le pubbliche; a parità per ID ascendente (ordine di creazione)
       if (a.pubblica !== b.pubblica) return a.pubblica ? 1 : -1;
       const maxIdA = Math.max(...a.edizioni.map(e => e.id || 0));
       const maxIdB = Math.max(...b.edizioni.map(e => e.id || 0));
-      return maxIdB - maxIdA;
+      return maxIdA - maxIdB;
     });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
     // Se non ci sono leghe private ma ci sono pubbliche, apri il tab pubblico

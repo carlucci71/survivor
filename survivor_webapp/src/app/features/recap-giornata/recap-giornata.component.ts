@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef, inject
+  Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef, inject, ViewChild, ElementRef
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -59,6 +59,9 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
 
   slides = SLIDES;
   currentIdx = 0;
+  sharingImage = false;
+
+  @ViewChild('fineSlide') fineSlideRef?: ElementRef<HTMLElement>;
 
   // swipe tracking
   private touchStartX = 0;
@@ -222,32 +225,42 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   // ─── Share ─────────────────────────────────────────────────────────────────
 
   async share(): Promise<void> {
-    if (!this.recap) return;
-    const text = this.buildShareText();
-    const url = window.location.href;
+    if (!this.recap || this.sharingImage) return;
+    this.sharingImage = true;
+    try {
+      const el = this.fineSlideRef?.nativeElement;
+      if (!el) return;
 
-    // Capacitor Share (nativo iOS/Android)
-    if (Capacitor.isNativePlatform()) {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(el, { backgroundColor: null, scale: 2, useCORS: true, logging: false });
+      const dataUrl = canvas.toDataURL('image/png');
+
+      // Capacitor nativo (iOS/Android)
       try {
         const { Share } = await import('@capacitor/share');
-        await Share.share({ title: text.split('\n')[0], text, url, dialogTitle: 'Condividi recap' });
+        const { Filesystem, Directory } = await import('@capacitor/filesystem');
+        const base64 = dataUrl.split(',')[1];
+        const saved = await Filesystem.writeFile({
+          path: 'survivor-recap.png',
+          data: base64,
+          directory: Directory.Cache
+        });
+        await Share.share({
+          title: `${this.recap.legaNome} — Giornata ${this.recap.giornataRelativa}`,
+          files: [saved.uri],
+          dialogTitle: 'Condividi su Instagram o altrove'
+        });
         return;
-      } catch { /* fallback */ }
-    }
+      } catch { /* fallback web */ }
 
-    // Web Share API
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: text.split('\n')[0], text, url });
-        return;
-      } catch { /* fallback */ }
+      // Web: download diretto
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `survivor-giornata-${this.recap.giornataRelativa}.png`;
+      a.click();
+    } finally {
+      this.sharingImage = false;
     }
-
-    // Clipboard fallback
-    try {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
-      alert('Testo copiato negli appunti!');
-    } catch { /* noop */ }
   }
 
   private buildShareText(): string {

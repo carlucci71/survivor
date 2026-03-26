@@ -50,6 +50,7 @@ import { PlayerHistoryDialogComponent } from '../../shared/components/player-his
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
 import { RecapService } from '../../core/services/recap.service';
+import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -282,11 +283,30 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
+          if (this.isTerminata()) {
+            setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
+          }
         }
       },
       error: (error) => {
         console.error('Errore nel caricamento del profilo o della lega:', error);
       }
+    });
+  }
+
+  private maybeOpenVincitoriDialog(): void {
+    const vincitori = this.lega!.giocatori?.filter(
+      g => g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
+    ) ?? [];
+
+    const isMobile = window.innerWidth <= 768;
+    this.dialog.open(VincitoriDialogComponent, {
+      width: isMobile ? '92vw' : '420px',
+      maxWidth: '92vw',
+      panelClass: 'vincitori-dialog-panel',
+      autoFocus: false,
+      disableClose: false,
+      data: { lega: this.lega, vincitori }
     });
   }
 

@@ -5033,6 +5033,28 @@
   text-decoration: line-through;
 }
 
+/* ─── Badge corona vincitore ─────────────────────────────────── */
+.vincitore-crown {
+  font-size: 1rem;
+  display: inline-block;
+  margin-left: 4px;
+  animation: crown-float 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.vincitore-crown-mobile {
+  font-size: 0.95rem;
+  display: inline-block;
+  margin-left: 4px;
+  animation: crown-float 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes crown-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-3px); }
+}
+
 .history-toggle-btn-mobile {
   display: flex;
   align-items: center;

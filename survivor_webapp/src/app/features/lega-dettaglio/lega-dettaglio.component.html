@@ -311,6 +311,9 @@
                   <td class="excel-cell user-cell">
                     <div class="user-name-wrapper">
                       <span class="user-name">{{ giocatore.nickname }}</span>
+                      @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                        <span class="vincitore-crown">👑</span>
+                      }
                       <!-- Gruppo icone a destra del nome -->
                       <div class="user-icons-group">
                         @if(hasMoreRounds(giocatore)) {
@@ -550,6 +553,9 @@
               </span>
 
               <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                <span class="vincitore-crown-mobile">👑</span>
+              }
 
               <!-- Icona storico completo se ci sono più di 5 giocate -->
               @if(hasMoreRounds(giocatore)) {
