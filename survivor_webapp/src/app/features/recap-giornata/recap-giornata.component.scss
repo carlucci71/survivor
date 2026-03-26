@@ -33,10 +33,13 @@ $slide-transition: 420ms cubic-bezier(0.4, 0, 0.2, 1);
   font-family: $font;
   user-select: none;
   animation: backdropIn .25s ease both;
+  // Tells the browser: handle vertical pan natively, let JS handle horizontal swipes
+  touch-action: pan-y;
 
   @media (max-width: 480px) {
-    padding: 12px;
-    align-items: flex-end; // bottom-sheet feel on small phones
+    // Keep safe-area insets on mobile so Android nav bar / notch don't cover the card
+    padding: max(12px, env(safe-area-inset-top, 12px)) 12px max(12px, env(safe-area-inset-bottom, 12px));
+    align-items: center; // centered card, not bottom-sheet — avoids Android gesture conflicts
   }
 }
 
@@ -61,13 +64,16 @@ $slide-transition: 420ms cubic-bezier(0.4, 0, 0.2, 1);
   animation: cardIn .3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   @media (max-width: 480px) {
-    height: 90vh;
-    border-radius: 24px 24px 16px 16px;
+    // Smaller card: leaves visible space around it, avoids full-screen feel
+    height: 74vh;
+    max-height: 620px;
+    border-radius: 20px;
   }
 
   @media (max-width: 360px) {
-    height: 92vh;
-    border-radius: 20px 20px 12px 12px;
+    height: 76vh;
+    max-height: 560px;
+    border-radius: 18px;
   }
 }
 

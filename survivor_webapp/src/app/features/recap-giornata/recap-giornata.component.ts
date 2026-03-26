@@ -167,6 +167,11 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     }
   }
 
+  onTouchCancel(): void {
+    // Android can cancel touches (e.g. system back gesture); reset dragging state cleanly
+    this.dragging = false;
+  }
+
   // ─── Keyboard ──────────────────────────────────────────────────────────────
 
   @HostListener('document:keydown', ['$event'])
