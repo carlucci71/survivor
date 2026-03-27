@@ -42,7 +42,7 @@
   &:hover { opacity: 0.8; }
   &:active { transform: scale(0.96); }
 
-  &--win  { background: rgba(255, 215, 0, 0.2);  color: #FFD700; border: 1px solid rgba(255,215,0,0.4); }
+  &--win  { background: rgba(79, 195, 247, 0.18); color: #4FC3F7; border: 1px solid rgba(79,195,247,0.4); }
   &--loss { background: rgba(100, 100, 100, 0.2); color: #aaa;    border: 1px solid rgba(150,150,150,0.35); }
 }
 
@@ -502,11 +502,11 @@
   .card-top-accent {
     background: linear-gradient(90deg,
       transparent 0%,
-      rgba(255,215,0,0) 0%,
-      rgba(255,215,0,0.9) 40%,
+      rgba(79,195,247,0) 0%,
+      rgba(79,195,247,0.9) 40%,
       rgba(255,255,255,1) 50%,
-      rgba(255,215,0,0.9) 60%,
-      rgba(255,215,0,0) 100%
+      rgba(79,195,247,0.9) 60%,
+      rgba(79,195,247,0) 100%
     );
     background-size: 200% 100%;
     animation: win-accent-sweep 2.4s ease-in-out infinite 0.3s;
@@ -524,8 +524,8 @@
 }
 
 @keyframes logo-win-pulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(255,200,30,0.18), 0 4px 14px rgba(0,0,0,0.45); }
-  50%       { box-shadow: 0 0 32px rgba(255,200,30,0.55), 0 4px 14px rgba(0,0,0,0.45); }
+  0%, 100% { box-shadow: 0 0 12px rgba(79,195,247,0.25), 0 4px 14px rgba(0,0,0,0.45); }
+  50%       { box-shadow: 0 0 32px rgba(79,195,247,0.70), 0 0 18px rgba(10,61,145,0.40), 0 4px 14px rgba(0,0,0,0.45); }
 }
 
 .giocata-card.anim-loss {
@@ -625,8 +625,8 @@
   inset: 0;
   border-radius: inherit;
   background: radial-gradient(circle at 50% 45%,
-    rgba(255, 230, 60, 0.55) 0%,
-    rgba(105, 240, 174, 0.28) 40%,
+    rgba(79, 195, 247, 0.55) 0%,
+    rgba(10,  61, 145, 0.28) 40%,
     transparent 72%
   );
   animation: win-burst-anim 1.4s ease-out forwards;
