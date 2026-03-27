@@ -1,10 +1,10 @@
-<!-- @if (!isProd && legheAttive.length > 0) {
+@if (!isProd && legheAttive.length > 0) {
   <div class="dev-test-bar">
     <span class="dev-label">DEV TEST</span>
     <button class="dev-btn dev-btn--win" (click)="testFlash('win')">WIN</button>
     <button class="dev-btn dev-btn--loss" (click)="testFlash('loss')">LOSS</button>
   </div>
-} -->
+}
 
 @if (legheAttive.length > 0 && selected) {
   <div class="recap-section">
@@ -81,6 +81,21 @@
           @if (flashType === 'loss') {
             <!-- Overlay grigio per sconfitta -->
             <div class="loss-overlay"></div>
+            <!-- Tunnel-vision vignette -->
+            <div class="loss-vignette"></div>
+            <!-- Ripple sui 3 battiti -->
+            <div class="loss-ripple r1"></div>
+            <div class="loss-ripple r2"></div>
+            <div class="loss-ripple r3"></div>
+            <!-- Ceneri che cadono -->
+            @for (piece of confettiPieces; track $index) {
+              <div
+                class="confetti-piece ash-piece"
+                [class.round]="piece.round"
+                [ngClass]="piece.animClass"
+                [ngStyle]="piece.styles"
+              ></div>
+            }
           }
         </div>
       }

@@ -274,7 +274,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
         this.flashTimeout = setTimeout(() => {
           this.showFlash = false;
           this.cdr.detectChanges();
-        }, 3200);
+        }, toAnimate[0].state === 'loss' ? 6000 : 3200);
       }, 80);
     }
   }
@@ -300,7 +300,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     this.flashTimeout = setTimeout(() => {
       this.showFlash = false;
       this.cdr.detectChanges();
-    }, 3200);
+    }, type === 'loss' ? 6000 : 3200);
   }
 
   goToLega(): void {
@@ -335,18 +335,19 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   private generateConfetti(type: 'win' | 'loss'): void {
     const winColors  = ['#FFD700','#69F0AE','#FF6EC7','#4FC3F7','#FFB300','#E040FB','#76FF03','#FF8C00','#FFFFFF','#FF9800'];
-    const lossColors = ['#FF5252','#E53935','#FF8A80','#B71C1C','#FF6B6B','#C62828'];
-    const colors = type === 'win' ? winColors : lossColors;
-    const count  = type === 'win' ? 36 : 20;
+    const ashColors  = ['#2a2a2a','#3d3d3d','#1a1a1a','#444444','#505050','#222222'];
+    const colors = type === 'win' ? winColors : ashColors;
+    const count  = type === 'win' ? 36 : 18;
     this.confettiPieces = Array.from({ length: count }, (_, i) => {
       const x     = 3 + Math.random() * 94;
-      const w     = Math.round(8 + Math.random() * 8);
-      const h     = Math.round(5 + Math.random() * 7);
+      const w     = type === 'loss' ? Math.round(3 + Math.random() * 5) : Math.round(8 + Math.random() * 8);
+      const h     = type === 'loss' ? Math.round(2 + Math.random() * 4) : Math.round(5 + Math.random() * 7);
       const color = colors[i % colors.length];
       const round = Math.random() > 0.5;
+      const animClass = type === 'loss' ? `ash-v${i % 5}` : `cf-v${i % 10}`;
       return {
         round,
-        animClass: `cf-v${i % 10}`,
+        animClass,
         styles: {
           left:       `${x.toFixed(1)}%`,
           width:      `${round ? w : w * 2}px`,

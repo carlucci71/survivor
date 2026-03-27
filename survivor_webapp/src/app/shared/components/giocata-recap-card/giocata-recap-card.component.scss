@@ -543,24 +543,66 @@
 }
 
 /* -----------------------------------------------------------
-   SCONFITTA: flicker — luce che si spegne
+   SCONFITTA: flicker — cuore che si spegne
+   Tre battiti sempre più lenti e fiochi, poi buio totale
    ----------------------------------------------------------- */
 
 .giocata-card.loss-desaturate {
-  animation: loss-flicker-anim 1.6s ease-out forwards;
+  animation:
+    loss-flicker-anim   5.5s ease-out forwards,
+    loss-heartbeat-scale 5.5s ease-out forwards,
+    loss-border-glow    5.5s ease-out forwards;
 }
 
+/* Filtro: saturazione/luminosità che segue il ritmo del cuore */
 @keyframes loss-flicker-anim {
-  0%    { filter: saturate(1)   brightness(1);    }
-  8%    { filter: saturate(0.5) brightness(0.4);  }
-  14%   { filter: saturate(0.9) brightness(0.95); }
-  22%   { filter: saturate(0.4) brightness(0.35); }
-  30%   { filter: saturate(0.8) brightness(0.85); }
-  42%   { filter: saturate(0.2) brightness(0.45); }
-  52%   { filter: saturate(0.5) brightness(0.65); }
-  68%   { filter: saturate(0.1) brightness(0.4);  }
-  80%   { filter: saturate(0.2) brightness(0.52); }
-  100%  { filter: saturate(0)   brightness(0.55); }
+  /* === Battito 1 — ritmo normale === */
+  0%    { filter: saturate(1)    brightness(1);    }
+  4%    { filter: saturate(0.65) brightness(0.55); }  /* sistole */
+  8%    { filter: saturate(0.92) brightness(0.90); }  /* diastole */
+  13%   { filter: saturate(0.55) brightness(0.48); }  /* sistole */
+  18%   { filter: saturate(0.80) brightness(0.78); }  /* diastole */
+  /* === Battito 2 — più lento, più debole === */
+  30%   { filter: saturate(0.40) brightness(0.40); }  /* sistole */
+  36%   { filter: saturate(0.60) brightness(0.58); }  /* diastole */
+  43%   { filter: saturate(0.28) brightness(0.34); }  /* sistole */
+  50%   { filter: saturate(0.45) brightness(0.48); }  /* diastole */
+  /* === Battito 3 — agonico, quasi spento === */
+  63%   { filter: saturate(0.15) brightness(0.28); }  /* sistole */
+  70%   { filter: saturate(0.25) brightness(0.38); }  /* debolissima diastole */
+  80%   { filter: saturate(0.08) brightness(0.25); }  /* ultimo battito */
+  90%   { filter: saturate(0.12) brightness(0.32); }  /* guizzo finale */
+  100%  { filter: saturate(0)    brightness(0.55); }  /* spento */
+}
+
+/* Scala: cardioide — piccole pulsazioni che svaniscono */
+@keyframes loss-heartbeat-scale {
+  0%    { transform: scale(1);       }
+  4%    { transform: scale(1.010);   }
+  8%    { transform: scale(0.998);   }
+  13%   { transform: scale(1.008);   }
+  18%   { transform: scale(1.000);   }
+  30%   { transform: scale(1.006);   }
+  36%   { transform: scale(0.999);   }
+  43%   { transform: scale(1.005);   }
+  50%   { transform: scale(1.000);   }
+  63%   { transform: scale(1.003);   }
+  70%   { transform: scale(1.000);   }
+  80%   { transform: scale(1.002);   }
+  100%  { transform: scale(1.000);   }
+}
+
+/* Bordo rosso che pulsa e svanisce */
+@keyframes loss-border-glow {
+  0%    { box-shadow: 0 0 0   0   rgba(220, 38, 38, 0);    }
+  4%    { box-shadow: 0 0 10px 3px rgba(220, 38, 38, 0.55); }
+  13%   { box-shadow: 0 0  6px 2px rgba(200, 30, 30, 0.40); }
+  18%   { box-shadow: 0 0  4px 1px rgba(180, 25, 25, 0.28); }
+  30%   { box-shadow: 0 0  7px 2px rgba(160, 20, 20, 0.35); }
+  43%   { box-shadow: 0 0  4px 1px rgba(130, 15, 15, 0.22); }
+  63%   { box-shadow: 0 0  4px 1px rgba(100, 10, 10, 0.18); }
+  80%   { box-shadow: 0 0  2px 1px rgba( 60,  5,  5, 0.10); }
+  100%  { box-shadow: 0 0  0   0   rgba(  0,  0,  0, 0);    }
 }
 
 /* -----------------------------------------------------------
@@ -845,16 +887,83 @@
   inset: 0;
   border-radius: inherit;
   background: rgba(30, 30, 30, 0.72);
-  animation: loss-overlay-anim 2.8s ease-out forwards;
+  animation: loss-overlay-anim 5.5s ease-out forwards;
   pointer-events: none;
 }
 
 @keyframes loss-overlay-anim {
-  0%   { opacity: 0; }
-  20%  { opacity: 1; }
-  85%  { opacity: 0.85; }
-  100% { opacity: 0; }
+  0%   { opacity: 0;    }
+  12%  { opacity: 0.75; }
+  18%  { opacity: 0.30; }
+  30%  { opacity: 0.80; }
+  50%  { opacity: 0.55; }
+  63%  { opacity: 0.85; }
+  80%  { opacity: 0.90; }
+  100% { opacity: 0;    }
 }
+
+/* -- LOSS: tunnel-vision vignette --------------------------- */
+
+.loss-vignette {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.90) 100%);
+  animation: loss-vignette-anim 5.5s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes loss-vignette-anim {
+  0%   { opacity: 0;    }
+  10%  { opacity: 0.38; }
+  18%  { opacity: 0.12; }
+  32%  { opacity: 0.58; }
+  50%  { opacity: 0.32; }
+  65%  { opacity: 0.72; }
+  82%  { opacity: 0.80; }
+  100% { opacity: 0.45; }
+}
+
+/* -- LOSS: ripple pulse sui 3 battiti ----------------------- */
+
+.loss-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid rgba(160, 15, 15, 0);
+  pointer-events: none;
+}
+
+.r1 { animation: loss-ripple-anim 1.0s ease-out 0.04s  forwards; }
+.r2 { animation: loss-ripple-anim 1.3s ease-out 1.50s  forwards; }
+.r3 { animation: loss-ripple-anim 1.8s ease-out 3.20s  forwards; }
+
+@keyframes loss-ripple-anim {
+  0%   { border-color: rgba(160,15,15,0.60); transform: scale(1.00); opacity: 1;   }
+  50%  { border-color: rgba(140,10,10,0.25); transform: scale(1.03); opacity: 0.5; }
+  100% { border-color: rgba(120, 5, 5,0.00); transform: scale(1.07); opacity: 0;   }
+}
+
+/* -- LOSS: ceneri che cadono -------------------------------- */
+
+.confetti-piece.ash-piece {
+  opacity: 0.70;
+  filter: blur(0.4px);
+}
+
+@keyframes ash-fall {
+  0%   { transform: translateY(-8px)  translateX(0px)              rotateZ(0deg);              opacity: 0.65; }
+  25%  { transform: translateY(55px)  translateX(6px)              rotateZ(100deg);             opacity: 0.50; }
+  55%  { transform: translateY(135px) translateX(-5px)             rotateZ(230deg);             opacity: 0.28; }
+  80%  { transform: translateY(195px) translateX(3px)              rotateZ(310deg);             opacity: 0.10; }
+  100% { transform: translateY(252px) translateX(var(--ash-dx,2px)) rotateZ(var(--ash-rot,380deg)); opacity: 0;    }
+}
+
+.ash-v0 { animation: ash-fall 4.2s ease-in forwards 0.5s;  --ash-rot:  340deg; --ash-dx:  4px; }
+.ash-v1 { animation: ash-fall 5.5s ease-in forwards 1.2s;  --ash-rot: -300deg; --ash-dx: -6px; }
+.ash-v2 { animation: ash-fall 4.8s ease-in forwards 0.3s;  --ash-rot:  420deg; --ash-dx:  3px; }
+.ash-v3 { animation: ash-fall 5.0s ease-in forwards 1.8s;  --ash-rot: -380deg; --ash-dx: -4px; }
+.ash-v4 { animation: ash-fall 4.0s ease-in forwards 0.8s;  --ash-rot:  260deg; --ash-dx:  5px; }
 
 /* Badge risultato */
 .esito-badge.badge-reveal {
