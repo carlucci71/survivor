@@ -50,6 +50,7 @@ external-api:
     implementation:
       API2:
         url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s&seasonId=%s
+        url-calendar-mondiali: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&phase=%s&subphase=%s
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal

@@ -68,6 +68,7 @@ public class CampionatoService {
         }
 
         ret.put(Enumeratori.CampionatiDisponibili.NBA_RS.name(), desNbaRS());
+        ret.put(Enumeratori.CampionatiDisponibili.MONDIALI_2026.name(), desMondiali());
         return ret;
     }
 
@@ -83,6 +84,15 @@ public class CampionatoService {
                     return ret;
                 })
                 .orElseGet(HashMap::new);
+    }
+
+    private Map<Integer, String> desMondiali() {
+        Map<Integer, String> ret = new HashMap<>();
+        Enumeratori.DesRoundMondiali[] values = Enumeratori.DesRoundMondiali.values();
+        for (int i = 0; i < values.length; i++) {
+            ret.put(i + 1, values[i].getDescrizione());
+        }
+        return ret;
     }
 
     public CampionatoDTO refreshCampionato(CampionatoDTO campionatoDTO, short anno) {
