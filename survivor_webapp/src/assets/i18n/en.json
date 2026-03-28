@@ -22,6 +22,10 @@
     "BADGE_FENOMENO": "Phenomenal",
     "BADGE_HALL_OF_FAME": "Iconic",
     "PARTICIPANTS": "participants",
+    "STATUS_ATTIVO": "In play",
+    "STATUS_ELIMINATO": "Eliminated",
+    "BADGE_PRIVATE": "Private",
+    "BADGE_PUBLIC": "Public",
     "TAB_PRIVATE": "Private",
     "TAB_PUBLIC": "Public"
   },
