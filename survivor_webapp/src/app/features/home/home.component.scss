@@ -646,15 +646,17 @@ h2 {
 
 // ── Badge stato survivor nella subtitle dell'edizione ─────────────────────
 .survivor-status-badge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 1;
 	display: inline-flex;
 	align-items: center;
 	gap: 3px;
-	margin-left: 8px;
 	padding: 2px 8px;
 	border-radius: 12px;
 	font-size: 0.72rem;
 	font-weight: 700;
-	vertical-align: middle;
 	line-height: 1.4;
 	text-transform: uppercase;
 	letter-spacing: 0.02em;
@@ -705,8 +707,9 @@ h2 {
 	gap: 3px;
 	margin-left: 8px;
 	padding: 2px 8px;
-	background: rgba(76, 175, 80, 0.12);
-	color: #2e7d32;
+	background: rgba(71, 85, 105, 0.09);
+	color: #475569;
+	border: 1px solid rgba(71, 85, 105, 0.18);
 	border-radius: 12px;
 	font-size: 0.72rem;
 	font-weight: 600;
@@ -717,7 +720,7 @@ h2 {
 		font-size: 12px !important;
 		width: 12px !important;
 		height: 12px !important;
-		color: #2e7d32;
+		color: #64748b;
 		opacity: 0.8;
 	}
 }
@@ -780,6 +783,7 @@ h2 {
 
 		/* EDIZIONI DENTRO LA LEGA - CARD BIANCHE */
 		.lega-card {
+			position: relative !important;
 			background: #FFFFFF !important;
 			border-radius: 12px !important;
 			box-shadow: 0 2px 12px rgba(10, 61, 145, 0.06) !important;

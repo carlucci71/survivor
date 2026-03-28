@@ -108,7 +108,7 @@
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--private">
-                      <mat-icon>lock</mat-icon> Privata
+                      <mat-icon>lock</mat-icon> {{ 'HOME.BADGE_PRIVATE' | translate }}
                     </span>
                     <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
                       <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
@@ -126,6 +126,12 @@
                 <mat-card-content>
                   <div class="edizioni-list">
                     <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
+                      <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
+                        <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                          <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                          {{ statoMe === 'ATTIVO' ? ('HOME.STATUS_ATTIVO' | translate) : ('HOME.STATUS_ELIMINATO' | translate) }}
+                        </span>
+                      </ng-container>
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
@@ -136,12 +142,6 @@
                             <mat-icon class="part-icon">group</mat-icon>
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
-                          <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
-                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
-                            </span>
-                          </ng-container>
                         </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>
@@ -175,7 +175,7 @@
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--public">
-                      <mat-icon>public</mat-icon> Pubblica
+                      <mat-icon>public</mat-icon> {{ 'HOME.BADGE_PUBLIC' | translate }}
                     </span>
                     <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
                       <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
@@ -193,6 +193,12 @@
                 <mat-card-content>
                   <div class="edizioni-list">
                     <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
+                      <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
+                        <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
+                          <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
+                          {{ statoMe === 'ATTIVO' ? ('HOME.STATUS_ATTIVO' | translate) : ('HOME.STATUS_ELIMINATO' | translate) }}
+                        </span>
+                      </ng-container>
                       <mat-card-header>
                         <mat-card-title>
                           Edizione {{ edizione.edizione }} {{edizione.anno}}
@@ -203,12 +209,6 @@
                             <mat-icon class="part-icon">group</mat-icon>
                             {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
                           </span>
-                          <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                            <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
-                              <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                              {{ statoMe === 'ATTIVO' ? 'In gara' : 'Eliminato' }}
-                            </span>
-                          </ng-container>
                         </mat-card-subtitle>
                       </mat-card-header>
                       <mat-card-actions>
