@@ -46,7 +46,8 @@
     "LIGA": "La Liga",
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
-    "NBA_RS": "NBA Reg. Season"
+    "NBA_RS": "NBA Reg. Season",
+    "MONDIALI_2026": "World Cup 2026"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
@@ -380,6 +381,26 @@
     "SEARCH_PLAYER": "Search player...",
     "SEARCH_TEAM": "Search team...",
     "HEAD_TO_HEAD": "Head to head",
+    "ROUND_LABELS": {
+      "GROUP_ROUND": "Group Stage - Matchday",
+      "ROUND_OF_32": "Round of 32",
+      "ROUND_OF_16": "Round of 16",
+      "QUARTERFINALS": "Quarterfinals",
+      "SEMIFINALS": "Semifinals",
+      "FINAL": "Final"
+    },
+    "ALL": "All",
+    "ACTIVE": "Active",
+    "ELIMINATED": "Eliminated",
+    "IN_GAME": "In Game",
+    "LAST_GAME": "Last game",
+    "NO_RESULTS": "No results",
+    "NO_RESULTS_SEARCH": "No players found with this search. Try another name!",
+    "NO_RESULTS_FILTER": "No players in this category. Try another filter!",
+    "EDITION_LABEL": "Edition",
+    "YOUR_PREDICTION": "YOUR PREDICTION",
+    "NO_PREDICTION_ROUND": "Matchday {{round}} — no prediction",
+    "WAITING_NEXT_ROUND": "Waiting for the next matchday",
     "CONSOLATION": {
       "1": "Luck wasn't on your side... but you can always cheer for those still in the game! 🍀",
       "2": "Not everyone can win, but you played with style! 😎",

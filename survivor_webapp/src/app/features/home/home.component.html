@@ -119,7 +119,7 @@
                     {{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}
                     <span class="max-partecipanti-chip">
                       <mat-icon class="mp-icon">group</mat-icon>
-                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : 'Senza limite' }}
+                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : ('CREATE_LEAGUE.MAX_PARTICIPANTS_UNLIMITED' | translate) }}
                     </span>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -186,7 +186,7 @@
                     {{ group.des.sportId | translateLeagueData: 'sport' }} - {{ group.des.campionatoId | translateLeagueData: 'championship' }}
                     <span class="max-partecipanti-chip">
                       <mat-icon class="mp-icon">group</mat-icon>
-                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : 'Senza limite' }}
+                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : ('CREATE_LEAGUE.MAX_PARTICIPANTS_UNLIMITED' | translate) }}
                     </span>
                   </mat-card-subtitle>
                 </mat-card-header>

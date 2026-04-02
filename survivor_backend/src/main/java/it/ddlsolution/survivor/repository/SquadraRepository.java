@@ -30,4 +30,7 @@ public interface SquadraRepository extends JpaRepository<Squadra, Long> {
 """)
     List<Squadra> findByNazioneOfCampionatoAndAnno(@Param("campionatoId") String campionatoId,@Param("anno") short anno);
 
+    @Query("SELECT s FROM Squadra s WHERE s.idCampionato = :idCampionato ORDER BY s.nome")
+    List<Squadra> findAllByIdCampionato(@Param("idCampionato") String idCampionato);
+
 }
