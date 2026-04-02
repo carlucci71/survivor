@@ -342,7 +342,10 @@ public class CacheableService {
             }
         }
         if (giornataDaGiocare==null){
-            giornataDaGiocare=campionatoDTO.getNumGiornate();
+            // Se non sono state trovate partite future, il campionato non è ancora
+            // iniziato (iniziGiornate vuoto) oppure è già concluso.
+            // Nel primo caso partiamo dalla giornata 1, nel secondo dall'ultima.
+            giornataDaGiocare = iniziGiornate.isEmpty() ? 1 : campionatoDTO.getNumGiornate();
         }
         campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
         campionatoDTO.setIniziGiornate(iniziGiornate);

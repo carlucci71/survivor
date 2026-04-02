@@ -13,7 +13,8 @@ class EnumAPI2 {
         LIGA(Map.of(2025, 23), SquadreLiga_API2.values()),
         TENNIS_W(Map.of(2025, 11316), SquadreTennis_API2.values()),
         TENNIS_AO(Map.of(2025, 10376, 2026, 12389), SquadreTennis_API2.values()),
-        NBA_RS(Map.of(2025, 3), SquadreNBA_API2.values());
+        NBA_RS(Map.of(2025, 3), SquadreNBA_API2.values()),
+        MONDIALI_2026(Map.of(2026, 4), SquadreNazionali_API2.values());
 
         final Map<Integer, Integer> id;
         final IEnumSquadre[] squadre;
@@ -81,7 +82,8 @@ class EnumAPI2 {
         FIXTURE(Enumeratori.StatoPartita.DA_GIOCARE),
         PLAYING(Enumeratori.StatoPartita.DA_GIOCARE),
         NOTSTARTED(Enumeratori.StatoPartita.DA_GIOCARE),
-        SUSPENDED(Enumeratori.StatoPartita.DA_GIOCARE);
+        SUSPENDED(Enumeratori.StatoPartita.DA_GIOCARE),
+        PREMATCH(Enumeratori.StatoPartita.DA_GIOCARE);
 
 
         final Enumeratori.StatoPartita statoPartita;
@@ -107,6 +109,38 @@ class EnumAPI2 {
 
         RoundTennis(String key) {
             this.key = key;
+        }
+    }
+
+    // Mapping giornata (1-based) → phase + subphase della Gazzetta API per i Mondiali 2026
+    // Le fasi knockout (giornate 4-8) sono da verificare quando sarà disponibile la fase eliminazione
+    enum RoundMondiali {
+        G1("groups", "1"),    // Giornata 1 gironi
+        G2("groups", "2"),    // Giornata 2 gironi
+        G3("groups", "3"),    // Giornata 3 gironi
+        R32("knockout", "1"), // Ottavi di finale (da verificare con API reale)
+        R16("knockout", "2"), // Sedicesimi di finale (da verificare)
+        QF("knockout", "3"),  // Quarti di finale (da verificare)
+        SF("knockout", "4"),  // Semifinali (da verificare)
+        F("knockout", "5");   // Finale (da verificare)
+
+        final String phase;
+        final String subphase;
+
+        RoundMondiali(String phase, String subphase) {
+            this.phase = phase;
+            this.subphase = subphase;
+        }
+
+        // Numero di giornata del girone in cui termina il group stage
+        static final int GIRONI_END = 3;
+
+        static RoundMondiali fromGiornata(int giornata) {
+            RoundMondiali[] values = values();
+            if (giornata < 1 || giornata > values.length) {
+                throw new IllegalArgumentException("Giornata Mondiali non valida: " + giornata);
+            }
+            return values[giornata - 1];
         }
     }
 

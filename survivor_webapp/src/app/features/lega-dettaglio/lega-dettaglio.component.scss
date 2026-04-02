@@ -136,6 +136,7 @@
 	align-items: center;
 	margin-top: 8px;
 	gap: 4px;
+	flex-wrap: wrap;
 }
 
 .lp-footer-start,
@@ -144,11 +145,17 @@
 	font-weight: 500;
 	color: #9CA3AF;
 	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.lp-footer-end {
+	margin-left: auto;
 }
 
 .lp-championship-label {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: 3px;
 	font-size: 0.72rem;
 	font-weight: 600;
@@ -157,8 +164,11 @@
 	border: 1px solid rgba(10, 61, 145, 0.15);
 	border-radius: 20px;
 	padding: 2px 8px;
-	white-space: nowrap;
-	flex-shrink: 0;
+	white-space: normal;
+	word-break: break-word;
+	flex: 1 1 auto;
+	text-align: center;
+	min-width: 0;
 }
 
 .lp-champ-icon {
@@ -166,6 +176,7 @@
 	width: 12px;
 	height: 12px;
 	color: #0A3D91;
+	flex-shrink: 0;
 }
 
 // Responsive mobile
@@ -187,6 +198,28 @@
 
 	.lp-champ-icon {
 		display: none;
+	}
+}
+
+// Su schermi piccoli metti il championship label su riga propria
+@media (max-width: 480px) {
+	.lp-footer {
+		row-gap: 6px;
+	}
+
+	.lp-championship-label {
+		order: 3;
+		flex: 1 0 100%;
+		font-size: 0.67rem;
+	}
+
+	.lp-footer-start {
+		order: 1;
+	}
+
+	.lp-footer-end {
+		order: 2;
+		margin-left: auto;
 	}
 }
 
@@ -1706,9 +1739,9 @@
 	font-size: 0.82rem;
 	color: #1f2937;
 	font-weight: 600;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
 }
 .stato-avviata {
 	color: #059669;

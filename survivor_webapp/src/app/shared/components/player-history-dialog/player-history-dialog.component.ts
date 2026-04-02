@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Giocatore, Lega } from '../../../core/models/interfaces.model';
 
 export interface PlayerHistoryDialogData {
@@ -50,7 +50,8 @@ export class PlayerHistoryDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<PlayerHistoryDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: PlayerHistoryDialogData
+    @Inject(MAT_DIALOG_DATA) public data: PlayerHistoryDialogData,
+    private translate: TranslateService
   ) {
     // Se il mock è abilitato, sovrascrivi i dati
     if (this.ENABLE_MOCK) {
@@ -197,7 +198,7 @@ export class PlayerHistoryDialogComponent {
    * Versione estesa per desktop: "Giornata X"
    */
   getGiornataLabelFull(giornata: number): string {
-    return `Giornata ${giornata}`;
+    return this.translate.instant('LEAGUE.ROUND') + ' ' + giornata;
   }
 }
 

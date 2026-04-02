@@ -101,16 +101,18 @@ public class GiocataRule implements GuardRule {
             }
             warning.add("Giocata alle " + dataRiferimento);
         }
-        if (giocatoreDTO.getGiocate().stream()
-                .filter(g -> !g.getGiornata().equals(giornata) && g.getLegaId().equals(idLega) && squadra.equals(g.getSquadraSigla()))
-                .count() > 0) {
-            throw new AccessDeniedException("Squadra già usata");
-        }
         if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
             throw new AccessDeniedException("Lega in stato TERMINATA");
         }
         if (legaDTO.getGiornataDaGiocare() > 0 && (legaDTO.getGiornataDaGiocare() < legaDTO.getGiornataCorrente())) {
             //throw new AccessDeniedException("La giornata da giocare " + legaDTO.getGiornataDaGiocare() + " è inferiore alla corrente " + legaDTO.getGiornataCorrente());
+        }
+
+        // Controllo squadra già usata con supporto phase-reset per MONDIALI_2026:
+        // nel knockout (giornata relativa > 3) le scelte del girone non contano
+        boolean squadraGiaUsata = isSquadraGiaUsata(giocatoreDTO.getGiocate(), idLega, squadra, giornata, legaDTO);
+        if (squadraGiaUsata) {
+            throw new AccessDeniedException("Squadra già usata");
         }
         if (warning.size() > 0) {
             ret.put(WARNING_GIOCATA_RULE, warning);
@@ -120,6 +122,36 @@ public class GiocataRule implements GuardRule {
 
     private GiocatoreDTO getUser(Long userId) {
         return giocatoreService.findByUserId(userId);
+    }
+
+    /**
+     * Verifica se la squadra è già stata usata dal giocatore in questa lega.
+     * Per MONDIALI_2026 applica il phase-reset:
+     * - giornate 1-3 (gironi): blacklist solo sulle giornate del girone
+     * - giornate 4-8 (knockout): blacklist reset, conta solo i pick del knockout
+     */
+    private boolean isSquadraGiaUsata(java.util.List<GiocataDTO> giocate, Long idLega,
+                                       String squadra, Integer giornataRelativa, LegaDTO legaDTO) {
+        boolean isMondiali = legaDTO.getCampionato() != null
+                && "MONDIALI_2026".equals(legaDTO.getCampionato().getId());
+
+        if (isMondiali) {
+            int gironiEnd = 3; // ultime 3 giornate relative del girone
+            boolean inKnockout = giornataRelativa > gironiEnd;
+            return giocate.stream()
+                    .filter(g -> !g.getGiornata().equals(giornataRelativa))
+                    .filter(g -> g.getLegaId().equals(idLega))
+                    .filter(g -> squadra.equals(g.getSquadraSigla()))
+                    // in knockout si ignorano le scelte fatte nel girone
+                    .filter(g -> !inKnockout || g.getGiornata() > gironiEnd)
+                    .count() > 0;
+        }
+
+        return giocate.stream()
+                .filter(g -> !g.getGiornata().equals(giornataRelativa))
+                .filter(g -> g.getLegaId().equals(idLega))
+                .filter(g -> squadra.equals(g.getSquadraSigla()))
+                .count() > 0;
     }
 
 }

@@ -46,6 +46,9 @@ public class CalendarioAPI2 implements ICalendario {
     @Value("${external-api.calendario.implementation.API2.url-info}")
     String urlInfo;
 
+    @Value("${external-api.calendario.implementation.API2.url-calendar-mondiali}")
+    String urlCalendarMondiali;
+
 
     private String faseFromCampionato(EnumAPI2.Campionato campionato) {
         String fase = null;
@@ -60,6 +63,10 @@ public class CalendarioAPI2 implements ICalendario {
     @Override
     public List<PartitaDTO> getPartite(CampionatoDTO campionatoDTO, int giornata, short anno) {
         String campionato=campionatoDTO.getId();
+        // Branch dedicato per i Mondiali: struttura URL e risposta API differente
+        if (campionato.equals(EnumAPI2.Campionato.MONDIALI_2026.name())) {
+            return getPartiteMondiali(campionatoDTO, giornata, anno);
+        }
         List<SquadraDTO> squadre=campionatoDTO.getSquadre();
         String sport = campionatoDTO.getSport().getId();
         List<PartitaDTO> ret = new ArrayList<>();
@@ -102,8 +109,103 @@ public class CalendarioAPI2 implements ICalendario {
         return EnumAPI2.Campionato.valueOf(idCampionato).getSquadre();
     }
 
+    // -------------------------------------------------------------------------
+    // MONDIALI 2026 - logica dedicata
+    // L'API Gazzetta usa phase/subphase invece di day/seasonId
+    // -------------------------------------------------------------------------
 
+    private List<PartitaDTO> getPartiteMondiali(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        List<PartitaDTO> ret = new ArrayList<>();
+        List<SquadraDTO> squadre = campionatoDTO.getSquadre();
+        EnumAPI2.RoundMondiali round = EnumAPI2.RoundMondiali.fromGiornata(giornata);
+        int competitionId = EnumAPI2.Campionato.MONDIALI_2026.id.get(Integer.valueOf(anno));
+        String urlResolved = String.format(urlCalendarMondiali,
+                EnumAPI2.Sport.CALCIO.id,
+                competitionId,
+                round.phase,
+                round.subphase);
+        log.info("Mondiali getPartite giornata={} url={}", giornata, urlResolved);
+        Map response = utility.callUrl(urlResolved, Map.class);
+        Map m = (Map) response.get("data");
+        elaboraMondiali(campionatoDTO.getId(), giornata, m, ret, squadre, anno);
+        return ret;
+    }
 
+    @SuppressWarnings("unchecked")
+    private void elaboraMondiali(String campionato, int giornata, Map m, List<PartitaDTO> ret,
+                                  List<SquadraDTO> squadreCampionato, short anno) {
+        Object gamesObj = m.get("games");
+        if (!(gamesObj instanceof List)) return;
+        List<Map<String, Object>> games = (List<Map<String, Object>>) gamesObj;
+
+        for (Map<String, Object> game : games) {
+            Object matchesObj = game.get("matches");
+            if (!(matchesObj instanceof List)) continue;
+            List<Object> matchesList = (List<Object>) matchesObj;
+
+            for (Object matchesEntry : matchesList) {
+                if (matchesEntry instanceof Map) {
+                    Map<String, Object> matchesMap = (Map<String, Object>) matchesEntry;
+                    // La risposta dei gironi raggruppa le partite per lettera di gruppo (A, B, ..., L)
+                    // La risposta del knockout potrebbe non avere chiavi di gruppo
+                    for (Map.Entry<String, Object> entry : matchesMap.entrySet()) {
+                        List<Map<String, Object>> matchList = toMatchList(entry.getValue());
+                        for (Map<String, Object> match : matchList) {
+                            PartitaDTO dto = buildPartitaMondiali(campionato, giornata, match, squadreCampionato, anno);
+                            if (dto != null) ret.add(dto);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> toMatchList(Object value) {
+        if (value instanceof List) {
+            return (List<Map<String, Object>>) value;
+        } else if (value instanceof Map) {
+            return List.of((Map<String, Object>) value);
+        }
+        return List.of();
+    }
+
+    private PartitaDTO buildPartitaMondiali(String campionato, int giornata, Map<String, Object> match,
+                                             List<SquadraDTO> squadreCampionato, short anno) {
+        try {
+            String status;
+            try {
+                status = ((Map<?, ?>) match.get("timing")).get("tag").toString();
+            } catch (Exception e) {
+                status = match.get("status").toString();
+            }
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+
+            Result resultHome = getResult(match, "home", statoPartita);
+            Result resultAway = getResult(match, "away", statoPartita);
+
+            OffsetDateTime odt = OffsetDateTime.parse(match.get("utcDate").toString());
+            LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+
+            return PartitaDTO.builder()
+                    .sportId(EnumAPI2.Sport.CALCIO.name())
+                    .campionatoId(campionato)
+                    .giornata(giornata)
+                    .orario(romaTime)
+                    .stato(statoPartita)
+                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla())
+                    .casaNome(resultHome.team())
+                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
+                    .fuoriNome(resultAway.team())
+                    .scoreCasa(resultHome.teamScore())
+                    .scoreFuori(resultAway.teamScore())
+                    .anno(anno)
+                    .build();
+        } catch (Exception e) {
+            log.warn("Errore elaborazione partita Mondiali: {}", e.getMessage());
+            return null;
+        }
+    }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
         String round = EnumAPI2.RoundTennis.values()[giornata - 1].key;

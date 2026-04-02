@@ -46,7 +46,8 @@
     "LIGA": "La Liga",
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
-    "NBA_RS": "NBA Reg. Season"
+    "NBA_RS": "NBA Reg. Season",
+    "MONDIALI_2026": "Mondiali 2026"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
@@ -468,6 +469,14 @@
     "SEARCH_PLAYER": "Cerca giocatore...",
     "SEARCH_TEAM": "Cerca squadra...",
     "HEAD_TO_HEAD": "Testa a testa",
+    "ROUND_LABELS": {
+      "GROUP_ROUND": "Girone - Giornata",
+      "ROUND_OF_32": "Ottavi di finale",
+      "ROUND_OF_16": "Sedicesimi di finale",
+      "QUARTERFINALS": "Quarti di finale",
+      "SEMIFINALS": "Semifinali",
+      "FINAL": "Finale"
+    },
     "ALL": "Tutti",
     "ACTIVE": "Attivi",
     "ELIMINATED": "Eliminati",
@@ -476,6 +485,9 @@
     "NO_RESULTS": "Nessun risultato",
     "NO_RESULTS_SEARCH": "Nessun giocatore trovato con questa ricerca. Prova con un altro nome!",
     "NO_RESULTS_FILTER": "Nessun giocatore in questa categoria. Prova un altro filtro!",
+    "YOUR_PREDICTION": "IL TUO PRONOSTICO",
+    "NO_PREDICTION_ROUND": "Giornata {{round}} — nessun pronostico",
+    "WAITING_NEXT_ROUND": "In attesa della prossima giornata",
     "CONSOLATION": {
       "1": "La fortuna non era dalla tua parte... ma puoi sempre tifare per chi è ancora in gara! 🍀",
       "2": "Non tutti possono vincere, ma tu hai giocato con stile! 😎",
@@ -667,7 +679,7 @@
     "ACCESS_FREE_LABEL": "Accesso libero",
     "ACCESS_FREE_DESC": "Chiunque può entrare direttamente senza approvazione",
     "MAX_PARTICIPANTS_LABEL": "Massimo partecipanti",
-    "MAX_PARTICIPANTS_UNLIMITED": "Illimitato"
+    "MAX_PARTICIPANTS_UNLIMITED": "Senza limite"
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",

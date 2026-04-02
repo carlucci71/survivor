@@ -7,6 +7,7 @@ import { MatRippleModule } from '@angular/material/core';
 import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
 import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface ConfettiPiece {
   styles: { [key: string]: string };
@@ -30,7 +31,7 @@ interface LegaConGiocata {
 @Component({
   selector: 'app-giocata-recap-card',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatRippleModule, TranslateLeagueDataPipe],
+  imports: [CommonModule, MatIconModule, MatRippleModule, TranslateLeagueDataPipe, TranslateModule],
   templateUrl: './giocata-recap-card.component.html',
   styleUrls: ['./giocata-recap-card.component.scss'],
 })

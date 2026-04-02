@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CampionatoService } from '../../../core/services/campionato.service';
 import { AdminService } from '../../../core/services/admin.service';
 
@@ -685,7 +685,8 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
     @Inject(MAT_DIALOG_DATA) public data: RoundResultsData,
     private dialogRef: MatDialogRef<RoundResultsDialogComponent>,
     private campionatoService: CampionatoService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -888,16 +889,16 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
     const sportId = lega.campionato?.sport?.id;
     if (sportId === 'TENNIS') return `Round ${g}`;
     if (sportId === 'BASKET') return `Day ${g}`;
-    return `Giornata ${g}`;
+    return this.translate.instant('LEAGUE.ROUND') + ' ' + g;
   }
 
   getRoundShortLabel(g: number): string {
     const lega = this.data.lega;
-    if (!lega) return `Giornata ${g}`;
+    if (!lega) return this.translate.instant('LEAGUE.ROUND') + ' ' + g;
     const sportId = lega.campionato?.sport?.id;
     if (sportId === 'TENNIS') return `Round ${g}`;
     if (sportId === 'BASKET') return `Day ${g}`;
-    return `Giornata ${g}`;
+    return this.translate.instant('LEAGUE.ROUND') + ' ' + g;
   }
 
   close(): void {

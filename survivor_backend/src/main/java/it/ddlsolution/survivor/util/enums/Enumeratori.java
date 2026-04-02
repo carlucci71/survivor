@@ -134,7 +134,8 @@ public class Enumeratori {
         LIGA,
         TENNIS_W,
         TENNIS_AO,
-        NBA_RS;
+        NBA_RS,
+        MONDIALI_2026;
     }
 
     public enum DesRoundTennis {
@@ -150,6 +151,27 @@ public class Enumeratori {
             this.descrizione=descrizione;
         }
         public String getDescrizione(){
+            return descrizione;
+        }
+    }
+
+    public enum DesRoundMondiali {
+        GIRONI_1("Girone - Giornata 1"),
+        GIRONI_2("Girone - Giornata 2"),
+        GIRONI_3("Girone - Giornata 3"),
+        OTTAVI("Ottavi di finale"),
+        SEDICESIMI("Sedicesimi di finale"),
+        QUARTI("Quarti di finale"),
+        SEMIFINALI("Semifinali"),
+        FINALE("Finale");
+
+        private final String descrizione;
+
+        DesRoundMondiali(String descrizione) {
+            this.descrizione = descrizione;
+        }
+
+        public String getDescrizione() {
             return descrizione;
         }
     }

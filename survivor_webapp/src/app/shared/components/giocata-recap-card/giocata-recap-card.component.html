@@ -12,7 +12,7 @@
     <!-- Section label -->
     <div class="section-header">
       <span class="sh-line"></span>
-      <span class="sh-text">IL TUO PRONOSTICO</span>
+      <span class="sh-text">{{ 'LEAGUE.YOUR_PREDICTION' | translate }}</span>
       <span class="sh-line"></span>
     </div>
 
@@ -157,15 +157,15 @@
             <span class="no-pick-icon">🎯</span>
             <div class="no-pick-text">
               @if (selected.lega.giornataDaGiocare > 0) {
-                <span class="no-pick-title">Giornata {{ selected.lega.giornataDaGiocare }} — nessun pronostico</span>
+                <span class="no-pick-title">{{ 'LEAGUE.NO_PREDICTION_ROUND' | translate: { round: selected.lega.giornataDaGiocare } }}</span>
               } @else {
-                <span class="no-pick-title">In attesa della prossima giornata</span>
+                <span class="no-pick-title">{{ 'LEAGUE.WAITING_NEXT_ROUND' | translate }}</span>
               }
               <span class="no-pick-sub">{{ selected.sportEmoji }} {{ selected.lega.name }}</span>
             </div>
             @if (selected.lega.giornataDaGiocare > 0) {
               <div class="no-pick-cta">
-                Gioca ora
+                {{ 'LEAGUE.PLAY_NOW' | translate }}
                 <mat-icon>chevron_right</mat-icon>
               </div>
             }
