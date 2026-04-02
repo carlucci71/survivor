@@ -10,11 +10,11 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
     MES("MES"),      // Messico
     SAF("SAF"),      // Sudafrica
     COR("COR"),      // Corea del Sud
-    UEFAD("UEFAD"),  // Vincitrice Spareggio UEFA D
+    CEC("CEC"),      // Repubblica Ceca
 
     // Girone B
     CAN("CAN"),      // Canada
-    UEFAA("UEFAA"),  // Vincitrice Spareggio UEFA A
+    BOS("BOS"),      // Bosnia ed Erzegovina
     QAT("QAT"),      // Qatar
     SVI("SVI"),      // Svizzera
 
@@ -28,7 +28,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
     USA("USA"),      // Stati Uniti
     PAR("PAR"),      // Paraguay
     AUS("AUS"),      // Australia
-    UEFAC("UEFAC"),  // Vincitrice Spareggio UEFA C
+    TUR("TUR"),      // Turchia
 
     // Girone E
     GER("GER"),      // Germania
@@ -39,7 +39,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
     // Girone F
     OLA("OLA"),      // Olanda
     JAP("JAP"),      // Giappone
-    UEFAB("UEFAB"),  // Vincitrice Spareggio UEFA B
+    SVE("SVE"),      // Svezia
     TUN("TUN"),      // Tunisia
 
     // Girone G
@@ -57,7 +57,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
     // Girone I
     FRA("FRA"),      // Francia
     SEN("SEN"),      // Senegal
-    INT2("INT2"),    // Vincitrice Spareggio Intercontinentale 2
+    IRQ("IRQ"),      // Iraq
     NOR("NOR"),      // Norvegia
 
     // Girone J
@@ -68,7 +68,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
 
     // Girone K
     POR("POR"),      // Portogallo
-    INT1("INT1"),    // Vincitrice Spareggio Intercontinentale 1
+    COD("COD"),      // Congo (Rep. Dem.)
     COL("COL"),      // Colombia
     UZB("UZB"),      // Uzbekistan
 

@@ -10,15 +10,23 @@ INSERT INTO campionato (id, id_sport, nome, nazione, num_giornate, anno_corrente
 VALUES ('MONDIALI_2026', 'CALCIO', 'FIFA World Cup 2026', 'MONDO', 8, 2026)
 ON CONFLICT (id) DO NOTHING;
 
--- 3. 48 squadre nazionali (sigla = codice API Gazzetta)
+-- 3. Aggiunge constraint UNIQUE su (sigla, nazione) se non esiste già
+DO $$
+BEGIN
+    ALTER TABLE squadra ADD CONSTRAINT squadra_sigla_nazione_unique UNIQUE (sigla, nazione);
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END$$;
+
+-- 4. 48 squadre nazionali (sigla = codice API Gazzetta)
 -- Girone A
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('MES',   'Messico',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('SAF',   'Sudafrica',                        'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('COR',   'Corea del Sud',                    'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('UEFAD', 'Vincitrice Spareggio UEFA D',       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('CEC',   'Repubblica Ceca',                  'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone B
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('CAN',   'Canada',                           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('UEFAA', 'Vincitrice Spareggio UEFA A',       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('BOS',   'Bosnia ed Erzegovina',            'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('QAT',   'Qatar',                            'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('SVI',   'Svizzera',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone C
@@ -30,7 +38,7 @@ INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('HAI',   'Hait
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('USA',   'Stati Uniti',                      'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('PAR',   'Paraguay',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('AUS',   'Australia',                        'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('UEFAC', 'Vincitrice Spareggio UEFA C',       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('TUR',   'Turchia',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone E
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('GER',   'Germania',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('CUR',   'Curaçao',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
@@ -39,7 +47,7 @@ INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('ECU',   'Ecua
 -- Girone F
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('OLA',   'Olanda',                           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('JAP',   'Giappone',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('UEFAB', 'Vincitrice Spareggio UEFA B',       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('SVE',   'Svezia',                           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('TUN',   'Tunisia',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone G
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('BEL',   'Belgio',                           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
@@ -54,7 +62,7 @@ INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('SAU',   'Arab
 -- Girone I
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('FRA',   'Francia',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('SEN',   'Senegal',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('INT2',  'Sp. Intercontinentale 2',           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('IRQ',   'Iraq',                             'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('NOR',   'Norvegia',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone J
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('ARG',   'Argentina',                        'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
@@ -63,7 +71,7 @@ INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('AUT',   'Aust
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('GIO',   'Giordania',                        'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone K
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('POR',   'Portogallo',                       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
-INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('INT1',  'Sp. Intercontinentale 1',           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('COD',   'Congo (Rep. Dem.)',                'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('COL',   'Colombia',                         'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('UZB',   'Uzbekistan',                       'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 -- Girone L
@@ -71,3 +79,11 @@ INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('ING',   'Ingh
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('CRO',   'Croazia',                          'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('GHA',   'Ghana',                            'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
 INSERT INTO squadra (sigla, nome, nazione, id_campionato) VALUES ('PAN',   'Panama',                           'MONDO', 'MONDIALI_2026') ON CONFLICT (sigla, nazione) DO NOTHING;
+
+-- 5. Aggiornamento squadre placeholder (se il DB era già stato inizializzato con le vecchie sigle)
+UPDATE squadra SET sigla = 'CEC', nome = 'Repubblica Ceca',      id_campionato = 'MONDIALI_2026' WHERE sigla = 'UEFAD' AND nazione = 'MONDO';
+UPDATE squadra SET sigla = 'BOS', nome = 'Bosnia ed Erzegovina', id_campionato = 'MONDIALI_2026' WHERE sigla = 'UEFAA' AND nazione = 'MONDO';
+UPDATE squadra SET sigla = 'TUR', nome = 'Turchia',              id_campionato = 'MONDIALI_2026' WHERE sigla = 'UEFAC' AND nazione = 'MONDO';
+UPDATE squadra SET sigla = 'SVE', nome = 'Svezia',               id_campionato = 'MONDIALI_2026' WHERE sigla = 'UEFAB' AND nazione = 'MONDO';
+UPDATE squadra SET sigla = 'IRQ', nome = 'Iraq',                 id_campionato = 'MONDIALI_2026' WHERE sigla = 'INT2'  AND nazione = 'MONDO';
+UPDATE squadra SET sigla = 'COD', nome = 'Congo (Rep. Dem.)',    id_campionato = 'MONDIALI_2026' WHERE sigla = 'INT1'  AND nazione = 'MONDO';

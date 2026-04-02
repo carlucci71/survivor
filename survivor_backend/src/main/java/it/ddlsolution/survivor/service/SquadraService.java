@@ -23,7 +23,15 @@ public class SquadraService {
 
     @Transactional(readOnly = true)
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {
-        List<Squadra> squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId, anno);
+        List<Squadra> squadre;
+        // Per i campionati internazionali (es. Mondiali) restituiamo tutte le
+        // squadre registrate, incluse quelle non ancora qualificate, senza
+        // filtrare tramite la tabella partita.
+        if (campionatoId != null && campionatoId.startsWith("MONDIALI")) {
+            squadre = squadraRepository.findAllByIdCampionato(campionatoId);
+        } else {
+            squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId, anno);
+        }
         return squadraMapper.toDTOList(squadre)
                 .stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
