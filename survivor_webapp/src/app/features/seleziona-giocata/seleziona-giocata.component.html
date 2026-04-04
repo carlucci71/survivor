@@ -205,7 +205,7 @@
         [disabled]="!squadraSelezionata"
       >
         <mat-icon>check</mat-icon>
-        <span>{{ 'COMMON.CONFIRM' | translate }}</span>
+        <span>{{ 'COMMON.CONFIRM' | translate }} {{nomeFromSigla(squadraSelezionata || '')}}</span>
       </button>
     </div>
 
