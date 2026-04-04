@@ -901,6 +901,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     return squadra.prossimaPartita.casaSigla === siglaSquadra;
   }
 
+  nomeFromSigla(sigla: string): string {
+    return  this.squadreDisponibili.find(s => s.sigla === sigla)?.nome || '';
+
+  }
+
+
   toggleDettagli(): void {
     if (!this.squadraSelezionata) return;
 
@@ -912,7 +918,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       const opponentSigla = this.getNextOpponentSigla(true);
       const sportId = this.lega?.campionato?.sport?.id;
 
-      this.dialog.open(m.DettagliSquadraDialogComponent, {
+      const ref = this.dialog.open(m.DettagliSquadraDialogComponent, {
         data: {
           squadraSelezionata: this.formatNomeSquadra(squadraSelezionata),
           squadraNome: squadra?.nome ? this.formatNomeSquadra(squadra.nome) : this.formatNomeSquadra(squadraSelezionata),
@@ -984,6 +990,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         autoFocus: false,
         hasBackdrop: true
         // CENTRATO (nessun position)
+      });
+      ref.afterClosed().subscribe(result => {
+        if (result?.selezionata) {
+          this.selezionaSquadra(result.selezionata);
+        }
       });
     });
   }
