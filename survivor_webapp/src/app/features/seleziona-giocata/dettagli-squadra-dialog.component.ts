@@ -72,7 +72,18 @@ export interface DettagliSquadraData {
             </div>
           }
         </div>
+        <div class="nav-btns">
+            <button class="nav-btn" 
+          (click)="navigateSquadra(-1)"><mat-icon>chevron_left</mat-icon></button>
+            <button class="nav-btn" 
+          (click)="navigateSquadra(1)"><mat-icon>chevron_right</mat-icon></button>
+          </div>
 
+<button class="seleziona-btn"
+      [style.background]="'linear-gradient(135deg, ' + localColors.primary + 
+  ', ' + localColors.secondary + ')'"
+      (click)="selezionaSquadraDialog()">Seleziona</button>
+          
         <button class="close-btn" (click)="dialogRef.close()">
           <mat-icon>close</mat-icon>
         </button>
@@ -534,6 +545,51 @@ export interface DettagliSquadraData {
       mat-icon { font-size: 20px; width: 20px; height: 20px; }
       &:hover { background: rgba(255,255,255,0.4); }
     }
+ .nav-btns {
+     display: flex;
+     gap: 4px;
+     align-items: center;
+   }
+   .nav-btn {
+     background: rgba(255,255,255,0.2);
+     border: none;
+     border-radius: 50%;
+     width: 32px;
+     height: 32px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     cursor: pointer;
+     transition: all 0.2s;
+     color: #FFFFFF;
+   }
+
+   .seleziona-btn {
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 0 18px;
+      height: 32px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: filter 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+    }
+    .seleziona-btn:hover {
+      filter: brightness(1.08);
+      box-shadow: 0 4px 16px rgba(59,130,246,0.15);
+    }
+   
+   .nav-btn mat-icon {
+     font-size: 20px;
+     width: 20px;
+     height: 20px;
+   }
+   .nav-btn:hover {
+     background: rgba(255,255,255,0.4);
+   }
 
     .tabs-container {
       display: flex;
@@ -768,6 +824,8 @@ export interface DettagliSquadraData {
   `]
 })
 export class DettagliSquadraDialogComponent implements OnDestroy {
+  currentSquadraIndex: number = 0;
+
   activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
   countdown: string = '';
   countdownActive: boolean = false;
@@ -792,6 +850,11 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     public dialogRef: MatDialogRef<DettagliSquadraDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DettagliSquadraData
   ) {
+    // Imposta l'indice corrente della squadra selezionata
+    if (data.allSquadre) {
+      this.currentSquadraIndex = data.allSquadre.findIndex(sq => sq.sigla === data.squadraSelezionata);
+      if (this.currentSquadraIndex === -1) this.currentSquadraIndex = 0;
+    }
     this.localSigla = data.squadraSelezionata;
     this.localNome = data.squadraNome;
     this.localUltimi = [...data.ultimiRisultati];
@@ -806,6 +869,18 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
+  }
+
+   selezionaSquadraDialog() {
+     this.dialogRef.close({ selezionata: this.localSigla });
+   }  
+  // ── Navigazione prev/next squadre ──
+  navigateSquadra(direction: number): void {
+    if (!this.data.allSquadre || this.data.allSquadre.length === 0) return;
+    const len = this.data.allSquadre.length;
+    this.currentSquadraIndex = (this.currentSquadraIndex + direction + len) % len;
+    const next = this.data.allSquadre[this.currentSquadraIndex];
+    this.selectTeam(next.sigla, next.nome);
   }
 
   // ── Search methods ──────────────────────────────────────────────
@@ -840,6 +915,11 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
   }
 
   selectTeam(sigla: string, nome: string): void {
+    // Aggiorna currentSquadraIndex se cambia da navigazione manuale
+    if (this.data.allSquadre) {
+      const idx = this.data.allSquadre.findIndex(sq => sq.sigla === sigla);
+      if (idx !== -1) this.currentSquadraIndex = idx;
+    }
     this.clearSearch();
     if (!this.data.loadStats) return;
     this.loading = true;
