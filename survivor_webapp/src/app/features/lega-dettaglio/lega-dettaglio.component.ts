@@ -572,7 +572,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
   goBack(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home'], { state: { selectedLegaId: this.lega?.id, activeTab: this.lega?.pubblica ? 'public' : 'private' } });
   }
 
   visualizzaGiocata(giornata: number, giocatore: Giocatore): string {
@@ -1932,8 +1932,19 @@ export class LegaDettaglioComponent implements OnDestroy {
    * - pubblica è false (esplicitamente privata)
    * - E la giornata non è ancora iniziata (giornata > giornataCorrente)
    */
-  shouldHideGiocata(giocata: any, giornata: number): boolean {
+  shouldHideGiocata(giocata: any, giornata: number, giocatore?: any): boolean {
     if (!giocata) return false;
+
+    // Se siamo nella giornata corrente e il countdown non è ancora scaduto,
+    // le scelte sono visibili solo al giocatore stesso e al leader/admin
+    if (giornata === (this.lega?.giornataCorrente || 0) && !this.countdownExpired) {
+      if (!this.isLeaderLega() && !this.isAdmin()) {
+        const currentUserId = this.authService.getCurrentUser()?.id;
+        if (!giocatore || giocatore.user?.id !== currentUserId) {
+          return true;
+        }
+      }
+    }
 
     // Se la giocata è esplicitamente pubblica, mostrala sempre
     if (giocata.pubblica === true) return false;
@@ -1961,8 +1972,8 @@ export class LegaDettaglioComponent implements OnDestroy {
       return '-';
     }
 
-    // Caso 2: Voto privato (pubblica = false e giornata non iniziata)
-    if (this.shouldHideGiocata(giocata, giornata)) {
+    // Caso 2: Voto privato (pubblica = false e giornata non iniziata, oppure countdown ancora attivo)
+    if (this.shouldHideGiocata(giocata, giornata, giocatore)) {
       return '🔒 Privato';
     }
 

@@ -209,7 +209,7 @@
       @if (lega.giocatori?.length) {
 
       <!-- BOTTONE GIOCA PRINCIPALE - IN PRIMO PIANO -->
-      @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore())) {
+      @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore()) && !countdownExpired) {
         <div class="play-action-primary">
           <button class="btn-play-primary" (click)="giocaGiornataDisponibile(getCurrentGiocatore())">
             <mat-icon class="play-icon-primary">{{ getGiocaIcon() }}</mat-icon>
@@ -228,7 +228,7 @@
             class="search-input-desktop"
             [(ngModel)]="searchText"
             (ngModelChange)="onSearchChange()"
-            placeholder="Cerca giocatore..."
+            placeholder="{{ 'LEAGUE.SEARCH_PLAYER' | translate }}"
           />
           <button *ngIf="searchText" class="clear-search-btn-desktop" (click)="clearSearch()">
             <mat-icon>close</mat-icon>
@@ -242,7 +242,7 @@
             [class.active]="playerFilter === 'all'"
             (click)="setPlayerFilter('all')"
           >
-            <span class="chip-label-desktop">Tutti</span>
+            <span class="chip-label-desktop">{{ 'LEAGUE.ALL' | translate }}</span>
             <span class="chip-count-desktop">{{ getTotalPlayersCount() }}</span>
           </button>
           <button
@@ -250,7 +250,7 @@
             [class.active]="playerFilter === 'active'"
             (click)="setPlayerFilter('active')"
           >
-            <span class="chip-label-desktop">Attivi</span>
+            <span class="chip-label-desktop">{{ 'LEAGUE.ACTIVE' | translate }}</span>
             <span class="chip-count-desktop">{{ getActivePlayersCount() }}</span>
           </button>
           <button
@@ -258,7 +258,7 @@
             [class.active]="playerFilter === 'eliminated'"
             (click)="setPlayerFilter('eliminated')"
           >
-            <span class="chip-label-desktop">Eliminati</span>
+            <span class="chip-label-desktop">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
             <span class="chip-count-desktop">{{ getEliminatedPlayersCount() }}</span>
           </button>
         </div>
@@ -290,7 +290,7 @@
                       [class.current-round]="giornata === lega.giornataCorrente">
                       <div>{{ getDesGiornataTitle(giornata) }}</div>
                       @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value){
-                        <div> {{getStatoGiornata(giornata)?.descrizione}} </div>
+                        <div> {{ 'LEAGUE.' + getStatoGiornata(giornata)!.value | translate }} </div>
                       }
                   </th>
                 }
@@ -361,8 +361,8 @@
                           (contextmenu)="$event.preventDefault()">
                           <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
                           <span
-                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'private-vote-badge' : 'team-name-compact'"
-                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata) ? 'Voto nascosto fino all\'inizio della giornata' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'private-vote-badge' : 'team-name-compact'"
+                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'Scelta visibile a tutti quando scade il timer' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
                             {{ getDisplaySquadraNome(giocatore, giornata) }}
                           </span>
                           <!-- Indicatori -->
@@ -383,7 +383,7 @@
                             }
                           </div>
                           <!-- Reaction badge (non occupa spazio nel layout) -->
-                          @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                          @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                             @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
                               <span class="reaction-badges">
                                 @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
@@ -611,15 +611,19 @@
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
                        (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
-                    @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
-                      <img
-                        class="team-logo-cell"
-                        [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
-                        [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''"
-                        (error)="onLogoError($event)"
-                      />
+                    @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
+                      <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
+                    } @else {
+                      @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
+                        <img
+                          class="team-logo-cell"
+                          [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                          [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''"
+                          (error)="onLogoError($event)"
+                        />
+                      }
+                      <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
                     }
-                    <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
                     <!-- Badge forzatura -->
                     <div class="badges-container-mobile">
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.forzatura) {
@@ -636,7 +640,7 @@
                       }
                     </div>
                     <!-- Reaction badge mobile -->
-                    @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata)) {
+                    @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
                         <span class="reaction-badges">
                           @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {

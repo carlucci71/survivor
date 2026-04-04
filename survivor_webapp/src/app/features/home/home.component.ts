@@ -77,6 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
   private giocatoreSubscription: any;
+  selectedLegaId: number | null = null;
 
   constructor(
     private authService: AuthService,
@@ -93,7 +94,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.loadMe();
-    const navState = (window.history.state) as { activeTab?: 'private' | 'public' };
+    const navState = (window.history.state) as { activeTab?: 'private' | 'public'; selectedLegaId?: number };
+    this.selectedLegaId = navState?.selectedLegaId ?? null;
     this.loadLeghe(navState?.activeTab);
 
     // Sottoscrivi agli aggiornamenti del profilo

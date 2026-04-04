@@ -37,6 +37,7 @@ interface LegaConGiocata {
 })
 export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
   @Input() leghe: Lega[] = [];
+  @Input() initialLegaId: number | null = null;
   @Output() refreshRequired = new EventEmitter<void>();
 
   legheAttive: LegaConGiocata[] = [];
@@ -245,6 +246,10 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     if (toAnimate.length > 0) {
       const firstIdx = newList.findIndex(l => (l.lega.id ?? 0) === toAnimate[0].legaId);
       if (firstIdx >= 0) this.selectedIndex = firstIdx;
+    } else if (this.initialLegaId != null) {
+      const initialIdx = this.legheAttive.findIndex(l => l.lega.id === this.initialLegaId);
+      if (initialIdx >= 0) this.selectedIndex = initialIdx;
+      this.initialLegaId = null; // usa solo al primo caricamento
     } else if (selectedLegaId !== undefined) {
       const preserved = this.legheAttive.findIndex(l => l.lega.id === selectedLegaId);
       if (preserved >= 0) this.selectedIndex = preserved;
