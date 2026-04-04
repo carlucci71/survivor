@@ -45,44 +45,44 @@ export interface DettagliSquadraData {
         </div>
 
         <!-- Search bar -->
-        <div class="sq-search-wrap" (click)="$event.stopPropagation()">
-          <div class="sq-search-bar">
-            <mat-icon class="sq-search-icon">search</mat-icon>
-            <input class="sq-search-input"
-                   [(ngModel)]="searchTerm"
-                   (input)="onSearchInput()"
-                   (focus)="onSearchFocus()"
-                   (blur)="closeDropdownDelayed()"
-                   placeholder="Cerca squadra..."
-                   autocomplete="off">
-            @if(searchTerm) {
+        <ng-container *ngIf="!searchMode">
+          <button mat-icon-button class="sq-search-toggle" (click)="toggleSearchMode()">
+            <mat-icon>search</mat-icon>
+          </button>
+          <div class="nav-btns">
+            <button class="nav-btn" (click)="navigateSquadra(-1)"><mat-icon>chevron_left</mat-icon></button>
+            <button class="nav-btn" (click)="navigateSquadra(1)"><mat-icon>chevron_right</mat-icon></button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="searchMode">
+          <div class="sq-search-wrap" (click)="$event.stopPropagation()">
+            <div class="sq-search-bar">
+              <mat-icon class="sq-search-icon">search</mat-icon>
+              <input class="sq-search-input"
+                     [(ngModel)]="searchTerm"
+                     (input)="onSearchInput()"
+                     (focus)="onSearchFocus()"
+                     (blur)="closeDropdownDelayed()"
+                     placeholder="Cerca squadra..."
+                     autocomplete="off">
               <button class="sq-clear-btn" (mousedown)="clearSearch()">
                 <mat-icon>close</mat-icon>
               </button>
-            }
-          </div>
-          @if(showDropdown && filteredSquadre.length > 0) {
-            <div class="sq-dropdown">
-              @for(sq of filteredSquadre; track sq.sigla) {
-                <div class="sq-dropdown-item" (mousedown)="selectTeam(sq.sigla, sq.nome)">
-                  <span class="sq-item-sigla">{{ sq.sigla }}</span>
-                  <span class="sq-item-nome">{{ sq.nome }}</span>
-                </div>
-              }
             </div>
-          }
-        </div>
-        <div class="nav-btns">
-            <button class="nav-btn" 
-          (click)="navigateSquadra(-1)"><mat-icon>chevron_left</mat-icon></button>
-            <button class="nav-btn" 
-          (click)="navigateSquadra(1)"><mat-icon>chevron_right</mat-icon></button>
+            <div *ngIf="showDropdown && filteredSquadre.length > 0" class="sq-dropdown">
+              <div *ngFor="let sq of filteredSquadre; trackBy: trackSigla" class="sq-dropdown-item" (mousedown)="selectTeam(sq.sigla, sq.nome)">
+                <span class="sq-item-sigla">{{ sq.sigla }}</span>
+                <span class="sq-item-nome">{{ sq.nome }}</span>
+              </div>
+            </div>
           </div>
+        </ng-container>
 
-<button class="seleziona-btn"
-      [style.background]="'linear-gradient(135deg, ' + localColors.primary + 
-  ', ' + localColors.secondary + ')'"
-      (click)="selezionaSquadraDialog()">Seleziona</button>
+<ng-container *ngIf="!searchMode">
+  <button class="sport-icon-btn" (click)="selezionaSquadraDialog()">
+    <mat-icon>{{ getSportIcon(data.sportId) }}</mat-icon>
+  </button>
+</ng-container>
           
         <button class="close-btn" (click)="dialogRef.close()">
           <mat-icon>close</mat-icon>
@@ -564,7 +564,30 @@ export interface DettagliSquadraData {
      color: #FFFFFF;
    }
 
-   .seleziona-btn {
+   .sport-icon-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #fff;
+  margin-left: 8px;
+}
+.sport-icon-btn:hover {
+  background: rgba(255,255,255,0.4);
+}
+.sport-icon-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.seleziona-btn {
       color: #fff;
       border: none;
       border-radius: 16px;
@@ -824,6 +847,35 @@ export interface DettagliSquadraData {
   `]
 })
 export class DettagliSquadraDialogComponent implements OnDestroy {
+  searchMode = false;
+
+  getSportIcon(sportId?: string): string {
+    switch ((sportId || '').toUpperCase()) {
+      case 'CALCIO':
+        return 'sports_soccer';
+      case 'BASKET':
+        return 'sports_basketball';
+      case 'TENNIS':
+        return 'sports_tennis';
+      case 'VOLLEY':
+        return 'sports_volleyball';
+      default:
+        return 'sports_soccer'; // fallback to soccer ball
+    }
+  }
+
+
+  toggleSearchMode() {
+    this.searchMode = !this.searchMode;
+    if (!this.searchMode) {
+      this.clearSearch();
+    }
+  }
+
+  trackSigla(index: number, item: any) {
+    return item.sigla;
+  }
+
   currentSquadraIndex: number = 0;
 
   activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
@@ -912,6 +964,7 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     this.searchTerm = '';
     this.filteredSquadre = [];
     this.showDropdown = false;
+    this.searchMode = false;
   }
 
   selectTeam(sigla: string, nome: string): void {
