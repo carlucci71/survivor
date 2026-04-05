@@ -4415,9 +4415,10 @@
 			text-align: center;
 			line-height: 1.1;
 			max-width: 100%;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			/* Wrap only at allowed break points (prefer spaces); avoid breaking words */
+			white-space: normal;
+			overflow-wrap: normal;
+			word-break: normal;
 			padding: 2px 4px;
 
 			&.clickable {
@@ -4515,7 +4516,10 @@
 			border-radius: 8px;
 			display: inline-block;
 			letter-spacing: 0.3px;
-			white-space: nowrap;
+			/* allow breaking only at natural break points (spaces) */
+			white-space: normal;
+			overflow-wrap: normal;
+			word-break: normal;
 			border: 1px solid rgba(107, 114, 128, 0.15);
 			transition: all 0.2s ease;
 			cursor: default;
@@ -5480,6 +5484,25 @@
     background: rgba(79, 195, 247, 0.12);
     border-color: rgba(10, 61, 145, 0.35);
   }
+}
+
+/* State variants that match the round cell colors */
+.voti-chip--current {
+	background: rgba(79, 195, 247, 0.12);
+	border-color: rgba(79, 195, 247, 0.25);
+	color: #0A3D91;
+}
+
+.voti-chip--ok {
+	background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(76, 175, 80, 0.12));
+	border-color: rgba(76, 175, 80, 0.28);
+	color: #0A3D91;
+}
+
+.voti-chip--ko {
+	background: linear-gradient(135deg, rgba(244, 67, 54, 0.08), rgba(244, 67, 54, 0.12));
+	border-color: rgba(244, 67, 54, 0.28);
+	color: #0A3D91;
 }
 
 .voti-chip__nome {
