@@ -2083,6 +2083,36 @@ export class LegaDettaglioComponent implements OnDestroy {
     return Array.from(map.values()).sort((a, b) => b.count - a.count);
   }
 
+  /**
+   * Restituisce la classe da applicare alla voti-chip per una squadra
+   * - voti-chip--ok: se esiste almeno una giocata con esito 'OK'
+   * - voti-chip--ko: se esiste almeno una giocata con esito 'KO'
+   * - voti-chip--current: se ci sono voti ma ancora nessun esito
+   */
+  getVotiChipClass(sigla: string): string | null {
+    if (!this.lega || !this.lega.giornataCorrente) return null;
+    const giornata = this.lega.giornataCorrente;
+    let foundAny = false;
+    let hasOk = false;
+    let hasKo = false;
+
+    for (const giocatore of this.lega.giocatori ?? []) {
+      const giocata = this.getGiocataByGiornataAssoluta(giocatore, giornata);
+      if (!giocata || giocata.squadraSigla !== sigla) continue;
+      if (this.shouldHideGiocata(giocata, giornata)) continue;
+      foundAny = true;
+      if (giocata.esito === 'OK') hasOk = true;
+      if (giocata.esito === 'KO') hasKo = true;
+      // se troviamo sia OK che KO possiamo fermarci
+      if (hasOk && hasKo) break;
+    }
+
+    if (hasOk) return 'voti-chip--ok';
+    if (hasKo) return 'voti-chip--ko';
+    if (foundAny) return 'voti-chip--current';
+    return null;
+  }
+
   openVotiSheet(entry: { nome: string; sigla: string; count: number; nicknames: string[] }): void {
     this.votiSheet = { nome: entry.nome, sigla: entry.sigla, nicknames: entry.nicknames };
   }
