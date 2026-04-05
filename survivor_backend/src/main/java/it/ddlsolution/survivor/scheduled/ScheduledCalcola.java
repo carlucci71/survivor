@@ -17,16 +17,14 @@ import java.util.ArrayList;
 public class ScheduledCalcola {
     private final LegaService legaService;
 
-    @Scheduled(cron = "0 0 */1 * * ?") //OGNI 1 ORE
-    //@Scheduled(cron = "0 0/1 * * * ?") //OGNI MINUTO
+    //    @Scheduled(cron = "0 0 */1 * * ?") //OGNI 1 ORE
+    @Scheduled(cron = "0 0/1 * * * ?") //OGNI MINUTO
     public void calcolaCampionati() {
         legaService.allLeghe().forEach(
                 l -> {
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0L, null, new ArrayList<>()));
                     try {
-                        if (l.getStato() != Enumeratori.StatoLega.TERMINATA) {
-                            legaService.calcola(l.getId());
-                        }
+                        legaService.calcola(l.getId());
                     } catch (Exception e) {
                         log.error("Errore in calcolo batch ", e);
                     } finally {
