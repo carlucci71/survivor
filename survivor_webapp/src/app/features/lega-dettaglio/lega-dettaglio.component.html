@@ -277,6 +277,20 @@
             </button>
           </div>
         }
+        <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
+        @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
+          <div class="voti-chips-row">
+            <span class="voti-chips-label">Chi ha votato:</span>
+            <div class="voti-chips-scroll">
+              @for (entry of getVotiPerSquadra(); track entry.sigla) {
+                <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
+                  <span class="voti-chip__nome">{{ entry.nome }}</span>
+                  <span class="voti-chip__badge">{{ entry.count }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
 
         <div class="excel-table-scroll" #excelTableScroll>
           <table class="excel-table">
@@ -507,7 +521,7 @@
             <span class="voti-chips-label">Chi ha votato:</span>
             <div class="voti-chips-scroll">
               @for (entry of getVotiPerSquadra(); track entry.sigla) {
-                <button class="voti-chip" (click)="openVotiSheet(entry)">
+                <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
                   <span class="voti-chip__nome">{{ entry.nome }}</span>
                   <span class="voti-chip__badge">{{ entry.count }}</span>
                 </button>
