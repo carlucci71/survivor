@@ -165,7 +165,7 @@ public class LegaService {
             }
 
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
-            if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && true) {//TODO opzione
+            if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && userId != 0 && true) {//TODO opzione
                 offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
             }
 
@@ -181,7 +181,7 @@ public class LegaService {
 
         // Popola reactions fuori dal try/catch principale: un errore qui non deve
         // compromettere il caricamento della lega
-        if (completo) {
+        if (completo && userId != 0) {
             try {
                 popolaReactions(legaDTO);
             } catch (Exception e) {
@@ -360,62 +360,71 @@ public class LegaService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
-        CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
-        legaDTO.setCampionato(campionatoDTO);
-        int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
-        if (nuovaGiornataCalcolata > campionatoDTO.getNumGiornate()) {
-            nuovaGiornataCalcolata = campionatoDTO.getNumGiornate();
+
+        int giocateDaCalcolare=0;
+        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+            giocateDaCalcolare +=giocatoreDTO.getGiocate().stream().filter(g->g.getEsito()==null).count();
         }
-        List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
-        final int giornataIniziale = legaDTO.getGiornataIniziale();
-        Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
-        if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
-            if (statoGiornata == Enumeratori.StatoPartita.SOSPESA) {
-                legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
-            } else {
-                for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
-                    Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
-                    if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
-                        final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
-                        List<GiocataDTO> giocate = giocatoreDTO
-                                .getGiocate()
-                                .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                                .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
-                                .toList();
-                        Boolean vincente = null;
-                        if (giocate.size() == 0) {
-                            vincente = false;
-                            GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
-                            giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
-                            giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
-                            giocataRequestDTO.setLegaId(legaDTO.getId());
-                            giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
-                            inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
-                        } else if (giocate.size() == 1) {
-                            GiocataDTO giocataDTO = giocate.get(0);
-                            vincente = vincente(giocataDTO.getSquadraSigla(), partite);
-                            if (vincente != null) {
-                                if (vincente) {
-                                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
-                                } else {
-                                    giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+        if (giocateDaCalcolare>0) {
+            CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
+            legaDTO.setCampionato(campionatoDTO);
+            int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
+            if (nuovaGiornataCalcolata > campionatoDTO.getNumGiornate()) {
+                nuovaGiornataCalcolata = campionatoDTO.getNumGiornate();
+            }
+            List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
+            final int giornataIniziale = legaDTO.getGiornataIniziale();
+            Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
+            if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
+                if (statoGiornata == Enumeratori.StatoPartita.SOSPESA) {
+                    legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
+                } else {
+                    for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                        Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
+                        if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
+                            final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
+                            List<GiocataDTO> giocate = giocatoreDTO
+                                    .getGiocate()
+                                    .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                                    .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
+                                    .toList();
+                            Boolean vincente = null;
+                            if (giocate.size() == 0) {
+                                vincente = false;
+                                GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
+                                giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
+                                giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
+                                giocataRequestDTO.setLegaId(legaDTO.getId());
+                                giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
+                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
+                            } else if (giocate.size() == 1) {
+                                GiocataDTO giocataDTO = giocate.get(0);
+                                vincente = vincente(giocataDTO.getSquadraSigla(), partite);
+                                if (vincente != null) {
+                                    if (vincente) {
+                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                    } else {
+                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                    }
                                 }
                             }
-                        }
-                        if (vincente != null && vincente == false) {
-                            giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
-                        }
+                            if (vincente != null && vincente == false) {
+                                giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                            }
 
+                        }
+                    }
+                    if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                        legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
                     }
                 }
-                if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
-                    legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
-                }
             }
+            salva(legaDTO, null);
+            LegaDTO legaDTOAggiornata = getLegaDTO(legaDTO.getId(), true, userId);
+            return legaDTOAggiornata;
+        } else {
+            return legaDTO;
         }
-        salva(legaDTO, null);
-        LegaDTO legaDTOAggiornata = getLegaDTO(legaDTO.getId(), true, userId);
-        return legaDTOAggiornata;
     }
 
 
