@@ -365,7 +365,7 @@ public class LegaService {
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             giocateDaCalcolare +=giocatoreDTO.getGiocate().stream().filter(g->g.getEsito()==null).count();
         }
-        if (giocateDaCalcolare>0) {
+        if (giocateDaCalcolare>0 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA) {
             CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
             legaDTO.setCampionato(campionatoDTO);
             int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
