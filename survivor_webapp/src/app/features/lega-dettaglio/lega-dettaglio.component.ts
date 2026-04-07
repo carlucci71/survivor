@@ -360,7 +360,15 @@ export class LegaDettaglioComponent implements OnDestroy {
             });
           }
 
+          const prevGiornataCorrente = this.lega?.giornataCorrente;
           this.lega = lega;
+
+          // Se è avanzata la giornata corrente (es. dopo un calcolo esterno),
+          // resetta il countdown scaduto e riavvialo per la nuova giornata.
+          if (this.countdownExpired && lega.giornataCorrente !== prevGiornataCorrente) {
+            this.countdownExpired = false;
+            this.startCountdown();
+          }
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
           if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
@@ -1515,6 +1523,10 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.lega = lega;
         this.caricaTabella();
         this.scrollTableToRight();
+        // Reset del countdown dopo il calcolo della giornata: la giornata successiva
+        // potrebbe avere ancora tempo disponibile per votare.
+        this.countdownExpired = false;
+        this.startCountdown();
       },
       error: (err: any) => {
         this.error = 'Errore in calcola della lega';

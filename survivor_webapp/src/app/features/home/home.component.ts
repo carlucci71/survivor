@@ -31,6 +31,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
 import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
+import { ProfiloDialogComponent } from '../../shared/components/info-banner/info-banner.component';
 
 
 @Component({
@@ -340,6 +341,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
+  }
+
+  openProfilo(): void {
+    this.dialog.open(ProfiloDialogComponent, {
+      width: '90vw',
+      maxWidth: '600px',
+      maxHeight: '90vh',
+      panelClass: 'profilo-dialog-container',
+      autoFocus: false,
+      restoreFocus: false
+    });
   }
 
   logout(): void {
