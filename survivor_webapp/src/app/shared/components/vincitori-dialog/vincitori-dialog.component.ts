@@ -19,7 +19,7 @@ export interface VincitoriDialogData {
   styleUrls: ['./vincitori-dialog.component.scss']
 })
 export class VincitoriDialogComponent {
-  confettiPieces = Array.from({ length: 24 }, (_, i) => i);
+  confettiPieces = Array.from({ length: 16 }, (_, i) => i);
   sharing = false;
 
   @ViewChild('shareCard') shareCardRef!: ElementRef<HTMLElement>;
