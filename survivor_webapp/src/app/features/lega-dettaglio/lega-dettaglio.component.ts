@@ -456,6 +456,19 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  getTorneoLogo(campionatoId: string | undefined): string | null {
+    if (!campionatoId) return null;
+    const map: Record<string, string> = {
+      'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
+      'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
+      'US_OPEN': 'assets/logos/tennis/tornei/US Open.png',
+      'WIMBLEDON': 'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
+  }
+
   // ── Progressione lega ─────────────────────────────────────────────────────
 
   getEffectiveGiornataFinale(): number {

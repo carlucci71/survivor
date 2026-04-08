@@ -105,6 +105,11 @@
             <ng-container *ngFor="let group of filteredPrivateLeghe; trackBy: trackByGroupName">
               <mat-card>
                 <mat-card-header>
+                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
+                       mat-card-avatar
+                       class="torneo-logo-avatar"
+                       [src]="getTorneoLogo(group.des.campionatoId)"
+                       [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--private">
@@ -172,6 +177,11 @@
             <ng-container *ngFor="let group of filteredPublicLeghe; trackBy: trackByGroupName">
               <mat-card>
                 <mat-card-header>
+                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
+                       mat-card-avatar
+                       class="torneo-logo-avatar"
+                       [src]="getTorneoLogo(group.des.campionatoId)"
+                       [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--public">

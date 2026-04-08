@@ -36,6 +36,13 @@
               {{ (lega.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }}
             </span>
             <span class="recap-dot">·</span>
+            @if (getTorneoLogo(lega.campionato?.id)) {
+              <span class="recap-torneo-logo-wrap">
+                <img class="recap-torneo-logo"
+                     [src]="getTorneoLogo(lega.campionato?.id)"
+                     [alt]="(lega.campionato?.id ?? '') | translateLeagueData: 'championship'">
+              </span>
+            }
             <span class="recap-championship">{{ (lega.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
             <span class="recap-dot">·</span>
             <span class="recap-year">{{ lega.anno }}</span>

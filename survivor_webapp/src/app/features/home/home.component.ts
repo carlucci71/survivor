@@ -416,6 +416,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     return              { icon: 'fiber_new',              key: 'HOME.BADGE_NEW',          tier: 'new' };
   }
 
+  getTorneoLogo(campionatoId: string): string | null {
+    const map: Record<string, string> = {
+      'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
+      'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
+      'US_OPEN': 'assets/logos/tennis/tornei/US Open.png',
+      'WIMBLEDON': 'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
+  }
+
   // TrackBy functions per ottimizzare il rendering
   trackByGroupName(index: number, group: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number }): string {
     return group.name;
