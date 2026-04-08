@@ -152,6 +152,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     return displayName.replaceAll(' ', '\n');
   }
 
+  getAvatarInitials(): string {
+    const n = (this.me?.nickname || '').trim();
+    if (!n) return '?';
+    return n.substring(0, 2).toUpperCase();
+  }
+
+  getAvatarGradient(): string {
+    const n = (this.me?.nickname || 'A').trim();
+    const palettes = [
+      'linear-gradient(135deg, #6366F1, #8B5CF6)',
+      'linear-gradient(135deg, #EC4899, #F43F5E)',
+      'linear-gradient(135deg, #0EA5E9, #06B6D4)',
+      'linear-gradient(135deg, #10B981, #059669)',
+      'linear-gradient(135deg, #F59E0B, #EF4444)',
+      'linear-gradient(135deg, #8B5CF6, #EC4899)',
+      'linear-gradient(135deg, #14B8A6, #0EA5E9)',
+    ];
+    let hash = 0;
+    for (let i = 0; i < n.length; i++) { hash = (hash * 31 + n.charCodeAt(i)) % palettes.length; }
+    return palettes[Math.abs(hash) % palettes.length];
+  }
+
   getNomeHtml(): SafeHtml {
     // Mostra nickname se disponibile, altrimenti il nome
     const nome = this.me?.nickname || this.me?.nickname || '';

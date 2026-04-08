@@ -299,10 +299,10 @@ export class LegaDettaglioComponent implements OnDestroy {
       g => g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
     ) ?? [];
 
-    const isMobile = window.innerWidth <= 768;
     this.dialog.open(VincitoriDialogComponent, {
-      width: isMobile ? '92vw' : '420px',
-      maxWidth: '92vw',
+      width: '92vw',
+      maxWidth: '440px',
+      maxHeight: '92dvh',
       panelClass: 'vincitori-dialog-panel',
       autoFocus: false,
       disableClose: false,

@@ -18,7 +18,8 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
   overflow: hidden;
   padding: 32px 28px 28px;
   text-align: center;
-  min-width: 300px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ─── Background glow ───────────────────────────────────────── */
@@ -337,18 +338,99 @@ $vd-cf-colors:
 }
 
 
-/* ─── Responsive ────────────────────────────────────────────── */
+/* ─── Responsive 480px ─────────────────────────────────────── */
 @media (max-width: 480px) {
   .vd-sheet {
-    padding: 26px 18px 22px;
+    padding: 24px 16px 20px;
+    border-radius: 20px;
   }
 
   .vd-trophy {
-    font-size: 3.2rem;
+    font-size: 3rem;
   }
 
   .vd-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+  }
+
+  .vd-subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 18px;
+  }
+
+  .vd-row {
+    padding: 11px 14px;
+  }
+
+  .vd-nickname {
+    font-size: 0.95rem;
+  }
+
+  .vd-close-btn {
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    border-radius: 14px;
+  }
+
+  .vd-share-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .vd-league-pill {
+    margin-bottom: 14px;
+  }
+}
+
+/* ─── Responsive 360px ─────────────────────────────────────── */
+@media (max-width: 360px) {
+  .vd-sheet {
+    padding: 20px 14px 18px;
+  }
+
+  .vd-trophy {
+    font-size: 2.6rem;
+  }
+
+  .vd-title {
+    font-size: 1.05rem;
+  }
+
+  .vd-subtitle {
+    font-size: 0.75rem;
+    margin-bottom: 14px;
+  }
+
+  .vd-row {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .vd-crown {
+    font-size: 1rem;
+  }
+
+  .vd-nickname {
+    font-size: 0.88rem;
+  }
+
+  .vd-list {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .vd-close-btn {
+    padding: 10px 10px;
+    font-size: 0.8rem;
+    border-radius: 12px;
+  }
+
+  .vd-share-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
   }
 }
 
