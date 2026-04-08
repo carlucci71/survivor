@@ -460,6 +460,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!campionatoId) return null;
     const map: Record<string, string> = {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
       'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
