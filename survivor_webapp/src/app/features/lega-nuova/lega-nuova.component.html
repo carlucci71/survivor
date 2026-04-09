@@ -61,7 +61,7 @@
             (click)="selectSport(sport.id)"
           >
             <mat-icon class="cn-sport-ico">{{ getSportIcon(sport.id) }}</mat-icon>
-            <span class="cn-sport-lbl">{{ sport.nome }}</span>
+            <span class="cn-sport-lbl">{{ getSportTranslateKey(sport.id) | translate }}</span>
           </button>
           }
         </div>
@@ -81,7 +81,7 @@
           >
             <span class="cn-camp-name">{{ campionato.nome }}</span>
             @if (campionato.giornataDaGiocare && campionato.numGiornate) {
-            <span class="cn-camp-info">Gior. {{ campionato.giornataDaGiocare }}/{{ campionato.numGiornate }}</span>
+            <span class="cn-camp-info">{{ 'LEAGUE.ROUND_SHORT' | translate }} {{ campionato.giornataDaGiocare }}/{{ campionato.numGiornate }}</span>
             }
           </button>
           }

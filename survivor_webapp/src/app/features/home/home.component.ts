@@ -152,6 +152,28 @@ export class HomeComponent implements OnInit, OnDestroy {
     return displayName.replaceAll(' ', '\n');
   }
 
+  getAvatarInitials(): string {
+    const n = (this.me?.nickname || '').trim();
+    if (!n) return '?';
+    return n.substring(0, 2).toUpperCase();
+  }
+
+  getAvatarGradient(): string {
+    const n = (this.me?.nickname || 'A').trim();
+    const palettes = [
+      'linear-gradient(135deg, #6366F1, #8B5CF6)',
+      'linear-gradient(135deg, #EC4899, #F43F5E)',
+      'linear-gradient(135deg, #0EA5E9, #06B6D4)',
+      'linear-gradient(135deg, #10B981, #059669)',
+      'linear-gradient(135deg, #F59E0B, #EF4444)',
+      'linear-gradient(135deg, #8B5CF6, #EC4899)',
+      'linear-gradient(135deg, #14B8A6, #0EA5E9)',
+    ];
+    let hash = 0;
+    for (let i = 0; i < n.length; i++) { hash = (hash * 31 + n.charCodeAt(i)) % palettes.length; }
+    return palettes[Math.abs(hash) % palettes.length];
+  }
+
   getNomeHtml(): SafeHtml {
     // Mostra nickname se disponibile, altrimenti il nome
     const nome = this.me?.nickname || this.me?.nickname || '';
@@ -414,6 +436,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (n >= 15)  return { icon: 'local_fire_department', key: 'HOME.BADGE_HOT',          tier: 'hot' };
     if (n >= 5)   return { icon: 'trending_up',           key: 'HOME.BADGE_GROWING',      tier: 'growing' };
     return              { icon: 'fiber_new',              key: 'HOME.BADGE_NEW',          tier: 'new' };
+  }
+
+  getTorneoLogo(campionatoId: string): string | null {
+    const map: Record<string, string> = {
+      'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
+      'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
+      'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
+      'US_OPEN': 'assets/logos/tennis/tornei/US Open.png',
+      'WIMBLEDON': 'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
   }
 
   // TrackBy functions per ottimizzare il rendering

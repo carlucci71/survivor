@@ -299,10 +299,10 @@ export class LegaDettaglioComponent implements OnDestroy {
       g => g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
     ) ?? [];
 
-    const isMobile = window.innerWidth <= 768;
     this.dialog.open(VincitoriDialogComponent, {
-      width: isMobile ? '92vw' : '420px',
-      maxWidth: '92vw',
+      width: '92vw',
+      maxWidth: '440px',
+      maxHeight: '92dvh',
       panelClass: 'vincitori-dialog-panel',
       autoFocus: false,
       disableClose: false,
@@ -454,6 +454,21 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.lega?.campionato?.id,
       index
     );
+  }
+
+  getTorneoLogo(campionatoId: string | undefined): string | null {
+    if (!campionatoId) return null;
+    const map: Record<string, string> = {
+      'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
+      'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
+      'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
+      'US_OPEN': 'assets/logos/tennis/tornei/US Open.png',
+      'WIMBLEDON': 'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
   }
 
   // ── Progressione lega ─────────────────────────────────────────────────────

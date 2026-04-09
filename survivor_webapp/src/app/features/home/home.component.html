@@ -4,15 +4,11 @@
   }
   <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
-      <mat-chip class="user-chip" [class.short-name]="((me?.nickname || me?.nickname)?.length || 0) <= 6" (click)="openProfilo()">
-        <ng-container *ngIf="isMobile; else desktopName">
-          <span class="config-user-name" [innerHTML]="getNomeHtml()"></span>
-        </ng-container>
-        <ng-template #desktopName>
-          <span class="config-user-name">{{ me?.nickname }}</span>
-        </ng-template>
-      </mat-chip>
-
+      <button class="user-avatar-btn" (click)="openProfilo()" [title]="me?.nickname || ''">
+        <div class="user-avatar" [style.background]="getAvatarGradient()">
+          <span class="user-avatar-initials">{{ getAvatarInitials() }}</span>
+        </div>
+      </button>
     </div>
   </app-header>
 
@@ -105,6 +101,11 @@
             <ng-container *ngFor="let group of filteredPrivateLeghe; trackBy: trackByGroupName">
               <mat-card>
                 <mat-card-header>
+                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
+                       mat-card-avatar
+                       class="torneo-logo-avatar"
+                       [src]="getTorneoLogo(group.des.campionatoId)"
+                       [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--private">
@@ -172,6 +173,11 @@
             <ng-container *ngFor="let group of filteredPublicLeghe; trackBy: trackByGroupName">
               <mat-card>
                 <mat-card-header>
+                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
+                       mat-card-avatar
+                       class="torneo-logo-avatar"
+                       [src]="getTorneoLogo(group.des.campionatoId)"
+                       [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
                     <span class="lega-visibility-badge lega-visibility-badge--public">

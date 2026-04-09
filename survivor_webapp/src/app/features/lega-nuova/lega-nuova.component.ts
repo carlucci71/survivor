@@ -191,6 +191,15 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     return icons[id] ?? 'sports';
   }
 
+  getSportTranslateKey(id: string): string {
+    const keys: Record<string, string> = {
+      CALCIO: 'COMMON.SOCCER',
+      BASKET: 'COMMON.BASKETBALL',
+      TENNIS: 'COMMON.TENNIS'
+    };
+    return keys[id] ?? 'COMMON.SOCCER';
+  }
+
   selectSport(id: string): void {
     this.sportSel = id;
     this.sportTouched = true;
