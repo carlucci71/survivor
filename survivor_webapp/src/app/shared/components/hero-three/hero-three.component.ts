@@ -363,6 +363,32 @@ import { CommonModule } from '@angular/common';
         0 0 14px rgba(79,195,247,1),
         0 0 32px rgba(79,195,247,0.60),
         0 0 54px rgba(79,195,247,0.22);
+      animation: viPulse 3.6s ease-in-out infinite;
+    }
+
+    @keyframes viPulse {
+      0%   {
+        text-shadow:
+          0 0 14px rgba(79,195,247,1),
+          0 0 32px rgba(79,195,247,0.60),
+          0 0 54px rgba(79,195,247,0.22);
+        color: #4fc3f7;
+      }
+      50%  {
+        text-shadow:
+          0 0 18px rgba(129,222,255,1),
+          0 0 48px rgba(79,195,247,0.85),
+          0 0 80px rgba(79,195,247,0.45),
+          0 0 120px rgba(79,195,247,0.18);
+        color: #a8eaff;
+      }
+      100% {
+        text-shadow:
+          0 0 14px rgba(79,195,247,1),
+          0 0 32px rgba(79,195,247,0.60),
+          0 0 54px rgba(79,195,247,0.22);
+        color: #4fc3f7;
+      }
     }
 
 
