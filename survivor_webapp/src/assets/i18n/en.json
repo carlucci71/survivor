@@ -844,5 +844,103 @@
       "You're famous, at least in this league 🌟",
       "Ok enough, even champs need sleep 🛌"
     ]
+  },
+  "ONBOARDING": {
+    "SKIP": "Skip",
+    "NEXT": "Next",
+    "FINISH": "Let's play!",
+    "SLIDE_1": {
+      "TITLE": "Welcome to Survivor!",
+      "DESC": "The only game where you pick a different team each round. Win and go on. Lose or skip — and you're out. Win or go home!"
+    },
+    "SLIDE_2": {
+      "TITLE": "Pick your team",
+      "DESC": "Each round, pick a winning team from football, basketball or tennis. You can't reuse the same team in the same season — plan ahead!"
+    },
+    "SLIDE_3": {
+      "TITLE": "Draw or deadline miss = out",
+      "DESC": "Draw or loss = elimination. Missing the deadline = automatic elimination. Watch the countdown and choose wisely!"
+    },
+    "SLIDE_4": {
+      "TITLE": "Leagues",
+      "DESC": "You play inside a League with friends or strangers. Leagues can be public (open to all) or private (invite-only or leader-approved)."
+    },
+    "SLIDE_5": {
+      "TITLE": "Join a league",
+      "DESC": "Search for a public league from the home screen, or use the link or code shared by a friend. For private leagues, the leader will approve your request."
+    },
+    "SLIDE_6": {
+      "TITLE": "Create your league",
+      "DESC": "Want to be in charge? Create a new league, choose the championship, invite your friends and become Leader: you'll manage everything and declare the winner!"
+    },
+    "SLIDE_7": {
+      "TITLE": "Last one standing wins!",
+      "DESC": "Outlast everyone else and take the win. Your league, your rules, your glory!"
+    }
+  },
+  "LEADER_TUTORIAL": {
+    "ROLE_BADGE": "Leader Guide",
+    "SKIP": "Skip",
+    "NEXT": "Next",
+    "FINISH": "Let's lead!",
+    "SLIDE_1": {
+      "TITLE": "You are the Leader!",
+      "DESC": "You created this league and you're in charge. Let's walk through everything you can do to manage it perfectly."
+    },
+    "SLIDE_2": {
+      "TITLE": "Invite players",
+      "DESC": "Share the league link or invite via email. If the league is private, join requests come to you — approve or reject them from the \"Requests\" section."
+    },
+    "SLIDE_3": {
+      "TITLE": "Players make their picks",
+      "DESC": "Each round, every player must pick a team they think will win. Miss the deadline and they're automatically eliminated. Keep an eye on everyone!"
+    },
+    "SLIDE_4": {
+      "TITLE": "Calculate the round",
+      "DESC": "After the matches are over, press \"Calculate\" in the actions panel. The system processes all results: winners survive, losers and draws get eliminated."
+    },
+    "SLIDE_5": {
+      "TITLE": "Suspensions & control",
+      "DESC": "If a match is postponed or suspended, manage it from the \"Suspensions\" panel. You can also remove a player from the league or undo a pick if needed."
+    },
+    "SLIDE_6": {
+      "TITLE": "Force results",
+      "DESC": "Click \"Show Results\" to view the round's results. From there you can manually force the outcome of a single match — useful if there's an error or a special situation."
+    },
+    "SLIDE_7": {
+      "TITLE": "Pick for others",
+      "DESC": "As leader you can tap any player's cell and choose a team on their behalf. Use it carefully — for example to fix a mistake or help a player who can't log in."
+    },
+    "SLIDE_8": {
+      "TITLE": "You are the referee!",
+      "DESC": "The last player standing wins the league. You're the one to declare it! You can also close the league manually or reopen it if everyone gets eliminated."
+    }
+  },
+  "PLAYER_TUTORIAL": {
+    "ROLE_BADGE": "Player Guide",
+    "SKIP": "Skip",
+    "NEXT": "Next",
+    "FINISH": "Let's play!",
+    "HELP_TOOLTIP": "How does it work?",
+    "SLIDE_1": {
+      "TITLE": "You're in the league!",
+      "DESC": "Welcome to your Survivor league! Each round you must pick a team. Survive the eliminations and be the last one standing!"
+    },
+    "SLIDE_2": {
+      "TITLE": "How to make your pick",
+      "DESC": "Press the \"Gioca ora\" button to select the team you think will win that round. Confirm your choice and you're set!"
+    },
+    "SLIDE_3": {
+      "TITLE": "Deadline is everything",
+      "DESC": "You have until the round closes to make your pick. The countdown is visible on the league screen. Don't wait until the last second!"
+    },
+    "SLIDE_4": {
+      "TITLE": "One team per season",
+      "DESC": "You cannot pick the same team twice in the same season. Plan ahead and keep track of the teams you've already used in your history."
+    },
+    "SLIDE_5": {
+      "TITLE": "Reactions & history",
+      "DESC": "Long-press on someone's pick to react with an emoji! Click the history icon next to a player's name to see all their picks."
+    }
   }
 }

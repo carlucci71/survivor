@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
-interface OnboardingSlide {
+interface TutorialSlide {
   icon: string;
   emoji: string;
   titleKey: string;
@@ -15,7 +15,7 @@ interface OnboardingSlide {
 }
 
 @Component({
-  selector: 'app-onboarding',
+  selector: 'app-player-tutorial',
   standalone: true,
   imports: [CommonModule, MatIconModule, MatButtonModule, TranslateModule],
   animations: [
@@ -28,7 +28,13 @@ interface OnboardingSlide {
   ],
   template: `
     <div class="ob-backdrop" (click)="onBackdropClick($event)">
-      <div class="ob-card" role="dialog" aria-modal="true">
+      <div class="ob-card" role="dialog" aria-modal="true" aria-label="Player Tutorial">
+
+        <!-- Badge ruolo -->
+        <div class="ob-role-badge">
+          <mat-icon class="ob-role-icon">sports</mat-icon>
+          <span>{{ 'PLAYER_TUTORIAL.ROLE_BADGE' | translate }}</span>
+        </div>
 
         <!-- Progress dots -->
         <div class="ob-dots">
@@ -41,21 +47,16 @@ interface OnboardingSlide {
         @for (slide of slides; track $index) {
           @if ($index === current) {
             <div class="ob-slide" [@slideAnim]>
-
-              <!-- Illustration -->
               <div class="ob-illustration" [style.background]="slide.gradient">
                 <div class="ob-emoji-ring" [style.borderColor]="slide.accent + '44'">
                   <span class="ob-emoji">{{ slide.emoji }}</span>
                 </div>
                 <mat-icon class="ob-bg-icon" [style.color]="slide.accent + '22'">{{ slide.icon }}</mat-icon>
               </div>
-
-              <!-- Text -->
               <div class="ob-text">
                 <h2 class="ob-title">{{ slide.titleKey | translate }}</h2>
                 <p class="ob-desc">{{ slide.descKey | translate }}</p>
               </div>
-
             </div>
           }
         }
@@ -63,24 +64,22 @@ interface OnboardingSlide {
         <!-- Actions -->
         <div class="ob-actions">
           <button class="ob-btn ob-btn--skip" (click)="skip()">
-            {{ 'ONBOARDING.SKIP' | translate }}
+            {{ 'PLAYER_TUTORIAL.SKIP' | translate }}
           </button>
-
           <div class="ob-nav-btns">
             @if (current > 0) {
               <button class="ob-btn ob-btn--back" (click)="prev()">
                 <mat-icon>arrow_back</mat-icon>
               </button>
             }
-
             @if (current < slides.length - 1) {
               <button class="ob-btn ob-btn--next" (click)="next()">
-                {{ 'ONBOARDING.NEXT' | translate }}
+                {{ 'PLAYER_TUTORIAL.NEXT' | translate }}
                 <mat-icon>arrow_forward</mat-icon>
               </button>
             } @else {
               <button class="ob-btn ob-btn--finish" (click)="finish()">
-                {{ 'ONBOARDING.FINISH' | translate }}
+                {{ 'PLAYER_TUTORIAL.FINISH' | translate }}
                 <mat-icon>sports_score</mat-icon>
               </button>
             }
@@ -91,7 +90,6 @@ interface OnboardingSlide {
     </div>
   `,
   styles: [`
-    /* ── Backdrop ── */
     .ob-backdrop {
       position: fixed;
       inset: 0;
@@ -106,7 +104,6 @@ interface OnboardingSlide {
       box-sizing: border-box;
     }
 
-    /* ── Card ── */
     .ob-card {
       background: #FFFFFF;
       border-radius: 24px;
@@ -124,12 +121,32 @@ interface OnboardingSlide {
       to   { opacity: 1; transform: scale(1)   translateY(0); }
     }
 
-    /* ── Progress dots ── */
+    .ob-role-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+      padding: 12px 24px 0;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #0A3D91;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ob-role-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #0A3D91;
+    }
+
     .ob-dots {
       display: flex;
       justify-content: center;
       gap: 8px;
-      padding: 20px 24px 0;
+      padding: 10px 24px 0;
     }
 
     .ob-dot {
@@ -146,33 +163,30 @@ interface OnboardingSlide {
       }
     }
 
-    /* ── Slide ── */
     .ob-slide {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* ── Illustration ── */
     .ob-illustration {
-      width: 100%;
-      height: 200px;
+      width: calc(100% - 48px);
+      height: 180px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
-      margin-top: 16px;
+      margin-top: 12px;
       border-radius: 16px;
       margin-left: 24px;
       margin-right: 24px;
-      width: calc(100% - 48px);
       flex-shrink: 0;
     }
 
     .ob-emoji-ring {
-      width: 110px;
-      height: 110px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       border: 3px solid;
       display: flex;
@@ -185,7 +199,7 @@ interface OnboardingSlide {
     }
 
     .ob-emoji {
-      font-size: 3.6rem;
+      font-size: 3.2rem;
       line-height: 1;
       animation: bob 3s ease-in-out infinite;
     }
@@ -206,15 +220,14 @@ interface OnboardingSlide {
       pointer-events: none;
     }
 
-    /* ── Text ── */
     .ob-text {
-      padding: 20px 28px 8px;
+      padding: 16px 28px 8px;
       text-align: center;
     }
 
     .ob-title {
       font-family: 'Poppins', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #0A3D91;
       margin: 0 0 10px;
@@ -223,13 +236,12 @@ interface OnboardingSlide {
 
     .ob-desc {
       font-family: 'Poppins', sans-serif;
-      font-size: 0.92rem;
+      font-size: 0.91rem;
       color: #4A5568;
       line-height: 1.65;
       margin: 0;
     }
 
-    /* ── Actions ── */
     .ob-actions {
       display: flex;
       align-items: center;
@@ -310,7 +322,6 @@ interface OnboardingSlide {
       }
     }
 
-    /* ── Responsive ── */
     @media (max-width: 480px) {
       .ob-card {
         border-radius: 20px;
@@ -319,99 +330,41 @@ interface OnboardingSlide {
       }
 
       .ob-illustration {
-        height: 160px;
+        height: 150px;
         margin-left: 16px;
         margin-right: 16px;
         width: calc(100% - 32px);
       }
 
-      .ob-emoji-ring {
-        width: 90px;
-        height: 90px;
-      }
-
-      .ob-emoji { font-size: 2.8rem; }
-
-      .ob-title  { font-size: 1.15rem; }
-      .ob-desc   { font-size: 0.85rem; }
-
-      .ob-text   { padding: 16px 20px 6px; }
+      .ob-emoji-ring { width: 85px; height: 85px; }
+      .ob-emoji { font-size: 2.6rem; }
+      .ob-title { font-size: 1.1rem; }
+      .ob-desc { font-size: 0.84rem; }
+      .ob-text { padding: 14px 20px 6px; }
       .ob-actions { padding: 12px 20px 20px; }
-
       .ob-btn--next,
       .ob-btn--finish { padding: 9px 16px; font-size: 0.82rem; }
     }
 
     @media (max-width: 360px) {
-      .ob-illustration { height: 140px; }
-      .ob-emoji-ring { width: 80px; height: 80px; }
-      .ob-emoji { font-size: 2.4rem; }
+      .ob-illustration { height: 130px; }
+      .ob-emoji-ring { width: 76px; height: 76px; }
+      .ob-emoji { font-size: 2.2rem; }
       .ob-title { font-size: 1rem; }
     }
   `]
 })
-export class OnboardingComponent {
+export class PlayerTutorialComponent {
   @Output() dismissed = new EventEmitter<void>();
 
   current = 0;
 
-  readonly slides: OnboardingSlide[] = [
-    {
-      emoji: '🏆',
-      icon: 'emoji_events',
-      titleKey: 'ONBOARDING.SLIDE_1.TITLE',
-      descKey: 'ONBOARDING.SLIDE_1.DESC',
-      accent: '#0A3D91',
-      gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)'
-    },
-    {
-      emoji: '⚽',
-      icon: 'sports_soccer',
-      titleKey: 'ONBOARDING.SLIDE_2.TITLE',
-      descKey: 'ONBOARDING.SLIDE_2.DESC',
-      accent: '#1a6bcc',
-      gradient: 'linear-gradient(135deg, #EFF6FF, #E0F2FE)'
-    },
-    {
-      emoji: '🎯',
-      icon: 'track_changes',
-      titleKey: 'ONBOARDING.SLIDE_3.TITLE',
-      descKey: 'ONBOARDING.SLIDE_3.DESC',
-      accent: '#E53935',
-      gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)'
-    },
-    {
-      emoji: '🔗',
-      icon: 'groups',
-      titleKey: 'ONBOARDING.SLIDE_4.TITLE',
-      descKey: 'ONBOARDING.SLIDE_4.DESC',
-      accent: '#8B5CF6',
-      gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)'
-    },
-    {
-      emoji: '🚪',
-      icon: 'login',
-      titleKey: 'ONBOARDING.SLIDE_5.TITLE',
-      descKey: 'ONBOARDING.SLIDE_5.DESC',
-      accent: '#10B981',
-      gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)'
-    },
-    {
-      emoji: '👑',
-      icon: 'star',
-      titleKey: 'ONBOARDING.SLIDE_6.TITLE',
-      descKey: 'ONBOARDING.SLIDE_6.DESC',
-      accent: '#F59E0B',
-      gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)'
-    },
-    {
-      emoji: '🦁',
-      icon: 'military_tech',
-      titleKey: 'ONBOARDING.SLIDE_7.TITLE',
-      descKey: 'ONBOARDING.SLIDE_7.DESC',
-      accent: '#F59E0B',
-      gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)'
-    }
+  readonly slides: TutorialSlide[] = [
+    { emoji: '🎮', icon: 'sports',    titleKey: 'PLAYER_TUTORIAL.SLIDE_1.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_1.DESC', accent: '#0A3D91', gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)' },
+    { emoji: '👆', icon: 'touch_app', titleKey: 'PLAYER_TUTORIAL.SLIDE_2.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_2.DESC', accent: '#4FC3F7', gradient: 'linear-gradient(135deg, #F0F9FF, #E0F2FE)' },
+    { emoji: '⏱️', icon: 'schedule',  titleKey: 'PLAYER_TUTORIAL.SLIDE_3.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_3.DESC', accent: '#EF4444', gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)' },
+    { emoji: '🚫', icon: 'block',     titleKey: 'PLAYER_TUTORIAL.SLIDE_4.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_4.DESC', accent: '#8B5CF6', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
+    { emoji: '📊', icon: 'bar_chart', titleKey: 'PLAYER_TUTORIAL.SLIDE_5.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_5.DESC', accent: '#10B981', gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)' },
   ];
 
   next(): void {
@@ -433,12 +386,11 @@ export class OnboardingComponent {
   }
 
   onBackdropClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('ob-backdrop')) {
-      // Don't close on backdrop click — force the user to read at least a bit
-    }
+    // Non chiudere sul click del backdrop — forza l'utente a leggere
+    void event;
   }
 
   private markSeen(): void {
-    localStorage.setItem('survivor_onboarding_v2_seen', '1');
+    localStorage.setItem('survivor_player_tutorial_seen', '1');
   }
 }

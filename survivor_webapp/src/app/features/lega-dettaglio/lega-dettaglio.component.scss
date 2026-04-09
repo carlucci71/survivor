@@ -1617,8 +1617,14 @@
 	flex-wrap: wrap;
 }
 
+.recap-actions {
+	margin-left: auto;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
 .recap-share-btn {
-	margin-left: auto !important;
 	width: 32px !important;
 	height: 32px !important;
 	color: rgba(255, 255, 255, 0.85) !important;
@@ -1635,6 +1641,27 @@
 
 	&:hover {
 		background: rgba(255, 255, 255, 0.22) !important;
+	}
+}
+
+.recap-help-btn {
+	width: 32px !important;
+	height: 32px !important;
+	color: rgba(255, 255, 255, 0.70) !important;
+	background: transparent !important;
+	border-radius: 8px !important;
+	transition: background 0.2s ease, color 0.2s ease !important;
+	flex-shrink: 0;
+
+	mat-icon {
+		font-size: 18px !important;
+		width: 18px !important;
+		height: 18px !important;
+	}
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.12) !important;
+		color: rgba(255, 255, 255, 1) !important;
 	}
 }
 .recap-league-name {

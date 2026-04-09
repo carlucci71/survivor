@@ -1,4 +1,10 @@
 <div class="lega-dettaglio-container">
+  @if (showLeaderTutorial) {
+    <app-leader-tutorial (dismissed)="onLeaderTutorialDismissed()"></app-leader-tutorial>
+  }
+  @if (showPlayerTutorial) {
+    <app-player-tutorial (dismissed)="onPlayerTutorialDismissed()"></app-player-tutorial>
+  }
   <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content">
@@ -15,13 +21,22 @@
         <div class="recap-header">
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
-            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <button *ngIf="isDaAvviare() && (isLeaderLega() || isAdmin())"
-              mat-icon-button
-              class="recap-share-btn"
-              (click)="shareLink()"
-              [matTooltip]="'COMMON.SHARE_LINK' | translate">
-              <mat-icon>share</mat-icon>
-            </button>
+            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <div class="recap-actions">
+              <button *ngIf="isInLega() && !isTerminata()"
+                mat-icon-button
+                class="recap-share-btn"
+                (click)="shareLink()"
+                [matTooltip]="'COMMON.SHARE_LINK' | translate">
+                <mat-icon>share</mat-icon>
+              </button>
+              <button *ngIf="isInLega()"
+                mat-icon-button
+                class="recap-help-btn"
+                (click)="isLeaderLega() || isAdmin() ? openLeaderTutorial() : openPlayerTutorial()"
+                [matTooltip]="'PLAYER_TUTORIAL.HELP_TOOLTIP' | translate">
+                <mat-icon>help_outline</mat-icon>
+              </button>
+            </div>
           </div>
           @if (lega.giornataCalcolata && recapGiornataRelativa !== null) {
             <button class="recap-mini-link" (click)="goToRecap()">

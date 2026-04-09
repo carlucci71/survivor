@@ -51,6 +51,8 @@ import { RoundResultsDialogComponent } from '../../shared/components/round-resul
 import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
 import { RecapService } from '../../core/services/recap.service';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
+import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial/leader-tutorial.component';
+import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -76,6 +78,8 @@ import { VincitoriDialogComponent } from '../../shared/components/vincitori-dial
     ReactiveFormsModule,
     TranslateModule,
     TranslateLeagueDataPipe,
+    LeaderTutorialComponent,
+    PlayerTutorialComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -166,6 +170,10 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.router.navigate(['/recap', this.lega.id, g]);
     }
   }
+
+  // Tutorial
+  showLeaderTutorial = false;
+  showPlayerTutorial = false;
 
   // Elimina lega
   showDeleteConfirm = false;
@@ -286,6 +294,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
+          this.maybeTriggerTutorial();
         }
       },
       error: (error) => {
@@ -460,6 +469,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!campionatoId) return null;
     const map: Record<string, string> = {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
@@ -1239,6 +1249,35 @@ export class LegaDettaglioComponent implements OnDestroy {
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
 
+  private maybeTriggerTutorial(): void {
+    if (this.isTerminata()) return;
+    if (this.isLeaderLega() || this.isAdmin()) {
+      if (!localStorage.getItem('survivor_leader_tutorial_seen')) {
+        this.showLeaderTutorial = true;
+      }
+    } else if (this.isInLega()) {
+      if (!localStorage.getItem('survivor_player_tutorial_seen')) {
+        this.showPlayerTutorial = true;
+      }
+    }
+  }
+
+  onLeaderTutorialDismissed(): void {
+    this.showLeaderTutorial = false;
+  }
+
+  onPlayerTutorialDismissed(): void {
+    this.showPlayerTutorial = false;
+  }
+
+  openLeaderTutorial(): void {
+    this.showLeaderTutorial = true;
+  }
+
+  openPlayerTutorial(): void {
+    this.showPlayerTutorial = true;
+  }
+
   goToRichieste(): void {
     this.router.navigate(['/richieste']);
   }
@@ -1452,9 +1491,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   async shareLink(): Promise<void> {
-    const url = (this.lega!.pubblica && this.lega!.accessoLibero)
-      ? environment.baseUrl + '/joinLega'
-      : environment.baseUrl + '/join/' + this.lega!.id;
+    const url = environment.baseUrl + '/join/' + this.lega!.id;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,

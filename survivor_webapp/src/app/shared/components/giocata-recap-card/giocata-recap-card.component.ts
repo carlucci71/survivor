@@ -319,7 +319,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     if (!campionatoId) return null;
     const map: Record<string, string> = {
       'SERIE_A':       'assets/logos/calcio/tornei/serie_A.png',
-      'SERIE_B':       'assets/logos/calcio/tornei/serie_B.png',
+      'SERIE_B':       'assets/logos/calcio/tornei/serie_b.png',
       'LIGA':          'assets/logos/calcio/tornei/liga.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
       'NBA_RS':        'assets/logos/basket/tornei/NBA.png',
