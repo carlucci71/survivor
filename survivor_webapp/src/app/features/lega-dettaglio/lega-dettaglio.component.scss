@@ -1684,6 +1684,26 @@
 	color: rgba(255,255,255,0.85);
 	font-size: 0.78rem;
 }
+.recap-torneo-logo-wrap {
+	display: inline-flex;
+	align-items: center;
+	background: rgba(255, 255, 255, 0.14);
+	border-radius: 6px;
+	padding: 2px 6px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	line-height: 1;
+}
+.recap-torneo-logo {
+	height: 20px;
+	max-width: 54px;
+	object-fit: contain;
+	display: block;
+
+	@media (max-width: 480px) {
+		height: 17px;
+		max-width: 44px;
+	}
+}
 .recap-year {
 	color: rgba(255,255,255,0.55);
 	font-size: 0.75rem;
