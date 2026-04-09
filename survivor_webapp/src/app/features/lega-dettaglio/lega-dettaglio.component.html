@@ -311,7 +311,7 @@
                       [class.current-round]="giornata === lega.giornataCorrente">
                       <div>{{ getDesGiornataTitle(giornata) }}</div>
                       @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value){
-                        <div> {{ 'LEAGUE.' + getStatoGiornata(giornata)!.value | translate }} </div>
+                        <div> {{ 'LEAGUE.' + getStatoGiornata(giornata)?.value | translate }} </div>
                       }
                   </th>
                 }
