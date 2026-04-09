@@ -30,10 +30,10 @@ import { CommonModule } from '@angular/common';
           <rect class="fl" x="630" y="68" width="110" height="124"/>
           <rect class="fl" x="688" y="95" width="52" height="70"/>
           <path class="fl" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
-          <path class="fl" d="M60,20 Q76,20 76,36"/>
-          <path class="fl" d="M740,20 Q724,20 724,36"/>
-          <path class="fl" d="M60,240 Q76,240 76,224"/>
-          <path class="fl" d="M740,240 Q724,240 724,224"/>
+          <path class="fl" d="M74,20 A14,14 0 0,1 60,34"/>
+          <path class="fl" d="M726,20 A14,14 0 0,0 740,34"/>
+          <path class="fl" d="M60,226 A14,14 0 0,1 74,240"/>
+          <path class="fl" d="M740,226 A14,14 0 0,0 726,240"/>
         </svg>
 
         <svg class="field" [class.on]="active===1"
@@ -76,6 +76,9 @@ import { CommonModule } from '@angular/common';
 
       <!-- Top shine line -->
       <div class="shine"></div>
+
+      <!-- Periodic light sweep -->
+      <div class="sweep" aria-hidden="true"></div>
 
       <!-- Text content -->
       <div class="content">
@@ -302,6 +305,38 @@ import { CommonModule } from '@angular/common';
         rgba(79, 195, 247, 0.40) 78%,
         transparent 100%
       );
+    }
+
+    /* =====================================================
+       LIGHT SWEEP
+    ===================================================== */
+
+    .sweep {
+      position: absolute;
+      top: 0; left: 0;
+      width: 60px;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        transparent       0%,
+        rgba(255,255,255,0.00) 30%,
+        rgba(255,255,255,0.07) 48%,
+        rgba(255,255,255,0.11) 50%,
+        rgba(255,255,255,0.07) 52%,
+        rgba(255,255,255,0.00) 70%,
+        transparent       100%
+      );
+      animation: sweepMove 7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes sweepMove {
+      0%   { transform: translateX(-80px);  opacity: 0; }
+      5%   { opacity: 1; }
+      40%  { transform: translateX(calc(100vw + 80px)); opacity: 1; }
+      41%  { opacity: 0; }
+      100% { transform: translateX(calc(100vw + 80px)); opacity: 0; }
     }
 
     /* =====================================================
