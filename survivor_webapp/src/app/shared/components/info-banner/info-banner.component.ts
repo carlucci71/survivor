@@ -1199,11 +1199,6 @@ export class AlboOroDialogComponent implements OnInit {
   template: `
     <div class="modal-container">
 
-      <!-- CLOSE BUTTON -->
-      <button class="close-btn" (click)="closeDialog()">
-        <mat-icon>close</mat-icon>
-      </button>
-
       <!-- HEADER: Avatar (sinistra) + Nickname (destra) -->
       <div class="profile-header">
         <div class="avatar" [style.background]="getAvatarGradient()">
@@ -1216,14 +1211,13 @@ export class AlboOroDialogComponent implements OnInit {
             [placeholder]="'PROFILE.NICKNAME' | translate"
             autocomplete="off" required>
         </div>
+        <button class="close-btn" (click)="closeDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
 
       <!-- FAVORITES -->
       <div class="favorites-section">
-        <p class="section-title">
-          <mat-icon>favorite</mat-icon>
-          {{ 'PROFILE.FAVORITE_TEAMS' | translate }}
-        </p>
 
         <!-- 3 chip sport in riga -->
         <div class="sport-chips">
@@ -1350,9 +1344,6 @@ export class AlboOroDialogComponent implements OnInit {
 
       <!-- ACTIONS -->
       <div class="actions-section">
-        <button type="button" class="btn-secondary" (click)="closeDialog()">
-          {{ 'PROFILE.CANCEL' | translate }}
-        </button>
         <button type="submit" class="btn-primary" [disabled]="!isFormValid() || isSaving" (click)="onSubmit()">
           {{ isSaving ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE' | translate) }}
         </button>
@@ -1360,8 +1351,7 @@ export class AlboOroDialogComponent implements OnInit {
 
       <!-- DANGER ZONE -->
       <div class="danger-zone">
-        <button type="button" class="btn-danger" (click)="openDeleteAccountDialog()">
-          <mat-icon>delete_forever</mat-icon>
+        <button type="button" class="btn-danger-link" (click)="openDeleteAccountDialog()">
           {{ 'PROFILE.DELETE_ACCOUNT' | translate }}
         </button>
       </div>
@@ -1369,89 +1359,46 @@ export class AlboOroDialogComponent implements OnInit {
     </div>
   `,
   styles: [`
-    :host {
-      display: block;
-      width: 100%;
-    }
-
+    :host { display: block; width: 100%; }
     * { box-sizing: border-box; }
 
     /* ─── CONTAINER ─── */
     .modal-container {
-      position: relative;
-      background: #FFFFFF;
+      background: #F8F9FC;
       border-radius: 20px;
-      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      width: 100%;
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
       font-family: 'Poppins', sans-serif;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* ─── CLOSE BTN ─── */
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 30;
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      min-height: 36px;
-      background: rgba(0,0,0,0.30);
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.45);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-
-      mat-icon {
-        color: #fff;
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        line-height: 18px;
-        pointer-events: none;
-      }
-
-      &:hover, &:active { background: rgba(0,0,0,0.50); }
-    }
-
-    /* ─── PROFILE HEADER (row layout: avatar sinistra, nickname destra) ─── */
+    /* ─── HEADER ─── */
     .profile-header {
-      background: linear-gradient(135deg, #0A3D91 0%, #1565C0 55%, #4FC3F7 100%);
-      border-radius: 20px 20px 0 0;
-      padding: 16px 58px 16px 20px;
+      background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #4FC3F7 100%);
+      padding: 20px;
       display: flex;
-      flex-direction: row;
       align-items: center;
-      gap: 14px;
-      flex-shrink: 0;
+      gap: 16px;
     }
 
     .avatar {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2.5px solid rgba(255,255,255,0.55);
-      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
       flex-shrink: 0;
     }
 
     .avatar-initials {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #fff;
-      font-family: 'Poppins', sans-serif;
       line-height: 1;
     }
 
@@ -1463,64 +1410,60 @@ export class AlboOroDialogComponent implements OnInit {
       min-width: 0;
     }
 
+    .close-btn {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: rgba(0,0,0,0.18);
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+
+      mat-icon { color: #fff; font-size: 17px; width: 17px; height: 17px; pointer-events: none; }
+      &:hover, &:active { background: rgba(0,0,0,0.35); }
+    }
+
     .field-label {
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
     }
 
     .nickname-input {
       width: 100%;
       padding: 8px 12px;
       border-radius: 10px;
-      background: rgba(255,255,255,0.18);
-      border: 1.5px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
       color: #fff;
       font-family: 'Poppins', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       transition: all 0.2s;
       -webkit-text-size-adjust: 100%;
 
-      &::placeholder { color: rgba(255,255,255,0.55); font-weight: 400; }
-
+      &::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
       &:focus {
         outline: none;
-        background: rgba(255,255,255,0.28);
-        border-color: rgba(255,255,255,0.8);
-        box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.25);
+        border-color: rgba(255,255,255,0.75);
       }
     }
 
-    /* ─── FAVORITES ─── */
+    /* ─── BODY ─── */
     .favorites-section {
-      padding: 14px 16px 0;
-      flex-shrink: 0;
+      padding: 16px 16px 0;
     }
 
-    .section-title {
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #6B7280;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin: 0 0 10px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-
-      mat-icon {
-        font-size: 13px;
-        width: 13px;
-        height: 13px;
-        color: #0A3D91;
-        vertical-align: middle;
-      }
-    }
-
-    /* ─── SPORT CHIPS (3 colonne) ─── */
+    /* ─── CHIP (3 colonne) ─── */
     .sport-chips {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1533,66 +1476,56 @@ export class AlboOroDialogComponent implements OnInit {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 3px;
       padding: 10px 6px;
-      border-radius: 14px;
-      border: 1.5px solid #E8ECF4;
-      background: #FAFBFF;
+      border-radius: 12px;
+      border: 1.5px solid #E2E8F0;
+      background: #fff;
       cursor: pointer;
-      transition: all 0.2s ease;
-      min-height: 68px;
-      overflow: hidden;
+      transition: all 0.18s ease;
+      min-height: 72px;
       -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
 
-      &:active { transform: scale(0.96); }
-
-      &:hover {
-        border-color: #B8C7E8;
-        background: #F0F4FF;
-      }
+      &:active { transform: scale(0.97); }
 
       &.chip--active {
         border-color: #1565C0;
-        background: linear-gradient(135deg, rgba(10,61,145,0.07), rgba(79,195,247,0.08));
-        box-shadow: 0 2px 10px rgba(10,61,145,0.12);
+        background: #EFF4FF;
+        box-shadow: 0 2px 8px rgba(10,61,145,0.1);
       }
 
       &.chip--has {
-        border-color: #4FC3F7;
-        background: linear-gradient(135deg, rgba(79,195,247,0.07), rgba(10,61,145,0.04));
+        border-color: #7CB9F4;
       }
 
       &.chip--active.chip--has {
         border-color: #0A3D91;
-        background: linear-gradient(135deg, rgba(10,61,145,0.1), rgba(79,195,247,0.1));
+        background: #E8F0FE;
       }
     }
 
     .chip-check {
       position: absolute;
-      top: 4px;
-      right: 6px;
-      font-size: 0.65rem;
-      font-weight: 700;
+      top: 5px;
+      right: 7px;
+      font-size: 0.6rem;
+      font-weight: 800;
       color: #16A34A;
-      line-height: 1;
     }
 
-    .chip-emoji { font-size: 1.35rem; line-height: 1; }
+    .chip-emoji { font-size: 1.4rem; line-height: 1; }
 
     .chip-label {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       font-weight: 600;
-      color: #6B7280;
+      color: #94A3B8;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      white-space: nowrap;
+      letter-spacing: 0.5px;
     }
 
     .chip-value {
-      font-size: 0.68rem;
-      font-weight: 600;
+      font-size: 0.66rem;
+      font-weight: 700;
       width: 100%;
       text-align: center;
       overflow: hidden;
@@ -1601,32 +1534,29 @@ export class AlboOroDialogComponent implements OnInit {
       padding: 0 4px;
     }
 
-    .chip-value--set { color: #0A3D91; }
-    .chip-value--empty { color: #C4C9D4; }
+    .chip-value--set { color: #1565C0; }
+    .chip-value--empty { color: #CBD5E1; }
 
-    /* ─── EDIT AREA (sotto i chip, per lo sport attivo) ─── */
-    .edit-area {
-      position: relative;
-      margin-top: 10px;
-    }
+    /* ─── EDIT AREA ─── */
+    .edit-area { margin-top: 10px; position: relative; }
 
     .edit-selected {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 10px 14px;
-      background: linear-gradient(135deg, rgba(10,61,145,0.05), rgba(79,195,247,0.06));
-      border: 1.5px solid #4FC3F7;
-      border-radius: 12px;
+      background: #fff;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 10px;
     }
 
-    .edit-emoji { font-size: 1.2rem; flex-shrink: 0; }
+    .edit-emoji { font-size: 1.1rem; flex-shrink: 0; }
 
     .edit-team {
       flex: 1;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 600;
-      color: #0A3D91;
+      color: #1E293B;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -1636,21 +1566,17 @@ export class AlboOroDialogComponent implements OnInit {
       background: transparent;
       border: none;
       cursor: pointer;
-      padding: 4px;
+      padding: 3px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: background 0.2s;
+      transition: background 0.15s;
       -webkit-tap-highlight-color: transparent;
 
-      mat-icon { font-size: 16px; width: 16px; height: 16px; color: #9CA3AF; }
-
-      &:hover, &:active {
-        background: rgba(220,38,38,0.08);
-        mat-icon { color: #DC2626; }
-      }
+      mat-icon { font-size: 15px; width: 15px; height: 15px; color: #94A3B8; }
+      &:hover mat-icon, &:active mat-icon { color: #DC2626; }
     }
 
     .edit-search { position: relative; }
@@ -1658,38 +1584,30 @@ export class AlboOroDialogComponent implements OnInit {
     .search-input {
       width: 100%;
       padding: 10px 14px;
-      border-radius: 12px;
-      border: 1.5px solid #E0E7EE;
+      border-radius: 10px;
+      border: 1.5px solid #E2E8F0;
       background: #fff;
-      color: #0A3D91;
+      color: #1E293B;
       font-family: 'Poppins', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: border-color 0.2s;
       -webkit-text-size-adjust: 100%;
 
-      &::placeholder { color: #9CA3AF; font-weight: 400; font-size: 0.88rem; }
-
-      &:focus {
-        outline: none;
-        border-color: #1565C0;
-        box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
-      }
+      &::placeholder { color: #94A3B8; font-size: 0.88rem; }
+      &:focus { outline: none; border-color: #1565C0; }
     }
 
-    /* ─── SUGGESTIONS (assoluto — non sposta il layout) ─── */
     .suggestions-list {
       position: absolute;
       top: calc(100% + 4px);
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
       z-index: 50;
       background: #fff;
-      border: 1.5px solid rgba(21,101,192,0.25);
-      border-radius: 12px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 6px 24px rgba(10,61,145,0.15);
-      animation: fadeIn 0.15s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
     }
 
     .suggestion-item {
@@ -1701,19 +1619,13 @@ export class AlboOroDialogComponent implements OnInit {
       font-size: 0.88rem;
       color: #374151;
       font-weight: 500;
-      border-bottom: 1px solid #F3F4F6;
-      transition: background 0.15s;
+      border-bottom: 1px solid #F1F5F9;
+      transition: background 0.12s;
 
       &:last-child { border-bottom: none; }
-
-      &:hover, &:active {
-        background: linear-gradient(135deg, rgba(10,61,145,0.05), rgba(79,195,247,0.07));
-        color: #0A3D91;
-        font-weight: 600;
-      }
+      &:hover, &:active { background: #F8FAFF; color: #0A3D91; }
     }
 
-    /* ─── ERRORI ─── */
     .team-error-banner {
       display: flex;
       align-items: center;
@@ -1721,12 +1633,11 @@ export class AlboOroDialogComponent implements OnInit {
       padding: 8px 12px;
       border-radius: 8px;
       margin-top: 6px;
-      background: #FFF3E0;
-      border: 1px solid #FFB74D;
-      color: #E65100;
-      font-size: 0.8rem;
+      background: #FFF7ED;
+      border: 1px solid #FED7AA;
+      color: #C2410C;
+      font-size: 0.78rem;
       font-weight: 600;
-      animation: slideIn 0.2s ease;
     }
 
     /* ─── FEEDBACK ─── */
@@ -1734,131 +1645,86 @@ export class AlboOroDialogComponent implements OnInit {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
-      font-size: 0.82rem;
+      padding: 8px 14px;
+      font-size: 0.8rem;
       font-weight: 500;
-      animation: slideIn 0.2s ease;
-      margin: 8px 16px 0;
-      border-radius: 10px;
-      flex-shrink: 0;
+      margin: 12px 16px 0;
+      border-radius: 8px;
 
-      &.success { background: #E8F5E9; color: #2E7D32; border: 1px solid #81C784; }
-      &.error   { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
-
-      mat-icon { font-size: 16px; width: 16px; height: 16px; flex-shrink: 0; }
+      &.success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+      &.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+      mat-icon { font-size: 15px; width: 15px; height: 15px; flex-shrink: 0; }
     }
 
     /* ─── ACTIONS ─── */
     .actions-section {
-      display: flex;
-      gap: 8px;
-      padding: 12px 16px;
-      border-top: 1px solid #F3F4F6;
-      margin-top: 14px;
-      flex-shrink: 0;
-    }
-
-    .btn-primary, .btn-secondary {
-      flex: 1;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      padding: 11px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.2s ease;
-      border: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .btn-secondary {
-      background: #F3F4F6;
-      color: #6B7280;
-      &:hover, &:active { background: #E5E7EB; color: #374151; }
+      padding: 16px 16px 8px;
     }
 
     .btn-primary {
+      display: block;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 13px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      border: none;
       background: linear-gradient(135deg, #0A3D91, #1565C0);
       color: #fff;
-      box-shadow: 0 3px 12px rgba(10,61,145,0.2);
-
-      &:hover:not(:disabled), &:active:not(:disabled) {
-        box-shadow: 0 5px 18px rgba(10,61,145,0.3);
-        transform: translateY(-1px);
-      }
-
-      &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
-    }
-
-    /* ─── DANGER ZONE ─── */
-    .danger-zone {
-      padding: 0 16px 14px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .btn-danger {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      font-size: 0.75rem;
-      padding: 7px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(220,38,38,0.22);
-      background: transparent;
-      color: #DC2626;
-      cursor: pointer;
-      transition: all 0.2s;
+      transition: opacity 0.2s;
       -webkit-tap-highlight-color: transparent;
 
-      mat-icon { font-size: 14px; width: 14px; height: 14px; }
-
-      &:hover, &:active { background: rgba(220,38,38,0.07); border-color: #DC2626; }
+      &:hover:not(:disabled), &:active:not(:disabled) { opacity: 0.88; }
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
     }
 
-    /* ─── ANIMAZIONI ─── */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    /* ─── DANGER ─── */
+    .danger-zone {
+      padding: 4px 16px 16px;
+      text-align: center;
     }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .btn-danger-link {
+      background: none;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 500;
+      color: #94A3B8;
+      cursor: pointer;
+      padding: 4px 8px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover, &:active { color: #DC2626; }
     }
 
-    /* ─── RESPONSIVE (480px) ─── */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ─── RESPONSIVE ─── */
     @media (max-width: 480px) {
-      .profile-header { padding: 14px 52px 14px 16px; gap: 12px; }
-      .avatar { width: 48px; height: 48px; }
-      .avatar-initials { font-size: 1.2rem; }
-      .nickname-input { padding: 7px 10px; }
-      .close-btn { top: 8px; right: 8px; width: 34px; height: 34px; min-width: 34px; min-height: 34px; }
-      .close-btn mat-icon { font-size: 16px; width: 16px; height: 16px; }
-      .favorites-section { padding: 12px 12px 0; }
-      .chip { min-height: 62px; padding: 8px 4px; border-radius: 12px; }
-      .chip-emoji { font-size: 1.2rem; }
-      .chip-value { font-size: 0.62rem; }
-      .actions-section { padding: 10px 12px; gap: 8px; }
-      .danger-zone { padding: 0 12px 12px; }
-      .btn-primary, .btn-secondary { padding: 10px 8px; font-size: 0.76rem; }
+      .profile-header { padding: 16px; gap: 12px; }
+      .avatar { width: 46px; height: 46px; }
+      .avatar-initials { font-size: 1.15rem; }
+      .favorites-section { padding: 14px 14px 0; }
+      .chip { min-height: 66px; }
+      .actions-section { padding: 14px; }
+      .danger-zone { padding: 0 14px 14px; }
     }
 
-    /* ─── RESPONSIVE (360px) ─── */
     @media (max-width: 360px) {
-      .profile-header { padding: 12px 48px 12px 14px; gap: 10px; }
-      .avatar { width: 44px; height: 44px; }
-      .avatar-initials { font-size: 1.1rem; }
-      .close-btn { top: 6px; right: 6px; width: 32px; height: 32px; min-width: 32px; min-height: 32px; }
+      .profile-header { padding: 14px; gap: 10px; }
+      .avatar { width: 42px; height: 42px; }
       .sport-chips { gap: 6px; }
-      .chip { min-height: 58px; }
-      .chip-emoji { font-size: 1.1rem; }
-      .chip-label { font-size: 0.55rem; }
-      .chip-value { font-size: 0.58rem; }
+      .chip { min-height: 60px; padding: 8px 4px; }
+      .chip-emoji { font-size: 1.2rem; }
+      .chip-label { font-size: 0.54rem; }
     }
   `]
 })
