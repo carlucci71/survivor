@@ -64,13 +64,13 @@ public class AuthController {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO("Inserisci un indirizzo email valido", false));
         }
-        Optional<User> userOpt = userRepository.findByEmail(request.getEmail().trim());
+        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(request.getEmail().trim());
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MagicLinkResponseDTO(
                     "Email non trovata. Devi prima registrarti.", false));
         }
         try {
-            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim(), request.getMobile());
+            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim().toLowerCase(), request.getMobile());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
                     "Magic link inviato con successo. Controlla la tua email.", true));
         } catch (Exception e) {
