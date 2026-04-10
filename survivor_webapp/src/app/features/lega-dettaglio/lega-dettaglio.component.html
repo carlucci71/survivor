@@ -22,14 +22,14 @@
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
             <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <div class="recap-actions">
+              @if (lega.giornataCalcolata && recapGiornataRelativa !== null) {
+                <button class="recap-mini-link" (click)="goToRecap()">
+                  <span class="recap-mini-link__icon">🎬</span>
+                  <span class="recap-mini-link__text">{{ 'RECAP.RIVIVI_LINK' | translate }} {{ recapGiornataRelativa }}</span>
+                  <span class="recap-mini-link__arrow">›</span>
+                </button>
+              }
               <button *ngIf="isInLega() && !isTerminata()"
-                mat-icon-button
-                class="recap-share-btn"
-                (click)="shareLink()"
-                [matTooltip]="'COMMON.SHARE_LINK' | translate">
-                <mat-icon>share</mat-icon>
-              </button>
-              <button *ngIf="isInLega()"
                 mat-icon-button
                 class="recap-help-btn"
                 (click)="isLeaderLega() || isAdmin() ? openLeaderTutorial() : openPlayerTutorial()"
@@ -38,13 +38,6 @@
               </button>
             </div>
           </div>
-          @if (lega.giornataCalcolata && recapGiornataRelativa !== null) {
-            <button class="recap-mini-link" (click)="goToRecap()">
-              <span class="recap-mini-link__icon">🎬</span>
-              <span class="recap-mini-link__text">{{ 'RECAP.RIVIVI_LINK' | translate }} {{ recapGiornataRelativa }}</span>
-              <span class="recap-mini-link__arrow">›</span>
-            </button>
-          }
           <div class="recap-sport-row">
             <span class="recap-sport-chip">
               <mat-icon class="recap-sport-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
@@ -338,18 +331,25 @@
 
             <!-- BODY -->
             <tbody>
-              @for (giocatore of getFilteredPlayers(); track giocatore.id) {
+              @for (giocatore of getFilteredPlayers(); track giocatore.id; let isFirst = $first) {
                 <tr class="excel-data-row"
                     [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
+                    [class.current-user-highlight]="isCurrentUserGiocatore(giocatore)"
                     [attr.data-alpha]="giocatore.nickname.charAt(0).toUpperCase()">
 
                   <!-- NOME UTENTE -->
                   <td class="excel-cell user-cell">
                     <div class="user-name-wrapper">
-                      <span class="user-name">{{ giocatore.nickname }}</span>
-                      @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
-                        <span class="vincitore-crown">👑</span>
-                      }
+                      <div class="user-name-left">
+                        @if (isCurrentUserGiocatore(giocatore)) {
+                          <span class="current-user-name-pill">{{ giocatore.nickname }}</span>
+                        } @else {
+                          <span class="user-name">{{ giocatore.nickname }}</span>
+                        }
+                        @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                          <span class="vincitore-crown">👑</span>
+                        }
+                      </div>
                       <!-- Gruppo icone a destra del nome -->
                       <div class="user-icons-group">
                         @if(hasMoreRounds(giocatore)) {
@@ -462,6 +462,20 @@
                     </td>
                   }
                 </tr>
+                @if (isFirst && isCurrentUserGiocatore(giocatore) && getFilteredPlayers().length > 1) {
+                  <tr class="current-user-divider-row">
+                    <td colspan="100" class="current-user-divider-cell">
+                      <div class="current-user-divider-inner">
+                        <span class="current-user-divider-line"></span>
+                        <span class="current-user-divider-label">
+                          <mat-icon class="divider-icon">people</mat-icon>
+                          {{ 'LEAGUE.OTHER_PARTICIPANTS' | translate }}
+                        </span>
+                        <span class="current-user-divider-line"></span>
+                      </div>
+                    </td>
+                  </tr>
+                }
               }
             </tbody>
           </table>
@@ -574,8 +588,10 @@
         }
 
         <!-- LISTA GIOCATORI FILTRATI -->
-        <div *ngFor="let giocatore of getFilteredPlayers(); trackBy: trackByGiocatoreId" class="player-card-mobile"
+        <ng-container *ngFor="let giocatore of getFilteredPlayers(); trackBy: trackByGiocatoreId; let isFirst = first">
+        <div class="player-card-mobile"
           [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
+          [class.current-user-card]="isCurrentUserGiocatore(giocatore)"
           [class.expanded]="expandedPlayers[giocatore.id]">
 
           <!-- Header giocatore compatto - Nome + Freccia sulla stessa riga -->
@@ -588,7 +604,11 @@
                     [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
               </span>
 
-              <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              @if (isCurrentUserGiocatore(giocatore)) {
+                <span class="current-user-name-pill current-user-name-pill--mobile">{{ giocatore.nickname }}</span>
+              } @else {
+                <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
+              }
               @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                 <span class="vincitore-crown-mobile">👑</span>
               }
@@ -697,6 +717,17 @@
             </div>
           </div>
         </div>
+        <!-- Divisore mobile dopo la card dell'utente corrente -->
+        <div *ngIf="isFirst && isCurrentUserGiocatore(giocatore) && getFilteredPlayers().length > 1"
+             class="mobile-current-user-divider">
+          <span class="mobile-divider-line"></span>
+          <span class="mobile-divider-label">
+            <mat-icon class="mobile-divider-icon">people</mat-icon>
+            {{ 'LEAGUE.OTHER_PARTICIPANTS' | translate }}
+          </span>
+          <span class="mobile-divider-line"></span>
+        </div>
+        </ng-container>
       </div>
       }
 

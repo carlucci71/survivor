@@ -344,6 +344,7 @@
     "DA_GIOCARE": "To Play",
     "IN_CORSO": "In Progress",
     "SOSPESA": "Suspended",
+    "TERMINATA": "Completed",
     "PLAY_NOW": "Play Now",
     "PLAY_FOR_USER": "Play for this user",
     "FORCED_BY_LEADER": "Pick forced by leader/admin",
@@ -381,6 +382,7 @@
     "LAST_ENCOUNTERS": "Last encounters",
     "NEXT_MATCHES": "Next",
     "NEXT_GAMES": "Next games",
+    "OTHER_PARTICIPANTS": "Other participants",
     "SEARCH_PLAYER": "Search player...",
     "SEARCH_TEAM": "Search team...",
     "HEAD_TO_HEAD": "Head to head",
@@ -635,7 +637,8 @@
       "3": "Awesome! Winning selection! 💪"
     },
     "HIDE_PICK": "Hide my pick from others",
-    "SHOW_PICK": "Make my pick visible"
+    "SHOW_PICK": "Make my pick visible",
+    "ALREADY_USED": "Already used"
   },
   "INVITE_USERS": {
     "TITLE": "Invite Users to",

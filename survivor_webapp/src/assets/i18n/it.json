@@ -432,6 +432,7 @@
     "DA_GIOCARE": "Da giocare",
     "IN_CORSO": "In corso",
     "SOSPESA": "Sospesa",
+    "TERMINATA": "Terminata",
     "PLAY_NOW": "Gioca Ora",
     "PLAY_FOR_USER": "Gioca per questo utente",
     "FORCED_BY_LEADER": "Giocata forzata dal leader/admin",
@@ -469,6 +470,7 @@
     "LAST_ENCOUNTERS": "Ultimi incontri",
     "NEXT_MATCHES": "Prossime",
     "NEXT_GAMES": "Prossime partite",
+    "OTHER_PARTICIPANTS": "Altri partecipanti",
     "SEARCH_PLAYER": "Cerca giocatore...",
     "SEARCH_TEAM": "Cerca squadra...",
     "HEAD_TO_HEAD": "Testa a testa",
@@ -730,7 +732,8 @@
       "3": "Grande! Selezione vincente! 💪"
     },
     "HIDE_PICK": "Rendi invisibile la mia giocata",
-    "SHOW_PICK": "Rendi visibile la mia giocata"
+    "SHOW_PICK": "Rendi visibile la mia giocata",
+    "ALREADY_USED": "Già usata"
   },
   "INVITE_USERS": {
     "TITLE": "Invita Utenti a",

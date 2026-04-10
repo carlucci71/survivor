@@ -564,8 +564,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giocateIds = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraSigla);
-    const squadreDisponibili = this.squadre.filter(
-      (s: any) => !giocateIds.includes(s.sigla) || s.sigla === squadraCorrenteId
+    // Passa TUTTE le squadre, marcando quelle già usate con alreadyUsed
+    const squadreDisponibili = this.squadre.map(
+      (s: any) => ({ ...s, alreadyUsed: giocateIds.includes(s.sigla) })
     );
 
     const { SelezionaGiocataComponent } = await import(
@@ -1951,8 +1952,15 @@ export class LegaDettaglioComponent implements OnDestroy {
       );
     }
 
-    // Ordine alfabetico per nickname
-    filtered.sort((a, b) => a.nickname.localeCompare(b.nickname));
+    // Ordine: utente corrente in cima, poi alfabetico per nickname
+    const currentUser = this.authService.getCurrentUser();
+    filtered.sort((a, b) => {
+      const aIsMe = !!currentUser && a.user?.id === currentUser.id;
+      const bIsMe = !!currentUser && b.user?.id === currentUser.id;
+      if (aIsMe && !bIsMe) return -1;
+      if (!aIsMe && bIsMe) return 1;
+      return a.nickname.localeCompare(b.nickname);
+    });
 
     return filtered;
   }
