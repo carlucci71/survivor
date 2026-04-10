@@ -187,7 +187,7 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   // FILTRI E RICERCA MOBILE
   searchText: string = '';
-  playerFilter: 'all' | 'active' | 'eliminated' = 'all';
+  playerFilter: 'all' | 'active' | 'eliminated' = 'active';
   expandedPlayers: { [key: number]: boolean } = {};
 
   // Giornate visibili

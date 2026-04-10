@@ -325,7 +325,7 @@
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
                       <div>{{ getDesGiornataTitle(giornata) }}</div>
-                      @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value){
+                      @if(getStatoGiornata(giornata)?.value != StatoPartita.TERMINATA.value && getStatoGiornata(giornata)?.value){
                         <div> {{ 'LEAGUE.' + getStatoGiornata(giornata)?.value | translate }} </div>
                       }
                   </th>
