@@ -423,9 +423,12 @@
                             @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
                               <span class="reaction-badges">
                                 @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
-                                  <span class="reaction-badge"
-                                    [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji">
-                                    {{ r.emoji }}
+                                  <span class="reaction-badge-wrap">
+                                    <span class="reaction-badge"
+                                      [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji"
+                                      (click)="toggleBadgeAutori(getGiocataByGiornataAssoluta(giocatore, giornata)!, r.emoji, $event)">
+                                      {{ r.emoji }}
+                                    </span>
                                   </span>
                                 }
                               </span>
@@ -700,9 +703,12 @@
                       @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
                         <span class="reaction-badges">
                           @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
-                            <span class="reaction-badge"
-                              [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji">
-                              {{ r.emoji }}
+                            <span class="reaction-badge-wrap">
+                              <span class="reaction-badge"
+                                [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji"
+                                (click)="toggleBadgeAutori(getGiocataByGiornataAssoluta(giocatore, giornata)!, r.emoji, $event)">
+                                {{ r.emoji }}
+                              </span>
                             </span>
                           }
                         </span>
@@ -850,13 +856,27 @@
     (mouseenter)="cancelClosePopup()"
     (mouseleave)="closeReactionPopupDelayed()"
     (click)="$event.stopPropagation()">
-    @for(emoji of REACTION_EMOJIS; track emoji) {
-      <button type="button" class="reaction-btn-global"
-        [class.reaction-btn-global--mine]="activeGiocata!.miaReaction === emoji"
-        (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
-        {{ emoji }}
-      </button>
-    }
+    <div class="reaction-emoji-grid">
+      @for(emoji of REACTION_EMOJIS; track emoji) {
+        <button type="button" class="reaction-btn-global"
+          [class.reaction-btn-global--mine]="activeGiocata!.miaReaction === emoji"
+          (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
+          {{ emoji }}
+        </button>
+      }
+    </div>
+  </div>
+}
+
+<!-- Overlay autori reaction (position:fixed, compare al tap sul badge) -->
+@if(activeBadgeAutoriKey !== null) {
+  <div class="badge-autori-global"
+    [class.badge-autori-global--expandable]="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded"
+    [style.top]="badgeAutoriStyle.top"
+    [style.right]="badgeAutoriStyle.right"
+    (click)="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded ? expandBadgeAutori($event) : $event.stopPropagation()">
+    <span class="badge-autori-emoji">{{ activeBadgeAutoriEmoji }}</span>
+    <span class="badge-autori-nomi">{{ activeBadgeAutoriNomi }}</span>
   </div>
 }
 </div>

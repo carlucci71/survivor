@@ -5533,14 +5533,58 @@
   pointer-events: none;
 }
 
+.reaction-badge-wrap {
+  position: relative;
+  pointer-events: auto;
+}
+
 .reaction-badge {
   font-size: 0.85rem;
   line-height: 1;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));
+  cursor: pointer;
+  display: block;
 
   &--mine {
     filter: drop-shadow(0 0 3px rgba(10, 61, 145, 0.5));
   }
+}
+
+// Popover nomi autori — overlay fixed, appare al tap sul badge
+.badge-autori-global {
+  position: fixed;
+  right: var(--badge-right, 8px);
+  z-index: 10000;
+  background: #0A3D91;
+  color: #fff;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(10, 61, 145, 0.4);
+  pointer-events: none;
+  max-width: calc(100vw - 16px);
+  box-sizing: border-box;
+
+  &--expandable {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+}
+
+.badge-autori-emoji {
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.badge-autori-nomi {
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: normal;
 }
 
 // Rende la cella mobile cliccabile visivamente
@@ -5683,7 +5727,48 @@
   }
 }
 
-// ─── Chips «Chi ha votato» ────────────────────────────────────────────────────
+// ─── Autori reactions nel popup ───────────────────────────────────────────────
+.reaction-autori-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 2px 4px;
+  max-width: calc(4 * 34px + 3 * 4px); // allineato alla griglia emoji
+}
+
+.reaction-autori-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.reaction-autori-emoji {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.reaction-autori-nomi {
+  font-size: 0.72rem;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.reaction-picker-divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.10);
+  margin: 4px 0;
+}
+
+.reaction-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 34px);
+  gap: 4px;
+}
 .voti-chips-row {
   display: flex;
   align-items: center;

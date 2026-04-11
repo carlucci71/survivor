@@ -121,11 +121,21 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
-  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂', '💀', '🤣', '😤', '🤦', '❤️', '😬', '🥶', '🤌', '🎉', '😈', '💪', '🤔'];
+  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
 
   activeReactionKey: string | null = null;
   activeGiocata: Giocata | null = null;
   reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  // chiave univoca del badge di cui mostrare gli autori: "giocataId_emoji"
+  activeBadgeAutoriKey: string | null = null;
+  activeBadgeAutoriNomi: string = '';
+  activeBadgeAutoriNomiAll: string = '';
+  activeBadgeAutoriHasMore: boolean = false;
+  activeBadgeAutoriExpanded: boolean = false;
+  activeBadgeAutoriEmoji: string = '';
+  badgeAutoriStyle: { top: string; right: string } = { top: '0px', right: '0px' };
+  private badgeAutoriTimer: any = null;
+  private pickerAutoCloseTimer: any = null;
   private longPressTimer: any = null;
   private closePopupTimer: any = null;
   private popupJustOpened = false;
@@ -1410,19 +1420,70 @@ export class LegaDettaglioComponent implements OnDestroy {
       .map(([emoji, count]) => ({ emoji, count }));
   }
 
+  getReactionAutori(giocata: Giocata, emoji: string): string {
+    const nomi = giocata.reactionAutori?.[emoji] ?? [];
+    if (nomi.length === 0) return '';
+    const MAX = 3;
+    if (nomi.length <= MAX) return nomi.join(', ');
+    return `${nomi.slice(0, MAX).join(', ')} +${nomi.length - MAX} altri`;
+  }
+
+  expandBadgeAutori(event: Event): void {
+    event.stopPropagation();
+    this.activeBadgeAutoriExpanded = true;
+    this.activeBadgeAutoriNomi = this.activeBadgeAutoriNomiAll;
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); }
+    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 4000);
+  }
+
+  toggleBadgeAutori(giocata: Giocata, emoji: string, event: Event): void {
+    event.stopPropagation();
+    const key = `${giocata.id}_${emoji}`;
+    if (this.activeBadgeAutoriKey === key) {
+      this.closeBadgeAutori();
+      return;
+    }
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
+    const el = event.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    this.badgeAutoriStyle = {
+      top: `${rect.bottom + 6}px`,
+      right: `${window.innerWidth - rect.right}px`,
+    };
+    const tutti = giocata.reactionAutori?.[emoji] ?? [];
+    const MAX = 3;
+    this.activeBadgeAutoriNomiAll = tutti.join(', ');
+    this.activeBadgeAutoriNomi = tutti.length <= MAX
+      ? tutti.join(', ')
+      : `${tutti.slice(0, MAX).join(', ')} +${tutti.length - MAX} altri`;
+    this.activeBadgeAutoriHasMore = tutti.length > MAX;
+    this.activeBadgeAutoriExpanded = false;
+    this.activeBadgeAutoriEmoji = emoji;
+    this.activeBadgeAutoriKey = key;
+    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 2500);
+  }
+
+  private closeBadgeAutori(): void {
+    this.activeBadgeAutoriKey = null;
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
+  }
+
+  isBadgeAutoriActive(giocataId: number | undefined, emoji: string): boolean {
+    return this.activeBadgeAutoriKey === `${giocataId}_${emoji}`;
+  }
+
   @HostListener('document:click')
   onDocumentClick(): void {
     if (this.popupJustOpened) return;
     this.activeReactionKey = null;
     this.activeGiocata = null;
+    this.closeBadgeAutori();
   }
 
   openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {
     if (!giocata || !el) return;
-    if (this.closePopupTimer) {
-      clearTimeout(this.closePopupTimer);
-      this.closePopupTimer = null;
-    }
+    if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
+    if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
     const rect = (el as HTMLElement).getBoundingClientRect();
     this.reactionPopupStyle = {
       top: `${rect.top}px`,
@@ -1430,6 +1491,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     };
     this.activeReactionKey = key;
     this.activeGiocata = giocata;
+    this.pickerAutoCloseTimer = setTimeout(() => {
+      this.activeReactionKey = null;
+      this.activeGiocata = null;
+      this.pickerAutoCloseTimer = null;
+    }, 4000);
   }
 
   /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
@@ -1443,10 +1509,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   cancelClosePopup(): void {
-    if (this.closePopupTimer) {
-      clearTimeout(this.closePopupTimer);
-      this.closePopupTimer = null;
-    }
+    if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
+    if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
   }
 
   closeReactionPopupDelayed(): void {

@@ -491,6 +491,7 @@ public class LegaService {
                 if (s != null) {
                     giocata.setReactions(s.reactions());
                     giocata.setMiaReaction(s.miaReaction());
+                    giocata.setReactionAutori(s.reactionAutori());
                 }
             });
         });
