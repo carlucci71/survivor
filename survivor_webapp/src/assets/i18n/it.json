@@ -955,5 +955,29 @@
       "TITLE": "Reaction e storico",
       "DESC": "Tieni premuto su una giocata altrui per reagire con un'emoji! Clicca sull'icona storico accanto al nome di un giocatore per vedere tutte le sue giocate."
     }
+  },
+  "EASTER_EGG": {
+    "REAPER_MSGS": [
+      "La morte è passata 💀",
+      "Il Boia ha fatto il suo lavoro ☠️",
+      "Nessuno scampa alla falce 🌑",
+      "GG WP, arrivederci nell'aldilà 👋",
+      "Erano bravi ragazzi... ieri 😔",
+      "La lega vi ricorderà (forse) 🕯️",
+      "Meglio eliminati che non aver giocato? No. ❌",
+      "Il Fantasy ti ha tradito ancora 🎰",
+      "Darwin aveva ragione. Sopravvive il più forte 🧬",
+      "Eliminati con disonore 🏳️",
+      "La ProfeSSia si compie... 🔮",
+      "Avete perso. Il Boia è soddisfatto 😈",
+      "Non esistono seconde chance. Solo seconde pianti 😭",
+      "Questa è la vostra eredità: zero punti 🪦",
+      "Il consiglio tribale ha parlato 🔥",
+      "Spegni la torcia e torna a casa 🕯️➡️🏠",
+      "Nella lista nera del Boia 📜",
+      "Avete giocato... ma non abbastanza 📉",
+      "Nel nome della falce: eliminati! ⚔️",
+      "La morte non guarda la classifica. Ma voi sì 📊"
+    ]
   }
 }

@@ -945,5 +945,29 @@
       "TITLE": "Reactions & history",
       "DESC": "Long-press on someone's pick to react with an emoji! Click the history icon next to a player's name to see all their picks."
     }
+  },
+  "EASTER_EGG": {
+    "REAPER_MSGS": [
+      "Death has passed by 💀",
+      "The Reaper has done his job ☠️",
+      "No one escapes the scythe 🌑",
+      "GG WP, see you in the afterlife 👋",
+      "They were good players... yesterday 😔",
+      "The league will remember you (maybe) 🕯️",
+      "Better eliminated than never played? No. ❌",
+      "Fantasy betrayed you once again 🎰",
+      "Darwin was right. Only the strongest survive 🧬",
+      "Eliminated with dishonor 🏳️",
+      "The Prophecy is fulfilled... 🔮",
+      "You lost. The Reaper is pleased 😈",
+      "No second chances. Only second tears 😭",
+      "This is your legacy: zero points 🪦",
+      "The tribal council has spoken 🔥",
+      "Snuff your torch and go home 🕯️➡️🏠",
+      "On the Reaper's blacklist 📜",
+      "You played... but not enough 📉",
+      "In the name of the scythe: eliminated! ⚔️",
+      "Death doesn't check the standings. But you did 📊"
+    ]
   }
 }

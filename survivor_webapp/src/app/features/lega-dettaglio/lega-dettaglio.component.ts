@@ -2047,6 +2047,48 @@ export class LegaDettaglioComponent implements OnDestroy {
     ).length;
   }
 
+  // ══════════════════════════════════════════
+  // 💀 EASTER EGG — Grim Reaper
+  // ══════════════════════════════════════════
+  grimReaperVisible = false;
+  grimReaperVittimeGiornata: string[] = [];
+  grimReaperMsg = '';
+  private _easterEggTapCount = 0;
+  private _easterEggTapTimer: any = null;
+
+  onEliminatiTripleTap(): void {
+    this._easterEggTapCount++;
+    if (this._easterEggTapTimer) clearTimeout(this._easterEggTapTimer);
+    this._easterEggTapTimer = setTimeout(() => { this._easterEggTapCount = 0; }, 600);
+    if (this._easterEggTapCount >= 3) {
+      this._easterEggTapCount = 0;
+      clearTimeout(this._easterEggTapTimer);
+      this.attivaGrimReaper();
+    }
+  }
+
+  private attivaGrimReaper(): void {
+    if (!this.lega?.giocatori) return;
+    const giornata = this.lega.giornataCorrente ?? -1;
+    this.grimReaperVittimeGiornata = this.lega.giocatori
+      .filter(g => {
+        const giocata = g.giocate?.find(gi => gi.giornata === giornata);
+        return giocata?.esito === 'KO';
+      })
+      .map(g => g.nickname);
+    if (this.grimReaperVittimeGiornata.length === 0) {
+      this.grimReaperVittimeGiornata = this.lega.giocatori
+        .filter(g => g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value)
+        .map(g => g.nickname);
+    }
+    const msgs: string[] = this.translate.instant('EASTER_EGG.REAPER_MSGS');
+    this.grimReaperMsg = Array.isArray(msgs)
+      ? msgs[Math.floor(Math.random() * msgs.length)]
+      : '💀';
+    this.grimReaperVisible = true;
+    setTimeout(() => { this.grimReaperVisible = false; }, 4500);
+  }
+
   getLastGiocata(giocatore: Giocatore): any {
     if (!giocatore.giocate || giocatore.giocate.length === 0) return null;
 

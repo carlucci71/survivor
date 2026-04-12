@@ -546,7 +546,7 @@
             <button
               class="filter-chip eliminated-chip"
               [class.active]="playerFilter === 'eliminated'"
-              (click)="setPlayerFilter('eliminated')"
+              (click)="setPlayerFilter('eliminated'); onEliminatiTripleTap()"
             >
               <span class="chip-label">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
               <span class="chip-count">{{ getEliminatedPlayersCount() }}</span>
@@ -877,6 +877,54 @@
     (click)="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded ? expandBadgeAutori($event) : $event.stopPropagation()">
     <span class="badge-autori-emoji">{{ activeBadgeAutoriEmoji }}</span>
     <span class="badge-autori-nomi">{{ activeBadgeAutoriNomi }}</span>
+  </div>
+}
+
+<!-- 💀 EASTER EGG — Grim Reaper -->
+@if (grimReaperVisible) {
+  <div class="grim-reaper-overlay" (click)="grimReaperVisible = false">
+    <div class="grim-reaper-scene">
+      <!-- Boia SVG -->
+      <div class="grim-reaper-figure">
+        <svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" class="reaper-svg">
+          <!-- Mantello -->
+          <path d="M20 60 Q10 90 8 160 Q30 170 60 168 Q90 170 112 160 Q110 90 100 60 Q80 50 60 48 Q40 50 20 60Z" fill="#1a1a2e" opacity="0.95"/>
+          <!-- Cappuccio -->
+          <path d="M25 65 Q20 30 60 18 Q100 30 95 65 Q80 55 60 53 Q40 55 25 65Z" fill="#1a1a2e"/>
+          <!-- Faccia teschio -->
+          <ellipse cx="60" cy="42" rx="18" ry="20" fill="#e8e8d0"/>
+          <!-- Occhi vuoti -->
+          <ellipse cx="53" cy="40" rx="5" ry="6" fill="#1a1a2e"/>
+          <ellipse cx="67" cy="40" rx="5" ry="6" fill="#1a1a2e"/>
+          <!-- Naso -->
+          <path d="M58 50 L60 55 L62 50Z" fill="#1a1a2e" opacity="0.5"/>
+          <!-- Sorriso -->
+          <path d="M50 58 Q60 65 70 58" stroke="#1a1a2e" stroke-width="2" fill="none"/>
+          <!-- Linee denti -->
+          <line x1="54" y1="58" x2="54" y2="63" stroke="#1a1a2e" stroke-width="1.5"/>
+          <line x1="58" y1="59" x2="58" y2="64" stroke="#1a1a2e" stroke-width="1.5"/>
+          <line x1="62" y1="59" x2="62" y2="64" stroke="#1a1a2e" stroke-width="1.5"/>
+          <line x1="66" y1="58" x2="66" y2="63" stroke="#1a1a2e" stroke-width="1.5"/>
+          <!-- Braccio con falce -->
+          <line x1="95" y1="80" x2="130" y2="60" stroke="#1a1a2e" stroke-width="8" stroke-linecap="round"/>
+          <!-- Manico falce -->
+          <line x1="130" y1="60" x2="145" y2="10" stroke="#5c3d1e" stroke-width="5" stroke-linecap="round"/>
+          <!-- Lama falce -->
+          <path d="M145 10 Q180 0 175 40 Q165 55 130 60Z" fill="#8ab4c8" opacity="0.9"/>
+          <path d="M145 10 Q180 0 175 40 Q165 55 130 60Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+        </svg>
+      </div>
+      <!-- Nomi vittime -->
+      <div class="grim-reaper-victims">
+        @for (vittima of grimReaperVittimeGiornata; track vittima; let i = $index) {
+          <div class="victim-name" [style.animation-delay]="(0.3 + i * 0.15) + 's'">
+            💀 {{ vittima }}
+          </div>
+        }
+      </div>
+      <!-- Testo drammatico -->
+      <div class="grim-reaper-title">{{ grimReaperMsg }}</div>
+    </div>
   </div>
 }
 </div>
