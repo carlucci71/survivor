@@ -100,6 +100,9 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
                                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
                         );
 
+                        // Imposta i punti totali della lega corrente (modalità Campionato)
+                        dto.setPuntiTotali(gl.getPuntiTotali());
+
                         return dto;
                     })
                     .toList());

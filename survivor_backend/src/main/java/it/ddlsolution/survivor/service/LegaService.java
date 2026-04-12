@@ -263,6 +263,9 @@ public class LegaService {
                             if (nuovoStato != null) {
                                 gl.setStato(nuovoStato);
                             }
+                            if (giocatoreDTO.getPuntiTotali() != null) {
+                                gl.setPuntiTotali(giocatoreDTO.getPuntiTotali());
+                            }
                             if (legaDTO.getStato()!= Enumeratori.StatoLega.TERMINATA) {
                                 gl.setPosizioneFinale(null);
                             }
@@ -276,6 +279,7 @@ public class LegaService {
                                             .ifPresent(giocata -> {
                                                 // Aggiorna l'esito se è cambiato
                                                 giocata.setEsito(giocataDTO.getEsito());
+                                                giocata.setPunti(giocataDTO.getPunti());
                                             });
                                 }
                             }
@@ -379,39 +383,80 @@ public class LegaService {
                 if (statoGiornata == Enumeratori.StatoPartita.SOSPESA) {
                     legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
                 } else {
-                    for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
-                        Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
-                        if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
+                    if (legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO) {
+                        // ── CAMPIONATO: nessuna eliminazione, accumula punti ──
+                        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                             final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
                             List<GiocataDTO> giocate = giocatoreDTO
                                     .getGiocate()
                                     .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
                                     .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
                                     .toList();
-                            Boolean vincente = null;
+                            Integer puntiRound = null;
                             if (giocate.size() == 0) {
-                                vincente = false;
+                                // Nessuna pick: 0 punti, auto-inserisci KO
+                                puntiRound = 0;
                                 GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
                                 giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
                                 giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
                                 giocataRequestDTO.setLegaId(legaDTO.getId());
                                 giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
+                                giocataRequestDTO.setPunti(0);
                                 inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
-                                vincente = vincente(giocataDTO.getSquadraSigla(), partite);
-                                if (vincente != null) {
-                                    if (vincente) {
+                                puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
+                                if (puntiRound != null) {
+                                    giocataDTO.setPunti(puntiRound);
+                                    if (puntiRound == 3) {
                                         giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                    } else if (puntiRound == 1) {
+                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.PAREGGIO);
                                     } else {
                                         giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
                                     }
                                 }
                             }
-                            if (vincente != null && vincente == false) {
-                                giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                            if (puntiRound != null) {
+                                int prevTotale = Optional.ofNullable(giocatoreDTO.getPuntiTotali()).orElse(0);
+                                giocatoreDTO.setPuntiTotali(prevTotale + puntiRound);
                             }
-
+                        }
+                    } else {
+                        // ── SURVIVOR: eliminazione classica ──
+                        for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                            Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
+                            if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
+                                final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
+                                List<GiocataDTO> giocate = giocatoreDTO
+                                        .getGiocate()
+                                        .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                                        .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
+                                        .toList();
+                                Boolean vincente = null;
+                                if (giocate.size() == 0) {
+                                    vincente = false;
+                                    GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
+                                    giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
+                                    giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
+                                    giocataRequestDTO.setLegaId(legaDTO.getId());
+                                    giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
+                                    inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
+                                } else if (giocate.size() == 1) {
+                                    GiocataDTO giocataDTO = giocate.get(0);
+                                    vincente = vincente(giocataDTO.getSquadraSigla(), partite);
+                                    if (vincente != null) {
+                                        if (vincente) {
+                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                        } else {
+                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                        }
+                                    }
+                                }
+                                if (vincente != null && vincente == false) {
+                                    giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                                }
+                            }
                         }
                     }
                     if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
@@ -427,6 +472,30 @@ public class LegaService {
         }
     }
 
+
+    /**
+     * Calcola i punti per modalità Campionato: 3 (vittoria), 1 (pareggio), 0 (sconfitta).
+     * Restituisce null se la partita non è ancora terminata.
+     */
+    private Integer calcolaPuntiCampionato(String squadraSigla, List<PartitaDTO> partite) {
+        if (squadraSigla == null) return 0;
+        Optional<PartitaDTO> optPartita = partite.stream()
+                .filter(p -> p.getCasaSigla().equals(squadraSigla) || p.getFuoriSigla().equals(squadraSigla))
+                .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                .findFirst();
+        if (optPartita.isEmpty()) return 0;
+        PartitaDTO p = optPartita.get();
+        if (p.getStato() != Enumeratori.StatoPartita.TERMINATA) return null;
+        if (Boolean.TRUE.equals(p.getForzata())) return 3;
+        Integer sc = p.getScoreCasa();
+        Integer sf = p.getScoreFuori();
+        if (sc == null || sf == null) return 0;
+        if (p.getCasaSigla().equals(squadraSigla)) {
+            return sc > sf ? 3 : sc.equals(sf) ? 1 : 0;
+        } else {
+            return sf > sc ? 3 : sf.equals(sc) ? 1 : 0;
+        }
+    }
 
     private Boolean vincente(String squadraSigla, List<PartitaDTO> partite) {
         Boolean ret = null;
@@ -534,22 +603,34 @@ public class LegaService {
 
 
     private void calcolaStatoLega(LegaDTO legaDTO, Enumeratori.StatoLega statoForzato) {
+        boolean isCampionato = legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO;
         if (statoForzato != null) {
             legaDTO.setStato(statoForzato);
-            if (statoForzato!= Enumeratori.StatoLega.TERMINATA){
+            if (statoForzato != Enumeratori.StatoLega.TERMINATA && !isCampionato) {
                 legaDTO.setGiornataFinale(null);
             }
         } else if ((legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
             legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
-            legaDTO.setGiornataFinale(null);
-        } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
+            if (!isCampionato) {
+                legaDTO.setGiornataFinale(null);
+            }
+        } else if (isCampionato
+                && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
+                && legaDTO.getGiornataCalcolata() != null
+                && legaDTO.getGiornataFinale() != null
+                && legaDTO.getGiornataCalcolata() >= legaDTO.getGiornataFinale()
+        ) {
+            legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
+        } else if (!isCampionato
+                && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
                 && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
         ) {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
-        } else if ((legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
+        } else if (!isCampionato
+                && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getGiocatori().stream()
                 .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
                 .count() <= 1
@@ -557,7 +638,7 @@ public class LegaService {
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         }
-        if (legaDTO.getStato()== Enumeratori.StatoLega.TERMINATA){
+        if (legaDTO.getStato() == Enumeratori.StatoLega.TERMINATA) {
             assegnaPosizioniFinali(legaDTO);
         }
     }
@@ -570,7 +651,16 @@ public class LegaService {
         log.info("Assegnazione posizioni finali per lega: {} - {}", legaDTO.getId(), legaDTO.getName());
 
         // Ordina i giocatori come nella classifica finale
-        List<GiocatoreDTO> classificaFinale = getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId());
+        List<GiocatoreDTO> classificaFinale;
+        if (legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO) {
+            classificaFinale = legaDTO.getGiocatori().stream()
+                    .sorted(Comparator.comparing(
+                            (GiocatoreDTO g) -> Optional.ofNullable(g.getPuntiTotali()).orElse(0)
+                    ).reversed())
+                    .toList();
+        } else {
+            classificaFinale = getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId());
+        }
 
         // Trova la lega entity
         Lega lega = legaRepository.findById(legaDTO.getId())

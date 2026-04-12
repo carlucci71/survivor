@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.dto.request;
 
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,5 +22,7 @@ public class LegaInsertDTO {
     private boolean pubblica;
     private Integer maxPartecipanti;
     private boolean accessoLibero;
+    /** Modalità di gioco della lega (default: SURVIVOR) */
+    private Enumeratori.ModalitaLega modalita = Enumeratori.ModalitaLega.SURVIVOR;
 }
 

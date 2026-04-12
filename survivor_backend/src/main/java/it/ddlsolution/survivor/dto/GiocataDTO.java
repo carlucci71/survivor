@@ -23,6 +23,6 @@ public class GiocataDTO {
     // emoji scelta dall'utente corrente (null se non ha reagito)
     private String miaReaction;
     // reactionAutori: emoji -> lista nomi giocatori (es. {"👏": ["Mario", "Luigi"]})
-    private Map<String, List<String>> reactionAutori;
-}
+    private Map<String, List<String>> reactionAutori;    /** Punti ottenuti in modalità Campionato (3 vittoria, 1 pareggio, 0 sconfitta) */
+    private Integer punti;}
 

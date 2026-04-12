@@ -77,6 +77,17 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   pubblica = false;
   accessoLibero = false;
   maxPartecipanti: number | null = null;
+  modalita: 'SURVIVOR' | 'CAMPIONATO' = 'SURVIVOR';
+
+  setModalita(m: 'SURVIVOR' | 'CAMPIONATO'): void {
+    this.modalita = m;
+    // In modalità CAMPIONATO la giornata finale è obbligatoria:
+    // se è ancora null, inizializzala all'ultima giornata disponibile
+    if (m === 'CAMPIONATO' && this.giornataFinale === null && this.campionatoSel) {
+      this.giornataFinale = this.campionatoSel.numGiornate ?? null;
+      this.giornataFinaleTouched = true;
+    }
+  }
 
   decMaxPartecipanti(): void {
     if (!this.maxPartecipanti) return;
@@ -272,12 +283,19 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   incGiornataFinale(): void {
-    if (this.giornataFinale === null) return;
     const max = this.campionatoSel?.numGiornate ?? 99;
+    if (this.giornataFinale === null) {
+      // In CAMPIONATO: inizia dall'ultima giornata disponibile
+      this.giornataFinale = max;
+      return;
+    }
     if (this.giornataFinale < max - 1) {
       this.giornataFinale++;
     } else {
-      this.giornataFinale = null; // torna a "fine stagione"
+      this.giornataFinale = null; // torna a "fine stagione" (solo SURVIVOR)
+      if (this.modalita === 'CAMPIONATO') {
+        this.giornataFinale = max; // CAMPIONATO: non tornare a null
+      }
     }
   }
 
@@ -320,8 +338,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   isGiornataFinaleValid(): boolean {
-    // Campo opzionale: se vuoto è valido
-    if (this.giornataFinale === null || this.giornataFinale === undefined) return true;
+    // In modalità CAMPIONATO la giornata finale è obbligatoria
+    if (this.modalita === 'CAMPIONATO') {
+      if (this.giornataFinale === null || this.giornataFinale === undefined) return false;
+    } else {
+      // SURVIVOR: campo opzionale; se vuoto è valido
+      if (this.giornataFinale === null || this.giornataFinale === undefined) return true;
+    }
     if (!this.campionatoSel || this.giornataIniziale === null) return false;
     const min = this.giornataIniziale + 1;
     const max = this.campionatoSel.numGiornate ?? Infinity;
@@ -377,7 +400,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.pwd,
         this.pubblica,
         this.accessoLibero,
-        this.maxPartecipanti
+        this.maxPartecipanti,
+        this.modalita
       )
       .subscribe({
         next: (lega) => {

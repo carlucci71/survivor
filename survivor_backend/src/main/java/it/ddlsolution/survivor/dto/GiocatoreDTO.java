@@ -20,6 +20,8 @@ public class GiocatoreDTO {
     private List<GiocataDTO> giocate;
     private UserDTO user;
     private List<LegaDTO> leghe = new ArrayList<>();
+    /** Punti totali accumulati in modalità Campionato per la lega corrente */
+    private Integer puntiTotali;
 
 }
 

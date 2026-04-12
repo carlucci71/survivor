@@ -409,6 +409,7 @@
     "YOUR_ROLE": "Ruolo in Lega",
     "LEAGUE_STATE": "Stato Lega",
     "FINAL_ROUND": "Giornata finale",
+    "CLASSIFICA": "Classifica",
     "VISIBILITY": "Visibilità",
     "VISIBILITY_PUBLIC": "Pubblica",
     "VISIBILITY_PRIVATE": "Privata",
@@ -663,6 +664,7 @@
     "SECTION_ACCESS_APPROVAL": "Modalità di accesso",
     "SECTION_ACCESS_APPROVAL_DESC": "Come entrano i nuovi giocatori nella lega pubblica",
     "FINAL_ROUND_OPTIONAL": "Giornata finale (opzionale)",
+    "FINAL_ROUND_REQUIRED": "Giornata finale",
     "FINAL_ROUND_HINT": "Lascia vuoto per giocare tutto il campionato",
     "FINAL_ROUND_HINT_SHORT": "Vuoto = tutto il campionato",
     "FINAL_ROUND_ERROR": "Deve essere tra la giornata iniziale e la fine del campionato",
@@ -678,6 +680,13 @@
     "VISIBILITY_PRIVATE_DESC": "Condividi il link solo con chi vuoi",
     "VISIBILITY_PUBLIC_LABEL": "Pubblica",
     "VISIBILITY_PUBLIC_DESC": "Appare nella lista e chiunque può entrare",
+    "SECTION_MODE": "Modalità di gioco",
+    "SECTION_MODE_DESC": "Come si vince la lega",
+    "MODE_SURVIVOR_LABEL": "Survivor",
+    "MODE_SURVIVOR_DESC": "Indovina la squadra vincente ogni giornata. Sbagli? Eliminato.",
+    "MODE_CAMPIONATO_LABEL": "Campionato",
+    "MODE_CAMPIONATO_DESC": "Vittoria 3 pt · Pareggio 1 pt · Sconfitta 0 pt. Vince chi accumula più punti.",
+    "GIORNATA_FINALE_REQUIRED": "In modalità Campionato la giornata finale è obbligatoria",
 
     "ACCESS_APPROVAL_LABEL": "Su approvazione",
     "ACCESS_APPROVAL_DESC": "Il leader approva o rifiuta ogni richiesta",
@@ -733,7 +742,9 @@
     },
     "HIDE_PICK": "Rendi invisibile la mia giocata",
     "SHOW_PICK": "Rendi visibile la mia giocata",
-    "ALREADY_USED": "Già usata"
+    "ALREADY_USED": "Già usata",
+    "CYCLE_AVAILABLE": "Disponibili in questo ciclo",
+    "CYCLE_USED": "Già usate in questo ciclo"
   },
   "INVITE_USERS": {
     "TITLE": "Invita Utenti a",

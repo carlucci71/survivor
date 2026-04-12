@@ -542,6 +542,29 @@ export class LegaDettaglioComponent implements OnDestroy {
     const fullTitle = this.getDesGiornataTitle(index);
     if (!fullTitle) return '';
 
+    // CAMPIONATO: etichette compatte specifiche per fase torneo
+    if (this.isCampionato()) {
+      const compactMap: Record<string, string> = {
+        'Girone - Giornata 1': 'G.1',
+        'Girone - Giornata 2': 'G.2',
+        'Girone - Giornata 3': 'G.3',
+        'Sedicesimi di finale': '32°',
+        'Ottavi di finale': '16°',
+        'Quarti di finale': 'QF',
+        'Semifinali': 'SF',
+        'Finale': 'F',
+      };
+      // Cerca corrispondenza sull'etichetta base (prima della traduzione)
+      const desBase = this.campionatoService.getDesGiornataNoAlias(
+        this.lega?.campionato?.id ?? '', index
+      );
+      if (compactMap[desBase]) return compactMap[desBase];
+      // Fallback: cerca sui valori tradotti
+      for (const [key, short] of Object.entries(compactMap)) {
+        if (fullTitle.includes(key)) return short;
+      }
+    }
+
     const roundWord = this.translate.instant('LEAGUE.ROUND');
     const weekWord = this.translate.instant('LEAGUE.WEEK');
     const roundShort = this.translate.instant('LEAGUE.ROUND_SHORT');
@@ -571,13 +594,25 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
     const squadraCorrenteId = giocataCorrente?.squadraSigla || null;
     // Escludi tutte le squadre già giocate, tranne quella corrente
-    const giocateIds = (giocatore.giocate || [])
+    const prevPicks = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraSigla);
-    // Passa TUTTE le squadre, marcando quelle già usate con alreadyUsed
-    const squadreDisponibili = this.squadre.map(
-      (s: any) => ({ ...s, alreadyUsed: giocateIds.includes(s.sigla) })
-    );
+
+    // Calcola alreadyUsed: ciclo per CAMPIONATO, blacklist globale per SURVIVOR
+    let squadreDisponibili: any[];
+    if (this.lega?.modalita === 'CAMPIONATO') {
+      const numSquadre = this.squadre.length;
+      const cycleStart = numSquadre > 0 ? Math.floor(prevPicks.length / numSquadre) * numSquadre : 0;
+      const currentCycleTeams = new Set(prevPicks.slice(cycleStart));
+      squadreDisponibili = this.squadre.map(
+        (s: any) => ({ ...s, alreadyUsed: currentCycleTeams.has(s.sigla) })
+      );
+    } else {
+      // SURVIVOR: qualsiasi squadra già usata nelle giornate precedenti è bloccata
+      squadreDisponibili = this.squadre.map(
+        (s: any) => ({ ...s, alreadyUsed: prevPicks.includes(s.sigla) })
+      );
+    }
 
     const { SelezionaGiocataComponent } = await import(
       '../seleziona-giocata/seleziona-giocata.component'
@@ -617,6 +652,29 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
   goBack(): void {
     this.router.navigate(['/home'], { state: { selectedLegaId: this.lega?.id, activeTab: this.lega?.pubblica ? 'public' : 'private' } });
+  }
+
+  isCampionato(): boolean {
+    return this.lega?.modalita === 'CAMPIONATO';
+  }
+
+  classificaAperta = false;
+
+  toggleClassifica(): void {
+    this.classificaAperta = !this.classificaAperta;
+  }
+
+  getClassificaCampionato(): Giocatore[] {
+    if (!this.lega?.giocatori) return [];
+    return [...this.lega.giocatori].sort((a, b) => (b.puntiTotali ?? 0) - (a.puntiTotali ?? 0));
+  }
+
+  getPosizioneClassifica(giocatore: Giocatore): number {
+    return this.getClassificaCampionato().findIndex(g => g.user?.id === giocatore.user?.id) + 1;
+  }
+
+  isCurrentUser(giocatore: Giocatore): boolean {
+    return giocatore.user?.id === this.authService.getCurrentUser()?.id;
   }
 
   visualizzaGiocata(giornata: number, giocatore: Giocatore): string {
@@ -685,13 +743,13 @@ export class LegaDettaglioComponent implements OnDestroy {
       maxGiornata = numGg;
     }
 
-    // Calcola le giornate da visualizzare (MAX 5, centrate sulla giornata corrente)
+    let startGiornata: number;
+    let endGiornata: number;
+
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 5; // LIMITE A 5 GIORNATE VISIBILI
-    let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
-    let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
-
-
+    const maxGiornateVisibili = this.isCampionato() ? 3 : 5;
+    startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
+    endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
     // Aggiusta se siamo vicini alla fine
     if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
       startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
@@ -945,6 +1003,12 @@ export class LegaDettaglioComponent implements OnDestroy {
       sigla,
       this.lega?.campionato?.id
     );
+  }
+
+  getSquadraNomeSenzaCitta(squadraSigla: string | null | undefined): string | null {
+    const nomeCompleto = this.getSquadraNome(squadraSigla);
+    if (!nomeCompleto) return squadraSigla ?? null;
+    return this.squadraService.formatNomeSquadra(nomeCompleto);
   }
 
   // ========== LOGHI E FOTO SQUADRE/TENNISTI ===

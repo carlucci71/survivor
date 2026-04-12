@@ -452,6 +452,28 @@ $radius-sm: 10px;
   letter-spacing: 0.4px;
 }
 
+.cn-step-auto-badge--warn {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #F57C00;
+  background: rgba(245, 124, 0, 0.12);
+  border-radius: 8px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cn-required-star {
+  color: #D32F2F;
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+.cn-stepper--required {
+  border-color: #D32F2F !important;
+  background: rgba(211, 47, 47, 0.04) !important;
+}
+
 .cn-stepper-error {
   font-size: 0.73rem;
   color: #D32F2F;

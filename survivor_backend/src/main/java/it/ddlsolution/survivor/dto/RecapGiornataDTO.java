@@ -30,10 +30,11 @@ public class RecapGiornataDTO {
         private String nickname;
         private String squadraNome;
         private String squadraSigla;
-        private Enumeratori.EsitoGiocata esito; // OK / KO / null (non ha giocato)
+        private Enumeratori.EsitoGiocata esito; // OK / KO / PAREGGIO / null (non ha giocato)
         private Enumeratori.StatoGiocatore statoDopoGiornata;
         private boolean eliminatoQuestaGiornata;
         private boolean forzata;
+        private Integer punti; // Punti ottenuti in modalità Campionato
     }
 
     @Data

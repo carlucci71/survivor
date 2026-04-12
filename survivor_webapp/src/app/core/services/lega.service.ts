@@ -39,7 +39,8 @@ export class LegaService {
     pwd: string | null,
     pubblica: boolean = false,
     accessoLibero: boolean = false,
-    maxPartecipanti: number | null = null
+    maxPartecipanti: number | null = null,
+    modalita: string = 'SURVIVOR'
   ): Observable<Lega> {
     const body: any = {
       name: name,
@@ -48,7 +49,8 @@ export class LegaService {
       giornataIniziale: giornataIniziale,
       pwd: pwd,
       pubblica: pubblica,
-      accessoLibero: accessoLibero
+      accessoLibero: accessoLibero,
+      modalita: modalita
     };
     if (giornataFinale !== null) {
       body['giornataFinale'] = giornataFinale;

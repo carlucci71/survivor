@@ -786,51 +786,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   formatNomeSquadra(nome: string): string {
-    if (!nome) return '';
-
-    // Rimuovi underscore e sostituiscili con spazi
-    let formatted = nome.replace(/_/g, ' ');
-
-    // Standardizza nomi NBA - mostra il nome della squadra, non la città
-    const abbreviazioni: { [key: string]: string } = {
-      'PORTLAND TRAIL BLAZERS': 'TRAIL BLAZERS',
-      'GOLDEN STATE WARRIORS': 'WARRIORS',
-      'OKLAHOMA CITY THUNDER': 'THUNDER',
-      'NEW ORLEANS PELICANS': 'PELICANS',
-      'MINNESOTA TIMBERWOLVES': 'TIMBERWOLVES',
-      'SACRAMENTO KINGS': 'KINGS',
-      'SAN ANTONIO SPURS': 'SPURS',
-      'LOS ANGELES LAKERS': 'LAKERS',
-      'LOS ANGELES CLIPPERS': 'CLIPPERS',
-      'MEMPHIS GRIZZLIES': 'GRIZZLIES',
-      'DALLAS MAVERICKS': 'MAVERICKS',
-      'ORLANDO MAGIC': 'MAGIC',
-      'PHILADELPHIA 76ERS': '76ERS',
-      'CHARLOTTE HORNETS': 'HORNETS',
-      'CLEVELAND CAVALIERS': 'CAVALIERS',
-      'MILWAUKEE BUCKS': 'BUCKS',
-      'WASHINGTON WIZARDS': 'WIZARDS',
-      'TORONTO RAPTORS': 'RAPTORS',
-      'BROOKLYN NETS': 'NETS',
-      'NEW YORK KNICKS': 'KNICKS',
-      'BOSTON CELTICS': 'CELTICS',
-      'DETROIT PISTONS': 'PISTONS',
-      'INDIANA PACERS': 'PACERS',
-      'CHICAGO BULLS': 'BULLS',
-      'ATLANTA HAWKS': 'HAWKS',
-      'MIAMI HEAT': 'HEAT',
-      'DENVER NUGGETS': 'NUGGETS',
-      'UTAH JAZZ': 'JAZZ',
-      'PHOENIX SUNS': 'SUNS',
-      'HOUSTON ROCKETS': 'ROCKETS',
-    };
-
-    const upper = formatted.toUpperCase();
-    if (abbreviazioni[upper]) {
-      return abbreviazioni[upper];
-    }
-
-    return formatted;
+    return this.squadraService.formatNomeSquadra(nome);
   }
 
   getSearchPlaceholder(): string {
@@ -1151,6 +1107,18 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     // Aggiorna le frecce dopo il filtro
     setTimeout(() => this.updateScrollButtons(), 100);
+  }
+
+  isCampionato(): boolean {
+    return this.lega?.modalita === 'CAMPIONATO';
+  }
+
+  get squadreFiltrateDisponibili(): any[] {
+    return this.squadreFiltrate.filter((s: any) => !s.alreadyUsed);
+  }
+
+  get squadreFiltrateGiaUsate(): any[] {
+    return this.squadreFiltrate.filter((s: any) => s.alreadyUsed);
   }
 
   clearSearch(): void {

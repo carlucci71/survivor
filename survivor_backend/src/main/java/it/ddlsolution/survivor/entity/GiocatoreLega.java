@@ -37,6 +37,9 @@ public class GiocatoreLega implements Serializable {
     @Column(name = "posizione_finale")
     private Integer posizioneFinale;
 
+    @Column(name = "punti_totali", nullable = false)
+    private Integer puntiTotali = 0;
+
     @Embeddable
     @Data
     public static class GiocatoreLegaId implements Serializable {
