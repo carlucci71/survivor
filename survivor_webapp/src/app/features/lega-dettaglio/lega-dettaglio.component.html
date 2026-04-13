@@ -884,34 +884,84 @@
 @if (grimReaperVisible) {
   <div class="grim-reaper-overlay" (click)="grimReaperVisible = false">
     <div class="grim-reaper-scene">
-      <!-- Boia SVG -->
+      <!-- Boia SVG v2 — più cattivo, falce vera, occhi rossi -->
       <div class="grim-reaper-figure">
-        <svg viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg" class="reaper-svg">
+        <svg viewBox="0 0 260 250" xmlns="http://www.w3.org/2000/svg" class="reaper-svg">
+          <defs>
+            <filter id="eyeGlowF" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Ombra a terra -->
+          <ellipse cx="95" cy="243" rx="68" ry="11" fill="#1a0005" opacity="0.55"/>
           <!-- Mantello -->
-          <path d="M20 60 Q10 90 8 160 Q30 170 60 168 Q90 170 112 160 Q110 90 100 60 Q80 50 60 48 Q40 50 20 60Z" fill="#1a1a2e" opacity="0.95"/>
-          <!-- Cappuccio -->
-          <path d="M25 65 Q20 30 60 18 Q100 30 95 65 Q80 55 60 53 Q40 55 25 65Z" fill="#1a1a2e"/>
-          <!-- Faccia teschio -->
-          <ellipse cx="60" cy="42" rx="18" ry="20" fill="#e8e8d0"/>
-          <!-- Occhi vuoti -->
-          <ellipse cx="53" cy="40" rx="5" ry="6" fill="#1a1a2e"/>
-          <ellipse cx="67" cy="40" rx="5" ry="6" fill="#1a1a2e"/>
+          <path d="M36 84 Q18 132 14 244 Q54 253 95 251 Q136 253 176 244 Q172 132 154 84 Q128 70 95 67 Q62 70 36 84Z" fill="#0d0d1e"/>
+          <!-- Cappuccio appuntito -->
+          <path d="M40 89 Q34 40 95 18 Q156 40 150 89 Q128 74 95 72 Q62 74 40 89Z" fill="#0d0d1e"/>
+          <!-- Oscurità interna cappuccio -->
+          <path d="M52 92 Q46 52 95 34 Q144 52 138 92 Q120 79 95 77 Q70 79 52 92Z" fill="#050510"/>
+          <!-- Teschio -->
+          <ellipse cx="95" cy="60" rx="22" ry="24" fill="#d0d0b2"/>
+          <!-- Crepa cranio -->
+          <path d="M84 38 Q89 44 87 51" stroke="#b0b098" stroke-width="1.2" fill="none" opacity="0.65"/>
+          <!-- Occhi rossi con glow -->
+          <ellipse cx="85" cy="56" rx="7" ry="8" fill="#770000" filter="url(#eyeGlowF)"/>
+          <ellipse cx="105" cy="56" rx="7" ry="8" fill="#770000" filter="url(#eyeGlowF)"/>
+          <ellipse cx="85" cy="56" rx="4.5" ry="5.5" fill="#ee1100">
+            <animate attributeName="opacity" values="0.7;1;0.7" dur="0.9s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="105" cy="56" rx="4.5" ry="5.5" fill="#ee1100">
+            <animate attributeName="opacity" values="0.7;1;0.7" dur="0.9s" begin="0.15s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="83" cy="54" rx="1.5" ry="2" fill="#ff8866" opacity="0.75"/>
+          <ellipse cx="103" cy="54" rx="1.5" ry="2" fill="#ff8866" opacity="0.75"/>
           <!-- Naso -->
-          <path d="M58 50 L60 55 L62 50Z" fill="#1a1a2e" opacity="0.5"/>
-          <!-- Sorriso -->
-          <path d="M50 58 Q60 65 70 58" stroke="#1a1a2e" stroke-width="2" fill="none"/>
-          <!-- Linee denti -->
-          <line x1="54" y1="58" x2="54" y2="63" stroke="#1a1a2e" stroke-width="1.5"/>
-          <line x1="58" y1="59" x2="58" y2="64" stroke="#1a1a2e" stroke-width="1.5"/>
-          <line x1="62" y1="59" x2="62" y2="64" stroke="#1a1a2e" stroke-width="1.5"/>
-          <line x1="66" y1="58" x2="66" y2="63" stroke="#1a1a2e" stroke-width="1.5"/>
-          <!-- Braccio con falce -->
-          <line x1="95" y1="80" x2="130" y2="60" stroke="#1a1a2e" stroke-width="8" stroke-linecap="round"/>
-          <!-- Manico falce -->
-          <line x1="130" y1="60" x2="145" y2="10" stroke="#5c3d1e" stroke-width="5" stroke-linecap="round"/>
-          <!-- Lama falce -->
-          <path d="M145 10 Q180 0 175 40 Q165 55 130 60Z" fill="#8ab4c8" opacity="0.9"/>
-          <path d="M145 10 Q180 0 175 40 Q165 55 130 60Z" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.5"/>
+          <path d="M92 68 L95 74 L98 68Z" fill="#050510"/>
+          <!-- Sorriso + denti -->
+          <path d="M81 80 Q95 92 109 80" stroke="#1a0f00" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <rect x="83" y="80" width="4.5" height="7" fill="#d0d0b2" rx="1"/>
+          <rect x="88.5" y="80" width="4.5" height="8" fill="#d0d0b2" rx="1"/>
+          <rect x="94" y="80" width="4.5" height="8" fill="#d0d0b2" rx="1"/>
+          <rect x="99.5" y="80" width="4.5" height="7" fill="#d0d0b2" rx="1"/>
+          <line x1="87.5" y1="80" x2="87.5" y2="87" stroke="#1a0f00" stroke-width="1"/>
+          <line x1="93" y1="80" x2="93" y2="88" stroke="#1a0f00" stroke-width="1"/>
+          <line x1="98.5" y1="80" x2="98.5" y2="88" stroke="#1a0f00" stroke-width="1"/>
+          <line x1="104" y1="80" x2="104" y2="87" stroke="#1a0f00" stroke-width="1"/>
+          <!-- FALCE: braccio ossuto + manico + lama (animazione swing) -->
+          <g>
+            <animateTransform attributeName="transform" type="rotate"
+              values="-6 148 100; 6 148 100; -6 148 100"
+              dur="1.6s" repeatCount="indefinite" calcMode="spline"
+              keySplines="0.45 0.05 0.55 0.95; 0.45 0.05 0.55 0.95"
+              keyTimes="0; 0.5; 1"/>
+            <!-- Braccio ossuto -->
+            <path d="M148 100 Q167 90 175 76" stroke="#bcbca0" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <circle cx="167" cy="88" r="4.5" fill="#c8c8a8"/>
+            <!-- Manico lungo (legno scuro) -->
+            <line x1="175" y1="74" x2="214" y2="22" stroke="#3a2007" stroke-width="7" stroke-linecap="round"/>
+            <!-- Grip manico -->
+            <line x1="195" y1="48" x2="190" y2="59" stroke="#5a3310" stroke-width="10" stroke-linecap="round" opacity="0.6"/>
+            <!-- Lama falce — grande crescent -->
+            <path d="M214 22 Q254 6 250 68 Q234 90 214 22Z" fill="#88b6cc"/>
+            <path d="M214 22 Q246 14 243 66 Q229 84 214 22Z" fill="#6896a8"/>
+            <!-- Bordo tagliente (gleam) -->
+            <path d="M214 22 Q254 6 250 68" stroke="#ddf2ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M216 28 Q248 14 244 64" stroke="#b8dae8" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <!-- Rivetto manico-lama -->
+            <circle cx="214" cy="22" r="7" fill="#3d200a"/>
+            <circle cx="214" cy="22" r="4" fill="#6e4818"/>
+            <!-- Punta luminosa -->
+            <circle cx="214" cy="22" r="3" fill="#ffffff" opacity="0.85"/>
+            <!-- Sangue sulla lama -->
+            <path d="M244 58 Q241 70 244 83" stroke="#cc0000" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="244" cy="83" r="4.5" fill="#990000"/>
+            <path d="M234 68 Q231 78 233 88" stroke="#bb0000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="233" cy="88" r="3.5" fill="#880000"/>
+          </g>
         </svg>
       </div>
       <!-- Nomi vittime -->
