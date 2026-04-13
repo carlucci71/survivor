@@ -1364,7 +1364,7 @@ export class AlboOroDialogComponent implements OnInit {
 
     /* ─── CONTAINER ─── */
     .modal-container {
-      background: #F8F9FC;
+      background: #F4F7FC;
       border-radius: 20px;
       width: 100% !important;
       max-width: 100% !important;
@@ -1378,10 +1378,10 @@ export class AlboOroDialogComponent implements OnInit {
     /* ─── HEADER ─── */
     .profile-header {
       background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #4FC3F7 100%);
-      padding: 20px;
+      padding: 20px 20px 24px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
     }
 
     .avatar {
@@ -1391,7 +1391,7 @@ export class AlboOroDialogComponent implements OnInit {
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
       flex-shrink: 0;
     }
 
@@ -1416,7 +1416,7 @@ export class AlboOroDialogComponent implements OnInit {
       height: 32px;
       background: rgba(0,0,0,0.18);
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.35);
+      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1430,11 +1430,11 @@ export class AlboOroDialogComponent implements OnInit {
     }
 
     .field-label {
-      font-size: 0.65rem;
+      font-size: 0.63rem;
       font-weight: 600;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.08em;
     }
 
     .nickname-input {
@@ -1442,7 +1442,7 @@ export class AlboOroDialogComponent implements OnInit {
       padding: 8px 12px;
       border-radius: 10px;
       background: rgba(255,255,255,0.15);
-      border: 1.5px solid rgba(255,255,255,0.35);
+      border: 1.5px solid rgba(255,255,255,0.3);
       color: #fff;
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
@@ -1450,11 +1450,11 @@ export class AlboOroDialogComponent implements OnInit {
       transition: all 0.2s;
       -webkit-text-size-adjust: 100%;
 
-      &::placeholder { color: rgba(255,255,255,0.45); font-weight: 400; }
+      &::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
       &:focus {
         outline: none;
-        background: rgba(255,255,255,0.25);
-        border-color: rgba(255,255,255,0.75);
+        background: rgba(255,255,255,0.22);
+        border-color: rgba(255,255,255,0.7);
       }
     }
 
@@ -1478,29 +1478,29 @@ export class AlboOroDialogComponent implements OnInit {
       justify-content: center;
       gap: 3px;
       padding: 10px 6px;
-      border-radius: 12px;
-      border: 1.5px solid #E2E8F0;
+      border-radius: 14px;
+      border: none;
       background: #fff;
       cursor: pointer;
       transition: all 0.18s ease;
       min-height: 72px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
       -webkit-tap-highlight-color: transparent;
 
       &:active { transform: scale(0.97); }
 
       &.chip--active {
-        border-color: #1565C0;
-        background: #EFF4FF;
-        box-shadow: 0 2px 8px rgba(10,61,145,0.1);
+        background: #EBF2FF;
+        box-shadow: 0 0 0 2px #1565C0, 0 2px 8px rgba(10,61,145,0.12);
       }
 
-      &.chip--has {
-        border-color: #7CB9F4;
+      &.chip--has:not(.chip--active) {
+        box-shadow: 0 0 0 2px #7CB9F4, 0 1px 4px rgba(0,0,0,0.07);
       }
 
       &.chip--active.chip--has {
-        border-color: #0A3D91;
         background: #E8F0FE;
+        box-shadow: 0 0 0 2px #0A3D91, 0 2px 10px rgba(10,61,145,0.15);
       }
     }
 
@@ -1546,8 +1546,9 @@ export class AlboOroDialogComponent implements OnInit {
       gap: 10px;
       padding: 10px 14px;
       background: #fff;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 10px;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
 
     .edit-emoji { font-size: 1.1rem; flex-shrink: 0; }
@@ -1575,7 +1576,7 @@ export class AlboOroDialogComponent implements OnInit {
       transition: background 0.15s;
       -webkit-tap-highlight-color: transparent;
 
-      mat-icon { font-size: 15px; width: 15px; height: 15px; color: #94A3B8; }
+      mat-icon { font-size: 15px; width: 15px; height: 15px; color: #CBD5E1; }
       &:hover mat-icon, &:active mat-icon { color: #DC2626; }
     }
 
@@ -1584,18 +1585,22 @@ export class AlboOroDialogComponent implements OnInit {
     .search-input {
       width: 100%;
       padding: 10px 14px;
-      border-radius: 10px;
-      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      border: none;
       background: #fff;
       color: #1E293B;
       font-family: 'Poppins', sans-serif;
       font-size: 15px;
       font-weight: 500;
-      transition: border-color 0.2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s;
       -webkit-text-size-adjust: 100%;
 
       &::placeholder { color: #94A3B8; font-size: 0.88rem; }
-      &:focus { outline: none; border-color: #1565C0; }
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px #1565C0, 0 2px 8px rgba(10,61,145,0.1);
+      }
     }
 
     .suggestions-list {
@@ -1604,10 +1609,10 @@ export class AlboOroDialogComponent implements OnInit {
       left: 0; right: 0;
       z-index: 50;
       background: #fff;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 10px;
+      border: none;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
 
     .suggestion-item {
@@ -1619,11 +1624,11 @@ export class AlboOroDialogComponent implements OnInit {
       font-size: 0.88rem;
       color: #374151;
       font-weight: 500;
-      border-bottom: 1px solid #F1F5F9;
+      border-bottom: 1px solid #F8FAFC;
       transition: background 0.12s;
 
       &:last-child { border-bottom: none; }
-      &:hover, &:active { background: #F8FAFF; color: #0A3D91; }
+      &:hover, &:active { background: #F0F5FF; color: #0A3D91; }
     }
 
     .team-error-banner {
@@ -1631,10 +1636,11 @@ export class AlboOroDialogComponent implements OnInit {
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       margin-top: 6px;
       background: #FFF7ED;
-      border: 1px solid #FED7AA;
+      border: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       color: #C2410C;
       font-size: 0.78rem;
       font-weight: 600;
@@ -1649,16 +1655,17 @@ export class AlboOroDialogComponent implements OnInit {
       font-size: 0.8rem;
       font-weight: 500;
       margin: 12px 16px 0;
-      border-radius: 8px;
+      border-radius: 10px;
+      border: none;
 
-      &.success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
-      &.error   { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+      &.success { background: #F0FDF4; color: #166534; box-shadow: 0 1px 3px rgba(22,163,74,0.1); }
+      &.error   { background: #FEF2F2; color: #991B1B; box-shadow: 0 1px 3px rgba(153,27,27,0.1); }
       mat-icon { font-size: 15px; width: 15px; height: 15px; flex-shrink: 0; }
     }
 
     /* ─── ACTIONS ─── */
     .actions-section {
-      padding: 16px 16px 8px;
+      padding: 16px;
     }
 
     .btn-primary {
@@ -1675,16 +1682,37 @@ export class AlboOroDialogComponent implements OnInit {
       border: none;
       background: linear-gradient(135deg, #0A3D91, #1565C0);
       color: #fff;
-      transition: opacity 0.2s;
+      box-shadow: 0 4px 14px rgba(10,61,145,0.25);
+      transition: opacity 0.2s, box-shadow 0.2s;
       -webkit-tap-highlight-color: transparent;
 
-      &:hover:not(:disabled), &:active:not(:disabled) { opacity: 0.88; }
-      &:disabled { opacity: 0.4; cursor: not-allowed; }
+      &:hover:not(:disabled), &:active:not(:disabled) { opacity: 0.88; box-shadow: 0 2px 8px rgba(10,61,145,0.2); }
+      &:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+    }
+
+    /* ─── ANNULLA ─── */
+    .btn-cancel {
+      display: block;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 0.82rem;
+      padding: 11px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      background: #E8EDF5;
+      color: #475569;
+      margin-top: 8px;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover, &:active { background: #DCE3EF; }
     }
 
     /* ─── DANGER ─── */
     .danger-zone {
-      padding: 4px 16px 16px;
+      padding: 0 16px 16px;
       text-align: center;
     }
 
@@ -1709,17 +1737,17 @@ export class AlboOroDialogComponent implements OnInit {
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 480px) {
-      .profile-header { padding: 16px; gap: 12px; }
+      .profile-header { padding: 16px 16px 20px; gap: 12px; }
       .avatar { width: 46px; height: 46px; }
       .avatar-initials { font-size: 1.15rem; }
-      .favorites-section { padding: 14px 14px 0; }
+      .favorites-section { padding: 14px 12px 0; }
       .chip { min-height: 66px; }
-      .actions-section { padding: 14px; }
-      .danger-zone { padding: 0 14px 14px; }
+      .actions-section { padding: 12px; }
+      .danger-zone { padding: 0 12px 12px; }
     }
 
     @media (max-width: 360px) {
-      .profile-header { padding: 14px; gap: 10px; }
+      .profile-header { padding: 12px 12px 16px; gap: 10px; }
       .avatar { width: 42px; height: 42px; }
       .sport-chips { gap: 6px; }
       .chip { min-height: 60px; padding: 8px 4px; }

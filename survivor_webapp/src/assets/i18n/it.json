@@ -912,30 +912,38 @@
       "DESC": "Hai creato questa lega e sei il suo responsabile. Stai per imparare tutto quello che puoi fare per gestirla al meglio."
     },
     "SLIDE_2": {
+      "TITLE": "Pubblica o Privata?",
+      "DESC": "Lega pubblica: chiunque può trovarla e unirsi. Lega privata: solo chi ha il link può fare richiesta, e tu approvi o rifiuti ogni ingresso."
+    },
+    "SLIDE_3": {
+      "TITLE": "Avvia la lega!",
+      "DESC": "Dopo aver invitato i giocatori, premi \"Avvia\" per dare il via. Senza questo passaggio la lega resta in attesa e nessuno può giocare."
+    },
+    "SLIDE_4": {
       "TITLE": "Invita i giocatori",
       "DESC": "Condividi il link della lega o invita tramite email. Se la lega è privata, le richieste di accesso arrivano a te: puoi approvarle o rifiutarle dalla sezione \"Richieste\"."
     },
-    "SLIDE_3": {
+    "SLIDE_5": {
       "TITLE": "I giocatori scelgono",
       "DESC": "Ogni giornata ogni giocatore deve scegliere una squadra che vincerà. Se non gioca entro la deadline, viene eliminato automaticamente. Tienili d'occhio!"
     },
-    "SLIDE_4": {
+    "SLIDE_6": {
       "TITLE": "Calcola la giornata",
       "DESC": "Dopo che le partite sono finite, premi \"Calcola\" nel pannello azioni. Il sistema elabora tutti i risultati: chi ha vinto sopravvive, chi ha perso o pareggiato viene eliminato."
     },
-    "SLIDE_5": {
+    "SLIDE_7": {
       "TITLE": "Sospensioni e controllo",
       "DESC": "Se una partita è rinviata o sospesa, puoi gestirla dal pannello \"Sospensioni\". Puoi anche rimuovere un giocatore dalla lega o annullare una giocata se necessario."
     },
-    "SLIDE_6": {
+    "SLIDE_8": {
       "TITLE": "Forza i risultati",
       "DESC": "Clicca \"Mostra Risultati\" per vedere i risultati della giornata. Da lì puoi forzare manualmente l'esito di una singola partita — utile se c'è un errore o una situazione speciale."
     },
-    "SLIDE_7": {
+    "SLIDE_9": {
       "TITLE": "Gioca per gli altri",
       "DESC": "Come leader puoi toccare la casella di qualsiasi giocatore e scegliere la squadra al posto suo. Usalo con cautela: ad esempio per correggere un errore o per un giocatore che non riesce ad accedere."
     },
-    "SLIDE_8": {
+    "SLIDE_10": {
       "TITLE": "Sei l'arbitro!",
       "DESC": "L'ultimo giocatore rimasto in piedi vince la lega. Sei tu a dichiararlo! Puoi anche chiudere la lega manualmente o riaprirla se tutti vengono eliminati."
     }
@@ -955,16 +963,52 @@
       "DESC": "Premi il pulsante \"Gioca ora\" per selezionare la squadra che pensi vincerà quella giornata. Conferma la scelta e sei a posto!"
     },
     "SLIDE_3": {
+      "TITLE": "Puoi cambiare idea!",
+      "DESC": "Hai già scelto ma ci hai ripensato? Puoi modificare la tua giocata fino alla chiusura della deadline. Tocca il tuo voto e scegli \"Modifica\"."
+    },
+    "SLIDE_4": {
       "TITLE": "La scadenza è tutto",
       "DESC": "Hai tempo fino alla chiusura della giornata per fare la tua scelta. Il countdown è visibile nella schermata della lega. Non aspettare l'ultimo momento!"
     },
-    "SLIDE_4": {
+    "SLIDE_5": {
       "TITLE": "Una squadra per stagione",
       "DESC": "Non puoi scegliere la stessa squadra due volte nella stessa stagione. Pianifica in anticipo e tieni traccia delle squadre già usate nello storico."
     },
-    "SLIDE_5": {
+    "SLIDE_6": {
+      "TITLE": "Eliminato? Puoi restare!",
+      "DESC": "Se vieni eliminato non sparisci: puoi continuare a seguire la lega come spettatore, vedere le giocate degli altri e reagire con le emoji."
+    },
+    "SLIDE_7": {
+      "TITLE": "Leggi lo storico",
+      "DESC": "Ogni giocata nello storico ha un colore: verde = vittoria (sopravvissuto), rosso = sconfitta o pareggio (eliminato). Tocca l'icona storico accanto a un nome per vederlo."
+    },
+    "SLIDE_8": {
       "TITLE": "Reaction e storico",
       "DESC": "Tieni premuto su una giocata altrui per reagire con un'emoji! Clicca sull'icona storico accanto al nome di un giocatore per vedere tutte le sue giocate."
     }
+  },
+  "EASTER_EGG": {
+    "REAPER_MSGS": [
+      "La morte è passata 💀",
+      "Il Boia ha fatto il suo lavoro ☠️",
+      "Nessuno scampa alla falce 🌑",
+      "GG WP, arrivederci nell'aldilà 👋",
+      "Erano bravi ragazzi... ieri 😔",
+      "La lega vi ricorderà (forse) 🕯️",
+      "Meglio eliminati che non aver giocato? No. ❌",
+      "Il Fantasy ti ha tradito ancora 🎰",
+      "Darwin aveva ragione. Sopravvive il più forte 🧬",
+      "Eliminati con disonore 🏳️",
+      "La ProfeSSia si compie... 🔮",
+      "Avete perso. Il Boia è soddisfatto 😈",
+      "Non esistono seconde chance. Solo seconde pianti 😭",
+      "Questa è la vostra eredità: zero punti 🪦",
+      "Il consiglio tribale ha parlato 🔥",
+      "Spegni la torcia e torna a casa 🕯️➡️🏠",
+      "Nella lista nera del Boia 📜",
+      "Avete giocato... ma non abbastanza 📉",
+      "Nel nome della falce: eliminati! ⚔️",
+      "La morte non guarda la classifica. Ma voi sì 📊"
+    ]
   }
 }

@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { trigger, style, animate, transition } from '@angular/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
 interface TutorialSlide {
@@ -12,6 +12,7 @@ interface TutorialSlide {
   descKey: string;
   accent: string;
   gradient: string;
+  demoType?: string;
 }
 
 @Component({
@@ -47,12 +48,64 @@ interface TutorialSlide {
         @for (slide of slides; track $index) {
           @if ($index === current) {
             <div class="ob-slide" [@slideAnim]>
-              <div class="ob-illustration" [style.background]="slide.gradient">
-                <div class="ob-emoji-ring" [style.borderColor]="slide.accent + '44'">
-                  <span class="ob-emoji">{{ slide.emoji }}</span>
+              @if (slide.demoType === 'modifica-giocata') {
+                <div class="ob-demo-wrapper">
+                  <div class="ob-demo-mockup demo-modifica-mockup">
+                    <div class="demo-pick-card" [class.demo-pick-card--selected]="demoStep >= 0">
+                      <span class="demo-pick-logo">🏆</span>
+                      <div class="demo-pick-info">
+                        <span class="demo-pick-name">Juventus</span>
+                        <span class="demo-pick-round">Giornata 28</span>
+                      </div>
+                      <mat-icon class="demo-pick-check">check_circle</mat-icon>
+                    </div>
+                    <div class="demo-modifica-btn" [class.demo-modifica-btn--visible]="demoStep === 1">
+                      <mat-icon class="demo-icon">edit</mat-icon>
+                      <span>Modifica</span>
+                    </div>
+                    <div class="demo-pick-card demo-pick-card--new" [class.demo-pick-card--visible]="demoStep === 2">
+                      <span class="demo-pick-logo">⚽</span>
+                      <div class="demo-pick-info">
+                        <span class="demo-pick-name">Inter</span>
+                        <span class="demo-pick-round">Nuova scelta</span>
+                      </div>
+                      <mat-icon class="demo-pick-check demo-pick-check--green">check_circle</mat-icon>
+                    </div>
+                  </div>
                 </div>
-                <mat-icon class="ob-bg-icon" [style.color]="slide.accent + '22'">{{ slide.icon }}</mat-icon>
-              </div>
+              } @else if (slide.demoType === 'storico-colori') {
+                <div class="ob-demo-wrapper">
+                  <div class="ob-demo-mockup demo-storico-mockup">
+                    <div class="demo-storico-header">Storico — Mario</div>
+                    <div class="demo-storico-row demo-storico-row--win" [class.demo-storico-row--active]="demoStep === 0">
+                      <span class="demo-storico-g">G27</span>
+                      <span class="demo-storico-team">Napoli</span>
+                      <span class="demo-storico-badge demo-storico-badge--win">✓ VINTO</span>
+                    </div>
+                    <div class="demo-storico-row demo-storico-row--loss" [class.demo-storico-row--active]="demoStep === 1">
+                      <span class="demo-storico-g">G28</span>
+                      <span class="demo-storico-team">Juventus</span>
+                      <span class="demo-storico-badge demo-storico-badge--loss">✗ PERSO</span>
+                    </div>
+                    <div class="demo-storico-row demo-storico-row--win" [class.demo-storico-row--active]="demoStep === 2">
+                      <span class="demo-storico-g">G29</span>
+                      <span class="demo-storico-team">Milan</span>
+                      <span class="demo-storico-badge demo-storico-badge--win">✓ VINTO</span>
+                    </div>
+                    <div class="demo-storico-legend">
+                      <span class="demo-legend-item demo-legend-item--win">🟢 Sopravvissuto</span>
+                      <span class="demo-legend-item demo-legend-item--loss">🔴 Eliminato</span>
+                    </div>
+                  </div>
+                </div>
+              } @else {
+                <div class="ob-illustration" [style.background]="slide.gradient">
+                  <div class="ob-emoji-ring" [style.borderColor]="slide.accent + '44'">
+                    <span class="ob-emoji">{{ slide.emoji }}</span>
+                  </div>
+                  <mat-icon class="ob-bg-icon" [style.color]="slide.accent + '22'">{{ slide.icon }}</mat-icon>
+                </div>
+              }
               <div class="ob-text">
                 <h2 class="ob-title">{{ slide.titleKey | translate }}</h2>
                 <p class="ob-desc">{{ slide.descKey | translate }}</p>
@@ -352,27 +405,234 @@ interface TutorialSlide {
       .ob-emoji { font-size: 2.2rem; }
       .ob-title { font-size: 1rem; }
     }
+
+    /* ── Demo wrapper shared ── */
+    .ob-demo-wrapper {
+      width: calc(100% - 48px);
+      margin: 12px 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ob-demo-mockup {
+      background: #EEF2FF;
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    /* ── Demo: Modifica giocata ── */
+    .demo-modifica-mockup { align-items: center; }
+
+    .demo-pick-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      background: #fff;
+      border: 2px solid #0A3D91;
+      border-radius: 10px;
+      padding: 8px 12px;
+      box-sizing: border-box;
+      transition: border-color 0.3s, opacity 0.4s;
+
+      &.demo-pick-card--new {
+        border-color: #10B981;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+
+        &.demo-pick-card--visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    }
+
+    .demo-pick-logo { font-size: 1.4rem; line-height: 1; flex-shrink: 0; }
+
+    .demo-pick-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .demo-pick-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+
+    .demo-pick-round {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.58rem;
+      color: #64748B;
+    }
+
+    .demo-pick-check {
+      font-size: 20px !important;
+      width: 20px !important;
+      height: 20px !important;
+      color: #0A3D91;
+
+      &.demo-pick-check--green { color: #10B981; }
+    }
+
+    .demo-modifica-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #F1F5F9;
+      color: #0A3D91;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid #0A3D91;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      .demo-icon { font-size: 13px; width: 13px; height: 13px; }
+
+      &.demo-modifica-btn--visible {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ── Demo: Storico colori ── */
+    .demo-storico-mockup { padding: 0; overflow: hidden; }
+
+    .demo-storico-header {
+      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.67rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .demo-storico-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-bottom: 1px solid #F1F5F9;
+      transition: background 0.3s;
+
+      &.demo-storico-row--win  { background: #F0FDF4; }
+      &.demo-storico-row--loss { background: #FFF5F5; }
+      &.demo-storico-row--active { filter: brightness(0.93); }
+    }
+
+    .demo-storico-g {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #94A3B8;
+      min-width: 26px;
+    }
+
+    .demo-storico-team {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #0F172A;
+      flex: 1;
+    }
+
+    .demo-storico-badge {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.58rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+
+      &.demo-storico-badge--win  { background: #DCFCE7; color: #166534; }
+      &.demo-storico-badge--loss { background: #FEE2E2; color: #991B1B; }
+    }
+
+    .demo-storico-legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 6px 12px;
+      background: #F8FAFC;
+    }
+
+    .demo-legend-item {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #475569;
+      &.demo-legend-item--win  { color: #166534; }
+      &.demo-legend-item--loss { color: #991B1B; }
+    }
+
+    .demo-icon { font-size: 13px; width: 13px; height: 13px; }
+
+    @media (max-width: 480px) {
+      .ob-demo-wrapper {
+        width: calc(100% - 32px);
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+    }
   `]
 })
-export class PlayerTutorialComponent {
+export class PlayerTutorialComponent implements OnDestroy {
   @Output() dismissed = new EventEmitter<void>();
 
-  current = 0;
+  demoStep = 0;
+  private _current = 0;
+  private _demoInterval: any = null;
+
+  get current(): number { return this._current; }
+  set current(val: number) {
+    this._current = val;
+    this._manageDemoInterval();
+  }
 
   readonly slides: TutorialSlide[] = [
     { emoji: '🎮', icon: 'sports',    titleKey: 'PLAYER_TUTORIAL.SLIDE_1.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_1.DESC', accent: '#0A3D91', gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)' },
     { emoji: '👆', icon: 'touch_app', titleKey: 'PLAYER_TUTORIAL.SLIDE_2.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_2.DESC', accent: '#4FC3F7', gradient: 'linear-gradient(135deg, #F0F9FF, #E0F2FE)' },
-    { emoji: '⏱️', icon: 'schedule',  titleKey: 'PLAYER_TUTORIAL.SLIDE_3.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_3.DESC', accent: '#EF4444', gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)' },
-    { emoji: '🚫', icon: 'block',     titleKey: 'PLAYER_TUTORIAL.SLIDE_4.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_4.DESC', accent: '#8B5CF6', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
-    { emoji: '📊', icon: 'bar_chart', titleKey: 'PLAYER_TUTORIAL.SLIDE_5.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_5.DESC', accent: '#10B981', gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)' },
+    { emoji: '✏️', icon: 'edit',      titleKey: 'PLAYER_TUTORIAL.SLIDE_3.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_3.DESC', accent: '#10B981', gradient: '', demoType: 'modifica-giocata' },
+    { emoji: '⏱️', icon: 'schedule',  titleKey: 'PLAYER_TUTORIAL.SLIDE_4.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_4.DESC', accent: '#EF4444', gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)' },
+    { emoji: '🚫', icon: 'block',     titleKey: 'PLAYER_TUTORIAL.SLIDE_5.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_5.DESC', accent: '#8B5CF6', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
+    { emoji: '👁️', icon: 'visibility', titleKey: 'PLAYER_TUTORIAL.SLIDE_6.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_6.DESC', accent: '#6366F1', gradient: 'linear-gradient(135deg, #EEF2FF, #E0E7FF)' },
+    { emoji: '📊', icon: 'bar_chart', titleKey: 'PLAYER_TUTORIAL.SLIDE_7.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_7.DESC', accent: '#10B981', gradient: '', demoType: 'storico-colori' },
+    { emoji: '🎉', icon: 'thumb_up',  titleKey: 'PLAYER_TUTORIAL.SLIDE_8.TITLE', descKey: 'PLAYER_TUTORIAL.SLIDE_8.DESC', accent: '#10B981', gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)' },
   ];
 
+  private _manageDemoInterval(): void {
+    if (this._demoInterval) { clearInterval(this._demoInterval); this._demoInterval = null; }
+    const demoType = this.slides[this._current]?.demoType;
+    if (demoType === 'modifica-giocata') {
+      this.demoStep = 0;
+      this._demoInterval = setInterval(() => { this.demoStep = (this.demoStep + 1) % 3; }, 2000);
+    } else if (demoType === 'storico-colori') {
+      this.demoStep = 0;
+      this._demoInterval = setInterval(() => { this.demoStep = (this.demoStep + 1) % 3; }, 1500);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this._demoInterval) clearInterval(this._demoInterval);
+  }
+
   next(): void {
-    if (this.current < this.slides.length - 1) this.current++;
+    if (this._current < this.slides.length - 1) this.current++;
   }
 
   prev(): void {
-    if (this.current > 0) this.current--;
+    if (this._current > 0) this.current--;
   }
 
   finish(): void {
