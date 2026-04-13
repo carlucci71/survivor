@@ -440,7 +440,15 @@
     "NO_PICKS_YET": "No picks made yet",
     "TABLE_USER": "User",
     "TABLE_STATUS": "Status",
-    "TABLE_ACTIONS": "Actions"
+    "TABLE_ACTIONS": "Actions",
+    "LIVES_REMAINING": "Lives remaining",
+    "MANAGE_LIVES": "Manage lives",
+    "LIVES_OF": "Lives of",
+    "ONE_LIFE": "life",
+    "MANY_LIVES": "lives",
+    "MANAGE_LIVES_CANCEL": "Cancel",
+    "MANAGE_LIVES_SAVE": "Save",
+    "MANAGE_LIVES_SAVING": "Saving…"
   },
   "COMMON": {
     "SOCCER": "Soccer",
@@ -606,7 +614,37 @@
     "ACCESS_FREE_LABEL": "Open access",
     "ACCESS_FREE_DESC": "Anyone can join directly without approval",
     "MAX_PARTICIPANTS_LABEL": "Maximum participants",
-    "MAX_PARTICIPANTS_UNLIMITED": "Unlimited"
+    "MAX_PARTICIPANTS_UNLIMITED": "Unlimited",
+    "LIVES_LABEL": "Starting lives",
+    "VITA": "life",
+    "VITE": "lives",
+    "LIVES_WARN": {
+      "MAX": { "EMOJI": "💀", "TEXT": "Everyone dies eventually. No one is immortal — not even you. This is the maximum allowed." },
+      "6": {
+        "0": { "EMOJI": "😏", "TEXT": "Sure you're worth 6 lives? Maybe ask yourself why..." },
+        "1": { "EMOJI": "🤔", "TEXT": "6 lives. Optimism, or zero self-awareness?" },
+        "2": { "EMOJI": "👀", "TEXT": "Other players are already kinda hating you." },
+        "3": { "EMOJI": "🎭", "TEXT": "6 free mistakes. An... artistic choice." }
+      },
+      "7": {
+        "0": { "EMOJI": "🐱", "TEXT": "Cats have 9. You're dangerously catching up." },
+        "1": { "EMOJI": "🦸", "TEXT": "Confirmed superhero. Just missing the cape." },
+        "2": { "EMOJI": "🎮", "TEXT": "Difficulty: «baby mode». At least admit it to your friends." },
+        "3": { "EMOJI": "💅", "TEXT": "7 lives. It's not even a challenge anymore." }
+      },
+      "8": {
+        "0": { "EMOJI": "💀", "TEXT": "8 lives? Death is avoiding you out of sheer pity." },
+        "1": { "EMOJI": "😰", "TEXT": "Eight lives. You're basically afraid of the game itself." },
+        "2": { "EMOJI": "🙈", "TEXT": "Opponents have already given up all hope. Thanks." },
+        "3": { "EMOJI": "🤦", "TEXT": "This isn't Survivor, it's a walk in the park." }
+      },
+      "9": {
+        "0": { "EMOJI": "😱", "TEXT": "NINE LIVES. Like a cat, but way less dignified." },
+        "1": { "EMOJI": "🐈", "TEXT": "You are officially a cat. At least try to meow." },
+        "2": { "EMOJI": "🚨", "TEXT": "Playing the game or just winning by opponent exhaustion?" },
+        "3": { "EMOJI": "⚠️", "TEXT": "Fair play is staring at you with deep, deep disappointment." }
+      }
+    }
   },
   "JOIN_LEAGUE": {
     "TITLE": "Join a League",

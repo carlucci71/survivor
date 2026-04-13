@@ -24,5 +24,8 @@ public class LegaInsertDTO {
     private boolean accessoLibero;
     /** Modalità di gioco della lega (default: SURVIVOR) */
     private Enumeratori.ModalitaLega modalita = Enumeratori.ModalitaLega.SURVIVOR;
+
+    /** Numero di vite iniziali per ogni giocatore (default 1 = survivor classico) */
+    private short viteIniziali = 1;
 }
 

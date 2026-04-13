@@ -38,5 +38,8 @@ public class LegaDTO {
     private GiocataDTO miaUltimaGiocataConEsito;
     /** Modalità di gioco della lega (SURVIVOR o CAMPIONATO) */
     private Enumeratori.ModalitaLega modalita;
+
+    /** Numero di vite iniziali assegnato a ogni giocatore (default 1) */
+    private short viteIniziali;
 }
 

@@ -82,4 +82,8 @@ public class Lega {
     @Column(name = "modalita", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private Enumeratori.ModalitaLega modalita = Enumeratori.ModalitaLega.SURVIVOR;
+
+    /** Numero di vite iniziali assegnato a ogni giocatore in questa lega (default 1 = survivor classico) */
+    @Column(name = "vite_iniziali", nullable = false)
+    private short viteIniziali = 1;
 }

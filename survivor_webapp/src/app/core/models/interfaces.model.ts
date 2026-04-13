@@ -132,6 +132,8 @@ export interface Lega {
   miaUltimaGiocataConEsito?: Giocata;
   /** Modalità di gioco: SURVIVOR (default) o CAMPIONATO */
   modalita?: string;
+  /** Numero vite iniziali (solo per SURVIVOR) */
+  viteIniziali?: number;
 }
 
 export interface LegaJoinRequest {
@@ -208,6 +210,8 @@ export interface Giocatore {
   squadraBasketCuore?: Squadra;
   tennistaCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
+  /** Vite rimaste per lega: legaId -> numero vite */
+  vitePerLega?: Record<number, number>;
   user?: User;
   giocate?: Giocata[];
   puntiTotali?: number;

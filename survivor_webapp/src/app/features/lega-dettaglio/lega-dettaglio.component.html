@@ -288,9 +288,10 @@
             [class.active]="playerFilter === 'active'"
             (click)="setPlayerFilter('active')"
           >
-            <span class="chip-label-desktop">{{ 'LEAGUE.ACTIVE' | translate }}</span>
+            <span class="chip-label-desktop">{{ (isCampionato() ? 'LEAGUE.ACTIVE' : 'LEAGUE.IN_GAME') | translate }}</span>
             <span class="chip-count-desktop">{{ getActivePlayersCount() }}</span>
           </button>
+          @if (!isCampionato()) {
           <button
             class="filter-chip-desktop eliminated-chip"
             [class.active]="playerFilter === 'eliminated'"
@@ -299,6 +300,7 @@
             <span class="chip-label-desktop">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
             <span class="chip-count-desktop">{{ getEliminatedPlayersCount() }}</span>
           </button>
+          }
         </div>
       </div>
 
@@ -336,7 +338,9 @@
             <thead>
               <tr class="excel-header-row">
                 <th class="excel-header-cell user-col">{{ 'LEAGUE.TABLE_USER' | translate }}</th>
-                <th class="excel-header-cell status-col">{{ 'LEAGUE.TABLE_STATUS' | translate }}</th>
+                @if (!isCampionato()) {
+                  <th class="excel-header-cell status-col status-col--survivor">{{ 'LEAGUE.IN_GAME' | translate }}</th>
+                }
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
@@ -397,13 +401,20 @@
                     </div>
                   </td>
 
-                  <!-- STATO -->
+                  <!-- STATO - Solo survivor -->
+                  @if (!isCampionato()) {
                   <td class="excel-cell status-cell">
                     <span class="status-indicator"
                           [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                           [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
                     </span>
+                    @if (lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                      <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
+                        ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
+                      </span>
+                    }
                   </td>
+                  }
 
                   <!-- GIORNATE (Limitate o Complete) -->
                   @for (giornata of getVisibleGiornateForPlayer(giocatore); track giornata) {
@@ -422,12 +433,23 @@
                           (touchend)="cancelLongPress()"
                           (touchmove)="cancelLongPress()"
                           (contextmenu)="$event.preventDefault()">
-                          <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
-                          <span
-                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'private-vote-badge' : 'team-name-compact'"
-                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'Scelta visibile a tutti quando scade il timer' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                            {{ getDisplaySquadraNome(giocatore, giornata) }}
-                          </span>
+                          <!-- Mostra logo+nome o badge "Voto Privato" se nascosta -->
+                          @if (shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
+                            <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">
+                              {{ getDisplaySquadraNome(giocatore, giornata) }}
+                            </span>
+                          } @else {
+                            <div class="team-pick-cell"
+                              [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                              @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
+                                <img class="team-pick-logo"
+                                     [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                                     [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                                     (error)="$any($event.target).style.display='none'">
+                              }
+                              <span class="team-pick-name">{{ getDisplaySquadraNome(giocatore, giornata) }}</span>
+                            </div>
+                          }
                           <!-- Indicatori -->
                           <div class="badges-container">
                             <!-- Indicatore forzatura giocata (da admin) -->
@@ -479,6 +501,13 @@
                                     (click)="giocaGiornataDisponibile(giocatore)"
                                     [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
                             edit
+                          </mat-icon>
+                        }
+                        @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                          <mat-icon class="action-icon vite-icon"
+                                    (click)="openGestisciViteDialog(giocatore)"
+                                    [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
+                            favorite
                           </mat-icon>
                         }
                         @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
@@ -567,9 +596,10 @@
               [class.active]="playerFilter === 'active'"
               (click)="setPlayerFilter('active')"
             >
-              <span class="chip-label">{{ 'LEAGUE.ACTIVE' | translate }}</span>
+              <span class="chip-label">{{ (isCampionato() ? 'LEAGUE.ACTIVE' : 'LEAGUE.IN_GAME') | translate }}</span>
               <span class="chip-count">{{ getActivePlayersCount() }}</span>
             </button>
+            @if (!isCampionato()) {
             <button
               class="filter-chip eliminated-chip"
               [class.active]="playerFilter === 'eliminated'"
@@ -578,6 +608,7 @@
               <span class="chip-label">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
               <span class="chip-count">{{ getEliminatedPlayersCount() }}</span>
             </button>
+            }
           </div>
         </div>
 
@@ -645,6 +676,11 @@
               @if (isCampionato() && giocatore.puntiTotali !== undefined) {
                 <span class="punti-totali-badge">{{ giocatore.puntiTotali }} pt</span>
               }
+              @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
+                  ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
+                </span>
+              }
 
               <!-- Icona storico completo se ci sono più di 5 giocate -->
               @if(hasMoreRounds(giocatore)) {
@@ -672,6 +708,13 @@
                           (click)="$event.stopPropagation(); giocaGiornataDisponibile(giocatore)"
                           [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
                   edit
+                </mat-icon>
+              }
+              @if (lega.modalita !== 'CAMPIONATO' && (isAdmin() || isLeaderLega()) && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                <mat-icon class="edit-user-icon-mobile vite-icon-mobile"
+                          (click)="$event.stopPropagation(); openGestisciViteDialog(giocatore)"
+                          [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
+                  favorite
                 </mat-icon>
               }
 
@@ -704,7 +747,15 @@
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
                     } @else {
-                      <span class="team-name-cell" [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''">{{ getSquadraNomeSenzaCitta(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                      <div class="team-pick-cell team-pick-cell--mobile" [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''">
+                        @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
+                          <img class="team-pick-logo"
+                               [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                               [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                               (error)="$any($event.target).style.display='none'">
+                        }
+                        <span class="team-name-cell">{{ getSquadraNomeSenzaCitta(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                      </div>
                     }
                     <!-- Badge forzatura -->
                     <div class="badges-container-mobile">

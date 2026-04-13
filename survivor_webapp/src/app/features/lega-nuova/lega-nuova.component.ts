@@ -20,7 +20,7 @@ import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { environment } from '../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -52,7 +52,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     private campionatoService: CampionatoService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private translate: TranslateService
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
@@ -78,6 +79,45 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   accessoLibero = false;
   maxPartecipanti: number | null = null;
   modalita: 'SURVIVOR' | 'CAMPIONATO' = 'SURVIVOR';
+  viteIniziali: number = 1;
+  viteWarn: { emoji: string; text: string } | null = null;
+
+  private readonly viteWarnCounts: Record<number, number> = { 6: 4, 7: 4, 8: 4, 9: 4 };
+
+  get isViteMax(): boolean {
+    return this.viteIniziali >= 10;
+  }
+
+  private updateViteWarn(): void {
+    const level = this.viteIniziali;
+    if (level <= 5) { this.viteWarn = null; return; }
+    if (level >= 10) {
+      this.viteWarn = {
+        emoji: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.EMOJI'),
+        text: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.TEXT'),
+      };
+      return;
+    }
+    const count = this.viteWarnCounts[level];
+    const idx = Math.floor(Math.random() * count);
+    this.viteWarn = {
+      emoji: this.translate.instant(`CREATE_LEAGUE.LIVES_WARN.${level}.${idx}.EMOJI`),
+      text: this.translate.instant(`CREATE_LEAGUE.LIVES_WARN.${level}.${idx}.TEXT`),
+    };
+  }
+
+  incViteIniziali(): void {
+    if (this.viteIniziali >= 10) return;
+    this.viteIniziali++;
+    this.updateViteWarn();
+  }
+
+  decViteIniziali(): void {
+    if (this.viteIniziali > 0) {
+      this.viteIniziali--;
+      this.updateViteWarn();
+    }
+  }
 
   setModalita(m: 'SURVIVOR' | 'CAMPIONATO'): void {
     this.modalita = m;
@@ -377,6 +417,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.pubblica = false;
     this.accessoLibero = false;
     this.maxPartecipanti = null;
+    this.viteIniziali = 1;
+    this.viteWarn = null;
   }
 
   onSubmit(): void {
@@ -401,7 +443,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.pubblica,
         this.accessoLibero,
         this.maxPartecipanti,
-        this.modalita
+        this.modalita,
+        this.viteIniziali
       )
       .subscribe({
         next: (lega) => {

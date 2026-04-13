@@ -7,6 +7,8 @@ import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.UserDTO;
+import it.ddlsolution.survivor.dto.VitaPersaDTO;
+import it.ddlsolution.survivor.dto.request.AggiornViteDTO;
 import it.ddlsolution.survivor.dto.request.GiocataRequestDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
@@ -14,6 +16,7 @@ import it.ddlsolution.survivor.entity.Giocatore;
 import it.ddlsolution.survivor.entity.GiocatoreLega;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.User;
+import it.ddlsolution.survivor.entity.VitaPersa;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
 import it.ddlsolution.survivor.exception.ManagedException;
 import it.ddlsolution.survivor.mapper.GiocataMapper;
@@ -22,6 +25,7 @@ import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LegaJoinRequestRepository;
 import it.ddlsolution.survivor.repository.LegaRepository;
+import it.ddlsolution.survivor.repository.VitaPersaRepository;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +69,7 @@ public class LegaService {
     private final ReactionGiocataService reactionGiocataService;
     private final GiocataRepository giocataRepository;
     private final GiocataMapper giocataMapper;
+    private final VitaPersaRepository vitaPersaRepository;
 
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
@@ -266,6 +271,11 @@ public class LegaService {
                             if (giocatoreDTO.getPuntiTotali() != null) {
                                 gl.setPuntiTotali(giocatoreDTO.getPuntiTotali());
                             }
+                            // Aggiorna vite correnti se presenti nel DTO
+                            Short viteCorrente = giocatoreDTO.getVitePerLega().get(legaDTO.getId());
+                            if (viteCorrente != null) {
+                                gl.setViteCorrente(viteCorrente);
+                            }
                             if (legaDTO.getStato()!= Enumeratori.StatoLega.TERMINATA) {
                                 gl.setPosizioneFinale(null);
                             }
@@ -423,7 +433,7 @@ public class LegaService {
                             }
                         }
                     } else {
-                        // ── SURVIVOR: eliminazione classica ──
+        // ── SURVIVOR: eliminazione con supporto vite ──
                         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                             Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
                             if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
@@ -454,7 +464,21 @@ public class LegaService {
                                     }
                                 }
                                 if (vincente != null && vincente == false) {
-                                    giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                                    // Decrementa una vita
+                                    Short viteAttuali = Optional.ofNullable(
+                                            giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 1);
+                                    short nuoveVite = (short) (viteAttuali - 1);
+                                    giocatoreDTO.getVitePerLega().put(idLega, nuoveVite);
+                                    // Registra storico vita persa
+                                    Giocatore giocatoreEntity = giocatoreRepository.findById(giocatoreDTO.getId())
+                                            .orElse(null);
+                                    Lega legaEntity = legaRepository.findById(idLega).orElse(null);
+                                    if (giocatoreEntity != null && legaEntity != null) {
+                                        vitaPersaRepository.save(new VitaPersa(giocatoreEntity, legaEntity, nuovaGiornataCalcolata));
+                                    }
+                                    if (nuoveVite <= 0) {
+                                        giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                                    }
                                 }
                             }
                         }
@@ -835,6 +859,9 @@ public class LegaService {
         giocatoreLega.setLega(lega);
         giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
+            giocatoreLega.setViteCorrente(legaInsertDTO.getViteIniziali() > 0 ? legaInsertDTO.getViteIniziali() : 1);
+        }
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
         lega.setAnno(campionatoService.getCampionato(lega.getCampionato().getId()).getAnnoCorrente());
@@ -878,6 +905,9 @@ public class LegaService {
                 giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
             }
             giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+            if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
+                giocatoreLega.setViteCorrente(lega.getViteIniziali() > 0 ? lega.getViteIniziali() : 1);
+            }
             giocatoriLega.add(giocatoreLega);
         }
         lega.setGiocatoreLeghe(giocatoriLega);
@@ -922,6 +952,9 @@ public class LegaService {
         giocatoreLega.setLega(lega);
         giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
+        if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
+            giocatoreLega.setViteCorrente(lega.getViteIniziali() > 0 ? lega.getViteIniziali() : 1);
+        }
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
         Lega legaSalvata = legaRepository.save(lega);
@@ -1005,6 +1038,41 @@ public class LegaService {
     @Transactional(readOnly = true)
     public List<LegaDTO> legheByCampionato(String idCampionato, short anno) {
         return legaMapper.toDTOList(legaRepository.findByCampionato_IdAndAnnoAndStatoIn(idCampionato,anno, List.of(Enumeratori.StatoLega.AVVIATA, Enumeratori.StatoLega.DA_AVVIARE)));
+    }
+
+    @Transactional
+    public LegaDTO aggiornVite(Long idLega, AggiornViteDTO dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        Lega lega = legaRepository.findById(idLega)
+                .orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
+        if (lega.getModalita() != Enumeratori.ModalitaLega.SURVIVOR) {
+            throw new ManagedException("Le vite sono disponibili solo in modalità SURVIVOR", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+        GiocatoreLega gl = lega.getGiocatoreLeghe().stream()
+                .filter(g -> g.getGiocatore().getId().equals(dto.getIdGiocatore()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Giocatore non trovato nella lega"));
+        gl.setViteCorrente(dto.getVite());
+        legaRepository.save(lega);
+        return getLegaDTO(idLega, true, userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VitaPersaDTO> storicoVite(Long idLega) {
+        return vitaPersaRepository.findByLega_IdOrderByGiornataAscGiocatore_IdAsc(idLega)
+                .stream()
+                .map(v -> {
+                    VitaPersaDTO dto = new VitaPersaDTO();
+                    dto.setId(v.getId());
+                    dto.setIdGiocatore(v.getGiocatore().getId());
+                    dto.setNicknameGiocatore(v.getGiocatore().getNickname());
+                    dto.setIdLega(v.getLega().getId());
+                    dto.setGiornata(v.getGiornata());
+                    dto.setPersaAt(v.getPersaAt());
+                    return dto;
+                })
+                .toList();
     }
 
 }

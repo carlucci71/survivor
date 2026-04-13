@@ -40,6 +40,10 @@ public class GiocatoreLega implements Serializable {
     @Column(name = "punti_totali", nullable = false)
     private Integer puntiTotali = 0;
 
+    /** Vite rimaste per questo giocatore in questa lega */
+    @Column(name = "vite_correnti", nullable = false)
+    private short viteCorrente = 1;
+
     @Embeddable
     @Data
     public static class GiocatoreLegaId implements Serializable {

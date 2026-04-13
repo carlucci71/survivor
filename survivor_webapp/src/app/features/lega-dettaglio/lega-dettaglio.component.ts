@@ -53,6 +53,7 @@ import { RecapService } from '../../core/services/recap.service';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
 import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial/leader-tutorial.component';
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
+import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -748,13 +749,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     let endGiornata: number;
 
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = this.isCampionato() ? 3 : 5;
-    startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
-    endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
-    // Aggiusta se siamo vicini alla fine
-    if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
-      startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
-    }
+    const maxGiornateVisibili = 5;
+    // Mostra tutte le giornate dall'inizio fino alla corrente, max 5
+    // Oltre 5 appare il pulsante storico — nessuna finestra scorrevole
+    startGiornata = giornataIniziale;
+    endGiornata = Math.min(maxGiornata, giornataCorrente, giornataIniziale + maxGiornateVisibili - 1);
 
     // Popola le colonne visibili
     for (let i = startGiornata; i <= endGiornata; i++) {
@@ -1690,7 +1689,27 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.error = 'Errore nel termina della lega';
       },
     });
+  }
 
+  openGestisciViteDialog(giocatore: Giocatore): void {
+    if (!this.lega?.id) return;
+    const dialogRef = this.dialog.open(GestisciViteDialogComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      panelClass: 'gv-dialog-panel',
+      data: {
+        idLega: this.lega.id,
+        idGiocatore: giocatore.id,
+        nicknameGiocatore: giocatore.nickname,
+        viteAttuali: giocatore.vitePerLega?.[this.lega.id] ?? this.lega.viteIniziali ?? 1,
+      },
+    });
+    dialogRef.afterClosed().subscribe((legaAggiornata: Lega | undefined) => {
+      if (legaAggiornata) {
+        this.lega = legaAggiornata;
+        this.caricaTabella();
+      }
+    });
   }
 
   sospensioni() {

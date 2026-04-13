@@ -527,7 +527,15 @@
     "PLAYER_JOURNEY": "Percorso Giocatori",
     "VIEW_ALL_JOURNEYS": "Visualizza il percorso di tutti i giocatori",
     "HIDE_JOURNEYS": "Nascondi percorsi",
-    "NO_PICKS_YET": "Nessuna scelta ancora effettuata"
+    "NO_PICKS_YET": "Nessuna scelta ancora effettuata",
+    "LIVES_REMAINING": "Vite rimaste",
+    "MANAGE_LIVES": "Gestisci vite",
+    "LIVES_OF": "Vite di",
+    "ONE_LIFE": "vita",
+    "MANY_LIVES": "vite",
+    "MANAGE_LIVES_CANCEL": "Annulla",
+    "MANAGE_LIVES_SAVE": "Salva",
+    "MANAGE_LIVES_SAVING": "Salvataggio…"
   },
   "COMMON": {
     "SOCCER": "Calcio",
@@ -693,7 +701,37 @@
     "ACCESS_FREE_LABEL": "Accesso libero",
     "ACCESS_FREE_DESC": "Chiunque può entrare direttamente senza approvazione",
     "MAX_PARTICIPANTS_LABEL": "Massimo partecipanti",
-    "MAX_PARTICIPANTS_UNLIMITED": "Senza limite"
+    "MAX_PARTICIPANTS_UNLIMITED": "Senza limite",
+    "LIVES_LABEL": "Vite iniziali",
+    "VITA": "vita",
+    "VITE": "vite",
+    "LIVES_WARN": {
+      "MAX": { "EMOJI": "💀", "TEXT": "Prima o poi bisogna morire. Nessuno è immortale — neanche tu. Questo è il massimo consentito." },
+      "6": {
+        "0": { "EMOJI": "😏", "TEXT": "Sei sicuro di valere 6 vite? Chiediti perché..." },
+        "1": { "EMOJI": "🤔", "TEXT": "6 vite. Ottimismo o autoconsapevolezza zero?" },
+        "2": { "EMOJI": "👀", "TEXT": "Gli altri giocatori ti stanno già un po' odiando." },
+        "3": { "EMOJI": "🎭", "TEXT": "Sei errori gratuiti. Una scelta... artistica." }
+      },
+      "7": {
+        "0": { "EMOJI": "🐱", "TEXT": "I gatti ne hanno 9. Stai pericolosamente avanzando." },
+        "1": { "EMOJI": "🦸", "TEXT": "Supereroe confermato. Manca solo il mantello." },
+        "2": { "EMOJI": "🎮", "TEXT": "Difficoltà: «bambino». Almeno confessalo agli amici." },
+        "3": { "EMOJI": "💅", "TEXT": "7 vite. Dai, non è neanche più una sfida." }
+      },
+      "8": {
+        "0": { "EMOJI": "💀", "TEXT": "8 vite? La morte ti sta evitando per pietà." },
+        "1": { "EMOJI": "😰", "TEXT": "Otto vite. Praticamente hai paura del gioco stesso." },
+        "2": { "EMOJI": "🙈", "TEXT": "Gli avversari hanno già smesso di sperare. Grazie." },
+        "3": { "EMOJI": "🤦", "TEXT": "Questo non è Survivor, è una passeggiata nel parco." }
+      },
+      "9": {
+        "0": { "EMOJI": "😱", "TEXT": "NOVE VITE. Come un gatto, ma meno dignitoso." },
+        "1": { "EMOJI": "🐈", "TEXT": "Sei ufficialmente un gatto. Miagola almeno." },
+        "2": { "EMOJI": "🚨", "TEXT": "Stai giocando o vuoi vincere per sfinimento degli avversari?" },
+        "3": { "EMOJI": "⚠️", "TEXT": "Il fair play ti sta guardando con profonda delusione." }
+      }
+    }
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",

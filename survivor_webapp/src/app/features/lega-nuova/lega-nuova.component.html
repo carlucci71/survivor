@@ -261,6 +261,36 @@
         @if (modalita === 'CAMPIONATO' && giornataFinaleTouched && !isGiornataFinaleValid()) {
           <p class="cn-validation-error">{{ 'CREATE_LEAGUE.GIORNATA_FINALE_REQUIRED' | translate }}</p>
         }
+        @if (modalita === 'SURVIVOR') {
+          <div class="cn-round-row cn-vite-row">
+            <div class="cn-stepper">
+              <span class="cn-stepper-label">
+                <mat-icon class="cn-vite-label-ico">favorite</mat-icon>
+                {{ 'CREATE_LEAGUE.LIVES_LABEL' | translate }}
+              </span>
+              <div class="cn-stepper-control">
+                <button type="button" class="cn-step-btn" (click)="decViteIniziali()" [disabled]="viteIniziali <= 0">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <div class="cn-step-val">
+                  <span class="cn-step-num cn-step-num--vite" [class.cn-step-num--vite-max]="isViteMax">{{ viteIniziali }}</span>
+                  <span class="cn-step-lbl">{{ (viteIniziali === 1 ? 'CREATE_LEAGUE.VITA' : 'CREATE_LEAGUE.VITE') | translate }}</span>
+                </div>
+                <button type="button" class="cn-step-btn" (click)="incViteIniziali()" [disabled]="isViteMax">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              @if (viteWarn) {
+                <div class="cn-vite-warn" [class.cn-vite-warn--max]="isViteMax">
+                  <span class="cn-vw-emoji">{{ viteWarn.emoji }}</span>
+                  <div class="cn-vw-text">
+                    <p class="cn-vw-msg">{{ viteWarn.text }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
 
       <!-- ── SEZIONE 5b: ACCESSO (solo se pubblica) ── -->
