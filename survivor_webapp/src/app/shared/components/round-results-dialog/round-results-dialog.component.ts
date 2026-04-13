@@ -73,7 +73,7 @@ export interface RoundResultsData {
               <span>{{ getSelectedLabel() }}</span>
             } @else {
               <mat-icon class="hint-icon">touch_app</mat-icon>
-              <span>Seleziona una partita per applicare o rimuovere la forzatura</span>
+              <span>{{ 'ROUND_RESULTS.FORCE_HINT_SELECT' | translate }}</span>
             }
           </div>
           <button class="apply-force-btn"
@@ -84,10 +84,10 @@ export interface RoundResultsData {
               <mat-icon class="spin-icon">sync</mat-icon>
             } @else if (isSelectedForzata()) {
               <mat-icon>cancel</mat-icon>
-              <span>Rimuovi forzatura</span>
+              <span>{{ 'ROUND_RESULTS.REMOVE_FORCE' | translate }}</span>
             } @else {
               <mat-icon>verified</mat-icon>
-              <span>Applica forzatura</span>
+              <span>{{ 'ROUND_RESULTS.APPLY_FORCE' | translate }}</span>
             }
           </button>
         </div>
@@ -728,10 +728,11 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
       ?? lega?.giornataIniziale
       ?? 1;
 
-    // Numero massimo giornate del campionato (sanity check)
+    // Numero massimo giornate del campionato
     const maxGiornate = lega?.campionato?.numGiornate ?? giornataCorrente;
 
-    const fine = Math.min(giornataCorrente, maxGiornate);
+    // Mostra tutte le giornate: passate, corrente e future
+    const fine = maxGiornate;
 
     console.log('[RoundResults] buildGiornateDisponibili → da:', giornataIniziale, 'a:', fine, '(maxGiornate campionato:', maxGiornate, ')');
 
@@ -744,8 +745,9 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
       this.giornateDisponibili = [fine];
     }
 
-    // Apri sempre sull'ultima giornata (quella corrente)
-    this.currentRoundIndex = this.giornateDisponibili.length - 1;
+    // Apri sulla giornata corrente (non sull'ultima)
+    const indexCorrente = this.giornateDisponibili.indexOf(giornataCorrente);
+    this.currentRoundIndex = indexCorrente >= 0 ? indexCorrente : this.giornateDisponibili.length - 1;
     console.log('[RoundResults] giornateDisponibili:', this.giornateDisponibili.length, 'chip, aperto su index:', this.currentRoundIndex);
   }
 

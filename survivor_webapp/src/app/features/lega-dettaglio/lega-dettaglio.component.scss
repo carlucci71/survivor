@@ -1822,6 +1822,27 @@
 	font-weight: 400;
 	font-size: 0.78rem;
 }
+.recap-chip--calendar {
+	cursor: pointer;
+	border: 1px solid rgba(79, 195, 247, 0.4);
+	transition: background 0.15s, transform 0.12s;
+	&:hover {
+		background: rgba(79, 195, 247, 0.1);
+		transform: translateY(-1px);
+	}
+	&:active {
+		transform: translateY(0);
+	}
+}
+.rc-icon--calendar {
+	color: #4FC3F7 !important;
+}
+.rc-value--calendar {
+	color: #0A3D91;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
 @media (max-width: 480px) {
 	.recap-chip {
 		padding: 8px 10px;

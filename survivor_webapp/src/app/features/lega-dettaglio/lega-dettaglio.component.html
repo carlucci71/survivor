@@ -243,7 +243,6 @@
       }
       }
 
-
       @if (lega.giocatori?.length) {
 
       <!-- BOTTONE GIOCA PRINCIPALE - IN PRIMO PIANO -->
@@ -308,7 +307,7 @@
       <div class="table-alpha-layout desktop-tablet-only">
         <div class="excel-table-wrapper desktop-tablet-only">
 
-        <!-- Link Mostra Risultati (sopra la tabella, fuori da essa) -->
+        <!-- Link Mostra Risultati — solo admin/leader (per forzature) -->
         @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
           <div class="show-results-bar">
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
@@ -638,7 +637,7 @@
           </div>
         }
 
-        <!-- Link Mostra Risultati (vista mobile/cards) -->
+        <!-- Link Mostra Risultati mobile — solo admin/leader (per forzature) -->
         @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
           <div class="show-results-bar-mobile">
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
