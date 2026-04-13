@@ -67,8 +67,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
-  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
-  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
+  groupedLeghe: { name: string; des: { sportId: string; campionatoId: string; modalita: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
+  filteredGroupedLeghe: { name: string; des: { sportId: string; campionatoId: string; modalita: string }; edizioni: Lega[]; pubblica: boolean; numPartecipanti: number; maxPartecipanti?: number }[] = [];
   searchText: string = '';
   private searchDebounceTimer: any;
   me: Giocatore | null = null;
@@ -312,10 +312,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       );
       const sportId = sorted[0].campionato?.sport?.id || '';
       const campionatoId = sorted[0].campionato?.id || '';
+      const modalita = sorted[0].modalita || 'SURVIVOR';
       const pubblica = !!sorted[0].pubblica;
       const numPartecipanti = sorted[0].numPartecipanti ?? sorted[0].giocatori?.length ?? 0;
       const maxPartecipanti = sorted[0].maxPartecipanti;
-      return { name, des: { sportId, campionatoId }, edizioni: sorted, pubblica, numPartecipanti, maxPartecipanti };
+      return { name, des: { sportId, campionatoId, modalita }, edizioni: sorted, pubblica, numPartecipanti, maxPartecipanti };
     }).sort((a, b) => {
       // Prima le leghe private, poi le pubbliche; a parità per ID ascendente (ordine di creazione)
       if (a.pubblica !== b.pubblica) return a.pubblica ? 1 : -1;

@@ -99,7 +99,7 @@
         <div class="leghe-groups" *ngIf="activeTab === 'private'">
           <ng-container *ngIf="filteredPrivateLeghe.length > 0; else noPrivate">
             <ng-container *ngFor="let group of filteredPrivateLeghe; trackBy: trackByGroupName">
-              <mat-card>
+              <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
                 <mat-card-header>
                   <img *ngIf="getTorneoLogo(group.des.campionatoId)"
                        mat-card-avatar
@@ -114,6 +114,9 @@
                     <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
                       <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
                       {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
+                    </span>
+                    <span *ngIf="group.des.modalita === 'CAMPIONATO'" class="modalita-badge modalita-badge--campionato">
+                      <mat-icon>emoji_events</mat-icon> CAMPIONATO
                     </span>
                   </mat-card-title>
                   <mat-card-subtitle class="group-subtitle">
@@ -171,7 +174,7 @@
         <div class="leghe-groups" *ngIf="activeTab === 'public'">
           <ng-container *ngIf="filteredPublicLeghe.length > 0; else noPublic">
             <ng-container *ngFor="let group of filteredPublicLeghe; trackBy: trackByGroupName">
-              <mat-card>
+              <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
                 <mat-card-header>
                   <img *ngIf="getTorneoLogo(group.des.campionatoId)"
                        mat-card-avatar
@@ -186,6 +189,9 @@
                     <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
                       <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
                       {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
+                    </span>
+                    <span *ngIf="group.des.modalita === 'CAMPIONATO'" class="modalita-badge modalita-badge--campionato">
+                      <mat-icon>emoji_events</mat-icon> CAMPIONATO
                     </span>
                   </mat-card-title>
                   <mat-card-subtitle class="group-subtitle">

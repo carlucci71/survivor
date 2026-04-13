@@ -564,6 +564,34 @@ h2 {
 	50%       { box-shadow: 0 0 8px rgba(139, 92, 246, 0.5); }
 }
 
+// ── Badge modalità campionato ────────────────────────────────────────────
+.modalita-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	border-radius: 20px;
+	padding: 2px 9px;
+	font-size: 0.6rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	vertical-align: middle;
+	margin-left: 6px;
+
+	::ng-deep mat-icon {
+		font-size: 11px;
+		width: 11px;
+		height: 11px;
+	}
+
+	&--campionato {
+		background: rgba(245, 158, 11, 0.14);
+		color: #92400E;
+		border: 1px solid rgba(245, 158, 11, 0.35);
+		::ng-deep mat-icon { color: #D97706; }
+	}
+}
+
 // ── Logo torneo nelle card della home ────────────────────────────────────
 ::ng-deep .torneo-logo-avatar {
 	border-radius: 10px !important;
@@ -807,6 +835,26 @@ h2 {
 		flex-direction: column;
 		width: 100%;
 		gap: 16px;
+	}
+
+	// ── Stile speciale per leghe in modalità CAMPIONATO ──────────────────────
+	::ng-deep mat-card.lega-card--campionato {
+		border-left: 4px solid #D97706 !important;
+		border-color: rgba(245, 158, 11, 0.4) !important;
+		background: #ECEDF0 !important;
+
+		.mat-mdc-card-header {
+			background: #F0F1F4 !important;
+		}
+
+		.mat-mdc-card-content {
+			background: #ECEDF0 !important;
+		}
+
+		&:hover {
+			border-color: #D97706 !important;
+			box-shadow: 0 12px 48px rgba(217, 119, 6, 0.15) !important;
+		}
 	}
 
 }
