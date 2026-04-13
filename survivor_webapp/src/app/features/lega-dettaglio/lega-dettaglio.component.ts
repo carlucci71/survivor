@@ -2053,16 +2053,15 @@ export class LegaDettaglioComponent implements OnDestroy {
   grimReaperVisible = false;
   grimReaperVittimeGiornata: string[] = [];
   grimReaperMsg = '';
-  private _easterEggTapCount = 0;
-  private _easterEggTapTimer: any = null;
+  private _tapTimestamps: number[] = [];
+  private _grimReaperDismissTimer: any = null;
 
   onEliminatiTripleTap(): void {
-    this._easterEggTapCount++;
-    if (this._easterEggTapTimer) clearTimeout(this._easterEggTapTimer);
-    this._easterEggTapTimer = setTimeout(() => { this._easterEggTapCount = 0; }, 600);
-    if (this._easterEggTapCount >= 3) {
-      this._easterEggTapCount = 0;
-      clearTimeout(this._easterEggTapTimer);
+    const now = Date.now();
+    this._tapTimestamps.push(now);
+    this._tapTimestamps = this._tapTimestamps.filter(t => now - t < 900);
+    if (this._tapTimestamps.length >= 3) {
+      this._tapTimestamps = [];
       this.attivaGrimReaper();
     }
   }
@@ -2086,7 +2085,8 @@ export class LegaDettaglioComponent implements OnDestroy {
       ? msgs[Math.floor(Math.random() * msgs.length)]
       : '💀';
     this.grimReaperVisible = true;
-    setTimeout(() => { this.grimReaperVisible = false; }, 4500);
+    if (this._grimReaperDismissTimer) clearTimeout(this._grimReaperDismissTimer);
+    this._grimReaperDismissTimer = setTimeout(() => { this.grimReaperVisible = false; }, 4500);
   }
 
   getLastGiocata(giocatore: Giocatore): any {
