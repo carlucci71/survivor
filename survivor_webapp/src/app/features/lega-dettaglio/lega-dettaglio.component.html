@@ -851,6 +851,7 @@
 <!-- Global reaction picker overlay (position:fixed, fuori dalla tabella per evitare overflow:hidden) -->
 @if(activeReactionKey !== null && activeGiocata !== null) {
   <div class="reaction-picker-global"
+    [class.reaction-picker-global--below]="reactionPickerBelow"
     [style.top]="reactionPopupStyle.top"
     [style.left]="reactionPopupStyle.left"
     (mouseenter)="cancelClosePopup()"
@@ -873,7 +874,7 @@
   <div class="badge-autori-global"
     [class.badge-autori-global--expandable]="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded"
     [style.top]="badgeAutoriStyle.top"
-    [style.right]="badgeAutoriStyle.right"
+    [style.left]="badgeAutoriStyle.left"
     (click)="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded ? expandBadgeAutori($event) : $event.stopPropagation()">
     <span class="badge-autori-emoji">{{ activeBadgeAutoriEmoji }}</span>
     <span class="badge-autori-nomi">{{ activeBadgeAutoriNomi }}</span>

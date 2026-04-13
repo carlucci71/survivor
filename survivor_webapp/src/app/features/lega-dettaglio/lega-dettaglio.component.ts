@@ -126,6 +126,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   activeReactionKey: string | null = null;
   activeGiocata: Giocata | null = null;
   reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  reactionPickerBelow = false;
   // chiave univoca del badge di cui mostrare gli autori: "giocataId_emoji"
   activeBadgeAutoriKey: string | null = null;
   activeBadgeAutoriNomi: string = '';
@@ -133,7 +134,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   activeBadgeAutoriHasMore: boolean = false;
   activeBadgeAutoriExpanded: boolean = false;
   activeBadgeAutoriEmoji: string = '';
-  badgeAutoriStyle: { top: string; right: string } = { top: '0px', right: '0px' };
+  badgeAutoriStyle: { top: string; left: string } = { top: '0px', left: '0px' };
   private badgeAutoriTimer: any = null;
   private pickerAutoCloseTimer: any = null;
   private longPressTimer: any = null;
@@ -1446,9 +1447,17 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
     const el = event.currentTarget as HTMLElement;
     const rect = el.getBoundingClientRect();
+    // Calcola left centrato sul badge, clamped ai bordi del viewport
+    const BADGE_MAX_W = Math.min(240, window.innerWidth - 16);
+    const MARGIN = 8;
+    const idealLeft = rect.left + rect.width / 2 - BADGE_MAX_W / 2;
+    const clampedLeft = Math.min(
+      Math.max(idealLeft, MARGIN),
+      window.innerWidth - BADGE_MAX_W - MARGIN
+    );
     this.badgeAutoriStyle = {
       top: `${rect.bottom + 6}px`,
-      right: `${window.innerWidth - rect.right}px`,
+      left: `${clampedLeft}px`,
     };
     const tutti = giocata.reactionAutori?.[emoji] ?? [];
     const MAX = 3;
@@ -1485,9 +1494,21 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
     if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
     const rect = (el as HTMLElement).getBoundingClientRect();
+    // Picker width: 4 colonne * 38px + 3 gap * 6px + 2 * 10px padding = ~192px → metà = 96
+    const HALF_W = 96;
+    const MARGIN = 8;
+    const rawLeft = rect.left + rect.width / 2;
+    const clampedLeft = Math.min(
+      Math.max(rawLeft, HALF_W + MARGIN),
+      window.innerWidth - HALF_W - MARGIN
+    );
+    // Se non c'è spazio sopra, mostra sotto (aggiunge classe via flag)
+    const PICKER_H = 200;
+    const showBelow = rect.top < PICKER_H + 10;
+    this.reactionPickerBelow = showBelow;
     this.reactionPopupStyle = {
-      top: `${rect.top}px`,
-      left: `${rect.left + rect.width / 2}px`
+      top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
+      left: `${clampedLeft}px`
     };
     this.activeReactionKey = key;
     this.activeGiocata = giocata;
@@ -1537,9 +1558,19 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.longPressTimer = setTimeout(() => {
       this.longPressTimer = null;
       const rect = el.getBoundingClientRect();
+      const HALF_W = 96;
+      const MARGIN = 8;
+      const rawLeft = rect.left + rect.width / 2;
+      const clampedLeft = Math.min(
+        Math.max(rawLeft, HALF_W + MARGIN),
+        window.innerWidth - HALF_W - MARGIN
+      );
+      const PICKER_H = 200;
+      const showBelow = rect.top < PICKER_H + 10;
+      this.reactionPickerBelow = showBelow;
       this.reactionPopupStyle = {
-        top: `${rect.top}px`,
-        left: `${rect.left + rect.width / 2}px`
+        top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
+        left: `${clampedLeft}px`
       };
       this.activeReactionKey = key;
       this.activeGiocata = giocata;
