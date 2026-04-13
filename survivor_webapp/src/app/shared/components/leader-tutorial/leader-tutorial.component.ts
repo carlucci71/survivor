@@ -50,14 +50,13 @@ interface TutorialSlide {
             <div class="ob-slide" [@slideAnim]>
               @if (slide.demoType === 'forza-risultati') {
                 <div class="ob-demo-wrapper">
+                  <!-- forza-risultati content unchanged -->
                   <div class="ob-demo-mockup">
-                    <!-- Step 1: Mostra Risultati button -->
                     <div class="demo-mostra-btn" [class.demo-hl]="demoStep === 0">
                       <mat-icon class="demo-icon">bar_chart</mat-icon>
                       <span>Mostra Risultati</span>
                       <span class="demo-step-inline" [class.demo-step-inline--visible]="demoStep === 0">①</span>
                     </div>
-                    <!-- Dialog mockup -->
                     <div class="demo-dialog" [class.demo-dialog--open]="demoStep >= 1">
                       <div class="demo-dialog-header">Risultati Giornata 31</div>
                       <div class="demo-match-row" [class.demo-hl]="demoStep === 1">
@@ -78,7 +77,6 @@ interface TutorialSlide {
                       </div>
                     </div>
                   </div>
-                  <!-- Step indicator dots -->
                   <div class="demo-stepper">
                     <div class="demo-stepper-item" [class.demo-stepper-item--active]="demoStep === 0">
                       <span class="demo-stepper-num">①</span>
@@ -94,6 +92,59 @@ interface TutorialSlide {
                       <span class="demo-stepper-num">③</span>
                       <span class="demo-stepper-lbl">Forza</span>
                     </div>
+                  </div>
+                </div>
+              } @else if (slide.demoType === 'pubblica-privata') {
+                <div class="ob-demo-wrapper">
+                  <div class="ob-demo-mockup demo-pp-mockup">
+                    <div class="demo-pp-option" [class.demo-pp-option--active]="demoStep === 0">
+                      <div class="demo-pp-icon demo-pp-icon--pub">
+                        <mat-icon>public</mat-icon>
+                      </div>
+                      <div class="demo-pp-text">
+                        <span class="demo-pp-label">Pubblica</span>
+                        <span class="demo-pp-sub">Chiunque può unirsi</span>
+                      </div>
+                      <mat-icon class="demo-pp-check" [class.demo-pp-check--visible]="demoStep === 0">check_circle</mat-icon>
+                    </div>
+                    <div class="demo-pp-option" [class.demo-pp-option--active]="demoStep === 1">
+                      <div class="demo-pp-icon demo-pp-icon--priv">
+                        <mat-icon>lock</mat-icon>
+                      </div>
+                      <div class="demo-pp-text">
+                        <span class="demo-pp-label">Privata</span>
+                        <span class="demo-pp-sub">Tu approvi ogni ingresso</span>
+                      </div>
+                      <mat-icon class="demo-pp-check" [class.demo-pp-check--visible]="demoStep === 1">check_circle</mat-icon>
+                    </div>
+                  </div>
+                </div>
+              } @else if (slide.demoType === 'avvia-lega') {
+                <div class="ob-demo-wrapper">
+                  <div class="ob-demo-mockup demo-avvia-mockup">
+                    <div class="demo-players-row">
+                      <div class="demo-player-chip">🧑 Marco</div>
+                      <div class="demo-player-chip">🧑 Sara</div>
+                      <div class="demo-player-chip">🧑 Luca</div>
+                    </div>
+                    <div class="demo-avvia-arrow">
+                      <mat-icon>arrow_downward</mat-icon>
+                    </div>
+                    <div class="demo-avvia-btn" [class.demo-avvia-btn--pulse]="demoStep === 0" [class.demo-avvia-btn--done]="demoStep === 1">
+                      @if (demoStep < 1) {
+                        <mat-icon class="demo-icon">rocket_launch</mat-icon>
+                        <span>Avvia la lega</span>
+                      } @else {
+                        <mat-icon class="demo-icon">check_circle</mat-icon>
+                        <span>Lega Avviata!</span>
+                      }
+                    </div>
+                    @if (demoStep === 1) {
+                      <div class="demo-avvia-status">
+                        <mat-icon class="demo-avvia-status-icon">sports_soccer</mat-icon>
+                        <span>I giocatori possono giocare</span>
+                      </div>
+                    }
                   </div>
                 </div>
               } @else {
@@ -631,6 +682,168 @@ interface TutorialSlide {
         margin-right: 16px;
       }
     }
+
+    /* ── Demo: Pubblica vs Privata ── */
+    .demo-pp-mockup {
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .demo-pp-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 2px solid #E2E8F0;
+      background: #fff;
+      transition: border-color 0.3s, background 0.3s, transform 0.2s;
+
+      &.demo-pp-option--active {
+        border-color: #0A3D91;
+        background: #EFF6FF;
+        transform: scale(1.02);
+      }
+    }
+
+    .demo-pp-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; }
+
+      &.demo-pp-icon--pub  { background: linear-gradient(135deg, #10B981, #6EE7B7); }
+      &.demo-pp-icon--priv { background: linear-gradient(135deg, #0A3D91, #4FC3F7); }
+    }
+
+    .demo-pp-text {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .demo-pp-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+
+    .demo-pp-sub {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.62rem;
+      color: #64748B;
+      font-weight: 500;
+    }
+
+    .demo-pp-check {
+      font-size: 20px !important;
+      width: 20px !important;
+      height: 20px !important;
+      color: #E2E8F0;
+      transition: color 0.3s, transform 0.3s;
+
+      &.demo-pp-check--visible {
+        color: #0A3D91;
+        transform: scale(1.2);
+      }
+    }
+
+    /* ── Demo: Avvia Lega ── */
+    .demo-avvia-mockup {
+      align-items: center;
+      gap: 8px;
+      padding: 14px 12px;
+    }
+
+    .demo-players-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .demo-player-chip {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #374151;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .demo-avvia-arrow {
+      color: #94A3B8;
+      mat-icon { font-size: 18px; width: 18px; height: 18px; animation: bounce-down 1s ease-in-out infinite; }
+    }
+
+    @keyframes bounce-down {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(4px); }
+    }
+
+    .demo-avvia-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      border-radius: 24px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #10B981, #34D399);
+      transition: background 0.4s, box-shadow 0.3s, transform 0.2s;
+      .demo-icon { font-size: 16px; width: 16px; height: 16px; }
+
+      &.demo-avvia-btn--pulse {
+        animation: avvia-pulse 1s ease-in-out infinite alternate;
+      }
+      &.demo-avvia-btn--done {
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        box-shadow: 0 0 0 4px rgba(10, 61, 145, 0.2);
+      }
+    }
+
+    @keyframes avvia-pulse {
+      from { box-shadow: 0 0 0 0px rgba(16, 185, 129, 0.5); transform: scale(1); }
+      to   { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);   transform: scale(1.04); }
+    }
+
+    .demo-avvia-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #ECFDF5;
+      border: 1px solid #6EE7B7;
+      border-radius: 8px;
+      padding: 5px 10px;
+      animation: status-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      .demo-avvia-status-icon {
+        font-size: 14px; width: 14px; height: 14px; color: #10B981;
+      }
+
+      span {
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: #065F46;
+      }
+    }
+
+    @keyframes status-in {
+      from { opacity: 0; transform: scale(0.8) translateY(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
   `]
 })
 export class LeaderTutorialComponent implements OnDestroy {
@@ -648,20 +861,29 @@ export class LeaderTutorialComponent implements OnDestroy {
 
   readonly slides: TutorialSlide[] = [
     { emoji: '👑', icon: 'star',         titleKey: 'LEADER_TUTORIAL.SLIDE_1.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_1.DESC', accent: '#F59E0B', gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)' },
-    { emoji: '📨', icon: 'group_add',    titleKey: 'LEADER_TUTORIAL.SLIDE_2.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_2.DESC', accent: '#3B82F6', gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)' },
-    { emoji: '⏳', icon: 'how_to_reg',   titleKey: 'LEADER_TUTORIAL.SLIDE_3.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_3.DESC', accent: '#8B5CF6', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
-    { emoji: '⚽', icon: 'calculate',    titleKey: 'LEADER_TUTORIAL.SLIDE_4.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_4.DESC', accent: '#10B981', gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)' },
-    { emoji: '🟡', icon: 'pause_circle', titleKey: 'LEADER_TUTORIAL.SLIDE_5.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_5.DESC', accent: '#EF4444', gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)' },
-    { emoji: '🎯', icon: 'tune',         titleKey: 'LEADER_TUTORIAL.SLIDE_6.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_6.DESC', accent: '#0891B2', gradient: '', demoType: 'forza-risultati' },
-    { emoji: '🎯', icon: 'edit_note',    titleKey: 'LEADER_TUTORIAL.SLIDE_7.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_7.DESC', accent: '#7C3AED', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
-    { emoji: '🏆', icon: 'emoji_events', titleKey: 'LEADER_TUTORIAL.SLIDE_8.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_8.DESC', accent: '#F59E0B', gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)' },
+    { emoji: '�', icon: 'lock',         titleKey: 'LEADER_TUTORIAL.SLIDE_2.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_2.DESC', accent: '#6366F1', gradient: '',                                          demoType: 'pubblica-privata' },
+    { emoji: '🚀', icon: 'rocket_launch', titleKey: 'LEADER_TUTORIAL.SLIDE_3.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_3.DESC', accent: '#10B981', gradient: '',                                         demoType: 'avvia-lega' },
+    { emoji: '📨', icon: 'group_add',    titleKey: 'LEADER_TUTORIAL.SLIDE_4.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_4.DESC', accent: '#3B82F6', gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)' },
+    { emoji: '⏳', icon: 'how_to_reg',   titleKey: 'LEADER_TUTORIAL.SLIDE_5.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_5.DESC', accent: '#8B5CF6', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
+    { emoji: '⚽', icon: 'calculate',    titleKey: 'LEADER_TUTORIAL.SLIDE_6.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_6.DESC', accent: '#10B981', gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)' },
+    { emoji: '🟡', icon: 'pause_circle', titleKey: 'LEADER_TUTORIAL.SLIDE_7.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_7.DESC', accent: '#EF4444', gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)' },
+    { emoji: '🎯', icon: 'tune',         titleKey: 'LEADER_TUTORIAL.SLIDE_8.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_8.DESC', accent: '#0891B2', gradient: '', demoType: 'forza-risultati' },
+    { emoji: '✏️', icon: 'edit_note',    titleKey: 'LEADER_TUTORIAL.SLIDE_9.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_9.DESC', accent: '#7C3AED', gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)' },
+    { emoji: '🏆', icon: 'emoji_events', titleKey: 'LEADER_TUTORIAL.SLIDE_10.TITLE', descKey: 'LEADER_TUTORIAL.SLIDE_10.DESC', accent: '#F59E0B', gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)' },
   ];
 
   private _manageDemoInterval(): void {
     if (this._demoInterval) { clearInterval(this._demoInterval); this._demoInterval = null; }
-    if (this.slides[this._current]?.demoType === 'forza-risultati') {
+    const demoType = this.slides[this._current]?.demoType;
+    if (demoType === 'forza-risultati') {
       this.demoStep = 0;
       this._demoInterval = setInterval(() => { this.demoStep = (this.demoStep + 1) % 3; }, 2200);
+    } else if (demoType === 'pubblica-privata') {
+      this.demoStep = 0;
+      this._demoInterval = setInterval(() => { this.demoStep = (this.demoStep + 1) % 2; }, 2000);
+    } else if (demoType === 'avvia-lega') {
+      this.demoStep = 0;
+      this._demoInterval = setInterval(() => { this.demoStep = (this.demoStep + 1) % 2; }, 2500);
     }
   }
 
