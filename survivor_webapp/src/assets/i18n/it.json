@@ -412,6 +412,8 @@
     "VISIBILITY": "Visibilità",
     "VISIBILITY_PUBLIC": "Pubblica",
     "VISIBILITY_PRIVATE": "Privata",
+    "CALENDAR_LABEL": "Calendario",
+    "CALENDAR_ACTION": "Vedi partite »",
     "BADGE_NEW": "Nuova",
     "BADGE_GROWING": "In crescita",
     "BADGE_HOT": "Popolare",
@@ -794,7 +796,10 @@
     "NO_MATCHES": "Nessuna partita trovata",
     "FORCE": "Forza",
     "FORCED": "Forzata ✓",
-    "LEGEND_FORCED": "Partita forzata: tutti i giocatori che l'hanno scelta avanzano"
+    "LEGEND_FORCED": "Partita forzata: tutti i giocatori che l'hanno scelta avanzano",
+    "FORCE_HINT_SELECT": "Seleziona una partita per applicare o rimuovere la forzatura",
+    "APPLY_FORCE": "Applica forzatura",
+    "REMOVE_FORCE": "Rimuovi forzatura"
   },
   "RECAP": {
     "LOADING": "Caricamento risultati…",

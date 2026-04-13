@@ -321,6 +321,8 @@
     "VISIBILITY": "Visibility",
     "VISIBILITY_PUBLIC": "Public",
     "VISIBILITY_PRIVATE": "Private",
+    "CALENDAR_LABEL": "Calendar",
+    "CALENDAR_ACTION": "View matches »",
     "BADGE_NEW": "New",
     "BADGE_GROWING": "Growing",
     "BADGE_HOT": "Hot",
@@ -784,7 +786,10 @@
     "NO_MATCHES": "No matches found",
     "FORCE": "Force",
     "FORCED": "Forced ✓",
-    "LEGEND_FORCED": "Forced match: all players who chose it advance"
+    "LEGEND_FORCED": "Forced match: all players who chose it advance",
+    "FORCE_HINT_SELECT": "Select a match to apply or remove the override",
+    "APPLY_FORCE": "Apply override",
+    "REMOVE_FORCE": "Remove override"
   },
   "RECAP": {
     "LOADING": "Loading results…",
