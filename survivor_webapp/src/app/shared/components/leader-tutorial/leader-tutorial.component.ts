@@ -54,14 +54,14 @@ interface TutorialSlide {
                   <div class="ob-demo-mockup">
                     <div class="demo-mostra-btn" [class.demo-hl]="demoStep === 0">
                       <mat-icon class="demo-icon">bar_chart</mat-icon>
-                      <span>Mostra Risultati</span>
+                      <span>{{ 'LEADER_TUTORIAL.DEMO_FORZA.BTN' | translate }}</span>
                       <span class="demo-step-inline" [class.demo-step-inline--visible]="demoStep === 0">①</span>
                     </div>
                     <div class="demo-dialog" [class.demo-dialog--open]="demoStep >= 1">
-                      <div class="demo-dialog-header">Risultati Giornata 31</div>
+                      <div class="demo-dialog-header">{{ 'LEADER_TUTORIAL.DEMO_FORZA.HEADER' | translate }}</div>
                       <div class="demo-match-row" [class.demo-hl]="demoStep === 1">
                         <span class="demo-team">Juventus</span>
-                        <span class="demo-badge-rinviata">RINVIATA</span>
+                        <span class="demo-badge-rinviata">{{ 'LEADER_TUTORIAL.DEMO_FORZA.BADGE_RINVIATA' | translate }}</span>
                         <span class="demo-team">Roma</span>
                         <span class="demo-step-inline demo-step-inline--row" [class.demo-step-inline--visible]="demoStep === 1">②</span>
                       </div>
@@ -72,7 +72,7 @@ interface TutorialSlide {
                       </div>
                       <div class="demo-forza-btn" [class.demo-hl]="demoStep === 2">
                         <mat-icon class="demo-icon">check_circle</mat-icon>
-                        <span>Applica forzatura</span>
+                        <span>{{ 'LEADER_TUTORIAL.DEMO_FORZA.APPLY_BTN' | translate }}</span>
                         <span class="demo-step-inline" [class.demo-step-inline--visible]="demoStep === 2">③</span>
                       </div>
                     </div>
@@ -80,17 +80,17 @@ interface TutorialSlide {
                   <div class="demo-stepper">
                     <div class="demo-stepper-item" [class.demo-stepper-item--active]="demoStep === 0">
                       <span class="demo-stepper-num">①</span>
-                      <span class="demo-stepper-lbl">Mostra Risultati</span>
+                      <span class="demo-stepper-lbl">{{ 'LEADER_TUTORIAL.DEMO_FORZA.BTN' | translate }}</span>
                     </div>
                     <mat-icon class="demo-stepper-arrow">chevron_right</mat-icon>
                     <div class="demo-stepper-item" [class.demo-stepper-item--active]="demoStep === 1">
                       <span class="demo-stepper-num">②</span>
-                      <span class="demo-stepper-lbl">Seleziona</span>
+                      <span class="demo-stepper-lbl">{{ 'LEADER_TUTORIAL.DEMO_FORZA.STEP_SELECT' | translate }}</span>
                     </div>
                     <mat-icon class="demo-stepper-arrow">chevron_right</mat-icon>
                     <div class="demo-stepper-item" [class.demo-stepper-item--active]="demoStep === 2">
                       <span class="demo-stepper-num">③</span>
-                      <span class="demo-stepper-lbl">Forza</span>
+                      <span class="demo-stepper-lbl">{{ 'LEADER_TUTORIAL.DEMO_FORZA.STEP_FORCE' | translate }}</span>
                     </div>
                   </div>
                 </div>
@@ -102,8 +102,8 @@ interface TutorialSlide {
                         <mat-icon>public</mat-icon>
                       </div>
                       <div class="demo-pp-text">
-                        <span class="demo-pp-label">Pubblica</span>
-                        <span class="demo-pp-sub">Chiunque può unirsi</span>
+                        <span class="demo-pp-label">{{ 'LEADER_TUTORIAL.DEMO_PP.PUBLIC_LABEL' | translate }}</span>
+                        <span class="demo-pp-sub">{{ 'LEADER_TUTORIAL.DEMO_PP.PUBLIC_SUB' | translate }}</span>
                       </div>
                       <mat-icon class="demo-pp-check" [class.demo-pp-check--visible]="demoStep === 0">check_circle</mat-icon>
                     </div>
@@ -112,8 +112,8 @@ interface TutorialSlide {
                         <mat-icon>lock</mat-icon>
                       </div>
                       <div class="demo-pp-text">
-                        <span class="demo-pp-label">Privata</span>
-                        <span class="demo-pp-sub">Tu approvi ogni ingresso</span>
+                        <span class="demo-pp-label">{{ 'LEADER_TUTORIAL.DEMO_PP.PRIVATE_LABEL' | translate }}</span>
+                        <span class="demo-pp-sub">{{ 'LEADER_TUTORIAL.DEMO_PP.PRIVATE_SUB' | translate }}</span>
                       </div>
                       <mat-icon class="demo-pp-check" [class.demo-pp-check--visible]="demoStep === 1">check_circle</mat-icon>
                     </div>
@@ -133,16 +133,16 @@ interface TutorialSlide {
                     <div class="demo-avvia-btn" [class.demo-avvia-btn--pulse]="demoStep === 0" [class.demo-avvia-btn--done]="demoStep === 1">
                       @if (demoStep < 1) {
                         <mat-icon class="demo-icon">rocket_launch</mat-icon>
-                        <span>Avvia la lega</span>
+                        <span>{{ 'LEADER_TUTORIAL.DEMO_AVVIA.BTN_START' | translate }}</span>
                       } @else {
                         <mat-icon class="demo-icon">check_circle</mat-icon>
-                        <span>Lega Avviata!</span>
+                        <span>{{ 'LEADER_TUTORIAL.DEMO_AVVIA.BTN_DONE' | translate }}</span>
                       }
                     </div>
                     @if (demoStep === 1) {
                       <div class="demo-avvia-status">
                         <mat-icon class="demo-avvia-status-icon">sports_soccer</mat-icon>
-                        <span>I giocatori possono giocare</span>
+                        <span>{{ 'LEADER_TUTORIAL.DEMO_AVVIA.STATUS' | translate }}</span>
                       </div>
                     }
                   </div>

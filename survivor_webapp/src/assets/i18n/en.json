@@ -981,6 +981,25 @@
     "SLIDE_10": {
       "TITLE": "You are the referee!",
       "DESC": "The last player standing wins the league. You're the one to declare it! You can also close the league manually or reopen it if everyone gets eliminated."
+    },
+    "DEMO_AVVIA": {
+      "BTN_START": "Start the league",
+      "BTN_DONE": "League Started!",
+      "STATUS": "Players can now play"
+    },
+    "DEMO_PP": {
+      "PUBLIC_LABEL": "Public",
+      "PUBLIC_SUB": "Anyone can join",
+      "PRIVATE_LABEL": "Private",
+      "PRIVATE_SUB": "You approve each request"
+    },
+    "DEMO_FORZA": {
+      "BTN": "Show Results",
+      "HEADER": "Round 31 Results",
+      "BADGE_RINVIATA": "POSTPONED",
+      "APPLY_BTN": "Apply override",
+      "STEP_SELECT": "Select",
+      "STEP_FORCE": "Override"
     }
   },
   "PLAYER_TUTORIAL": {
