@@ -940,6 +940,25 @@
     "SLIDE_10": {
       "TITLE": "Sei l'arbitro!",
       "DESC": "L'ultimo giocatore rimasto in piedi vince la lega. Sei tu a dichiararlo! Puoi anche chiudere la lega manualmente o riaprirla se tutti vengono eliminati."
+    },
+    "DEMO_AVVIA": {
+      "BTN_START": "Avvia la lega",
+      "BTN_DONE": "Lega Avviata!",
+      "STATUS": "I giocatori possono giocare"
+    },
+    "DEMO_PP": {
+      "PUBLIC_LABEL": "Pubblica",
+      "PUBLIC_SUB": "Chiunque può unirsi",
+      "PRIVATE_LABEL": "Privata",
+      "PRIVATE_SUB": "Tu approvi ogni ingresso"
+    },
+    "DEMO_FORZA": {
+      "BTN": "Mostra Risultati",
+      "HEADER": "Risultati Giornata 31",
+      "BADGE_RINVIATA": "RINVIATA",
+      "APPLY_BTN": "Applica forzatura",
+      "STEP_SELECT": "Seleziona",
+      "STEP_FORCE": "Forza"
     }
   },
   "PLAYER_TUTORIAL": {
