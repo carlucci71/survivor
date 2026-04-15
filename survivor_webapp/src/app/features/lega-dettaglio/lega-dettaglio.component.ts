@@ -2292,8 +2292,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   grimReaperVisible = false;
   grimReaperVittimeGiornata: string[] = [];
   grimReaperMsg = '';
+  grimReaperObsessed = false;
   private _tapTimestamps: number[] = [];
   private _grimReaperDismissTimer: any = null;
+  private _grimReaperActivations = 0;
 
   onEliminatiTripleTap(): void {
     const now = Date.now();
@@ -2307,6 +2309,25 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   private attivaGrimReaper(): void {
     if (!this.lega?.giocatori) return;
+    this._grimReaperActivations++;
+
+    if (this._grimReaperActivations > 3) {
+      const msgs: string[] = this.translate.instant('EASTER_EGG.REAPER_OBSESSED');
+      this.grimReaperMsg = Array.isArray(msgs)
+        ? msgs[Math.floor(Math.random() * msgs.length)]
+        : '🙄';
+      this.grimReaperObsessed = true;
+      this.grimReaperVittimeGiornata = [];
+      this.grimReaperVisible = true;
+      if (this._grimReaperDismissTimer) clearTimeout(this._grimReaperDismissTimer);
+      this._grimReaperDismissTimer = setTimeout(() => {
+        this.grimReaperVisible = false;
+        this.grimReaperObsessed = false;
+      }, 4500);
+      return;
+    }
+
+    this.grimReaperObsessed = false;
     const giornataRelativa = (this.lega.giornataCorrente ?? this.lega.giornataIniziale) - this.lega.giornataIniziale + 1;
     this.grimReaperVittimeGiornata = this.lega.giocatori
       .filter(g => {

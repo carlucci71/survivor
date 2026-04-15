@@ -3219,136 +3219,134 @@
 
 /* BANNER ELIMINATO - Simpatico e colorato */
 .eliminato-banner {
+	position: relative;
+	overflow: hidden;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 16px;
-	margin: 24px auto 20px;
-	padding: 20px 24px;
-	background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
-	border: 2px solid #FECACA;
-	border-radius: 16px;
-	max-width: 600px;
-	width: fit-content;
-	box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
-	animation: shakeHead 0.5s ease-in-out;
+	gap: 14px;
+	margin: 28px auto 24px;
+	padding: 28px 28px 22px;
+	background: linear-gradient(145deg, #1a0a0a 0%, #2D0A0A 35%, #1a0a1a 100%);
+	border: 1px solid rgba(239,68,68,0.35);
+	border-radius: 20px;
+	max-width: 560px;
+	width: calc(100% - 32px);
+	box-shadow:
+		0 0 0 1px rgba(239,68,68,0.15),
+		0 8px 32px rgba(239,68,68,0.25),
+		0 2px 8px rgba(0,0,0,0.4);
+	animation: eliminatoEntrance 0.55s cubic-bezier(0.34, 1.26, 0.64, 1);
+	text-align: center;
 
-	@keyframes shakeHead {
-
-		0%,
-		100% {
-			transform: translateX(0);
-		}
-
-		20% {
-			transform: translateX(-5px);
-		}
-
-		40% {
-			transform: translateX(5px);
-		}
-
-		60% {
-			transform: translateX(-3px);
-		}
-
-		80% {
-			transform: translateX(3px);
-		}
+	@keyframes eliminatoEntrance {
+		from { transform: scale(0.82) translateY(20px); opacity: 0; }
+		to   { transform: scale(1)    translateY(0);    opacity: 1; }
 	}
 
-	.eliminato-emoji {
-		font-size: 3rem;
-		animation: bounce 1s ease infinite;
-
-		@keyframes bounce {
-
-			0%,
-			100% {
-				transform: translateY(0);
-			}
-
-			50% {
-				transform: translateY(-8px);
-			}
-		}
+	.eliminato-bg-glow {
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.18) 0%, transparent 70%);
+		pointer-events: none;
 	}
 
-	.eliminato-content {
-		flex: 1;
+	.eliminato-top {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.eliminato-skull {
+		font-size: 3.2rem;
+		line-height: 1;
+		filter: drop-shadow(0 0 16px rgba(239,68,68,0.6));
+		animation: skullPulse 2.4s ease-in-out infinite;
+
+		@keyframes skullPulse {
+			0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 12px rgba(239,68,68,0.5)); }
+			50%      { transform: scale(1.10); filter: drop-shadow(0 0 22px rgba(239,68,68,0.85)); }
+		}
 	}
 
 	.eliminato-title {
-		font-size: 1.1rem;
-		font-weight: 800;
-		color: #DC2626;
+		font-size: 1.25rem;
+		font-weight: 900;
+		color: #FF4444;
 		font-family: 'Poppins', sans-serif;
 		text-transform: uppercase;
-		letter-spacing: 0.5px;
+		letter-spacing: 1.5px;
+		text-shadow: 0 0 18px rgba(239,68,68,0.5);
 	}
 
-	.eliminato-squadra {
+	.eliminato-betrayal {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.eliminato-label {
+		font-size: 0.72rem;
+		font-weight: 500;
+		color: rgba(255,255,255,0.45);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+
+	.eliminato-betrayal-row {
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		flex-wrap: wrap;
+		justify-content: center;
+	}
 
-		.eliminato-label {
-			font-size: 0.75rem;
-			color: #6B7280;
-		}
+	.eliminato-team {
+		font-size: 1rem;
+		font-weight: 800;
+		color: #fff;
+		background: linear-gradient(135deg, rgba(239,68,68,0.25) 0%, rgba(239,68,68,0.12) 100%);
+		border: 1px solid rgba(239,68,68,0.40);
+		padding: 5px 16px;
+		border-radius: 30px;
+		letter-spacing: 0.02em;
+	}
 
-		.eliminato-team {
-			font-size: 0.85rem;
-			font-weight: 700;
-			color: #0A3D91;
-			background: #FFFFFF;
-			padding: 4px 12px;
-			border-radius: 20px;
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-		}
+	.eliminato-sep {
+		color: rgba(255,255,255,0.25);
+		font-size: 1rem;
+	}
 
-		.eliminato-giornata {
-			font-size: 0.7rem;
-			color: #9CA3AF;
-			font-style: italic;
-		}
+	.eliminato-giornata {
+		font-size: 0.75rem;
+		color: rgba(255,255,255,0.35);
+		font-style: italic;
+	}
+
+	.eliminato-divider {
+		width: 60px;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, rgba(239,68,68,0.5), transparent);
+		border-radius: 2px;
 	}
 
 	.eliminato-message {
-		font-size: 0.75rem;
-		color: #6B7280;
+		font-size: 0.82rem;
+		color: rgba(255,255,255,0.55);
 		font-style: italic;
-		margin-top: 4px;
+		line-height: 1.5;
+		max-width: 380px;
 	}
 
 	@media (max-width: 480px) {
-		flex-direction: column;
-		text-align: center;
-		padding: 16px 18px;
+		padding: 22px 20px 18px;
 		gap: 12px;
-		max-width: 90%;
-		width: auto;
-		margin: 16px auto;
-
-		.eliminato-emoji {
-			font-size: 2.5rem;
-		}
-
-		.eliminato-title {
-			font-size: 1rem;
-		}
-
-		.eliminato-squadra {
-			justify-content: center;
-		}
-	}
-
-	@media (max-width: 768px) {
-		max-width: 85%;
-		padding: 18px 20px;
+		.eliminato-skull  { font-size: 2.6rem; }
+		.eliminato-title  { font-size: 1.05rem; letter-spacing: 1px; }
+		.eliminato-team   { font-size: 0.9rem; }
+		.eliminato-message { font-size: 0.78rem; }
 	}
 }
 
@@ -6803,6 +6801,34 @@
 // ------------------------------------------
 // ?? EASTER EGG � Grim Reaper
 // ------------------------------------------
+.grim-reaper-obsessed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 32px 28px;
+  background: rgba(20, 20, 30, 0.95);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 20px;
+  max-width: 340px;
+  text-align: center;
+  animation: reaper-fade-in 0.3s ease forwards;
+
+  .gro-emoji {
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+
+  .gro-msg {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.80);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
 .grim-reaper-overlay {
   position: fixed;
   inset: 0;

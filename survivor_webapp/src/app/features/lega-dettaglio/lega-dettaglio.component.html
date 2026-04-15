@@ -889,23 +889,29 @@
 
 
       <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
-      <!-- Posizionato dopo la tabella così appare sotto alla giocata dell'utente -->
       @if (isCurrentUserEliminato()) {
       <div class="eliminato-banner">
-        <div class="eliminato-emoji">💀</div>
-        <div class="eliminato-content">
+        <div class="eliminato-bg-glow"></div>
+
+        <div class="eliminato-top">
+          <span class="eliminato-skull">💀</span>
           <div class="eliminato-title">{{ 'LEAGUE.YOU_ELIMINATED' | translate }}</div>
-          @if (getSquadraEliminazione()) {
-          <div class="eliminato-squadra">
-            <span class="eliminato-label">{{ 'LEAGUE.YOU_BETRAYED' | translate }}</span>
+        </div>
+
+        @if (getSquadraEliminazione()) {
+        <div class="eliminato-betrayal">
+          <span class="eliminato-label">{{ 'LEAGUE.YOU_BETRAYED' | translate }}</span>
+          <div class="eliminato-betrayal-row">
             <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
+            <span class="eliminato-sep">·</span>
             <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
           </div>
-          }
-          <div class="eliminato-message">
-            {{ getRandomConsolationMessage() }}
-          </div>
         </div>
+        }
+
+        <div class="eliminato-divider"></div>
+
+        <div class="eliminato-message">{{ getRandomConsolationMessage() }}</div>
       </div>
       }
 
@@ -1033,7 +1039,13 @@
 
 <!-- 💀 EASTER EGG — Grim Reaper -->
 @if (grimReaperVisible) {
-  <div class="grim-reaper-overlay" (click)="grimReaperVisible = false">
+  <div class="grim-reaper-overlay" (click)="grimReaperVisible = false; grimReaperObsessed = false">
+    @if (grimReaperObsessed) {
+      <div class="grim-reaper-obsessed">
+        <span class="gro-emoji">😑</span>
+        <p class="gro-msg">{{ grimReaperMsg }}</p>
+      </div>
+    } @else {
     <div class="grim-reaper-scene">
       <!-- Boia SVG v2 — più cattivo, falce vera, occhi rossi -->
       <div class="grim-reaper-figure">
@@ -1126,6 +1138,7 @@
       <!-- Testo drammatico -->
       <div class="grim-reaper-title">{{ grimReaperMsg }}</div>
     </div>
+    }
   </div>
 }
 </div>
