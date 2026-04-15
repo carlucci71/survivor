@@ -121,7 +121,9 @@ export interface StudioGiocataDialogData {
       display: flex;
       flex-direction: column;
       width: 100%;
-      max-height: 85vh;
+      height: 75vh;
+      max-height: 600px;
+      min-height: 420px;
       overflow: hidden;
       background: #fff;
       border-radius: 16px;
@@ -313,7 +315,7 @@ export interface StudioGiocataDialogData {
     .sg-standings-wrap {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-y: auto;
       flex: 1;
     }
 

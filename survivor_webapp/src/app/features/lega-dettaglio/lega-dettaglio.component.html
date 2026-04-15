@@ -255,7 +255,7 @@
       @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore()) && !countdownExpired) {
         <div class="play-action-primary">
           <button class="btn-play-primary" (click)="giocaGiornataDisponibile(getCurrentGiocatore())">
-            <mat-icon class="play-icon-primary">{{ getGiocaIcon() }}</mat-icon>
+            <span class="play-sport-emoji">{{ getGiocaEmoji() }}</span>
             <span class="play-label-primary">{{ 'LEAGUE.PLAY_NOW' | translate }}</span>
           </button>
         </div>
@@ -300,22 +300,23 @@
             } @else {
               <span class="crw-status crw-status--chase">{{ 'LEAGUE.RANK_WIDGET.CHASE' | translate: { gap: rank.distanza, leader: rank.leaderNick } }}</span>
             }
-            <!-- Ticker scoreboard partite -->
-            @if (tickerPartite.length > 0) {
+            <!-- Ticker classifica giocatori lega -->
+            @if (lega.giocatori && lega.giocatori.length > 0) {
               <div class="crw-scoreboard">
                 <div class="crw-scoreboard-track">
-                  <!-- Duplicato per loop continuo -->
-                  @for (p of tickerPartite; track $index) {
-                    <span class="crw-match-item">
-                      <span class="crw-match-time">{{ p.orario | date:'dd/MM HH:mm' }}</span>
-                      <span class="crw-match-teams">{{ p.casa }} <span class="crw-vs">vs</span> {{ p.fuori }}</span>
+                  @for (g of getClassificaCampionato(); track g.user?.id; let i = $index) {
+                    <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
+                      <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
+                      <span class="crw-player-name">{{ g.nickname }}</span>
+                      <span class="crw-player-pts">{{ isGiocatoreEliminato(g) ? '☠️' : (g.puntiTotali ?? 0) + 'pt' }}</span>
                     </span>
                     <span class="crw-match-sep">·</span>
                   }
-                  @for (p of tickerPartite; track $index) {
-                    <span class="crw-match-item">
-                      <span class="crw-match-time">{{ p.orario | date:'dd/MM HH:mm' }}</span>
-                      <span class="crw-match-teams">{{ p.casa }} <span class="crw-vs">vs</span> {{ p.fuori }}</span>
+                  @for (g of getClassificaCampionato(); track g.user?.id; let i = $index) {
+                    <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
+                      <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
+                      <span class="crw-player-name">{{ g.nickname }}</span>
+                      <span class="crw-player-pts">{{ isGiocatoreEliminato(g) ? '☠️' : (g.puntiTotali ?? 0) + 'pt' }}</span>
                     </span>
                     <span class="crw-match-sep">·</span>
                   }

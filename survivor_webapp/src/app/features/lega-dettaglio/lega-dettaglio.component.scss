@@ -826,6 +826,43 @@
 	padding: 0 2px;
 }
 
+// Ticker classifica giocatori lega
+.crw-player-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0 8px;
+}
+
+.crw-player-pos {
+	font-size: 0.72rem;
+	line-height: 1;
+}
+
+.crw-player-name {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.88);
+	letter-spacing: 0.2px;
+}
+
+.crw-player-pts {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: rgba(255,255,255,0.5);
+	letter-spacing: 0.2px;
+}
+
+.crw-player-out {
+	.crw-player-name {
+		color: rgba(255,255,255,0.35);
+		text-decoration: line-through;
+	}
+	.crw-player-pts {
+		color: rgba(255,255,255,0.4);
+	}
+}
+
 // Ticker semplice (fallback quando non ci sono partite)
 .crw-ticker {
 	display: flex;
@@ -877,94 +914,142 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	gap: 10px;
-	padding: 12px 28px;
-	background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-	color: #FFFFFF;
+	gap: 12px;
+	width: 100%;
+	max-width: 340px;
+	padding: 16px 32px;
+	background: linear-gradient(135deg, #0A3D91 0%, #1565C0 40%, #4FC3F7 100%);
+	background-size: 200% 200%;
+	color: #fff;
 	border: none;
-	border-radius: 12px;
-	font-size: 0.95rem;
-	font-weight: 600;
+	border-radius: 16px;
+	font-size: 1.08rem;
+	font-weight: 800;
 	cursor: pointer;
-	box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25);
-	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-	letter-spacing: 0.3px;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
 	position: relative;
 	overflow: hidden;
+	box-shadow:
+		0 6px 20px rgba(10, 61, 145, 0.45),
+		0 2px 6px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	animation: btn-gradient-shift 4s ease infinite, btn-glow-pulse 2.5s ease-in-out infinite;
+	transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.22s;
 
-	// Effetto ripple sottile
+	// Shimmer sweep
 	&::before {
 		content: '';
 		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 0;
-		height: 0;
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.2);
-		transform: translate(-50%, -50%);
-		transition: width 0.6s, height 0.6s;
+		top: 0;
+		left: -75%;
+		width: 55%;
+		height: 100%;
+		background: linear-gradient(
+			120deg,
+			transparent 0%,
+			rgba(255,255,255,0.32) 50%,
+			transparent 100%
+		);
+		animation: btn-shimmer 3s ease-in-out infinite;
+		pointer-events: none;
 	}
 
-	&:hover::before {
-		width: 300px;
-		height: 300px;
+	// Inner border
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 16px;
+		border: 1.5px solid rgba(255,255,255,0.25);
+		pointer-events: none;
 	}
 
-	.play-icon-primary {
-		font-size: 22px;
-		width: 22px;
-		height: 22px;
-		transition: transform 0.25s ease;
+	.play-sport-emoji {
+		font-size: 1.5rem;
+		line-height: 1;
+		z-index: 1;
+		animation: emoji-bounce 1.8s ease-in-out infinite;
+		transition: transform 0.22s ease;
+		filter: drop-shadow(0 2px 4px rgba(0,0,0,0.22));
 	}
 
 	.play-label-primary {
-		font-size: 0.95rem;
+		font-size: 1.08rem;
+		font-weight: 800;
 		position: relative;
 		z-index: 1;
+		text-shadow: 0 1px 4px rgba(0,0,0,0.2);
 	}
 
 	&:hover {
-		background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(10, 61, 145, 0.35);
+		transform: translateY(-3px) scale(1.02);
+		box-shadow:
+			0 10px 32px rgba(10, 61, 145, 0.55),
+			0 4px 10px rgba(0,0,0,0.18),
+			inset 0 1px 0 rgba(255,255,255,0.3);
 
-		.play-icon-primary {
-			transform: scale(1.15);
+		.play-sport-emoji {
+			animation: none;
+			transform: rotate(-15deg) scale(1.25);
 		}
 	}
 
 	&:active {
-		transform: translateY(0) scale(0.98);
-		box-shadow: 0 2px 8px rgba(10, 61, 145, 0.25);
+		transform: translateY(0) scale(0.97);
+		box-shadow: 0 3px 10px rgba(10,61,145,0.3);
 	}
 
-	// Stato focus per accessibilità
 	&:focus-visible {
-		outline: 2px solid #0A3D91;
-		outline-offset: 2px;
+		outline: 3px solid #4FC3F7;
+		outline-offset: 3px;
 	}
 }
 
-// Responsive mobile - più compatto
+@keyframes btn-gradient-shift {
+	0%   { background-position: 0% 50%; }
+	50%  { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
+@keyframes btn-shimmer {
+	0%   { left: -75%; }
+	60%  { left: 125%; }
+	100% { left: 125%; }
+}
+
+@keyframes emoji-bounce {
+	0%, 100% { transform: translateY(0) rotate(0deg); }
+	20%       { transform: translateY(-4px) rotate(-8deg); }
+	40%       { transform: translateY(0) rotate(4deg); }
+	60%       { transform: translateY(-2px) rotate(-4deg); }
+	80%       { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes btn-glow-pulse {
+	0%, 100% { box-shadow: 0 6px 20px rgba(10,61,145,0.45), 0 2px 6px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2); }
+	50%       { box-shadow: 0 8px 28px rgba(79,195,247,0.5), 0 2px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.2); }
+}
+
+// Responsive mobile
 @media (max-width: 767px) {
 	.play-action-primary {
 		margin: 16px 0;
 	}
 
 	.btn-play-primary {
-		padding: 10px 24px;
-		font-size: 0.9rem;
-		border-radius: 10px;
+		padding: 14px 24px;
+		font-size: 1rem;
+		border-radius: 14px;
 
 		.play-icon-primary {
-			font-size: 20px;
-			width: 20px;
-			height: 20px;
+			font-size: 22px;
+			width: 22px;
+			height: 22px;
 		}
 
 		.play-label-primary {
-			font-size: 0.9rem;
+			font-size: 1rem;
 		}
 	}
 }
@@ -972,7 +1057,7 @@
 // Tablet
 @media (min-width: 768px) and (max-width: 1024px) {
 	.btn-play-primary {
-		padding: 11px 26px;
+		padding: 15px 30px;
 	}
 }
 

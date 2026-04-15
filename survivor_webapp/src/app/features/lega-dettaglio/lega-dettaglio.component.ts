@@ -1299,6 +1299,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.authService.getCurrentUser();
   }
 
+  isGiocatoreEliminato(g: Giocatore): boolean {
+    return g.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value;
+  }
+
   // Verifica se il giocatore corrente (utente loggato) è eliminato in questa lega
   isCurrentUserEliminato(): boolean {
     const currentUserId = this.authService.getCurrentUser()?.id;
@@ -2396,6 +2400,19 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+  }
+
+  getGiocaEmoji(): string {
+    const sport = this.lega?.campionato?.sport?.id;
+    if (sport === 'CALCIO') return '⚽';
+    if (sport === 'BASKET') return '🏀';
+    if (sport === 'TENNIS') return '🎾';
+    if (sport === 'FOOTBALL') return '🏈';
+    if (sport === 'BASEBALL') return '⚾';
+    if (sport === 'HOCKEY') return '🏒';
+    if (sport === 'RUGBY') return '🏉';
+    if (sport === 'VOLLEYBALL') return '🏐';
+    return '🏆';
   }
 
   getCountdownTargetDate(): any {
