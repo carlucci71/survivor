@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Campionato, Partita } from '../models/interfaces.model';
+import { Campionato, ClassificaRow, Partita } from '../models/interfaces.model';
 import { LoadingService } from './loading.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -90,6 +90,10 @@ export class CampionatoService {
     return this.http.get<any>(
       `${this.apiUrl}/partiteDellaGiornata/${campionatoId}/${anno}/${giornata}`
     );
+  }
+
+  classificaCampionato(campionatoId: string, anno: number): Observable<ClassificaRow[]> {
+    return this.http.get<ClassificaRow[]>(`${this.apiUrl}/classifica/${campionatoId}/${anno}`);
   }
 
 }

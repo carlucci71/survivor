@@ -394,6 +394,14 @@
       "CHASE": "-{{gap}} pts from {{leader}}",
       "NEXT_ROUND": "Next round"
     },
+    "STUDIO": {
+      "OPEN": "Analyze your pick 🔍",
+      "CLOSE": "Close analysis",
+      "TAB_CALENDAR": "Schedule",
+      "TAB_STANDINGS": "Standings",
+      "LOADING": "Loading...",
+      "TEAM": "Team"
+    },
     "CALCULATE": "Calculate",
     "SUSPENSIONS": "Suspensions",
     "INVITE": "Invite",

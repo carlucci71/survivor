@@ -482,6 +482,14 @@
       "CHASE": "-{{gap}} pt da {{leader}}",
       "NEXT_ROUND": "Prossima giornata"
     },
+    "STUDIO": {
+      "OPEN": "Studia qui la tua giocata 🔍",
+      "CLOSE": "Chiudi analisi",
+      "TAB_CALENDAR": "Calendario",
+      "TAB_STANDINGS": "Classifica",
+      "LOADING": "Caricamento...",
+      "TEAM": "Squadra"
+    },
     "CALCULATE": "Calcola",
     "SUSPENSIONS": "Sospensioni",
     "INVITE": "Invita",

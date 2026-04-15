@@ -225,7 +225,6 @@
 
 // COUNTDOWN TIMER
 .countdown-timer-section {
-	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -551,6 +550,16 @@
 }
 
 // Particelle fluttuanti
+@keyframes crw-twinkle {
+	0%, 100% { opacity: 0.08; transform: scale(0.8); }
+	50% { opacity: 0.55; transform: scale(1.25); }
+}
+
+@keyframes crw-pulse {
+	0%, 100% { transform: scale(1); opacity: 0.15; }
+	50% { transform: scale(1.4); opacity: 0.45; }
+}
+
 .crw-particle {
 	position: absolute;
 	border-radius: 50%;
@@ -584,6 +593,49 @@
 	background: rgba(255, 214, 0, 0.12);
 	bottom: 14px; left: 38%;
 	animation: crw-float2 4.8s ease-in-out infinite 0.3s;
+}
+
+// Particelle extra
+.crw-p5 {
+	width: 6px; height: 6px;
+	background: rgba(255, 255, 255, 0.55);
+	top: 18px; right: 32%;
+	animation: crw-twinkle 2.8s ease-in-out infinite 0.5s;
+}
+
+.crw-p6 {
+	width: 5px; height: 5px;
+	background: rgba(255, 214, 0, 0.7);
+	top: 60%; right: 12%;
+	animation: crw-twinkle 3.2s ease-in-out infinite 1.1s;
+}
+
+.crw-p7 {
+	width: 8px; height: 8px;
+	background: rgba(79, 195, 247, 0.35);
+	bottom: 18px; left: 62%;
+	animation: crw-twinkle 2.4s ease-in-out infinite 0.2s;
+}
+
+.crw-p8 {
+	width: 14px; height: 14px;
+	background: rgba(255, 255, 255, 0.07);
+	top: 30%; right: 42%;
+	animation: crw-pulse 5.5s ease-in-out infinite 0.7s;
+}
+
+.crw-p9 {
+	width: 5px; height: 5px;
+	background: rgba(255, 255, 255, 0.6);
+	top: 75%; left: 52%;
+	animation: crw-twinkle 1.9s ease-in-out infinite 1.8s;
+}
+
+.crw-p10 {
+	width: 18px; height: 18px;
+	background: rgba(79, 195, 247, 0.1);
+	top: 10px; left: 72%;
+	animation: crw-pulse 6s ease-in-out infinite 1.3s;
 }
 
 .crw-left {
@@ -697,7 +749,84 @@
 	}
 }
 
-// Ticker prossima giornata
+@keyframes crw-scroll {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-50%); }
+}
+
+// Ticker scoreboard a scorrimento
+.crw-scoreboard {
+	margin-top: 6px;
+	overflow: hidden;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.22);
+	border-top: 1px solid rgba(255,255,255,0.08);
+	position: relative;
+
+	// Sfumature laterali per effetto "entra/esce"
+	&::before, &::after {
+		content: '';
+		position: absolute;
+		top: 0; bottom: 0;
+		width: 24px;
+		z-index: 2;
+		pointer-events: none;
+	}
+	&::before {
+		left: 0;
+		background: linear-gradient(to right, rgba(10,42,100,0.9), transparent);
+	}
+	&::after {
+		right: 0;
+		background: linear-gradient(to left, rgba(10,42,100,0.9), transparent);
+	}
+}
+
+.crw-scoreboard-track {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	padding: 5px 0;
+	white-space: nowrap;
+	animation: crw-scroll 16s linear infinite;
+	will-change: transform;
+}
+
+.crw-match-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 0 10px;
+}
+
+.crw-match-time {
+	font-size: 0.68rem;
+	color: rgba(255,255,255,0.45);
+	font-weight: 400;
+	letter-spacing: 0.2px;
+}
+
+.crw-match-teams {
+	font-size: 0.75rem;
+	color: rgba(255,255,255,0.85);
+	font-weight: 600;
+	letter-spacing: 0.3px;
+}
+
+.crw-vs {
+	font-size: 0.65rem;
+	color: rgba(255,255,255,0.4);
+	font-weight: 400;
+	margin: 0 2px;
+}
+
+.crw-match-sep {
+	color: rgba(255,255,255,0.2);
+	font-size: 0.9rem;
+	padding: 0 2px;
+}
+
+// Ticker semplice (fallback quando non ci sono partite)
 .crw-ticker {
 	display: flex;
 	align-items: center;
@@ -6684,3 +6813,356 @@
   50%  { opacity: 1; transform: translateY(4px) rotate(1deg); }
   to   { opacity: 1; transform: translateY(0) rotate(0deg); }
 }
+
+// ─── Studio panel ─────────────────────────────────────────────────────────────
+
+// Bottone FAB in alto a destra nell'header della card
+.studio-fab-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.95);
+	border: none;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	font-size: 0.95rem;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0;
+	flex-shrink: 0;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+	animation: studio-fab-pulse 3s ease-in-out infinite;
+	transition: transform 0.18s, box-shadow 0.18s;
+
+	&:hover {
+		transform: scale(1.15);
+		box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+		animation: none;
+	}
+}
+
+@keyframes studio-fab-pulse {
+	0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.18); transform: scale(1); }
+	50%       { box-shadow: 0 2px 12px rgba(79,195,247,0.55); transform: scale(1.08); }
+}
+
+// Riga countdown centrata con bottone studio in assoluto a destra
+.countdown-studio-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+
+	.countdown-timer-section {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	.studio-fab-btn {
+		position: absolute;
+		right: 16px;
+		animation: studio-fab-pulse 3s ease-in-out infinite;
+	}
+}
+
+.studio-panel {
+	margin: 4px 0 4px;
+	border-radius: 14px;
+	background: #fff;
+	border: 1.5px solid rgba(10,61,145,0.13);
+	box-shadow: 0 4px 18px rgba(10,61,145,0.08);
+	overflow: hidden;
+	animation: studio-in 0.22s ease-out;
+}
+
+@keyframes studio-in {
+	from { opacity: 0; transform: translateY(-6px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Tab bar */
+.studio-tabs {
+	display: flex;
+	background: linear-gradient(135deg, #0A3D91, #1565c0);
+}
+
+.studio-tab {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	background: none;
+	border: none;
+	color: rgba(255,255,255,0.55);
+	font-size: 0.73rem;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	text-transform: uppercase;
+	padding: 11px 8px;
+	cursor: pointer;
+	border-bottom: 3px solid transparent;
+	transition: color 0.18s, border-color 0.18s, background 0.18s;
+
+	mat-icon { font-size: 15px; width: 15px; height: 15px; }
+
+	&.active {
+		color: #fff;
+		border-bottom-color: rgba(255,255,255,0.6);
+		background: rgba(255,255,255,0.08);
+	}
+	&:hover:not(.active) {
+		color: rgba(255,255,255,0.8);
+		background: rgba(255,255,255,0.05);
+	}
+}
+
+/* Loading */
+.studio-loading {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 28px 0;
+}
+
+/* Empty state */
+.studio-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 28px 16px;
+	color: #9CA3AF;
+	font-size: 0.82rem;
+
+	mat-icon { font-size: 28px; width: 28px; height: 28px; opacity: 0.4; }
+}
+
+// ── Calendario ────────────────────────────────────────────────────────────────
+
+.studio-calendar {
+	padding: 8px 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	max-height: 340px;
+	overflow-y: auto;
+}
+
+.studio-match {
+	border-radius: 10px;
+	border: 1px solid #E5E7EB;
+	background: #FAFAFA;
+	padding: 8px 12px;
+	transition: box-shadow 0.15s;
+
+	&:hover { box-shadow: 0 2px 8px rgba(10,61,145,0.07); }
+
+	&.terminata {
+		border-left: 3px solid #9CA3AF;
+		background: #F9FAFB;
+	}
+	&.in-corso {
+		border-left: 3px solid #1565c0;
+		background: rgba(10,61,145,0.03);
+	}
+}
+
+.studio-match-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 5px;
+}
+
+.studio-match-time {
+	font-size: 0.66rem;
+	color: #6B7280;
+	font-weight: 500;
+	text-transform: capitalize;
+	flex: 1;
+}
+
+.studio-badge {
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+	padding: 1px 5px;
+	border-radius: 4px;
+
+	&.live {
+		background: #1565c0;
+		color: #fff;
+		animation: pulse-live 1.5s ease-in-out infinite;
+	}
+	&.fin {
+		background: #E5E7EB;
+		color: #6B7280;
+	}
+}
+
+@keyframes pulse-live {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.6; }
+}
+
+.studio-match-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.studio-team {
+	flex: 1;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #111827;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&.home { text-align: right; }
+	&.away { text-align: left; }
+}
+
+.studio-score {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: #0A3D91;
+	min-width: 36px;
+	justify-content: center;
+	background: rgba(10,61,145,0.06);
+	border-radius: 6px;
+	padding: 2px 5px;
+	flex-shrink: 0;
+
+	.sc { min-width: 12px; text-align: center; }
+	.sep { color: #9CA3AF; font-weight: 400; }
+}
+
+.studio-vs {
+	font-size: 0.7rem;
+	color: #9CA3AF;
+	min-width: 22px;
+	text-align: center;
+	flex-shrink: 0;
+}
+
+// ── Classifica ────────────────────────────────────────────────────────────────
+
+.studio-standings {
+	max-height: 380px;
+	overflow-y: auto;
+}
+
+.studio-standings-head {
+	display: grid;
+	grid-template-columns: 28px 1fr 28px 24px 24px 24px 30px 32px;
+	gap: 2px;
+	padding: 8px 12px;
+	background: #fff;
+	border-bottom: 2px solid rgba(10,61,145,0.15);
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.sth-rank {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #6B7280;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sth-team {
+	font-size: 0.7rem;
+	font-weight: 700;
+	color: #6B7280;
+	letter-spacing: 0.3px;
+	text-transform: uppercase;
+}
+
+.sth-num {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #6B7280;
+	text-align: center;
+}
+
+.sth-pts {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: #0A3D91;
+	text-align: center;
+}
+
+.studio-standing-row {
+	display: grid;
+	grid-template-columns: 28px 1fr 28px 24px 24px 24px 30px 32px;
+	gap: 2px;
+	padding: 8px 12px;
+	border-bottom: 1px solid #F3F4F6;
+	align-items: center;
+	transition: background 0.12s;
+
+	&:hover { background: rgba(10,61,145,0.03); }
+	&:last-child { border-bottom: none; }
+
+	&.pos1 { background: rgba(255,214,0,0.05); }
+	&.pos2 { background: rgba(192,192,192,0.05); }
+	&.pos3 { background: rgba(205,127,50,0.04); }
+
+	.sth-rank {
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	.sth-team {
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: #111827;
+		text-transform: none;
+		letter-spacing: 0;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.sth-num {
+		font-size: 0.74rem;
+		font-weight: 400;
+		color: #4B5563;
+		text-align: center;
+	}
+
+	.sth-pts {
+		font-size: 0.82rem;
+		font-weight: 800;
+		color: #0A3D91;
+		text-align: center;
+	}
+
+	.gd {
+		font-weight: 600;
+		&.pos { color: #16a34a; }
+		&.neg { color: #dc2626; }
+	}
+}
+
+@media (min-width: 480px) {
+	.studio-standings-head,
+	.studio-standing-row {
+		grid-template-columns: 30px 1fr 32px 26px 26px 26px 34px 36px;
+		padding: 9px 16px;
+	}
+	.studio-team, .studio-standing-row .sth-team { font-size: 0.82rem; }
+}
+

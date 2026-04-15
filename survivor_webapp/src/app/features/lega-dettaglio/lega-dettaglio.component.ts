@@ -3,14 +3,16 @@ import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { map, filter, switchMap, take } from 'rxjs/operators';
+import { combineLatest, forkJoin, of } from 'rxjs';
+import { map, filter, switchMap, take, catchError } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LegaService } from '../../core/services/lega.service';
 import {
+  ClassificaRow,
   Giocata,
   Giocatore,
   Lega,
+  Partita,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
@@ -53,6 +55,7 @@ import { RecapService } from '../../core/services/recap.service';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
 import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial/leader-tutorial.component';
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
+import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component';
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 
 @Component({
@@ -211,6 +214,17 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
+  // Partite della prossima giornata per il ticker del widget campionato
+  tickerPartite: { casa: string; fuori: string; orario: Date | null }[] = [];
+
+  // Studio: calendario + classifica della giornata corrente
+  studioAperto = false;
+  studioTab: 'calendario' | 'classifica' = 'calendario';
+  studioPartite: Partita[] = [];
+  studioClassifica: ClassificaRow[] = [];
+  studioCaricato = false;
+  studioLoading = false;
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -303,6 +317,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
+          if (this.isCampionato()) this.caricaTickerPartite();
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
@@ -425,6 +440,95 @@ export class LegaDettaglioComponent implements OnDestroy {
         },
       });
     }
+  }
+
+  caricaTickerPartite(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    if (!giornata) return;
+    this.campionatoService.partiteDellaGiornata(
+      this.lega.campionato.id!,
+      this.lega.anno,
+      giornata
+    ).subscribe({
+      next: (partite: any[]) => {
+        this.tickerPartite = (partite || [])
+          .sort((a, b) => new Date(a.orario).getTime() - new Date(b.orario).getTime())
+          .map(p => ({
+            casa: p.casaSigla || p.casaNome || '?',
+            fuori: p.fuoriSigla || p.fuoriNome || '?',
+            orario: p.orario ? new Date(p.orario) : null,
+          }));
+      },
+      error: () => {}
+    });
+  }
+
+  apriStudio(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    if (!this.studioCaricato) {
+      this.studioLoading = true;
+      this.caricaStudio();
+    }
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    const label = this.campionatoService.getDesGiornata(
+      this.lega.campionato.id!,
+      giornata ?? 1,
+      ''
+    );
+    // Se i dati sono già pronti apre subito, altrimenti aspetta il caricamento
+    if (this.studioCaricato) {
+      this.dialog.open(StudioGiocataDialogComponent, {
+        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+        panelClass: 'studio-dialog-panel',
+        maxWidth: '520px',
+        width: '96vw',
+      });
+    } else {
+      const sub = this.campionatoService.partiteDellaGiornata(this.lega.campionato.id!, this.lega.anno, giornata!)
+        .pipe(catchError(() => of([])))
+        .subscribe(() => {
+          // caricaStudio() gestisce già il completamento; al prossimo click sarà pronto
+          sub.unsubscribe();
+        });
+      // Apri il dialog appena caricaStudio finisce
+      const waitOpen = setInterval(() => {
+        if (this.studioCaricato) {
+          clearInterval(waitOpen);
+          this.dialog.open(StudioGiocataDialogComponent, {
+            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+            panelClass: 'studio-dialog-panel',
+            maxWidth: '520px',
+            width: '96vw',
+          });
+        }
+      }, 100);
+      // Fallback after 8s
+      setTimeout(() => clearInterval(waitOpen), 8000);
+    }
+  }
+
+  caricaStudio(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    if (!giornata) return;
+    this.studioLoading = true;
+    const campId = this.lega.campionato.id!;
+    const anno = this.lega.anno;
+    forkJoin({
+      partite: this.campionatoService.partiteDellaGiornata(campId, anno, giornata).pipe(catchError(() => of([]))),
+      classifica: this.campionatoService.classificaCampionato(campId, anno).pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ partite, classifica }) => {
+        this.studioPartite = [...(partite as any[])].sort(
+          (a, b) => new Date(a.orario).getTime() - new Date(b.orario).getTime()
+        ) as Partita[];
+        this.studioClassifica = classifica;
+        this.studioCaricato = true;
+        this.studioLoading = false;
+      },
+      error: () => { this.studioLoading = false; }
+    });
   }
 
   caricaPartiteForzate(): void {

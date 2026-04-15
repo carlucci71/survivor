@@ -173,6 +173,18 @@ export interface Partita {
     forzata?: boolean;
 }
 
+export interface ClassificaRow {
+    sigla: string;
+    nome: string;
+    pj: number;
+    v: number;
+    n: number;
+    p: number;
+    punti: number;
+    gf: number;
+    gs: number;
+}
+
 export interface PartitaMock {
     id: number;
     campionatoId: string;
