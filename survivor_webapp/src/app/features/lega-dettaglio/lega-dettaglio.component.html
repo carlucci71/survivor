@@ -304,7 +304,7 @@
             @if (lega.giocatori && lega.giocatori.length > 0) {
               <div class="crw-scoreboard">
                 <div class="crw-scoreboard-track">
-                  @for (g of getClassificaCampionato(); track g.user?.id; let i = $index) {
+                  @for (g of getClassificaCampionato(); track g.id; let i = $index) {
                     <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
                       <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
                       <span class="crw-player-name">{{ g.nickname }}</span>
@@ -312,7 +312,7 @@
                     </span>
                     <span class="crw-match-sep">·</span>
                   }
-                  @for (g of getClassificaCampionato(); track g.user?.id; let i = $index) {
+                  @for (g of getClassificaCampionato(); track 'dup-' + g.id; let i = $index) {
                     <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
                       <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
                       <span class="crw-player-name">{{ g.nickname }}</span>

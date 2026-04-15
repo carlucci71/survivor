@@ -49,14 +49,198 @@
     </div>
 
     @if(squadreDisponibili.length > 0) {
+
+  <!-- 💡 MODALE CONSIGLI (overlay inline) -->
+  @if (consigliAperto) {
+    <div class="consigli-overlay" (click)="chiudiConsigli()">
+      <div class="consigli-modal" (click)="$event.stopPropagation()">
+
+        <!-- Header modale -->
+        <div class="cm-header">
+          <div class="cm-header-left">
+            <span class="cm-icon">💡</span>
+            <span class="cm-title">{{ 'PLAY.CONSIGLI.MODAL_TITLE' | translate }}</span>
+          </div>
+          <button class="cm-close" type="button" (click)="chiudiConsigli()" aria-label="Chiudi">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Body modale -->
+        <div class="cm-body">
+          @if (consiglioPending) {
+            <!-- PANNELLO RAGIONE -->
+            <div class="cr-panel">
+              <span class="cr-emoji">{{ consigliReasonEmoji }}</span>
+              <p class="cr-text">{{ consigliReasonText }}</p>
+
+              <!-- FORMULA MATEMATICA -->
+              <div class="cr-formula">
+                <p class="cr-formula-title">
+                  {{ consiglioPending.isUnderdog
+                    ? ('PLAY.CONSIGLI.FORMULA_UPSET_TITLE' | translate)
+                    : ('PLAY.CONSIGLI.FORMULA_TITLE' | translate) }}
+                </p>
+                @for (row of consiglioPending.formulaRows; track row.labelKey) {
+                  <div class="cr-formula-row">
+                    <span class="cr-formula-label">{{ row.labelKey | translate }}</span>
+                    <span class="cr-formula-expr">{{ row.factor }}% × {{ row.weight }}%</span>
+                    <span class="cr-formula-val">+{{ row.contribution }}</span>
+                  </div>
+                }
+                <div class="cr-formula-total">
+                  <span>{{ consiglioPending.isUnderdog
+                    ? ('PLAY.CONSIGLI.FORMULA_UPSET_TOTAL' | translate)
+                    : ('PLAY.CONSIGLI.FORMULA_TOTAL' | translate) }}</span>
+                  <span class="cr-formula-score"
+                        [style.color]="getScoreColor(consiglioPending.formulaTotal)">{{ consiglioPending.formulaTotal }}%</span>
+                </div>
+              </div>
+
+              <div class="cr-actions">
+                <button class="cr-confirm" type="button" (click)="confermaConsiglio()">
+                  {{ 'PLAY.CONSIGLI.CONFIRM' | translate }} {{ formatNomeSquadra(consiglioPending.nome) }}! ✓
+                </button>
+                <button class="cr-dismiss" type="button" (click)="annullaConsiglio()">
+                  {{ 'PLAY.CONSIGLI.DISMISS' | translate }}
+                </button>
+              </div>
+            </div>
+          } @else if (loadingConsigli) {
+            <div class="consigli-skeleton">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+            </div>
+          } @else if (consigli.length === 0) {
+            <p class="cm-empty">{{ 'PLAY.CONSIGLI.EMPTY' | translate }}</p>
+          } @else {
+
+            <!-- Underdog della giornata -->
+            @if (underdogDiGiornata) {
+              <div class="underdog-section">
+                <div class="underdog-header">
+                  <span class="underdog-icon">🎲</span>
+                  <div class="underdog-header-text">
+                    <span class="underdog-title">{{ 'PLAY.CONSIGLI.UNDERDOG_TITLE' | translate }}</span>
+                    <span class="underdog-subtitle">{{ 'PLAY.CONSIGLI.UNDERDOG_SUBTITLE' | translate }}</span>
+                  </div>
+                </div>
+                <div class="underdog-card"
+                     [class.selected-pick]="squadraSelezionata === underdogDiGiornata.sigla"
+                     (click)="mostraRagione(underdogDiGiornata, true)">
+                  <div class="u-logo">
+                    @if (getTeamLogo(underdogDiGiornata.sigla)) {
+                      <img [src]="getTeamLogo(underdogDiGiornata.sigla)!"
+                           [alt]="formatNomeSquadra(underdogDiGiornata.nome)"
+                           class="u-logo-img"
+                           (error)="onLogoError($event)" />
+                    } @else {
+                      <svg class="u-jersey-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <path [attr.fill]="getTeamColors(underdogDiGiornata.sigla).primary"
+                              d="M 20 25 L 10 35 L 10 50 L 15 50 L 15 120 L 85 120 L 85 50 L 90 50 L 90 35 L 80 25 L 75 20 Q 70 15 65 15 L 60 20 Q 55 25 50 25 Q 45 25 40 20 L 35 15 Q 30 15 25 20 L 20 25 Z"/>
+                        <text x="50" y="75" text-anchor="middle"
+                              [attr.fill]="getTeamColors(underdogDiGiornata.sigla).secondary"
+                              font-size="32" font-weight="bold" font-family="Poppins">{{ getSquadraInitials(underdogDiGiornata.nome) }}</text>
+                      </svg>
+                    }
+                  </div>
+                  <div class="u-info">
+                    <span class="u-name">{{ formatNomeSquadra(underdogDiGiornata.nome) }}</span>
+                    <div class="u-pills">
+                      <span class="u-pill">📊 {{ underdogDiGiornata.factorWinRate }}% win</span>
+                      @if (underdogDiGiornata.factorHome) {
+                        <span class="u-pill u-pill--home">🏠 {{ 'PLAY.CONSIGLI.PILL_HOME' | translate }}</span>
+                      } @else {
+                        <span class="u-pill u-pill--away">✈️ {{ 'PLAY.CONSIGLI.PILL_AWAY' | translate }}</span>
+                      }
+                      @if (underdogDiGiornata.factorAvvDebole <= 40) {
+                        <span class="u-pill u-pill--strong">⚡ {{ 'PLAY.CONSIGLI.PILL_AVV_STRONG' | translate }}</span>
+                      }
+                    </div>
+                  </div>
+                  <span class="u-upset-badge">{{ 'PLAY.CONSIGLI.UPSET_BADGE' | translate }}</span>
+                </div>
+              </div>
+            }
+
+            <div class="consigli-cards">
+              @for (c of consigli; track c.sigla; let i = $index) {
+                <div class="consiglio-card"
+                     [class.top-pick]="i === 0"
+                     [class.selected-pick]="squadraSelezionata === c.sigla"
+                     (click)="mostraRagione(c, false)">
+                  @if (i === 0) {
+                    <span class="top-badge">🏆 Top</span>
+                  }
+                  <div class="c-logo">
+                    @if (getTeamLogo(c.sigla)) {
+                      <img [src]="getTeamLogo(c.sigla)!"
+                           [alt]="formatNomeSquadra(c.nome)"
+                           class="c-logo-img"
+                           (error)="onLogoError($event)" />
+                    } @else {
+                      <svg class="c-jersey-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                        <path [attr.fill]="getTeamColors(c.sigla).primary"
+                              d="M 20 25 L 10 35 L 10 50 L 15 50 L 15 120 L 85 120 L 85 50 L 90 50 L 90 35 L 80 25 L 75 20 Q 70 15 65 15 L 60 20 Q 55 25 50 25 Q 45 25 40 20 L 35 15 Q 30 15 25 20 L 20 25 Z"/>
+                        <text x="50" y="75" text-anchor="middle"
+                              [attr.fill]="getTeamColors(c.sigla).secondary"
+                              font-size="32" font-weight="bold" font-family="Poppins">{{ getSquadraInitials(c.nome) }}</text>
+                      </svg>
+                    }
+                  </div>
+
+                  <span class="c-name">{{ formatNomeSquadra(c.nome) }}</span>
+
+                  <div class="c-score-bar-track">
+                    <div class="c-score-bar-fill"
+                         [style.width.%]="c.score"
+                         [style.background]="getScoreColor(c.score)"></div>
+                  </div>
+
+                  <span class="c-score-num" [style.color]="getScoreColor(c.score)">{{ c.score }}%</span>
+
+                  <div class="c-pills">
+                    <span class="c-pill">📊 {{ c.factorWinRate }}% win</span>
+                    @if (c.factorHome) {
+                      <span class="c-pill c-pill--home">🏠 {{ 'PLAY.CONSIGLI.PILL_HOME' | translate }}</span>
+                    } @else {
+                      <span class="c-pill c-pill--away">✈️ {{ 'PLAY.CONSIGLI.PILL_AWAY' | translate }}</span>
+                    }
+                    @if (c.factorAvvDebole >= 60) {
+                      <span class="c-pill c-pill--avv">⚔️ {{ 'PLAY.CONSIGLI.PILL_AVV_WEAK' | translate }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <p class="consigli-disclaimer">
+              {{ 'PLAY.CONSIGLI.DISCLAIMER' | translate }}
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- SELEZIONE SQUADRE -->
   <div class="calendario-container">
-    <h3 class="calendario-title">
-      {{ 'PLAY.SELECT_TEAM' | translate }}
-      @if(searchQuery && squadreFiltrate.length > 0) {
-        <span class="team-count">({{ squadreFiltrate.length }})</span>
+    <div class="calendario-title-row">
+      <h3 class="calendario-title">
+        {{ 'PLAY.SELECT_TEAM' | translate }}
+        @if(searchQuery && squadreFiltrate.length > 0) {
+          <span class="team-count">({{ squadreFiltrate.length }})</span>
+        }
+      </h3>
+      @if (consigli.length > 0 || loadingConsigli) {
+        <button class="consigli-link" type="button" (click)="consigliAperto = true">
+          <span class="consigli-link-icon">💡</span>
+          <span>{{ 'PLAY.CONSIGLI.LINK_LABEL' | translate }}</span>
+
+        </button>
       }
-    </h3>
+    </div>
 
     <!-- BARRA DI RICERCA -->
     <div class="search-container">

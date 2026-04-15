@@ -1,4 +1,27 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
+
+export interface FormulaRow {
+  labelKey: string;
+  factor: number;
+  weight: number;
+  contribution: number;
+}
+
+export interface SquadraConsiglio {
+  sigla: string;
+  nome: string;
+  /** Punteggio affidabilità 0–100 */
+  score: number;
+  /** Fattore win-rate stagionale 0–100 */
+  factorWinRate: number;
+  /** Gioca in casa */
+  factorHome: boolean;
+  /** Debolezza avversario 0–100 (100 = avversario ultimo in classifica) */
+  factorAvvDebole: number;
+  /** Goal balance normalizzato 0–100 */
+  factorGoalBalance: number;
+}
+
 import { MatSelect } from '@angular/material/select';
 import {
   MAT_DIALOG_DATA,
@@ -54,6 +77,16 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   prossimePartite: Partita[] = [];
   loadingUltimi = false;
   loadingProssime = false;
+
+  // 💡 Consigli algoritmici
+  consigli: SquadraConsiglio[] = [];
+  underdogDiGiornata: SquadraConsiglio | null = null;
+  loadingConsigli = false;
+  consigliAperto = false;
+  consiglioPending: { sigla: string; nome: string; isUnderdog: boolean; formulaRows: FormulaRow[]; formulaTotal: number } | null = null;
+  consigliReasonEmoji = '';
+  consigliReasonText = '';
+
   squadreDisponibili: Squadra[] = [];
   squadraSelezionata: string | null = null;
   statoGiornataCorrente!: StatoPartita;
@@ -1025,6 +1058,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         next: (partite) => {
           this.prossimaGiornata = partite;
           this.caricaPartitePerTutteSquadre();
+          this.calcolaConsigli();
         },
         error: (error) => {
           console.error('Errore caricamento prossima giornata:', error);
@@ -1196,6 +1230,159 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     // Aggiorna stato frecce
     this.updateScrollButtons();
+  }
+
+  // ─── Consigli algoritmici ──────────────────────────────────────────────────
+
+  /**
+   * Calcola le top-3 squadre consigliate usando la classifica stagionale.
+   * Score = winRate×40% + goalBalanceNorm×20% + casaBonus×20% + avvDebole×20%
+   * Richiede 1 sola chiamata API (classificaCampionato).
+   */
+  mostraRagione(card: SquadraConsiglio, isUnderdog: boolean): void {
+    const key = isUnderdog ? 'UNDERDOG_REASONS' : 'TOP_REASONS';
+    const idx = Math.floor(Math.random() * 20);
+    this.consigliReasonEmoji = this.translate.instant(`PLAY.CONSIGLI.${key}.${idx}.EMOJI`);
+    this.consigliReasonText  = this.translate.instant(`PLAY.CONSIGLI.${key}.${idx}.TEXT`);
+    const formulaRows = isUnderdog ? this.getUnderdogFormula(card) : this.getTopFormula(card);
+    const formulaTotal = formulaRows.reduce((sum, r) => sum + r.contribution, 0);
+    this.consiglioPending = { sigla: card.sigla, nome: card.nome, isUnderdog, formulaRows, formulaTotal };
+  }
+
+  private getTopFormula(card: SquadraConsiglio): FormulaRow[] {
+    const homeVal = card.factorHome ? 100 : 40;
+    return [
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_WIN',  factor: card.factorWinRate,    weight: 40, contribution: Math.round(card.factorWinRate * 0.40) },
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_GB',   factor: card.factorGoalBalance, weight: 20, contribution: Math.round(card.factorGoalBalance * 0.20) },
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_HOME', factor: homeVal,                weight: 20, contribution: Math.round(homeVal * 0.20) },
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_OPP',  factor: card.factorAvvDebole,   weight: 20, contribution: Math.round(card.factorAvvDebole * 0.20) },
+    ];
+  }
+
+  private getUnderdogFormula(card: SquadraConsiglio): FormulaRow[] {
+    const homeVal = card.factorHome ? 100 : 30;
+    const weak    = 100 - card.factorWinRate;
+    const strong  = 100 - card.factorAvvDebole;
+    return [
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_WEAK',       factor: weak,    weight: 40, contribution: Math.round(weak * 0.40) },
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_HOME_BONUS', factor: homeVal, weight: 35, contribution: Math.round(homeVal * 0.35) },
+      { labelKey: 'PLAY.CONSIGLI.FORMULA_OPP_STRONG', factor: strong,  weight: 25, contribution: Math.round(strong * 0.25) },
+    ];
+  }
+
+  confermaConsiglio(): void {
+    if (this.consiglioPending) {
+      this.selezionaSquadra(this.consiglioPending.sigla);
+      this.consiglioPending = null;
+      this.consigliAperto = false;
+    }
+  }
+
+  annullaConsiglio(): void {
+    this.consiglioPending = null;
+  }
+
+  chiudiConsigli(): void {
+    this.consiglioPending = null;
+    this.consigliAperto = false;
+  }
+
+  calcolaConsigli(): void {
+    // Solo calcio/basket: la classifica stagionale non si applica al tennis a gironi
+    if (this.lega?.campionato?.sport?.id === 'TENNIS') return;
+    const campionatoId = this.lega?.campionato?.id;
+    if (!campionatoId) return;
+
+    this.loadingConsigli = true;
+
+    this.campionatoService.classificaCampionato(campionatoId, this.lega.anno).subscribe({
+      next: (classifica) => {
+        const total = classifica.length || 1;
+        const disponibili = this.squadreConPartite.filter((s: any) => !s.alreadyUsed);
+
+        const raw = disponibili.map((squadra: any) => {
+          const row = classifica.find(r => r.sigla === squadra.sigla);
+          const pj = row?.pj ?? 0;
+          const winRate = pj > 0 ? (row!.v / pj) : 0;
+          const avgGB   = pj > 0 ? ((row!.gf - row!.gs) / pj) : 0;
+          const isHome  = this.isPlayingHome(squadra.sigla);
+
+          let avvPos = Math.ceil(total / 2); // default: metà classifica
+          if (squadra.prossimaPartita) {
+            const avvSigla = squadra.prossimaPartita.casaSigla === squadra.sigla
+              ? squadra.prossimaPartita.fuoriSigla
+              : squadra.prossimaPartita.casaSigla;
+            const avvIdx = classifica.findIndex(r => r.sigla === avvSigla);
+            if (avvIdx >= 0) avvPos = avvIdx + 1;
+          }
+          const avvDebole = (total - avvPos + 1) / total;
+
+          return { squadra, winRate, avgGB, isHome, avvDebole };
+        });
+
+        // Normalizza goal balance su range 0-1
+        const gbs = raw.map((s: any) => s.avgGB);
+        const minGB = Math.min(...gbs, 0);
+        const maxGB = Math.max(...gbs, 0.01);
+        const gbRange = maxGB - minGB || 1;
+
+        const scored: SquadraConsiglio[] = raw.map((s: any) => {
+          const gbNorm  = (s.avgGB - minGB) / gbRange;
+          const homeVal = s.isHome ? 1.0 : 0.4;
+          const total01 = s.winRate * 0.40 + gbNorm * 0.20 + homeVal * 0.20 + s.avvDebole * 0.20;
+          return {
+            sigla:             s.squadra.sigla,
+            nome:              s.squadra.nome,
+            score:             Math.round(Math.min(total01, 1) * 100),
+            factorWinRate:     Math.round(s.winRate * 100),
+            factorHome:        s.isHome,
+            factorAvvDebole:   Math.round(s.avvDebole * 100),
+            factorGoalBalance: Math.round(gbNorm * 100),
+          };
+        });
+
+        this.consigli = scored
+          .filter(c => c.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3);
+
+        // ── Underdog della giornata ─────────────────────────────────
+        // Sfavorita (winRate 15–45%) che gimca in casa contro un avversario forte
+        const underdogPool = scored.filter(c =>
+          c.factorWinRate >= 15 && c.factorWinRate <= 45
+        );
+        if (underdogPool.length > 0) {
+          const casalinghe = underdogPool.filter(c => c.factorHome);
+          const pool = casalinghe.length > 0 ? casalinghe : underdogPool;
+          const sorted = pool
+            .map(c => ({
+              ...c,
+              uScore: (1 - c.factorWinRate / 100) * 0.40
+                    + (c.factorHome ? 1.0 : 0.3) * 0.35
+                    + (1 - c.factorAvvDebole / 100) * 0.25
+            }))
+            .sort((a, b) => b.uScore - a.uScore);
+          this.underdogDiGiornata = sorted[0];
+        } else {
+          const fallback = scored.filter(c => c.score < 45);
+          this.underdogDiGiornata = fallback.length > 0 ? fallback[fallback.length - 1] : null;
+        }
+
+        this.loadingConsigli = false;
+      },
+      error: () => {
+        this.loadingConsigli = false;
+        this.consigli = [];
+        this.underdogDiGiornata = null;
+      }
+    });
+  }
+
+  /** Colore del score: verde ≥70, giallo ≥45, rosso <45 */
+  getScoreColor(score: number): string {
+    if (score >= 70) return '#16A34A';
+    if (score >= 45) return '#D97706';
+    return '#DC2626';
   }
 
 }
