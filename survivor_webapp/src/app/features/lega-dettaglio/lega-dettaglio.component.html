@@ -255,6 +255,50 @@
         </div>
       }
 
+      <!-- WIDGET POSIZIONE CAMPIONATO -->
+      @if (isCampionato() && getMiaPosizioneClassifica(); as rank) {
+        <div class="crw-card">
+          <!-- Particelle decorative -->
+          <div class="crw-bg-glow"></div>
+          <span class="crw-particle crw-p1"></span>
+          <span class="crw-particle crw-p2"></span>
+          <span class="crw-particle crw-p3"></span>
+          <span class="crw-particle crw-p4"></span>
+
+          <!-- Colonna sinistra: posizione -->
+          <div class="crw-left">
+            <span class="crw-medal">{{ rank.emoji }}</span>
+            <div class="crw-pos-label">
+              <span class="crw-pos-num">{{ rank.pos }}</span><span class="crw-pos-suffix">°</span>
+            </div>
+            <span class="crw-pos-sub">{{ 'LEAGUE.RANK_WIDGET.OF' | translate }} {{ rank.totale }}</span>
+          </div>
+
+          <!-- Divisore verticale -->
+          <div class="crw-divider"></div>
+
+          <!-- Colonna destra: punti, gap, prossima giornata -->
+          <div class="crw-right">
+            <div class="crw-pts-row">
+              <span class="crw-pts-num">{{ rank.punti }}</span>
+              <span class="crw-pts-label">{{ 'LEAGUE.RANK_WIDGET.POINTS' | translate }}</span>
+            </div>
+            @if (rank.isLeader) {
+              <span class="crw-status crw-status--leader">🔥 {{ 'LEAGUE.RANK_WIDGET.LEADER' | translate }}</span>
+            } @else {
+              <span class="crw-status crw-status--chase">{{ 'LEAGUE.RANK_WIDGET.CHASE' | translate: { gap: rank.distanza, leader: rank.leaderNick } }}</span>
+            }
+            <!-- Ticker prossima giornata -->
+            @if (lega.inizioProssimaGiornata) {
+              <div class="crw-ticker">
+                <mat-icon class="crw-ticker-icon">event</mat-icon>
+                <span class="crw-ticker-text">{{ 'LEAGUE.RANK_WIDGET.NEXT_ROUND' | translate }}: {{ lega.inizioProssimaGiornata | date:'dd/MM HH:mm' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       <!-- RICERCA E FILTRI PER DESKTOP/TABLET -->
       <div class="desktop-filters-section desktop-tablet-only">
         <!-- Ricerca utente -->
@@ -273,6 +317,7 @@
         </div>
 
         <!-- Filtri chips -->
+        @if (!isCampionato()) {
         <div class="filter-chips-desktop">
           <button
             class="filter-chip-desktop"
@@ -287,10 +332,9 @@
             [class.active]="playerFilter === 'active'"
             (click)="setPlayerFilter('active')"
           >
-            <span class="chip-label-desktop">{{ (isCampionato() ? 'LEAGUE.ACTIVE' : 'LEAGUE.IN_GAME') | translate }}</span>
+            <span class="chip-label-desktop">{{ 'LEAGUE.IN_GAME' | translate }}</span>
             <span class="chip-count-desktop">{{ getActivePlayersCount() }}</span>
           </button>
-          @if (!isCampionato()) {
           <button
             class="filter-chip-desktop eliminated-chip"
             [class.active]="playerFilter === 'eliminated'"
@@ -299,8 +343,8 @@
             <span class="chip-label-desktop">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
             <span class="chip-count-desktop">{{ getEliminatedPlayersCount() }}</span>
           </button>
-          }
         </div>
+        }
       </div>
 
       <!-- VISTA DESKTOP/TABLET - Tabella Compatta Tipo Excel -->
@@ -581,7 +625,8 @@
           </div>
 
           <!-- Filtri chips -->
-      <div class="filter-chips">
+          @if (!isCampionato()) {
+          <div class="filter-chips">
             <button
               class="filter-chip"
               [class.active]="playerFilter === 'all'"
@@ -595,10 +640,9 @@
               [class.active]="playerFilter === 'active'"
               (click)="setPlayerFilter('active')"
             >
-              <span class="chip-label">{{ (isCampionato() ? 'LEAGUE.ACTIVE' : 'LEAGUE.IN_GAME') | translate }}</span>
+              <span class="chip-label">{{ 'LEAGUE.IN_GAME' | translate }}</span>
               <span class="chip-count">{{ getActivePlayersCount() }}</span>
             </button>
-            @if (!isCampionato()) {
             <button
               class="filter-chip eliminated-chip"
               [class.active]="playerFilter === 'eliminated'"
@@ -607,8 +651,8 @@
               <span class="chip-label">{{ 'LEAGUE.ELIMINATED' | translate }}</span>
               <span class="chip-count">{{ getEliminatedPlayersCount() }}</span>
             </button>
-            }
           </div>
+          }
         </div>
 
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->

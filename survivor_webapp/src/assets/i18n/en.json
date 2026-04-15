@@ -387,6 +387,13 @@
     "WITH_PASSWORD": "Password protected",
     "CLOSING_IN": "Closing in",
     "NEXT_START": "Next start",
+    "RANK_WIDGET": {
+      "OF": "of",
+      "POINTS": "pts",
+      "LEADER": "You're leading!",
+      "CHASE": "-{{gap}} pts from {{leader}}",
+      "NEXT_ROUND": "Next round"
+    },
     "CALCULATE": "Calculate",
     "SUSPENSIONS": "Suspensions",
     "INVITE": "Invite",

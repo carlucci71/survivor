@@ -475,6 +475,13 @@
     "WITH_PASSWORD": "Con password",
     "CLOSING_IN": "Chiusura scelte tra",
     "NEXT_START": "Prossimo inizio",
+    "RANK_WIDGET": {
+      "OF": "su",
+      "POINTS": "pt",
+      "LEADER": "Sei in testa!",
+      "CHASE": "-{{gap}} pt da {{leader}}",
+      "NEXT_ROUND": "Prossima giornata"
+    },
     "CALCULATE": "Calcola",
     "SUSPENSIONS": "Sospensioni",
     "INVITE": "Invita",

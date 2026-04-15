@@ -498,6 +498,244 @@
 // ============================================
 // BOTTONE GIOCA PRIMARIO - Design Professionale
 // ============================================
+// ============================================
+// WIDGET POSIZIONE CAMPIONATO
+// ============================================
+@keyframes crw-float {
+	0%, 100% { transform: translateY(0) scale(1); opacity: 0.5; }
+	50% { transform: translateY(-10px) scale(1.15); opacity: 0.9; }
+}
+
+@keyframes crw-float2 {
+	0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+	50% { transform: translateY(8px) scale(1.1); opacity: 0.7; }
+}
+
+@keyframes crw-ticker-scroll {
+	0% { transform: translateX(100%); }
+	100% { transform: translateX(-100%); }
+}
+
+.crw-card {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin: 16px 0;
+	background: linear-gradient(135deg, #0A3D91 0%, #0d47a1 55%, #1565c0 100%);
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 8px 28px rgba(10, 61, 145, 0.45), 0 1px 6px rgba(0,0,0,0.14);
+	min-height: 96px;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 18px;
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		pointer-events: none;
+		z-index: 3;
+	}
+}
+
+.crw-bg-glow {
+	position: absolute;
+	top: -40px;
+	right: -40px;
+	width: 160px;
+	height: 160px;
+	background: radial-gradient(circle, rgba(79,195,247,0.28) 0%, transparent 65%);
+	pointer-events: none;
+	z-index: 0;
+}
+
+// Particelle fluttuanti
+.crw-particle {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.crw-p1 {
+	width: 28px; height: 28px;
+	background: rgba(79, 195, 247, 0.18);
+	top: 8px; left: 55%;
+	animation: crw-float 4.2s ease-in-out infinite;
+}
+
+.crw-p2 {
+	width: 16px; height: 16px;
+	background: rgba(255, 255, 255, 0.12);
+	bottom: 10px; right: 18%;
+	animation: crw-float2 3.5s ease-in-out infinite 0.8s;
+}
+
+.crw-p3 {
+	width: 10px; height: 10px;
+	background: rgba(79, 195, 247, 0.22);
+	top: 50%; left: 45%;
+	animation: crw-float 5s ease-in-out infinite 1.4s;
+}
+
+.crw-p4 {
+	width: 20px; height: 20px;
+	background: rgba(255, 214, 0, 0.12);
+	bottom: 14px; left: 38%;
+	animation: crw-float2 4.8s ease-in-out infinite 0.3s;
+}
+
+.crw-left {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	padding: 18px 22px;
+	flex-shrink: 0;
+	position: relative;
+	z-index: 1;
+}
+
+.crw-medal {
+	font-size: 1.6rem;
+	line-height: 1;
+	filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+}
+
+.crw-pos-label {
+	display: flex;
+	align-items: baseline;
+	gap: 1px;
+	line-height: 1;
+}
+
+.crw-pos-num {
+	font-size: 2rem;
+	font-weight: 800;
+	color: #fff;
+	line-height: 1;
+	text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.crw-pos-suffix {
+	font-size: 1rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.65);
+	align-self: flex-start;
+	margin-top: 4px;
+}
+
+.crw-pos-sub {
+	font-size: 0.7rem;
+	color: rgba(255,255,255,0.5);
+	font-weight: 400;
+	letter-spacing: 0.3px;
+}
+
+.crw-divider {
+	width: 1px;
+	height: 60px;
+	background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.25), transparent);
+	flex-shrink: 0;
+}
+
+.crw-right {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4px;
+	padding: 14px 16px 10px 16px;
+	flex: 1;
+	position: relative;
+	z-index: 1;
+	min-width: 0;
+}
+
+.crw-pts-row {
+	display: flex;
+	align-items: baseline;
+	gap: 5px;
+}
+
+.crw-pts-num {
+	font-size: 1.9rem;
+	font-weight: 800;
+	color: #fff;
+	line-height: 1;
+	text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.crw-pts-label {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.6);
+}
+
+.crw-status {
+	font-size: 0.77rem;
+	font-weight: 500;
+	border-radius: 20px;
+	padding: 3px 10px;
+	width: fit-content;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&--leader {
+		background: rgba(255, 215, 0, 0.2);
+		color: #FFE082;
+		border: 1px solid rgba(255, 215, 0, 0.35);
+	}
+
+	&--chase {
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255,255,255,0.75);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+	}
+}
+
+// Ticker prossima giornata
+.crw-ticker {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-top: 4px;
+	padding: 4px 8px;
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	border-top: 1px solid rgba(255,255,255,0.08);
+	overflow: hidden;
+	max-width: 100%;
+}
+
+.crw-ticker-icon {
+	font-size: 13px;
+	width: 13px;
+	height: 13px;
+	color: rgba(255,255,255,0.5);
+	flex-shrink: 0;
+}
+
+.crw-ticker-text {
+	font-size: 0.72rem;
+	color: rgba(255,255,255,0.55);
+	font-weight: 400;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	letter-spacing: 0.2px;
+}
+
+@media (max-width: 480px) {
+	.crw-left { padding: 16px 16px; }
+	.crw-pos-num { font-size: 1.7rem; }
+	.crw-pts-num { font-size: 1.6rem; }
+	.crw-right { padding: 12px 12px 10px 12px; }
+}
+
 .play-action-primary {
 	display: flex;
 	justify-content: center;

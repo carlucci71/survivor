@@ -675,6 +675,23 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.getClassificaCampionato().findIndex(g => g.user?.id === giocatore.user?.id) + 1;
   }
 
+  getMiaPosizioneClassifica(): { pos: number; punti: number; emoji: string; totale: number; distanza: number; leaderNick: string | null; isLeader: boolean } | null {
+    const me = this.getCurrentGiocatore();
+    if (!me) return null;
+    const classifica = this.getClassificaCampionato();
+    const pos = classifica.findIndex(g => g.user?.id === me.user?.id) + 1;
+    if (pos === 0) return null;
+    const punti = me.puntiTotali ?? 0;
+    const emoji = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '🏆';
+    const totale = classifica.length;
+    const leader = classifica[0];
+    const leaderPunti = leader?.puntiTotali ?? 0;
+    const distanza = pos === 1 ? 0 : leaderPunti - punti;
+    const isLeader = pos === 1;
+    const leaderNick = (!isLeader && leader?.nickname) ? leader.nickname : null;
+    return { pos, punti, emoji, totale, distanza, leaderNick, isLeader };
+  }
+
   isCurrentUser(giocatore: Giocatore): boolean {
     return giocatore.user?.id === this.authService.getCurrentUser()?.id;
   }
@@ -2182,10 +2199,10 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   private attivaGrimReaper(): void {
     if (!this.lega?.giocatori) return;
-    const giornata = this.lega.giornataCorrente ?? -1;
+    const giornataRelativa = (this.lega.giornataCorrente ?? this.lega.giornataIniziale) - this.lega.giornataIniziale + 1;
     this.grimReaperVittimeGiornata = this.lega.giocatori
       .filter(g => {
-        const giocata = g.giocate?.find(gi => gi.giornata === giornata);
+        const giocata = g.giocate?.find(gi => gi.giornata === giornataRelativa);
         return giocata?.esito === 'KO';
       })
       .map(g => g.nickname);
