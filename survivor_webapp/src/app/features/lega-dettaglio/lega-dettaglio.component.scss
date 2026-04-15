@@ -6903,19 +6903,33 @@
 }
 
 .grim-reaper-victims {
+  height: 160px;
+  width: 240px;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+.victims-scroll {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  animation: victims-scroll 3s linear 0.4s forwards;
+}
+
+@keyframes victims-scroll {
+  from { transform: translateY(160px); }
+  to   { transform: translateY(-900px); }
 }
 
 .victim-name {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: #ff4444;
   letter-spacing: 1px;
-  opacity: 0;
-  animation: victim-fall 0.5s ease forwards;
+  white-space: nowrap;
   text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
 }
 

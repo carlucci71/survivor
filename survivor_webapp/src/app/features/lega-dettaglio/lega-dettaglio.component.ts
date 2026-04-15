@@ -2340,6 +2340,9 @@ export class LegaDettaglioComponent implements OnDestroy {
         .filter(g => g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value)
         .map(g => g.nickname);
     }
+    // TODO MOCK — rimuovere dopo il test visivo
+    this.grimReaperVittimeGiornata = ['Marco', 'Giulia', 'Luca', 'Sofia', 'Andrea', 'Chiara', 'Matteo', 'Valentina', 'Lorenzo', 'Francesca', 'Alessandro', 'Martina', 'Davide', 'Sara', 'Federico', 'Elena', 'Nicola', 'Alice', 'Stefano', 'Beatrice', 'Simone', 'Laura', 'Riccardo', 'Anna', 'Gabriele', 'Giorgia', 'Tommaso', 'Elisa', 'Pietro', 'Serena'];
+    // FINE MOCK
     const msgs: string[] = this.translate.instant('EASTER_EGG.REAPER_MSGS');
     this.grimReaperMsg = Array.isArray(msgs)
       ? msgs[Math.floor(Math.random() * msgs.length)]

@@ -1129,11 +1129,11 @@
       </div>
       <!-- Nomi vittime -->
       <div class="grim-reaper-victims">
-        @for (vittima of grimReaperVittimeGiornata; track vittima; let i = $index) {
-          <div class="victim-name" [style.animation-delay]="(0.3 + i * 0.15) + 's'">
-            💀 {{ vittima }}
-          </div>
-        }
+        <div class="victims-scroll">
+          @for (vittima of grimReaperVittimeGiornata; track vittima) {
+            <div class="victim-name">💀 {{ vittima }}</div>
+          }
+        </div>
       </div>
       <!-- Testo drammatico -->
       <div class="grim-reaper-title">{{ grimReaperMsg }}</div>
