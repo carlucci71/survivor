@@ -46,7 +46,7 @@
     <div
       class="giocata-card"
       [style.background]="selected.teamBgRaw"
-      [class.no-pick]="!selected.lega.miaGiocataCorrente"
+      [class.no-pick]="!selected.lega.miaGiocataCorrente && selected.esitoClass !== 'loss'"
       [class.anim-win]="selected.animationState === 'win'"
       [class.anim-loss]="selected.animationState === 'loss'"
       [class.loss-desaturate]="showFlash && flashType === 'loss'"
@@ -121,7 +121,7 @@
         <span class="p p8"></span>
       </div>
 
-      @if (selected.displayGiocata && !selected.isLastResult) {
+      @if (selected.displayGiocata && (!selected.isLastResult || selected.esitoClass === 'loss')) {
         <!-- STATO A: pick attiva per la giornata corrente — layout 3 colonne con colori squadra -->
         <div class="card-left">
           <div class="logo-wrapper">
