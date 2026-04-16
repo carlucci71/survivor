@@ -7,9 +7,7 @@
     <div class="recap-sport-row">
       <span class="recap-sport-chip">
         <mat-icon class="recap-sport-icon">{{ lega?.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega?.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
-        {{ (lega?.campionato?.sport?.id ?? '') | translateLeagueData: 'sport' }}
       </span>
-      <span class="recap-dot">·</span>
       <span class="recap-championship">{{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
     </div>
   </div>

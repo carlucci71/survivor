@@ -30,10 +30,10 @@ import { CommonModule } from '@angular/common';
           <rect class="fl" x="630" y="68" width="110" height="124"/>
           <rect class="fl" x="688" y="95" width="52" height="70"/>
           <path class="fl" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
-          <path class="fl" d="M60,20 Q76,20 76,36"/>
-          <path class="fl" d="M740,20 Q724,20 724,36"/>
-          <path class="fl" d="M60,240 Q76,240 76,224"/>
-          <path class="fl" d="M740,240 Q724,240 724,224"/>
+          <path class="fl" d="M74,20 A14,14 0 0,1 60,34"/>
+          <path class="fl" d="M726,20 A14,14 0 0,0 740,34"/>
+          <path class="fl" d="M60,226 A14,14 0 0,1 74,240"/>
+          <path class="fl" d="M740,226 A14,14 0 0,0 726,240"/>
         </svg>
 
         <svg class="field" [class.on]="active===1"
@@ -76,6 +76,9 @@ import { CommonModule } from '@angular/common';
 
       <!-- Top shine line -->
       <div class="shine"></div>
+
+      <!-- Periodic light sweep -->
+      <div class="sweep" aria-hidden="true"></div>
 
       <!-- Text content -->
       <div class="content">
@@ -305,6 +308,38 @@ import { CommonModule } from '@angular/common';
     }
 
     /* =====================================================
+       LIGHT SWEEP
+    ===================================================== */
+
+    .sweep {
+      position: absolute;
+      top: 0; left: 0;
+      width: 60px;
+      height: 100%;
+      z-index: 5;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        transparent       0%,
+        rgba(255,255,255,0.00) 30%,
+        rgba(255,255,255,0.07) 48%,
+        rgba(255,255,255,0.11) 50%,
+        rgba(255,255,255,0.07) 52%,
+        rgba(255,255,255,0.00) 70%,
+        transparent       100%
+      );
+      animation: sweepMove 7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes sweepMove {
+      0%   { transform: translateX(-80px);  opacity: 0; }
+      5%   { opacity: 1; }
+      40%  { transform: translateX(calc(100vw + 80px)); opacity: 1; }
+      41%  { opacity: 0; }
+      100% { transform: translateX(calc(100vw + 80px)); opacity: 0; }
+    }
+
+    /* =====================================================
        EDGE FADES
     ===================================================== */
 
@@ -363,6 +398,32 @@ import { CommonModule } from '@angular/common';
         0 0 14px rgba(79,195,247,1),
         0 0 32px rgba(79,195,247,0.60),
         0 0 54px rgba(79,195,247,0.22);
+      animation: viPulse 3.6s ease-in-out infinite;
+    }
+
+    @keyframes viPulse {
+      0%   {
+        text-shadow:
+          0 0 14px rgba(79,195,247,1),
+          0 0 32px rgba(79,195,247,0.60),
+          0 0 54px rgba(79,195,247,0.22);
+        color: #4fc3f7;
+      }
+      50%  {
+        text-shadow:
+          0 0 18px rgba(129,222,255,1),
+          0 0 48px rgba(79,195,247,0.85),
+          0 0 80px rgba(79,195,247,0.45),
+          0 0 120px rgba(79,195,247,0.18);
+        color: #a8eaff;
+      }
+      100% {
+        text-shadow:
+          0 0 14px rgba(79,195,247,1),
+          0 0 32px rgba(79,195,247,0.60),
+          0 0 54px rgba(79,195,247,0.22);
+        color: #4fc3f7;
+      }
     }
 
 

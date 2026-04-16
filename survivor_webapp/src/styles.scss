@@ -684,6 +684,14 @@ mat-dialog-actions {
     max-width: 100vw !important;
     padding: 0 !important;
     margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mdc-dialog,
+  .mdc-dialog__container {
+    padding: 0 !important;
+    background: transparent !important;
   }
 
   .mat-mdc-dialog-surface,
@@ -693,6 +701,8 @@ mat-dialog-actions {
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
   }
 }
 

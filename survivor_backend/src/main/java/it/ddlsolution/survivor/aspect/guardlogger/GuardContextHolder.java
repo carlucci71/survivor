@@ -48,7 +48,7 @@ public class GuardContextHolder {
     }
 
     /**
-     * Rimuove la mappa dal contesto (opzionale, viene pulito automaticamente)
+     * Rimuove la mappa dal contesto (opzionale, viene pulito automaticamente)   
      */
     public static void clear() {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

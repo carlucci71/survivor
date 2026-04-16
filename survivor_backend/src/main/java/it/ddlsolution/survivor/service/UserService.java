@@ -27,23 +27,25 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User findByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseGet(() -> createNewUser(email));
+        String normalizedEmail = email.toLowerCase();
+        User user = userRepository.findByEmailIgnoreCase(normalizedEmail)
+                .orElseGet(() -> createNewUser(normalizedEmail));
         return user;
     }
 
     @Transactional(readOnly = true)
     public User findByEmailExisting(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailIgnoreCase(email.toLowerCase())
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));
     }
 
 
     @Transactional
     public User createNewUser(String email) {
+        String normalizedEmail = email.toLowerCase();
         User user = new User();
-        user.setEmail(email);
-        user.setName(extractNameFromEmail(email));
+        user.setEmail(normalizedEmail);
+        user.setName(extractNameFromEmail(normalizedEmail));
         user.setEnabled(true);
         return userRepository.save(user);
     }

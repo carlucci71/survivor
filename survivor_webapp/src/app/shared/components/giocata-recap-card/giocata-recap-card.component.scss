@@ -102,6 +102,13 @@
   letter-spacing: 0.3px;
 
   .pill-sport { font-size: 12px; line-height: 1; }
+  .pill-torneo-logo {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
   .pill-name  { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
 
   .pill-dot {
@@ -339,12 +346,23 @@
 }
 
 .sport-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
   color: #4FC3F7;
   opacity: 0.9;
+
+  .sport-badge-logo {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
 }
 
 .giornata-badge {
@@ -465,8 +483,19 @@
 }
 
 .no-pick-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 11px;
   color: rgba(255, 255, 255, 0.45);
+
+  .sport-badge-logo {
+    width: 13px;
+    height: 13px;
+    object-fit: contain;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
 }
 
 .no-pick-cta {

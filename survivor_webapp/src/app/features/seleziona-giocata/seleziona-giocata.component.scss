@@ -496,6 +496,35 @@
 			box-shadow: 0 14px 36px rgba(10, 61, 145, 0.35);
 		}
 	}
+
+	// ── Squadra già usata in una giornata precedente ──────────────────────
+	&.already-used {
+		cursor: not-allowed;
+		opacity: 0.55;
+		filter: grayscale(80%);
+		background: linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.05));
+		border-color: rgba(0, 0, 0, 0.08);
+		box-shadow: none;
+
+		&:hover {
+			transform: none;
+			box-shadow: none;
+			background: linear-gradient(135deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.05));
+			border-color: rgba(0, 0, 0, 0.08);
+
+			.jersey-container {
+				transform: none;
+			}
+		}
+
+		.jersey-info .jersey-name {
+			color: #9CA3AF;
+		}
+
+		.jersey-info .jersey-vs {
+			color: #C0C8D0;
+		}
+	}
 }
 
 /* BADGE CASA - Solo icona, compatto ed elegante */
@@ -693,6 +722,33 @@
 	100% {
 		transform: scale(1);
 		opacity: 1;
+	}
+}
+
+/* BADGE GIÀ USATA */
+.already-used-badge {
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	background: rgba(30, 30, 30, 0.70);
+	color: #fff;
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	padding: 3px 7px 3px 4px;
+	border-radius: 20px;
+	z-index: 6;
+	backdrop-filter: blur(4px);
+	text-transform: uppercase;
+
+	.already-used-icon {
+		font-size: 11px;
+		width: 11px;
+		height: 11px;
+		color: #ff8a80;
 	}
 }
 

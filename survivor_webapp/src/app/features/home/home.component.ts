@@ -63,7 +63,7 @@ import { ProfiloDialogComponent } from '../../shared/components/info-banner/info
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isMobile = false;
-  showOnboarding = !localStorage.getItem('survivor_onboarding_seen');
+  showOnboarding = !localStorage.getItem('survivor_onboarding_v2_seen');
   private resizeHandler: (() => void) | null = null;
   currentUser: User | null = null;
   leghe: Lega[] = [];
@@ -441,6 +441,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getTorneoLogo(campionatoId: string): string | null {
     const map: Record<string, string> = {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',

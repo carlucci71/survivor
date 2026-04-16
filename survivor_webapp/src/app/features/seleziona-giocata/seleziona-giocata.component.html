@@ -44,7 +44,7 @@
       <span class="info-separator">|</span>
       <span class="info-item">
         <mat-icon class="stato-icon">{{ getGiocaIcon() }}</mat-icon>
-        <span class="value">{{ data.statoGiornataCorrente.descrizione }}</span>
+        <span class="value">{{ 'LEAGUE.' + data.statoGiornataCorrente.value | translate }}</span>
       </span>
     </div>
 
@@ -107,8 +107,16 @@
               class="jersey-card"
               [class.selected]="squadraSelezionata === squadra.sigla"
               [class.playing-home]="isPlayingHome(squadra.sigla)"
+              [class.already-used]="squadra.alreadyUsed"
               (click)="selezionaSquadra(squadra.sigla)"
             >
+              <!-- Badge "Già usata" -->
+              @if(squadra.alreadyUsed) {
+                <div class="already-used-badge">
+                  <mat-icon class="already-used-icon">block</mat-icon>
+                  <span>{{ 'PLAY.ALREADY_USED' | translate }}</span>
+                </div>
+              }
               <!-- INDICATORE CASA (in alto) -->
               @if(isPlayingHome(squadra.sigla)) {
                 <div class="home-badge">

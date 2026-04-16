@@ -28,7 +28,11 @@
             role="tab"
             (click)="selectLega(i)"
           >
-            <span class="pill-sport">{{ item.sportEmoji }}</span>
+            @if (item.torneoLogoUrl) {
+              <img class="pill-torneo-logo" [src]="item.torneoLogoUrl" [alt]="item.sportEmoji" (error)="onLogoError($event)" />
+            } @else {
+              <span class="pill-sport">{{ item.sportEmoji }}</span>
+            }
             <span class="pill-name">{{ item.lega.name }}</span>
             @if (!item.lega.miaGiocataCorrente) {
               <span class="pill-dot"></span>
@@ -42,7 +46,7 @@
     <div
       class="giocata-card"
       [style.background]="selected.teamBgRaw"
-      [class.no-pick]="!selected.lega.miaGiocataCorrente"
+      [class.no-pick]="!selected.lega.miaGiocataCorrente && selected.esitoClass !== 'loss'"
       [class.anim-win]="selected.animationState === 'win'"
       [class.anim-loss]="selected.animationState === 'loss'"
       [class.loss-desaturate]="showFlash && flashType === 'loss'"
@@ -117,7 +121,7 @@
         <span class="p p8"></span>
       </div>
 
-      @if (selected.displayGiocata && !selected.isLastResult) {
+      @if (selected.displayGiocata && (!selected.isLastResult || selected.esitoClass === 'loss')) {
         <!-- STATO A: pick attiva per la giornata corrente — layout 3 colonne con colori squadra -->
         <div class="card-left">
           <div class="logo-wrapper">
@@ -136,11 +140,17 @@
 
         <div class="card-center">
           <div class="meta-row">
-            <span class="sport-badge">{{ selected.sportEmoji }} {{ (selected.lega.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
-            <span class="giornata-badge">GIR. {{ selected.displayGiornata }}</span>
+            <span class="sport-badge">
+              @if (selected.torneoLogoUrl) {
+                <img class="sport-badge-logo" [src]="selected.torneoLogoUrl" [alt]="selected.sportEmoji" (error)="onLogoError($event)" />
+              } @else {
+                {{ selected.sportEmoji }}
+              }
+              {{ (selected.lega.campionato?.id ?? '') | translateLeagueData: 'championship' }}
+            </span>
           </div>
           <div class="team-name">{{ selected.displayGiocata.squadraNome || selected.displayGiocata.squadraSigla }}</div>
-          <div class="lega-label">{{ selected.lega.name }} · Ed. {{ selected.lega.edizione }}</div>
+          <div class="lega-label">Ed. {{ selected.lega.edizione }} · Gir. {{ selected.displayGiornata }}</div>
         </div>
 
         <div class="card-right">
@@ -161,7 +171,14 @@
               } @else {
                 <span class="no-pick-title">{{ 'LEAGUE.WAITING_NEXT_ROUND' | translate }}</span>
               }
-              <span class="no-pick-sub">{{ selected.sportEmoji }} {{ selected.lega.name }}</span>
+              <span class="no-pick-sub">
+                @if (selected.torneoLogoUrl) {
+                  <img class="sport-badge-logo" [src]="selected.torneoLogoUrl" [alt]="selected.sportEmoji" (error)="onLogoError($event)" />
+                } @else {
+                  {{ selected.sportEmoji }}
+                }
+                {{ selected.lega.name }}
+              </span>
             </div>
             @if (selected.lega.giornataDaGiocare > 0) {
               <div class="no-pick-cta">
