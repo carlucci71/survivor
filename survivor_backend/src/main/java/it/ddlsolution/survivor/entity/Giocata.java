@@ -50,5 +50,7 @@ public class Giocata {
     @Column(name = "pubblica")
     private Boolean pubblica; // Se true, la giocata è visibile a tutti; se false/null, è nascosta fino all'inizio della giornata
 
+    @Column(name = "punti")
+    private Integer punti; // Punti ottenuti in modalità Campionato (3 vittoria, 1 pareggio, 0 sconfitta)
 
 }

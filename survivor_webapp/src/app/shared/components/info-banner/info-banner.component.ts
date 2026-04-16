@@ -45,7 +45,24 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <p>{{ 'RULES.SECTION_2_TEXT' | translate }}</p>
         </div>
 
-        <!-- 3. Eliminazione -->
+        <!-- 3. Modalità di gioco -->
+        <div class="regola">
+          <h3>{{ 'RULES.SECTION_MODE_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_MODE_P1' | translate }}</p>
+          <h4>{{ 'RULES.SECTION_MODE_SURVIVOR_TITLE' | translate }}</h4>
+          <p>{{ 'RULES.SECTION_MODE_SURVIVOR_TEXT' | translate }}</p>
+          <h4>{{ 'RULES.SECTION_MODE_CAMPIONATO_TITLE' | translate }}</h4>
+          <p>{{ 'RULES.SECTION_MODE_CAMPIONATO_TEXT' | translate }}</p>
+        </div>
+
+        <!-- 4. Sistema delle vite -->
+        <div class="regola">
+          <h3>{{ 'RULES.SECTION_LIVES_TITLE' | translate }}</h3>
+          <p>{{ 'RULES.SECTION_LIVES_P1' | translate }}</p>
+          <p>{{ 'RULES.SECTION_LIVES_P2' | translate }}</p>
+        </div>
+
+        <!-- 5. Eliminazione -->
         <div class="regola">
           <h3>{{ 'RULES.SECTION_3_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_3_TEXT' | translate }}</p>

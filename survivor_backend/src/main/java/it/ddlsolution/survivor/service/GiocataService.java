@@ -92,6 +92,7 @@ public class GiocataService {
         giocata.setLega(lega);
         giocata.setSquadra(squadra);
         giocata.setEsito(request.getEsitoGiocata());
+        giocata.setPunti(request.getPunti());
         giocata.setPubblica(request.getPubblica() != null ? request.getPubblica() : false); // Default false (nascosta)
 
         // Gestione forzatura: popola il campo se il guard ha restituito warning

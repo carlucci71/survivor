@@ -20,6 +20,11 @@ public class GiocatoreDTO {
     private List<GiocataDTO> giocate;
     private UserDTO user;
     private List<LegaDTO> leghe = new ArrayList<>();
+    /** Punti totali accumulati in modalità Campionato per la lega corrente */
+    private Integer puntiTotali;
+
+    /** Vite rimaste nella lega corrente (per modalità SURVIVOR con vite > 1) */
+    private Map<Long, Short> vitePerLega = new HashMap<>();
 
 }
 

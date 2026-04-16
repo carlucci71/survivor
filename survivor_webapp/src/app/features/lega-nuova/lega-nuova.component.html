@@ -144,10 +144,15 @@
             }
           </div>
 
-          <!-- Stepper: giornata FINE (opzionale) -->
-          <div class="cn-stepper">
+          <!-- Stepper: giornata FINE (opzionale/obbligatoria) -->
+          <div class="cn-stepper" [class.cn-stepper--required]="modalita === 'CAMPIONATO' && giornataFinaleTouched && !isGiornataFinaleValid()">
             <span class="cn-stepper-label">
-              {{ 'CREATE_LEAGUE.FINAL_ROUND_OPTIONAL' | translate }}
+              @if (modalita === 'CAMPIONATO') {
+                {{ 'CREATE_LEAGUE.FINAL_ROUND_REQUIRED' | translate }}
+                <span class="cn-required-star">*</span>
+              } @else {
+                {{ 'CREATE_LEAGUE.FINAL_ROUND_OPTIONAL' | translate }}
+              }
             </span>
             <div class="cn-stepper-control">
               <button type="button" class="cn-step-btn"
@@ -162,15 +167,22 @@
                 } @else {
                   <span class="cn-step-num cn-step-num--auto">{{ campionatoSel.numGiornate }}</span>
                   <span class="cn-step-lbl">{{ getDesGiornataLabel(campionatoSel, campionatoSel.numGiornate ?? null) }}</span>
-                  <span class="cn-step-auto-badge">auto</span>
+                  @if (modalita !== 'CAMPIONATO') {
+                    <span class="cn-step-auto-badge">auto</span>
+                  } @else {
+                    <span class="cn-step-auto-badge cn-step-auto-badge--warn">!</span>
+                  }
                 }
               </div>
               <button type="button" class="cn-step-btn"
                 (click)="incGiornataFinale()"
-                [disabled]="giornataFinale === null">
+                [disabled]="giornataFinale === null && modalita !== 'CAMPIONATO'">
                 <mat-icon>add</mat-icon>
               </button>
             </div>
+            @if (modalita === 'CAMPIONATO' && giornataFinaleTouched && !isGiornataFinaleValid()) {
+              <span class="cn-stepper-error">{{ 'CREATE_LEAGUE.GIORNATA_FINALE_REQUIRED' | translate }}</span>
+            }
           </div>
 
         </div>
@@ -221,6 +233,64 @@
             <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.VISIBILITY_PUBLIC_DESC' | translate }}</span>
           </button>
         </div>
+      </div>
+
+      <!-- ── SEZIONE 6: MODALITÀ DI GIOCO ── -->
+      <div class="cn-section">
+        <div class="cn-section-head">
+          <div class="cn-section-icon">
+            <mat-icon>{{ modalita === 'CAMPIONATO' ? 'emoji_events' : 'close' }}</mat-icon>
+          </div>
+          <div class="cn-section-info">
+            <h3 class="cn-section-title">{{ 'CREATE_LEAGUE.SECTION_MODE' | translate }}</h3>
+            <p class="cn-section-desc">{{ 'CREATE_LEAGUE.SECTION_MODE_DESC' | translate }}</p>
+          </div>
+        </div>
+        <div class="cn-visibility-grid">
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="modalita === 'SURVIVOR'" (click)="setModalita('SURVIVOR')">
+            <mat-icon class="cn-vis-ico">close</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.MODE_SURVIVOR_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.MODE_SURVIVOR_DESC' | translate }}</span>
+          </button>
+          <button type="button" class="cn-vis-btn" [class.cn-vis-btn--active]="modalita === 'CAMPIONATO'" (click)="setModalita('CAMPIONATO')">
+            <mat-icon class="cn-vis-ico">emoji_events</mat-icon>
+            <span class="cn-vis-label">{{ 'CREATE_LEAGUE.MODE_CAMPIONATO_LABEL' | translate }}</span>
+            <span class="cn-vis-desc">{{ 'CREATE_LEAGUE.MODE_CAMPIONATO_DESC' | translate }}</span>
+          </button>
+        </div>
+        @if (modalita === 'CAMPIONATO' && giornataFinaleTouched && !isGiornataFinaleValid()) {
+          <p class="cn-validation-error">{{ 'CREATE_LEAGUE.GIORNATA_FINALE_REQUIRED' | translate }}</p>
+        }
+        @if (modalita === 'SURVIVOR') {
+          <div class="cn-round-row cn-vite-row">
+            <div class="cn-stepper">
+              <span class="cn-stepper-label">
+                <mat-icon class="cn-vite-label-ico">favorite</mat-icon>
+                {{ 'CREATE_LEAGUE.LIVES_LABEL' | translate }}
+              </span>
+              <div class="cn-stepper-control">
+                <button type="button" class="cn-step-btn" (click)="decViteIniziali()" [disabled]="viteIniziali <= 0">
+                  <mat-icon>remove</mat-icon>
+                </button>
+                <div class="cn-step-val">
+                  <span class="cn-step-num cn-step-num--vite" [class.cn-step-num--vite-max]="isViteMax">{{ viteIniziali }}</span>
+                  <span class="cn-step-lbl">{{ (viteIniziali === 1 ? 'CREATE_LEAGUE.VITA' : 'CREATE_LEAGUE.VITE') | translate }}</span>
+                </div>
+                <button type="button" class="cn-step-btn" (click)="incViteIniziali()" [disabled]="isViteMax">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              @if (viteWarn) {
+                <div class="cn-vite-warn" [class.cn-vite-warn--max]="isViteMax">
+                  <span class="cn-vw-emoji">{{ viteWarn.emoji }}</span>
+                  <div class="cn-vw-text">
+                    <p class="cn-vw-msg">{{ viteWarn.text }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
       </div>
 
       <!-- ── SEZIONE 5b: ACCESSO (solo se pubblica) ── -->

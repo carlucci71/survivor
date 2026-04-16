@@ -155,32 +155,61 @@
         </div>
         }
 
-        @if (!this.isTerminata()){
-        <!-- COUNTDOWN TIMER - Centrato con spazio sopra -->
-        <div class="countdown-timer-section">
-          @if(countdownActive && shouldShowExpiredCountdown()) {
-          <div class="countdown-wrapper" [class.expired]="countdownExpired">
-            <mat-icon class="countdown-icon">schedule</mat-icon>
-            <div class="countdown-content">
-              <span class="countdown-time">{{ countdown }}</span>
-            </div>
+        <!-- CLASSIFICA CAMPIONATO -->
+        @if (isCampionato()) {
+        <div class="classifica-campionato">
+          <div class="classifica-header classifica-header--toggle" (click)="toggleClassifica()">
+            <mat-icon class="classifica-header-icon">emoji_events</mat-icon>
+            <span>{{ 'LEAGUE.CLASSIFICA' | translate }}</span>
+            <mat-icon class="classifica-header-chevron" [class.classifica-header-chevron--open]="classificaAperta">expand_more</mat-icon>
           </div>
-          } @else if(countdownActive && !countdownExpired) {
-          <div class="countdown-wrapper">
-            <mat-icon class="countdown-icon">schedule</mat-icon>
-            <div class="countdown-content">
-              <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
-              <span class="countdown-time">{{ countdown }}</span>
-            </div>
-          </div>
-          } @else if(lega.inizioProssimaGiornata && isProssimaGiornataFutura()) {
-          <div class="prossimo-inizio">
-            <mat-icon class="prossimo-inizio-icon">event</mat-icon>
-            {{ 'LEAGUE.NEXT_START' | translate }}: {{ lega.inizioProssimaGiornata | date:'dd/MM/yyyy HH:mm' }}
+          @if (classificaAperta) {
+          @for (giocatore of getClassificaCampionato(); track giocatore.user?.id; let pos = $index) {
+          <div class="classifica-row" [class.classifica-row--me]="isCurrentUser(giocatore)">
+            <span class="classifica-pos" [class.classifica-pos--gold]="pos === 0" [class.classifica-pos--silver]="pos === 1" [class.classifica-pos--bronze]="pos === 2">
+              @if (pos === 0) { 🥇 } @else if (pos === 1) { 🥈 } @else if (pos === 2) { 🥉 } @else { {{ pos + 1 }} }
+            </span>
+            <span class="classifica-avatar">{{ (giocatore.nickname || '?')[0].toUpperCase() }}</span>
+            <span class="classifica-nome">{{ giocatore.nickname }}</span>
+            <span class="classifica-punti">{{ giocatore.puntiTotali ?? 0 }} pt</span>
           </div>
           }
+          }
         </div>
-      }
+        }
+
+        @if (!this.isTerminata()){
+        <!-- COUNTDOWN TIMER + bottone studio -->
+        <div class="countdown-studio-row">
+          <div class="countdown-timer-section">
+            @if(countdownActive && shouldShowExpiredCountdown()) {
+            <div class="countdown-wrapper" [class.expired]="countdownExpired">
+              <mat-icon class="countdown-icon">schedule</mat-icon>
+              <div class="countdown-content">
+                <span class="countdown-time">{{ countdown }}</span>
+              </div>
+            </div>
+            } @else if(countdownActive && !countdownExpired) {
+            <div class="countdown-wrapper">
+              <mat-icon class="countdown-icon">schedule</mat-icon>
+              <div class="countdown-content">
+                <span class="countdown-label">{{ 'LEAGUE.CLOSING_IN' | translate }}</span>
+                <span class="countdown-time">{{ countdown }}</span>
+              </div>
+            </div>
+            } @else if(lega.inizioProssimaGiornata && isProssimaGiornataFutura()) {
+            <div class="prossimo-inizio">
+              <mat-icon class="prossimo-inizio-icon">event</mat-icon>
+              {{ 'LEAGUE.NEXT_START' | translate }}: {{ lega.inizioProssimaGiornata | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+            }
+          </div>
+          @if (lega.campionato?.id) {
+            <button class="studio-fab-btn" (click)="apriStudio()"
+                    [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
+          }
+        </div>
+        }
     <mat-card-content>
 
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
@@ -210,7 +239,7 @@
           <mat-icon class="calcola-icon">lock_open</mat-icon>
           <span class="action-label">{{ 'LEAGUE.REOPEN' | translate }}</span>
         </div>
-        @if (contaAttivi()==0) {
+        @if (contaAttivi()==0 && !isCampionato()) {
         <div class="admin-action-item small" (click)="secondaOccasione()">
           <mat-icon class="calcola-icon">replay</mat-icon>
           <span class="action-label">{{ 'LEAGUE.SECOND_CHANCE' | translate }}</span>
@@ -226,9 +255,80 @@
       @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore()) && !countdownExpired) {
         <div class="play-action-primary">
           <button class="btn-play-primary" (click)="giocaGiornataDisponibile(getCurrentGiocatore())">
-            <mat-icon class="play-icon-primary">{{ getGiocaIcon() }}</mat-icon>
+            <span class="play-sport-emoji">{{ getGiocaEmoji() }}</span>
             <span class="play-label-primary">{{ 'LEAGUE.PLAY_NOW' | translate }}</span>
           </button>
+        </div>
+      }
+
+      <!-- WIDGET POSIZIONE CAMPIONATO -->
+      @if (isCampionato() && getMiaPosizioneClassifica(); as rank) {
+        <div class="crw-card">
+          <!-- Particelle decorative -->
+          <div class="crw-bg-glow"></div>
+          <span class="crw-particle crw-p1"></span>
+          <span class="crw-particle crw-p2"></span>
+          <span class="crw-particle crw-p3"></span>
+          <span class="crw-particle crw-p4"></span>
+          <span class="crw-particle crw-p5"></span>
+          <span class="crw-particle crw-p6"></span>
+          <span class="crw-particle crw-p7"></span>
+          <span class="crw-particle crw-p8"></span>
+          <span class="crw-particle crw-p9"></span>
+          <span class="crw-particle crw-p10"></span>
+
+          <!-- Colonna sinistra: posizione -->
+          <div class="crw-left">
+            <span class="crw-medal">{{ rank.emoji }}</span>
+            <div class="crw-pos-label">
+              <span class="crw-pos-num">{{ rank.pos }}</span><span class="crw-pos-suffix">°</span>
+            </div>
+            <span class="crw-pos-sub">{{ 'LEAGUE.RANK_WIDGET.OF' | translate }} {{ rank.totale }}</span>
+          </div>
+
+          <!-- Divisore verticale -->
+          <div class="crw-divider"></div>
+
+          <!-- Colonna destra: punti, gap, prossima giornata -->
+          <div class="crw-right">
+            <div class="crw-pts-row">
+              <span class="crw-pts-num">{{ rank.punti }}</span>
+              <span class="crw-pts-label">{{ 'LEAGUE.RANK_WIDGET.POINTS' | translate }}</span>
+            </div>
+            @if (rank.isLeader) {
+              <span class="crw-status crw-status--leader">🔥 {{ 'LEAGUE.RANK_WIDGET.LEADER' | translate }}</span>
+            } @else {
+              <span class="crw-status crw-status--chase">{{ 'LEAGUE.RANK_WIDGET.CHASE' | translate: { gap: rank.distanza, leader: rank.leaderNick } }}</span>
+            }
+            <!-- Ticker classifica giocatori lega -->
+            @if (lega.giocatori && lega.giocatori.length > 0) {
+              <div class="crw-scoreboard">
+                <div class="crw-scoreboard-track">
+                  @for (g of getClassificaCampionato(); track g.id; let i = $index) {
+                    <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
+                      <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
+                      <span class="crw-player-name">{{ g.nickname }}</span>
+                      <span class="crw-player-pts">{{ isGiocatoreEliminato(g) ? '☠️' : (g.puntiTotali ?? 0) + 'pt' }}</span>
+                    </span>
+                    <span class="crw-match-sep">·</span>
+                  }
+                  @for (g of getClassificaCampionato(); track 'dup-' + g.id; let i = $index) {
+                    <span class="crw-player-item" [class.crw-player-out]="isGiocatoreEliminato(g)">
+                      <span class="crw-player-pos">{{ i===0 ? '🥇' : i===1 ? '🥈' : i===2 ? '🥉' : (i+1)+'°' }}</span>
+                      <span class="crw-player-name">{{ g.nickname }}</span>
+                      <span class="crw-player-pts">{{ isGiocatoreEliminato(g) ? '☠️' : (g.puntiTotali ?? 0) + 'pt' }}</span>
+                    </span>
+                    <span class="crw-match-sep">·</span>
+                  }
+                </div>
+              </div>
+            } @else if (lega.inizioProssimaGiornata) {
+              <div class="crw-ticker">
+                <mat-icon class="crw-ticker-icon">event</mat-icon>
+                <span class="crw-ticker-text">{{ 'LEAGUE.RANK_WIDGET.NEXT_ROUND' | translate }}: {{ lega.inizioProssimaGiornata | date:'dd/MM HH:mm' }}</span>
+              </div>
+            }
+          </div>
         </div>
       }
 
@@ -250,6 +350,7 @@
         </div>
 
         <!-- Filtri chips -->
+        @if (!isCampionato()) {
         <div class="filter-chips-desktop">
           <button
             class="filter-chip-desktop"
@@ -264,7 +365,7 @@
             [class.active]="playerFilter === 'active'"
             (click)="setPlayerFilter('active')"
           >
-            <span class="chip-label-desktop">{{ 'LEAGUE.ACTIVE' | translate }}</span>
+            <span class="chip-label-desktop">{{ 'LEAGUE.IN_GAME' | translate }}</span>
             <span class="chip-count-desktop">{{ getActivePlayersCount() }}</span>
           </button>
           <button
@@ -276,6 +377,7 @@
             <span class="chip-count-desktop">{{ getEliminatedPlayersCount() }}</span>
           </button>
         </div>
+        }
       </div>
 
       <!-- VISTA DESKTOP/TABLET - Tabella Compatta Tipo Excel -->
@@ -312,7 +414,9 @@
             <thead>
               <tr class="excel-header-row">
                 <th class="excel-header-cell user-col">{{ 'LEAGUE.TABLE_USER' | translate }}</th>
-                <th class="excel-header-cell status-col">{{ 'LEAGUE.TABLE_STATUS' | translate }}</th>
+                @if (!isCampionato()) {
+                  <th class="excel-header-cell status-col status-col--survivor">{{ 'LEAGUE.IN_GAME' | translate }}</th>
+                }
                 @for (giornata of giornataIndices; track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
@@ -348,6 +452,9 @@
                         @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                           <span class="vincitore-crown">👑</span>
                         }
+                        @if (isCampionato() && giocatore.puntiTotali !== undefined) {
+                          <span class="punti-totali-badge">{{ giocatore.puntiTotali }} pt</span>
+                        }
                       </div>
                       <!-- Gruppo icone a destra del nome -->
                       <div class="user-icons-group">
@@ -370,13 +477,20 @@
                     </div>
                   </td>
 
-                  <!-- STATO -->
+                  <!-- STATO - Solo survivor -->
+                  @if (!isCampionato()) {
                   <td class="excel-cell status-cell">
                     <span class="status-indicator"
                           [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                           [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
                     </span>
+                    @if (lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                      <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
+                        ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
+                      </span>
+                    }
                   </td>
+                  }
 
                   <!-- GIORNATE (Limitate o Complete) -->
                   @for (giornata of getVisibleGiornateForPlayer(giocatore); track giornata) {
@@ -384,6 +498,7 @@
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
                         [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
+                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
                         [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
@@ -394,12 +509,23 @@
                           (touchend)="cancelLongPress()"
                           (touchmove)="cancelLongPress()"
                           (contextmenu)="$event.preventDefault()">
-                          <!-- Mostra il nome COMPLETO della squadra o badge "Voto Privato" se nascosta -->
-                          <span
-                            [class]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'private-vote-badge' : 'team-name-compact'"
-                            [title]="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? 'Scelta visibile a tutti quando scade il timer' : getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                            {{ getDisplaySquadraNome(giocatore, giornata) }}
-                          </span>
+                          <!-- Mostra logo+nome o badge "Voto Privato" se nascosta -->
+                          @if (shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
+                            <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">
+                              {{ getDisplaySquadraNome(giocatore, giornata) }}
+                            </span>
+                          } @else {
+                            <div class="team-pick-cell"
+                              [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
+                              @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
+                                <img class="team-pick-logo"
+                                     [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                                     [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                                     (error)="$any($event.target).style.display='none'">
+                              }
+                              <span class="team-pick-name">{{ getDisplaySquadraNome(giocatore, giornata) }}</span>
+                            </div>
+                          }
                           <!-- Indicatori -->
                           <div class="badges-container">
                             <!-- Indicatore forzatura giocata (da admin) -->
@@ -451,6 +577,13 @@
                                     (click)="giocaGiornataDisponibile(giocatore)"
                                     [matTooltip]="'LEAGUE.PLAY_FOR_USER' | translate">
                             edit
+                          </mat-icon>
+                        }
+                        @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                          <mat-icon class="action-icon vite-icon"
+                                    (click)="openGestisciViteDialog(giocatore)"
+                                    [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
+                            favorite
                           </mat-icon>
                         }
                         @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
@@ -525,7 +658,8 @@
           </div>
 
           <!-- Filtri chips -->
-      <div class="filter-chips">
+          @if (!isCampionato()) {
+          <div class="filter-chips">
             <button
               class="filter-chip"
               [class.active]="playerFilter === 'all'"
@@ -539,7 +673,7 @@
               [class.active]="playerFilter === 'active'"
               (click)="setPlayerFilter('active')"
             >
-              <span class="chip-label">{{ 'LEAGUE.ACTIVE' | translate }}</span>
+              <span class="chip-label">{{ 'LEAGUE.IN_GAME' | translate }}</span>
               <span class="chip-count">{{ getActivePlayersCount() }}</span>
             </button>
             <button
@@ -551,6 +685,7 @@
               <span class="chip-count">{{ getEliminatedPlayersCount() }}</span>
             </button>
           </div>
+          }
         </div>
 
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
@@ -614,6 +749,14 @@
               @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                 <span class="vincitore-crown-mobile">👑</span>
               }
+              @if (isCampionato() && giocatore.puntiTotali !== undefined) {
+                <span class="punti-totali-badge">{{ giocatore.puntiTotali }} pt</span>
+              }
+              @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
+                  ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
+                </span>
+              }
 
               <!-- Icona storico completo se ci sono più di 5 giocate -->
               @if(hasMoreRounds(giocatore)) {
@@ -643,6 +786,13 @@
                   edit
                 </mat-icon>
               }
+              @if (lega.modalita !== 'CAMPIONATO' && (isAdmin() || isLeaderLega()) && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                <mat-icon class="edit-user-icon-mobile vite-icon-mobile"
+                          (click)="$event.stopPropagation(); openGestisciViteDialog(giocatore)"
+                          [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
+                  favorite
+                </mat-icon>
+              }
 
               <!-- Freccia espandi/comprimi -->
               <mat-icon class="expand-icon-mobile">
@@ -668,19 +818,20 @@
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
+                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
                        (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
                     } @else {
-                      @if(getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
-                        <img
-                          class="team-logo-cell"
-                          [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
-                          [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''"
-                          (error)="onLogoError($event)"
-                        />
-                      }
-                      <span class="team-name-cell">{{ getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                      <div class="team-pick-cell team-pick-cell--mobile" [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''">
+                        @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
+                          <img class="team-pick-logo"
+                               [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                               [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
+                               (error)="$any($event.target).style.display='none'">
+                        }
+                        <span class="team-name-cell">{{ getSquadraNomeSenzaCitta(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                      </div>
                     }
                     <!-- Badge forzatura -->
                     <div class="badges-container-mobile">
@@ -738,23 +889,29 @@
 
 
       <!-- SEZIONE ELIMINATO - Mostra quando l'utente corrente è stato eliminato -->
-      <!-- Posizionato dopo la tabella così appare sotto alla giocata dell'utente -->
       @if (isCurrentUserEliminato()) {
       <div class="eliminato-banner">
-        <div class="eliminato-emoji">💀</div>
-        <div class="eliminato-content">
+        <div class="eliminato-bg-glow"></div>
+
+        <div class="eliminato-top">
+          <span class="eliminato-skull">💀</span>
           <div class="eliminato-title">{{ 'LEAGUE.YOU_ELIMINATED' | translate }}</div>
-          @if (getSquadraEliminazione()) {
-          <div class="eliminato-squadra">
-            <span class="eliminato-label">{{ 'LEAGUE.YOU_BETRAYED' | translate }}</span>
+        </div>
+
+        @if (getSquadraEliminazione()) {
+        <div class="eliminato-betrayal">
+          <span class="eliminato-label">{{ 'LEAGUE.YOU_BETRAYED' | translate }}</span>
+          <div class="eliminato-betrayal-row">
             <span class="eliminato-team">{{ getSquadraEliminazione()?.nome }}</span>
+            <span class="eliminato-sep">·</span>
             <span class="eliminato-giornata">{{ getDesGiornataTitle(getSquadraEliminazione()?.giornata || 0) }}</span>
           </div>
-          }
-          <div class="eliminato-message">
-            {{ getRandomConsolationMessage() }}
-          </div>
         </div>
+        }
+
+        <div class="eliminato-divider"></div>
+
+        <div class="eliminato-message">{{ getRandomConsolationMessage() }}</div>
       </div>
       }
 
@@ -882,7 +1039,13 @@
 
 <!-- 💀 EASTER EGG — Grim Reaper -->
 @if (grimReaperVisible) {
-  <div class="grim-reaper-overlay" (click)="grimReaperVisible = false">
+  <div class="grim-reaper-overlay" (click)="grimReaperVisible = false; grimReaperObsessed = false">
+    @if (grimReaperObsessed) {
+      <div class="grim-reaper-obsessed">
+        <span class="gro-emoji">😑</span>
+        <p class="gro-msg">{{ grimReaperMsg }}</p>
+      </div>
+    } @else {
     <div class="grim-reaper-scene">
       <!-- Boia SVG v2 — più cattivo, falce vera, occhi rossi -->
       <div class="grim-reaper-figure">
@@ -966,15 +1129,16 @@
       </div>
       <!-- Nomi vittime -->
       <div class="grim-reaper-victims">
-        @for (vittima of grimReaperVittimeGiornata; track vittima; let i = $index) {
-          <div class="victim-name" [style.animation-delay]="(0.3 + i * 0.15) + 's'">
-            💀 {{ vittima }}
-          </div>
-        }
+        <div class="victims-scroll">
+          @for (vittima of grimReaperVittimeGiornata; track vittima) {
+            <div class="victim-name">💀 {{ vittima }}</div>
+          }
+        </div>
       </div>
       <!-- Testo drammatico -->
       <div class="grim-reaper-title">{{ grimReaperMsg }}</div>
     </div>
+    }
   </div>
 }
 </div>

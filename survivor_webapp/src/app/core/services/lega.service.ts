@@ -39,7 +39,9 @@ export class LegaService {
     pwd: string | null,
     pubblica: boolean = false,
     accessoLibero: boolean = false,
-    maxPartecipanti: number | null = null
+    maxPartecipanti: number | null = null,
+    modalita: string = 'SURVIVOR',
+    viteIniziali: number = 1
   ): Observable<Lega> {
     const body: any = {
       name: name,
@@ -48,7 +50,9 @@ export class LegaService {
       giornataIniziale: giornataIniziale,
       pwd: pwd,
       pubblica: pubblica,
-      accessoLibero: accessoLibero
+      accessoLibero: accessoLibero,
+      modalita: modalita,
+      viteIniziali: viteIniziali
     };
     if (giornataFinale !== null) {
       body['giornataFinale'] = giornataFinale;
@@ -57,6 +61,14 @@ export class LegaService {
       body['maxPartecipanti'] = maxPartecipanti;
     }
     return this.http.post<Lega>(`${this.apiUrl}`, body);
+  }
+
+  aggiornVite(idLega: number, idGiocatore: number, vite: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/${idLega}/vite`, { idGiocatore, vite }).pipe(map(mapLegaFromBE));
+  }
+
+  storicoVite(idLega: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${idLega}/vite/storico`);
   }
 
   join(id: number, pwd: string | null, tokenOriginal: string): Observable<Lega> {

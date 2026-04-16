@@ -20,4 +20,5 @@ public interface LegaProjection {
     boolean isPubblica();
     boolean isAccessoLibero();
     Integer getMaxPartecipanti();
+    Enumeratori.ModalitaLega getModalita();
 }

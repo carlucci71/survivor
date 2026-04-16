@@ -8,7 +8,11 @@ public class Enumeratori {
     }
 
     public enum EsitoGiocata {
-        OK, KO
+        OK, KO, PAREGGIO
+    }
+
+    public enum ModalitaLega {
+        SURVIVOR, CAMPIONATO
     }
 
     public enum TipoMagicToken {
@@ -159,8 +163,8 @@ public class Enumeratori {
         GIRONI_1("Girone - Giornata 1"),
         GIRONI_2("Girone - Giornata 2"),
         GIRONI_3("Girone - Giornata 3"),
-        OTTAVI("Ottavi di finale"),
         SEDICESIMI("Sedicesimi di finale"),
+        OTTAVI("Ottavi di finale"),
         QUARTI("Quarti di finale"),
         SEMIFINALI("Semifinali"),
         FINALE("Finale");

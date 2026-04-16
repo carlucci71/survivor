@@ -33,6 +33,45 @@ export class SquadraService {
     return squadraSigla;
   }
 
+  formatNomeSquadra(nome: string): string {
+    if (!nome) return '';
+    let formatted = nome.replace(/_/g, ' ');
+    const abbreviazioni: { [key: string]: string } = {
+      'PORTLAND TRAIL BLAZERS': 'TRAIL BLAZERS',
+      'GOLDEN STATE WARRIORS': 'WARRIORS',
+      'OKLAHOMA CITY THUNDER': 'THUNDER',
+      'NEW ORLEANS PELICANS': 'PELICANS',
+      'MINNESOTA TIMBERWOLVES': 'TIMBERWOLVES',
+      'SACRAMENTO KINGS': 'KINGS',
+      'SAN ANTONIO SPURS': 'SPURS',
+      'LOS ANGELES LAKERS': 'LAKERS',
+      'LOS ANGELES CLIPPERS': 'CLIPPERS',
+      'MEMPHIS GRIZZLIES': 'GRIZZLIES',
+      'DALLAS MAVERICKS': 'MAVERICKS',
+      'ORLANDO MAGIC': 'MAGIC',
+      'PHILADELPHIA 76ERS': '76ERS',
+      'CHARLOTTE HORNETS': 'HORNETS',
+      'CLEVELAND CAVALIERS': 'CAVALIERS',
+      'MILWAUKEE BUCKS': 'BUCKS',
+      'WASHINGTON WIZARDS': 'WIZARDS',
+      'TORONTO RAPTORS': 'RAPTORS',
+      'BROOKLYN NETS': 'NETS',
+      'NEW YORK KNICKS': 'KNICKS',
+      'BOSTON CELTICS': 'CELTICS',
+      'DETROIT PISTONS': 'PISTONS',
+      'INDIANA PACERS': 'PACERS',
+      'CHICAGO BULLS': 'BULLS',
+      'ATLANTA HAWKS': 'HAWKS',
+      'MIAMI HEAT': 'HEAT',
+      'DENVER NUGGETS': 'NUGGETS',
+      'UTAH JAZZ': 'JAZZ',
+      'PHOENIX SUNS': 'SUNS',
+      'HOUSTON ROCKETS': 'ROCKETS',
+    };
+    const upper = formatted.toUpperCase();
+    return abbreviazioni[upper] ?? formatted;
+  }
+
   getSquadreByCampionatoAndGiornata(campionatoId: string, anno: number, giornata: number): Observable<string[]> {
     return this.http.get<any[]>(`${this.apiUrl}/calendario/${campionatoId}/squadreDisponibili/${anno}/${giornata}`);
   }

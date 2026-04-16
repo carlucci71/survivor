@@ -4,6 +4,8 @@ import it.ddlsolution.survivor.aspect.guardlogger.GuardiaDispositiva;
 import it.ddlsolution.survivor.aspect.guardlogger.rule.LeaderRule;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.RecapGiornataDTO;
+import it.ddlsolution.survivor.dto.VitaPersaDTO;
+import it.ddlsolution.survivor.dto.request.AggiornViteDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
@@ -135,6 +137,25 @@ public class LegaController {
             @PathVariable Long idLega,
             @PathVariable Integer giornata) {
         return ResponseEntity.ok(recapGiornataService.getRecap(idLega, giornata));
+    }
+
+    /**
+     * Aggiorna le vite correnti di un giocatore in una lega (solo leader).
+     */
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/{idLega}/vite")
+    public ResponseEntity<LegaDTO> aggiornVite(
+            @PathVariable Long idLega,
+            @RequestBody AggiornViteDTO aggiornViteDTO) {
+        return ResponseEntity.ok(legaService.aggiornVite(idLega, aggiornViteDTO));
+    }
+
+    /**
+     * Restituisce lo storico delle vite perse per una lega.
+     */
+    @GetMapping("/{idLega}/vite/storico")
+    public ResponseEntity<List<VitaPersaDTO>> storicoVite(@PathVariable Long idLega) {
+        return ResponseEntity.ok(legaService.storicoVite(idLega));
     }
 
 }
