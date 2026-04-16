@@ -1000,6 +1000,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   selezionaSquadra(sigla: string): void {
+    // Squadra già usata in giornate precedenti → non selezionabile
+    const squadra = this.squadreConPartite.find(s => s.sigla === sigla);
+    if (squadra?.alreadyUsed) return;
+
     // Click sulla squadra già selezionata → mostra popup di conferma
     if (this.squadraSelezionata === sigla) {
       this.showConfirmRemove = true;

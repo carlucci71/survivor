@@ -412,6 +412,8 @@
     "VISIBILITY": "Visibilità",
     "VISIBILITY_PUBLIC": "Pubblica",
     "VISIBILITY_PRIVATE": "Privata",
+    "CALENDAR_LABEL": "Calendario",
+    "CALENDAR_ACTION": "Vedi partite »",
     "BADGE_NEW": "Nuova",
     "BADGE_GROWING": "In crescita",
     "BADGE_HOT": "Popolare",
@@ -432,6 +434,7 @@
     "DA_GIOCARE": "Da giocare",
     "IN_CORSO": "In corso",
     "SOSPESA": "Sospesa",
+    "TERMINATA": "Terminata",
     "PLAY_NOW": "Gioca Ora",
     "PLAY_FOR_USER": "Gioca per questo utente",
     "FORCED_BY_LEADER": "Giocata forzata dal leader/admin",
@@ -469,6 +472,7 @@
     "LAST_ENCOUNTERS": "Ultimi incontri",
     "NEXT_MATCHES": "Prossime",
     "NEXT_GAMES": "Prossime partite",
+    "OTHER_PARTICIPANTS": "Altri partecipanti",
     "SEARCH_PLAYER": "Cerca giocatore...",
     "SEARCH_TEAM": "Cerca squadra...",
     "HEAD_TO_HEAD": "Testa a testa",
@@ -730,7 +734,8 @@
       "3": "Grande! Selezione vincente! 💪"
     },
     "HIDE_PICK": "Rendi invisibile la mia giocata",
-    "SHOW_PICK": "Rendi visibile la mia giocata"
+    "SHOW_PICK": "Rendi visibile la mia giocata",
+    "ALREADY_USED": "Già usata"
   },
   "INVITE_USERS": {
     "TITLE": "Invita Utenti a",
@@ -791,7 +796,10 @@
     "NO_MATCHES": "Nessuna partita trovata",
     "FORCE": "Forza",
     "FORCED": "Forzata ✓",
-    "LEGEND_FORCED": "Partita forzata: tutti i giocatori che l'hanno scelta avanzano"
+    "LEGEND_FORCED": "Partita forzata: tutti i giocatori che l'hanno scelta avanzano",
+    "FORCE_HINT_SELECT": "Seleziona una partita per applicare o rimuovere la forzatura",
+    "APPLY_FORCE": "Applica forzatura",
+    "REMOVE_FORCE": "Rimuovi forzatura"
   },
   "RECAP": {
     "LOADING": "Caricamento risultati…",
@@ -853,6 +861,167 @@
       "Salva lo screenshot prima che passa 🏃",
       "Sei famoso, almeno in questa lega 🌟",
       "Ok basta, anche i campioni vanno a letto 🛌"
+    ]
+  },
+  "ONBOARDING": {
+    "SKIP": "Salta",
+    "NEXT": "Avanti",
+    "FINISH": "Inizia a giocare!",
+    "SLIDE_1": {
+      "TITLE": "Benvenuto in Survivor!",
+      "DESC": "L'unico gioco in cui scegli una squadra diversa ogni giornata. Vinci, e vai avanti. Perdi, o non giochi — e sei eliminato. Win or go home!"
+    },
+    "SLIDE_2": {
+      "TITLE": "Scegli la tua squadra",
+      "DESC": "Ogni giornata scegli una squadra vincente tra calcio, basket o tennis. Non puoi riutilizzare la stessa squadra nella stessa stagione: pianifica bene!"
+    },
+    "SLIDE_3": {
+      "TITLE": "Pareggio o scadenza = eliminazione",
+      "DESC": "Pareggio o sconfitta = eliminazione. Non giocare entro la deadline = eliminazione automatica. Tieni d'occhio il countdown e scegli con saggezza!"
+    },
+    "SLIDE_4": {
+      "TITLE": "Le Leghe",
+      "DESC": "Giochi all'interno di una Lega con amici o sconosciuti. Le leghe possono essere pubbliche (aperte a tutti) o private (solo su invito o approvazione del leader)."
+    },
+    "SLIDE_5": {
+      "TITLE": "Entra in una lega",
+      "DESC": "Cerca una lega pubblica dalla home, oppure usa il link o il codice che ti ha mandato l'amico. Se la lega è privata, il leader approverà la tua richiesta."
+    },
+    "SLIDE_6": {
+      "TITLE": "Crea la tua lega",
+      "DESC": "Vuoi essere il capo? Crea una nuova lega, scegli il campionato, invita i tuoi amici e diventa Leader: sarai tu a gestire tutto e dichiarare il vincitore!"
+    },
+    "SLIDE_7": {
+      "TITLE": "L'ultimo in piedi vince!",
+      "DESC": "Sopravvivi più a lungo di tutti gli altri e porta a casa la vittoria. La tua lega, le tue regole, la tua gloria!"
+    }
+  },
+  "LEADER_TUTORIAL": {
+    "ROLE_BADGE": "Guida Leader",
+    "SKIP": "Salta",
+    "NEXT": "Avanti",
+    "FINISH": "Inizia a guidare!",
+    "SLIDE_1": {
+      "TITLE": "Sei il Leader!",
+      "DESC": "Hai creato questa lega e sei il suo responsabile. Stai per imparare tutto quello che puoi fare per gestirla al meglio."
+    },
+    "SLIDE_2": {
+      "TITLE": "Pubblica o Privata?",
+      "DESC": "Lega pubblica: chiunque può trovarla e unirsi. Lega privata: solo chi ha il link può fare richiesta, e tu approvi o rifiuti ogni ingresso."
+    },
+    "SLIDE_3": {
+      "TITLE": "Avvia la lega!",
+      "DESC": "Dopo aver invitato i giocatori, premi \"Avvia\" per dare il via. Senza questo passaggio la lega resta in attesa e nessuno può giocare."
+    },
+    "SLIDE_4": {
+      "TITLE": "Invita i giocatori",
+      "DESC": "Condividi il link della lega o invita tramite email. Se la lega è privata, le richieste di accesso arrivano a te: puoi approvarle o rifiutarle dalla sezione \"Richieste\"."
+    },
+    "SLIDE_5": {
+      "TITLE": "I giocatori scelgono",
+      "DESC": "Ogni giornata ogni giocatore deve scegliere una squadra che vincerà. Se non gioca entro la deadline, viene eliminato automaticamente. Tienili d'occhio!"
+    },
+    "SLIDE_6": {
+      "TITLE": "Calcola la giornata",
+      "DESC": "Dopo che le partite sono finite, premi \"Calcola\" nel pannello azioni. Il sistema elabora tutti i risultati: chi ha vinto sopravvive, chi ha perso o pareggiato viene eliminato."
+    },
+    "SLIDE_7": {
+      "TITLE": "Sospensioni e controllo",
+      "DESC": "Se una partita è rinviata o sospesa, puoi gestirla dal pannello \"Sospensioni\". Puoi anche rimuovere un giocatore dalla lega o annullare una giocata se necessario."
+    },
+    "SLIDE_8": {
+      "TITLE": "Forza i risultati",
+      "DESC": "Clicca \"Mostra Risultati\" per vedere i risultati della giornata. Da lì puoi forzare manualmente l'esito di una singola partita — utile se c'è un errore o una situazione speciale."
+    },
+    "SLIDE_9": {
+      "TITLE": "Gioca per gli altri",
+      "DESC": "Come leader puoi toccare la casella di qualsiasi giocatore e scegliere la squadra al posto suo. Usalo con cautela: ad esempio per correggere un errore o per un giocatore che non riesce ad accedere."
+    },
+    "SLIDE_10": {
+      "TITLE": "Sei l'arbitro!",
+      "DESC": "L'ultimo giocatore rimasto in piedi vince la lega. Sei tu a dichiararlo! Puoi anche chiudere la lega manualmente o riaprirla se tutti vengono eliminati."
+    },
+    "DEMO_AVVIA": {
+      "BTN_START": "Avvia la lega",
+      "BTN_DONE": "Lega Avviata!",
+      "STATUS": "I giocatori possono giocare"
+    },
+    "DEMO_PP": {
+      "PUBLIC_LABEL": "Pubblica",
+      "PUBLIC_SUB": "Chiunque può unirsi",
+      "PRIVATE_LABEL": "Privata",
+      "PRIVATE_SUB": "Tu approvi ogni ingresso"
+    },
+    "DEMO_FORZA": {
+      "BTN": "Mostra Risultati",
+      "HEADER": "Risultati Giornata 31",
+      "BADGE_RINVIATA": "RINVIATA",
+      "APPLY_BTN": "Applica forzatura",
+      "STEP_SELECT": "Seleziona",
+      "STEP_FORCE": "Forza"
+    }
+  },
+  "PLAYER_TUTORIAL": {
+    "ROLE_BADGE": "Guida Giocatore",
+    "SKIP": "Salta",
+    "NEXT": "Avanti",
+    "FINISH": "Inizia a giocare!",
+    "HELP_TOOLTIP": "Come funziona?",
+    "SLIDE_1": {
+      "TITLE": "Sei nella lega!",
+      "DESC": "Benvenuto nella tua lega Survivor! Ogni giornata devi scegliere una squadra. Sopravvivi alle eliminazioni e diventa l'ultimo in piedi!"
+    },
+    "SLIDE_2": {
+      "TITLE": "Come fare la tua giocata",
+      "DESC": "Premi il pulsante \"Gioca ora\" per selezionare la squadra che pensi vincerà quella giornata. Conferma la scelta e sei a posto!"
+    },
+    "SLIDE_3": {
+      "TITLE": "Puoi cambiare idea!",
+      "DESC": "Hai già scelto ma ci hai ripensato? Puoi modificare la tua giocata fino alla chiusura della deadline. Tocca il tuo voto e scegli \"Modifica\"."
+    },
+    "SLIDE_4": {
+      "TITLE": "La scadenza è tutto",
+      "DESC": "Hai tempo fino alla chiusura della giornata per fare la tua scelta. Il countdown è visibile nella schermata della lega. Non aspettare l'ultimo momento!"
+    },
+    "SLIDE_5": {
+      "TITLE": "Una squadra per stagione",
+      "DESC": "Non puoi scegliere la stessa squadra due volte nella stessa stagione. Pianifica in anticipo e tieni traccia delle squadre già usate nello storico."
+    },
+    "SLIDE_6": {
+      "TITLE": "Eliminato? Puoi restare!",
+      "DESC": "Se vieni eliminato non sparisci: puoi continuare a seguire la lega come spettatore, vedere le giocate degli altri e reagire con le emoji."
+    },
+    "SLIDE_7": {
+      "TITLE": "Leggi lo storico",
+      "DESC": "Ogni giocata nello storico ha un colore: verde = vittoria (sopravvissuto), rosso = sconfitta o pareggio (eliminato). Tocca l'icona storico accanto a un nome per vederlo."
+    },
+    "SLIDE_8": {
+      "TITLE": "Reaction e storico",
+      "DESC": "Tieni premuto su una giocata altrui per reagire con un'emoji! Clicca sull'icona storico accanto al nome di un giocatore per vedere tutte le sue giocate."
+    }
+  },
+  "EASTER_EGG": {
+    "REAPER_MSGS": [
+      "La morte è passata 💀",
+      "Il Boia ha fatto il suo lavoro ☠️",
+      "Nessuno scampa alla falce 🌑",
+      "GG WP, arrivederci nell'aldilà 👋",
+      "Erano bravi ragazzi... ieri 😔",
+      "La lega vi ricorderà (forse) 🕯️",
+      "Meglio eliminati che non aver giocato? No. ❌",
+      "Il Fantasy ti ha tradito ancora 🎰",
+      "Darwin aveva ragione. Sopravvive il più forte 🧬",
+      "Eliminati con disonore 🏳️",
+      "La ProfeSSia si compie... 🔮",
+      "Avete perso. Il Boia è soddisfatto 😈",
+      "Non esistono seconde chance. Solo seconde pianti 😭",
+      "Questa è la vostra eredità: zero punti 🪦",
+      "Il consiglio tribale ha parlato 🔥",
+      "Spegni la torcia e torna a casa 🕯️➡️🏠",
+      "Nella lista nera del Boia 📜",
+      "Avete giocato... ma non abbastanza 📉",
+      "Nel nome della falce: eliminati! ⚔️",
+      "La morte non guarda la classifica. Ma voi sì 📊"
     ]
   }
 }

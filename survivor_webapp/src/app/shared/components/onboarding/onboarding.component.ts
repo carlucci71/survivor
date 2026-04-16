@@ -1,34 +1,28 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface OnboardingSlide {
-  icon: string;           // Material icon
-  emoji: string;          // Decorative emoji
-  titleIt: string;
-  titleEn: string;
-  descIt: string;
-  descEn: string;
-  accent: string;         // Accent color for this slide
-  gradient: string;       // Card gradient
+  icon: string;
+  emoji: string;
+  titleKey: string;
+  descKey: string;
+  accent: string;
+  gradient: string;
 }
 
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, TranslateModule],
   animations: [
     trigger('slideAnim', [
-      state('enter', style({ opacity: 1, transform: 'translateX(0)' })),
       transition(':enter', [
         style({ opacity: 0, transform: 'translateX(32px)' }),
         animate('320ms cubic-bezier(0.35, 0, 0.25, 1)')
-      ]),
-      transition(':leave', [
-        animate('240ms cubic-bezier(0.35, 0, 0.25, 1)',
-          style({ opacity: 0, transform: 'translateX(-32px)' }))
       ])
     ])
   ],
@@ -58,8 +52,8 @@ interface OnboardingSlide {
 
               <!-- Text -->
               <div class="ob-text">
-                <h2 class="ob-title">{{ lang === 'it' ? slide.titleIt : slide.titleEn }}</h2>
-                <p class="ob-desc">{{ lang === 'it' ? slide.descIt : slide.descEn }}</p>
+                <h2 class="ob-title">{{ slide.titleKey | translate }}</h2>
+                <p class="ob-desc">{{ slide.descKey | translate }}</p>
               </div>
 
             </div>
@@ -69,7 +63,7 @@ interface OnboardingSlide {
         <!-- Actions -->
         <div class="ob-actions">
           <button class="ob-btn ob-btn--skip" (click)="skip()">
-            {{ lang === 'it' ? 'Salta' : 'Skip' }}
+            {{ 'ONBOARDING.SKIP' | translate }}
           </button>
 
           <div class="ob-nav-btns">
@@ -81,12 +75,12 @@ interface OnboardingSlide {
 
             @if (current < slides.length - 1) {
               <button class="ob-btn ob-btn--next" (click)="next()">
-                {{ lang === 'it' ? 'Avanti' : 'Next' }}
+                {{ 'ONBOARDING.NEXT' | translate }}
                 <mat-icon>arrow_forward</mat-icon>
               </button>
             } @else {
               <button class="ob-btn ob-btn--finish" (click)="finish()">
-                {{ finishLabel }}
+                {{ 'ONBOARDING.FINISH' | translate }}
                 <mat-icon>sports_score</mat-icon>
               </button>
             }
@@ -356,63 +350,69 @@ interface OnboardingSlide {
     }
   `]
 })
-export class OnboardingComponent implements OnInit {
+export class OnboardingComponent {
   @Output() dismissed = new EventEmitter<void>();
 
   current = 0;
-  lang = 'it';
 
   readonly slides: OnboardingSlide[] = [
     {
       emoji: '🏆',
       icon: 'emoji_events',
-      titleIt: 'Benvenuto in Survivor!',
-      titleEn: 'Welcome to Survivor!',
-      descIt: 'L\'unico gioco in cui scegli una squadra diversa ogni giornata. Vinci, e vai avanti. Perdi, o non giochi — e sei eliminato. Win or go home!',
-      descEn: 'The only game where you pick a different team each round. Win and go on. Lose or skip — and you\'re out. Win or go home!',
+      titleKey: 'ONBOARDING.SLIDE_1.TITLE',
+      descKey: 'ONBOARDING.SLIDE_1.DESC',
       accent: '#0A3D91',
       gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)'
     },
     {
       emoji: '⚽',
       icon: 'sports_soccer',
-      titleIt: 'Scegli la tua squadra',
-      titleEn: 'Pick your team',
-      descIt: 'Ogni giornata scegli una squadra che secondo te vincerà. Non puoi riutilizzare la stessa squadra nella stessa stagione!',
-      descEn: 'Each round, pick a team you think will win. You can\'t reuse the same team in the same season!',
+      titleKey: 'ONBOARDING.SLIDE_2.TITLE',
+      descKey: 'ONBOARDING.SLIDE_2.DESC',
       accent: '#1a6bcc',
       gradient: 'linear-gradient(135deg, #EFF6FF, #E0F2FE)'
     },
     {
       emoji: '🎯',
       icon: 'track_changes',
-      titleIt: 'Attenzione alle trappole',
-      titleEn: 'Watch out for traps',
-      descIt: 'Pareggio o sconfitta = eliminazione. Non giocare entro la deadline = eliminazione. Resta concentrato e scegli con saggezza!',
-      descEn: 'Draw or loss = elimination. Missing the deadline = elimination. Stay focused and choose wisely!',
+      titleKey: 'ONBOARDING.SLIDE_3.TITLE',
+      descKey: 'ONBOARDING.SLIDE_3.DESC',
       accent: '#E53935',
       gradient: 'linear-gradient(135deg, #FFF5F5, #FEE2E2)'
     },
     {
+      emoji: '🔗',
+      icon: 'groups',
+      titleKey: 'ONBOARDING.SLIDE_4.TITLE',
+      descKey: 'ONBOARDING.SLIDE_4.DESC',
+      accent: '#8B5CF6',
+      gradient: 'linear-gradient(135deg, #F5F3FF, #EDE9FE)'
+    },
+    {
+      emoji: '🚪',
+      icon: 'login',
+      titleKey: 'ONBOARDING.SLIDE_5.TITLE',
+      descKey: 'ONBOARDING.SLIDE_5.DESC',
+      accent: '#10B981',
+      gradient: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)'
+    },
+    {
       emoji: '👑',
+      icon: 'star',
+      titleKey: 'ONBOARDING.SLIDE_6.TITLE',
+      descKey: 'ONBOARDING.SLIDE_6.DESC',
+      accent: '#F59E0B',
+      gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)'
+    },
+    {
+      emoji: '🦁',
       icon: 'military_tech',
-      titleIt: 'L\'ultimo in piedi vince!',
-      titleEn: 'Last one standing wins!',
-      descIt: 'Sopravvivi più a lungo di tutti gli altri e porta a casa la vittoria. La tua lega, le tue regole, la tua gloria!',
-      descEn: 'Outlast everyone else and take the win. Your league, your rules, your glory!',
+      titleKey: 'ONBOARDING.SLIDE_7.TITLE',
+      descKey: 'ONBOARDING.SLIDE_7.DESC',
       accent: '#F59E0B',
       gradient: 'linear-gradient(135deg, #FFFBEB, #FEF3C7)'
     }
   ];
-
-  ngOnInit(): void {
-    const savedLang = localStorage.getItem('lang') || navigator.language?.slice(0, 2) || 'it';
-    this.lang = ['it', 'en'].includes(savedLang) ? savedLang : 'it';
-  }
-
-  get finishLabel(): string {
-    return this.lang === 'it' ? 'Inizia a giocare!' : "Let's play!";
-  }
 
   next(): void {
     if (this.current < this.slides.length - 1) this.current++;
@@ -439,6 +439,6 @@ export class OnboardingComponent implements OnInit {
   }
 
   private markSeen(): void {
-    localStorage.setItem('survivor_onboarding_seen', '1');
+    localStorage.setItem('survivor_onboarding_v2_seen', '1');
   }
 }

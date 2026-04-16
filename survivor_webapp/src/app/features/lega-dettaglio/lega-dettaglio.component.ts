@@ -51,6 +51,8 @@ import { RoundResultsDialogComponent } from '../../shared/components/round-resul
 import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
 import { RecapService } from '../../core/services/recap.service';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
+import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial/leader-tutorial.component';
+import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -76,6 +78,8 @@ import { VincitoriDialogComponent } from '../../shared/components/vincitori-dial
     ReactiveFormsModule,
     TranslateModule,
     TranslateLeagueDataPipe,
+    LeaderTutorialComponent,
+    PlayerTutorialComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -117,11 +121,22 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
-  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '😂', '💀', '🤣', '😤', '🤦', '❤️', '😬', '🥶', '🤌', '🎉', '😈', '💪', '🤔'];
+  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
 
   activeReactionKey: string | null = null;
   activeGiocata: Giocata | null = null;
   reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  reactionPickerBelow = false;
+  // chiave univoca del badge di cui mostrare gli autori: "giocataId_emoji"
+  activeBadgeAutoriKey: string | null = null;
+  activeBadgeAutoriNomi: string = '';
+  activeBadgeAutoriNomiAll: string = '';
+  activeBadgeAutoriHasMore: boolean = false;
+  activeBadgeAutoriExpanded: boolean = false;
+  activeBadgeAutoriEmoji: string = '';
+  badgeAutoriStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  private badgeAutoriTimer: any = null;
+  private pickerAutoCloseTimer: any = null;
   private longPressTimer: any = null;
   private closePopupTimer: any = null;
   private popupJustOpened = false;
@@ -167,6 +182,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
   }
 
+  // Tutorial
+  showLeaderTutorial = false;
+  showPlayerTutorial = false;
+
   // Elimina lega
   showDeleteConfirm = false;
   isDeleting = false;
@@ -179,7 +198,7 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   // FILTRI E RICERCA MOBILE
   searchText: string = '';
-  playerFilter: 'all' | 'active' | 'eliminated' = 'all';
+  playerFilter: 'all' | 'active' | 'eliminated' = 'active';
   expandedPlayers: { [key: number]: boolean } = {};
 
   // Giornate visibili
@@ -286,6 +305,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
+          this.maybeTriggerTutorial();
         }
       },
       error: (error) => {
@@ -460,6 +480,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!campionatoId) return null;
     const map: Record<string, string> = {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
+      'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
@@ -554,8 +575,9 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giocateIds = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraSigla);
-    const squadreDisponibili = this.squadre.filter(
-      (s: any) => !giocateIds.includes(s.sigla) || s.sigla === squadraCorrenteId
+    // Passa TUTTE le squadre, marcando quelle già usate con alreadyUsed
+    const squadreDisponibili = this.squadre.map(
+      (s: any) => ({ ...s, alreadyUsed: giocateIds.includes(s.sigla) })
     );
 
     const { SelezionaGiocataComponent } = await import(
@@ -1239,6 +1261,35 @@ export class LegaDettaglioComponent implements OnDestroy {
     return !!ruolo && ruolo.value === RuoloGiocatore.LEADER.value;
   }
 
+  private maybeTriggerTutorial(): void {
+    if (this.isTerminata()) return;
+    if (this.isLeaderLega() || this.isAdmin()) {
+      if (!localStorage.getItem('survivor_leader_tutorial_seen')) {
+        this.showLeaderTutorial = true;
+      }
+    } else if (this.isInLega()) {
+      if (!localStorage.getItem('survivor_player_tutorial_seen')) {
+        this.showPlayerTutorial = true;
+      }
+    }
+  }
+
+  onLeaderTutorialDismissed(): void {
+    this.showLeaderTutorial = false;
+  }
+
+  onPlayerTutorialDismissed(): void {
+    this.showPlayerTutorial = false;
+  }
+
+  openLeaderTutorial(): void {
+    this.showLeaderTutorial = true;
+  }
+
+  openPlayerTutorial(): void {
+    this.showPlayerTutorial = true;
+  }
+
   goToRichieste(): void {
     this.router.navigate(['/richieste']);
   }
@@ -1370,26 +1421,102 @@ export class LegaDettaglioComponent implements OnDestroy {
       .map(([emoji, count]) => ({ emoji, count }));
   }
 
+  getReactionAutori(giocata: Giocata, emoji: string): string {
+    const nomi = giocata.reactionAutori?.[emoji] ?? [];
+    if (nomi.length === 0) return '';
+    const MAX = 3;
+    if (nomi.length <= MAX) return nomi.join(', ');
+    return `${nomi.slice(0, MAX).join(', ')} +${nomi.length - MAX} altri`;
+  }
+
+  expandBadgeAutori(event: Event): void {
+    event.stopPropagation();
+    this.activeBadgeAutoriExpanded = true;
+    this.activeBadgeAutoriNomi = this.activeBadgeAutoriNomiAll;
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); }
+    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 4000);
+  }
+
+  toggleBadgeAutori(giocata: Giocata, emoji: string, event: Event): void {
+    event.stopPropagation();
+    const key = `${giocata.id}_${emoji}`;
+    if (this.activeBadgeAutoriKey === key) {
+      this.closeBadgeAutori();
+      return;
+    }
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
+    const el = event.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    // Calcola left centrato sul badge, clamped ai bordi del viewport
+    const BADGE_MAX_W = Math.min(240, window.innerWidth - 16);
+    const MARGIN = 8;
+    const idealLeft = rect.left + rect.width / 2 - BADGE_MAX_W / 2;
+    const clampedLeft = Math.min(
+      Math.max(idealLeft, MARGIN),
+      window.innerWidth - BADGE_MAX_W - MARGIN
+    );
+    this.badgeAutoriStyle = {
+      top: `${rect.bottom + 6}px`,
+      left: `${clampedLeft}px`,
+    };
+    const tutti = giocata.reactionAutori?.[emoji] ?? [];
+    const MAX = 3;
+    this.activeBadgeAutoriNomiAll = tutti.join(', ');
+    this.activeBadgeAutoriNomi = tutti.length <= MAX
+      ? tutti.join(', ')
+      : `${tutti.slice(0, MAX).join(', ')} +${tutti.length - MAX} altri`;
+    this.activeBadgeAutoriHasMore = tutti.length > MAX;
+    this.activeBadgeAutoriExpanded = false;
+    this.activeBadgeAutoriEmoji = emoji;
+    this.activeBadgeAutoriKey = key;
+    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 2500);
+  }
+
+  private closeBadgeAutori(): void {
+    this.activeBadgeAutoriKey = null;
+    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
+  }
+
+  isBadgeAutoriActive(giocataId: number | undefined, emoji: string): boolean {
+    return this.activeBadgeAutoriKey === `${giocataId}_${emoji}`;
+  }
+
   @HostListener('document:click')
   onDocumentClick(): void {
     if (this.popupJustOpened) return;
     this.activeReactionKey = null;
     this.activeGiocata = null;
+    this.closeBadgeAutori();
   }
 
   openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {
     if (!giocata || !el) return;
-    if (this.closePopupTimer) {
-      clearTimeout(this.closePopupTimer);
-      this.closePopupTimer = null;
-    }
+    if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
+    if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
     const rect = (el as HTMLElement).getBoundingClientRect();
+    // Picker width: 4 colonne * 38px + 3 gap * 6px + 2 * 10px padding = ~192px → metà = 96
+    const HALF_W = 96;
+    const MARGIN = 8;
+    const rawLeft = rect.left + rect.width / 2;
+    const clampedLeft = Math.min(
+      Math.max(rawLeft, HALF_W + MARGIN),
+      window.innerWidth - HALF_W - MARGIN
+    );
+    // Se non c'è spazio sopra, mostra sotto (aggiunge classe via flag)
+    const PICKER_H = 200;
+    const showBelow = rect.top < PICKER_H + 10;
+    this.reactionPickerBelow = showBelow;
     this.reactionPopupStyle = {
-      top: `${rect.top}px`,
-      left: `${rect.left + rect.width / 2}px`
+      top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
+      left: `${clampedLeft}px`
     };
     this.activeReactionKey = key;
     this.activeGiocata = giocata;
+    this.pickerAutoCloseTimer = setTimeout(() => {
+      this.activeReactionKey = null;
+      this.activeGiocata = null;
+      this.pickerAutoCloseTimer = null;
+    }, 4000);
   }
 
   /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
@@ -1403,10 +1530,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   cancelClosePopup(): void {
-    if (this.closePopupTimer) {
-      clearTimeout(this.closePopupTimer);
-      this.closePopupTimer = null;
-    }
+    if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
+    if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
   }
 
   closeReactionPopupDelayed(): void {
@@ -1433,9 +1558,19 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.longPressTimer = setTimeout(() => {
       this.longPressTimer = null;
       const rect = el.getBoundingClientRect();
+      const HALF_W = 96;
+      const MARGIN = 8;
+      const rawLeft = rect.left + rect.width / 2;
+      const clampedLeft = Math.min(
+        Math.max(rawLeft, HALF_W + MARGIN),
+        window.innerWidth - HALF_W - MARGIN
+      );
+      const PICKER_H = 200;
+      const showBelow = rect.top < PICKER_H + 10;
+      this.reactionPickerBelow = showBelow;
       this.reactionPopupStyle = {
-        top: `${rect.top}px`,
-        left: `${rect.left + rect.width / 2}px`
+        top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
+        left: `${clampedLeft}px`
       };
       this.activeReactionKey = key;
       this.activeGiocata = giocata;
@@ -1452,9 +1587,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   async shareLink(): Promise<void> {
-    const url = (this.lega!.pubblica && this.lega!.accessoLibero)
-      ? environment.baseUrl + '/joinLega'
-      : environment.baseUrl + '/join/' + this.lega!.id;
+    const url = environment.baseUrl + '/join/' + this.lega!.id;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,
@@ -1914,8 +2047,15 @@ export class LegaDettaglioComponent implements OnDestroy {
       );
     }
 
-    // Ordine alfabetico per nickname
-    filtered.sort((a, b) => a.nickname.localeCompare(b.nickname));
+    // Ordine: utente corrente in cima, poi alfabetico per nickname
+    const currentUser = this.authService.getCurrentUser();
+    filtered.sort((a, b) => {
+      const aIsMe = !!currentUser && a.user?.id === currentUser.id;
+      const bIsMe = !!currentUser && b.user?.id === currentUser.id;
+      if (aIsMe && !bIsMe) return -1;
+      if (!aIsMe && bIsMe) return 1;
+      return a.nickname.localeCompare(b.nickname);
+    });
 
     return filtered;
   }
@@ -1936,6 +2076,48 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.lega.giocatori.filter(g =>
       g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value
     ).length;
+  }
+
+  // ══════════════════════════════════════════
+  // 💀 EASTER EGG — Grim Reaper
+  // ══════════════════════════════════════════
+  grimReaperVisible = false;
+  grimReaperVittimeGiornata: string[] = [];
+  grimReaperMsg = '';
+  private _tapTimestamps: number[] = [];
+  private _grimReaperDismissTimer: any = null;
+
+  onEliminatiTripleTap(): void {
+    const now = Date.now();
+    this._tapTimestamps.push(now);
+    this._tapTimestamps = this._tapTimestamps.filter(t => now - t < 900);
+    if (this._tapTimestamps.length >= 3) {
+      this._tapTimestamps = [];
+      this.attivaGrimReaper();
+    }
+  }
+
+  private attivaGrimReaper(): void {
+    if (!this.lega?.giocatori) return;
+    const giornata = this.lega.giornataCorrente ?? -1;
+    this.grimReaperVittimeGiornata = this.lega.giocatori
+      .filter(g => {
+        const giocata = g.giocate?.find(gi => gi.giornata === giornata);
+        return giocata?.esito === 'KO';
+      })
+      .map(g => g.nickname);
+    if (this.grimReaperVittimeGiornata.length === 0) {
+      this.grimReaperVittimeGiornata = this.lega.giocatori
+        .filter(g => g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ELIMINATO.value)
+        .map(g => g.nickname);
+    }
+    const msgs: string[] = this.translate.instant('EASTER_EGG.REAPER_MSGS');
+    this.grimReaperMsg = Array.isArray(msgs)
+      ? msgs[Math.floor(Math.random() * msgs.length)]
+      : '💀';
+    this.grimReaperVisible = true;
+    if (this._grimReaperDismissTimer) clearTimeout(this._grimReaperDismissTimer);
+    this._grimReaperDismissTimer = setTimeout(() => { this.grimReaperVisible = false; }, 4500);
   }
 
   getLastGiocata(giocatore: Giocatore): any {

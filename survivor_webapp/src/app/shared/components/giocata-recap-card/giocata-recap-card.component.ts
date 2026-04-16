@@ -18,6 +18,7 @@ interface ConfettiPiece {
 interface LegaConGiocata {
   lega: Lega;
   logoUrl: string | null;
+  torneoLogoUrl: string | null;
   sportEmoji: string;
   esitoClass: string;
   esitoLabel: string;
@@ -233,6 +234,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
           logoUrl: displayGiocata
             ? this.logoService.getLogoUrl(l.campionato?.sport?.id, l.campionato?.id, displayGiocata.squadraSigla)
             : null,
+          torneoLogoUrl: this.getTorneoLogoUrl(l.campionato?.id),
           sportEmoji: this.getSportEmoji(l.campionato?.sport?.id),
           // Per LIVE usiamo mia (non la cache), cosi non mostriamo LIVE sul vecchio risultato
           ...this.getEsitoInfo(displayEsito, isLastResult ? undefined : l),
@@ -311,6 +313,22 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   goToLega(): void {
     if (this.selected) this.router.navigate(['/lega', this.selected.lega.id]);
+  }
+
+  private getTorneoLogoUrl(campionatoId: string | undefined): string | null {
+    if (!campionatoId) return null;
+    const map: Record<string, string> = {
+      'SERIE_A':       'assets/logos/calcio/tornei/serie_A.png',
+      'SERIE_B':       'assets/logos/calcio/tornei/serie_b.png',
+      'LIGA':          'assets/logos/calcio/tornei/liga.png',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
+      'NBA_RS':        'assets/logos/basket/tornei/NBA.png',
+      'AUS_OPEN':      'assets/logos/tennis/tornei/Australian Open.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
+      'US_OPEN':       'assets/logos/tennis/tornei/US Open.png',
+      'WIMBLEDON':     'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
   }
 
   private getSportEmoji(sportId: string | undefined): string {

@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReactionGiocataService {
 
-    private static final Set<String> EMOJI_VALIDE = Set.of("👏", "😱", "🔥", "😂", "💀", "🤣", "😤", "🤦", "❤️", "😬", "🥶", "🤌", "🎉", "😈", "💪", "🤔");
+    private static final Set<String> EMOJI_VALIDE = Set.of("👏", "😱", "🔥", "🤬", "💀", "🤡", "😤", "🤦", "💩", "🤘", "🥶", "🤌", "😵", "😈", "💪", "❤️");
 
     private final ReactionGiocataRepository reactionRepository;
     private final GiocataRepository giocataRepository;
@@ -92,14 +93,18 @@ public class ReactionGiocataService {
                             Map<String, Integer> conteggio = list.stream()
                                     .collect(Collectors.groupingBy(ReactionGiocata::getEmoji,
                                             Collectors.collectingAndThen(Collectors.counting(), Long::intValue)));
+                            Map<String, List<String>> autori = list.stream()
+                                    .collect(Collectors.groupingBy(
+                                            ReactionGiocata::getEmoji,
+                                            Collectors.mapping(r -> r.getGiocatore().getNickname(), Collectors.toList())));
                             String mia = list.stream()
                                     .filter(r -> r.getGiocatore().getId().equals(mioGiocatoreId))
                                     .map(ReactionGiocata::getEmoji)
                                     .findFirst().orElse(null);
-                            return new ReactionSummary(conteggio, mia);
+                            return new ReactionSummary(conteggio, mia, autori);
                         }
                 ));
     }
 
-    public record ReactionSummary(Map<String, Integer> reactions, String miaReaction) {}
+    public record ReactionSummary(Map<String, Integer> reactions, String miaReaction, Map<String, List<String>> reactionAutori) {}
 }

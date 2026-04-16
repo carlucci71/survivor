@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.dto;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -21,5 +22,7 @@ public class GiocataDTO {
     private Map<String, Integer> reactions;
     // emoji scelta dall'utente corrente (null se non ha reagito)
     private String miaReaction;
+    // reactionAutori: emoji -> lista nomi giocatori (es. {"👏": ["Mario", "Luigi"]})
+    private Map<String, List<String>> reactionAutori;
 }
 

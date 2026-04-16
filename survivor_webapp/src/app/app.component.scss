@@ -73,13 +73,15 @@ app-loading-overlay {
 ::ng-deep .profilo-dialog-container {
   .mat-mdc-dialog-container {
     padding: 0 !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     overflow: hidden !important;
+    background: transparent !important;
     box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25) !important;
   }
 
   .mat-mdc-dialog-surface {
-    border-radius: 16px !important;
-    background: #FFFFFF !important;
+    border-radius: 20px !important;
+    background: transparent !important;
+    overflow: hidden !important;
   }
 }
