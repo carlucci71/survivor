@@ -204,7 +204,7 @@
             </div>
             }
           </div>
-          @if (lega.campionato?.id) {
+          @if (lega.campionato?.id && !countdownExpired) {
             <button class="studio-fab-btn" (click)="apriStudio()"
                     [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
           }
@@ -226,6 +226,10 @@
           <mat-icon class="calcola-icon">pause_circle</mat-icon>
           <span class="action-label">{{ 'LEAGUE.SUSPENSIONS' | translate }}</span>
         </div>
+        @if (lega.campionato?.id && countdownExpired) {
+        <button class="studio-fab-btn studio-fab-btn--admin" (click)="apriStudio()"
+                [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
+        }
         @if (isChiudibile()){
         <div class="admin-action-item" (click)="termina()">
           <mat-icon class="calcola-icon">lock</mat-icon>

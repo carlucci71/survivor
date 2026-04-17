@@ -22,7 +22,7 @@ export interface StudioGiocataDialogData {
       <!-- Header -->
       <div class="sg-header">
         <div class="sg-header-title">
-          <span class="sg-icon">🔍</span>
+          <span class="sg-header-icon">🔍</span>
           <span>{{ data.giornataLabel }}</span>
         </div>
         <button class="sg-close" (click)="close()"><mat-icon>close</mat-icon></button>
@@ -42,32 +42,39 @@ export interface StudioGiocataDialogData {
       @if (tab === 'calendario') {
         <div class="sg-body">
           @if (data.partite.length === 0) {
-            <div class="sg-empty"><mat-icon>sports_soccer</mat-icon><span>Nessuna partita trovata</span></div>
+            <div class="sg-empty">
+              <mat-icon>sports_soccer</mat-icon>
+              <span>Nessuna partita trovata</span>
+            </div>
           }
           @for (p of data.partite; track p.casaSigla + p.giornata) {
             <div class="sg-match"
                  [class.terminata]="p.stato.value === 'TERMINATA'"
                  [class.in-corso]="p.stato.value === 'IN_CORSO'">
-              <div class="sg-match-header">
+              <div class="sg-match-meta">
                 <span class="sg-match-time">{{ p.orario | date:'EEE d MMM · HH:mm' }}</span>
                 @if (p.stato.value === 'IN_CORSO') {
-                  <span class="sg-badge live">LIVE</span>
+                  <span class="sg-badge live">● LIVE</span>
                 } @else if (p.stato.value === 'TERMINATA') {
                   <span class="sg-badge fin">FIN</span>
                 }
               </div>
               <div class="sg-match-row">
-                <span class="sg-team home">{{ p.casaNome }}</span>
+                <div class="sg-team-block home">
+                  <span class="sg-team-name">{{ p.casaNome }}</span>
+                </div>
                 @if (p.stato.value === 'TERMINATA' || p.stato.value === 'IN_CORSO') {
-                  <span class="sg-score">
+                  <div class="sg-score">
                     <span class="sc">{{ p.scoreCasa }}</span>
-                    <span class="sep">-</span>
+                    <span class="sep">–</span>
                     <span class="sc">{{ p.scoreFuori }}</span>
-                  </span>
+                  </div>
                 } @else {
-                  <span class="sg-vs">vs</span>
+                  <div class="sg-vs">VS</div>
                 }
-                <span class="sg-team away">{{ p.fuoriNome }}</span>
+                <div class="sg-team-block away">
+                  <span class="sg-team-name">{{ p.fuoriNome }}</span>
+                </div>
               </div>
             </div>
           }
@@ -117,65 +124,65 @@ export interface StudioGiocataDialogData {
     </div>
   `,
   styles: [`
+    :host { font-family: 'Poppins', sans-serif; }
+
     .sg-dialog {
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 75vh;
-      max-height: 600px;
+      height: 78vh;
+      max-height: 640px;
       min-height: 420px;
       overflow: hidden;
-      background: #fff;
-      border-radius: 16px;
+      background: #F4F7FF;
+      border-radius: 18px;
     }
 
-    /* Header */
+    /* ── Header ─────────────────────────────────── */
     .sg-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px 10px;
-      background: linear-gradient(135deg, #0A3D91, #1565c0);
-      border-radius: 16px 16px 0 0;
+      padding: 14px 18px 12px;
+      background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #1976D2 100%);
+      border-radius: 18px 18px 0 0;
+      flex-shrink: 0;
     }
-
     .sg-header-title {
       display: flex;
       align-items: center;
       gap: 8px;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      letter-spacing: 0.3px;
-
-      .sg-icon { font-size: 1rem; }
+      letter-spacing: 0.4px;
     }
-
+    .sg-header-icon { font-size: 1.1rem; }
     .sg-close {
       background: rgba(255,255,255,0.15);
-      border: none;
+      border: 1.5px solid rgba(255,255,255,0.25);
       border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       color: #fff;
-      transition: background 0.18s;
+      transition: background 0.18s, transform 0.18s;
       padding: 0;
-
+      flex-shrink: 0;
       mat-icon { font-size: 18px; width: 18px; height: 18px; }
-      &:hover { background: rgba(255,255,255,0.25); }
+      &:hover { background: rgba(255,255,255,0.28); transform: scale(1.08); }
     }
 
-    /* Tabs */
+    /* ── Tabs ───────────────────────────────────── */
     .sg-tabs {
       display: flex;
-      border-bottom: 1px solid #E5E7EB;
-      background: #F9FAFB;
+      background: #fff;
+      border-bottom: 2px solid #E8EEF8;
+      flex-shrink: 0;
     }
-
     .sg-tab {
       flex: 1;
       display: flex;
@@ -185,193 +192,205 @@ export interface StudioGiocataDialogData {
       background: none;
       border: none;
       border-bottom: 3px solid transparent;
-      color: #6B7280;
-      font-size: 0.73rem;
-      font-weight: 600;
-      letter-spacing: 0.4px;
+      margin-bottom: -2px;
+      color: #94A3B8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
       text-transform: uppercase;
-      padding: 11px 8px;
+      padding: 12px 8px;
       cursor: pointer;
       transition: color 0.18s, border-color 0.18s;
-
-      mat-icon { font-size: 15px; width: 15px; height: 15px; }
-
-      &.active {
-        color: #0A3D91;
-        border-bottom-color: #0A3D91;
-        background: #fff;
-      }
-      &:hover:not(.active) { color: #374151; }
+      mat-icon { font-size: 14px; width: 14px; height: 14px; }
+      &.active { color: #0A3D91; border-bottom-color: #4FC3F7; }
+      &:hover:not(.active) { color: #475569; }
     }
 
-    /* Calendario */
+    /* ── Calendario ─────────────────────────────── */
     .sg-body {
-      padding: 6px 8px;
+      padding: 10px 10px 6px;
       overflow-y: auto;
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .sg-empty {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
-      padding: 32px 0;
-      color: #9CA3AF;
+      gap: 8px;
+      padding: 40px 0;
+      color: #94A3B8;
       font-size: 0.82rem;
-
-      mat-icon { font-size: 32px; width: 32px; height: 32px; opacity: 0.35; }
+      mat-icon { font-size: 36px; width: 36px; height: 36px; opacity: 0.3; }
     }
 
     .sg-match {
-      padding: 5px 8px;
-      border-radius: 8px;
-      border: 1px solid #E5E7EB;
-      background: #FAFAFA;
-      margin-bottom: 3px;
-      transition: box-shadow 0.14s;
+      background: #fff;
+      border-radius: 12px;
+      padding: 9px 12px 11px;
+      border: 1.5px solid #E8EEF8;
+      box-shadow: 0 2px 8px rgba(10,61,145,0.05);
+      border-left: 4px solid #CBD5E1;
+      transition: box-shadow 0.18s, transform 0.18s;
 
-      &:hover { box-shadow: 0 2px 8px rgba(10,61,145,0.07); }
-      &.terminata { border-left: 3px solid #D1D5DB; }
-      &.in-corso  { border-left: 3px solid #1565c0; background: rgba(10,61,145,0.02); }
+      &:hover { box-shadow: 0 4px 16px rgba(10,61,145,0.11); transform: translateY(-1px); }
+      &.in-corso { border-left-color: #4FC3F7; background: linear-gradient(135deg, #fff 80%, rgba(79,195,247,0.04) 100%); }
+      &.terminata { border-left-color: #CBD5E1; opacity: 0.85; }
     }
 
-    .sg-match-header {
+    .sg-match-meta {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 2px;
+      justify-content: space-between;
+      margin-bottom: 8px;
     }
-
     .sg-match-time {
-      flex: 1;
-      font-size: 0.67rem;
-      color: #6B7280;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #64748B;
+      letter-spacing: 0.3px;
       text-transform: capitalize;
     }
 
     .sg-badge {
-      font-size: 0.58rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      padding: 1px 5px;
-      border-radius: 4px;
-
-      &.live { background: #1565c0; color: #fff; animation: pulse-live 1.4s ease-in-out infinite; }
-      &.fin  { background: #E5E7EB; color: #6B7280; }
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 2px 7px;
+      border-radius: 20px;
+      &.live {
+        background: linear-gradient(90deg, #0A3D91, #4FC3F7);
+        color: #fff;
+        animation: pulse-live 1.4s ease-in-out infinite;
+      }
+      &.fin { background: #E2E8F0; color: #64748B; }
     }
-
     @keyframes pulse-live {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.55; }
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(79,195,247,0.4); }
+      50% { opacity: 0.85; box-shadow: 0 0 0 4px rgba(79,195,247,0); }
     }
 
     .sg-match-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
-
-    .sg-team {
+    .sg-team-block {
       flex: 1;
-      font-size: 0.76rem;
-      font-weight: 600;
-      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      &.home { flex-direction: row; }
+      &.away { flex-direction: row-reverse; }
+    }
+    .sg-team-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.52rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      &.home-badge { background: linear-gradient(135deg, #0A3D91, #1565C0); color: #fff; }
+      &.away-badge { background: linear-gradient(135deg, #1E293B, #334155); color: #fff; }
+    }
+    .sg-team-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #1E293B;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-
-      &.home { text-align: right; }
-      &.away { text-align: left; }
+      .home & { text-align: left; }
+      .away & { text-align: right; }
     }
 
     .sg-score {
       display: flex;
       align-items: center;
-      gap: 3px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #0A3D91;
-      min-width: 34px;
-      justify-content: center;
-      background: rgba(10,61,145,0.07);
-      border-radius: 5px;
-      padding: 1px 5px;
+      gap: 4px;
+      background: linear-gradient(135deg, #0A3D91, #1565C0);
+      border-radius: 8px;
+      padding: 4px 10px;
       flex-shrink: 0;
-
-      .sc  { min-width: 12px; text-align: center; }
-      .sep { color: #9CA3AF; font-weight: 400; }
+      min-width: 52px;
+      justify-content: center;
+      .sc { font-size: 0.88rem; font-weight: 800; color: #fff; min-width: 12px; text-align: center; }
+      .sep { font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 400; }
     }
 
     .sg-vs {
-      font-size: 0.72rem;
-      color: #9CA3AF;
-      min-width: 22px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #94A3B8;
+      min-width: 32px;
       text-align: center;
       flex-shrink: 0;
+      letter-spacing: 1px;
     }
 
-    /* Classifica */
+    /* ── Classifica ─────────────────────────────── */
     .sg-standings-wrap {
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
+      overflow: hidden;
       flex: 1;
     }
-
     .sg-standings-head {
       display: grid;
-      grid-template-columns: 28px 1fr 28px 24px 24px 24px 30px 32px;
+      grid-template-columns: 32px 1fr 28px 24px 24px 24px 32px 34px;
       gap: 2px;
-      padding: 8px 14px;
-      background: #fff;
-      border-bottom: 2px solid rgba(10,61,145,0.15);
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #0A3D91, #1565C0);
       position: sticky;
       top: 0;
       z-index: 2;
     }
-
     .sg-standings-body {
       overflow-y: auto;
       flex: 1;
     }
-
     .sg-standing-row {
       display: grid;
-      grid-template-columns: 28px 1fr 28px 24px 24px 24px 30px 32px;
+      grid-template-columns: 32px 1fr 28px 24px 24px 24px 32px 34px;
       gap: 2px;
-      padding: 9px 14px;
-      border-bottom: 1px solid #F3F4F6;
+      padding: 10px 12px;
+      border-bottom: 1px solid #F1F5F9;
       align-items: center;
       transition: background 0.12s;
-
-      &:hover { background: rgba(10,61,145,0.025); }
+      background: #fff;
+      &:hover { background: #F8FAFF; }
       &:last-child { border-bottom: none; }
-      &.pos1 { background: rgba(255,214,0,0.07); }
-      &.pos2 { background: rgba(192,192,192,0.06); }
-      &.pos3 { background: rgba(205,127,50,0.05); }
+      &.pos1 { background: linear-gradient(90deg, rgba(255,214,0,0.08) 0%, #fff 100%); }
+      &.pos2 { background: linear-gradient(90deg, rgba(192,192,192,0.08) 0%, #fff 100%); }
+      &.pos3 { background: linear-gradient(90deg, rgba(205,127,50,0.07) 0%, #fff 100%); }
     }
-
     .sth-rank {
       font-size: 0.7rem;
       font-weight: 700;
-      color: #6B7280;
+      color: rgba(255,255,255,0.7);
       text-align: center;
-
       &.medal { font-size: 1rem; line-height: 1; }
+      .sg-standing-row & { color: #64748B; }
     }
-
     .sth-team {
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      color: #6B7280;
+      color: rgba(255,255,255,0.85);
       text-transform: uppercase;
-      letter-spacing: 0.3px;
-
+      letter-spacing: 0.4px;
       .sg-standing-row & {
         font-size: 0.8rem;
-        font-weight: 500;
-        color: #111827;
+        font-weight: 600;
+        color: #1E293B;
         text-transform: none;
         letter-spacing: 0;
         white-space: nowrap;
@@ -379,37 +398,35 @@ export interface StudioGiocataDialogData {
         text-overflow: ellipsis;
       }
     }
-
     .sth-num {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      color: #6B7280;
+      color: rgba(255,255,255,0.7);
       text-align: center;
-
-      .sg-standing-row & { font-weight: 400; color: #4B5563; }
+      .sg-standing-row & { font-size: 0.75rem; font-weight: 400; color: #475569; }
     }
-
     .sth-pts {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 800;
-      color: #0A3D91;
+      color: #4FC3F7;
       text-align: center;
-
-      .sg-standing-row & { font-size: 0.84rem; }
+      .sg-standing-row & { font-size: 0.85rem; font-weight: 800; color: #0A3D91; }
     }
-
     .gd {
       font-size: 0.74rem;
-      font-weight: 600;
+      font-weight: 700;
       text-align: center;
-      &.pos { color: #16a34a; }
-      &.neg { color: #dc2626; }
+      &.pos { color: #16A34A; }
+      &.neg { color: #DC2626; }
     }
 
-    @media (min-width: 480px) {
-      .sg-standings-head,
-      .sg-standing-row {
-        grid-template-columns: 30px 1fr 32px 26px 26px 26px 34px 36px;
+    @media (max-width: 400px) {
+      .sg-team-badge { width: 24px; height: 24px; font-size: 0.45rem; border-radius: 6px; }
+      .sg-team-name { font-size: 0.72rem; }
+      .sg-score { padding: 3px 7px; min-width: 44px; .sc { font-size: 0.8rem; } }
+      .sg-standings-head, .sg-standing-row {
+        grid-template-columns: 26px 1fr 24px 20px 20px 20px 26px 28px;
+        padding: 8px 8px;
       }
     }
   `]
@@ -423,4 +440,11 @@ export class StudioGiocataDialogComponent {
   ) {}
 
   close(): void { this.dialogRef.close(); }
+
+  getInitials(nome: string): string {
+    if (!nome) return '?';
+    const words = nome.trim().split(/\s+/);
+    if (words.length === 1) return nome.substring(0, 3).toUpperCase();
+    return words.map(w => w[0]).join('').substring(0, 3).toUpperCase();
+  }
 }
