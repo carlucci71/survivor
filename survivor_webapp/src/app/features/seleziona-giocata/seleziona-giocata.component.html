@@ -269,7 +269,16 @@
            CAMPIONATO: layout a due sezioni (disponibili + già usate)
            ═══════════════════════════════════════════════════════════ -->
       @if (isCampionato()) {
-        <div class="teams-scroll-wrapper" #scrollWrapper (wheel)="onScrollWrapperScroll($event)" (scroll)="updateScrollButtons()">
+        <div class="teams-scroll-container">
+          <!-- Freccia sinistra -->
+          <button class="scroll-arrow scroll-arrow-left" (click)="scrollLeft()" [class.hidden]="!canScrollLeft">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <!-- Freccia destra -->
+          <button class="scroll-arrow scroll-arrow-right" (click)="scrollRight()" [class.hidden]="!canScrollRight">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+          <div class="teams-scroll-wrapper" #scrollWrapper (wheel)="onScrollWrapperScroll($event)" (scroll)="updateScrollButtons()">
           @for (squadra of squadreFiltrateDisponibili; track squadra.sigla) {
             <div
               class="jersey-card"
@@ -325,6 +334,7 @@
               </div>
             </div>
           }
+        </div>
         </div>
 
       } @else {

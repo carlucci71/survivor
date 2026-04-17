@@ -2373,8 +2373,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   shouldHideGiocata(giocata: any, giornata: number, giocatore?: any): boolean {
     if (!giocata) return false;
 
+    // Se la giocata è esplicitamente pubblica, mostrala sempre (ha priorità su tutto)
+    if (giocata.pubblica === true) return false;
+
     // Se siamo nella giornata corrente e il countdown non è ancora scaduto,
-    // le scelte sono visibili solo al giocatore stesso e al leader/admin
+    // le scelte private sono visibili solo al giocatore stesso e al leader/admin
     if (giornata === (this.lega?.giornataCorrente || 0) && !this.countdownExpired) {
       if (!this.isLeaderLega() && !this.isAdmin()) {
         const currentUserId = this.authService.getCurrentUser()?.id;
@@ -2383,9 +2386,6 @@ export class LegaDettaglioComponent implements OnDestroy {
         }
       }
     }
-
-    // Se la giocata è esplicitamente pubblica, mostrala sempre
-    if (giocata.pubblica === true) return false;
 
     // Se la giornata è già iniziata o passata, mostra sempre la giocata
     if (giornata <= (this.lega?.giornataCorrente || 0)) return false;
