@@ -50,7 +50,7 @@ public class AuthController {
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
         try {
-            magicLinkService.sendMagicLink(request.getEmail(), request.getMobile());
+            magicLinkService.sendMagicLink(request.getEmail().trim().toLowerCase(), request.getMobile());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
                     "Magic link inviato con successo. Controlla la tua email.", true));
         } catch (Exception e) {
