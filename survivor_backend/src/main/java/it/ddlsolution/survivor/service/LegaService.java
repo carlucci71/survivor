@@ -130,8 +130,8 @@ public class LegaService {
                 legaDTO.setNumPartecipanti(giocatoreLegaService.countByLegaId(id));
 
             }
-            if (legaDTO.getStato()== Enumeratori.StatoLega.ERRORE){
-                calcolaStatoLega(legaDTO,null);
+            if (legaDTO.getStato() == Enumeratori.StatoLega.ERRORE) {
+                calcolaStatoLega(legaDTO, null);
             }
 
             addInfoCalcolate(legaDTO, userId);
@@ -165,13 +165,13 @@ public class LegaService {
             }
 
 
-            if (legaDTO.getStato()== Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE){
+            if (legaDTO.getStato() == Enumeratori.StatoLega.DA_AVVIARE && legaDTO.getStatoGiornataCorrente() != Enumeratori.StatoPartita.DA_GIOCARE) {
                 legaDTO.setStato(Enumeratori.StatoLega.AVVIATA);
             }
 
             legaDTO.setGiocatori(getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId()));
             if (completo && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.DA_GIOCARE && userId != 0 && true) {//TODO opzione
-                offuscaUltimaGiocata(legaDTO,giocatoreService.findByUserId(userId).getId());
+                offuscaUltimaGiocata(legaDTO, giocatoreService.findByUserId(userId).getId());
             }
 
             if (legaDTO.getId() != null) {
@@ -276,7 +276,7 @@ public class LegaService {
                             if (viteCorrente != null) {
                                 gl.setViteCorrente(viteCorrente);
                             }
-                            if (legaDTO.getStato()!= Enumeratori.StatoLega.TERMINATA) {
+                            if (legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA) {
                                 gl.setPosizioneFinale(null);
                             }
                             // Aggiorna le giocate del giocatore (esito OK/KO)
@@ -328,7 +328,7 @@ public class LegaService {
 
         //Se partita forzata la considero terminata
         for (PartitaDTO partitaDTO : partite) {
-            if (Boolean.TRUE.equals(partitaDTO.getForzata())){
+            if (Boolean.TRUE.equals(partitaDTO.getForzata())) {
                 partitaDTO.setStato(Enumeratori.StatoPartita.TERMINATA);
             }
         }
@@ -367,7 +367,6 @@ public class LegaService {
     }
 
 
-
     @LoggaDispositiva(tipologia = "calcola")
     @Transactional
     public LegaDTO calcola(Long idLega) {
@@ -375,11 +374,13 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
 
-        int giocateDaCalcolare=0;
+        int giocateDaCalcolare = 0;
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
-            giocateDaCalcolare +=giocatoreDTO.getGiocate().stream().filter(g->g.getEsito()==null).count();
+            giocateDaCalcolare += giocatoreDTO.getGiocate().stream().filter(g -> g.getEsito() == null).count();
         }
-        if (giocateDaCalcolare>0 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA) {
+        if ((legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA)
+                || (giocateDaCalcolare > 0 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA)
+        ) {
             CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
             legaDTO.setCampionato(campionatoDTO);
             int nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() == null ? legaDTO.getGiornataIniziale() : legaDTO.getGiornataCalcolata() + 1;
@@ -400,7 +401,7 @@ public class LegaService {
                             List<GiocataDTO> giocate = giocatoreDTO
                                     .getGiocate()
                                     .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                                    .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
+                                    .filter(g -> g.getLegaId().equals(idLega) && g.getGiornata() + giornataIniziale - 1 == gc)
                                     .toList();
                             Integer puntiRound = null;
                             if (giocate.size() == 0) {
@@ -409,21 +410,23 @@ public class LegaService {
                                 GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
                                 giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
                                 giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
-                                giocataRequestDTO.setLegaId(legaDTO.getId());
+                                giocataRequestDTO.setLegaId(idLega);
                                 giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
                                 giocataRequestDTO.setPunti(0);
                                 inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
-                                puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
-                                if (puntiRound != null) {
-                                    giocataDTO.setPunti(puntiRound);
-                                    if (puntiRound == 3) {
-                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
-                                    } else if (puntiRound == 1) {
-                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.PAREGGIO);
-                                    } else {
-                                        giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                if (giocataDTO.getEsito() == null) {
+                                    puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
+                                    if (puntiRound != null) {
+                                        giocataDTO.setPunti(puntiRound);
+                                        if (puntiRound == 3) {
+                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                        } else if (puntiRound == 1) {
+                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.PAREGGIO);
+                                        } else {
+                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                        }
                                     }
                                 }
                             }
@@ -433,7 +436,7 @@ public class LegaService {
                             }
                         }
                     } else {
-        // ── SURVIVOR: eliminazione con supporto vite ──
+                        // ── SURVIVOR: eliminazione con supporto vite ──
                         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                             Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
                             if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
@@ -441,7 +444,7 @@ public class LegaService {
                                 List<GiocataDTO> giocate = giocatoreDTO
                                         .getGiocate()
                                         .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                                        .filter(g -> g.getLegaId().equals(legaDTO.getId()) && g.getGiornata() + giornataIniziale - 1 == gc)
+                                        .filter(g -> g.getLegaId().equals(idLega) && g.getGiornata() + giornataIniziale - 1 == gc)
                                         .toList();
                                 Boolean vincente = null;
                                 if (giocate.size() == 0) {
@@ -449,7 +452,7 @@ public class LegaService {
                                     GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
                                     giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
                                     giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
-                                    giocataRequestDTO.setLegaId(legaDTO.getId());
+                                    giocataRequestDTO.setLegaId(idLega);
                                     giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
                                     inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
                                 } else if (giocate.size() == 1) {
@@ -489,7 +492,7 @@ public class LegaService {
                 }
             }
             salva(legaDTO, null);
-            LegaDTO legaDTOAggiornata = getLegaDTO(legaDTO.getId(), true, userId);
+            LegaDTO legaDTOAggiornata = getLegaDTO(idLega, true, userId);
             return legaDTOAggiornata;
         } else {
             return legaDTO;
@@ -498,8 +501,8 @@ public class LegaService {
 
 
     /**
-     * Calcola i punti per modalità Campionato: 3 (vittoria), 1 (pareggio), 0 (sconfitta).
-     * Restituisce null se la partita non è ancora terminata.
+     * Calcola i punti per modalità Campionato: 3 (vittoria), 1 (pareggio), 0 (sconfitta). Restituisce null se la
+     * partita non è ancora terminata.
      */
     private Integer calcolaPuntiCampionato(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return 0;
@@ -532,7 +535,7 @@ public class LegaService {
         if (optPartitaDTO.isPresent()) {
             PartitaDTO partitaDTO = optPartitaDTO.get();
             if (partitaDTO.getStato() == Enumeratori.StatoPartita.TERMINATA) {
-                if (Boolean.TRUE.equals(partitaDTO.getForzata())){
+                if (Boolean.TRUE.equals(partitaDTO.getForzata())) {
                     ret = true;
                 } else {
                     String casa = partitaDTO.getCasaSigla();
@@ -668,8 +671,8 @@ public class LegaService {
     }
 
     /**
-     * Assegna le posizioni finali ai giocatori in base alla classifica
-     * Posizione 1 = vincitore, 2 = secondo posto, etc.
+     * Assegna le posizioni finali ai giocatori in base alla classifica Posizione 1 = vincitore, 2 = secondo posto,
+     * etc.
      */
     private void assegnaPosizioniFinali(LegaDTO legaDTO) {
         log.info("Assegnazione posizioni finali per lega: {} - {}", legaDTO.getId(), legaDTO.getName());
@@ -1010,11 +1013,12 @@ public class LegaService {
     }
 
     @Transactional
-    public Lega findByIdEntity(Long legaId){
+    public Lega findByIdEntity(Long legaId) {
         return legaRepository.findById(legaId)
                 .orElseThrow(() -> new IllegalArgumentException("Lega non trovata"));
 
     }
+
     @Transactional
     @LoggaDispositiva
     public void eliminaLega(Long idLega) {
@@ -1037,7 +1041,7 @@ public class LegaService {
 
     @Transactional(readOnly = true)
     public List<LegaDTO> legheByCampionato(String idCampionato, short anno) {
-        return legaMapper.toDTOList(legaRepository.findByCampionato_IdAndAnnoAndStatoIn(idCampionato,anno, List.of(Enumeratori.StatoLega.AVVIATA, Enumeratori.StatoLega.DA_AVVIARE)));
+        return legaMapper.toDTOList(legaRepository.findByCampionato_IdAndAnnoAndStatoIn(idCampionato, anno, List.of(Enumeratori.StatoLega.AVVIATA, Enumeratori.StatoLega.DA_AVVIARE)));
     }
 
     @Transactional
