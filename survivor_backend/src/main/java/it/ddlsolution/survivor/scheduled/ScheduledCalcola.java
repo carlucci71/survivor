@@ -24,7 +24,9 @@ public class ScheduledCalcola {
                 l -> {
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(0L, null, new ArrayList<>()));
                     try {
-                        legaService.calcola(l.getId());
+                        if (l.getStato()!= Enumeratori.StatoLega.TERMINATA) {
+                            legaService.calcola(l.getId());
+                        }
                     } catch (Exception e) {
                         log.error("Errore in calcolo batch ", e);
                     } finally {
