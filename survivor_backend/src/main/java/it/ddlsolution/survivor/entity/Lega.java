@@ -8,6 +8,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -76,4 +78,12 @@ public class Lega {
 
     @Column(name = "accesso_libero", nullable = false)
     private boolean accessoLibero = false;
+
+    @Column(name = "modalita", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private Enumeratori.ModalitaLega modalita = Enumeratori.ModalitaLega.SURVIVOR;
+
+    /** Numero di vite iniziali assegnato a ogni giocatore in questa lega (default 1 = survivor classico) */
+    @Column(name = "vite_iniziali", nullable = false)
+    private short viteIniziali = 1;
 }

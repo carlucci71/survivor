@@ -20,7 +20,7 @@ import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { environment } from '../../../environments/environment';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-lega-nuova',
@@ -52,7 +52,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     private campionatoService: CampionatoService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private translate: TranslateService
   ) {}
   sportSel: string | null = null;
   campionatoSel: Campionato | null = null;
@@ -77,6 +78,56 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   pubblica = false;
   accessoLibero = false;
   maxPartecipanti: number | null = null;
+  modalita: 'SURVIVOR' | 'CAMPIONATO' = 'SURVIVOR';
+  viteIniziali: number = 1;
+  viteWarn: { emoji: string; text: string } | null = null;
+
+  private readonly viteWarnCounts: Record<number, number> = { 6: 4, 7: 4, 8: 4, 9: 4 };
+
+  get isViteMax(): boolean {
+    return this.viteIniziali >= 10;
+  }
+
+  private updateViteWarn(): void {
+    const level = this.viteIniziali;
+    if (level <= 5) { this.viteWarn = null; return; }
+    if (level >= 10) {
+      this.viteWarn = {
+        emoji: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.EMOJI'),
+        text: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.TEXT'),
+      };
+      return;
+    }
+    const count = this.viteWarnCounts[level];
+    const idx = Math.floor(Math.random() * count);
+    this.viteWarn = {
+      emoji: this.translate.instant(`CREATE_LEAGUE.LIVES_WARN.${level}.${idx}.EMOJI`),
+      text: this.translate.instant(`CREATE_LEAGUE.LIVES_WARN.${level}.${idx}.TEXT`),
+    };
+  }
+
+  incViteIniziali(): void {
+    if (this.viteIniziali >= 10) return;
+    this.viteIniziali++;
+    this.updateViteWarn();
+  }
+
+  decViteIniziali(): void {
+    if (this.viteIniziali > 0) {
+      this.viteIniziali--;
+      this.updateViteWarn();
+    }
+  }
+
+  setModalita(m: 'SURVIVOR' | 'CAMPIONATO'): void {
+    this.modalita = m;
+    // In modalità CAMPIONATO la giornata finale è obbligatoria:
+    // se è ancora null, inizializzala all'ultima giornata disponibile
+    if (m === 'CAMPIONATO' && this.giornataFinale === null && this.campionatoSel) {
+      this.giornataFinale = this.campionatoSel.numGiornate ?? null;
+      this.giornataFinaleTouched = true;
+    }
+  }
 
   decMaxPartecipanti(): void {
     if (!this.maxPartecipanti) return;
@@ -272,12 +323,19 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   incGiornataFinale(): void {
-    if (this.giornataFinale === null) return;
     const max = this.campionatoSel?.numGiornate ?? 99;
+    if (this.giornataFinale === null) {
+      // In CAMPIONATO: inizia dall'ultima giornata disponibile
+      this.giornataFinale = max;
+      return;
+    }
     if (this.giornataFinale < max - 1) {
       this.giornataFinale++;
     } else {
-      this.giornataFinale = null; // torna a "fine stagione"
+      this.giornataFinale = null; // torna a "fine stagione" (solo SURVIVOR)
+      if (this.modalita === 'CAMPIONATO') {
+        this.giornataFinale = max; // CAMPIONATO: non tornare a null
+      }
     }
   }
 
@@ -320,8 +378,13 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   isGiornataFinaleValid(): boolean {
-    // Campo opzionale: se vuoto è valido
-    if (this.giornataFinale === null || this.giornataFinale === undefined) return true;
+    // In modalità CAMPIONATO la giornata finale è obbligatoria
+    if (this.modalita === 'CAMPIONATO') {
+      if (this.giornataFinale === null || this.giornataFinale === undefined) return false;
+    } else {
+      // SURVIVOR: campo opzionale; se vuoto è valido
+      if (this.giornataFinale === null || this.giornataFinale === undefined) return true;
+    }
     if (!this.campionatoSel || this.giornataIniziale === null) return false;
     const min = this.giornataIniziale + 1;
     const max = this.campionatoSel.numGiornate ?? Infinity;
@@ -354,6 +417,8 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.pubblica = false;
     this.accessoLibero = false;
     this.maxPartecipanti = null;
+    this.viteIniziali = 1;
+    this.viteWarn = null;
   }
 
   onSubmit(): void {
@@ -377,7 +442,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         this.pwd,
         this.pubblica,
         this.accessoLibero,
-        this.maxPartecipanti
+        this.maxPartecipanti,
+        this.modalita,
+        this.viteIniziali
       )
       .subscribe({
         next: (lega) => {

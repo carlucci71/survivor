@@ -130,6 +130,10 @@ export interface Lega {
   miaGiocataCorrente?: Giocata;
   /** Ultima giocata con esito definitivo: popolata dal backend quando non c'è ancora una pick per la giornata corrente */
   miaUltimaGiocataConEsito?: Giocata;
+  /** Modalità di gioco: SURVIVOR (default) o CAMPIONATO */
+  modalita?: string;
+  /** Numero vite iniziali (solo per SURVIVOR) */
+  viteIniziali?: number;
 }
 
 export interface LegaJoinRequest {
@@ -169,6 +173,18 @@ export interface Partita {
     forzata?: boolean;
 }
 
+export interface ClassificaRow {
+    sigla: string;
+    nome: string;
+    pj: number;
+    v: number;
+    n: number;
+    p: number;
+    punti: number;
+    gf: number;
+    gs: number;
+}
+
 export interface PartitaMock {
     id: number;
     campionatoId: string;
@@ -206,8 +222,11 @@ export interface Giocatore {
   squadraBasketCuore?: Squadra;
   tennistaCuore?: Squadra;
   statiPerLega?: Record<number, StatoGiocatore>;
+  /** Vite rimaste per lega: legaId -> numero vite */
+  vitePerLega?: Record<number, number>;
   user?: User;
-  giocate?: Giocata[]
+  giocate?: Giocata[];
+  puntiTotali?: number;
 }
 
 export interface Giocata {
@@ -223,6 +242,7 @@ export interface Giocata {
   reactions?: Record<string, number>; // emoji -> conteggio
   miaReaction?: string | null; // emoji scelta dall'utente corrente
   reactionAutori?: Record<string, string[]>; // emoji -> lista nomi giocatori
+  punti?: number; // Punti in modalità Campionato (3 vittoria, 1 pareggio, 0 sconfitta)
 }
 
 export interface StatiPerLega {

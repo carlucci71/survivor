@@ -1228,6 +1228,8 @@ export class ChiSiamoDialogComponent implements OnInit{
             <span class="separator">|</span>
             <a href="#" class="footer-link" (click)="openFaq($event)">{{ 'FOOTER.FAQ' | translate }}</a>
             <span class="separator">|</span>
+            <a href="#" class="footer-link" (click)="openGuida($event)">Guida</a>
+            <span class="separator">|</span>
             <a href="#" class="footer-link" (click)="openChiSiamo($event)">{{ 'FOOTER.ABOUT' | translate }}</a>
             <span class="separator">|</span>
             <a href="#" class="footer-link" (click)="openContatti($event)">{{ 'FOOTER.CONTACT' | translate }}</a>
@@ -1537,6 +1539,11 @@ export class FooterComponent  {
       maxHeight: '90vh',
       panelClass: 'custom-dialog-container' // CENTRATO
     });
+  }
+
+  openGuida(event: Event) {
+    event.preventDefault();
+    this.router.navigate(['/guida']);
   }
 
   openContatti(event: Event) {

@@ -7,6 +7,7 @@ import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.UserDTO;
 import it.ddlsolution.survivor.service.GiocatoreService;
 import it.ddlsolution.survivor.service.PartitaMockService;
+import it.ddlsolution.survivor.service.SquadraService;
 import it.ddlsolution.survivor.service.UserService;
 import it.ddlsolution.survivor.util.Utility;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -20,10 +21,13 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.IDLEGA;
 import static it.ddlsolution.survivor.aspect.guardlogger.rule.GuardRule.PARAM.SIGLASQUADRA;
@@ -38,6 +42,7 @@ public class GiocataRule implements GuardRule {
     private final GiocatoreService giocatoreService;
     private final Utility utility;
     private final PartitaMockService partitaMockService;
+    private final SquadraService squadraService;
 
     @Override
     public Map<String, Object> run(Map<GuardRule.PARAM, Object> args) {
@@ -108,9 +113,13 @@ public class GiocataRule implements GuardRule {
             //throw new AccessDeniedException("La giornata da giocare " + legaDTO.getGiornataDaGiocare() + " è inferiore alla corrente " + legaDTO.getGiornataCorrente());
         }
 
-        // Controllo squadra già usata con supporto phase-reset per MONDIALI_2026:
-        // nel knockout (giornata relativa > 3) le scelte del girone non contano
-        boolean squadraGiaUsata = isSquadraGiaUsata(giocatoreDTO.getGiocate(), idLega, squadra, giornata, legaDTO);
+        // Controllo squadra già usata: ciclo per CAMPIONATO, blacklist globale per SURVIVOR
+        boolean squadraGiaUsata;
+        if (legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO) {
+            squadraGiaUsata = isSquadraGiaUsataCampionato(giocatoreDTO.getGiocate(), idLega, squadra, giornata, legaDTO);
+        } else {
+            squadraGiaUsata = isSquadraGiaUsata(giocatoreDTO.getGiocate(), idLega, squadra, giornata, legaDTO);
+        }
         if (squadraGiaUsata) {
             throw new AccessDeniedException("Squadra già usata");
         }
@@ -152,6 +161,30 @@ public class GiocataRule implements GuardRule {
                 .filter(g -> g.getLegaId().equals(idLega))
                 .filter(g -> squadra.equals(g.getSquadraSigla()))
                 .count() > 0;
+    }
+
+    /**
+     * In modalità Campionato la stessa squadra può essere ripresa solo dopo aver usato tutte le squadre del campionato.
+     * Verifica se la squadra è già presente nel ciclo corrente.
+     */
+    private boolean isSquadraGiaUsataCampionato(List<GiocataDTO> giocate, Long idLega,
+                                                  String squadra, Integer giornataRelativa, LegaDTO legaDTO) {
+        int numSquadre = squadraService.getSquadreByCampionatoId(
+                legaDTO.getCampionato().getId(), (short) legaDTO.getAnno()).size();
+        if (numSquadre == 0) return false;
+
+        List<String> prevPicks = giocate.stream()
+                .filter(g -> g.getLegaId().equals(idLega))
+                .filter(g -> !g.getGiornata().equals(giornataRelativa))
+                .filter(g -> g.getSquadraSigla() != null)
+                .sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                .map(GiocataDTO::getSquadraSigla)
+                .toList();
+
+        int cycleStart = (prevPicks.size() / numSquadre) * numSquadre;
+        Set<String> currentCycle = prevPicks.subList(cycleStart, prevPicks.size()).stream()
+                .collect(Collectors.toSet());
+        return currentCycle.contains(squadra);
     }
 
 }

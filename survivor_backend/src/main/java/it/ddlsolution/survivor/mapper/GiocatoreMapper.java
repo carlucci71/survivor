@@ -36,10 +36,10 @@ public abstract class GiocatoreMapper  implements DtoMapper<GiocatoreDTO, Giocat
                     Enumeratori.StatoGiocatore stato = gl.getStato();
                     Enumeratori.RuoloGiocatoreLega ruolo = gl.getRuolo();
 
-
                     // Aggiungi lo stato specifico per questa giocatore
                     giocatoreDTO.getStatiPerLega().put(idLega, stato);
                     giocatoreDTO.getRuoliPerLega().put(idLega, ruolo);
+                    giocatoreDTO.getVitePerLega().put(idLega, gl.getViteCorrente());
                 });
 
     }

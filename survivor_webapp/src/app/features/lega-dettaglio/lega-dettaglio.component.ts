@@ -3,14 +3,16 @@ import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest } from 'rxjs';
-import { map, filter, switchMap, take } from 'rxjs/operators';
+import { combineLatest, forkJoin, of } from 'rxjs';
+import { map, filter, switchMap, take, catchError } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { LegaService } from '../../core/services/lega.service';
 import {
+  ClassificaRow,
   Giocata,
   Giocatore,
   Lega,
+  Partita,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
@@ -53,6 +55,8 @@ import { RecapService } from '../../core/services/recap.service';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
 import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial/leader-tutorial.component';
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
+import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component';
+import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -210,6 +214,17 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
+  // Partite della prossima giornata per il ticker del widget campionato
+  tickerPartite: { casa: string; fuori: string; orario: Date | null }[] = [];
+
+  // Studio: calendario + classifica della giornata corrente
+  studioAperto = false;
+  studioTab: 'calendario' | 'classifica' = 'calendario';
+  studioPartite: Partita[] = [];
+  studioClassifica: ClassificaRow[] = [];
+  studioCaricato = false;
+  studioLoading = false;
+
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
@@ -302,6 +317,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
+          if (this.isCampionato()) this.caricaTickerPartite();
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
@@ -426,6 +442,95 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
   }
 
+  caricaTickerPartite(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    if (!giornata) return;
+    this.campionatoService.partiteDellaGiornata(
+      this.lega.campionato.id!,
+      this.lega.anno,
+      giornata
+    ).subscribe({
+      next: (partite: any[]) => {
+        this.tickerPartite = (partite || [])
+          .sort((a, b) => new Date(a.orario).getTime() - new Date(b.orario).getTime())
+          .map(p => ({
+            casa: p.casaSigla || p.casaNome || '?',
+            fuori: p.fuoriSigla || p.fuoriNome || '?',
+            orario: p.orario ? new Date(p.orario) : null,
+          }));
+      },
+      error: () => {}
+    });
+  }
+
+  apriStudio(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    if (!this.studioCaricato) {
+      this.studioLoading = true;
+      this.caricaStudio();
+    }
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    const label = this.campionatoService.getDesGiornata(
+      this.lega.campionato.id!,
+      giornata ?? 1,
+      ''
+    );
+    // Se i dati sono già pronti apre subito, altrimenti aspetta il caricamento
+    if (this.studioCaricato) {
+      this.dialog.open(StudioGiocataDialogComponent, {
+        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+        panelClass: 'studio-dialog-panel',
+        maxWidth: '520px',
+        width: '96vw',
+      });
+    } else {
+      const sub = this.campionatoService.partiteDellaGiornata(this.lega.campionato.id!, this.lega.anno, giornata!)
+        .pipe(catchError(() => of([])))
+        .subscribe(() => {
+          // caricaStudio() gestisce già il completamento; al prossimo click sarà pronto
+          sub.unsubscribe();
+        });
+      // Apri il dialog appena caricaStudio finisce
+      const waitOpen = setInterval(() => {
+        if (this.studioCaricato) {
+          clearInterval(waitOpen);
+          this.dialog.open(StudioGiocataDialogComponent, {
+            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+            panelClass: 'studio-dialog-panel',
+            maxWidth: '520px',
+            width: '96vw',
+          });
+        }
+      }, 100);
+      // Fallback after 8s
+      setTimeout(() => clearInterval(waitOpen), 8000);
+    }
+  }
+
+  caricaStudio(): void {
+    if (!this.lega?.campionato?.id || !this.lega.anno) return;
+    const giornata = this.lega.giornataDaGiocare || this.lega.giornataCorrente;
+    if (!giornata) return;
+    this.studioLoading = true;
+    const campId = this.lega.campionato.id!;
+    const anno = this.lega.anno;
+    forkJoin({
+      partite: this.campionatoService.partiteDellaGiornata(campId, anno, giornata).pipe(catchError(() => of([]))),
+      classifica: this.campionatoService.classificaCampionato(campId, anno).pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ partite, classifica }) => {
+        this.studioPartite = [...(partite as any[])].sort(
+          (a, b) => new Date(a.orario).getTime() - new Date(b.orario).getTime()
+        ) as Partita[];
+        this.studioClassifica = classifica;
+        this.studioCaricato = true;
+        this.studioLoading = false;
+      },
+      error: () => { this.studioLoading = false; }
+    });
+  }
+
   caricaPartiteForzate(): void {
     if (!this.lega?.campionato?.id || !this.lega.anno) return;
 
@@ -543,6 +648,29 @@ export class LegaDettaglioComponent implements OnDestroy {
     const fullTitle = this.getDesGiornataTitle(index);
     if (!fullTitle) return '';
 
+    // CAMPIONATO: etichette compatte specifiche per fase torneo
+    if (this.isCampionato()) {
+      const compactMap: Record<string, string> = {
+        'Girone - Giornata 1': 'G.1',
+        'Girone - Giornata 2': 'G.2',
+        'Girone - Giornata 3': 'G.3',
+        'Sedicesimi di finale': '32°',
+        'Ottavi di finale': '16°',
+        'Quarti di finale': 'QF',
+        'Semifinali': 'SF',
+        'Finale': 'F',
+      };
+      // Cerca corrispondenza sull'etichetta base (prima della traduzione)
+      const desBase = this.campionatoService.getDesGiornataNoAlias(
+        this.lega?.campionato?.id ?? '', index
+      );
+      if (compactMap[desBase]) return compactMap[desBase];
+      // Fallback: cerca sui valori tradotti
+      for (const [key, short] of Object.entries(compactMap)) {
+        if (fullTitle.includes(key)) return short;
+      }
+    }
+
     const roundWord = this.translate.instant('LEAGUE.ROUND');
     const weekWord = this.translate.instant('LEAGUE.WEEK');
     const roundShort = this.translate.instant('LEAGUE.ROUND_SHORT');
@@ -572,13 +700,25 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
     const squadraCorrenteId = giocataCorrente?.squadraSigla || null;
     // Escludi tutte le squadre già giocate, tranne quella corrente
-    const giocateIds = (giocatore.giocate || [])
+    const prevPicks = (giocatore.giocate || [])
       .filter((g: any) => Number(g?.giornata) !== giornata)
       .map((g: any) => g.squadraSigla);
-    // Passa TUTTE le squadre, marcando quelle già usate con alreadyUsed
-    const squadreDisponibili = this.squadre.map(
-      (s: any) => ({ ...s, alreadyUsed: giocateIds.includes(s.sigla) })
-    );
+
+    // Calcola alreadyUsed: ciclo per CAMPIONATO, blacklist globale per SURVIVOR
+    let squadreDisponibili: any[];
+    if (this.lega?.modalita === 'CAMPIONATO') {
+      const numSquadre = this.squadre.length;
+      const cycleStart = numSquadre > 0 ? Math.floor(prevPicks.length / numSquadre) * numSquadre : 0;
+      const currentCycleTeams = new Set(prevPicks.slice(cycleStart));
+      squadreDisponibili = this.squadre.map(
+        (s: any) => ({ ...s, alreadyUsed: currentCycleTeams.has(s.sigla) })
+      );
+    } else {
+      // SURVIVOR: qualsiasi squadra già usata nelle giornate precedenti è bloccata
+      squadreDisponibili = this.squadre.map(
+        (s: any) => ({ ...s, alreadyUsed: prevPicks.includes(s.sigla) })
+      );
+    }
 
     const { SelezionaGiocataComponent } = await import(
       '../seleziona-giocata/seleziona-giocata.component'
@@ -618,6 +758,46 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
   goBack(): void {
     this.router.navigate(['/home'], { state: { selectedLegaId: this.lega?.id, activeTab: this.lega?.pubblica ? 'public' : 'private' } });
+  }
+
+  isCampionato(): boolean {
+    return this.lega?.modalita === 'CAMPIONATO';
+  }
+
+  classificaAperta = false;
+
+  toggleClassifica(): void {
+    this.classificaAperta = !this.classificaAperta;
+  }
+
+  getClassificaCampionato(): Giocatore[] {
+    if (!this.lega?.giocatori) return [];
+    return [...this.lega.giocatori].sort((a, b) => (b.puntiTotali ?? 0) - (a.puntiTotali ?? 0));
+  }
+
+  getPosizioneClassifica(giocatore: Giocatore): number {
+    return this.getClassificaCampionato().findIndex(g => g.user?.id === giocatore.user?.id) + 1;
+  }
+
+  getMiaPosizioneClassifica(): { pos: number; punti: number; emoji: string; totale: number; distanza: number; leaderNick: string | null; isLeader: boolean } | null {
+    const me = this.getCurrentGiocatore();
+    if (!me) return null;
+    const classifica = this.getClassificaCampionato();
+    const pos = classifica.findIndex(g => g.user?.id === me.user?.id) + 1;
+    if (pos === 0) return null;
+    const punti = me.puntiTotali ?? 0;
+    const emoji = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : '🏆';
+    const totale = classifica.length;
+    const leader = classifica[0];
+    const leaderPunti = leader?.puntiTotali ?? 0;
+    const distanza = pos === 1 ? 0 : leaderPunti - punti;
+    const isLeader = pos === 1;
+    const leaderNick = (!isLeader && leader?.nickname) ? leader.nickname : null;
+    return { pos, punti, emoji, totale, distanza, leaderNick, isLeader };
+  }
+
+  isCurrentUser(giocatore: Giocatore): boolean {
+    return giocatore.user?.id === this.authService.getCurrentUser()?.id;
   }
 
   visualizzaGiocata(giornata: number, giocatore: Giocatore): string {
@@ -686,17 +866,15 @@ export class LegaDettaglioComponent implements OnDestroy {
       maxGiornata = numGg;
     }
 
-    // Calcola le giornate da visualizzare (MAX 5, centrate sulla giornata corrente)
+    let startGiornata: number;
+    let endGiornata: number;
+
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 5; // LIMITE A 5 GIORNATE VISIBILI
-    let startGiornata = Math.max(giornataIniziale, giornataCorrente - Math.floor(maxGiornateVisibili / 2));
-    let endGiornata = Math.min(maxGiornata, startGiornata + maxGiornateVisibili - 1);
-
-
-    // Aggiusta se siamo vicini alla fine
-    if (endGiornata - startGiornata + 1 < maxGiornateVisibili) {
-      startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
-    }
+    const maxGiornateVisibili = 5;
+    // Mostra tutte le giornate dall'inizio fino alla corrente, max 5
+    // Oltre 5 appare il pulsante storico — nessuna finestra scorrevole
+    startGiornata = giornataIniziale;
+    endGiornata = Math.min(maxGiornata, giornataCorrente, giornataIniziale + maxGiornateVisibili - 1);
 
     // Popola le colonne visibili
     for (let i = startGiornata; i <= endGiornata; i++) {
@@ -948,6 +1126,12 @@ export class LegaDettaglioComponent implements OnDestroy {
     );
   }
 
+  getSquadraNomeSenzaCitta(squadraSigla: string | null | undefined): string | null {
+    const nomeCompleto = this.getSquadraNome(squadraSigla);
+    if (!nomeCompleto) return squadraSigla ?? null;
+    return this.squadraService.formatNomeSquadra(nomeCompleto);
+  }
+
   // ========== LOGHI E FOTO SQUADRE/TENNISTI ===
   // Mapping loghi calcio (Serie A + Serie B)
   private readonly logoFiles: { [key: string]: string } = {
@@ -1113,6 +1297,10 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getCurrentUser() {
     return this.authService.getCurrentUser();
+  }
+
+  isGiocatoreEliminato(g: Giocatore): boolean {
+    return g.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ELIMINATO.value;
   }
 
   // Verifica se il giocatore corrente (utente loggato) è eliminato in questa lega
@@ -1626,7 +1814,27 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.error = 'Errore nel termina della lega';
       },
     });
+  }
 
+  openGestisciViteDialog(giocatore: Giocatore): void {
+    if (!this.lega?.id) return;
+    const dialogRef = this.dialog.open(GestisciViteDialogComponent, {
+      width: '360px',
+      maxWidth: '95vw',
+      panelClass: 'gv-dialog-panel',
+      data: {
+        idLega: this.lega.id,
+        idGiocatore: giocatore.id,
+        nicknameGiocatore: giocatore.nickname,
+        viteAttuali: giocatore.vitePerLega?.[this.lega.id] ?? this.lega.viteIniziali ?? 1,
+      },
+    });
+    dialogRef.afterClosed().subscribe((legaAggiornata: Lega | undefined) => {
+      if (legaAggiornata) {
+        this.lega = legaAggiornata;
+        this.caricaTabella();
+      }
+    });
   }
 
   sospensioni() {
@@ -2084,8 +2292,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   grimReaperVisible = false;
   grimReaperVittimeGiornata: string[] = [];
   grimReaperMsg = '';
+  grimReaperObsessed = false;
   private _tapTimestamps: number[] = [];
   private _grimReaperDismissTimer: any = null;
+  private _grimReaperActivations = 0;
 
   onEliminatiTripleTap(): void {
     const now = Date.now();
@@ -2099,10 +2309,29 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   private attivaGrimReaper(): void {
     if (!this.lega?.giocatori) return;
-    const giornata = this.lega.giornataCorrente ?? -1;
+    this._grimReaperActivations++;
+
+    if (this._grimReaperActivations > 3) {
+      const msgs: string[] = this.translate.instant('EASTER_EGG.REAPER_OBSESSED');
+      this.grimReaperMsg = Array.isArray(msgs)
+        ? msgs[Math.floor(Math.random() * msgs.length)]
+        : '🙄';
+      this.grimReaperObsessed = true;
+      this.grimReaperVittimeGiornata = [];
+      this.grimReaperVisible = true;
+      if (this._grimReaperDismissTimer) clearTimeout(this._grimReaperDismissTimer);
+      this._grimReaperDismissTimer = setTimeout(() => {
+        this.grimReaperVisible = false;
+        this.grimReaperObsessed = false;
+      }, 4500);
+      return;
+    }
+
+    this.grimReaperObsessed = false;
+    const giornataRelativa = (this.lega.giornataCorrente ?? this.lega.giornataIniziale) - this.lega.giornataIniziale + 1;
     this.grimReaperVittimeGiornata = this.lega.giocatori
       .filter(g => {
-        const giocata = g.giocate?.find(gi => gi.giornata === giornata);
+        const giocata = g.giocate?.find(gi => gi.giornata === giornataRelativa);
         return giocata?.esito === 'KO';
       })
       .map(g => g.nickname);
@@ -2144,8 +2373,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   shouldHideGiocata(giocata: any, giornata: number, giocatore?: any): boolean {
     if (!giocata) return false;
 
+    // Se la giocata è esplicitamente pubblica, mostrala sempre (ha priorità su tutto)
+    if (giocata.pubblica === true) return false;
+
     // Se siamo nella giornata corrente e il countdown non è ancora scaduto,
-    // le scelte sono visibili solo al giocatore stesso e al leader/admin
+    // le scelte private sono visibili solo al giocatore stesso e al leader/admin
     if (giornata === (this.lega?.giornataCorrente || 0) && !this.countdownExpired) {
       if (!this.isLeaderLega() && !this.isAdmin()) {
         const currentUserId = this.authService.getCurrentUser()?.id;
@@ -2154,9 +2386,6 @@ export class LegaDettaglioComponent implements OnDestroy {
         }
       }
     }
-
-    // Se la giocata è esplicitamente pubblica, mostrala sempre
-    if (giocata.pubblica === true) return false;
 
     // Se la giornata è già iniziata o passata, mostra sempre la giocata
     if (giornata <= (this.lega?.giornataCorrente || 0)) return false;
@@ -2192,6 +2421,19 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   getGiocaIcon(): string {
     return this.utilService.getGiocaIcon(this.lega!.campionato!.sport!.id);
+  }
+
+  getGiocaEmoji(): string {
+    const sport = this.lega?.campionato?.sport?.id;
+    if (sport === 'CALCIO') return '⚽';
+    if (sport === 'BASKET') return '🏀';
+    if (sport === 'TENNIS') return '🎾';
+    if (sport === 'FOOTBALL') return '🏈';
+    if (sport === 'BASEBALL') return '⚾';
+    if (sport === 'HOCKEY') return '🏒';
+    if (sport === 'RUGBY') return '🏉';
+    if (sport === 'VOLLEYBALL') return '🏐';
+    return '🏆';
   }
 
   getCountdownTargetDate(): any {

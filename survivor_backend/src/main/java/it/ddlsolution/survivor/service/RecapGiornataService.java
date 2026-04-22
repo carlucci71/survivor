@@ -96,6 +96,7 @@ public class RecapGiornataService {
                     .squadraNome(squadraNome)
                     .squadraSigla(squadraSigla)
                     .esito(giocata != null ? giocata.getEsito() : null)
+                    .punti(giocata != null ? giocata.getPunti() : null)
                     .statoDopoGiornata(statoAttuale)
                     .eliminatoQuestaGiornata(eliminatoQuestaGiornata)
                     .forzata(giocata != null && giocata.getForzatura() != null

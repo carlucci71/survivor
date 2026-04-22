@@ -1,6 +1,7 @@
 package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
+import it.ddlsolution.survivor.dto.ClassificaRowDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
@@ -43,6 +44,13 @@ public class CampionatoController {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
         List<PartitaDTO> squadraDTOListMap = utilCalendarioService.partiteDellaGiornata(campionatoDTO, giornata, anno);
         return ResponseEntity.ok(squadraDTOListMap);
+    }
+
+    @GetMapping(value = "/classifica/{campionatoId}/{anno}")
+    public ResponseEntity<List<ClassificaRowDTO>> classifica(@PathVariable String campionatoId, @PathVariable Short anno) {
+        CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
+        List<ClassificaRowDTO> rows = utilCalendarioService.computeClassifica(campionatoDTO, anno);
+        return ResponseEntity.ok(rows);
     }
 
 }

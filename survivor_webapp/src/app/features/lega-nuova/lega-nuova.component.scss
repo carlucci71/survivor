@@ -452,10 +452,121 @@ $radius-sm: 10px;
   letter-spacing: 0.4px;
 }
 
+.cn-step-auto-badge--warn {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #F57C00;
+  background: rgba(245, 124, 0, 0.12);
+  border-radius: 8px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cn-required-star {
+  color: #D32F2F;
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+.cn-stepper--required {
+  border-color: #D32F2F !important;
+  background: rgba(211, 47, 47, 0.04) !important;
+}
+
 .cn-stepper-error {
   font-size: 0.73rem;
   color: #D32F2F;
   padding: 0 2px;
+}
+
+.cn-vite-row {
+  margin-top: 12px;
+}
+
+.cn-vite-label-ico {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  color: #ef4444;
+}
+
+.cn-step-num--vite {
+  color: #ef4444;
+}
+
+.cn-step-num--vite-max {
+  color: #b91c1c;
+}
+
+// ── Vite warning ───────────────────────────────────────────
+.cn-vite-warn {
+  margin-top: 12px;
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.09), rgba(251, 191, 36, 0.06));
+  border: 1.5px solid rgba(245, 158, 11, 0.38);
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  animation: cn-appear 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  .cn-vw-emoji {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    line-height: 1.1;
+    filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+  }
+
+  .cn-vw-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .cn-vw-msg {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #92400e;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  // ── Versione MAX (10 vite) ─────────────────────────────
+  &--max {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(185, 28, 28, 0.07));
+    border-color: rgba(239, 68, 68, 0.45);
+    padding: 16px 17px;
+    animation: cn-vite-max-pulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+    .cn-vw-emoji {
+      font-size: 2rem;
+      filter: drop-shadow(0 3px 8px rgba(185, 28, 28, 0.4));
+      animation: cn-skull-shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    .cn-vw-msg {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #991b1b;
+      letter-spacing: 0.01em;
+    }
+  }
+}
+
+@keyframes cn-vite-max-pulse {
+  0%   { transform: scale(0.9); opacity: 0; }
+  60%  { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes cn-skull-shake {
+  0%   { transform: rotate(0deg) scale(0.5); opacity: 0; }
+  25%  { transform: rotate(-8deg) scale(1.2); opacity: 1; }
+  50%  { transform: rotate(6deg) scale(1.1); }
+  75%  { transform: rotate(-4deg) scale(1.05); }
+  100% { transform: rotate(0deg) scale(1); }
 }
 
 // â”€â”€ Preview durata â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

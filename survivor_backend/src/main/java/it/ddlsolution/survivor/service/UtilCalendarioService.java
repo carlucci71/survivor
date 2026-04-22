@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.ddlsolution.survivor.dto.ClassificaRowDTO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,6 +73,56 @@ public class UtilCalendarioService {
         cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(campionatoDTO.getId(), anno);
     }
 
+
+    public List<ClassificaRowDTO> computeClassifica(CampionatoDTO campionatoDTO, short anno) {
+        List<PartitaDTO> all = cacheableProvider.getIfAvailable()
+                .getPartiteCampionatoAnno(campionatoDTO.getId(), anno)
+                .stream()
+                .filter(p -> p.getStato() == Enumeratori.StatoPartita.TERMINATA)
+                .toList();
+
+        Map<String, int[]> stats = new LinkedHashMap<>();
+        Map<String, String> nomi = new LinkedHashMap<>();
+
+        for (PartitaDTO part : all) {
+            stats.computeIfAbsent(part.getCasaSigla(), k -> new int[7]);
+            stats.computeIfAbsent(part.getFuoriSigla(), k -> new int[7]);
+            nomi.put(part.getCasaSigla(), part.getCasaNome());
+            nomi.put(part.getFuoriSigla(), part.getFuoriNome());
+
+            int sc = part.getScoreCasa() != null ? part.getScoreCasa() : 0;
+            int sf = part.getScoreFuori() != null ? part.getScoreFuori() : 0;
+            int[] casa = stats.get(part.getCasaSigla());
+            int[] fuori = stats.get(part.getFuoriSigla());
+            // [0]=pj [1]=v [2]=n [3]=p [4]=punti [5]=gf [6]=gs
+            casa[0]++; fuori[0]++;
+            casa[5] += sc; casa[6] += sf;
+            fuori[5] += sf; fuori[6] += sc;
+            if (sc > sf) {
+                casa[1]++; casa[4] += 3; fuori[3]++;
+            } else if (sc < sf) {
+                fuori[1]++; fuori[4] += 3; casa[3]++;
+            } else {
+                casa[2]++; casa[4]++; fuori[2]++; fuori[4]++;
+            }
+        }
+
+        return stats.entrySet().stream()
+                .map(e -> {
+                    int[] s = e.getValue();
+                    return ClassificaRowDTO.builder()
+                            .sigla(e.getKey())
+                            .nome(nomi.getOrDefault(e.getKey(), e.getKey()))
+                            .pj(s[0]).v(s[1]).n(s[2]).p(s[3])
+                            .punti(s[4]).gf(s[5]).gs(s[6])
+                            .build();
+                })
+                .sorted((a, b) -> {
+                    if (b.getPunti() != a.getPunti()) return b.getPunti() - a.getPunti();
+                    return (b.getGf() - b.getGs()) - (a.getGf() - a.getGs());
+                })
+                .collect(Collectors.toList());
+    }
 
     public List<PartitaDTO> partite(CampionatoDTO campionatoDTO, short anno) {
         List<PartitaDTO> ret = new ArrayList<>();

@@ -36,5 +36,10 @@ public class LegaDTO {
     private GiocataDTO miaGiocataCorrente;
     /** Ultima giocata con esito definitivo (OK/KO): usata dalla home per mostrare il risultato precedente quando non c'è ancora una pick per la giornata corrente */
     private GiocataDTO miaUltimaGiocataConEsito;
+    /** Modalità di gioco della lega (SURVIVOR o CAMPIONATO) */
+    private Enumeratori.ModalitaLega modalita;
+
+    /** Numero di vite iniziali assegnato a ogni giocatore (default 1) */
+    private short viteIniziali;
 }
 
