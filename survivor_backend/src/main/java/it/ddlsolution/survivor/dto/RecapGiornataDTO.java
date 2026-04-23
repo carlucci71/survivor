@@ -17,6 +17,7 @@ public class RecapGiornataDTO {
     private Integer giornataRelativa;   // numero progressivo nella lega (1, 2, 3…)
     private String campionatoNome;
     private String sport;
+    private String modalita;            // SURVIVOR o CAMPIONATO
     private int totaleMembri;           // tutti i partecipanti alla giornata
     private int sopravvissuti;          // ancora ATTIVI dopo questa giornata
     private int eliminatiQuestaGiornata;
@@ -34,7 +35,9 @@ public class RecapGiornataDTO {
         private Enumeratori.StatoGiocatore statoDopoGiornata;
         private boolean eliminatoQuestaGiornata;
         private boolean forzata;
-        private Integer punti; // Punti ottenuti in modalità Campionato
+        private Integer punti;       // Punti ottenuti questa giornata (modalità Campionato)
+        private Integer puntiTotali; // Punti totali cumulativi (modalità Campionato)
+        private Integer viteCorrente; // Vite rimaste (modalità Survivor con vite)
     }
 
     @Data
