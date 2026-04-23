@@ -704,6 +704,11 @@
     "STATISTICS": "Statistics",
     "NO_TEAMS_FOUND": "No teams found",
     "NO_PLAYS_AVAILABLE": "Unfortunately you have no plays available",
+    "PUBLIC_SHORT": "Public",
+    "PRIVATE_SHORT": "Private",
+    "VISIBILITY_LABEL": "Pick visibility",
+    "PUBLIC_HINT": "Your pick will be immediately visible to all players",
+    "PRIVATE_HINT": "Your pick stays hidden (***) until the round kicks off",
     "SUCCESS_MESSAGES": {
       "1": "Great choice! 🔥",
       "2": "Perfect! You nailed it! 🎯",

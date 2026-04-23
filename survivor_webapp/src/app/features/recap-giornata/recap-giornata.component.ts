@@ -10,20 +10,28 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RecapService } from '../../core/services/recap.service';
 import { RecapGiornata, RecapPickEntry } from '../../core/models/interfaces.model';
 
-export type SlideId = 'cover' | 'scelte' | 'sopravvissuti' | 'eliminati' | 'stats' | 'fine';
+export type SlideId = 'cover' | 'scelte' | 'sopravvissuti' | 'eliminati' | 'classifica' | 'stats' | 'fine';
 
 interface Slide {
   id: SlideId;
   label: string;
 }
 
-const SLIDES: Slide[] = [
+const SLIDES_SURVIVOR: Slide[] = [
   { id: 'cover',         label: 'Intro' },
   { id: 'scelte',        label: 'Scelte' },
   { id: 'sopravvissuti', label: 'Vivi' },
   { id: 'eliminati',     label: 'Fuori' },
   { id: 'stats',         label: 'Stats' },
   { id: 'fine',          label: 'Fine' },
+];
+
+const SLIDES_CAMPIONATO: Slide[] = [
+  { id: 'cover',      label: 'Intro' },
+  { id: 'scelte',     label: 'Scelte' },
+  { id: 'classifica', label: 'Classifica' },
+  { id: 'stats',      label: 'Stats' },
+  { id: 'fine',       label: 'Fine' },
 ];
 
 @Component({
@@ -57,7 +65,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   error = false;
   errorDetail: string | null = null;
 
-  slides = SLIDES;
+  slides: Slide[] = SLIDES_SURVIVOR;
   currentIdx = 0;
   sharingImage = false;
 
@@ -104,6 +112,53 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     return Math.round((this.recap.sopravvissuti / this.recap.totaleMembri) * 100);
   }
 
+  get isCampionato(): boolean {
+    return this.recap?.modalita === 'CAMPIONATO';
+  }
+
+  /** Picks ordinati per puntiTotali desc (classifica campionato) */
+  get classificaCampionato(): RecapPickEntry[] {
+    if (!this.recap) return [];
+    return [...this.recap.picks].sort((a, b) => (b.puntiTotali ?? 0) - (a.puntiTotali ?? 0));
+  }
+
+  /** Giocatore con più punti in questa giornata */
+  get topScorerRound(): RecapPickEntry | null {
+    if (!this.recap) return null;
+    const withPts = this.recap.picks.filter(p => p.punti != null && p.punti > 0);
+    if (withPts.length === 0) return null;
+    return withPts.reduce((best, p) => (p.punti ?? 0) > (best.punti ?? 0) ? p : best);
+  }
+
+  /** Media punti questa giornata */
+  get avgPuntiRound(): number {
+    if (!this.recap) return 0;
+    const withPts = this.recap.picks.filter(p => p.punti != null);
+    if (withPts.length === 0) return 0;
+    const total = withPts.reduce((s, p) => s + (p.punti ?? 0), 0);
+    return Math.round((total / withPts.length) * 10) / 10;
+  }
+
+  /** Leader attuale della classifica */
+  get leaderClassifica(): RecapPickEntry | null {
+    if (!this.recap || this.recap.picks.length === 0) return null;
+    return this.classificaCampionato[0] ?? null;
+  }
+
+  /** Emoji medaglia per posizione */
+  medalEmoji(pos: number): string {
+    if (pos === 0) return '🥇';
+    if (pos === 1) return '🥈';
+    if (pos === 2) return '🥉';
+    return `${pos + 1}°`;
+  }
+
+  /** True se c'è un sistema di vite attivo (viteCorrente presente e lega è survivor) */
+  get hasVite(): boolean {
+    if (this.isCampionato) return false;
+    return this.recap?.picks.some(p => p.viteCorrente != null && p.viteCorrente > 1) ?? false;
+  }
+
   ngOnInit(): void {
     const legaId = Number(this.route.snapshot.paramMap.get('legaId'));
     const giornata = Number(this.route.snapshot.paramMap.get('giornata'));
@@ -122,6 +177,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     this.recapService.getRecap(legaId, giornata).subscribe({
       next: (data) => {
         this.recap = data;
+        this.slides = data.modalita === 'CAMPIONATO' ? SLIDES_CAMPIONATO : SLIDES_SURVIVOR;
         this.loading = false;
         this.recapService.markAsSeen(legaId, giornata);
         this.cdr.detectChanges();

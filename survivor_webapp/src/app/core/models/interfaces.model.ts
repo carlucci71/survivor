@@ -307,10 +307,13 @@ export interface RecapPickEntry {
   nickname: string;
   squadraNome: string | null;
   squadraSigla: string | null;
-  esito: 'OK' | 'KO' | null;
+  esito: 'OK' | 'KO' | 'PAREGGIO' | null;
   statoDopoGiornata: 'ATTIVO' | 'ELIMINATO' | 'PENDING';
   eliminatoQuestaGiornata: boolean;
   forzata: boolean;
+  punti?: number | null;       // Punti questa giornata (campionato)
+  puntiTotali?: number | null; // Punti totali cumulativi (campionato)
+  viteCorrente?: number | null; // Vite rimaste (survivor con vite)
 }
 
 export interface RecapStatGiornata {
@@ -328,6 +331,7 @@ export interface RecapGiornata {
   giornataRelativa: number;   // progressiva nella lega
   campionatoNome: string | null;
   sport: string | null;
+  modalita?: string;          // 'SURVIVOR' | 'CAMPIONATO'
   totaleMembri: number;
   sopravvissuti: number;
   eliminatiQuestaGiornata: number;
