@@ -413,22 +413,26 @@
 
   <!-- AZIONI: CONFERMA + STATISTICHE -->
   <div class="actions-container">
-    <!-- TOGGLE PRIVACY GIOCATA - SOLO ICONA OCCHIO -->
-    <div class="privacy-checkbox-container">
-      <div class="privacy-toggle-wrapper">
-        <button
-          type="button"
-          class="privacy-toggle"
-          (click)="giocataPubblica = !giocataPubblica"
-        >
-          <mat-icon class="privacy-icon">
-            {{ giocataPubblica ? 'visibility' : 'visibility_off' }}
-          </mat-icon>
-          <span class="privacy-label-text">
-            {{ giocataPubblica ? ('PLAY.HIDE_PICK' | translate) : ('PLAY.SHOW_PICK' | translate) }}
-          </span>
-        </button>
-      </div>
+    <!-- TOGGLE PRIVACY GIOCATA - PILL SELECTOR -->
+    <div class="visibility-pill-group">
+      <button
+        type="button"
+        class="visibility-pill"
+        [class.active]="!giocataPubblica"
+        (click)="giocataPubblica = false"
+      >
+        <mat-icon>lock</mat-icon>
+        <span>{{ 'PLAY.PRIVATE_SHORT' | translate }}</span>
+      </button>
+      <button
+        type="button"
+        class="visibility-pill"
+        [class.active]="giocataPubblica"
+        (click)="giocataPubblica = true"
+      >
+        <mat-icon>visibility</mat-icon>
+        <span>{{ 'PLAY.PUBLIC_SHORT' | translate }}</span>
+      </button>
     </div>
 
     <div class="save-container">

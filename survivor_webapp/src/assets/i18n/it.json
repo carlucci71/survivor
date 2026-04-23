@@ -795,8 +795,9 @@
     "NO_PLAYS_AVAILABLE": "Purtroppo non hai giocate disponibili",
     "MAKE_PUBLIC": "Rendi pubblica la scelta",
     "KEEP_PRIVATE": "Mantieni nascosta la scelta",
-    "PUBLIC_SHORT": "Scelta pubblica",
-    "PRIVATE_SHORT": "Scelta nascosta",
+    "PUBLIC_SHORT": "Pubblica",
+    "PRIVATE_SHORT": "Privata",
+    "VISIBILITY_LABEL": "Visibilità giocata",
     "PUBLIC_HINT": "La tua scelta sarà visibile immediatamente a tutti i giocatori",
     "PRIVATE_HINT": "La tua scelta resterà nascosta (***) fino all'inizio della giornata",
     "SUCCESS_MESSAGES": {
