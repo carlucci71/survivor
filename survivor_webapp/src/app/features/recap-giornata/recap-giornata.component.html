@@ -65,15 +65,30 @@
             <p class="cover__camp">{{ recap.campionatoNome }}</p>
           }
           <div class="cover__teaser">
-            <div class="teaser-chip teaser-chip--vivi">
-              <span class="teaser-chip__num">{{ recap.sopravvissuti }}</span>
-              <span class="teaser-chip__lbl">{{ recap.sopravvissuti === 1 ? ('RECAP.STILL_ALIVE_ONE' | translate) : ('RECAP.STILL_ALIVE_OTHER' | translate) }}</span>
-            </div>
-            @if (recap.eliminatiQuestaGiornata > 0) {
-              <div class="teaser-chip teaser-chip--out">
-                <span class="teaser-chip__num">{{ recap.eliminatiQuestaGiornata }}</span>
-                <span class="teaser-chip__lbl">{{ recap.eliminatiQuestaGiornata === 1 ? ('RECAP.ELIMINATED_ONE' | translate) : ('RECAP.ELIMINATED_OTHER' | translate) }}</span>
+            @if (!isCampionato) {
+              <div class="teaser-chip teaser-chip--vivi">
+                <span class="teaser-chip__num">{{ recap.sopravvissuti }}</span>
+                <span class="teaser-chip__lbl">{{ recap.sopravvissuti === 1 ? ('RECAP.STILL_ALIVE_ONE' | translate) : ('RECAP.STILL_ALIVE_OTHER' | translate) }}</span>
               </div>
+              @if (recap.eliminatiQuestaGiornata > 0) {
+                <div class="teaser-chip teaser-chip--out">
+                  <span class="teaser-chip__num">{{ recap.eliminatiQuestaGiornata }}</span>
+                  <span class="teaser-chip__lbl">{{ recap.eliminatiQuestaGiornata === 1 ? ('RECAP.ELIMINATED_ONE' | translate) : ('RECAP.ELIMINATED_OTHER' | translate) }}</span>
+                </div>
+              }
+            } @else {
+              @if (topScorerRound) {
+                <div class="teaser-chip teaser-chip--gold">
+                  <span class="teaser-chip__num">{{ topScorerRound.punti }}</span>
+                  <span class="teaser-chip__lbl">pt — {{ topScorerRound.nickname }}</span>
+                </div>
+              }
+              @if (leaderClassifica) {
+                <div class="teaser-chip teaser-chip--vivi">
+                  <span class="teaser-chip__num">🏆</span>
+                  <span class="teaser-chip__lbl">{{ leaderClassifica.nickname }}</span>
+                </div>
+              }
             }
           </div>
         </div>
@@ -92,11 +107,15 @@
           <p class="slide__subtitle">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }} · {{ recap.totaleMembri }} {{ 'RECAP.PLAYERS' | translate }}</p>
           <div class="picks-list" [@staggerCards]="recap.picks.length">
             @for (pick of recap.picks; track pick.nickname) {
-              <div class="pick-row" [class.pick-row--ok]="pick.esito === 'OK'" [class.pick-row--ko]="pick.esito === 'KO'">
+              <div class="pick-row"
+                   [class.pick-row--ok]="pick.esito === 'OK'"
+                   [class.pick-row--ko]="pick.esito === 'KO'"
+                   [class.pick-row--pareggio]="pick.esito === 'PAREGGIO'">
                 <div class="pick-row__left">
                   <span class="pick-row__esito-icon">
                     @if (pick.esito === 'OK') { ✅ }
                     @else if (pick.esito === 'KO') { ❌ }
+                    @else if (pick.esito === 'PAREGGIO') { 🤝 }
                     @else { ⏳ }
                   </span>
                   <span class="pick-row__nickname">{{ pick.nickname }}</span>
@@ -106,6 +125,12 @@
                     <span class="pick-row__team">{{ pick.squadraNome }}</span>
                   } @else {
                     <span class="pick-row__team pick-row__team--none">{{ 'RECAP.NO_PICK' | translate }}</span>
+                  }
+                  @if (isCampionato && pick.punti != null) {
+                    <span class="pick-badge pick-badge--punti" [class.pick-badge--punti-zero]="pick.punti === 0">{{ pick.punti }} pt</span>
+                  }
+                  @if (!isCampionato && hasVite && pick.statoDopoGiornata === 'ATTIVO' && pick.viteCorrente != null && pick.viteCorrente > 1) {
+                    <span class="pick-badge pick-badge--vite">❤️ {{ pick.viteCorrente }}</span>
                   }
                   @if (pick.forzata) {
                     <span class="pick-badge pick-badge--forzata">F</span>
@@ -139,6 +164,9 @@
                   <span class="vivi-card__name">{{ p.nickname }}</span>
                   @if (p.squadraNome) {
                     <span class="vivi-card__team">{{ p.squadraNome }}</span>
+                  }
+                  @if (hasVite && p.viteCorrente != null) {
+                    <span class="vivi-card__vite">{{ '❤️'.repeat(p.viteCorrente) }}</span>
                   }
                 </div>
               }
@@ -182,64 +210,146 @@
       </div>
     }
 
+    <!-- ── SLIDE 4b: CLASSIFICA (campionato) ────────────────────────── -->
+    @if (currentSlide === 'classifica') {
+      <div class="slide slide--classifica" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
+        <div class="slide__inner">
+          <h2 class="slide__title">🏆 Classifica</h2>
+          <p class="slide__subtitle">Dopo la giornata {{ recap.giornataRelativa }}</p>
+          <div class="classifica-list" [@staggerCards]="classificaCampionato.length">
+            @for (pick of classificaCampionato; track pick.nickname; let i = $index) {
+              <div class="classifica-row" [class.classifica-row--top]="i < 3" [class.classifica-row--primo]="i === 0">
+                <span class="classifica-row__pos">{{ medalEmoji(i) }}</span>
+                <span class="classifica-row__avatar">{{ pick.nickname.charAt(0).toUpperCase() }}</span>
+                <div class="classifica-row__info">
+                  <span class="classifica-row__name">{{ pick.nickname }}</span>
+                  @if (pick.squadraNome) {
+                    <span class="classifica-row__team">{{ pick.squadraNome }}</span>
+                  }
+                </div>
+                <div class="classifica-row__pts">
+                  <span class="classifica-row__totale">{{ pick.puntiTotali ?? 0 }} pt</span>
+                  @if (pick.punti != null) {
+                    <span class="classifica-row__delta" [class.delta--pos]="pick.punti > 0" [class.delta--zero]="pick.punti === 0">
+                      +{{ pick.punti }}
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
     <!-- ── SLIDE 5: STATS ─────────────────────────────────────────────── -->
     @if (currentSlide === 'stats') {
       <div class="slide slide--stats" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
         <div class="slide__inner">
           <h2 class="slide__title">{{ 'RECAP.STATS_TITLE' | translate }}</h2>
-          <div class="stats-grid">
 
-            <!-- stat: sopravvissuti -->
-            <div class="stat-card stat-card--primary">
-              <span class="stat-card__icon">🛡️</span>
-              <span class="stat-card__value">{{ recap.sopravvissuti }}/{{ recap.totaleMembri }}</span>
-              <span class="stat-card__label">{{ 'RECAP.SURVIVORS' | translate }}</span>
-            </div>
-
-            <!-- stat: eliminati questa giornata -->
-            <div class="stat-card stat-card--danger">
-              <span class="stat-card__icon">💀</span>
-              <span class="stat-card__value">{{ recap.eliminatiQuestaGiornata }}</span>
-              <span class="stat-card__label">{{ 'RECAP.ELIMINATED_TODAY' | translate }}</span>
-            </div>
-
-            <!-- stat: pick vincenti -->
-            @if (okCount > 0 || koCount > 0) {
-              <div class="stat-card stat-card--green">
-                <span class="stat-card__icon">✅</span>
-                <span class="stat-card__value">{{ okCount }}</span>
-                <span class="stat-card__label">{{ 'RECAP.WINNING_PICKS' | translate }}</span>
+          @if (!isCampionato) {
+            <!-- ── Stats SURVIVOR ── -->
+            <div class="stats-grid">
+              <div class="stat-card stat-card--primary">
+                <span class="stat-card__icon">🛡️</span>
+                <span class="stat-card__value">{{ recap.sopravvissuti }}/{{ recap.totaleMembri }}</span>
+                <span class="stat-card__label">{{ 'RECAP.SURVIVORS' | translate }}</span>
               </div>
-              <div class="stat-card stat-card--red-soft">
-                <span class="stat-card__icon">❌</span>
-                <span class="stat-card__value">{{ koCount }}</span>
-                <span class="stat-card__label">{{ 'RECAP.LOSING_PICKS' | translate }}</span>
+              <div class="stat-card stat-card--danger">
+                <span class="stat-card__icon">💀</span>
+                <span class="stat-card__value">{{ recap.eliminatiQuestaGiornata }}</span>
+                <span class="stat-card__label">{{ 'RECAP.ELIMINATED_TODAY' | translate }}</span>
               </div>
-            }
-
-            <!-- stat: squadra più scelta -->
-            @if (recap.stats.squadraPiuScelta) {
-              <div class="stat-card stat-card--accent stat-card--wide">
-                <span class="stat-card__icon">🔥</span>
-                <div class="stat-card__text-block">
-                  <span class="stat-card__value">{{ recap.stats.squadraPiuScelta }}</span>
-                  <span class="stat-card__label">{{ 'RECAP.CHOSEN_BY' | translate:{ n: recap.stats.quanti } }}</span>
+              @if (okCount > 0 || koCount > 0) {
+                <div class="stat-card stat-card--green">
+                  <span class="stat-card__icon">✅</span>
+                  <span class="stat-card__value">{{ okCount }}</span>
+                  <span class="stat-card__label">{{ 'RECAP.WINNING_PICKS' | translate }}</span>
                 </div>
-              </div>
-            }
-
-            <!-- stat: pick più reazionato -->
-            @if (recap.stats.pickPiuReagito) {
-              <div class="stat-card stat-card--gold stat-card--wide">
-                <span class="stat-card__icon">😱</span>
-                <div class="stat-card__text-block">
-                  <span class="stat-card__value">{{ recap.stats.pickPiuReagito }}</span>
-                  <span class="stat-card__label">{{ 'RECAP.REACTIONS' | translate:{ n: recap.stats.reazioni } }}</span>
+                <div class="stat-card stat-card--red-soft">
+                  <span class="stat-card__icon">❌</span>
+                  <span class="stat-card__value">{{ koCount }}</span>
+                  <span class="stat-card__label">{{ 'RECAP.LOSING_PICKS' | translate }}</span>
                 </div>
+              }
+              @if (recap.stats.squadraPiuScelta) {
+                <div class="stat-card stat-card--accent stat-card--wide">
+                  <span class="stat-card__icon">🔥</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ recap.stats.squadraPiuScelta }}</span>
+                    <span class="stat-card__label">{{ 'RECAP.CHOSEN_BY' | translate:{ n: recap.stats.quanti } }}</span>
+                  </div>
+                </div>
+              }
+              @if (recap.stats.pickPiuReagito) {
+                <div class="stat-card stat-card--gold stat-card--wide">
+                  <span class="stat-card__icon">😱</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ recap.stats.pickPiuReagito }}</span>
+                    <span class="stat-card__label">{{ 'RECAP.REACTIONS' | translate:{ n: recap.stats.reazioni } }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- ── Stats CAMPIONATO ── -->
+            <div class="stats-grid">
+              @if (topScorerRound) {
+                <div class="stat-card stat-card--gold stat-card--wide">
+                  <span class="stat-card__icon">⭐</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ topScorerRound.nickname }}</span>
+                    <span class="stat-card__label">Miglior punteggio · {{ topScorerRound.punti }} pt questa giornata</span>
+                  </div>
+                </div>
+              }
+              @if (leaderClassifica) {
+                <div class="stat-card stat-card--primary stat-card--wide">
+                  <span class="stat-card__icon">🏆</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ leaderClassifica.nickname }}</span>
+                    <span class="stat-card__label">Leader classifica · {{ leaderClassifica.puntiTotali }} pt totali</span>
+                  </div>
+                </div>
+              }
+              @if (okCount > 0 || koCount > 0) {
+                <div class="stat-card stat-card--green">
+                  <span class="stat-card__icon">✅</span>
+                  <span class="stat-card__value">{{ okCount }}</span>
+                  <span class="stat-card__label">Vittorie</span>
+                </div>
+                <div class="stat-card stat-card--red-soft">
+                  <span class="stat-card__icon">❌</span>
+                  <span class="stat-card__value">{{ koCount }}</span>
+                  <span class="stat-card__label">Sconfitte</span>
+                </div>
+              }
+              <div class="stat-card stat-card--accent">
+                <span class="stat-card__icon">📊</span>
+                <span class="stat-card__value">{{ avgPuntiRound }}</span>
+                <span class="stat-card__label">Media pt / giornata</span>
               </div>
-            }
-
-          </div>
+              @if (recap.stats.squadraPiuScelta) {
+                <div class="stat-card stat-card--accent stat-card--wide">
+                  <span class="stat-card__icon">🔥</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ recap.stats.squadraPiuScelta }}</span>
+                    <span class="stat-card__label">{{ 'RECAP.CHOSEN_BY' | translate:{ n: recap.stats.quanti } }}</span>
+                  </div>
+                </div>
+              }
+              @if (recap.stats.pickPiuReagito) {
+                <div class="stat-card stat-card--gold stat-card--wide">
+                  <span class="stat-card__icon">😱</span>
+                  <div class="stat-card__text-block">
+                    <span class="stat-card__value">{{ recap.stats.pickPiuReagito }}</span>
+                    <span class="stat-card__label">{{ 'RECAP.REACTIONS' | translate:{ n: recap.stats.reazioni } }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
         </div>
       </div>
     }
@@ -252,10 +362,17 @@
           <img src="assets/logo.png" class="fine__logo" alt="Survivor" />
           <div class="fine__trophy">🏆</div>
           <h2 class="fine__title">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }} {{ 'RECAP.ROUND_CONCLUDED' | translate }}</h2>
-          <p class="fine__text">
-            {{ 'RECAP.WARRIORS_PREFIX' | translate }} <strong>{{ recap.sopravvissuti }}</strong> {{ 'RECAP.WARRIORS_SUFFIX' | translate }}<br>
-            {{ 'RECAP.NEXT_CHALLENGE' | translate }}
-          </p>
+          @if (!isCampionato) {
+            <p class="fine__text">
+              {{ 'RECAP.WARRIORS_PREFIX' | translate }} <strong>{{ recap.sopravvissuti }}</strong> {{ 'RECAP.WARRIORS_SUFFIX' | translate }}<br>
+              {{ 'RECAP.NEXT_CHALLENGE' | translate }}
+            </p>
+          } @else {
+            <p class="fine__text">
+              <strong>{{ leaderClassifica?.nickname }}</strong> guida la classifica con <strong>{{ leaderClassifica?.puntiTotali }}</strong> pt.<br>
+              {{ 'RECAP.NEXT_CHALLENGE' | translate }}
+            </p>
+          }
           <div class="fine__actions">
             <button class="btn-primary-recap" (click)="close()">
               {{ 'COMMON.CLOSE' | translate }}

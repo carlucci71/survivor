@@ -97,6 +97,8 @@ public class RecapGiornataService {
                     .squadraSigla(squadraSigla)
                     .esito(giocata != null ? giocata.getEsito() : null)
                     .punti(giocata != null ? giocata.getPunti() : null)
+                    .puntiTotali(gl.getPuntiTotali())
+                    .viteCorrente((int) gl.getViteCorrente())
                     .statoDopoGiornata(statoAttuale)
                     .eliminatoQuestaGiornata(eliminatoQuestaGiornata)
                     .forzata(giocata != null && giocata.getForzatura() != null
@@ -104,12 +106,21 @@ public class RecapGiornataService {
                     .build());
         }
 
-        // Ordina: sopravvissuti → eliminati questa giornata → resto
-        picks.sort(Comparator
-                .comparing((RecapGiornataDTO.PickEntry p) ->
-                        p.getStatoDopoGiornata() == Enumeratori.StatoGiocatore.ATTIVO ? 0
-                                : (p.isEliminatoQuestaGiornata() ? 1 : 2))
-                .thenComparing(p -> p.getNickname() != null ? p.getNickname() : ""));
+        // Ordina: per campionato → per punti totali desc; per survivor → sopravvissuti → eliminati → resto
+        boolean isCampionato = lega.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO;
+        if (isCampionato) {
+            picks.sort(Comparator
+                    .comparingInt((RecapGiornataDTO.PickEntry p) ->
+                            p.getPuntiTotali() != null ? p.getPuntiTotali() : 0)
+                    .reversed()
+                    .thenComparing(p -> p.getNickname() != null ? p.getNickname() : ""));
+        } else {
+            picks.sort(Comparator
+                    .comparing((RecapGiornataDTO.PickEntry p) ->
+                            p.getStatoDopoGiornata() == Enumeratori.StatoGiocatore.ATTIVO ? 0
+                                    : (p.isEliminatoQuestaGiornata() ? 1 : 2))
+                    .thenComparing(p -> p.getNickname() != null ? p.getNickname() : ""));
+        }
 
         long sopravvissuti = picks.stream()
                 .filter(p -> p.getStatoDopoGiornata() == Enumeratori.StatoGiocatore.ATTIVO)
@@ -175,6 +186,7 @@ public class RecapGiornataService {
                 .giornataRelativa(giornata)
                 .campionatoNome(campionatoNome)
                 .sport(sportNome)
+                .modalita(lega.getModalita() != null ? lega.getModalita().name() : "SURVIVOR")
                 .totaleMembri(picks.size())
                 .sopravvissuti((int) sopravvissuti)
                 .eliminatiQuestaGiornata((int) eliminatiQuesta)
