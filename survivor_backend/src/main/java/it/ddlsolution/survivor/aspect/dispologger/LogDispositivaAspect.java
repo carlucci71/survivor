@@ -49,7 +49,12 @@ public class LogDispositivaAspect {
     // Bind the thrown exception with `throwing` and accept it as a method parameter
     @AfterThrowing(pointcut = "@annotation(loggaDispositiva)", throwing = "ex")
     public void onError(JoinPoint joinPoint, LoggaDispositiva loggaDispositiva, Throwable ex) {
-        logJoinPoint(joinPoint, loggaDispositiva, "ERROR", ex);
+        try {
+            logJoinPoint(joinPoint, loggaDispositiva, "ERROR", ex);
+        } catch (Exception loggingEx) {
+            // Non mascherare l'eccezione originale con errori del sistema di logging
+            log.error("Errore durante il logging dell'eccezione (ignorato): {}", loggingEx.getMessage());
+        }
     }
 
     // Backwards-compatible: old method delegates to new implementation
