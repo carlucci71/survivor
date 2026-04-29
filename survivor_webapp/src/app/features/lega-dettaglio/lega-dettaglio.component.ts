@@ -871,10 +871,10 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
     const maxGiornateVisibili = 5;
-    // Mostra tutte le giornate dall'inizio fino alla corrente, max 5
-    // Oltre 5 appare il pulsante storico — nessuna finestra scorrevole
-    startGiornata = giornataIniziale;
-    endGiornata = Math.min(maxGiornata, giornataCorrente, giornataIniziale + maxGiornateVisibili - 1);
+    // Mostra le ultime 5 giornate fino alla corrente (finestra scorrevole)
+    // Oltre 5 giocate appare il pulsante storico
+    endGiornata = Math.min(maxGiornata, giornataCorrente);
+    startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
 
     // Popola le colonne visibili
     for (let i = startGiornata; i <= endGiornata; i++) {
