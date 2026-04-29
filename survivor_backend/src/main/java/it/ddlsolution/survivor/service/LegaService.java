@@ -71,6 +71,16 @@ public class LegaService {
     private final GiocataMapper giocataMapper;
     private final VitaPersaRepository vitaPersaRepository;
 
+    /**
+     * Self-reference per invocare getLegaDTO via proxy (rispettando @Transactional NOT_SUPPORTED).
+     * Senza questo, le chiamate self a getLegaDTO ignorano NOT_SUPPORTED e girano in TX1,
+     * causando UnexpectedRollbackException se un'eccezione interna catturata ha già
+     * marcato TX1 come rollback-only.
+     */
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    private LegaService legaServiceProxy;
+
     @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
     public List<LegaDTO> mieLeghe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -372,8 +382,12 @@ public class LegaService {
     public LegaDTO calcola(Long idLega) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
+        LegaDTO legaDTO = legaServiceProxy.getLegaDTO(idLega, true, userId);
 
+        if (legaDTO.getGiocatori() == null) {
+            log.warn("calcola: getLegaDTO ha restituito giocatori null per lega {} (stato={})", idLega, legaDTO.getStato());
+            return legaDTO;
+        }
         int giocateDaCalcolare = 0;
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             giocateDaCalcolare += giocatoreDTO.getGiocate().stream().filter(g -> g.getEsito() == null).count();
@@ -500,7 +514,7 @@ public class LegaService {
                 }
             }
             salva(legaDTO, null);
-            LegaDTO legaDTOAggiornata = getLegaDTO(idLega, true, userId);
+            LegaDTO legaDTOAggiornata = legaServiceProxy.getLegaDTO(idLega, true, userId);
             return legaDTOAggiornata;
         } else {
             return legaDTO;

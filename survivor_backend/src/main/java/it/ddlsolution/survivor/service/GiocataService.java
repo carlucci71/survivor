@@ -147,7 +147,7 @@ public class GiocataService {
 
     }
 
-    @Transactional
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void aggiornaSnapshotGiocata(GiocataDTO giocata) {
         Optional<Long> revNumber = getRevNumberOfGiocata(giocata);
         if (revNumber.isPresent()) {

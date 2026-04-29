@@ -6,6 +6,7 @@ import it.ddlsolution.survivor.mapper.UserMapper;
 import it.ddlsolution.survivor.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -14,7 +15,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userrMapper;
 
-    @Transactional(readOnly = true)
+    /**
+     * REQUIRES_NEW: apre sempre una transazione propria.
+     * Evita che, quando chiamato dall'aspect @AfterThrowing con la transazione
+     * esterna già marcata rollback-only, venga lanciata UnexpectedRollbackException
+     * mascherando l'eccezione originale.
+     */
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public UserDTO userById(Long userId) {
         return userrMapper.toDTO(userRepository.findById(userId).orElseGet(()->new User()));
     }
