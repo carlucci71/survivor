@@ -8,6 +8,7 @@ import it.ddlsolution.survivor.repository.LogDispositivaRepository;
 import it.ddlsolution.survivor.repository.ParamLogDispositivaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class LogDispositivaService {
     private final ParamLogDispositivaRepository paramLogDispositivaRepository;
     private final LogDispositivaMapper logDispositivaMapper;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public LogDispositivaDTO salva(LogDispositivaDTO logDispositivaDTO) {
         LogDispositiva logDispositiva = logDispositivaMapper.toEntity(logDispositivaDTO);
         // Assicuro che ogni ParamLogDispositiva referenzi il parent (bidirectional relationship)
