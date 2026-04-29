@@ -1364,6 +1364,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!this.countdownExpired) {
       return false;
     }
+    // In CAMPIONATO il timer scaduto è solo informativo: non blocca le pick
+    if (this.isCampionato()) {
+      return false;
+    }
     // Se la giornata è in corso e l'utente ha già giocato, nascondi il timeout
     if (this.isCurrentRoundInProgress() && this.hasCurrentUserPlayedCurrentRound()) {
       return false;
