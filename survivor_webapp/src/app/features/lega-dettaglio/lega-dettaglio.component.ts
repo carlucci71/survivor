@@ -950,18 +950,18 @@ export class LegaDettaglioComponent implements OnDestroy {
       return true; // Mostra sempre l'icona in modalità test
     }
 
-    if (!giocatore?.giocate || !this.giornataIndices) return false;
+    if (!giocatore?.giocate || !this.giornataIndices || this.giornataIndices.length === 0) return false;
 
-    // Conta quante giocate ha effettuato in totale
-    const totaleGiocate = giocatore.giocate.length;
+    const giornataIniziale = this.lega?.giornataIniziale || 1;
+    const windowStart = this.giornataIndices[0];
+    const legaId = this.lega?.id;
 
-    // Conta quante giornate sono visualizzate nella tabella corrente
-    const giornateVisibili = this.giornataIndices.length;
-
-    // Mostra il pulsante se ha più giocate di quelle visualizzate nella tabella
-    // (cioè se ci sono giocate "nascoste" che non si vedono nella tabella)
-    // ✅ ANCHE per i giocatori eliminati!
-    return totaleGiocate > giornateVisibili;
+    // Mostra storico se il giocatore ha giocate in questa lega precedenti alla finestra visibile
+    return giocatore.giocate.some(g => {
+      if (legaId && g.legaId !== legaId) return false;
+      const giornataAssoluta = giornataIniziale + (g.giornata || 0) - 1;
+      return giornataAssoluta < windowStart;
+    });
   }
 
   /**
