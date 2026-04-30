@@ -956,6 +956,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     const windowStart = this.giornataIndices[0];
     const legaId = this.lega?.id;
 
+    // Mostra storico solo dopo la sesta scelta
+    const giocateInLega = giocatore.giocate.filter(g => !legaId || g.legaId === legaId);
+    if (giocateInLega.length < 6) return false;
+
     // Mostra storico se il giocatore ha giocate in questa lega precedenti alla finestra visibile
     return giocatore.giocate.some(g => {
       if (legaId && g.legaId !== legaId) return false;
