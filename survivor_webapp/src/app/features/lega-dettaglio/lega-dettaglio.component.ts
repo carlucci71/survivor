@@ -1884,6 +1884,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   calcolaGiornata() {
     this.legaService.calcola(Number(this.id)).subscribe({
       next: (lega: Lega) => {
+        if (!lega?.id || lega.stato?.value === StatoLega.ERRORE.value) {
+          this.error = 'Errore in calcola della lega';
+          return;
+        }
         this.lega = lega;
         this.caricaTabella();
         this.scrollTableToRight();
