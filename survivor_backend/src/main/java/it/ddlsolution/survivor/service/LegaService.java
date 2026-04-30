@@ -382,7 +382,9 @@ public class LegaService {
     public LegaDTO calcola(Long idLega) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-        LegaDTO legaDTO = legaServiceProxy.getLegaDTO(idLega, true, userId);
+        // Chiamata diretta (self-call) per evitare che NOT_SUPPORTED sospenda la TX e
+        // sganci la sessione Hibernate, causando LazyInitializationException nel mapper.
+        LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
 
         if (legaDTO.getGiocatori() == null) {
             log.warn("calcola: getLegaDTO ha restituito giocatori null per lega {} (stato={})", idLega, legaDTO.getStato());
@@ -514,7 +516,7 @@ public class LegaService {
                 }
             }
             salva(legaDTO, null);
-            LegaDTO legaDTOAggiornata = legaServiceProxy.getLegaDTO(idLega, true, userId);
+            LegaDTO legaDTOAggiornata = getLegaDTO(idLega, true, userId);
             return legaDTOAggiornata;
         } else {
             return legaDTO;
