@@ -486,7 +486,7 @@ public class LegaService {
                                         }
                                     }
                                 }
-                                if (esitoCalcolato == Enumeratori.EsitoGiocata.KO) {
+                                if (esitoCalcolato == Enumeratori.EsitoGiocata.KO || esitoCalcolato == Enumeratori.EsitoGiocata.PAREGGIO) {//FIXME GESTIRE PAREGGIO
                                     // Sconfitta: eliminazione immediata indipendentemente dalle vite
                                     giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                                 } else if (esitoCalcolato == Enumeratori.EsitoGiocata.PAREGGIO) {
