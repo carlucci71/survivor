@@ -6668,6 +6668,12 @@
 	color: #0A3D91;
 }
 
+.voti-chip--pareggio {
+	background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.14));
+	border-color: rgba(255, 193, 7, 0.35);
+	color: #0A3D91;
+}
+
 .voti-chip__nome {
   font-size: 0.78rem;
   font-weight: 600;
