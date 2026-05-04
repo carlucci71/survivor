@@ -228,6 +228,15 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
+  // ─── Pull-to-refresh ────────────────────────────────────────────────────
+  ptrActive = false;        // spinner visibile
+  ptrProgress = 0;          // 0-100, per animare la progress arc
+  private ptrTouchStartY = 0;
+  private ptrTouchStartScrollTop = 0;
+  private ptrTriggered = false;
+  private readonly PTR_THRESHOLD = 72; // px di pull necessari per triggherare
+  private appStateChangeListener: any = null;
+
   constructor(
     private route: ActivatedRoute,
     private legaService: LegaService,
@@ -322,6 +331,9 @@ export class LegaDettaglioComponent implements OnDestroy {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
           this.maybeTriggerTutorial();
+          // Inizializza pull-to-refresh e reload su ritorno in foreground
+          setTimeout(() => this.initPullToRefresh(), 300);
+          this.initAppStateRefresh();
         }
       },
       error: (error) => {
@@ -2071,6 +2083,82 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
+    }
+    this.removePtrListeners();
+    if (this.appStateChangeListener) {
+      this.appStateChangeListener.remove?.();
+      this.appStateChangeListener = null;
+    }
+  }
+
+  // ─── Pull-to-refresh ────────────────────────────────────────────────────
+
+  initPullToRefresh(): void {
+    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
+    if (!el) return;
+    el.addEventListener('touchstart', this.onPtrTouchStart, { passive: true });
+    el.addEventListener('touchmove',  this.onPtrTouchMove,  { passive: false });
+    el.addEventListener('touchend',   this.onPtrTouchEnd,   { passive: true });
+  }
+
+  private removePtrListeners(): void {
+    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
+    if (!el) return;
+    el.removeEventListener('touchstart', this.onPtrTouchStart);
+    el.removeEventListener('touchmove',  this.onPtrTouchMove);
+    el.removeEventListener('touchend',   this.onPtrTouchEnd);
+  }
+
+  private onPtrTouchStart = (e: TouchEvent): void => {
+    const el = e.currentTarget as HTMLElement;
+    this.ptrTouchStartY = e.touches[0].clientY;
+    this.ptrTouchStartScrollTop = el.scrollTop;
+    this.ptrTriggered = false;
+  };
+
+  private onPtrTouchMove = (e: TouchEvent): void => {
+    if (this.ptrTriggered) return;
+    const el = e.currentTarget as HTMLElement;
+    if (el.scrollTop > 0) return; // non siamo in cima
+    const dy = e.touches[0].clientY - this.ptrTouchStartY;
+    if (dy <= 0) return;
+    e.preventDefault();
+    this.ptrProgress = Math.min(100, Math.round((dy / this.PTR_THRESHOLD) * 100));
+    this.ptrActive = true;
+    if (dy >= this.PTR_THRESHOLD) {
+      this.ptrTriggered = true;
+      this.triggerRefresh();
+    }
+  };
+
+  private onPtrTouchEnd = (_e: TouchEvent): void => {
+    if (!this.ptrTriggered) {
+      this.ptrActive = false;
+      this.ptrProgress = 0;
+    }
+  };
+
+  private triggerRefresh(): void {
+    this.ptrProgress = 100;
+    this.loadLegaDetails();
+    // Nascondi lo spinner dopo un breve delay per feedback visivo
+    setTimeout(() => {
+      this.ptrActive = false;
+      this.ptrProgress = 0;
+      this.ptrTriggered = false;
+    }, 900);
+  }
+
+  async initAppStateRefresh(): Promise<void> {
+    try {
+      const { App } = await import('@capacitor/app');
+      this.appStateChangeListener = await App.addListener('appStateChange', (state) => {
+        if (state.isActive) {
+          this.loadLegaDetails();
+        }
+      });
+    } catch {
+      // Su web puro @capacitor/app non è disponibile — ignora
     }
   }
 
