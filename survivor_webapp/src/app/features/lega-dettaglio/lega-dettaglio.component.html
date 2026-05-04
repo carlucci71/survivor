@@ -256,12 +256,61 @@
       @if (lega.giocatori?.length) {
 
       <!-- BOTTONE GIOCA PRINCIPALE - IN PRIMO PIANO -->
-      @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore()) && (!countdownExpired || isCampionato())) {
+      @if (getCurrentGiocatore() && hasGiocataDisponibile(getCurrentGiocatore()) && (!countdownExpired || (isCampionato() && !isCurrentRoundInProgress()))) {
         <div class="play-action-primary">
           <button class="btn-play-primary" (click)="giocaGiornataDisponibile(getCurrentGiocatore())">
             <span class="play-sport-emoji">{{ getGiocaEmoji() }}</span>
             <span class="play-label-primary">{{ 'LEAGUE.PLAY_NOW' | translate }}</span>
           </button>
+        </div>
+      }
+
+      <!-- BANNER GIORNATA IN CORSO (CAMPIONATO) -->
+      @if (isCampionato() && isCurrentRoundInProgress()) {
+        <div class="rlb">
+          <!-- bolle fluttuanti -->
+          <span class="rlb__b rlb__b1"></span>
+          <span class="rlb__b rlb__b2"></span>
+          <span class="rlb__b rlb__b3"></span>
+          <span class="rlb__b rlb__b4"></span>
+          <span class="rlb__b rlb__b5"></span>
+          <!-- barra accent LIVE -->
+          <div class="rlb__accent"></div>
+          <!-- sinistra -->
+          <div class="rlb__left">
+            <div class="rlb__live-badge">
+              <span class="rlb__dot"></span>
+              <span class="rlb__live-text">LIVE</span>
+            </div>
+            <span class="rlb__round">G{{ lega.giornataCorrente }}</span>
+          </div>
+          <div class="rlb__divider"></div>
+          <!-- destra -->
+          <div class="rlb__right">
+            @if (getCurrentGiocatore(); as me) {
+              @if (getGiocataByGiornataAssoluta(me, lega.giornataCorrente); as giocata) {
+                @if (!shouldHideGiocata(giocata, lega.giornataCorrente, me)) {
+                  <span class="rlb__pick-label">La tua pick</span>
+                  <div class="rlb__team-row">
+                    @if (getTeamLogo(giocata.squadraSigla); as logo) {
+                      <img class="rlb__logo" [src]="logo" [alt]="giocata.squadraSigla" (error)="onLogoError($event)">
+                    }
+                    <span class="rlb__team-name">{{ getSquadraNomeSenzaCitta(giocata.squadraSigla) || giocata.squadraSigla }}</span>
+                    @if (giocata.esito === 'OK') {
+                      <span class="rlb__badge rlb__badge--ok">✓</span>
+                    } @else if (giocata.esito === 'KO') {
+                      <span class="rlb__badge rlb__badge--ko">✗</span>
+                    } @else if (giocata.esito === 'PAREGGIO') {
+                      <span class="rlb__badge rlb__badge--draw">＝</span>
+                    } @else {
+                      <span class="rlb__badge rlb__badge--wait">⏳</span>
+                    }
+                  </div>
+                }
+              }
+            }
+            <span class="rlb__hint">Risultati a fine giornata</span>
+          </div>
         </div>
       }
 

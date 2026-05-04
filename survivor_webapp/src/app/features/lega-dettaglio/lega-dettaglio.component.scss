@@ -6668,6 +6668,12 @@
 	color: #0A3D91;
 }
 
+.voti-chip--pareggio {
+	background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.14));
+	border-color: rgba(255, 193, 7, 0.35);
+	color: #0A3D91;
+}
+
 .voti-chip__nome {
   font-size: 0.78rem;
   font-weight: 600;
@@ -6686,6 +6692,188 @@
   align-items: center;
   justify-content: center;
   padding: 0 4px;
+}
+
+// ─── Round Live Banner ─────────────────────────────────────────────
+.rlb {
+	position: relative;
+	display: flex;
+	align-items: center;
+	margin: 4px 0 16px;
+	background: #fff;
+	border-radius: 18px;
+	overflow: hidden;
+	min-height: 88px;
+	border: 1px solid rgba(10, 61, 145, 0.09);
+	box-shadow:
+		0 4px 20px rgba(10, 61, 145, 0.09),
+		0 1px 4px rgba(0, 0, 0, 0.05),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	animation: rlb-in 0.45s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes rlb-in {
+	from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+	to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Barra rossa LIVE a sinistra
+.rlb__accent {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 4px;
+	background: linear-gradient(to bottom, #ff5252, #d32f2f);
+	z-index: 2;
+}
+
+// Bolle fluttuanti
+.rlb__b {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+}
+.rlb__b1 { width: 64px; height: 64px; background: rgba(79,195,247,0.07);  top: -22px;  right: 50px;  animation: rlb-float1 5.2s ease-in-out infinite; }
+.rlb__b2 { width: 38px; height: 38px; background: rgba(10,61,145,0.05);   bottom: -12px; right: 22%;  animation: rlb-float2 4.4s ease-in-out infinite 0.9s; }
+.rlb__b3 { width: 22px; height: 22px; background: rgba(79,195,247,0.1);   top: 42%;    right: 10%;  animation: rlb-float1 3.9s ease-in-out infinite 1.6s; }
+.rlb__b4 { width: 48px; height: 48px; background: rgba(10,61,145,0.04);   top: -18px;  right: 70px; animation: rlb-float2 6.1s ease-in-out infinite 0.4s; }
+.rlb__b5 { width: 14px; height: 14px; background: rgba(255,82,82,0.06);   bottom: 8px; right: 38%;  animation: rlb-float1 2.9s ease-in-out infinite 2.1s; }
+
+@keyframes rlb-float1 {
+	0%, 100% { transform: translateY(0) scale(1);    opacity: 0.7; }
+	50%       { transform: translateY(-9px) scale(1.12); opacity: 1; }
+}
+@keyframes rlb-float2 {
+	0%, 100% { transform: translateY(0);  opacity: 0.5; }
+	50%       { transform: translateY(8px); opacity: 0.9; }
+}
+
+// Colonna sinistra
+.rlb__left {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 18px 20px 18px 26px;
+	flex-shrink: 0;
+	position: relative;
+	z-index: 1;
+}
+
+.rlb__live-badge {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	background: rgba(255, 82, 82, 0.07);
+	border: 1px solid rgba(255, 82, 82, 0.18);
+	border-radius: 20px;
+	padding: 2px 9px;
+}
+
+.rlb__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: #ff5252;
+	box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.55);
+	animation: rlb-dot-pulse 1.5s ease-in-out infinite;
+	flex-shrink: 0;
+}
+
+@keyframes rlb-dot-pulse {
+	0%   { box-shadow: 0 0 0 0   rgba(255, 82, 82, 0.55); }
+	70%  { box-shadow: 0 0 0 7px rgba(255, 82, 82, 0); }
+	100% { box-shadow: 0 0 0 0   rgba(255, 82, 82, 0); }
+}
+
+.rlb__live-text {
+	font-size: 0.62rem;
+	font-weight: 800;
+	color: #ff5252;
+	text-transform: uppercase;
+	letter-spacing: 1.1px;
+}
+
+.rlb__round {
+	font-size: 1.65rem;
+	font-weight: 800;
+	color: #0A3D91;
+	line-height: 1;
+	letter-spacing: -0.5px;
+}
+
+// Divisore
+.rlb__divider {
+	width: 1px;
+	height: 52px;
+	background: linear-gradient(to bottom, transparent, rgba(10,61,145,0.12), transparent);
+	flex-shrink: 0;
+}
+
+// Colonna destra
+.rlb__right {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4px;
+	padding: 14px 16px 12px;
+	flex: 1;
+	position: relative;
+	z-index: 1;
+	min-width: 0;
+}
+
+.rlb__pick-label {
+	font-size: 0.64rem;
+	color: #9e9e9e;
+	text-transform: uppercase;
+	letter-spacing: 0.7px;
+	font-weight: 600;
+}
+
+.rlb__team-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rlb__logo {
+	width: 26px;
+	height: 26px;
+	object-fit: contain;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.rlb__team-name {
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #0A3D91;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.rlb__badge {
+	font-size: 0.7rem;
+	font-weight: 800;
+	padding: 3px 8px;
+	border-radius: 8px;
+	flex-shrink: 0;
+
+	&--ok   { background: rgba(76,175,80,0.1);  color: #2e7d32; border: 1px solid rgba(76,175,80,0.25); }
+	&--ko   { background: rgba(244,67,54,0.1);  color: #c62828; border: 1px solid rgba(244,67,54,0.22); }
+	&--draw { background: rgba(255,193,7,0.1);  color: #e65100; border: 1px solid rgba(255,193,7,0.28); }
+	&--wait { background: rgba(0,0,0,0.04);     color: #9e9e9e; border: 1px solid rgba(0,0,0,0.08); }
+}
+
+.rlb__hint {
+	font-size: 0.68rem;
+	color: #bdbdbd;
+	margin-top: 2px;
 }
 
 // ─── Bottom sheet voti ────────────────────────────────────────────────────────
