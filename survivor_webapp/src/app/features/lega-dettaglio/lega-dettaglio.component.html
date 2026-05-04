@@ -501,9 +501,12 @@
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
-                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
                         [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
+
+<!-- rimosso
+                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                        -->
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"

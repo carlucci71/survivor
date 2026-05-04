@@ -486,17 +486,17 @@ public class LegaService {
                                         }
                                     }
                                 }
-                                if (esitoCalcolato == Enumeratori.EsitoGiocata.KO || esitoCalcolato == Enumeratori.EsitoGiocata.PAREGGIO) {//FIXME GESTIRE PAREGGIO
+                                if (esitoCalcolato == Enumeratori.EsitoGiocata.KO ) {
                                     // Sconfitta: eliminazione immediata indipendentemente dalle vite
                                     giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                                 } else if (esitoCalcolato == Enumeratori.EsitoGiocata.PAREGGIO) {
                                     // Pareggio: consuma una vita se disponibile, altrimenti eliminazione
                                     Short viteAttuali = Optional.ofNullable(
                                             giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
-                                    if (viteAttuali <= 0) {
+                                    short nuoveVite = (short) (viteAttuali - 1);
+                                    if (nuoveVite <= 0) {
                                         giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                                     } else {
-                                        short nuoveVite = (short) (viteAttuali - 1);
                                         giocatoreDTO.getVitePerLega().put(idLega, nuoveVite);
                                         Giocatore giocatoreEntity = giocatoreRepository.findById(giocatoreDTO.getId())
                                                 .orElse(null);
