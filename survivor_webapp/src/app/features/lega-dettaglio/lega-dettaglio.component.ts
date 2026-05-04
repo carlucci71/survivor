@@ -2566,6 +2566,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       foundAny = true;
       if (giocata.esito === 'OK') hasOk = true;
       if (giocata.esito === 'KO') hasKo = true;
+      if (giocata.esito === 'PAREGGIO') hasKo = true;
       // se troviamo sia OK che KO possiamo fermarci
       if (hasOk && hasKo) break;
     }
