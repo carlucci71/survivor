@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 
 @Component({
   selector: 'app-guida',
   standalone: true,
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, HeaderComponent, TranslateModule],
   template: `
     <div class="guida-page">
       <app-header
-        title="Guida"
+        [title]="'FOOTER.GUIDE' | translate"
         visHome="S"
         (back)="goBack()"
         [hideActions]="false"
@@ -21,32 +22,32 @@ import { HeaderComponent } from '../../shared/components/header/header.component
         <nav class="guida-nav" [class.open]="sidebarOpen">
           <div class="nav-header">
             <div class="nav-logo">SURVIVOR</div>
-            <div class="nav-tagline">Guida utente completa</div>
+            <div class="nav-tagline">{{ 'GUIDE.TAGLINE' | translate }}</div>
           </div>
 
-          <div class="nav-section">Introduzione</div>
+          <div class="nav-section">{{ 'GUIDE.SECTION_INTRO' | translate }}</div>
           <ul>
-            <li><a (click)="scrollTo('intro')"><span class="nav-num">0</span> Cos'è Survivor</a></li>
+            <li><a (click)="scrollTo('intro')"><span class="nav-num">0</span> {{ 'GUIDE.NAV_0' | translate }}</a></li>
           </ul>
 
           <div class="nav-section">First Steps</div>
           <ul>
-            <li><a (click)="scrollTo('login')"><span class="nav-num">1</span> Registrazione e Login</a></li>
-            <li><a (click)="scrollTo('home-section')"><span class="nav-num">2</span> La Home</a></li>
-            <li><a (click)="scrollTo('join')"><span class="nav-num">3</span> Entrare in una lega</a></li>
+            <li><a (click)="scrollTo('login')"><span class="nav-num">1</span> {{ 'GUIDE.NAV_1' | translate }}</a></li>
+            <li><a (click)="scrollTo('home-section')"><span class="nav-num">2</span> {{ 'GUIDE.NAV_2' | translate }}</a></li>
+            <li><a (click)="scrollTo('join')"><span class="nav-num">3</span> {{ 'GUIDE.NAV_3' | translate }}</a></li>
           </ul>
 
-          <div class="nav-section">Come si gioca</div>
+          <div class="nav-section">{{ 'GUIDE.SECTION_PLAY' | translate }}</div>
           <ul>
-            <li><a (click)="scrollTo('giocata')"><span class="nav-num">4</span> Fare la giocata</a></li>
-            <li><a (click)="scrollTo('recap')"><span class="nav-num">5</span> Recap e risultati</a></li>
-            <li><a (click)="scrollTo('classifica')"><span class="nav-num">6</span> Classifica e trofei</a></li>
+            <li><a (click)="scrollTo('giocata')"><span class="nav-num">4</span> {{ 'GUIDE.NAV_4' | translate }}</a></li>
+            <li><a (click)="scrollTo('recap')"><span class="nav-num">5</span> {{ 'GUIDE.NAV_5' | translate }}</a></li>
+            <li><a (click)="scrollTo('classifica')"><span class="nav-num">6</span> {{ 'GUIDE.NAV_6' | translate }}</a></li>
           </ul>
 
-          <div class="nav-section">Avanzato</div>
+          <div class="nav-section">{{ 'GUIDE.SECTION_ADVANCED' | translate }}</div>
           <ul>
-            <li><a (click)="scrollTo('crea')"><span class="nav-num">7</span> Creare una lega</a></li>
-            <li><a (click)="scrollTo('tips')"><span class="nav-num">8</span> Consigli generali</a></li>
+            <li><a (click)="scrollTo('crea')"><span class="nav-num">7</span> {{ 'GUIDE.NAV_7' | translate }}</a></li>
+            <li><a (click)="scrollTo('tips')"><span class="nav-num">8</span> {{ 'GUIDE.NAV_8' | translate }}</a></li>
             <li><a (click)="scrollTo('faq')"><span class="nav-num">9</span> FAQ</a></li>
           </ul>
         </nav>
@@ -66,46 +67,46 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <div class="hero">
             <div class="hero-badge">
               <span class="material-icons" style="font-size:13px">menu_book</span>
-              Guida Ufficiale
+              {{ 'GUIDE.HERO_BADGE' | translate }}
             </div>
             <h1>SURVIVOR</h1>
-            <p>Tutto quello che ti serve per iniziare a giocare, fare le tue previsioni e sfidare i tuoi amici nelle leghe sportive.</p>
+            <p>{{ 'GUIDE.HERO_DESC' | translate }}</p>
           </div>
 
-          <!-- 0 — Cos'è Survivor -->
+          <!-- 0 — What is Survivor -->
           <section class="chapter" id="intro">
             <div class="chapter-header">
               <div class="chapter-num">0</div>
-              <h2>Cos'è Survivor</h2>
+              <h2>{{ 'GUIDE.S0_TITLE' | translate }}</h2>
             </div>
-            <p><strong>Survivor</strong> è una piattaforma di leghe fantasy sportive. Ogni giornata scegli una squadra: se vince, sopravvivi. Se perde o non giochi, sei eliminato. Se pareggia, perdi una vita. Vince chi dura di più — o chi accumula più punti, secondo la modalità scelta.</p>
-            <p>Puoi giocare con gli amici in leghe private o unirti a leghe pubbliche. I campionati disponibili includono <strong>Serie A, Serie B, Liga, NBA, Australian Open, Roland Garros, US Open e Wimbledon</strong>.</p>
+            <p [innerHTML]="'GUIDE.S0_P1' | translate"></p>
+            <p [innerHTML]="'GUIDE.S0_P2' | translate"></p>
 
             <div class="compare">
               <div class="mode-card">
                 <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">favorite</span> Survivor <span class="badge-mode">CLASSIC</span></h3>
                 <ul>
-                  <li>Scegli una squadra a giornata</li>
-                  <li>Sconfitta o no-pick: sei eliminato</li>
-                  <li>Pareggio: perdi una vita</li>
-                  <li>Esaurite le vite sei eliminato</li>
-                  <li>L'ultimo rimasto vince</li>
+                  <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI1' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI2' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI3' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI4' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI5' | translate }}</li>
                 </ul>
               </div>
               <div class="mode-card alt">
                 <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">emoji_events</span> Campionato <span class="badge-mode">PUNTI</span></h3>
                 <ul>
-                  <li>Scegli una squadra a giornata</li>
-                  <li>Vittoria = 3 pt, Pareggio = 1 pt</li>
-                  <li>Nessuna eliminazione</li>
-                  <li>Vince chi ha più punti a fine torneo</li>
+                  <li>{{ 'GUIDE.S0_MODE_CHAMP_LI1' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_CHAMP_LI2' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_CHAMP_LI3' | translate }}</li>
+                  <li>{{ 'GUIDE.S0_MODE_CHAMP_LI4' | translate }}</li>
                 </ul>
               </div>
             </div>
 
             <div class="tip">
               <span class="callout-icon">💡</span>
-              Puoi partecipare a più leghe contemporaneamente, anche di sport diversi.
+              {{ 'GUIDE.S0_TIP' | translate }}
             </div>
           </section>
 
@@ -113,18 +114,18 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <section class="chapter" id="login">
             <div class="chapter-header">
               <div class="chapter-num">1</div>
-              <h2>Registrazione e Login</h2>
+              <h2>{{ 'GUIDE.S1_TITLE' | translate }}</h2>
             </div>
-            <p>Survivor usa il <strong>Magic Link</strong>: niente password da ricordare. Ti arriva un link via email, clicchi, e sei dentro. Al primo accesso l'account viene creato automaticamente.</p>
+            <p [innerHTML]="'GUIDE.S1_P1' | translate"></p>
             <ul class="steps">
-              <li><div class="step-icon">📧</div><div class="step-body"><strong>Inserisci la tua email</strong><span>Apri l'app e digita il tuo indirizzo email nella schermata di accesso.</span></div></li>
-              <li><div class="step-icon">📨</div><div class="step-body"><strong>Controlla la casella di posta</strong><span>Riceverai un'email con un link di accesso. Controlla anche la cartella spam se non arriva entro un minuto.</span></div></li>
-              <li><div class="step-icon">✅</div><div class="step-body"><strong>Clicca il link</strong><span>Il link ti autentica automaticamente. Nessuna password richiesta.</span></div></li>
-              <li><div class="step-icon">🎨</div><div class="step-body"><strong>Completa il profilo</strong><span>Imposta un nickname e, se vuoi, scegli la tua squadra del cuore per ogni sport.</span></div></li>
+              <li><div class="step-icon">📧</div><div class="step-body"><strong>{{ 'GUIDE.S1_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S1_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📨</div><div class="step-body"><strong>{{ 'GUIDE.S1_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S1_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">✅</div><div class="step-body"><strong>{{ 'GUIDE.S1_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S1_LI3_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🎨</div><div class="step-body"><strong>{{ 'GUIDE.S1_LI4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S1_LI4_TEXT' | translate }}</span></div></li>
             </ul>
             <div class="info">
               <span class="callout-icon">ℹ️</span>
-              Il Magic Link ha una scadenza. Se scade prima di cliccarci, torna alla schermata di login e richiedine uno nuovo.
+              {{ 'GUIDE.S1_INFO' | translate }}
             </div>
           </section>
 
@@ -132,119 +133,119 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <section class="chapter" id="home-section">
             <div class="chapter-header">
               <div class="chapter-num">2</div>
-              <h2>La Home</h2>
+              <h2>{{ 'GUIDE.S2_TITLE' | translate }}</h2>
             </div>
-            <p>Dopo il login arrivi alla <strong>Home</strong>, il tuo pannello di controllo principale. Da qui gestisci tutto.</p>
+            <p [innerHTML]="'GUIDE.S2_P1' | translate"></p>
             <div class="card-grid">
-              <div class="card"><div class="card-icon">🔒</div><strong>Le mie leghe</strong><span>Tutte le leghe a cui stai partecipando, incluse quelle in attesa di approvazione.</span></div>
-              <div class="card"><div class="card-icon">🌐</div><strong>Leghe pubbliche</strong><span>Sfoglia e unisciti alle leghe aperte create da altri utenti.</span></div>
-              <div class="card"><div class="card-icon">➕</div><strong>Crea lega</strong><span>Avvia la tua lega personalizzata e invita gli amici.</span></div>
-              <div class="card"><div class="card-icon">🔔</div><strong>Notifiche</strong><span>Risultati, richieste di accesso, scadenze giocate e molto altro.</span></div>
+              <div class="card"><div class="card-icon">🔒</div><strong>{{ 'GUIDE.S2_CARD1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD1_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">🌐</div><strong>{{ 'GUIDE.S2_CARD2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD2_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">➕</div><strong>{{ 'GUIDE.S2_CARD3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD3_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">🔔</div><strong>{{ 'GUIDE.S2_CARD4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD4_TEXT' | translate }}</span></div>
             </div>
-            <p>Le leghe mostrano un <strong>badge di popolarità</strong> che va da <em>New</em> fino a <em>Hall of Fame</em> in base al numero di partecipanti e all'attività.</p>
-            <div class="tip"><span class="callout-icon">💡</span>Usa i filtri in cima alla lista per trovare leghe per sport, campionato o stato (in corso, da avviare, terminate).</div>
+            <p [innerHTML]="'GUIDE.S2_P2' | translate"></p>
+            <div class="tip"><span class="callout-icon">💡</span>{{ 'GUIDE.S2_TIP' | translate }}</div>
           </section>
 
           <!-- 3 — Join -->
           <section class="chapter" id="join">
             <div class="chapter-header">
               <div class="chapter-num">3</div>
-              <h2>Entrare in una lega</h2>
+              <h2>{{ 'GUIDE.S3_TITLE' | translate }}</h2>
             </div>
-            <p>Ci sono tre modi per entrare in una lega:</p>
+            <p>{{ 'GUIDE.S3_P1' | translate }}</p>
             <ul class="steps">
-              <li><div class="step-icon">🔗</div><div class="step-body"><strong>Link di invito</strong><span>Se un amico ti ha mandato un link, aprilo direttamente. Clicca "Unisciti" per entrare subito.</span></div></li>
-              <li><div class="step-icon">🌐</div><div class="step-body"><strong>Leghe pubbliche</strong><span>Dalla Home vai su "Leghe pubbliche", cerca quella che ti interessa e premi "Entra".</span></div></li>
-              <li><div class="step-icon">🔑</div><div class="step-body"><strong>Lega con password</strong><span>Alcune leghe private richiedono una password. Chiedila al creatore e inseriscila quando richiesto.</span></div></li>
+              <li><div class="step-icon">🔗</div><div class="step-body"><strong>{{ 'GUIDE.S3_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S3_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🌐</div><div class="step-body"><strong>{{ 'GUIDE.S3_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S3_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🔑</div><div class="step-body"><strong>{{ 'GUIDE.S3_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S3_LI3_TEXT' | translate }}</span></div></li>
             </ul>
-            <p>Se la lega non è ad accesso libero, la tua richiesta andrà approvata dal <strong>Leader</strong>. Riceverai una notifica quando sarà accettata o rifiutata.</p>
-            <div class="warn"><span class="callout-icon">⚠️</span>Non puoi fare giocate finché la tua iscrizione non è approvata e la lega non è iniziata.</div>
+            <p [innerHTML]="'GUIDE.S3_P2' | translate"></p>
+            <div class="warn"><span class="callout-icon">⚠️</span>{{ 'GUIDE.S3_WARN' | translate }}</div>
           </section>
 
           <!-- 4 — Giocata -->
           <section class="chapter" id="giocata">
             <div class="chapter-header">
               <div class="chapter-num">4</div>
-              <h2>Fare la giocata</h2>
+              <h2>{{ 'GUIDE.S4_TITLE' | translate }}</h2>
             </div>
-            <p>La giocata è il cuore del gioco: ogni giornata scegli <strong>una squadra</strong> tra quelle che giocano nel turno corrente.</p>
+            <p [innerHTML]="'GUIDE.S4_P1' | translate"></p>
             <ul class="steps">
-              <li><div class="step-icon">1️⃣</div><div class="step-body"><strong>Apri la lega attiva</strong><span>Dalla Home, entra nella lega. Vedrai il pulsante "Fai la tua giocata" per la giornata corrente.</span></div></li>
-              <li><div class="step-icon">📋</div><div class="step-body"><strong>Guarda le partite disponibili</strong><span>Vedrai tutte le partite con squadre, orari e quota. Espandi ogni partita per vedere gli ultimi 5 risultati.</span></div></li>
-              <li><div class="step-icon">🤖</div><div class="step-body"><strong>Usa il Consiglio AI (opzionale)</strong><span>Il sistema suggerisce una squadra analizzando affidabilità, % vittorie stagionale, vantaggio casalingo e debolezza avversaria. Utile, non infallibile!</span></div></li>
-              <li><div class="step-icon">✔️</div><div class="step-body"><strong>Seleziona e conferma</strong><span>Clicca sulla squadra scelta e conferma. Puoi renderla pubblica (visibile subito) o nascosta (rivelata solo a partita iniziata).</span></div></li>
+              <li><div class="step-icon">1️⃣</div><div class="step-body"><strong>{{ 'GUIDE.S4_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S4_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📋</div><div class="step-body"><strong>{{ 'GUIDE.S4_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S4_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🤖</div><div class="step-body"><strong>{{ 'GUIDE.S4_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S4_LI3_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">✔️</div><div class="step-body"><strong>{{ 'GUIDE.S4_LI4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S4_LI4_TEXT' | translate }}</span></div></li>
             </ul>
             <div class="table-wrap">
               <table>
-                <tr><th>Risultato partita</th><th>Modalità Survivor</th><th>Modalità Campionato</th></tr>
-                <tr><td>La tua squadra vince</td><td class="ok">✓ Sopravvivi</td><td class="ok">+3 punti</td></tr>
-                <tr><td>Pareggio</td><td class="ko">✗ Perdi una vita</td><td class="neu">+1 punto</td></tr>
-                <tr><td>La tua squadra perde</td><td class="ko">✗ Sei eliminato</td><td class="neu">+0 punti</td></tr>
-                <tr><td>Non hai giocato</td><td class="ko">✗ Sei eliminato</td><td class="neu">+0 punti</td></tr>
+                <tr><th>{{ 'GUIDE.S4_TABLE_TH1' | translate }}</th><th>{{ 'GUIDE.S4_TABLE_TH2' | translate }}</th><th>{{ 'GUIDE.S4_TABLE_TH3' | translate }}</th></tr>
+                <tr><td>{{ 'GUIDE.S4_TABLE_R1_TD1' | translate }}</td><td class="ok">{{ 'GUIDE.S4_TABLE_R1_TD2' | translate }}</td><td class="ok">{{ 'GUIDE.S4_TABLE_R1_TD3' | translate }}</td></tr>
+                <tr><td>{{ 'GUIDE.S4_TABLE_R2_TD1' | translate }}</td><td class="ko">{{ 'GUIDE.S4_TABLE_R2_TD2' | translate }}</td><td class="neu">{{ 'GUIDE.S4_TABLE_R2_TD3' | translate }}</td></tr>
+                <tr><td>{{ 'GUIDE.S4_TABLE_R3_TD1' | translate }}</td><td class="ko">{{ 'GUIDE.S4_TABLE_R3_TD2' | translate }}</td><td class="neu">{{ 'GUIDE.S4_TABLE_R3_TD3' | translate }}</td></tr>
+                <tr><td>{{ 'GUIDE.S4_TABLE_R4_TD1' | translate }}</td><td class="ko">{{ 'GUIDE.S4_TABLE_R4_TD2' | translate }}</td><td class="neu">{{ 'GUIDE.S4_TABLE_R4_TD3' | translate }}</td></tr>
               </table>
             </div>
-            <div class="warn"><span class="callout-icon">⚠️</span>Puoi modificare o cancellare la giocata fino all'inizio della prima partita della giornata. Dopo non è più possibile.</div>
-            <div class="tip"><span class="callout-icon">💡</span>Attiva le notifiche push: l'app ti avvisa quando la scadenza si avvicina.</div>
+            <div class="warn"><span class="callout-icon">⚠️</span>{{ 'GUIDE.S4_WARN' | translate }}</div>
+            <div class="tip"><span class="callout-icon">💡</span>{{ 'GUIDE.S4_TIP' | translate }}</div>
           </section>
 
           <!-- 5 — Recap -->
           <section class="chapter" id="recap">
             <div class="chapter-header">
               <div class="chapter-num">5</div>
-              <h2>Recap e risultati</h2>
+              <h2>{{ 'GUIDE.S5_TITLE' | translate }}</h2>
             </div>
-            <p>Al termine di ogni giornata il Leader calcola i risultati. Da quel momento puoi vedere il <strong>Recap</strong>: un riepilogo completo di tutte le giocate.</p>
+            <p [innerHTML]="'GUIDE.S5_P1' | translate"></p>
             <div class="card-grid">
-              <div class="card"><div class="card-icon">👁️</div><strong>Giocate di tutti</strong><span>Vedi cosa ha scelto ogni partecipante e se ha vinto o perso.</span></div>
-              <div class="card"><div class="card-icon">🏅</div><strong>Scelta più popolare</strong><span>La squadra più selezionata della giornata.</span></div>
-              <div class="card"><div class="card-icon">💬</div><strong>Reazioni</strong><span>Metti emoji alla giocata degli altri per festeggiare (o prendere in giro).</span></div>
-              <div class="card"><div class="card-icon">☠️</div><strong>Eliminazioni</strong><span>Scopri chi ha esaurito le vite e chi è ancora in gara.</span></div>
+              <div class="card"><div class="card-icon">👁️</div><strong>{{ 'GUIDE.S5_CARD1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S5_CARD1_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">🏅</div><strong>{{ 'GUIDE.S5_CARD2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S5_CARD2_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">💬</div><strong>{{ 'GUIDE.S5_CARD3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S5_CARD3_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">☠️</div><strong>{{ 'GUIDE.S5_CARD4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S5_CARD4_TEXT' | translate }}</span></div>
             </div>
-            <div class="info"><span class="callout-icon">ℹ️</span>Puoi consultare il recap di qualsiasi giornata passata dalla sezione "Giornate" all'interno della lega.</div>
+            <div class="info"><span class="callout-icon">ℹ️</span>{{ 'GUIDE.S5_INFO' | translate }}</div>
           </section>
 
           <!-- 6 — Classifica -->
           <section class="chapter" id="classifica">
             <div class="chapter-header">
               <div class="chapter-num">6</div>
-              <h2>Classifica e trofei</h2>
+              <h2>{{ 'GUIDE.S6_TITLE' | translate }}</h2>
             </div>
-            <p>Ogni lega ha una <strong>classifica in tempo reale</strong>. In modalità Survivor mostra le vite rimaste; in modalità Campionato mostra i punti accumulati.</p>
-            <p>I <strong>Trofei</strong> sono il tuo palmares personale: tengono traccia di tutte le vittorie e i podi (top 3) ottenuti nel tempo, in tutte le leghe e campionati.</p>
-            <div class="tip"><span class="callout-icon">💡</span>Accedi al tuo profilo per vedere i tuoi trofei e confrontare le statistiche con gli altri utenti.</div>
+            <p [innerHTML]="'GUIDE.S6_P1' | translate"></p>
+            <p [innerHTML]="'GUIDE.S6_P2' | translate"></p>
+            <div class="tip"><span class="callout-icon">💡</span>{{ 'GUIDE.S6_TIP' | translate }}</div>
           </section>
 
           <!-- 7 — Crea -->
           <section class="chapter" id="crea">
             <div class="chapter-header">
               <div class="chapter-num">7</div>
-              <h2>Creare una lega</h2>
+              <h2>{{ 'GUIDE.S7_TITLE' | translate }}</h2>
             </div>
-            <p>Dalla Home premi <strong>"Crea lega"</strong> e configura le regole a tuo piacimento.</p>
+            <p [innerHTML]="'GUIDE.S7_P1' | translate"></p>
             <ul class="steps">
-              <li><div class="step-icon">🏅</div><div class="step-body"><strong>Sport e campionato</strong><span>Scegli lo sport e il campionato specifico (es. Serie A, NBA, Roland Garros).</span></div></li>
-              <li><div class="step-icon">📝</div><div class="step-body"><strong>Nome, edizione e modalità</strong><span>Dai un nome alla lega, imposta il numero di edizione e scegli tra Survivor e Campionato.</span></div></li>
-              <li><div class="step-icon">🔢</div><div class="step-body"><strong>Giornata di inizio e fine</strong><span>Decidi da quale giornata parte la lega e quando termina.</span></div></li>
-              <li><div class="step-icon">❤️</div><div class="step-body"><strong>Vite iniziali (solo Survivor)</strong><span>Quante vite ha ogni giocatore. 1 vita = eliminazione immediata al primo errore.</span></div></li>
-              <li><div class="step-icon">🔒</div><div class="step-body"><strong>Accesso: pubblica o privata</strong><span>Pubblica = chiunque può unirsi. Privata = solo chi ha il link o la password. Puoi richiedere approvazione manuale per ogni iscrizione.</span></div></li>
-              <li><div class="step-icon">📨</div><div class="step-body"><strong>Invita i giocatori</strong><span>Inserisci le email degli amici per invitarli, oppure condividi il link della lega.</span></div></li>
+              <li><div class="step-icon">🏅</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📝</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🔢</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI3_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">❤️</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI4_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🔒</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI5_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI5_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📨</div><div class="step-body"><strong>{{ 'GUIDE.S7_LI6_TITLE' | translate }}</strong><span>{{ 'GUIDE.S7_LI6_TEXT' | translate }}</span></div></li>
             </ul>
-            <div class="info"><span class="callout-icon">ℹ️</span>Come <strong>Leader</strong> hai accesso a funzioni extra: approvare iscrizioni, calcolare i risultati a fine giornata, gestire le vite dei giocatori e correggere eventuali errori.</div>
+            <div class="info"><span class="callout-icon">ℹ️</span><span [innerHTML]="'GUIDE.S7_INFO' | translate"></span></div>
           </section>
 
           <!-- 8 — Tips -->
           <section class="chapter" id="tips">
             <div class="chapter-header">
               <div class="chapter-num">8</div>
-              <h2>Consigli generali</h2>
+              <h2>{{ 'GUIDE.S8_TITLE' | translate }}</h2>
             </div>
             <ul class="steps">
-              <li><div class="step-icon">📅</div><div class="step-body"><strong>Gioca il prima possibile</strong><span>Non aspettare l'ultimo momento: le partite possono iniziare e bloccare la selezione.</span></div></li>
-              <li><div class="step-icon">🤫</div><div class="step-body"><strong>Usa la giocata nascosta</strong><span>Non vuoi far copiare la tua scelta? Imposta la giocata come nascosta: viene rivelata solo al fischio d'inizio.</span></div></li>
-              <li><div class="step-icon">📉</div><div class="step-body"><strong>Non scegliere sempre il favorito</strong><span>In Survivor l'obiettivo è durare. Considera il fattore casalingo e la forma recente, non solo le quote.</span></div></li>
-              <li><div class="step-icon">🤖</div><div class="step-body"><strong>Il Consiglio AI è un punto di partenza</strong><span>L'algoritmo è utile ma non infallibile. Usalo come spunto, poi decidi tu.</span></div></li>
-              <li><div class="step-icon">🔔</div><div class="step-body"><strong>Attiva le notifiche push</strong><span>Riceverai avvisi prima della scadenza giocate e quando i risultati vengono calcolati.</span></div></li>
-              <li><div class="step-icon">👀</div><div class="step-body"><strong>Studia le giocate degli altri</strong><span>Il recap giornaliero mostra le scelte di tutti: analizzare le tendenze degli avversari può diventare parte della strategia.</span></div></li>
+              <li><div class="step-icon">📅</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🤫</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📉</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI3_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🤖</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI4_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🔔</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI5_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI5_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">👀</div><div class="step-body"><strong>{{ 'GUIDE.S8_LI6_TITLE' | translate }}</strong><span>{{ 'GUIDE.S8_LI6_TEXT' | translate }}</span></div></li>
             </ul>
           </section>
 
@@ -252,12 +253,12 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <section class="chapter" id="faq">
             <div class="chapter-header">
               <div class="chapter-num">9</div>
-              <h2>Domande frequenti</h2>
+              <h2>{{ 'GUIDE.S9_TITLE' | translate }}</h2>
             </div>
             <div class="faq">
-              <details *ngFor="let item of faqItems">
-                <summary>{{ item.q }} <span class="faq-toggle">+</span></summary>
-                <p>{{ item.a }}</p>
+              <details *ngFor="let item of faqKeys">
+                <summary>{{ 'GUIDE.FAQ_Q' + item | translate }} <span class="faq-toggle">+</span></summary>
+                <p>{{ 'GUIDE.FAQ_A' + item | translate }}</p>
               </details>
             </div>
           </section>
@@ -640,17 +641,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 })
 export class GuidaComponent {
   sidebarOpen = false;
-
-  faqItems = [
-    { q: 'Non ho ricevuto il Magic Link, cosa faccio?', a: 'Controlla la cartella spam o posta indesiderata. Se non è lì, attendi un minuto e poi riprova. Assicurati di usare l\'indirizzo email corretto.' },
-    { q: 'Posso cambiare la giocata dopo averla confermata?', a: 'Sì, puoi modificarla o cancellarla finché non inizia la prima partita della giornata. Dopo è bloccata.' },
-    { q: 'Cosa succede se dimentico di fare la giocata?', a: 'In Survivor sei eliminato immediatamente, come se avessi scelto una squadra perdente. In Campionato non guadagni punti per quella giornata.' },
-    { q: 'Posso partecipare a più leghe contemporaneamente?', a: 'Sì, non c\'è limite. Puoi essere in leghe di sport diversi, campionati diversi e modalità diverse allo stesso tempo.' },
-    { q: 'Chi calcola i risultati a fine giornata?', a: 'Il Leader della lega. Se i risultati tardano ad arrivare, contatta il Leader. Se sei tu il Leader, trovi il pulsante "Calcola risultati" nella schermata di gestione della lega.' },
-    { q: 'La giocata "nascosta" serve a qualcosa strategicamente?', a: 'Sì: impedisce agli altri di copiare la tua scelta in tempo reale. La vedranno solo dopo il fischio d\'inizio della partita.' },
-    { q: 'I trofei sono visibili solo a me?', a: 'No, i tuoi trofei e le statistiche sono visibili anche agli altri dalla tua scheda profilo pubblica.' },
-    { q: 'Posso uscire da una lega?', a: 'Sì, puoi abbandonare una lega dal suo pannello. Se sei il Leader con partecipanti attivi, valuta di trasferire il ruolo prima di uscire.' },
-  ];
+  faqKeys = [1, 2, 3, 4, 5, 6, 7, 8];
 
   constructor(private router: Router) {}
 

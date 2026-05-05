@@ -344,6 +344,7 @@ insert into squadra(sigla,nome,id_campionato) values('STR','Südtirol','SERIE_B'
 insert into squadra(sigla,nome,id_campionato) values('ENT','Virtus Entella','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('EMP','Empoli','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('MAN','Mantova','SERIE_B');
+insert into squadra(sigla,nome,id_campionato) values('BEN','Benevento','SERIE_B');
 insert into squadra(sigla,nome,id_campionato) values('RAY','Rayo Vallecano','LIGA');
 insert into squadra(sigla,nome,id_campionato) values('GIR','Girona','LIGA');
 insert into squadra(sigla,nome,id_campionato) values('OVI','Real Oviedo','LIGA');
