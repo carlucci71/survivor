@@ -308,6 +308,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
+    'SERIE_B_BEN': 'benevento.png',
 
     // MONDIALI 2026 (48 squadre nazionali)
     'MONDIALI_2026_ALG': 'mondiali/algeria.png',
