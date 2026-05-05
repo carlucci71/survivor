@@ -566,12 +566,9 @@
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
+                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
                         [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
-
-<!-- rimosso
-                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
-                        -->
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"
@@ -889,8 +886,8 @@
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
-                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
+                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
                        (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
