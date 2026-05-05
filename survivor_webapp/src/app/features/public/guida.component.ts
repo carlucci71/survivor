@@ -78,7 +78,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
               <div class="chapter-num">0</div>
               <h2>Cos'è Survivor</h2>
             </div>
-            <p><strong>Survivor</strong> è una piattaforma di leghe fantasy sportive. Ogni giornata scegli una squadra: se vince, sopravvivi. Se perde (o pareggia), perdi una vita. Vince chi dura di più — o chi accumula più punti, secondo la modalità scelta.</p>
+            <p><strong>Survivor</strong> è una piattaforma di leghe fantasy sportive. Ogni giornata scegli una squadra: se vince, sopravvivi. Se perde o non giochi, sei eliminato. Se pareggia, perdi una vita. Vince chi dura di più — o chi accumula più punti, secondo la modalità scelta.</p>
             <p>Puoi giocare con gli amici in leghe private o unirti a leghe pubbliche. I campionati disponibili includono <strong>Serie A, Serie B, Liga, NBA, Australian Open, Roland Garros, US Open e Wimbledon</strong>.</p>
 
             <div class="compare">
@@ -86,7 +86,8 @@ import { HeaderComponent } from '../../shared/components/header/header.component
                 <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">favorite</span> Survivor <span class="badge-mode">CLASSIC</span></h3>
                 <ul>
                   <li>Scegli una squadra a giornata</li>
-                  <li>Perdi una vita se non vince</li>
+                  <li>Sconfitta o no-pick: sei eliminato</li>
+                  <li>Pareggio: perdi una vita</li>
                   <li>Esaurite le vite sei eliminato</li>
                   <li>L'ultimo rimasto vince</li>
                 </ul>
@@ -178,8 +179,8 @@ import { HeaderComponent } from '../../shared/components/header/header.component
                 <tr><th>Risultato partita</th><th>Modalità Survivor</th><th>Modalità Campionato</th></tr>
                 <tr><td>La tua squadra vince</td><td class="ok">✓ Sopravvivi</td><td class="ok">+3 punti</td></tr>
                 <tr><td>Pareggio</td><td class="ko">✗ Perdi una vita</td><td class="neu">+1 punto</td></tr>
-                <tr><td>La tua squadra perde</td><td class="ko">✗ Perdi una vita</td><td class="neu">+0 punti</td></tr>
-                <tr><td>Non hai giocato</td><td class="ko">✗ Perdi una vita</td><td class="neu">+0 punti</td></tr>
+                <tr><td>La tua squadra perde</td><td class="ko">✗ Sei eliminato</td><td class="neu">+0 punti</td></tr>
+                <tr><td>Non hai giocato</td><td class="ko">✗ Sei eliminato</td><td class="neu">+0 punti</td></tr>
               </table>
             </div>
             <div class="warn"><span class="callout-icon">⚠️</span>Puoi modificare o cancellare la giocata fino all'inizio della prima partita della giornata. Dopo non è più possibile.</div>
@@ -643,7 +644,7 @@ export class GuidaComponent {
   faqItems = [
     { q: 'Non ho ricevuto il Magic Link, cosa faccio?', a: 'Controlla la cartella spam o posta indesiderata. Se non è lì, attendi un minuto e poi riprova. Assicurati di usare l\'indirizzo email corretto.' },
     { q: 'Posso cambiare la giocata dopo averla confermata?', a: 'Sì, puoi modificarla o cancellarla finché non inizia la prima partita della giornata. Dopo è bloccata.' },
-    { q: 'Cosa succede se dimentico di fare la giocata?', a: 'In Survivor perdi una vita come se avessi scelto una squadra perdente. In Campionato non guadagni punti per quella giornata.' },
+    { q: 'Cosa succede se dimentico di fare la giocata?', a: 'In Survivor sei eliminato immediatamente, come se avessi scelto una squadra perdente. In Campionato non guadagni punti per quella giornata.' },
     { q: 'Posso partecipare a più leghe contemporaneamente?', a: 'Sì, non c\'è limite. Puoi essere in leghe di sport diversi, campionati diversi e modalità diverse allo stesso tempo.' },
     { q: 'Chi calcola i risultati a fine giornata?', a: 'Il Leader della lega. Se i risultati tardano ad arrivare, contatta il Leader. Se sei tu il Leader, trovi il pulsante "Calcola risultati" nella schermata di gestione della lega.' },
     { q: 'La giocata "nascosta" serve a qualcosa strategicamente?', a: 'Sì: impedisce agli altri di copiare la tua scelta in tempo reale. La vedranno solo dopo il fischio d\'inizio della partita.' },
