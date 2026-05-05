@@ -67,6 +67,13 @@ public class RecapGiornataService {
         Map<Long, Long> reactionCountPerGiocata = reactions.stream()
                 .collect(Collectors.groupingBy(r -> r.getGiocata().getId(), Collectors.counting()));
 
+        // Pre-carica in un'unica query i giocatori che hanno giocate in giornate SUCCESSIVE:
+        // se un giocatore ha ancora giocate future rispetto a questa giornata, significa che
+        // è sopravvissuto a questa giornata (p.es. PAREGGIO con vite rimanenti) e quindi
+        // NON va contato tra gli eliminati di questa giornata.
+        java.util.Set<Long> giocatoriConGiocateFuture =
+                giocataRepository.findGiocatoreIdsWithGiocateAfterRound(legaId, giornata);
+
         List<RecapGiornataDTO.PickEntry> picks = new ArrayList<>();
 
         for (GiocatoreLega gl : partecipanti) {
@@ -76,15 +83,16 @@ public class RecapGiornataService {
 
             Giocata giocata = giocataPerGiocatoreId.get(giocatoreId);
 
-            // Era già eliminato (KO in una giornata precedente) → non è una nuova eliminazione questa giornata
-            boolean eraGiaEliminato = giocataRepository
-                    .existsByGiocatore_IdAndLega_IdAndGiornataLessThanAndEsito(
-                            giocatoreId, legaId, giornata, Enumeratori.EsitoGiocata.KO);
-
-            boolean eliminatoQuestaGiornata = !eraGiaEliminato
-                    && statoAttuale == Enumeratori.StatoGiocatore.ELIMINATO
+            // Un giocatore è stato eliminato IN questa giornata se:
+            //  - ha partecipato (giocata != null) → era ATTIVO prima di questa giornata
+            //  - il suo stato attuale è ELIMINATO
+            //  - l'esito è KO (eliminazione immediata) oppure PAREGGIO (ultima vita consumata)
+            //  - non ha giocate in giornate successive (altrimenti il PAREGGIO non lo ha eliminato)
+            boolean eliminatoQuestaGiornata = statoAttuale == Enumeratori.StatoGiocatore.ELIMINATO
                     && giocata != null
-                    && Enumeratori.EsitoGiocata.KO == giocata.getEsito();
+                    && (Enumeratori.EsitoGiocata.KO == giocata.getEsito()
+                        || Enumeratori.EsitoGiocata.PAREGGIO == giocata.getEsito())
+                    && !giocatoriConGiocateFuture.contains(giocatoreId);
 
             String squadraNome = (giocata != null && giocata.getSquadra() != null)
                     ? giocata.getSquadra().getNome() : null;
