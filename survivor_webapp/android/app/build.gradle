@@ -9,8 +9,8 @@ android {
     applicationId "com.survivor.app"
     minSdkVersion cd    rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
-    versionCode 77
-    versionName "1.9.2"
+    versionCode 78
+    versionName "1.9.3"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
 
