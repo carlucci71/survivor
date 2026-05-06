@@ -524,6 +524,10 @@
 		.jersey-info .jersey-vs {
 			color: #C0C8D0;
 		}
+
+		.jersey-info {
+			padding-bottom: 14px; // compensa la riga jersey-vs assente
+		}
 	}
 }
 
