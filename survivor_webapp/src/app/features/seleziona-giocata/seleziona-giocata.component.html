@@ -279,13 +279,20 @@
             <mat-icon>chevron_right</mat-icon>
           </button>
           <div class="teams-scroll-wrapper" #scrollWrapper (wheel)="onScrollWrapperScroll($event)" (scroll)="updateScrollButtons()">
-          @for (squadra of squadreFiltrateDisponibili; track squadra.sigla) {
+          @for (squadra of squadreFiltrate; track squadra.sigla) {
             <div
               class="jersey-card"
               [class.selected]="squadraSelezionata === squadra.sigla"
               [class.playing-home]="isPlayingHome(squadra.sigla)"
+              [class.already-used]="squadra.alreadyUsed"
               (click)="selezionaSquadra(squadra.sigla)"
             >
+              @if (squadra.alreadyUsed) {
+                <div class="already-used-badge">
+                  <mat-icon class="already-used-icon">block</mat-icon>
+                  <span>{{ 'PLAY.ALREADY_USED' | translate }}</span>
+                </div>
+              }
               @if (isPlayingHome(squadra.sigla)) {
                 <div class="home-badge">
                   <mat-icon class="home-icon">home</mat-icon>
@@ -304,34 +311,13 @@
               </div>
               <div class="jersey-info">
                 <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
-                @if (squadra.prossimaPartita) {
+                @if (squadra.prossimaPartita && !squadra.alreadyUsed) {
                   <span class="jersey-vs">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
                 }
               </div>
               @if (squadraSelezionata === squadra.sigla) {
                 <div class="jersey-check"><mat-icon>check_circle</mat-icon></div>
               }
-            </div>
-          }
-          @for (squadra of squadreFiltrateGiaUsate; track squadra.sigla) {
-            <div class="jersey-card already-used">
-              <div class="already-used-badge">
-                <mat-icon class="already-used-icon">block</mat-icon>
-                <span>{{ 'PLAY.ALREADY_USED' | translate }}</span>
-              </div>
-              <div class="jersey-container">
-                @if (getTeamLogo(squadra.sigla)) {
-                  <img [src]="getTeamLogo(squadra.sigla)!" [alt]="formatNomeSquadra(squadra.nome)" class="team-logo-img" (error)="onLogoError($event)" />
-                } @else {
-                  <svg class="jersey-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-                    <path class="jersey-body" [attr.fill]="getTeamColors(squadra.sigla).primary" d="M 20 25 L 10 35 L 10 50 L 15 50 L 15 120 L 85 120 L 85 50 L 90 50 L 90 35 L 80 25 L 75 20 Q 70 15 65 15 L 60 20 Q 55 25 50 25 Q 45 25 40 20 L 35 15 Q 30 15 25 20 L 20 25 Z"/>
-                    <text class="jersey-number" x="50" y="75" text-anchor="middle" [attr.fill]="getTeamColors(squadra.sigla).secondary" font-size="32" font-weight="bold" font-family="'Poppins', sans-serif">{{ getSquadraInitials(squadra.nome) }}</text>
-                  </svg>
-                }
-              </div>
-              <div class="jersey-info">
-                <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
-              </div>
             </div>
           }
         </div>

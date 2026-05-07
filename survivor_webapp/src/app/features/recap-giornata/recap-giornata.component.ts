@@ -163,8 +163,6 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     const legaId = Number(this.route.snapshot.paramMap.get('legaId'));
     const giornata = Number(this.route.snapshot.paramMap.get('giornata'));
 
-    console.log('[RecapGiornata] ngOnInit → legaId:', legaId, 'giornata:', giornata);
-
     if (!legaId || !giornata || isNaN(legaId) || isNaN(giornata)) {
       console.error('[RecapGiornata] Parametri rotta non validi', { legaId, giornata });
       this.errorDetail = `Parametri non validi: legaId=${legaId}, giornata=${giornata}`;

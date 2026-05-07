@@ -25,7 +25,7 @@ export class TeamLogoService {
     'SERIE_B_PAD': 'PADOVA.png', 'SERIE_B_PAL': 'PAL.png', 'SERIE_B_PES': 'PESC.png',
     'SERIE_B_REG': 'REGGIANA.png', 'SERIE_B_SAM': 'SAMP.png', 'SERIE_B_SPE': 'SPEZIA.webp',
     'SERIE_B_STR': 'SUDTIROL.png', 'SERIE_B_FRO': 'FRO.png', 'SERIE_B_EMP': 'EMP.png',
-    'SERIE_B_MON': 'MON.png', 'SERIE_B_VEN': 'VEN.png',
+    'SERIE_B_MON': 'MON.png', 'SERIE_B_VEN': 'VEN.png', 'SERIE_B_BEN': 'benevento.png',
     // MONDIALI 2026
     'MONDIALI_2026_ALG': 'mondiali/algeria.png',
     'MONDIALI_2026_SAU': 'mondiali/arabia-saudita.png',

@@ -308,6 +308,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
+    'SERIE_B_BEN': 'benevento.png',
 
     // MONDIALI 2026 (48 squadre nazionali)
     'MONDIALI_2026_ALG': 'mondiali/algeria.png',
@@ -543,11 +544,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     // ✅ Inizializza giocataPubblica con il valore della giocata esistente
     if (data.giocataCorrente && typeof data.giocataCorrente.pubblica === 'boolean') {
       this.giocataPubblica = data.giocataCorrente.pubblica;
-      console.log('✅ Inizializzato giocataPubblica con valore esistente:', this.giocataPubblica);
     } else {
       // Default: false (nascosta) se non esiste una giocata precedente
       this.giocataPubblica = false;
-      console.log('⚠️ Nessuna giocata precedente, giocataPubblica impostato a false (nascosta)');
     }
   }
 
@@ -716,8 +715,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   salvaSquadra() {
-    console.log('💾 Salvataggio giocata - giocataPubblica:', this.giocataPubblica);
-
     if (this.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value) {
       this.dialog
         .open(ConfermaAssegnazioneDialogComponent, {
@@ -729,7 +726,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         .subscribe((result) => {
           if (result) {
             this.showEncouragementMessage();
-            console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
               pubblica: this.giocataPubblica
@@ -739,7 +735,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         });
     } else {
       this.showEncouragementMessage();
-      console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
       this.dialogRef.close({
         squadraSelezionata: this.squadraSelezionata,
         pubblica: this.giocataPubblica
@@ -1010,14 +1005,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   confermaRimozione(): void {
     if (this._eliminaLoading) return;
     this._eliminaLoading = true;
-    console.log('🗑️ Elimina giocata - giornata:', this.data.giornata, 'giocatoreId:', this.data.giocatore.id, 'legaId:', this.data.lega.id);
     this.giocataService.eliminaGiocata(
       this.data.giornata,
       this.data.giocatore.id,
       this.data.lega.id
     ).subscribe({
       next: (res) => {
-        console.log('✅ Giocata eliminata con successo', res);
         this._eliminaLoading = false;
         this.showConfirmRemove = false;
         this.squadraSelezionata = null;

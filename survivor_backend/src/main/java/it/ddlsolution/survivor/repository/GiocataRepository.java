@@ -35,5 +35,16 @@ public interface GiocataRepository extends JpaRepository<Giocata, Long> {
      */
     boolean existsByGiocatore_IdAndLega_IdAndGiornataLessThanAndEsito(
             Long giocatoreId, Long legaId, Integer giornata, Enumeratori.EsitoGiocata esito);
+
+    /**
+     * Restituisce gli id dei giocatori che hanno almeno una giocata in una giornata
+     * successiva a quella indicata (usato per distinguere le eliminazioni della giornata
+     * corrente da quelle di giornate successive, nel caso del sistema vite con PAREGGIO).
+     */
+    @org.springframework.data.jpa.repository.Query(
+            "SELECT DISTINCT g.giocatore.id FROM Giocata g WHERE g.lega.id = :legaId AND g.giornata > :giornata")
+    java.util.Set<Long> findGiocatoreIdsWithGiocateAfterRound(
+            @org.springframework.data.repository.query.Param("legaId") Long legaId,
+            @org.springframework.data.repository.query.Param("giornata") Integer giornata);
 }
 

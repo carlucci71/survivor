@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
   namespace "com.survivor.app"
   compileSdk rootProject.ext.compileSdkVersion
@@ -22,9 +28,9 @@ android {
   signingConfigs {
     release {
       storeFile file("my-release-key.jks")
-      storePassword "qwerty90@!"
-      keyAlias "my-key-alias"
-      keyPassword "qwerty90@!"
+      storePassword keystoreProperties['storePassword'] ?: System.getenv('KEYSTORE_PASSWORD') ?: ''
+      keyAlias keystoreProperties['keyAlias'] ?: System.getenv('KEY_ALIAS') ?: ''
+      keyPassword keystoreProperties['keyPassword'] ?: System.getenv('KEY_PASSWORD') ?: ''
     }
   }
 

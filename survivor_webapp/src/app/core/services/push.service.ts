@@ -112,20 +112,16 @@ export class PushService {
       const token = await this.getFCMTokenFromNative();
       
       if (token && token !== this.lastRegisteredToken) {
-        console.log('🔥 FCM Token iOS (salvato nel DB):', token);
-        
         const authService = this.injector.get(AuthService);
         if (authService?.getCurrentUser()) {
           await this.sendTokenToBackend(token);
-          
           // Cancella il token da localStorage dopo averlo inviato con successo
           // così alla prossima apertura Firebase fornirà il token aggiornato
           localStorage.removeItem('FCMToken');
-          console.log('✓ Token FCM inviato e rimosso da localStorage');
         }
       }
     } catch (err) {
-      console.log('Impossibile recuperare FCM token da UserDefaults:', err);
+      // Impossibile recuperare FCM token da UserDefaults
     }
   }
 
@@ -165,27 +161,18 @@ export class PushService {
 
   private registerListeners(): void {
     PushNotifications.addListener('registration', (token: Token) => {
-      console.log('Push notification token registrato:', token.value);
-      
       const platform = Capacitor.getPlatform();
-      
-      // Su iOS, questo è il token APNs (per console Apple)
-      if (platform === 'ios') {
-        console.log('🍎 APNs Device Token (per Apple Push Console):', token.value);
-      }
 
       // Invia il token solo se l'utente è già autenticato
       try {
         const authService = this.injector.get(AuthService);
         if (authService && typeof authService.getCurrentUser === 'function' && authService.getCurrentUser()) {
-          void this.sendTokenToBackend(token.value).catch((error) => {
-            console.warn('Impossibile inviare token push ora:', error);
+          void this.sendTokenToBackend(token.value).catch(() => {
+            // Invio token push fallito, verrà ritentato al prossimo avvio
           });
-        } else {
-          console.log('Utente non autenticato: token push salvato in attesa di login');
         }
       } catch (err) {
-        console.log('AuthService non disponibile al momento; token push salvato in attesa di login', err);
+        // AuthService non disponibile, token push verrà registrato dopo il login
       }
     });
 
@@ -246,9 +233,7 @@ export class PushService {
       
       if (persistentId) {
         deviceId = persistentId;
-        console.log('✅ Usando Persistent Device ID:', deviceId);
       } else {
-        console.warn('⚠️ Persistent Device ID non ancora disponibile, uso fallback');
         const deviceInfo = await Device.getId();
         deviceId = deviceInfo.identifier;
       }
@@ -265,17 +250,11 @@ export class PushService {
     };
 
     const url = `${environment.apiUrl}/push/register`;
-    console.log('📤 Invio token push al backend:', {
-      platform: payload.platform,
-      deviceId: payload.deviceId,
-      tokenPrefix: token.substring(0, 20) + '...'
-    });
 
     try {
       await firstValueFrom(this.http.post(url, payload));
-      console.log('Token push inviato con successo al backend');
     } catch (error) {
-      console.error('Errore invio token push al backend - URL:', url, 'Error:', error);
+      console.error('Errore invio token push al backend:', error);
       throw error;
     }
   }
