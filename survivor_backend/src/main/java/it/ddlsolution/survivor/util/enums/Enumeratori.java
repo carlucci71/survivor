@@ -138,6 +138,7 @@ public class Enumeratori {
         LIGA,
         TENNIS_W,
         TENNIS_AO,
+        ROLAND_GARROS,
         NBA_RS,
         MONDIALI_2026;
     }

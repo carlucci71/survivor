@@ -423,8 +423,14 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   // Metodo per ottenere il logo ufficiale della squadra (assets locali)
   getTeamLogo(sigla: string): string | null {
     const sportId = this.lega?.campionato?.sport?.id;
-    const calcioId = this.lega?.campionato?.id; //SERIE_A, SERIE_B, LIGA
+    const campionatoId = this.lega?.campionato?.id;
+    const calcioId = campionatoId; //SERIE_A, SERIE_B, LIGA
     if (sportId === 'TENNIS') {
+      // Per il Roland Garros la sigla è già nel formato "jannik_sinner"
+      if (campionatoId === 'ROLAND_GARROS') {
+        return `assets/logos/tennis/${sigla}.png`;
+      }
+
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
@@ -552,11 +558,14 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
-    this.getSquadreByCampionatoAndGiornata(
-      this.lega.campionato!.id,
-      this.lega.anno,
-      this.data.giornata
-    );
+    // Per il Roland Garros non ci sono partite: saltiamo il filtro per giornata
+    if (this.lega.campionato?.id !== 'ROLAND_GARROS') {
+      this.getSquadreByCampionatoAndGiornata(
+        this.lega.campionato!.id,
+        this.lega.anno,
+        this.data.giornata
+      );
+    }
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
@@ -1099,8 +1108,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   applicaFiltroGiocatoriAttivi(): void {
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    const isRolandGarros = this.lega?.campionato?.id === 'ROLAND_GARROS';
 
-    if (isTennis) {
+    if (isTennis && !isRolandGarros) {
       // Filtra solo i giocatori che hanno una prossima partita (sono ancora in gara)
       this.squadreConPartite = this.squadreConPartite.filter(squadra => squadra.prossimaPartita !== null);
     }
@@ -1111,10 +1121,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   filtraSquadre(): void {
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    const isRolandGarros = this.lega?.campionato?.id === 'ROLAND_GARROS';
     let squadreDaFiltrare = [...this.squadreConPartite];
 
-    // Per il tennis, mostra solo i giocatori ancora in gara (con prossima partita)
-    if (isTennis) {
+    // Per il tennis (escluso Roland Garros), mostra solo i giocatori ancora in gara (con prossima partita)
+    if (isTennis && !isRolandGarros) {
       squadreDaFiltrare = squadreDaFiltrare.filter(squadra => squadra.prossimaPartita !== null);
     }
 
