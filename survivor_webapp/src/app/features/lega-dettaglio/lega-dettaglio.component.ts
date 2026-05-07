@@ -296,8 +296,6 @@ export class LegaDettaglioComponent implements OnDestroy {
           // - Icona storico accanto al nome utente
           // - NO scroll orizzontale su desktop/tablet
           if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
-            console.log('🧪 MOCK MODE ATTIVO: Generazione 10 giornate fittizie');
-
             // Forzo giornataIniziale e giornataFinale per avere 10 giornate
             this.lega.giornataIniziale = 1;
             this.lega.giornataFinale = 10;
@@ -1305,7 +1303,6 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   giornataDaGiocare(): boolean {
-    if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return (
       this.lega?.statoGiornataCorrente?.value == StatoPartita.DA_GIOCARE.value
     );
@@ -1949,16 +1946,6 @@ export class LegaDettaglioComponent implements OnDestroy {
       .subscribe({
         next: (res: Giocatore) => {
           // Debug: verifica se il campo forzatura arriva dal backend
-          console.log('🔍 Giocate ricevute:', res.giocate);
-          res.giocate?.forEach((g, i) => {
-            console.log(`Giocata ${i}:`, {
-              giornata: g.giornata,
-              squadra: g.squadraSigla,
-              forzatura: g.forzatura,
-              hasForzatura: !!g.forzatura
-            });
-          });
-
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
           if (res && Array.isArray(res.giocate)) {
             giocatore.giocate = res.giocate;
@@ -2689,7 +2676,6 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataCorrente = this.lega.giornataCorrente;
     // SEMPRE da 1: l'admin può vedere e forzare QUALSIASI giornata passata del campionato
     const giornataIniziale = 1;
-    console.log('[LegaDettaglio v3] apriRisultatiGiornata → range:', giornataIniziale, '-', giornataCorrente);
     const dialogRef = this.dialog.open(RoundResultsDialogComponent, {
       data: {
         lega: this.lega,
