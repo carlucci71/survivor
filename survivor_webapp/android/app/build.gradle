@@ -7,7 +7,7 @@ android {
 
   defaultConfig {
     applicationId "com.survivor.app"
-    minSdkVersion cd    rootProject.ext.minSdkVersion
+    minSdkVersion rootProject.ext.minSdkVersion
     targetSdkVersion rootProject.ext.targetSdkVersion
     versionCode 78
     versionName "1.9.3"
