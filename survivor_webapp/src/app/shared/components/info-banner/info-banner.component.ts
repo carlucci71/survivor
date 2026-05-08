@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -1208,6 +1208,157 @@ export class AlboOroDialogComponent implements OnInit {
   }
 }
 
+// ── EASTER EGG: Liquid Glass Shader ────────────────────────────────────────
+const EASTER_EGG_SHADER = `
+  precision highp float;
+  uniform sampler2D src;
+  uniform vec2 resolution;
+  uniform vec2 offset;
+  uniform vec2 lag;
+  uniform float time;
+  out vec4 outColor;
+
+  const float SPHERE_R = 0.12;
+  const float DISP = 0.025;
+  const int   DISP_STEPS = 12;
+  const float DISP_LO = 0.0;
+  const float DISP_HI = 1.0;
+  const float SCATTER = 0.025;
+  const int N_BUBBLES = 8;
+  const float BUBBLE_SMOOTH = 0.025;
+  uniform float bubbleData[32];
+  const vec3 ABSORB = vec3(1.0, 0.7, 0.5) * 2.0;
+
+  float smin(float a, float b, float k) {
+    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+    return mix(b, a, h) - k * h * (1.0 - h);
+  }
+
+  vec2 hash22(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.xx + p3.yz) * p3.zy) * 2.0 - 1.0;
+  }
+
+  mat2 rot(float t) {
+    float c = cos(t), s = sin(t);
+    return mat2(c, -s, s, c);
+  }
+
+  float sdSphere(vec3 p, float r) { return length(p) - r; }
+
+  float map(vec3 p, vec3 c) {
+    vec3 q = p - c;
+    vec3 sp = q;
+    sp.y += sin(sp.z * 29.0 + time * 6.5) * 0.01;
+    sp.z += sin(sp.x * 23.0 + sp.y * 11.0 + time * 7.0) * 0.01;
+    sp.xy *= rot(time * 1.3);
+    sp.xz *= rot(time * 1.1);
+    float d = sdSphere(sp, SPHERE_R);
+    for (int i = 0; i < N_BUBBLES; i++) {
+      int b = i * 4;
+      vec3 bPos = vec3(bubbleData[b], bubbleData[b+1], bubbleData[b+2]);
+      float r = bubbleData[b+3];
+      d = smin(d, sdSphere(q - bPos, max(r, 0.001)), BUBBLE_SMOOTH);
+    }
+    return d;
+  }
+
+  vec3 calcNormal(vec3 p, vec3 c) {
+    vec2 e = vec2(0.001, 0.0);
+    return normalize(vec3(
+      map(p + e.xyy, c) - map(p - e.xyy, c),
+      map(p + e.yxy, c) - map(p - e.yxy, c),
+      map(p + e.yyx, c) - map(p - e.yyx, c)
+    ));
+  }
+
+  vec3 spectrum(float x) {
+    return clamp(vec3(
+      1.5 - abs(4.0 * x - 1.0),
+      1.5 - abs(4.0 * x - 2.0),
+      1.5 - abs(4.0 * x - 3.0)
+    ), 0.0, 1.0);
+  }
+
+  vec4 getSrc(vec2 uv) {
+    // Ritorna il pixel così com'è (trasparente dove non c'è sorgente)
+    return texture(src, uv);
+  }
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - offset) / resolution;
+    float aspect = resolution.y / resolution.x;
+    vec2 p = (uv - 0.5) * vec2(1.0, aspect);
+    vec2 mp = (lag / resolution - 0.5) * vec2(1.0, aspect);
+    vec3 ro = vec3(0.0, 0.0, -2.0);
+    float focal = 2.0;
+    vec3 rd = normalize(vec3(p, focal));
+    vec3 c = vec3(mp, 0.0);
+    vec3 firstN = vec3(0.0);
+    vec3 lastN = vec3(0.0);
+    int hitCount = 0;
+    float thickness = 0.0;
+    float tEntry = 0.0;
+    float t = 0.0;
+    bool inside = false;
+    for (int i = 0; i < 50; i++) {
+      if (t > 10.0) break;
+      vec3 pos = ro + rd * t;
+      float d = map(pos, c);
+      float step = inside ? -d : d;
+      if (step < 3e-4) {
+        vec3 n = calcNormal(pos, c);
+        if (hitCount == 0) firstN = n;
+        lastN = n;
+        if (!inside) { tEntry = t; } else { thickness += t - tEntry; }
+        hitCount++;
+        if (hitCount >= 4) { break; }
+        inside = !inside;
+        t += 0.01;
+      } else { t += step; }
+    }
+    if (hitCount > 0) {
+      vec2 baseDisp = -(firstN.xy + lastN.xy) * 0.5 * DISP;
+      float NdotR = max(dot(firstN, -rd), 0.0);
+      float scatter = pow((1.0 - NdotR), 2.0) * SCATTER;
+      vec3 acc = vec3(0.0);
+      vec3 wsum = vec3(0.0);
+      for (int i = 0; i < DISP_STEPS; i++) {
+        float wl = float(i) / float(DISP_STEPS - 1);
+        float k = mix(DISP_LO, DISP_HI, wl) * (1.3 + float(hitCount) * 0.2);
+        vec2 h = hash22(uv * 1000.0 + float(i) * 7.13 + time) * scatter;
+        vec3 w = spectrum(wl);
+        acc += getSrc(uv + baseDisp * k + h).rgb * w;
+        wsum += w;
+      }
+      vec3 col = acc / wsum * 0.99;
+      col -= float(hitCount) * 0.05;
+      col += 0.1;
+      float fres = pow(1.0 - NdotR, 5.0);
+      col *= 1.0 + fres;
+      float f2 = 1.0 - pow(NdotR, 3.0);
+      col *= mix(vec3(1), exp(-ABSORB * thickness), f2);
+      col *= 1.0 + f2;
+      vec3 ld = normalize(vec3(0.5, 0.9, -0.3));
+      float spec = pow(max(dot(reflect(-ld, firstN), -rd), 0.0), 200.0);
+      col += spec * 30.0;
+      ld = normalize(vec3(-0.9, 0.4, -0.3));
+      spec = pow(max(dot(reflect(-ld, firstN), -rd), 0.0), 300.0);
+      col += spec * 3.0;
+      ld = normalize(vec3(-0.1, -0.9, -0.1));
+      spec = pow(max(dot(reflect(-ld, firstN), -rd), 0.0), 30.0);
+      col += spec * 0.5;
+      col = min(col, 1.0);
+      col = 1.0 - abs(col + fres * 0.5 - 1.0);
+      outColor = vec4(col, 1.0);
+    } else {
+      // Nessuna bolla qui: pixel trasparente → l'app si vede attraverso
+      outColor = vec4(0.0);
+    }
+  }
+`;
+
 // MODAL PROFILO UTENTE
 @Component({
   selector: 'app-profilo-dialog',
@@ -1218,8 +1369,26 @@ export class AlboOroDialogComponent implements OnInit {
 
       <!-- HEADER: Avatar (sinistra) + Nickname (destra) -->
       <div class="profile-header">
-        <div class="avatar" [style.background]="getAvatarGradient()">
+        <div class="avatar" [style.background]="getAvatarGradient()"
+          (pointerdown)="onAvatarPointerDown($event)"
+          (pointerup)="onAvatarPointerUp()"
+          (pointerleave)="onAvatarPointerLeave()"
+          (pointercancel)="onAvatarPointerLeave()"
+          (contextmenu)="$event.preventDefault()">
           <span class="avatar-initials">{{ getInitials() }}</span>
+          <svg *ngIf="easterEggProgress > 0 || easterEggComplete" class="egg-ring"
+               [class.egg-ring--burst]="easterEggComplete"
+               viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="6"/>
+            <circle cx="50" cy="50" r="47" fill="none"
+              [attr.stroke]="getRingColor()"
+              stroke-width="6"
+              stroke-dasharray="295.31"
+              [attr.stroke-dashoffset]="295.31 * (1 - easterEggProgress)"
+              stroke-linecap="round"
+              transform="rotate(-90 50 50)"
+              style="filter: drop-shadow(0 0 3px currentColor)"/>
+          </svg>
         </div>
         <div class="nickname-wrap">
           <label class="field-label">{{ 'PROFILE.NICKNAME' | translate }}</label>
@@ -1410,6 +1579,47 @@ export class AlboOroDialogComponent implements OnInit {
       justify-content: center;
       box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
       flex-shrink: 0;
+      position: relative;
+      overflow: visible;
+      cursor: pointer;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .egg-ring {
+      /* inset:0 → SVG esattamente della stessa dimensione dell'avatar.
+         viewBox 0 0 100 100 con r=47 e stroke-width=6:
+         il bordo esterno del tratto è a 47+3=50 unità viewBox = 100% del raggio dell'avatar.
+         Il ring è interamente DENTRO il cerchio → nessun problema con overflow:hidden. */
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    @keyframes egg-burst {
+      0%   { transform: scale(1);    opacity: 1; }
+      30%  { transform: scale(1.18); opacity: 1; filter: brightness(2) saturate(1.8); }
+      100% { transform: scale(1.6);  opacity: 0; }
+    }
+
+    @keyframes egg-avatar-glow {
+      0%   { box-shadow: 0 0 0 3px rgba(255,255,255,0.25); }
+      40%  { box-shadow: 0 0 0 6px rgba(255,235,59,0.7), 0 0 18px rgba(255,152,0,0.6); }
+      100% { box-shadow: 0 0 0 3px rgba(255,255,255,0.25); }
+    }
+
+    .egg-ring--burst {
+      animation: egg-burst 0.55s ease-out forwards;
+    }
+
+    .avatar:has(.egg-ring--burst) {
+      animation: egg-avatar-glow 0.55s ease-out forwards;
     }
 
     .avatar-initials {
@@ -1773,13 +1983,24 @@ export class AlboOroDialogComponent implements OnInit {
     }
   `]
 })
-export class ProfiloDialogComponent implements OnInit {
+export class ProfiloDialogComponent implements OnInit, OnDestroy {
   userProfile = {
     nickname: '',
     squadraCalcio: '',
     squadraBasket: '',
     tennista: ''
   };
+
+  // ── Easter egg state ─────────────────────────────────────────────────────
+  easterEggProgress = 0;
+  easterEggComplete  = false;
+  private _eggInterval: ReturnType<typeof setInterval> | null = null;
+  private _eggStartTime = 0;
+  private readonly EGG_DURATION = 5000;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private _eggVfx: any = null;
+  private _eggOverlay: HTMLElement | null = null;
+  private _eggBgCanvas: HTMLCanvasElement | null = null;
 
   activeSport: 'calcio' | 'basket' | 'tennis' = 'calcio';
 
@@ -2028,6 +2249,241 @@ export class ProfiloDialogComponent implements OnInit {
       maxHeight: '90vh',
       panelClass: 'custom-dialog-container' // CENTRATO
     });
+  }
+
+  // ── Easter Egg: long press sulle iniziali ─────────────────────────────────
+
+  onAvatarPointerDown(event: PointerEvent): void {
+    event.preventDefault();
+    this._eggStartTime = Date.now();
+    this.easterEggProgress = 0;
+    this.easterEggComplete  = false;
+    this._eggInterval = setInterval(() => {
+      const elapsed = Date.now() - this._eggStartTime;
+      this.easterEggProgress = Math.min(elapsed / this.EGG_DURATION, 1);
+      if (this.easterEggProgress >= 1) {
+        // Ferma l'intervallo e congela il ring a 1 per la burst animation
+        if (this._eggInterval) { clearInterval(this._eggInterval); this._eggInterval = null; }
+        this.easterEggComplete = true;
+        // Breve delay per far vedere la burst, poi lancia la bolla
+        setTimeout(() => {
+          this.easterEggComplete  = false;
+          this.easterEggProgress  = 0;
+          this._activateEasterEgg();
+        }, 600);
+      }
+    }, 50);
+  }
+
+  onAvatarPointerUp(): void    { this._clearEasterEggProgress(); }
+  onAvatarPointerLeave(): void { this._clearEasterEggProgress(); }
+
+  private _clearEasterEggProgress(): void {
+    if (this._eggInterval) { clearInterval(this._eggInterval); this._eggInterval = null; }
+    this.easterEggProgress = 0;
+    this.easterEggComplete  = false;
+  }
+
+  /** Colore arcobaleno del ring interpolato sul progresso (0→1) */
+  getRingColor(): string {
+    const p = this.easterEggProgress;
+    // cyan → blue → violet → pink → orange → gold
+    const stops: [number, number, number][] = [
+      [ 79, 195, 247],  // 0.00 cyan
+      [ 33, 150, 243],  // 0.20 blue
+      [156,  39, 176],  // 0.45 violet
+      [233,  30,  99],  // 0.65 pink
+      [255, 152,   0],  // 0.82 orange
+      [255, 235,  59],  // 1.00 gold
+    ];
+    const t = p * (stops.length - 1);
+    const i = Math.min(Math.floor(t), stops.length - 2);
+    const f = t - i;
+    const [r1, g1, b1] = stops[i];
+    const [r2, g2, b2] = stops[i + 1];
+    return `rgb(${Math.round(r1+(r2-r1)*f)},${Math.round(g1+(g2-g1)*f)},${Math.round(b1+(b2-b1)*f)})`;
+  }
+
+  private async _activateEasterEgg(): Promise<void> {
+    try {
+      const { VFX } = await import('@vfx-js/core');
+
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+
+      // ── 1. srcDiv: div trasparente full-screen necessario per attivare
+      //    il post-effect VFX-JS (serve almeno un elemento tracciato)
+      const srcDiv = document.createElement('div');
+      srcDiv.style.cssText = [
+        'position:fixed', 'inset:0',
+        'z-index:-1', 'pointer-events:none',
+        'background:transparent',
+      ].join(';');
+      document.body.appendChild(srcDiv);
+
+      // ── 2. uiLayer: bottone ✕ + hint + tracking touch ────────────────────
+      // z-index 99999: sempre sopra il canvas VFX (9998).
+      // Questo elemento NON viene mai toccato da VFX → close button funziona.
+      const uiLayer = document.createElement('div');
+      uiLayer.style.cssText = [
+        'position:fixed', 'inset:0', 'z-index:99999',
+        'touch-action:none',  // blocca scroll sotto
+      ].join(';');
+
+      const closeBtn = document.createElement('button');
+      closeBtn.setAttribute('aria-label', 'Chiudi easter egg');
+      closeBtn.style.cssText = [
+        'position:absolute',
+        'top:calc(env(safe-area-inset-top, 0px) + 14px)', 'right:14px',
+        'width:44px', 'height:44px', 'border-radius:50%',
+        'background:rgba(255,255,255,0.22)',
+        'border:1.5px solid rgba(255,255,255,0.45)',
+        'color:white', 'font-size:20px', 'line-height:1',
+        'display:flex', 'align-items:center', 'justify-content:center',
+        'cursor:pointer', 'touch-action:manipulation',
+        '-webkit-tap-highlight-color:transparent',
+        'font-family:system-ui,sans-serif',
+        'backdrop-filter:blur(8px)',
+      ].join(';');
+      closeBtn.textContent = '✕';
+      uiLayer.appendChild(closeBtn);
+
+      const hint = document.createElement('div');
+      hint.style.cssText = [
+        'position:absolute',
+        'bottom:calc(env(safe-area-inset-bottom, 0px) + 32px)',
+        'left:50%', 'transform:translateX(-50%)',
+        'color:rgba(255,255,255,0.55)', 'font-size:0.7rem',
+        'font-family:Poppins,sans-serif',
+        'white-space:nowrap', 'letter-spacing:0.06em',
+        'text-shadow:0 1px 8px rgba(0,0,0,0.5)',
+        'pointer-events:none',
+      ].join(';');
+      hint.textContent = '✦  Muovi il dito  ·  ✕ per uscire  ✦';
+      uiLayer.appendChild(hint);
+
+      document.body.appendChild(uiLayer);
+      this._eggOverlay = uiLayer;
+
+      // ── 3. Bubble state ───────────────────────────────────────────────────
+      const N = 8;
+      const bubbles = new Float32Array(N * 4);
+      const t0 = performance.now() / 1000;
+      const p0 = { x: W / 2, y: H / 2 };
+      const p1 = { x: W / 2, y: H / 2 };
+      const p2 = { x: W / 2, y: H / 2 };
+
+      const fract = (x: number) => x - Math.floor(x);
+      const rot2d = (x: number, y: number, ang: number): [number, number] => {
+        const c = Math.cos(ang), s = Math.sin(ang);
+        return [x * c - y * s, x * s + y * c];
+      };
+
+      // Tracking sul uiLayer: pointerdown setta posizione iniziale e cattura
+      // il puntatore (setPointerCapture) → pointermove arriva su uiLayer anche
+      // durante il drag veloce su iOS senza perdere l'evento.
+      const onPointerDown = (e: PointerEvent) => {
+        if (closeBtn.contains(e.target as Node)) return; // non interferire col close
+        p0.x = e.clientX;
+        p0.y = H - e.clientY;
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        p0.x = e.clientX;
+        p0.y = H - e.clientY; // flip Y per WebGL (0 = basso)
+      };
+      uiLayer.addEventListener('pointerdown', onPointerDown);
+      uiLayer.addEventListener('pointermove', onPointerMove);
+
+      // ── 4. Animazione bolle ───────────────────────────────────────────────
+      let animId = 0;
+      const tick = () => {
+        const time = performance.now() / 1000 - t0;
+        const sm = 0.10;
+        p1.x += (p0.x - p1.x) * sm;
+        p1.y += (p0.y - p1.y) * sm;
+        p2.x += (p1.x - p2.x) * sm;
+        p2.y += (p1.y - p2.y) * sm;
+        for (let i = 0; i < N; i++) {
+          const life = fract(time * 0.7 + i / N);
+          const orbitR = 0.12 * (0.3 + life * 0.8);
+          const orbitAngle = time * (0.8 + fract(i * 0.618) * 0.7) + i * 1.256;
+          let bx = Math.cos(orbitAngle) * orbitR;
+          let by = 0;
+          let bz = Math.sin(orbitAngle) * orbitR;
+          [bx, by] = rot2d(bx, by, i * 2.3);
+          [by, bz] = rot2d(by, bz, i * 1.8);
+          by += life * 0.1;
+          bx += Math.sin(time * 2.7 + i * 4.1) * 0.008 * life;
+          bz += Math.cos(time * 3.1 + i * 3.7) * 0.008 * life;
+          bx += ((p2.x - p1.x) / W) * (H / W);
+          by += (p2.y - p1.y) / H;
+          const maxR = 0.03 + 0.04 * fract(i * 0.618);
+          const j = i * 4;
+          bubbles[j] = bx;     bubbles[j + 1] = by;
+          bubbles[j + 2] = bz; bubbles[j + 3] = maxR * Math.sin(life * Math.PI);
+        }
+        animId = requestAnimationFrame(tick);
+      };
+      tick();
+
+      // ── 5. VFX ────────────────────────────────────────────────────────────
+      // fixedCanvas:true → canvas position:fixed
+      // zIndex:9998 → sotto uiLayer(99999), sopra l'app
+      // Il canvas WebGL è trasparente dove non c'è bolla → app visibile sotto
+      const vfx = new VFX({
+        zIndex: 9998,
+        scrollPadding: false,
+        postEffect: {
+          shader: EASTER_EGG_SHADER,
+          uniforms: {
+            lag: () => [
+              p2.x * devicePixelRatio,
+              p2.y * devicePixelRatio,
+            ],
+            bubbleData: () => bubbles,
+          },
+        },
+      });
+      this._eggVfx = vfx;
+
+      // srcDiv trasparente come sorgente: attiva il post-effect senza coprire nulla
+      await vfx.add(srcDiv, { shader: 'none' });
+      vfx.play();
+
+      // ── 6. Dismiss ────────────────────────────────────────────────────────
+      let dismissed = false;
+      const dismiss = () => {
+        if (dismissed) return;
+        dismissed = true;
+        cancelAnimationFrame(animId);
+        uiLayer.removeEventListener('pointerdown', onPointerDown);
+        uiLayer.removeEventListener('pointermove', onPointerMove);
+        uiLayer.style.transition = 'opacity 0.22s ease';
+        uiLayer.style.opacity = '0';
+        setTimeout(() => {
+          try { vfx.destroy(); } catch (_) { /* noop */ }
+          srcDiv.remove();
+          uiLayer.remove();
+          this._eggOverlay = null;
+          this._eggVfx     = null;
+        }, 240);
+      };
+
+      // Auto-close dopo 8 secondi
+      setTimeout(dismiss, 8000);
+
+      // Tasto chiudi: usa 'click' (affidabile sia desktop che mobile)
+      closeBtn.addEventListener('click', dismiss, { once: true });
+
+    } catch (err) {
+      console.error('[EasterEgg] VFX error:', err);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._clearEasterEggProgress();
+    if (this._eggVfx) { try { this._eggVfx.destroy(); } catch (_) {} this._eggVfx = null; }
+    if (this._eggOverlay)  { this._eggOverlay.remove();  this._eggOverlay  = null; }
   }
 }
 
