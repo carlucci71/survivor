@@ -235,6 +235,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   private ptrTouchStartScrollTop = 0;
   private ptrTriggered = false;
   private readonly PTR_THRESHOLD = 72; // px di pull necessari per triggherare
+  private readonly PTR_DEAD_ZONE = 16;  // px di pull prima che l'indicatore compaia
   private appStateChangeListener: any = null;
 
   constructor(
@@ -2111,8 +2112,13 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.ptrTouchStartScrollTop > 0 || el.scrollTop > 0) return;
     const dy = e.touches[0].clientY - this.ptrTouchStartY;
     if (dy <= 0) return;
+    // Dead zone: per i primi PTR_DEAD_ZONE px non mostrare nulla (comportamento nativo)
+    if (dy < this.PTR_DEAD_ZONE) return;
     e.preventDefault();
-    this.ptrProgress = Math.min(100, Math.round((dy / this.PTR_THRESHOLD) * 100));
+    // Calcola il progresso a partire dalla fine della dead zone
+    const effectiveDy = dy - this.PTR_DEAD_ZONE;
+    const effectiveThreshold = this.PTR_THRESHOLD - this.PTR_DEAD_ZONE;
+    this.ptrProgress = Math.min(100, Math.round((effectiveDy / effectiveThreshold) * 100));
     this.ptrActive = true;
     if (dy >= this.PTR_THRESHOLD) {
       this.ptrTriggered = true;
