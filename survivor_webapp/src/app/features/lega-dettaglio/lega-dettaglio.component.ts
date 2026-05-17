@@ -2106,7 +2106,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   private onPtrTouchMove = (e: TouchEvent): void => {
     if (this.ptrTriggered) return;
     const el = e.currentTarget as HTMLElement;
-    if (el.scrollTop > 0) return; // non siamo in cima
+    // Blocca il PTR se il touch è iniziato mentre si era già scrollati:
+    // evita che risalendo da metà pagina scatti il refresh quando si torna in cima
+    if (this.ptrTouchStartScrollTop > 0 || el.scrollTop > 0) return;
     const dy = e.touches[0].clientY - this.ptrTouchStartY;
     if (dy <= 0) return;
     e.preventDefault();
