@@ -234,8 +234,9 @@ export class LegaDettaglioComponent implements OnDestroy {
   private ptrTouchStartY = 0;
   private ptrTouchStartScrollTop = 0;
   private ptrTriggered = false;
+  private ptrGestureAborted = false;   // true se il gesto ha avuto movimento verso l'alto
   private readonly PTR_THRESHOLD = 72; // px di pull necessari per triggherare
-  private readonly PTR_DEAD_ZONE = 16;  // px di pull prima che l'indicatore compaia
+  private readonly PTR_DEAD_ZONE = 25;  // px di pull prima che l'indicatore compaia
   private appStateChangeListener: any = null;
 
   constructor(
@@ -2102,18 +2103,36 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.ptrTouchStartY = e.touches[0].clientY;
     this.ptrTouchStartScrollTop = el.scrollTop;
     this.ptrTriggered = false;
+    this.ptrGestureAborted = false;
   };
 
   private onPtrTouchMove = (e: TouchEvent): void => {
-    if (this.ptrTriggered) return;
+    // Uscita anticipata se il refresh è già partito o se il gesto è stato classificato come scroll
+    if (this.ptrTriggered || this.ptrGestureAborted) return;
+
     const el = e.currentTarget as HTMLElement;
-    // Blocca il PTR se il touch è iniziato mentre si era già scrollati:
-    // evita che risalendo da metà pagina scatti il refresh quando si torna in cima
-    if (this.ptrTouchStartScrollTop > 0 || el.scrollTop > 0) return;
+    // Blocca il PTR se il touch è iniziato mentre si era già scrollati
+    if (this.ptrTouchStartScrollTop > 0 || el.scrollTop > 0) {
+      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
+      return;
+    }
+
     const dy = e.touches[0].clientY - this.ptrTouchStartY;
-    if (dy <= 0) return;
-    // Dead zone: per i primi PTR_DEAD_ZONE px non mostrare nulla (comportamento nativo)
-    if (dy < this.PTR_DEAD_ZONE) return;
+
+    // Se il dito va verso l'alto (anche solo un pixel) prima che il PTR sia attivo,
+    // il gesto è uno scroll normale: disattiva il PTR per tutto questo touch
+    if (dy < 0) {
+      this.ptrGestureAborted = true;
+      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
+      return;
+    }
+
+    // Se il dito torna sotto la dead zone, nascondi immediatamente l'indicatore
+    if (dy < this.PTR_DEAD_ZONE) {
+      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
+      return;
+    }
+
     e.preventDefault();
     // Calcola il progresso a partire dalla fine della dead zone
     const effectiveDy = dy - this.PTR_DEAD_ZONE;
