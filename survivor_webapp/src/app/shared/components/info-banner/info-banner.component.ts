@@ -2348,19 +2348,7 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
       closeBtn.textContent = '✕';
       uiLayer.appendChild(closeBtn);
 
-      const hint = document.createElement('div');
-      hint.style.cssText = [
-        'position:absolute',
-        'bottom:calc(env(safe-area-inset-bottom, 0px) + 32px)',
-        'left:50%', 'transform:translateX(-50%)',
-        'color:rgba(255,255,255,0.55)', 'font-size:0.7rem',
-        'font-family:Poppins,sans-serif',
-        'white-space:nowrap', 'letter-spacing:0.06em',
-        'text-shadow:0 1px 8px rgba(0,0,0,0.5)',
-        'pointer-events:none',
-      ].join(';');
-      hint.textContent = '✦  Muovi il dito  ·  ✕ per uscire  ✦';
-      uiLayer.appendChild(hint);
+      // hint rimosso
 
       document.body.appendChild(uiLayer);
       this._eggOverlay = uiLayer;
