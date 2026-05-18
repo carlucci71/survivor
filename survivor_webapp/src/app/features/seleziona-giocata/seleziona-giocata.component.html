@@ -147,6 +147,9 @@
                   </div>
                   <div class="u-info">
                     <span class="u-name">{{ formatNomeSquadra(underdogDiGiornata.nome) }}</span>
+                    @if (underdogDiGiornata.nomeAvversario) {
+                      <span class="u-opponent">vs {{ formatNomeSquadra(underdogDiGiornata.nomeAvversario) }}</span>
+                    }
                     <div class="u-pills">
                       <span class="u-pill">📊 {{ underdogDiGiornata.factorWinRate }}% win</span>
                       @if (underdogDiGiornata.factorHome) {
@@ -191,6 +194,9 @@
                   </div>
 
                   <span class="c-name">{{ formatNomeSquadra(c.nome) }}</span>
+                  @if (c.nomeAvversario) {
+                    <span class="c-opponent">vs {{ formatNomeSquadra(c.nomeAvversario) }}</span>
+                  }
 
                   <div class="c-score-bar-track">
                     <div class="c-score-bar-fill"

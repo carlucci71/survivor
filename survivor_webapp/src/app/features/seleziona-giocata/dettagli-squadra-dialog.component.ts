@@ -39,19 +39,14 @@ export interface DettagliSquadraData {
   template: `
     <div class="dettagli-dialog" [style.background]="'linear-gradient(135deg, ' + localColors.primary + ', ' + localColors.secondary + ')'">
       <div class="dettagli-header">
-        <div class="dettagli-title">
-          <span>📊</span>
-          <span class="squadra-badge" [style.color]="localColors.primary">{{ localSigla }}</span>
-        </div>
-
         <!-- Search bar -->
         <ng-container *ngIf="!searchMode">
-          <button mat-icon-button class="sq-search-toggle" (click)="toggleSearchMode()">
-            <mat-icon>search</mat-icon>
-          </button>
-          <div class="nav-btns">
-            <button class="nav-btn" (click)="navigateSquadra(-1)"><mat-icon>chevron_left</mat-icon></button>
-            <button class="nav-btn" (click)="navigateSquadra(1)"><mat-icon>chevron_right</mat-icon></button>
+          <div class="dettagli-title">
+            <span>📊</span>
+            <span class="squadra-badge" [style.color]="localColors.primary">{{ localSigla }}</span>
+            <button mat-icon-button class="sq-search-toggle" (click)="toggleSearchMode()">
+              <mat-icon>search</mat-icon>
+            </button>
           </div>
         </ng-container>
         <ng-container *ngIf="searchMode">
@@ -78,12 +73,6 @@ export interface DettagliSquadraData {
           </div>
         </ng-container>
 
-<ng-container *ngIf="!searchMode">
-  <button class="sport-icon-btn" (click)="selezionaSquadraDialog()">
-    <mat-icon>{{ getSportIcon(data.sportId) }}</mat-icon>
-  </button>
-</ng-container>
-          
         <button class="close-btn" (click)="dialogRef.close()">
           <mat-icon>close</mat-icon>
         </button>

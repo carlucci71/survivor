@@ -20,6 +20,8 @@ export interface SquadraConsiglio {
   factorAvvDebole: number;
   /** Goal balance normalizzato 0–100 */
   factorGoalBalance: number;
+  /** Nome dell'avversario nella prossima partita */
+  nomeAvversario?: string;
 }
 
 import { MatSelect } from '@angular/material/select';
@@ -997,11 +999,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     const squadra = this.squadreConPartite.find(s => s.sigla === sigla);
     if (squadra?.alreadyUsed) return;
 
-    // Click sulla squadra già selezionata → mostra popup di conferma
-    if (this.squadraSelezionata === sigla) {
-      this.showConfirmRemove = true;
-      return;
-    }
+    // Click sulla squadra già selezionata → ignora
+    if (this.squadraSelezionata === sigla) return;
     this.squadraSelezionata = sigla;
     this.mostraUltimiRisultati(this.squadraSelezionata);
     this.mostraProssimePartite();
@@ -1312,16 +1311,19 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
           const isHome  = this.isPlayingHome(squadra.sigla);
 
           let avvPos = Math.ceil(total / 2); // default: metà classifica
+          let avvNome = '';
           if (squadra.prossimaPartita) {
-            const avvSigla = squadra.prossimaPartita.casaSigla === squadra.sigla
-              ? squadra.prossimaPartita.fuoriSigla
-              : squadra.prossimaPartita.casaSigla;
+            const isCasa = squadra.prossimaPartita.casaSigla === squadra.sigla;
+            const avvSigla = isCasa ? squadra.prossimaPartita.fuoriSigla : squadra.prossimaPartita.casaSigla;
+            avvNome = isCasa
+              ? (squadra.prossimaPartita.fuoriNome || avvSigla || '')
+              : (squadra.prossimaPartita.casaNome  || avvSigla || '');
             const avvIdx = classifica.findIndex(r => r.sigla === avvSigla);
             if (avvIdx >= 0) avvPos = avvIdx + 1;
           }
           const avvDebole = (total - avvPos + 1) / total;
 
-          return { squadra, winRate, avgGB, isHome, avvDebole };
+          return { squadra, winRate, avgGB, isHome, avvDebole, avvNome };
         });
 
         // Normalizza goal balance su range 0-1
@@ -1342,6 +1344,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             factorHome:        s.isHome,
             factorAvvDebole:   Math.round(s.avvDebole * 100),
             factorGoalBalance: Math.round(gbNorm * 100),
+            nomeAvversario:    s.avvNome || undefined,
           };
         });
 
