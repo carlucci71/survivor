@@ -9,21 +9,6 @@
 
   <main class="main-content lega-dettaglio-scroll">
 
-    <!-- PULL-TO-REFRESH INDICATOR -->
-    @if (ptrActive) {
-      <div class="ptr-indicator" [class.ptr-indicator--ready]="ptrProgress >= 100">
-        <div class="ptr-spinner">
-          <svg viewBox="0 0 36 36" class="ptr-arc">
-            <circle class="ptr-arc__bg" cx="18" cy="18" r="14"/>
-            <circle class="ptr-arc__fill" cx="18" cy="18" r="14"
-              [style.stroke-dashoffset]="88 - (88 * ptrProgress / 100)"/>
-          </svg>
-          <span class="ptr-icon">↓</span>
-        </div>
-        <span class="ptr-label">{{ ptrProgress >= 100 ? 'Aggiornamento…' : 'Trascina per aggiornare' }}</span>
-      </div>
-    }
-
     <div class="lega-dettaglio-container">
       @if (isMock) {
           {{beDataRiferimento}}

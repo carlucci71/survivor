@@ -228,15 +228,6 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
-  // ─── Pull-to-refresh ────────────────────────────────────────────────────
-  ptrActive = false;        // spinner visibile
-  ptrProgress = 0;          // 0-100, per animare la progress arc
-  private ptrTouchStartY = 0;
-  private ptrTouchStartScrollTop = 0;
-  private ptrTriggered = false;
-  private ptrGestureAborted = false;   // true se il gesto ha avuto movimento verso l'alto
-  private readonly PTR_THRESHOLD = 72; // px di pull necessari per triggherare
-  private readonly PTR_DEAD_ZONE = 25;  // px di pull prima che l'indicatore compaia
   private appStateChangeListener: any = null;
 
   // ─── Edge-swipe → home (iOS + Android) ──────────────────────────────────
@@ -338,8 +329,7 @@ export class LegaDettaglioComponent implements OnDestroy {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
           this.maybeTriggerTutorial();
-          // Inizializza pull-to-refresh e reload su ritorno in foreground
-          setTimeout(() => this.initPullToRefresh(), 300);
+          // Reload su ritorno in foreground
           this.initEdgeSwipe();
           this.initAppStateRefresh();
         }
@@ -2081,93 +2071,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
     }
-    this.removePtrListeners();
     this.removeEdgeSwipeListeners();
     if (this.appStateChangeListener) {
       this.appStateChangeListener.remove?.();
       this.appStateChangeListener = null;
     }
-  }
-
-  // ─── Pull-to-refresh ────────────────────────────────────────────────────
-
-  initPullToRefresh(): void {
-    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
-    if (!el) return;
-    el.addEventListener('touchstart', this.onPtrTouchStart, { passive: true });
-    el.addEventListener('touchmove',  this.onPtrTouchMove,  { passive: false });
-    el.addEventListener('touchend',   this.onPtrTouchEnd,   { passive: true });
-  }
-
-  private removePtrListeners(): void {
-    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
-    if (!el) return;
-    el.removeEventListener('touchstart', this.onPtrTouchStart);
-    el.removeEventListener('touchmove',  this.onPtrTouchMove);
-    el.removeEventListener('touchend',   this.onPtrTouchEnd);
-  }
-
-  private onPtrTouchStart = (e: TouchEvent): void => {
-    this.ptrTouchStartY = e.touches[0].clientY;
-    this.ptrTouchStartScrollTop = window.scrollY;
-    this.ptrTriggered = false;
-    this.ptrGestureAborted = false;
-  };
-
-  private onPtrTouchMove = (e: TouchEvent): void => {
-    // Uscita anticipata se il refresh è già partito o se il gesto è stato classificato come scroll
-    if (this.ptrTriggered || this.ptrGestureAborted) return;
-
-    // Blocca il PTR se il touch è iniziato mentre si era già scrollati
-    if (this.ptrTouchStartScrollTop > 0 || window.scrollY > 0) {
-      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
-      return;
-    }
-
-    const dy = e.touches[0].clientY - this.ptrTouchStartY;
-
-    // Se il dito va verso l'alto (anche solo un pixel) prima che il PTR sia attivo,
-    // il gesto è uno scroll normale: disattiva il PTR per tutto questo touch
-    if (dy < 0) {
-      this.ptrGestureAborted = true;
-      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
-      return;
-    }
-
-    // Se il dito torna sotto la dead zone, nascondi immediatamente l'indicatore
-    if (dy < this.PTR_DEAD_ZONE) {
-      if (this.ptrActive) { this.ptrActive = false; this.ptrProgress = 0; }
-      return;
-    }
-
-    e.preventDefault();
-    // Calcola il progresso a partire dalla fine della dead zone
-    const effectiveDy = dy - this.PTR_DEAD_ZONE;
-    const effectiveThreshold = this.PTR_THRESHOLD - this.PTR_DEAD_ZONE;
-    this.ptrProgress = Math.min(100, Math.round((effectiveDy / effectiveThreshold) * 100));
-    this.ptrActive = true;
-    if (dy >= this.PTR_THRESHOLD) {
-      this.ptrTriggered = true;
-      this.triggerRefresh();
-    }
-  };
-
-  private onPtrTouchEnd = (_e: TouchEvent): void => {
-    if (!this.ptrTriggered) {
-      this.ptrActive = false;
-      this.ptrProgress = 0;
-    }
-  };
-
-  private triggerRefresh(): void {
-    this.ptrProgress = 100;
-    this.loadLegaDetails();
-    // Nascondi lo spinner dopo un breve delay per feedback visivo
-    setTimeout(() => {
-      this.ptrActive = false;
-      this.ptrProgress = 0;
-      this.ptrTriggered = false;
-    }, 900);
   }
 
   async initAppStateRefresh(): Promise<void> {
