@@ -15,7 +15,7 @@
 					</button>
 					<button *ngFor="let s of sportsDisponibili" class="pill" [class.active]="filterSport === s.id" (click)="setFilter('sport', s.id)">
 						<mat-icon class="pill-icon">{{ getGiocaIcon(s.id) }}</mat-icon>
-						{{ s.nome }}
+						{{ ('SPORTS.' + s.id) | translate }}
 					</button>
 				</div>
 			</div>
