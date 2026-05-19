@@ -45,7 +45,7 @@ interface OnboardingSlide {
               <!-- Illustration -->
               <div class="ob-illustration" [style.background]="slide.gradient">
                 <div class="ob-emoji-ring" [style.borderColor]="slide.accent + '44'">
-                  <span class="ob-emoji">{{ slide.emoji }}</span>
+                  <span class="ob-emoji" [class.multi]="slide.emoji.length > 4">{{ slide.emoji }}</span>
                 </div>
                 <mat-icon class="ob-bg-icon" [style.color]="slide.accent + '22'">{{ slide.icon }}</mat-icon>
               </div>
@@ -188,6 +188,12 @@ interface OnboardingSlide {
       font-size: 3.6rem;
       line-height: 1;
       animation: bob 3s ease-in-out infinite;
+      letter-spacing: -2px;
+
+      &.multi {
+        font-size: 1.9rem;
+        letter-spacing: 2px;
+      }
     }
 
     @keyframes bob {
@@ -331,6 +337,7 @@ interface OnboardingSlide {
       }
 
       .ob-emoji { font-size: 2.8rem; }
+      .ob-emoji.multi { font-size: 1.5rem; }
 
       .ob-title  { font-size: 1.15rem; }
       .ob-desc   { font-size: 0.85rem; }
@@ -346,6 +353,7 @@ interface OnboardingSlide {
       .ob-illustration { height: 140px; }
       .ob-emoji-ring { width: 80px; height: 80px; }
       .ob-emoji { font-size: 2.4rem; }
+      .ob-emoji.multi { font-size: 1.3rem; }
       .ob-title { font-size: 1rem; }
     }
   `]
@@ -365,8 +373,8 @@ export class OnboardingComponent {
       gradient: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)'
     },
     {
-      emoji: '⚽',
-      icon: 'sports_soccer',
+      emoji: '⚽🏀🎾',
+      icon: 'sports',
       titleKey: 'ONBOARDING.SLIDE_2.TITLE',
       descKey: 'ONBOARDING.SLIDE_2.DESC',
       accent: '#1a6bcc',

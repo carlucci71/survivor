@@ -2,18 +2,107 @@
 	<app-header [title]="'JOIN_LEAGUE.TITLE' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
 
 	<main class="main-content">
-		<section class="leghe-section" *ngIf="leghe?.length; else noLeghe">
+
+		<!-- ── Filter bar ── -->
+		<section class="filters-bar" *ngIf="leghe?.length">
+
+			<!-- Sport -->
+			<div class="filter-group" *ngIf="sportsDisponibili.length > 1">
+				<span class="filter-label">{{ 'JOIN_LEAGUE.FILTER_SPORT' | translate }}</span>
+				<div class="filter-pills">
+					<button class="pill" [class.active]="filterSport === ''" (click)="setFilter('sport', '')">
+						{{ 'JOIN_LEAGUE.FILTER_ALL' | translate }}
+					</button>
+					<button *ngFor="let s of sportsDisponibili" class="pill" [class.active]="filterSport === s.id" (click)="setFilter('sport', s.id)">
+						<mat-icon class="pill-icon">{{ getGiocaIcon(s.id) }}</mat-icon>
+						{{ s.nome }}
+					</button>
+				</div>
+			</div>
+
+			<!-- Campionato (solo se sport selezionato e > 1 campionato) -->
+			<div class="filter-group" *ngIf="filterSport && campionatiDisponibili.length > 1">
+				<span class="filter-label">{{ 'JOIN_LEAGUE.FILTER_CAMPIONATO' | translate }}</span>
+				<div class="filter-pills">
+					<button class="pill" [class.active]="filterCampionato === ''" (click)="setFilter('campionato', '')">
+						{{ 'JOIN_LEAGUE.FILTER_ALL' | translate }}
+					</button>
+					<button *ngFor="let c of campionatiDisponibili" class="pill" [class.active]="filterCampionato === c.id" (click)="setFilter('campionato', c.id)">
+						{{ c.nome }}
+					</button>
+				</div>
+			</div>
+
+			<!-- Stato -->
+			<div class="filter-group">
+				<span class="filter-label">{{ 'JOIN_LEAGUE.FILTER_STATO' | translate }}</span>
+				<div class="filter-pills">
+					<button class="pill" [class.active]="filterStato === ''" (click)="setFilter('stato', '')">
+						{{ 'JOIN_LEAGUE.FILTER_ALL' | translate }}
+					</button>
+					<button class="pill pill--green" [class.active]="filterStato === 'AVVIATA'" (click)="setFilter('stato', 'AVVIATA')">
+						<mat-icon class="pill-icon">play_circle</mat-icon>
+						{{ 'JOIN_LEAGUE.STATO_AVVIATA' | translate }}
+					</button>
+					<button class="pill pill--amber" [class.active]="filterStato === 'DA_AVVIARE'" (click)="setFilter('stato', 'DA_AVVIARE')">
+						<mat-icon class="pill-icon">hourglass_empty</mat-icon>
+						{{ 'JOIN_LEAGUE.STATO_DA_AVVIARE' | translate }}
+					</button>
+				</div>
+			</div>
+
+		</section>
+
+		<!-- ── Lista leghe ── -->
+		<section class="leghe-section" *ngIf="legheFiltrate.length > 0; else emptyState">
 			<div class="leghe-groups">
 				<div class="edizioni-list">
-					<app-lega-card *ngFor="let l of leghe" [lega]="l" (action)="seleziona($event)"></app-lega-card>
+					<app-lega-card *ngFor="let l of legheFiltrate" [lega]="l" (action)="seleziona($event)"></app-lega-card>
 				</div>
 			</div>
 		</section>
 
-		<ng-template #noLeghe>
-			<mat-card class="no-data">
-				<mat-card-content>{{ 'JOIN_LEAGUE.NO_LEAGUES' | translate }}</mat-card-content>
-			</mat-card>
+		<ng-template #emptyState>
+
+			<!-- ── Empty state: filtri senza risultati ── -->
+			<div *ngIf="leghe?.length; else noLegheBlock" class="empty-state empty-state--filter">
+				<div class="es-icon-wrap es-icon-wrap--blue">
+					<mat-icon class="es-icon">filter_alt_off</mat-icon>
+				</div>
+				<h3 class="es-title">{{ 'JOIN_LEAGUE.EMPTY_FILTER_TITLE' | translate }}</h3>
+				<p class="es-desc">{{ 'JOIN_LEAGUE.EMPTY_FILTER_DESC' | translate }}</p>
+				<button class="es-btn es-btn--primary" (click)="clearFilters()">
+					<mat-icon>restart_alt</mat-icon>
+					{{ 'JOIN_LEAGUE.EMPTY_FILTER_CTA' | translate }}
+				</button>
+			</div>
+
+			<!-- ── Empty state: nessuna lega disponibile ── -->
+			<ng-template #noLegheBlock>
+				<div class="empty-state empty-state--no-leagues">
+					<div class="es-illustration">
+						<div class="es-bg-circle es-bg-circle--1"></div>
+						<div class="es-bg-circle es-bg-circle--2"></div>
+						<div class="es-icon-wrap es-icon-wrap--gold">
+							<mat-icon class="es-icon">emoji_events</mat-icon>
+						</div>
+					</div>
+					<h3 class="es-title">{{ 'JOIN_LEAGUE.EMPTY_NO_LEAGUES_TITLE' | translate }}</h3>
+					<p class="es-desc">{{ 'JOIN_LEAGUE.EMPTY_NO_LEAGUES_DESC' | translate }}</p>
+					<div class="es-actions">
+						<button class="es-btn es-btn--secondary" (click)="goBack()">
+							<mat-icon>arrow_back</mat-icon>
+							{{ 'JOIN_LEAGUE.EMPTY_BACK' | translate }}
+						</button>
+						<button class="es-btn es-btn--primary" (click)="goCreLega()">
+							<mat-icon>add_circle_outline</mat-icon>
+							{{ 'JOIN_LEAGUE.EMPTY_CREATE_CTA' | translate }}
+						</button>
+					</div>
+				</div>
+			</ng-template>
+
 		</ng-template>
+
 	</main>
 </div>
