@@ -5,9 +5,7 @@ import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.entity.NotificheInviate;
-import it.ddlsolution.survivor.mapper.CampionatoMapper;
 import it.ddlsolution.survivor.repository.GiocataRepository;
-import it.ddlsolution.survivor.repository.NotificheInviateRepository;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.service.NotificheInviateService;
@@ -23,17 +21,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Component
 @RequiredArgsConstructor
@@ -278,4 +267,20 @@ public class ScheduledPushNotifications {
     private String sportEmoji(Set<String> sport) {
         if (sport.size() == 1) {
             String s = sport.iterator().next();
-            if (s.contains("calcio")) return "\u26bd\
+            if (s.contains("calcio")) return "\u26bd\ufe0f";
+            if (s.contains("basket")) return "\ud83c\udfc0";
+            if (s.contains("tennis")) return "\ud83c\udfbe";
+        }
+        return "\ud83c\udfc6";
+    }
+
+    private String sportImageUrl(Set<String> sport) {
+        if (sport.size() == 1) {
+            String s = sport.iterator().next();
+            if (s.contains("calcio")) return "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80";
+            if (s.contains("basket")) return "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80";
+            if (s.contains("tennis")) return "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&q=80";
+        }
+        return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80";
+    }
+}
