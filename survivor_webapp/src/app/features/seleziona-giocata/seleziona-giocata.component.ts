@@ -20,6 +20,8 @@ export interface SquadraConsiglio {
   factorAvvDebole: number;
   /** Goal balance normalizzato 0–100 */
   factorGoalBalance: number;
+  /** Nome dell'avversario nella prossima partita */
+  nomeAvversario?: string;
 }
 
 import { MatSelect } from '@angular/material/select';
@@ -308,6 +310,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
+    'SERIE_B_BEN': 'benevento.png',
 
     // MONDIALI 2026 (48 squadre nazionali)
     'MONDIALI_2026_ALG': 'mondiali/algeria.png',
@@ -422,8 +425,14 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   // Metodo per ottenere il logo ufficiale della squadra (assets locali)
   getTeamLogo(sigla: string): string | null {
     const sportId = this.lega?.campionato?.sport?.id;
-    const calcioId = this.lega?.campionato?.id; //SERIE_A, SERIE_B, LIGA
+    const campionatoId = this.lega?.campionato?.id;
+    const calcioId = campionatoId; //SERIE_A, SERIE_B, LIGA
     if (sportId === 'TENNIS') {
+      // Per il Roland Garros la sigla è già nel formato "jannik_sinner"
+      if (campionatoId === 'ROLAND_GARROS') {
+        return `assets/logos/tennis/${sigla}.png`;
+      }
+
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
@@ -543,21 +552,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     // ✅ Inizializza giocataPubblica con il valore della giocata esistente
     if (data.giocataCorrente && typeof data.giocataCorrente.pubblica === 'boolean') {
       this.giocataPubblica = data.giocataCorrente.pubblica;
-      console.log('✅ Inizializzato giocataPubblica con valore esistente:', this.giocataPubblica);
     } else {
       // Default: false (nascosta) se non esiste una giocata precedente
       this.giocataPubblica = false;
-      console.log('⚠️ Nessuna giocata precedente, giocataPubblica impostato a false (nascosta)');
     }
   }
 
   ngOnInit(): void {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
-    this.getSquadreByCampionatoAndGiornata(
-      this.lega.campionato!.id,
-      this.lega.anno,
-      this.data.giornata
-    );
+    // Per il Roland Garros non ci sono partite: saltiamo il filtro per giornata
+    if (this.lega.campionato?.id !== 'ROLAND_GARROS') {
+      this.getSquadreByCampionatoAndGiornata(
+        this.lega.campionato!.id,
+        this.lega.anno,
+        this.data.giornata
+      );
+    }
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
@@ -716,8 +726,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   salvaSquadra() {
-    console.log('💾 Salvataggio giocata - giocataPubblica:', this.giocataPubblica);
-
     if (this.statoGiornataCorrente.value !== StatoPartita.DA_GIOCARE.value) {
       this.dialog
         .open(ConfermaAssegnazioneDialogComponent, {
@@ -729,7 +737,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         .subscribe((result) => {
           if (result) {
             this.showEncouragementMessage();
-            console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
               pubblica: this.giocataPubblica
@@ -739,7 +746,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         });
     } else {
       this.showEncouragementMessage();
-      console.log('✅ Chiusura dialog con pubblica:', this.giocataPubblica);
       this.dialogRef.close({
         squadraSelezionata: this.squadraSelezionata,
         pubblica: this.giocataPubblica
@@ -993,11 +999,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     const squadra = this.squadreConPartite.find(s => s.sigla === sigla);
     if (squadra?.alreadyUsed) return;
 
-    // Click sulla squadra già selezionata → mostra popup di conferma
-    if (this.squadraSelezionata === sigla) {
-      this.showConfirmRemove = true;
-      return;
-    }
+    // Click sulla squadra già selezionata → ignora
+    if (this.squadraSelezionata === sigla) return;
     this.squadraSelezionata = sigla;
     this.mostraUltimiRisultati(this.squadraSelezionata);
     this.mostraProssimePartite();
@@ -1010,14 +1013,12 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   confermaRimozione(): void {
     if (this._eliminaLoading) return;
     this._eliminaLoading = true;
-    console.log('🗑️ Elimina giocata - giornata:', this.data.giornata, 'giocatoreId:', this.data.giocatore.id, 'legaId:', this.data.lega.id);
     this.giocataService.eliminaGiocata(
       this.data.giornata,
       this.data.giocatore.id,
       this.data.lega.id
     ).subscribe({
       next: (res) => {
-        console.log('✅ Giocata eliminata con successo', res);
         this._eliminaLoading = false;
         this.showConfirmRemove = false;
         this.squadraSelezionata = null;
@@ -1106,8 +1107,9 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   applicaFiltroGiocatoriAttivi(): void {
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    const isRolandGarros = this.lega?.campionato?.id === 'ROLAND_GARROS';
 
-    if (isTennis) {
+    if (isTennis && !isRolandGarros) {
       // Filtra solo i giocatori che hanno una prossima partita (sono ancora in gara)
       this.squadreConPartite = this.squadreConPartite.filter(squadra => squadra.prossimaPartita !== null);
     }
@@ -1118,10 +1120,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   filtraSquadre(): void {
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
+    const isRolandGarros = this.lega?.campionato?.id === 'ROLAND_GARROS';
     let squadreDaFiltrare = [...this.squadreConPartite];
 
-    // Per il tennis, mostra solo i giocatori ancora in gara (con prossima partita)
-    if (isTennis) {
+    // Per il tennis (escluso Roland Garros), mostra solo i giocatori ancora in gara (con prossima partita)
+    if (isTennis && !isRolandGarros) {
       squadreDaFiltrare = squadreDaFiltrare.filter(squadra => squadra.prossimaPartita !== null);
     }
 
@@ -1308,16 +1311,19 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
           const isHome  = this.isPlayingHome(squadra.sigla);
 
           let avvPos = Math.ceil(total / 2); // default: metà classifica
+          let avvNome = '';
           if (squadra.prossimaPartita) {
-            const avvSigla = squadra.prossimaPartita.casaSigla === squadra.sigla
-              ? squadra.prossimaPartita.fuoriSigla
-              : squadra.prossimaPartita.casaSigla;
+            const isCasa = squadra.prossimaPartita.casaSigla === squadra.sigla;
+            const avvSigla = isCasa ? squadra.prossimaPartita.fuoriSigla : squadra.prossimaPartita.casaSigla;
+            avvNome = isCasa
+              ? (squadra.prossimaPartita.fuoriNome || avvSigla || '')
+              : (squadra.prossimaPartita.casaNome  || avvSigla || '');
             const avvIdx = classifica.findIndex(r => r.sigla === avvSigla);
             if (avvIdx >= 0) avvPos = avvIdx + 1;
           }
           const avvDebole = (total - avvPos + 1) / total;
 
-          return { squadra, winRate, avgGB, isHome, avvDebole };
+          return { squadra, winRate, avgGB, isHome, avvDebole, avvNome };
         });
 
         // Normalizza goal balance su range 0-1
@@ -1338,6 +1344,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             factorHome:        s.isHome,
             factorAvvDebole:   Math.round(s.avvDebole * 100),
             factorGoalBalance: Math.round(gbNorm * 100),
+            nomeAvversario:    s.avvNome || undefined,
           };
         });
 

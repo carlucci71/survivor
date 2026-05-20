@@ -1,9 +1,11 @@
 package it.ddlsolution.survivor.controller;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
-import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.dto.PartitaDTO;
+import it.ddlsolution.survivor.dto.RankingTennisDTO;
+import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.service.CampionatoService;
+import it.ddlsolution.survivor.service.RankingTennisService;
 import it.ddlsolution.survivor.service.SquadraService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class SquadraController {
     private final SquadraService squadraService;
     private final CampionatoService campionatoService;
     private final UtilCalendarioService utilCalendarioService;
+    private final RankingTennisService rankingTennisService;
 
     @GetMapping("/campionato/{idCampionato}/{anno}")
     public ResponseEntity<List<SquadraDTO>> getSquadreByCampionato(@PathVariable String idCampionato, @PathVariable short anno) {
@@ -51,6 +54,11 @@ public class SquadraController {
     @GetMapping("/sport/{sportId}")
     public ResponseEntity<List<SquadraDTO>> getBySport(@PathVariable String sportId) {
         return ResponseEntity.ok(squadraService.getBySport(sportId));
+    }
+
+    @GetMapping("/ranking/tennis/atp")
+    public ResponseEntity<List<RankingTennisDTO>> getRankingAtp() {
+        return ResponseEntity.ok(rankingTennisService.getRankingAtp());
     }
 
 }

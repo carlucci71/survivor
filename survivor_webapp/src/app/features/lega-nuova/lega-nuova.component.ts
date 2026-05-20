@@ -284,7 +284,6 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
       this.pubblica = value;
       if (!value) this.accessoLibero = false;
       this.cdr.detectChanges();
-      console.log('[LegaNuova] setPubblica ->', value, '| pubblica now:', this.pubblica);
     });
   }
 
@@ -292,7 +291,6 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.ngZone.run(() => {
       this.accessoLibero = value;
       this.cdr.detectChanges();
-      console.log('[LegaNuova] setAccessoLibero ->', value);
     });
   }
 
@@ -431,7 +429,6 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     if (!this.isFormValid()) {
       return;
     }
-    console.log('[LegaNuova] onSubmit - pubblica:', this.pubblica, '| accessoLibero:', this.accessoLibero);
     this.legaService
       .inserisciLega(
         this.name!,

@@ -9,21 +9,6 @@
 
   <main class="main-content lega-dettaglio-scroll">
 
-    <!-- PULL-TO-REFRESH INDICATOR -->
-    @if (ptrActive) {
-      <div class="ptr-indicator" [class.ptr-indicator--ready]="ptrProgress >= 100">
-        <div class="ptr-spinner">
-          <svg viewBox="0 0 36 36" class="ptr-arc">
-            <circle class="ptr-arc__bg" cx="18" cy="18" r="14"/>
-            <circle class="ptr-arc__fill" cx="18" cy="18" r="14"
-              [style.stroke-dashoffset]="88 - (88 * ptrProgress / 100)"/>
-          </svg>
-          <span class="ptr-icon">↓</span>
-        </div>
-        <span class="ptr-label">{{ ptrProgress >= 100 ? 'Aggiornamento…' : 'Trascina per aggiornare' }}</span>
-      </div>
-    }
-
     <div class="lega-dettaglio-container">
       @if (isMock) {
           {{beDataRiferimento}}
@@ -566,12 +551,9 @@
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
+                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
                         [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
-
-<!-- rimosso
-                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
-                        -->
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"
@@ -889,8 +871,8 @@
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO'"
-                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO'"
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
+                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
                        (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>

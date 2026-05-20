@@ -452,63 +452,121 @@
   color: rgba(79, 195, 247, 0.65);
 }
 
-/* ─── No-pick state ───────────────────────────────────────── */
-.no-pick-content {
+/* ─── No-pick redesign ────────────────────────────────────── */
+.no-pick-body {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: 100%;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
 }
 
-.no-pick-icon {
-  font-size: 28px;
+.np-round {
   flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(79, 195, 247, 0.1);
+  border: 1.5px solid rgba(79, 195, 247, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  animation: np-round-pulse 3s ease-in-out infinite;
 }
 
-.no-pick-text {
+.np-round-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: #4FC3F7;
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.np-round-lbl {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(79, 195, 247, 0.55);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+@keyframes np-round-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(79, 195, 247, 0.15); }
+  50%       { box-shadow: 0 0 22px rgba(79, 195, 247, 0.35), 0 0 0 5px rgba(79, 195, 247, 0.06); }
+}
+
+.np-center {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
-.no-pick-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
+.np-league-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.np-torneo-logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.np-sport-emoji {
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.np-league-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.2px;
 }
 
-.no-pick-sub {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.np-cta-label {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+  color: #4FC3F7;
+  opacity: 0.75;
+  letter-spacing: 0.3px;
 
-  .sport-badge-logo {
-    width: 13px;
-    height: 13px;
-    object-fit: contain;
-    border-radius: 2px;
-    flex-shrink: 0;
+  &.np-waiting {
+    color: rgba(255, 255, 255, 0.38);
+    font-weight: 400;
   }
 }
 
-.no-pick-cta {
+.np-arrow {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(79, 195, 247, 0.08);
+  border: 1px solid rgba(79, 195, 247, 0.22);
   display: flex;
   align-items: center;
-  gap: 2px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #4FC3F7;
-  white-space: nowrap;
-  flex-shrink: 0;
+  justify-content: center;
 
-  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: rgba(79, 195, 247, 0.7);
+  }
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */
@@ -520,7 +578,7 @@
   .logo-wrapper { width: 54px; height: 54px; border-radius: 12px; }
   .team-logo    { width: 42px; height: 42px; }
   .team-name    { font-size: 16px; }
-  .no-pick-cta  { display: none; }
+  .np-league-name { font-size: 14px; }
 }
 
 /* -----------------------------------------------------------

@@ -228,14 +228,14 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Sottoscrizione agli aggiornamenti del profilo
   private giocatoreSubscription: any;
 
-  // ─── Pull-to-refresh ────────────────────────────────────────────────────
-  ptrActive = false;        // spinner visibile
-  ptrProgress = 0;          // 0-100, per animare la progress arc
-  private ptrTouchStartY = 0;
-  private ptrTouchStartScrollTop = 0;
-  private ptrTriggered = false;
-  private readonly PTR_THRESHOLD = 72; // px di pull necessari per triggherare
   private appStateChangeListener: any = null;
+
+  // ─── Edge-swipe → home (iOS + Android) ──────────────────────────────────
+  private readonly EDGE_ZONE = 50;  // px dal bordo dello schermo per attivare
+  private readonly SWIPE_MIN = 80;  // px di spostamento orizzontale minimo
+  private edgeSwipeStartX = 0;
+  private edgeSwipeStartY = 0;
+  private edgeSwipeActive = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -296,8 +296,6 @@ export class LegaDettaglioComponent implements OnDestroy {
           // - Icona storico accanto al nome utente
           // - NO scroll orizzontale su desktop/tablet
           if (this.TEST_MODE_FORCE_HISTORY_ICON && this.lega) {
-            console.log('🧪 MOCK MODE ATTIVO: Generazione 10 giornate fittizie');
-
             // Forzo giornataIniziale e giornataFinale per avere 10 giornate
             this.lega.giornataIniziale = 1;
             this.lega.giornataFinale = 10;
@@ -331,8 +329,8 @@ export class LegaDettaglioComponent implements OnDestroy {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
           this.maybeTriggerTutorial();
-          // Inizializza pull-to-refresh e reload su ritorno in foreground
-          setTimeout(() => this.initPullToRefresh(), 300);
+          // Reload su ritorno in foreground
+          this.initEdgeSwipe();
           this.initAppStateRefresh();
         }
       },
@@ -1305,7 +1303,6 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   giornataDaGiocare(): boolean {
-    if ((this.lega?.giornataCorrente || 0) <= 15) return true; //TODO PER TEST
     return (
       this.lega?.statoGiornataCorrente?.value == StatoPartita.DA_GIOCARE.value
     );
@@ -1949,16 +1946,6 @@ export class LegaDettaglioComponent implements OnDestroy {
       .subscribe({
         next: (res: Giocatore) => {
           // Debug: verifica se il campo forzatura arriva dal backend
-          console.log('🔍 Giocate ricevute:', res.giocate);
-          res.giocate?.forEach((g, i) => {
-            console.log(`Giocata ${i}:`, {
-              giornata: g.giornata,
-              squadra: g.squadraSigla,
-              forzatura: g.forzatura,
-              hasForzatura: !!g.forzatura
-            });
-          });
-
           // Aggiorna la lista delle giocate del giocatore con quella restituita dal servizio
           if (res && Array.isArray(res.giocate)) {
             giocatore.giocate = res.giocate;
@@ -2084,69 +2071,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
     }
-    this.removePtrListeners();
+    this.removeEdgeSwipeListeners();
     if (this.appStateChangeListener) {
       this.appStateChangeListener.remove?.();
       this.appStateChangeListener = null;
     }
-  }
-
-  // ─── Pull-to-refresh ────────────────────────────────────────────────────
-
-  initPullToRefresh(): void {
-    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
-    if (!el) return;
-    el.addEventListener('touchstart', this.onPtrTouchStart, { passive: true });
-    el.addEventListener('touchmove',  this.onPtrTouchMove,  { passive: false });
-    el.addEventListener('touchend',   this.onPtrTouchEnd,   { passive: true });
-  }
-
-  private removePtrListeners(): void {
-    const el = document.querySelector('.lega-dettaglio-scroll') as HTMLElement | null;
-    if (!el) return;
-    el.removeEventListener('touchstart', this.onPtrTouchStart);
-    el.removeEventListener('touchmove',  this.onPtrTouchMove);
-    el.removeEventListener('touchend',   this.onPtrTouchEnd);
-  }
-
-  private onPtrTouchStart = (e: TouchEvent): void => {
-    const el = e.currentTarget as HTMLElement;
-    this.ptrTouchStartY = e.touches[0].clientY;
-    this.ptrTouchStartScrollTop = el.scrollTop;
-    this.ptrTriggered = false;
-  };
-
-  private onPtrTouchMove = (e: TouchEvent): void => {
-    if (this.ptrTriggered) return;
-    const el = e.currentTarget as HTMLElement;
-    if (el.scrollTop > 0) return; // non siamo in cima
-    const dy = e.touches[0].clientY - this.ptrTouchStartY;
-    if (dy <= 0) return;
-    e.preventDefault();
-    this.ptrProgress = Math.min(100, Math.round((dy / this.PTR_THRESHOLD) * 100));
-    this.ptrActive = true;
-    if (dy >= this.PTR_THRESHOLD) {
-      this.ptrTriggered = true;
-      this.triggerRefresh();
-    }
-  };
-
-  private onPtrTouchEnd = (_e: TouchEvent): void => {
-    if (!this.ptrTriggered) {
-      this.ptrActive = false;
-      this.ptrProgress = 0;
-    }
-  };
-
-  private triggerRefresh(): void {
-    this.ptrProgress = 100;
-    this.loadLegaDetails();
-    // Nascondi lo spinner dopo un breve delay per feedback visivo
-    setTimeout(() => {
-      this.ptrActive = false;
-      this.ptrProgress = 0;
-      this.ptrTriggered = false;
-    }, 900);
   }
 
   async initAppStateRefresh(): Promise<void> {
@@ -2161,6 +2090,41 @@ export class LegaDettaglioComponent implements OnDestroy {
       // Su web puro @capacitor/app non è disponibile — ignora
     }
   }
+
+  // ─── Edge-swipe → home ──────────────────────────────────────────────────
+
+  initEdgeSwipe(): void {
+    document.addEventListener('touchstart', this.onEdgeSwipeTouchStart, { passive: true });
+    document.addEventListener('touchend',   this.onEdgeSwipeTouchEnd,   { passive: true });
+  }
+
+  private removeEdgeSwipeListeners(): void {
+    document.removeEventListener('touchstart', this.onEdgeSwipeTouchStart);
+    document.removeEventListener('touchend',   this.onEdgeSwipeTouchEnd);
+  }
+
+  private onEdgeSwipeTouchStart = (e: TouchEvent): void => {
+    const x = e.touches[0].clientX;
+    if (x < this.EDGE_ZONE || x > window.innerWidth - this.EDGE_ZONE) {
+      this.edgeSwipeStartX = x;
+      this.edgeSwipeStartY = e.touches[0].clientY;
+      this.edgeSwipeActive = true;
+    } else {
+      this.edgeSwipeActive = false;
+    }
+  };
+
+  private onEdgeSwipeTouchEnd = (e: TouchEvent): void => {
+    if (!this.edgeSwipeActive) return;
+    this.edgeSwipeActive = false;
+    const dx = e.changedTouches[0].clientX - this.edgeSwipeStartX;
+    const dy = e.changedTouches[0].clientY - this.edgeSwipeStartY;
+    if (Math.abs(dx) >= this.SWIPE_MIN && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      this.router.navigate(['/home'], {
+        state: { selectedLegaId: this.lega?.id, activeTab: this.lega?.pubblica ? 'public' : 'private' }
+      });
+    }
+  };
 
   startCountdown(): void {
     if (!this.lega) {
@@ -2689,7 +2653,6 @@ export class LegaDettaglioComponent implements OnDestroy {
     const giornataCorrente = this.lega.giornataCorrente;
     // SEMPRE da 1: l'admin può vedere e forzare QUALSIASI giornata passata del campionato
     const giornataIniziale = 1;
-    console.log('[LegaDettaglio v3] apriRisultatiGiornata → range:', giornataIniziale, '-', giornataCorrente);
     const dialogRef = this.dialog.open(RoundResultsDialogComponent, {
       data: {
         lega: this.lega,

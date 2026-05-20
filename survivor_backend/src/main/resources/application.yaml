@@ -54,6 +54,9 @@ external-api:
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:
         url: https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal
+  ranking:
+    tennis:
+      atp-url: https://mc-public-api.gazzetta.it/api/sports/v1/standing/teams?competitionId=1&sportId=8
 
 springdoc:
   api-docs:

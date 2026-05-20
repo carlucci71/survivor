@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
-import { Lega } from '../../core/models/interfaces.model';
+import { Lega, StatoLega } from '../../core/models/interfaces.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,59 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class LegaJoinComponent implements OnInit, AfterViewInit {
   leghe: Lega[] = [];
+
+  filterSport = '';
+  filterCampionato = '';
+  filterStato = '';
+
+  get sportsDisponibili(): { id: string; nome: string }[] {
+    const seen = new Set<string>();
+    const sports: { id: string; nome: string }[] = [];
+    for (const l of this.leghe) {
+      const s = l.campionato?.sport;
+      if (s && !seen.has(s.id)) {
+        seen.add(s.id);
+        sports.push({ id: s.id, nome: s.nome });
+      }
+    }
+    return sports;
+  }
+
+  get campionatiDisponibili(): { id: string; nome: string }[] {
+    const seen = new Set<string>();
+    const campionati: { id: string; nome: string }[] = [];
+    const source = this.filterSport
+      ? this.leghe.filter(l => l.campionato?.sport?.id === this.filterSport)
+      : this.leghe;
+    for (const l of source) {
+      const c = l.campionato;
+      if (c && !seen.has(c.id)) {
+        seen.add(c.id);
+        campionati.push({ id: c.id, nome: c.nome });
+      }
+    }
+    return campionati;
+  }
+
+  get legheFiltrate(): Lega[] {
+    return this.leghe.filter(l => {
+      if (this.filterSport && l.campionato?.sport?.id !== this.filterSport) return false;
+      if (this.filterCampionato && l.campionato?.id !== this.filterCampionato) return false;
+      if (this.filterStato && (l.stato as StatoLega)?.value !== this.filterStato) return false;
+      return true;
+    });
+  }
+
+  setFilter(tipo: 'sport' | 'campionato' | 'stato', valore: string): void {
+    if (tipo === 'sport') {
+      this.filterSport = valore;
+      this.filterCampionato = '';
+    } else if (tipo === 'campionato') {
+      this.filterCampionato = valore;
+    } else {
+      this.filterStato = valore;
+    }
+  }
 
   constructor(
     private router: Router,
@@ -57,6 +110,16 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
 
   goBack(): void {
     this.router.navigate(['/home']);
+  }
+
+  clearFilters(): void {
+    this.filterSport = '';
+    this.filterCampionato = '';
+    this.filterStato = '';
+  }
+
+  goCreLega(): void {
+    this.router.navigate(['/creaLega']);
   }
   seleziona(lega: Lega | null): void {
     if (!lega) return;

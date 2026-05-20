@@ -5,8 +5,7 @@ import it.ddlsolution.survivor.dto.GiocatoreDTO;
 import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.entity.NotificheInviate;
-import it.ddlsolution.survivor.mapper.CampionatoMapper;
-import it.ddlsolution.survivor.repository.NotificheInviateRepository;
+import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.service.NotificheInviateService;
@@ -22,17 +21,8 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static it.ddlsolution.survivor.util.Constant.CALENDARIO_MOCK;
 
 @Component
 @RequiredArgsConstructor
@@ -43,6 +33,7 @@ public class ScheduledPushNotifications {
     private final CacheableService cacheableService;
     private final LegaService legaService;
     private final NotificheInviateService notificheInviateService;
+    private final GiocataRepository giocataRepository;
 
     @Value("${push.notification.scheduler-enabled}")
     private boolean notificationsEnabled;
@@ -132,9 +123,18 @@ public class ScheduledPushNotifications {
             log.info("Raccolta utenti per campionato {} ({}) alle {}", campionatoDTO.getId(), sportNome, orario);
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
+                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
+                        boolean haGiaVotato = giocataRepository
+                                .findByGiornataAndGiocatore_IdAndLega_Id(giornataRelativa, giocatore.getId(), lega.getId())
+                                .isPresent();
+                        if (haGiaVotato) {
+                            log.debug("Giocatore {} ha gi\u00e0 votato per lega '{}' giornata {}, skip notifica INIZIO_PARTITA",
+                                    giocatore.getNickname(), lega.getName(), giornataRelativa);
+                            continue;
+                        }
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
@@ -218,9 +218,18 @@ public class ScheduledPushNotifications {
             String sportNome = campionatoDTO.getSport() != null ? campionatoDTO.getSport().getNome().toLowerCase() : "";
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
+                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
+                        boolean haGiaVotato = giocataRepository
+                                .findByGiornataAndGiocatore_IdAndLega_Id(giornataRelativa, giocatore.getId(), lega.getId())
+                                .isPresent();
+                        if (haGiaVotato) {
+                            log.debug("Giocatore {} ha gi\u00e0 votato per lega '{}' giornata {}, skip notifica REMINDER_GIORNATA",
+                                    giocatore.getNickname(), lega.getName(), giornataRelativa);
+                            continue;
+                        }
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
@@ -235,12 +244,12 @@ public class ScheduledPushNotifications {
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
 
             String body = voci.size() == 1
-                    ? "Domani si gioca! Dai il tuo pronostico per la lega " + voci.get(0) + " prima che sia tardi."
-                    : "Domani si gioca in " + voci.size() + " leghe: " + String.join(", ", voci) + ". Dai i tuoi pronostici in anticipo!";
+                    ? "Non hai ancora fatto la tua scelta per la lega " + voci.get(0) + ". Fallo prima che sia tardi!"
+                    : "Non hai ancora votato in " + voci.size() + " leghe: " + String.join(", ", voci) + ". Dai i tuoi pronostici in anticipo!";
 
             log.info("Reminder serale per {}: {}", giocatore.getNickname(), body);
             PushNotificationDTO notification = PushNotificationDTO.builder()
-                    .title(sportEmoji(sport) + " Domani si gioca — hai votato?")
+                    .title(sportEmoji(sport) + " Domani si gioca — non hai ancora votato!")
                     .body(body)
                     .sound("default")
                     .tipoNotifica(Enumeratori.TipoNotifica.REMINDER_GIORNATA)
@@ -274,5 +283,4 @@ public class ScheduledPushNotifications {
         }
         return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80";
     }
-
 }

@@ -1,5 +1,6 @@
 package it.ddlsolution.survivor.service;
 
+import it.ddlsolution.survivor.dto.RankingTennisDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.SquadraMapper;
@@ -20,9 +21,22 @@ public class SquadraService {
     private final SquadraRepository squadraRepository;
     private final SquadraMapper squadraMapper;
     private final ObjectProvider<CacheableService> cacheableProvider;
+    private final RankingTennisService rankingTennisService;
 
     @Transactional(readOnly = true)
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {
+        // Per il Roland Garros non esistono partite nel DB: restituiamo il ranking ATP live.
+        if ("ROLAND_GARROS".equals(campionatoId)) {
+            return rankingTennisService.getRankingAtp().stream()
+                    .map(p -> {
+                        SquadraDTO dto = new SquadraDTO();
+                        dto.setSigla(normalizzaNome(p.getDisplayName()));
+                        dto.setNome(p.getDisplayName());
+                        dto.setIdCampionato("ROLAND_GARROS");
+                        return dto;
+                    })
+                    .toList();
+        }
         List<Squadra> squadre;
         // Per i campionati internazionali (es. Mondiali) restituiamo tutte le
         // squadre registrate, incluse quelle non ancora qualificate, senza
@@ -36,6 +50,12 @@ public class SquadraService {
                 .stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
                 .toList();
+    }
+
+    /** Normalizza il displayName in chiave-immagine: "Jannik Sinner" → "jannik_sinner" */
+    private static String normalizzaNome(String displayName) {
+        if (displayName == null) return "";
+        return displayName.toLowerCase().replace(' ', '_');
     }
 
     @Transactional(readOnly = true)
