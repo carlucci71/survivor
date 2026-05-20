@@ -6,6 +6,7 @@ import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.PushNotificationDTO;
 import it.ddlsolution.survivor.entity.NotificheInviate;
 import it.ddlsolution.survivor.mapper.CampionatoMapper;
+import it.ddlsolution.survivor.repository.GiocataRepository;
 import it.ddlsolution.survivor.repository.NotificheInviateRepository;
 import it.ddlsolution.survivor.service.CacheableService;
 import it.ddlsolution.survivor.service.LegaService;
@@ -43,6 +44,7 @@ public class ScheduledPushNotifications {
     private final CacheableService cacheableService;
     private final LegaService legaService;
     private final NotificheInviateService notificheInviateService;
+    private final GiocataRepository giocataRepository;
 
     @Value("${push.notification.scheduler-enabled}")
     private boolean notificationsEnabled;
@@ -132,9 +134,18 @@ public class ScheduledPushNotifications {
             log.info("Raccolta utenti per campionato {} ({}) alle {}", campionatoDTO.getId(), sportNome, orario);
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
+                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
+                        boolean haGiaVotato = giocataRepository
+                                .findByGiornataAndGiocatore_IdAndLega_Id(giornataRelativa, giocatore.getId(), lega.getId())
+                                .isPresent();
+                        if (haGiaVotato) {
+                            log.debug("Giocatore {} ha gi\u00e0 votato per lega '{}' giornata {}, skip notifica INIZIO_PARTITA",
+                                    giocatore.getNickname(), lega.getName(), giornataRelativa);
+                            continue;
+                        }
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
@@ -218,9 +229,18 @@ public class ScheduledPushNotifications {
             String sportNome = campionatoDTO.getSport() != null ? campionatoDTO.getSport().getNome().toLowerCase() : "";
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
+                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
+                        boolean haGiaVotato = giocataRepository
+                                .findByGiornataAndGiocatore_IdAndLega_Id(giornataRelativa, giocatore.getId(), lega.getId())
+                                .isPresent();
+                        if (haGiaVotato) {
+                            log.debug("Giocatore {} ha gi\u00e0 votato per lega '{}' giornata {}, skip notifica REMINDER_GIORNATA",
+                                    giocatore.getNickname(), lega.getName(), giornataRelativa);
+                            continue;
+                        }
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
@@ -235,12 +255,12 @@ public class ScheduledPushNotifications {
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
 
             String body = voci.size() == 1
-                    ? "Domani si gioca! Dai il tuo pronostico per la lega " + voci.get(0) + " prima che sia tardi."
-                    : "Domani si gioca in " + voci.size() + " leghe: " + String.join(", ", voci) + ". Dai i tuoi pronostici in anticipo!";
+                    ? "Non hai ancora fatto la tua scelta per la lega " + voci.get(0) + ". Fallo prima che sia tardi!"
+                    : "Non hai ancora votato in " + voci.size() + " leghe: " + String.join(", ", voci) + ". Dai i tuoi pronostici in anticipo!";
 
             log.info("Reminder serale per {}: {}", giocatore.getNickname(), body);
             PushNotificationDTO notification = PushNotificationDTO.builder()
-                    .title(sportEmoji(sport) + " Domani si gioca — hai votato?")
+                    .title(sportEmoji(sport) + " Domani si gioca — non hai ancora votato!")
                     .body(body)
                     .sound("default")
                     .tipoNotifica(Enumeratori.TipoNotifica.REMINDER_GIORNATA)
@@ -258,21 +278,4 @@ public class ScheduledPushNotifications {
     private String sportEmoji(Set<String> sport) {
         if (sport.size() == 1) {
             String s = sport.iterator().next();
-            if (s.contains("calcio")) return "\u26bd\ufe0f";
-            if (s.contains("basket")) return "\ud83c\udfc0";
-            if (s.contains("tennis")) return "\ud83c\udfbe";
-        }
-        return "\ud83c\udfc6";
-    }
-
-    private String sportImageUrl(Set<String> sport) {
-        if (sport.size() == 1) {
-            String s = sport.iterator().next();
-            if (s.contains("calcio")) return "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80";
-            if (s.contains("basket")) return "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&q=80";
-            if (s.contains("tennis")) return "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&q=80";
-        }
-        return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80";
-    }
-
-}
+            if (s.contains("calcio")) return "\u26bd\

@@ -1228,7 +1228,7 @@ export class ChiSiamoDialogComponent implements OnInit{
             <span class="separator">|</span>
             <a href="#" class="footer-link" (click)="openFaq($event)">{{ 'FOOTER.FAQ' | translate }}</a>
             <span class="separator">|</span>
-            <a href="#" class="footer-link" (click)="openGuida($event)">Guida</a>
+            <a href="#" class="footer-link" (click)="openGuida($event)">{{ 'FOOTER.GUIDE' | translate }}</a>
             <span class="separator">|</span>
             <a href="#" class="footer-link" (click)="openChiSiamo($event)">{{ 'FOOTER.ABOUT' | translate }}</a>
             <span class="separator">|</span>

@@ -138,7 +138,6 @@ export class RemainingTeamsDialogComponent {
         const matchingKeys = Object.keys(teamLogos).filter(k => k.endsWith(`_${sigla}`));
         if (matchingKeys.length > 0) {
           fileName = teamLogos[matchingKeys[0]];
-          console.log(`📌 Fallback calcio: ${sigla} → ${matchingKeys[0]} → ${fileName}`);
         }
       }
 
@@ -194,7 +193,6 @@ export class RemainingTeamsDialogComponent {
         const matchingKeys = Object.keys(basketLogos).filter(k => k.endsWith(`_${sigla}`));
         if (matchingKeys.length > 0) {
           fileName = basketLogos[matchingKeys[0]];
-          console.log(`📌 Fallback basket: ${sigla} → ${matchingKeys[0]} → ${fileName}`);
         }
       }
 
@@ -248,7 +246,6 @@ export class RemainingTeamsDialogComponent {
           const testKey = `${campionatoId}_${variant}`;
           if (tennisPhotos[testKey]) {
             fileName = tennisPhotos[testKey];
-            console.log(`📌 Fallback tennis variante: ${sigla} → ${testKey} → ${fileName}`);
             break;
           }
         }
@@ -265,7 +262,6 @@ export class RemainingTeamsDialogComponent {
 
         if (matchingKeys.length > 0) {
           fileName = tennisPhotos[matchingKeys[0]];
-          console.log(`📌 Fallback tennis cognome: ${sigla} → ${matchingKeys[0]} → ${fileName}`);
         }
       }
 

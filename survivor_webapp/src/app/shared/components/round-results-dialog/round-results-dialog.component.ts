@@ -691,7 +691,6 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(): void {
     // v3 - giornate da 1 a giornataCorrente
-    console.log('[RoundResults v3] data ricevuto → giornata:', this.data.giornata, '| lega.giornataCorrente:', this.data.lega?.giornataCorrente, '| lega.numGiornate:', this.data.lega?.campionato?.numGiornate);
     this.buildGiornateDisponibili();
     this.needsScrollToActive = true;
     this.loadPartite();
@@ -734,8 +733,6 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
     // Mostra tutte le giornate: passate, corrente e future
     const fine = maxGiornate;
 
-    console.log('[RoundResults] buildGiornateDisponibili → da:', giornataIniziale, 'a:', fine, '(maxGiornate campionato:', maxGiornate, ')');
-
     this.giornateDisponibili = [];
     for (let g = giornataIniziale; g <= fine; g++) {
       this.giornateDisponibili.push(g);
@@ -748,7 +745,6 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
     // Apri sulla giornata corrente (non sull'ultima)
     const indexCorrente = this.giornateDisponibili.indexOf(giornataCorrente);
     this.currentRoundIndex = indexCorrente >= 0 ? indexCorrente : this.giornateDisponibili.length - 1;
-    console.log('[RoundResults] giornateDisponibili:', this.giornateDisponibili.length, 'chip, aperto su index:', this.currentRoundIndex);
   }
 
   goToRound(index: number): void {

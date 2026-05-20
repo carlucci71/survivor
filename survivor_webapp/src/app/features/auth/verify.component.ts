@@ -44,7 +44,6 @@ export class VerifyComponent implements OnInit {
 
     // CONTROLLO SE L'UTENTE È GIÀ LOGGATO
     if (this.authService.isAuthenticated()) {
-      console.log('[VerifyComponent] Utente già autenticato, skip verifica magic link');
       this.isSuccess = true;
 
       // Se è un link di JOIN, prova a estrarre il legaId dall'addInfo

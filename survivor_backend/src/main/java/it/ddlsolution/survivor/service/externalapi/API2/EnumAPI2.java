@@ -13,6 +13,7 @@ class EnumAPI2 {
         LIGA(Map.of(2025, 23), SquadreLiga_API2.values()),
         TENNIS_W(Map.of(2025, 11316), SquadreTennis_API2.values()),
         TENNIS_AO(Map.of(2025, 10376, 2026, 12389), SquadreTennis_API2.values()),
+        ROLAND_GARROS(Map.of(2026, 0), SquadreTennis_API2.values()),  // competitionId da aggiornare quando disponibile
         NBA_RS(Map.of(2025, 3), SquadreNBA_API2.values()),
         MONDIALI_2026(Map.of(2026, 4), SquadreNazionali_API2.values());
 
