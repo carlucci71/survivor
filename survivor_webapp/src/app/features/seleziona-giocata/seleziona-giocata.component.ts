@@ -1481,4 +1481,27 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     return '#DC2626';
   }
 
+  /**
+   * Restituisce la classe CSS per scalare il font del nome in base alla sua lunghezza.
+   * Nomi corti (<= 15 car.) → dimensione normale.
+   * Nomi medi (16-22 car.)  → leggermente ridotta (name-sm).
+   * Nomi lunghi (> 22 car.) → ancora più ridotta (name-xs).
+   */
+  getNameClass(nome: string): string {
+    const len = (nome || '').length;
+    if (len > 22) return 'name-xs';
+    if (len > 15) return 'name-sm';
+    return '';
+  }
+
+  /**
+   * Restituisce la classe CSS per scalare il font del testo "vs avversario".
+   * Usata per evitare troncature eccessive su nomi lunghi.
+   */
+  getVsClass(nome: string): string {
+    const len = (nome || '').length;
+    if (len > 18) return 'vs-long';
+    return '';
+  }
+
 }

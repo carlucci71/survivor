@@ -316,9 +316,9 @@
                 }
               </div>
               <div class="jersey-info">
-                <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
+                <span class="jersey-name" [ngClass]="getNameClass(formatNomeSquadra(squadra.nome))">{{ formatNomeSquadra(squadra.nome) }}</span>
                 @if (squadra.prossimaPartita && !squadra.alreadyUsed) {
-                  <span class="jersey-vs">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
+                  <span class="jersey-vs" [ngClass]="getVsClass(formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)))">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
                 }
               </div>
               @if (squadraSelezionata === squadra.sigla) {
@@ -387,9 +387,9 @@
                   }
                 </div>
                 <div class="jersey-info">
-                  <span class="jersey-name">{{ formatNomeSquadra(squadra.nome) }}</span>
+                  <span class="jersey-name" [ngClass]="getNameClass(formatNomeSquadra(squadra.nome))">{{ formatNomeSquadra(squadra.nome) }}</span>
                   @if (squadra.prossimaPartita) {
-                    <span class="jersey-vs">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
+                    <span class="jersey-vs" [ngClass]="getVsClass(formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)))">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
                   }
                 </div>
                 @if (squadraSelezionata === squadra.sigla) {
