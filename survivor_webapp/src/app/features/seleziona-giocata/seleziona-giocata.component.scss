@@ -786,7 +786,7 @@
 
 /* INFO SQUADRA SOTTO LA MAGLIETTA */
 .jersey-info {
-	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	width: 100%;
 	text-align: center;
 }
 
@@ -798,8 +798,11 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
+	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	max-height: 2.4em;
+	word-break: break-word;
+	hyphens: auto;
 }
 
 .jersey-vs {
@@ -826,7 +829,9 @@
 	}
 
 	.jersey-name {
-		font-size: 0.7rem;
+		font-size: 0.68rem;
+		-webkit-line-clamp: 3;
+		max-height: 3.6em;
 	}
 
 	.jersey-vs {
@@ -859,16 +864,16 @@
 
 	/* Aggiusto margini e padding per desktop */
 	.teams-scroll-container {
-		margin: 0; /* Rimosso margin negativo */
+		margin: 0;
 	}
 
 	.teams-scroll-wrapper {
-		padding: 8px 28px; /* Padding uguale a sinistra e destra */
-		gap: 16px; /* Più spazio tra le card su desktop */
+		padding: 8px 28px;
+		gap: 16px;
 	}
 
 	.jersey-card {
-		width: 120px;
+		width: 130px;
 	}
 
 	.jersey-container {
@@ -878,6 +883,8 @@
 
 	.jersey-name {
 		font-size: 0.8rem;
+		-webkit-line-clamp: 3;
+		max-height: 3.6em;
 	}
 
 	/* Dimensioni testo sulla maglietta per desktop */
