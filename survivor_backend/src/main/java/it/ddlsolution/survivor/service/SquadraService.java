@@ -98,25 +98,76 @@ public class SquadraService {
     /** Estrae giocatori unici da una lista di partite (casaSigla+fuoriSigla). */
     private static List<SquadraDTO> extractPlayersFromPartite(List<PartitaDTO> partite, String campionatoId) {
         Map<String, SquadraDTO> bySignla = new LinkedHashMap<>();
+        // Dedup secondario "iniziale_cognome": cattura casi in cui lo stesso giocatore
+        // è stato salvato con sigla diversa (es. "CARLOS_ALCARAZ" dal singolare e
+        // "C._ALCARAZ" dal doppio). La chiave è "INIZIALE_COGNOME" estratta via extractNormKey.
+        Map<String, String> normNameToSigla = new LinkedHashMap<>();
+
         for (PartitaDTO p : partite) {
-            if (p.getCasaSigla() != null && !bySignla.containsKey(p.getCasaSigla())) {
-                SquadraDTO dto = new SquadraDTO();
-                dto.setSigla(p.getCasaSigla());
-                dto.setNome(p.getCasaNome() != null ? p.getCasaNome() : p.getCasaSigla());
-                dto.setIdCampionato(campionatoId);
-                bySignla.put(p.getCasaSigla(), dto);
-            }
-            if (p.getFuoriSigla() != null && !bySignla.containsKey(p.getFuoriSigla())) {
-                SquadraDTO dto = new SquadraDTO();
-                dto.setSigla(p.getFuoriSigla());
-                dto.setNome(p.getFuoriNome() != null ? p.getFuoriNome() : p.getFuoriSigla());
-                dto.setIdCampionato(campionatoId);
-                bySignla.put(p.getFuoriSigla(), dto);
-            }
+            addPlayer(p.getCasaSigla(), p.getCasaNome(), campionatoId, bySignla, normNameToSigla);
+            addPlayer(p.getFuoriSigla(), p.getFuoriNome(), campionatoId, bySignla, normNameToSigla);
         }
         return bySignla.values().stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
                 .toList();
+    }
+
+    /**
+     * Aggiunge un giocatore alla mappa deduplicata.
+     * Salta i placeholder BYE/QUALIFIER e i giocatori già presenti con
+     * sigla identica O con chiave "iniziale_cognome" identica
+     * (es. "CARLOS_ALCARAZ" e "C._ALCARAZ" sono lo stesso giocatore).
+     */
+    private static void addPlayer(String sigla, String nome, String campionatoId,
+                                   Map<String, SquadraDTO> bySignla,
+                                   Map<String, String> normNameToSigla) {
+        if (sigla == null || sigla.isEmpty()) return;
+        // Salta placeholder che non sono giocatori reali
+        if (sigla.startsWith("BYE") || sigla.startsWith("QUALIFIER") || sigla.startsWith("Q_")) return;
+
+        // Dedup primario per sigla identica
+        if (bySignla.containsKey(sigla)) return;
+
+        // Dedup secondario "iniziale_cognome": cattura lo stesso giocatore
+        // quando il doppio usa il nome abbreviato (es. "C._ALCARAZ" per "CARLOS_ALCARAZ").
+        // Usa l'ultimo token come cognome e il primo carattere del primo token come iniziale.
+        String normKey = extractNormKey(sigla);
+        if (!normKey.isEmpty() && normNameToSigla.containsKey(normKey)) {
+            log.debug("Squadra deduplicata per chiave '{}': scarto '{}', già presente come '{}'",
+                    normKey, sigla, normNameToSigla.get(normKey));
+            return;
+        }
+
+        SquadraDTO dto = new SquadraDTO();
+        dto.setSigla(sigla);
+        dto.setNome(nome != null ? nome : sigla);
+        dto.setIdCampionato(campionatoId);
+        bySignla.put(sigla, dto);
+        if (!normKey.isEmpty()) {
+            normNameToSigla.put(normKey, sigla);
+        }
+    }
+
+    /**
+     * Calcola una chiave di normalizzazione "iniziale_cognome" dalla sigla.
+     * "CARLOS_ALCARAZ"   → "C_ALCARAZ"
+     * "C._ALCARAZ"       → "C_ALCARAZ"  (stesso giocatore, nome abbreviato nel doppio)
+     * "JANNIK_SINNER"    → "J_SINNER"
+     * "FRANCISCO_CERUNDOLO"   → "F_CERUNDOLO"
+     * "JUAN_MANUEL_CERUNDOLO" → "J_CERUNDOLO"  (cognomi diversi → nessun falso positivo)
+     */
+    private static String extractNormKey(String sigla) {
+        if (sigla == null || sigla.isEmpty()) return "";
+        // Conserva solo lettere maiuscole e underscore, poi split
+        String[] tokens = sigla.toUpperCase().replaceAll("[^A-Z_]", "").split("_");
+        // Filtra i token vuoti (prodotti da underscore consecutivi o iniziali come "C_")
+        List<String> parts = Arrays.stream(tokens)
+                .filter(t -> !t.isEmpty())
+                .toList();
+        if (parts.isEmpty()) return "";
+        String cognome = parts.get(parts.size() - 1);            // ultimo token
+        String iniziale = String.valueOf(parts.get(0).charAt(0)); // prima lettera del primo token
+        return iniziale + "_" + cognome;
     }
 
     @Transactional(readOnly = true)

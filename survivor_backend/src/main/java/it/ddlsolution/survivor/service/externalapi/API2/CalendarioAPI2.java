@@ -247,6 +247,21 @@ public class CalendarioAPI2 implements ICalendario {
 
         for (Map<String, Object> match : matches) {
             try {
+                // Salta i match di doppio: nel singolare ciascuna entry ha esattamente 1 giocatore.
+                // Nel doppio firstEntry.players ha 2 elementi → nomi abbreviati diversi dal singolare
+                // produrrebbero sigle duplicate (es. "C._ALCARAZ" vs "CARLOS_ALCARAZ").
+                Map<?, ?> firstEntryCheck = (Map<?, ?>) match.get("firstEntry");
+                if (firstEntryCheck == null) {
+                    log.debug("Roland Garros giornata {}: skip match senza firstEntry", giornata);
+                    continue;
+                }
+                List<?> firstPlayers = (List<?>) firstEntryCheck.get("players");
+                if (firstPlayers == null || firstPlayers.size() != 1) {
+                    log.debug("Roland Garros giornata {}: skip match non-singolo (players={})",
+                            giornata, firstPlayers == null ? "null" : firstPlayers.size());
+                    continue;
+                }
+
                 String dateStr = match.get("date") != null
                         ? match.get("date").toString()
                         : match.get("utcDate").toString();
