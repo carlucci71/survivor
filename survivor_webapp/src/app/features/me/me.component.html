@@ -30,8 +30,9 @@
               <button
                 mat-raised-button
                 class="btn-conferma"
-                type="submit"
+                type="button"
                 [disabled]="!nomeModificato || isSaving"
+                (click)="confermaNome()"
               >
                 {{ isSaving ? 'Salvataggio...' : 'Conferma' }}
               </button>
@@ -53,3 +54,30 @@
     </div>
   </main>
 </div>
+
+@if (showEasterEgg) {
+  <div class="easter-overlay"
+       [class.lit]="easterLit"
+       [class.extinguished]="easterExtinguished"
+       (mousemove)="handleEasterMove($event)"
+       (touchmove)="handleEasterMove($event)"
+       (click)="handleEasterClick()">
+    <p class="easter-instruction" [style.opacity]="easterInstructionOpacity">{{ easterInstructionText }}</p>
+    <div class="easter-scene">
+      <div class="easter-match" [style.transform]="matchTransform">
+        <div class="easter-smoke-container">
+          <div class="easter-smoke easter-smoke-1"></div>
+          <div class="easter-smoke easter-smoke-2"></div>
+          <div class="easter-smoke easter-smoke-3"></div>
+        </div>
+        <div class="easter-flame-container">
+          <div class="easter-flame"></div>
+          <div class="easter-sparkles"></div>
+        </div>
+        <div class="easter-match-head"></div>
+        <div class="easter-match-stick"></div>
+      </div>
+    </div>
+    <button class="easter-close" (click)="onCloseEaster($event)">✕</button>
+  </div>
+}
