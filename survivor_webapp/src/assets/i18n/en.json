@@ -710,7 +710,9 @@
     "LOADING": "Loading league information...",
     "ERROR_INVALID_ID": "Invalid league ID",
     "ERROR_LOAD": "Unable to load league data",
-    "NO_DATA": "League information not available."
+    "NO_DATA": "League information not available.",
+    "INVITE_TITLE": "You've been invited!",
+    "INVITE_SUBTITLE": "The link brought you directly to this league"
   },
   "SUSPENSIONS": {
     "TITLE": "Manage Suspensions",
