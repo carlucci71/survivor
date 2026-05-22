@@ -209,11 +209,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
 
   getShareUrl(): string {
     // Pubblica ad accesso libero → lista pubblica
-    // Privata o con approvazione → link diretto alla lega
+    // Privata o con approvazione → link diretto alla sezione join con la lega preselezionata
     if (this.pubblica && this.accessoLibero) {
       return this.baseUrl() + '/joinLega';
     }
-    return this.baseUrl() + '/join/' + this.legaCreataId;
+    return this.baseUrl() + '/joinLega?legaId=' + this.legaCreataId;
   }
 
   selezionaSport() {

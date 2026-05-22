@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
 import { Lega, StatoLega } from '../../core/models/interfaces.model';
@@ -25,6 +25,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class LegaJoinComponent implements OnInit, AfterViewInit {
   leghe: Lega[] = [];
+  invitedLega: Lega | null = null;
+  invitedLegaLoading = false;
 
   filterSport = '';
   filterCampionato = '';
@@ -80,6 +82,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
     private legaService: LegaService,
@@ -91,6 +94,19 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.loadLegheLibere();
+    const legaIdStr = this.route.snapshot.queryParamMap.get('legaId');
+    if (legaIdStr) {
+      this.invitedLegaLoading = true;
+      this.legaService.getLegaById(Number(legaIdStr)).subscribe({
+        next: (lega) => {
+          this.invitedLega = lega;
+          this.invitedLegaLoading = false;
+        },
+        error: () => {
+          this.invitedLegaLoading = false;
+        }
+      });
+    }
   }
 
   ngAfterViewInit(): void {

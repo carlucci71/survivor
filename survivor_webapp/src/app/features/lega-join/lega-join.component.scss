@@ -3,6 +3,55 @@
 	/* keep minimal overrides here if necessary */
 }
 
+/* ── Invite section (da link condiviso) ── */
+.invite-section {
+	background: linear-gradient(135deg, #EBF0FF 0%, #F0F7FF 100%);
+	border: 1.5px solid #B8C9F5;
+	border-radius: 16px;
+	padding: 16px 20px 20px;
+	margin-bottom: 24px;
+
+	&--loading {
+		background: #F8FAFF;
+		border-color: #E2E8F0;
+		padding: 16px 20px;
+		color: #718096;
+		font-size: 0.875rem;
+	}
+}
+
+.invite-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 14px;
+}
+
+.invite-icon {
+	color: #0A3D91;
+	font-size: 1.5rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+
+.invite-title {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1rem;
+	font-weight: 700;
+	color: #0A3D91;
+	margin: 0 0 2px;
+}
+
+.invite-subtitle {
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.8rem;
+	color: #4A5568;
+	margin: 0;
+}
+
+
 .main-content {
 	max-width: 1200px;
 	margin: 0 auto;
@@ -261,9 +310,11 @@ h2 {
 	transition: all 0.2s ease;
 
 	mat-icon {
-		font-size: 18px;
-		width: 18px;
-		height: 18px;
+		font-size: 18px !important;
+		width: 18px !important;
+		height: 18px !important;
+		line-height: 18px !important;
+		vertical-align: middle;
 	}
 
 	&--primary {
