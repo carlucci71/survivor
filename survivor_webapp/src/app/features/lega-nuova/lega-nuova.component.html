@@ -77,6 +77,8 @@
             type="button"
             class="cn-camp-btn"
             [class.cn-camp-btn--active]="campionatoSel?.id === campionato.id"
+            [class.cn-camp-btn--terminated]="isCampionatoTerminato(campionato)"
+            [disabled]="isCampionatoTerminato(campionato)"
             (click)="selectCampionato(campionato)"
           >
             <span class="cn-camp-name">{{ campionato.nome }}</span>
