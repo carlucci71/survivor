@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface RichiediIngressoData {
   lega: {
@@ -18,7 +19,7 @@ export interface RichiediIngressoData {
 @Component({
   selector: 'app-richiedi-ingresso-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
   template: `
     <div class="ri-dialog">
       <button class="ri-close" (click)="dialogRef.close(false)" aria-label="Chiudi">
@@ -31,8 +32,8 @@ export interface RichiediIngressoData {
           <mat-icon class="ri-main-icon">how_to_reg</mat-icon>
         </div>
 
-        <h2 class="ri-title">Richiedi ingresso</h2>
-        <p class="ri-subtitle">Stai per inviare una richiesta per unirti a questa lega. Il creatore dovrà approvarla.</p>
+        <h2 class="ri-title">{{ 'RICHIESTA_INGRESSO.TITLE' | translate }}</h2>
+        <p class="ri-subtitle">{{ 'RICHIESTA_INGRESSO.SUBTITLE' | translate }}</p>
 
         <div class="ri-lega-card">
           <div class="ri-lega-name">{{ data.lega.name }}</div>
@@ -45,20 +46,20 @@ export interface RichiediIngressoData {
             }
             <span class="ri-meta-chip">
               <mat-icon>flag</mat-icon>
-              Giornata {{ data.lega.giornataIniziale }}
+              {{ 'RICHIESTA_INGRESSO.ROUND' | translate }} {{ data.lega.giornataIniziale }}
             </span>
             <span class="ri-meta-chip">
               <mat-icon>group</mat-icon>
-              {{ (data.lega.numPartecipanti ?? data.lega.giocatori?.length ?? 0) }} partecipanti
+              {{ 'RICHIESTA_INGRESSO.PARTICIPANTS' | translate: { count: (data.lega.numPartecipanti ?? data.lega.giocatori?.length ?? 0) } }}
             </span>
           </div>
         </div>
 
         <div class="ri-actions">
-          <button class="ri-btn ri-btn--cancel" (click)="dialogRef.close(false)">Annulla</button>
+          <button class="ri-btn ri-btn--cancel" (click)="dialogRef.close(false)">{{ 'COMMON.CANCEL' | translate }}</button>
           <button class="ri-btn ri-btn--confirm" (click)="dialogRef.close(true)">
             <mat-icon>send</mat-icon>
-            Invia richiesta
+            {{ 'RICHIESTA_INGRESSO.SEND_BTN' | translate }}
           </button>
         </div>
 
@@ -68,12 +69,12 @@ export interface RichiediIngressoData {
           <mat-icon class="ri-success-icon">check_circle</mat-icon>
         </div>
 
-        <h2 class="ri-title">Richiesta inviata!</h2>
-        <p class="ri-subtitle">La tua richiesta per <strong>{{ data.lega.name }}</strong> è stata inviata. Riceverai una notifica non appena il creatore la approverà.</p>
+        <h2 class="ri-title">{{ 'RICHIESTA_INGRESSO.SUCCESS_TITLE' | translate }}</h2>
+        <p class="ri-subtitle">{{ 'RICHIESTA_INGRESSO.SUCCESS_DESC' | translate: { name: data.lega.name } }}</p>
 
         <button class="ri-btn ri-btn--confirm" style="margin-top: 8px;" (click)="dialogRef.close(false)">
           <mat-icon>done</mat-icon>
-          Perfetto!
+          {{ 'RICHIESTA_INGRESSO.SUCCESS_BTN' | translate }}
         </button>
       }
     </div>

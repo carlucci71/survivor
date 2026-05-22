@@ -1,36 +1,160 @@
-<div class="home-container">
-	<app-header [title]="'JOIN_LEAGUE.PAGE_TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
+<div class="jm-container">
+  <app-header [title]="'JOIN_LEAGUE.PAGE_TITLE' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
-	<main class="main-content">
-		<div *ngIf="isLoading" class="loading-container">
-			<mat-spinner></mat-spinner>
-			<p>{{ 'JOIN_LEAGUE.LOADING' | translate }}</p>
-		</div>
+  <main class="jm-main">
 
-		<div *ngIf="error" class="error-container">
-			<mat-card>
-				<mat-card-content>
-					<div class="error-message">
-						<mat-icon color="warn">error</mat-icon>
-						<p>{{ error }}</p>
-					</div>
-				</mat-card-content>
-			</mat-card>
-		</div>
+    <!-- ── LOADING ── -->
+    @if (joinState === 'loading') {
+      <div class="jm-loading">
+        <mat-progress-spinner mode="indeterminate" diameter="44"></mat-progress-spinner>
+        <p class="jm-loading-text">{{ 'JOIN_LEAGUE.LOADING' | translate }}</p>
+      </div>
+    }
 
-		<section class="leghe-section" *ngIf="lega; else noLega">
+    <!-- ── JOIN: mostra la lega e il bottone richiedi accesso ── -->
+    @if (joinState === 'join' && lega) {
+      <div class="jm-card jm-card--appear">
 
-			<div class="leghe-groups">
-				<div class="edizioni-list">
-					<app-lega-card [lega]="lega" (action)="confermaJoin($event)"></app-lega-card>
-				</div>
-			</div>
-		</section>
+        <!-- Lega info block -->
+        <div class="jm-lega-hero">
+          <div class="jm-lega-sport-badge">
+            <mat-icon>{{ getGiocaIcon(lega.campionato?.sport?.id || '') }}</mat-icon>
+          </div>
+          <div class="jm-lega-info">
+            <h2 class="jm-lega-name">{{ lega.name }}</h2>
+            @if (lega.campionato?.nome) {
+              <span class="jm-lega-camp">{{ lega.campionato!.nome }}</span>
+            }
+            <div class="jm-lega-meta">
+              <span class="jm-meta-chip">
+                <mat-icon>group</mat-icon>
+                {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}
+                @if (lega.maxPartecipanti) { / {{ lega.maxPartecipanti }} }
+              </span>
+              @if (lega.giornataIniziale) {
+                <span class="jm-meta-chip">
+                  <mat-icon>flag</mat-icon>
+                  G{{ lega.giornataIniziale }}
+                </span>
+              }
+              <span class="jm-meta-chip" [class.jm-meta-chip--active]="lega.stato.value === 'AVVIATA'">
+                <mat-icon>{{ lega.stato.value === 'AVVIATA' ? 'play_circle' : 'hourglass_empty' }}</mat-icon>
+                {{ ('LEAGUE_STATUS.' + lega.stato.value) | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
 
-		<ng-template #noLega>
-			<mat-card class="no-data">
-				<mat-card-content>{{ 'JOIN_LEAGUE.NO_DATA' | translate }}</mat-card-content>
-			</mat-card>
-		</ng-template>
-	</main>
+        <!-- Descrizione flusso approvazione -->
+        @if (!lega.accessoLibero) {
+          <div class="jm-approval-notice">
+            <mat-icon class="jm-notice-icon">admin_panel_settings</mat-icon>
+            <p>{{ 'JOIN_LEAGUE.APPROVAL_REQUIRED_DESC' | translate }}</p>
+          </div>
+        }
+
+        <!-- Azioni -->
+        <div class="jm-actions">
+          @if (lega.accessoLibero) {
+            <button class="jm-btn jm-btn--primary" (click)="confermaJoinLibero()">
+              <mat-icon>login</mat-icon>
+              {{ 'JOIN_LEAGUE.JOIN_NOW' | translate }}
+            </button>
+          } @else {
+            <button class="jm-btn jm-btn--primary" [disabled]="isSubmitting" (click)="sendRequest()">
+              @if (isSubmitting) {
+                <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner>
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              {{ isSubmitting ? ('JOIN_LEAGUE.SENDING' | translate) : ('JOIN_LEAGUE.REQUEST_ACCESS' | translate) }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── PENDING: richiesta inviata, in attesa ── -->
+    @if (joinState === 'pending' && lega) {
+      <div class="jm-card jm-card--appear">
+        <div class="jm-state-icon jm-state-icon--pending">
+          <mat-icon class="jm-icon-spin">hourglass_top</mat-icon>
+        </div>
+        <h2 class="jm-state-title">{{ 'JOIN_REQUEST.PENDING_TITLE' | translate }}</h2>
+        <p class="jm-state-desc">{{ 'JOIN_REQUEST.PENDING_DESC' | translate: { lega: lega.name } }}</p>
+
+        <div class="jm-lega-pill">
+          <mat-icon>emoji_events</mat-icon>
+          <span>{{ lega.name }}</span>
+        </div>
+
+        @if (joinRequest?.createdAt) {
+          <span class="jm-date-label">
+            <mat-icon>schedule</mat-icon>
+            {{ 'JOIN_REQUEST.SENT_ON' | translate }} {{ joinRequest!.createdAt | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        }
+
+        <div class="jm-polling-hint">
+          <mat-progress-spinner diameter="14" mode="indeterminate"></mat-progress-spinner>
+          <span>{{ 'JOIN_REQUEST.POLLING_HINT' | translate }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- ── APPROVED: accettato ── -->
+    @if (joinState === 'approved' && lega) {
+      <div class="jm-card jm-card--appear">
+        <div class="jm-state-icon jm-state-icon--approved">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <h2 class="jm-state-title jm-state-title--green">{{ 'JOIN_REQUEST.APPROVED_TITLE' | translate }}</h2>
+        <p class="jm-state-desc">{{ 'JOIN_REQUEST.APPROVED_DESC' | translate: { lega: lega.name } }}</p>
+
+        <div class="jm-lega-pill jm-lega-pill--green">
+          <mat-icon>emoji_events</mat-icon>
+          <span>{{ lega.name }}</span>
+        </div>
+
+        <button class="jm-btn jm-btn--primary jm-btn--go" (click)="goToLega()">
+          <mat-icon>sports_score</mat-icon>
+          {{ 'JOIN_REQUEST.GO_TO_LEGA' | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- ── REJECTED: non accettato ── -->
+    @if (joinState === 'rejected' && lega) {
+      <div class="jm-card jm-card--appear">
+        <div class="jm-state-icon jm-state-icon--rejected">
+          <mat-icon>cancel</mat-icon>
+        </div>
+        <h2 class="jm-state-title jm-state-title--red">{{ 'JOIN_REQUEST.REJECTED_TITLE' | translate }}</h2>
+        <p class="jm-state-desc">{{ 'JOIN_REQUEST.REJECTED_DESC' | translate: { lega: lega.name } }}</p>
+
+        <div class="jm-lega-pill jm-lega-pill--red">
+          <mat-icon>emoji_events</mat-icon>
+          <span>{{ lega.name }}</span>
+        </div>
+
+        <button class="jm-btn jm-btn--secondary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          {{ 'JOIN_LEAGUE.BACK_TO_HOME' | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- ── ERROR ── -->
+    @if (error) {
+      <div class="jm-card jm-card--error">
+        <mat-icon class="jm-error-icon">error_outline</mat-icon>
+        <p class="jm-error-text">{{ error }}</p>
+        <button class="jm-btn jm-btn--secondary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          {{ 'JOIN_LEAGUE.BACK_TO_HOME' | translate }}
+        </button>
+      </div>
+    }
+
+  </main>
 </div>

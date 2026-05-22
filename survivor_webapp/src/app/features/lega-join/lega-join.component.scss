@@ -51,6 +51,122 @@
 	margin: 0;
 }
 
+/* ── Invite state cards (pending / approved / rejected) ── */
+.invite-state-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
+	text-align: center;
+	padding: 8px 8px 4px;
+
+	&--approved { background: none; }
+	&--rejected { background: none; }
+}
+
+.isc-icon {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	mat-icon {
+		font-size: 34px;
+		width: 34px;
+		height: 34px;
+	}
+
+	&--pending {
+		background: #fef3c7;
+		mat-icon { color: #d97706; }
+	}
+	&--approved {
+		background: #dcfce7;
+		mat-icon { color: #16a34a; }
+	}
+	&--rejected {
+		background: #fee2e2;
+		mat-icon { color: #dc2626; }
+	}
+}
+
+@keyframes isc-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
+}
+
+.isc-spin { animation: isc-spin 2s linear infinite; }
+
+.isc-title {
+	font-family: 'Poppins', sans-serif;
+	font-size: 1.05rem;
+	font-weight: 700;
+	color: #111827;
+	margin: 0;
+
+	&--green { color: #16a34a; }
+	&--red   { color: #dc2626; }
+}
+
+.isc-desc {
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.86rem;
+	color: #6B7280;
+	line-height: 1.5;
+	margin: 0;
+	max-width: 340px;
+}
+
+.isc-lega-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #f1f5f9;
+	border: 1.5px solid #E5E7EB;
+	border-radius: 30px;
+	padding: 6px 16px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.84rem;
+	font-weight: 600;
+	color: #111827;
+
+	mat-icon { font-size: 16px; width: 16px; height: 16px; color: #0A3D91; }
+}
+
+.isc-polling {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.76rem;
+	color: #9CA3AF;
+}
+
+.isc-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 11px 22px;
+	border-radius: 12px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	border: none;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+	mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+	&--go {
+		background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+		color: #fff;
+		box-shadow: 0 4px 14px rgba(22, 163, 74, 0.3);
+		&:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(22, 163, 74, 0.38); }
+	}
+}
+
 
 .main-content {
 	max-width: 1200px;

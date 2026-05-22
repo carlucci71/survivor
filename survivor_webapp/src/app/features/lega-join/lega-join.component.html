@@ -5,14 +5,64 @@
 
 		<!-- ── Lega da invito (link condiviso) ── -->
 		<section class="invite-section" *ngIf="invitedLega">
-			<div class="invite-header">
-				<mat-icon class="invite-icon">link</mat-icon>
-				<div>
-					<h2 class="invite-title">{{ 'JOIN_LEAGUE.INVITE_TITLE' | translate }}</h2>
-					<p class="invite-subtitle">{{ 'JOIN_LEAGUE.INVITE_SUBTITLE' | translate }}</p>
+
+			<!-- Stato: nessuna richiesta → mostra card con azione -->
+			<ng-container *ngIf="invitedJoinState === 'none'">
+				<div class="invite-header">
+					<mat-icon class="invite-icon">link</mat-icon>
+					<div>
+						<h2 class="invite-title">{{ 'JOIN_LEAGUE.INVITE_TITLE' | translate }}</h2>
+						<p class="invite-subtitle">{{ 'JOIN_LEAGUE.INVITE_SUBTITLE' | translate }}</p>
+					</div>
 				</div>
-			</div>
-			<app-lega-card [lega]="invitedLega" (action)="seleziona($event)"></app-lega-card>
+				<app-lega-card [lega]="invitedLega" (action)="seleziona($event)"></app-lega-card>
+			</ng-container>
+
+			<!-- Stato: in attesa di approvazione -->
+			<ng-container *ngIf="invitedJoinState === 'pending'">
+				<div class="invite-state-card">
+					<div class="isc-icon isc-icon--pending">
+						<mat-icon class="isc-spin">hourglass_top</mat-icon>
+					</div>
+					<h2 class="isc-title">{{ 'JOIN_REQUEST.PENDING_TITLE' | translate }}</h2>
+					<p class="isc-desc">{{ 'JOIN_REQUEST.PENDING_DESC' | translate: { lega: invitedLega.name } }}</p>
+					<div class="isc-lega-pill">
+						<mat-icon>emoji_events</mat-icon>
+						<span>{{ invitedLega.name }}</span>
+					</div>
+					<div class="isc-polling">
+						<mat-progress-spinner diameter="14" mode="indeterminate"></mat-progress-spinner>
+						<span>{{ 'JOIN_REQUEST.POLLING_HINT' | translate }}</span>
+					</div>
+				</div>
+			</ng-container>
+
+			<!-- Stato: approvato (auto-redirect ma mostrato come fallback) -->
+			<ng-container *ngIf="invitedJoinState === 'approved'">
+				<div class="invite-state-card invite-state-card--approved">
+					<div class="isc-icon isc-icon--approved">
+						<mat-icon>check_circle</mat-icon>
+					</div>
+					<h2 class="isc-title isc-title--green">{{ 'JOIN_REQUEST.APPROVED_TITLE' | translate }}</h2>
+					<p class="isc-desc">{{ 'JOIN_REQUEST.APPROVED_DESC' | translate: { lega: invitedLega.name } }}</p>
+					<button class="isc-btn isc-btn--go" (click)="router.navigate(['/lega', invitedLega.id])">
+						<mat-icon>sports_score</mat-icon>
+						{{ 'JOIN_REQUEST.GO_TO_LEGA' | translate }}
+					</button>
+				</div>
+			</ng-container>
+
+			<!-- Stato: rifiutato -->
+			<ng-container *ngIf="invitedJoinState === 'rejected'">
+				<div class="invite-state-card invite-state-card--rejected">
+					<div class="isc-icon isc-icon--rejected">
+						<mat-icon>cancel</mat-icon>
+					</div>
+					<h2 class="isc-title isc-title--red">{{ 'JOIN_REQUEST.REJECTED_TITLE' | translate }}</h2>
+					<p class="isc-desc">{{ 'JOIN_REQUEST.REJECTED_DESC' | translate: { lega: invitedLega.name } }}</p>
+				</div>
+			</ng-container>
+
 		</section>
 
 		<section class="invite-section invite-section--loading" *ngIf="invitedLegaLoading">
@@ -20,7 +70,7 @@
 		</section>
 
 		<!-- ── Filter bar ── -->
-		<section class="filters-bar" *ngIf="leghe?.length">
+		<section class="filters-bar" *ngIf="leghe.length">
 
 			<!-- Sport -->
 			<div class="filter-group" *ngIf="sportsDisponibili.length > 1">
@@ -81,7 +131,7 @@
 		<ng-template #emptyState>
 
 			<!-- ── Empty state: filtri senza risultati ── -->
-			<div *ngIf="leghe?.length; else noLegheBlock" class="empty-state empty-state--filter">
+			<div *ngIf="leghe.length; else noLegheBlock" class="empty-state empty-state--filter">
 				<div class="es-icon-wrap es-icon-wrap--blue">
 					<mat-icon class="es-icon">filter_alt_off</mat-icon>
 				</div>

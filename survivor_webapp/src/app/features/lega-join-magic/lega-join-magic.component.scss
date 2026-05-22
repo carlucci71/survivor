@@ -1,32 +1,404 @@
-/* Reuse home layout styles for consistency */
-.home-container {
-	/* keep minimal overrides here if necessary */
+$blue: #0A3D91;
+$blue-light: #1a5abf;
+$border: #E5E7EB;
+$text: #111827;
+$muted: #6B7280;
+$green: #16a34a;
+$green-light: #dcfce7;
+$red: #dc2626;
+$red-light: #fee2e2;
+$pending: #d97706;
+$pending-light: #fef3c7;
+
+/* ── Container ── */
+.jm-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Poppins', sans-serif;
 }
 
-.main-content {
-	max-width: 1000px;
-	margin: 0 auto;
-	padding: 32px 20px;
+.jm-main {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+
+  @media (max-width: 600px) {
+    padding: 24px 16px 40px;
+  }
 }
 
-h2 {
-	margin: 0 0 12px 0;
-	font-size: 1.6rem;
-	color: #333;
+/* ── Loading ── */
+.jm-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 80px;
 }
 
-.leghe-groups {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 18px;
-
-	.edizioni-list {
-		display: flex;
-		flex-direction: column;
-		align-items: center; /* center narrow cards */
-		width: 100%;
-	}
+.jm-loading-text {
+  color: $muted;
+  font-size: 0.95rem;
 }
+
+/* ── Main card ── */
+.jm-card {
+  background: #fff;
+  border-radius: 20px;
+  border: 1.5px solid $border;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 4px 24px rgba(10, 61, 145, 0.07);
+  text-align: center;
+
+  @media (max-width: 600px) {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  &--error {
+    border-color: #fca5a5;
+    background: #fff7f7;
+  }
+}
+
+@keyframes jm-appear {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.jm-card--appear {
+  animation: jm-appear 0.35s ease both;
+}
+
+/* ── Lega hero (stato JOIN) ── */
+.jm-lega-hero {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+
+  @media (max-width: 400px) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.jm-lega-sport-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $blue 0%, $blue-light 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon {
+    color: #fff;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.jm-lega-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.jm-lega-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.jm-lega-camp {
+  font-size: 0.83rem;
+  color: $blue;
+  font-weight: 600;
+}
+
+.jm-lega-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.jm-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  font-size: 0.78rem;
+  color: $muted;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &--active {
+    background: #dbeafe;
+    color: $blue;
+  }
+}
+
+/* ── Notice approvazione ── */
+.jm-approval-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #1e40af;
+    line-height: 1.5;
+  }
+}
+
+.jm-notice-icon {
+  color: $blue;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── State icon (pending/approved/rejected) ── */
+.jm-state-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  &--pending {
+    background: $pending-light;
+    mat-icon { color: $pending; }
+  }
+
+  &--approved {
+    background: $green-light;
+    mat-icon { color: $green; }
+  }
+
+  &--rejected {
+    background: $red-light;
+    mat-icon { color: $red; }
+  }
+}
+
+@keyframes jm-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.jm-icon-spin {
+  animation: jm-spin 2s linear infinite;
+}
+
+/* ── State title / desc ── */
+.jm-state-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $text;
+  margin: 0;
+  line-height: 1.3;
+
+  &--green { color: $green; }
+  &--red   { color: $red; }
+}
+
+.jm-state-desc {
+  font-size: 0.9rem;
+  color: $muted;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 340px;
+}
+
+/* ── Lega pill (stati pending/approved/rejected) ── */
+.jm-lega-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border: 1.5px solid $border;
+  border-radius: 30px;
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: $text;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: $blue;
+  }
+
+  &--green {
+    background: $green-light;
+    border-color: #86efac;
+    mat-icon { color: $green; }
+    color: $green;
+  }
+
+  &--red {
+    background: $red-light;
+    border-color: #fca5a5;
+    mat-icon { color: $red; }
+    color: $red;
+  }
+}
+
+/* ── Date label ── */
+.jm-date-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: $muted;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ── Polling hint ── */
+.jm-polling-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: $muted;
+
+  mat-progress-spinner {
+    opacity: 0.7;
+  }
+}
+
+/* ── Buttons ── */
+.jm-actions {
+  width: 100%;
+}
+
+.jm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  min-width: 180px;
+  width: 100%;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  mat-progress-spinner {
+    display: inline-block;
+  }
+
+  &--primary {
+    background: linear-gradient(135deg, $blue 0%, $blue-light 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(10, 61, 145, 0.28);
+
+    &:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(10, 61, 145, 0.36);
+    }
+
+    &:active:not([disabled]) {
+      transform: translateY(0);
+    }
+
+    &[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+  }
+
+  &--secondary {
+    background: #fff;
+    color: $blue;
+    border: 1.5px solid $border;
+
+    &:hover {
+      background: #f1f5f9;
+    }
+  }
+
+  &--go {
+    margin-top: 4px;
+    background: linear-gradient(135deg, $green 0%, #15803d 100%);
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.28);
+
+    &:hover {
+      box-shadow: 0 6px 20px rgba(22, 163, 74, 0.36);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* ── Error card ── */
+.jm-error-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: $red;
+}
+
+.jm-error-text {
+  font-size: 0.9rem;
+  color: $red;
+  margin: 0;
+  line-height: 1.5;
+}
+
 
 .edizioni-list {
 	display: grid;
