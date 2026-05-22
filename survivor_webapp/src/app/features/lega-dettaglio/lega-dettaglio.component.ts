@@ -661,6 +661,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // CAMPIONATO: etichette compatte specifiche per fase torneo
     if (this.isCampionato()) {
       const compactMap: Record<string, string> = {
+        // Mondiali / Calcio
         'Girone - Giornata 1': 'G.1',
         'Girone - Giornata 2': 'G.2',
         'Girone - Giornata 3': 'G.3',
@@ -669,6 +670,12 @@ export class LegaDettaglioComponent implements OnDestroy {
         'Quarti di finale': 'QF',
         'Semifinali': 'SF',
         'Finale': 'F',
+        // Tennis
+        '64-esimi': 'R128',
+        '32-esimi': 'R64',
+        '16-esimi': 'R32',
+        'Ottavi': 'R16',
+        'Quarti': 'QF',
       };
       // Cerca corrispondenza sull'etichetta base (prima della traduzione)
       const desBase = this.campionatoService.getDesGiornataNoAlias(
