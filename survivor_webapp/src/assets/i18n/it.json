@@ -507,7 +507,16 @@
       "ROUND_OF_16": "Sedicesimi di finale",
       "QUARTERFINALS": "Quarti di finale",
       "SEMIFINALS": "Semifinali",
-      "FINAL": "Finale"
+      "FINAL": "Finale",
+      "TENNIS": {
+        "ROUND_OF_128": "64-esimi",
+        "ROUND_OF_64": "32-esimi",
+        "ROUND_OF_32": "16-esimi",
+        "ROUND_OF_16": "Ottavi",
+        "QUARTERFINALS": "Quarti",
+        "SEMIFINALS": "Semifinali",
+        "FINAL": "Finale"
+      }
     },
     "ALL": "Tutti",
     "ACTIVE": "Attivi",

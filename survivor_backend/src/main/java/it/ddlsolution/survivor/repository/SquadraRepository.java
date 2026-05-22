@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface SquadraRepository extends JpaRepository<Squadra, Long> {
     Optional<Squadra> findBySiglaAndNazione(String sigla, String nazione);
 
+    Optional<Squadra> findBySiglaAndCampionato_Id(String sigla, String campionatoId);
+
     Optional<Squadra> findByNome(String nome);
 
     @Query("SELECT s FROM Squadra s WHERE s.nazione = (SELECT c.nazione FROM Campionato c WHERE c.id = :campionatoId)")

@@ -786,7 +786,7 @@
 
 /* INFO SQUADRA SOTTO LA MAGLIETTA */
 .jersey-info {
-	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	width: 100%;
 	text-align: center;
 }
 
@@ -798,19 +798,40 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
+	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	max-height: 2.4em;
+	word-break: break-word;
+	hyphens: auto;
+
+	// Scaling progressivo in base alla lunghezza del nome
+	&.name-sm {
+		font-size: 0.72rem;
+	}
+	&.name-xs {
+		font-size: 0.62rem;
+		-webkit-line-clamp: 2;
+		max-height: 2.6em; // leggermente più alto per compensare le 2 righe piccole
+	}
 }
 
 .jersey-vs {
 	font-size: 0.7rem;
 	font-weight: 500;
 	color: #6B7280;
-	line-height: 1.1;
+	line-height: 1.2;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	white-space: nowrap;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;   // permette 2 righe invece di troncare con nowrap
+	max-height: 2.4em;
 	max-width: 100%;
+
+	// Font più piccolo per nomi avversario lunghi
+	&.vs-long {
+		font-size: 0.60rem;
+	}
 }
 
 /* RESPONSIVE - Mobile first */
@@ -826,11 +847,17 @@
 	}
 
 	.jersey-name {
-		font-size: 0.7rem;
+		font-size: 0.68rem;
+		-webkit-line-clamp: 3;
+		max-height: 3.6em;
+
+		&.name-sm { font-size: 0.62rem; }
+		&.name-xs { font-size: 0.56rem; }
 	}
 
 	.jersey-vs {
-		font-size: 0.6rem;
+		font-size: 0.60rem;
+		&.vs-long { font-size: 0.54rem; }
 	}
 
 	/* Dimensioni testo sulla maglietta per mobile */
@@ -859,16 +886,16 @@
 
 	/* Aggiusto margini e padding per desktop */
 	.teams-scroll-container {
-		margin: 0; /* Rimosso margin negativo */
+		margin: 0;
 	}
 
 	.teams-scroll-wrapper {
-		padding: 8px 28px; /* Padding uguale a sinistra e destra */
-		gap: 16px; /* Più spazio tra le card su desktop */
+		padding: 8px 28px;
+		gap: 16px;
 	}
 
 	.jersey-card {
-		width: 120px;
+		width: 130px;
 	}
 
 	.jersey-container {
@@ -878,6 +905,11 @@
 
 	.jersey-name {
 		font-size: 0.8rem;
+		-webkit-line-clamp: 3;
+		max-height: 3.6em;
+
+		&.name-sm { font-size: 0.72rem; }
+		&.name-xs { font-size: 0.64rem; }
 	}
 
 	/* Dimensioni testo sulla maglietta per desktop */

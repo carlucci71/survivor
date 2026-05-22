@@ -123,7 +123,18 @@ public class ScheduledPushNotifications {
             log.info("Raccolta utenti per campionato {} ({}) alle {}", campionatoDTO.getId(), sportNome, orario);
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
-                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
+                // giornataDaGiocare non è popolato dal mapper (non esiste nella entity);
+                // va calcolato dalla stessa formula di addInfoCalcolate:
+                // giornataCalcolata + 1, oppure giornataIniziale se mai giocata
+                int giornataDaGiocare = (lega.getGiornataCalcolata() != null)
+                        ? lega.getGiornataCalcolata() + 1
+                        : lega.getGiornataIniziale();
+                int giornataRelativa = giornataDaGiocare - lega.getGiornataIniziale() + 1;
+                if (giornataRelativa <= 0) {
+                    log.warn("giornataRelativa <= 0 per lega {} (giornataDaGiocare={}, giornataIniziale={}), skip",
+                            lega.getId(), giornataDaGiocare, lega.getGiornataIniziale());
+                    continue;
+                }
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
@@ -218,7 +229,17 @@ public class ScheduledPushNotifications {
             String sportNome = campionatoDTO.getSport() != null ? campionatoDTO.getSport().getNome().toLowerCase() : "";
             List<LegaDTO> legheAttive = legaService.legheByCampionato(campionatoDTO.getId(), campionatoDTO.getAnnoCorrente());
             for (LegaDTO lega : legheAttive) {
-                int giornataRelativa = lega.getGiornataDaGiocare() - lega.getGiornataIniziale() + 1;
+                // giornataDaGiocare non è popolato dal mapper (non esiste nella entity);
+                // va calcolato dalla stessa formula di addInfoCalcolate
+                int giornataDaGiocare = (lega.getGiornataCalcolata() != null)
+                        ? lega.getGiornataCalcolata() + 1
+                        : lega.getGiornataIniziale();
+                int giornataRelativa = giornataDaGiocare - lega.getGiornataIniziale() + 1;
+                if (giornataRelativa <= 0) {
+                    log.warn("giornataRelativa <= 0 per lega {} (giornataDaGiocare={}, giornataIniziale={}), skip",
+                            lega.getId(), giornataDaGiocare, lega.getGiornataIniziale());
+                    continue;
+                }
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {

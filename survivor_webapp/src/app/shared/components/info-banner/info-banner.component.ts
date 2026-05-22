@@ -1543,6 +1543,37 @@ const EASTER_EGG_SHADER = `
       </div>
 
     </div>
+
+  @if (showMatchEgg) {
+    <div class="match-egg-overlay"
+         [class.lit]="matchEggLit"
+         [class.extinguished]="matchEggExtinguished"
+         (mousemove)="handleMatchMove($event)"
+         (touchmove)="handleMatchMove($event)"
+         (click)="handleMatchClick()">
+      <div class="match-egg-scene">
+        <div class="match-egg-match" [style.transform]="matchTransform">
+          <div class="match-egg-smoke-container">
+            <div class="match-egg-smoke match-egg-smoke-1"></div>
+            <div class="match-egg-smoke match-egg-smoke-2"></div>
+            <div class="match-egg-smoke match-egg-smoke-3"></div>
+          </div>
+          <div class="match-egg-flame-container">
+            <div class="match-egg-flame"></div>
+            <div class="match-egg-sparkles"></div>
+          </div>
+          <div class="match-egg-head"></div>
+          <div class="match-egg-stick"></div>
+        </div>
+      </div>
+      <button class="match-egg-close" (click)="onCloseMatchEgg($event)">✕</button>
+      @if (matchEggMessage && matchEggMessageVisible) {
+        <div class="match-egg-msg" [class.visible]="matchEggMessageVisible">
+          <span class="match-egg-msg-text">{{ matchEggMessage }}</span>
+        </div>
+      }
+    </div>
+  }
   `,
   styles: [`
     :host { display: block; width: 100%; }
@@ -1981,6 +2012,217 @@ const EASTER_EGG_SHADER = `
       .chip-emoji { font-size: 1.2rem; }
       .chip-label { font-size: 0.54rem; }
     }
+
+    /* ─── MATCH EASTER EGG ─── */
+    .match-egg-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 99999;
+      background-color: rgba(18, 18, 18, 0.78);
+      color: rgba(255,255,255,0.5);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .match-egg-overlay::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(74,37,17,0.45) 0%, transparent 65%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .match-egg-overlay.lit::before { opacity: 1; }
+    .match-egg-overlay.lit { color: rgba(255,255,255,0.85); }
+    .match-egg-instruction {
+      position: absolute;
+      top: 15%;
+      font-size: 1.2rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      user-select: none;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      color: inherit;
+      text-shadow: none;
+    }
+    .match-egg-scene {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .match-egg-match {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px;
+      z-index: 10;
+    }
+    .match-egg-head {
+      width: 32px; height: 48px;
+      background: linear-gradient(135deg, #a31515, #5e0b0b);
+      border-radius: 40% 40% 30% 30%;
+      margin-bottom: -10px;
+      z-index: 2;
+      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.4), inset 3px 3px 6px rgba(255,255,255,0.1);
+      transition: background 0.3s ease;
+    }
+    .match-egg-overlay.lit .match-egg-head,
+    .match-egg-overlay.extinguished .match-egg-head {
+      background: linear-gradient(135deg, #111, #000);
+      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.8), inset 2px 2px 4px rgba(255,255,255,0.05);
+    }
+    .match-egg-stick {
+      width: 18px; height: 250px;
+      background: linear-gradient(90deg, #d2a679, #e6c299 30%, #b88654 80%, #8c6239);
+      border-radius: 2px 2px 8px 8px;
+      z-index: 1;
+      box-shadow: inset -2px 0 5px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    .match-egg-stick::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 0%;
+      background: linear-gradient(to bottom, #111 0%, #333 70%, transparent 100%);
+      transition: height 0s;
+    }
+    .match-egg-overlay.lit .match-egg-stick::after {
+      height: 60%;
+      transition: height 15s linear;
+    }
+    .match-egg-overlay.extinguished .match-egg-stick::after {
+      height: 60%;
+      transition: none;
+    }
+    .match-egg-flame-container {
+      position: absolute;
+      top: 10px; left: 50%;
+      transform: translateX(-50%);
+      width: 100px; height: 150px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+      transition: opacity 0.2s ease, transform 0s;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .match-egg-overlay.lit .match-egg-flame-container {
+      opacity: 1;
+      transform: translateX(-50%) translateY(140px);
+      transition: opacity 0.2s ease, transform 15s linear;
+    }
+    .match-egg-flame {
+      width: 60px; height: 120px;
+      background: radial-gradient(ellipse at bottom, #fff 5%, #ffeb99 20%, #ff9900 50%, #ff3300 80%, transparent 100%);
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 -10px 40px #ff3300, 0 0 80px #ff9900;
+      animation: matchFlicker 0.1s infinite alternate, matchSway 3s ease-in-out infinite alternate;
+      transform-origin: bottom center;
+      filter: blur(2px);
+    }
+    .match-egg-sparkles {
+      position: absolute;
+      bottom: 20px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .match-egg-overlay.lit .match-egg-sparkles {
+      animation: matchExplode 0.5s ease-out forwards;
+    }
+    .match-egg-smoke-container {
+      position: absolute;
+      top: 60px; left: 50%;
+      transform: translateX(-50%);
+      width: 50px; height: 50px;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .match-egg-smoke {
+      position: absolute;
+      width: 30px; height: 30px;
+      background: radial-gradient(circle, rgba(180,180,180,0.4) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(5px);
+      opacity: 0;
+    }
+    .match-egg-overlay.extinguished .match-egg-smoke-1 { animation: matchSmokeRise 2.5s ease-out forwards; }
+    .match-egg-overlay.extinguished .match-egg-smoke-2 { animation: matchSmokeRise 3s ease-out 0.3s forwards; }
+    .match-egg-overlay.extinguished .match-egg-smoke-3 { animation: matchSmokeRise 3.5s ease-out 0.6s forwards; }
+    .match-egg-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.75);
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .match-egg-close:hover { background: rgba(255,255,255,0.22); }
+    .match-egg-msg {
+      position: absolute;
+      top: 12%; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      text-align: center;
+      opacity: 0; transition: opacity 0.6s ease;
+      pointer-events: none;
+      width: 90%; max-width: 340px;
+    }
+    .match-egg-msg.visible { opacity: 1; }
+    .match-egg-msg-text {
+      font-size: 1.05rem; font-weight: 700; color: #fff;
+      text-shadow: 0 0 12px rgba(255,120,0,0.9), 0 2px 6px rgba(0,0,0,0.6);
+      letter-spacing: 0.5px; text-align: center;
+      line-height: 1.4; word-break: break-word;
+    }
+    @media (max-width: 480px) {
+      .match-egg-msg { top: 10%; width: 88%; }
+      .match-egg-msg-text { font-size: 0.9rem; letter-spacing: 0.3px; }
+    }
+    @media (max-width: 360px) {
+      .match-egg-msg { top: 8%; width: 85%; }
+      .match-egg-msg-text { font-size: 0.8rem; }
+    }
+    @keyframes matchFlicker {
+      0% { transform: scaleX(0.98) scaleY(1.02); opacity: 0.9; }
+      100% { transform: scaleX(1.02) scaleY(0.98); opacity: 1; }
+    }
+    @keyframes matchSway {
+      0% { transform: rotate(-5deg); }
+      100% { transform: rotate(5deg); }
+    }
+    @keyframes matchExplode {
+      0% { box-shadow: 0 0 0 #fff, 0 0 0 #ff9900, 0 0 0 #ff3300; }
+      50% { box-shadow: -20px -30px 10px #ff9900, 30px -40px 15px #ff3300, -10px -60px 5px #fff; }
+      100% { box-shadow: -40px -60px 20px transparent, 50px -80px 30px transparent, -20px -100px 10px transparent; }
+    }
+    @keyframes matchSmokeRise {
+      0% { transform: translateY(0) scale(1) translateX(0); opacity: 0.8; }
+      50% { transform: translateY(-100px) scale(2.5) translateX(-20px); opacity: 0.5; }
+      100% { transform: translateY(-250px) scale(4) translateX(20px); opacity: 0; }
+    }
   `]
 })
 export class ProfiloDialogComponent implements OnInit, OnDestroy {
@@ -2001,6 +2243,47 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
   private _eggVfx: any = null;
   private _eggOverlay: HTMLElement | null = null;
   private _eggBgCanvas: HTMLCanvasElement | null = null;
+
+  // ── Match easter egg state ─────────────────────────────────────────────────
+  showMatchEgg = false;
+  matchEggLit = false;
+  matchEggExtinguished = false;
+  matchEggInstructionOpacity = '0';
+  matchTransform = 'translate(0px) rotate(0deg)';
+  matchEggMessage: string | null = null;
+  matchEggMessageVisible = false;
+  private readonly _matchEggMessages: { it: string; en: string }[] = [
+    { it: 'Sei letteralmente in fiamme. Qualcuno chiami i pompieri. 🔥', en: 'You\'re literally on fire. Someone call 911. 🔥' },
+    { it: 'Un genio assoluto. Tua madre sarebbe fiera. 👏', en: 'An absolute genius. Your mother would be proud. 👏' },
+    { it: 'admin_fire? Ci hai pensato a lungo, eh? 🤔', en: 'admin_fire? That took some serious brainpower. 🤔' },
+    { it: 'Complimenti. Ora torna a perdere come al solito. 😈', en: 'Congrats. Now go back to losing like usual. 😈' },
+    { it: 'Hai trovato il segreto. Peccato non serva assolutamente a niente. 💀', en: 'You found the secret. Too bad it\'s completely useless. 💀' },
+    { it: 'Secondi preziosi della tua vita sprecati per accendere un cerino virtuale. 🎉', en: 'Precious seconds of your life wasted lighting a virtual match. 🎉' },
+    { it: 'Sì, funziona. No, non sblocca niente. Vai a fare qualcosa di utile. 💼', en: 'Yes, it works. No, it unlocks nothing. Go touch grass. 💼' },
+    { it: 'Aspettavi una ricompensa? Eccola: 👋', en: 'Were you expecting a reward? Here it is: 👋' },
+    { it: 'Riesci ad accendere un cerino digitale. Candidati al Nobel. 🥇', en: 'You lit a digital match. Nobel Prize incoming. 🥇' },
+    { it: 'Non hai niente di meglio da fare? Nemmeno noi. 🤝', en: 'Nothing better to do? Neither do we. 🤝' },
+    { it: 'Breaking news: utente accende fiammifero, guadagna zero punti. 📰', en: 'Breaking: user lights match, gains zero points. 📰' },
+    { it: 'Sei on fire! Solo in senso figurato però. E letterale. Però basta. 🔥', en: 'You\'re on fire! Figuratively. And literally. But that\'s it. 🔥' },
+    { it: 'Fiammifero acceso. QI: invariato. 🧠', en: 'Match lit. IQ: unchanged. 🧠' },
+    { it: 'Hacker del profilo rilevato. Livello di minaccia: ridicolo. 👨‍💻', en: 'Profile hacker detected. Threat level: laughable. 👨‍💻' },
+    { it: 'Potevi semplicemente giocare. Ma hai scelto questo. Rispetto. 🤷', en: 'You could\'ve just played the game. You chose this. Respect. 🤷' },
+    { it: 'Easter egg trovato. Miglioramento della vita: 0%. 📊', en: 'Easter egg found. Life improvement: 0%. 📊' },
+    { it: 'Sei speciale. Nel senso che nessun altro ha tempo per queste cose. ✨', en: 'You\'re special. As in, nobody else has time for this. ✨' },
+    { it: 'Il fuoco è bello, vero? Pittoresco. Ora smettila e vai a giocare. 🎮', en: 'Fire is pretty, right? Lovely. Now stop and go play. 🎮' },
+    { it: 'Tipo, c\'era tutto un campionato da seguire. Ma ok, il cerino. 😂', en: 'There was a whole championship to follow. But sure, the match. 😂' },
+    { it: 'Se lo racconti agli amici, nessuno ti crederà. E fanno bene. 😏', en: 'If you tell your friends, nobody will believe you. Good call on their part. 😏' },
+  ];
+  private _matchIsLit = false;
+  private _matchHeat = 0;
+  private _matchLastTime = 0;
+  private _matchLastX = 0;
+  private _matchLastY = 0;
+  private _matchLastStrikeTime = 0;
+  private _matchResetTimeout: ReturnType<typeof setTimeout> | null = null;
+  private _matchAudioCtx: AudioContext | null = null;
+  private _matchFireNoiseSource: AudioBufferSourceNode | null = null;
+  private _matchFireGainNode: GainNode | null = null;
 
   activeSport: 'calcio' | 'basket' | 'tennis' = 'calcio';
 
@@ -2180,6 +2463,11 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
   // ── Submit ─────────────────────────────────────────────────────────────────
 
   onSubmit() {
+    // Easter egg: se il nickname è "admin_fire" lancia il cerino
+    if (this.userProfile.nickname.trim().toUpperCase() === 'ADMIN_FIRE') {
+      this.openMatchEgg();
+      return;
+    }
     if (!this.isFormValid()) { this.showFeedback('Inserisci un nickname valido', 'error'); return; }
     this.isSaving = true;
     this.feedbackMessage = null;
@@ -2468,10 +2756,204 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
     }
   }
 
+  // ── Match Easter Egg ─────────────────────────────────────────────────────
+
+  openMatchEgg(): void {
+    this.showMatchEgg = true;
+    this._matchIsLit = false;
+    this._matchHeat = 0;
+    this.matchEggLit = false;
+    this.matchEggExtinguished = false;
+    this.matchEggInstructionOpacity = '0';
+    this.matchTransform = 'translate(0px) rotate(0deg)';
+    this._matchLastTime = 0;
+  }
+
+  closeMatchEgg(): void {
+    this.showMatchEgg = false;
+    this._matchIsLit = false;
+    this.matchEggLit = false;
+    this.matchEggExtinguished = false;
+    this._matchHeat = 0;
+    this.matchEggInstructionOpacity = '0';
+    this.matchEggMessage = null;
+    this.matchEggMessageVisible = false;
+    if (this._matchResetTimeout) { clearTimeout(this._matchResetTimeout); this._matchResetTimeout = null; }
+    this._matchStopFireSound();
+  }
+
+  onCloseMatchEgg(e: MouseEvent): void {
+    e.stopPropagation();
+    this.closeMatchEgg();
+  }
+
+  handleMatchMove(e: MouseEvent | TouchEvent): void {
+    if (this._matchIsLit) return;
+    if (this.matchEggExtinguished) {
+      this.matchEggExtinguished = false;
+      if (this._matchResetTimeout) { clearTimeout(this._matchResetTimeout); this._matchResetTimeout = null; }
+    }
+    const pos = this._matchPos(e);
+    const currentTime = Date.now();
+    if (this._matchLastTime !== 0) {
+      const deltaTime = currentTime - this._matchLastTime;
+      if (deltaTime > 0) {
+        const dx = pos.x - this._matchLastX;
+        const dy = pos.y - this._matchLastY;
+        const speed = Math.sqrt(dx * dx + dy * dy) / deltaTime;
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const isOverMatch = Math.abs(pos.x - centerX) < 150 && Math.abs(pos.y - centerY) < 250;
+        if (isOverMatch && speed > 0.5) {
+          this._matchHeat += speed;
+          if (currentTime - this._matchLastStrikeTime > 80) {
+            this._matchPlayStrikeSound(speed);
+            this._matchLastStrikeTime = currentTime;
+          }
+          const shakeX = (Math.random() - 0.5) * Math.min(speed * 2, 10);
+          this.matchTransform = `translateX(${shakeX}px) rotate(${shakeX / 2}deg)`;
+          if (this._matchHeat > 30) { this._matchIgnite(); }
+        } else {
+          this._matchHeat = Math.max(0, this._matchHeat - 2);
+          if (this._matchHeat === 0) { this.matchTransform = 'translate(0px) rotate(0deg)'; }
+        }
+      }
+    }
+    this._matchLastX = pos.x;
+    this._matchLastY = pos.y;
+    this._matchLastTime = currentTime;
+  }
+
+  handleMatchClick(): void {
+    this._matchInitAudio();
+    if (this._matchIsLit) {
+      this._matchIsLit = false;
+      this._matchHeat = 0;
+      this.matchEggLit = false;
+      this.matchEggExtinguished = true;
+      this._matchStopFireSound();
+      this._matchPlayHissSound();
+      if (this._matchResetTimeout) { clearTimeout(this._matchResetTimeout); }
+      this._matchResetTimeout = setTimeout(() => { this.matchEggExtinguished = false; }, 4000);
+    }
+  }
+
+  private _matchIgnite(): void {
+    this._matchIsLit = true;
+    this.matchEggExtinguished = false;
+    this.matchEggLit = true;
+    this.matchTransform = 'translate(0px) rotate(0deg)';
+    this.matchEggInstructionOpacity = '0';
+    this._matchPlayIgniteSound();
+    // Messaggio sarcastico random nella lingua corrente
+    const idx = Math.floor(Math.random() * this._matchEggMessages.length);
+    const picked = this._matchEggMessages[idx];
+    const lang = (this.translate.currentLang || this.translate.defaultLang || 'it');
+    this.matchEggMessage = lang.startsWith('it') ? picked.it : picked.en;
+    setTimeout(() => { this.matchEggMessageVisible = true; }, 800);
+    setTimeout(() => { this.matchEggMessageVisible = false; }, 5000);
+    if (this._matchResetTimeout) { clearTimeout(this._matchResetTimeout); }
+    this._matchResetTimeout = setTimeout(() => { this.closeMatchEgg(); }, 15000);
+  }
+
+  private _matchPos(e: MouseEvent | TouchEvent): { x: number; y: number } {
+    if ('touches' in e && e.touches.length > 0) {
+      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY };
+  }
+
+  private _matchInitAudio(): void {
+    if (!this._matchAudioCtx) {
+      const AudioCtx = (window.AudioContext || (window as any).webkitAudioContext) as typeof AudioContext;
+      this._matchAudioCtx = new AudioCtx();
+    }
+    if (this._matchAudioCtx.state === 'suspended') { this._matchAudioCtx.resume(); }
+  }
+
+  private _matchPlayStrikeSound(intensity: number): void {
+    this._matchInitAudio();
+    if (!this._matchAudioCtx) return;
+    const sr = this._matchAudioCtx.sampleRate;
+    const buf = this._matchAudioCtx.createBuffer(1, Math.floor(sr * 0.05), sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) { data[i] = Math.random() * 2 - 1; }
+    const src = this._matchAudioCtx.createBufferSource();
+    src.buffer = buf;
+    const filt = this._matchAudioCtx.createBiquadFilter();
+    filt.type = 'bandpass';
+    filt.frequency.value = 800 + Math.min(intensity, 5) * 400;
+    const gain = this._matchAudioCtx.createGain();
+    gain.gain.setValueAtTime(0.3, this._matchAudioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, this._matchAudioCtx.currentTime + 0.04);
+    src.connect(filt); filt.connect(gain); gain.connect(this._matchAudioCtx.destination);
+    src.start();
+  }
+
+  private _matchPlayIgniteSound(): void {
+    this._matchInitAudio();
+    if (!this._matchAudioCtx) return;
+    const ctx = this._matchAudioCtx;
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.5);
+    const oscGain = ctx.createGain();
+    oscGain.gain.setValueAtTime(1, ctx.currentTime);
+    oscGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    osc.connect(oscGain); oscGain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.5);
+    const sr = ctx.sampleRate;
+    const buf = ctx.createBuffer(1, Math.floor(sr * 2), sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) { data[i] = Math.random() * 2 - 1; }
+    this._matchFireNoiseSource = ctx.createBufferSource();
+    this._matchFireNoiseSource.buffer = buf;
+    this._matchFireNoiseSource.loop = true;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 300;
+    this._matchFireGainNode = ctx.createGain();
+    this._matchFireGainNode.gain.setValueAtTime(0, ctx.currentTime);
+    this._matchFireGainNode.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 1);
+    this._matchFireNoiseSource.connect(filt); filt.connect(this._matchFireGainNode);
+    this._matchFireGainNode.connect(ctx.destination);
+    this._matchFireNoiseSource.start();
+  }
+
+  private _matchPlayHissSound(): void {
+    this._matchInitAudio();
+    if (!this._matchAudioCtx) return;
+    const ctx = this._matchAudioCtx;
+    const sr = ctx.sampleRate;
+    const buf = ctx.createBuffer(1, Math.floor(sr * 0.3), sr);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) { data[i] = Math.random() * 2 - 1; }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'highpass'; filt.frequency.value = 2000;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+    src.start();
+  }
+
+  private _matchStopFireSound(): void {
+    if (this._matchFireNoiseSource && this._matchFireGainNode && this._matchAudioCtx) {
+      this._matchFireGainNode.gain.linearRampToValueAtTime(0, this._matchAudioCtx.currentTime + 0.3);
+      setTimeout(() => {
+        if (this._matchFireNoiseSource) { this._matchFireNoiseSource.stop(); this._matchFireNoiseSource = null; }
+      }, 300);
+    }
+  }
+
   ngOnDestroy(): void {
     this._clearEasterEggProgress();
     if (this._eggVfx) { try { this._eggVfx.destroy(); } catch (_) {} this._eggVfx = null; }
     if (this._eggOverlay)  { this._eggOverlay.remove();  this._eggOverlay  = null; }
+    this.closeMatchEgg();
+    if (this._matchAudioCtx) { this._matchAudioCtx.close(); this._matchAudioCtx = null; }
   }
 }
 

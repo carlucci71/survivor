@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,6 +50,9 @@ public class CalendarioAPI2 implements ICalendario {
     @Value("${external-api.calendario.implementation.API2.url-calendar-mondiali}")
     String urlCalendarMondiali;
 
+    @Value("${external-api.calendario.implementation.API2.url-calendar-roland-garros}")
+    String urlCalendarRolandGarros;
+
 
     private String faseFromCampionato(EnumAPI2.Campionato campionato) {
         String fase = null;
@@ -66,6 +70,10 @@ public class CalendarioAPI2 implements ICalendario {
         // Branch dedicato per i Mondiali: struttura URL e risposta API differente
         if (campionato.equals(EnumAPI2.Campionato.MONDIALI_2026.name())) {
             return getPartiteMondiali(campionatoDTO, giornata, anno);
+        }
+        // Branch dedicato per il Roland Garros: tabellone via endpoint separato
+        if (campionato.equals(EnumAPI2.Campionato.ROLAND_GARROS.name())) {
+            return getPartiteRolandGarros(campionatoDTO, giornata, anno);
         }
         List<SquadraDTO> squadre=campionatoDTO.getSquadre();
         String sport = campionatoDTO.getSport().getId();
@@ -205,6 +213,90 @@ public class CalendarioAPI2 implements ICalendario {
             log.warn("Errore elaborazione partita Mondiali: {}", e.getMessage());
             return null;
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // ROLAND GARROS - tabellone via endpoint dedicato Gazzetta
+    // -------------------------------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private List<PartitaDTO> getPartiteRolandGarros(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        List<PartitaDTO> ret = new ArrayList<>();
+        log.info("Roland Garros getPartite giornata={} url={}", giornata, urlCalendarRolandGarros);
+        Map<String, Object> response = utility.callUrl(urlCalendarRolandGarros, Map.class);
+        Map<String, Object> data = (Map<String, Object>) response.get("data");
+        elaboraRolandGarros(campionatoDTO.getId(), giornata, data, ret, anno);
+        return ret;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void elaboraRolandGarros(String campionato, int giornata, Map<String, Object> data,
+                                     List<PartitaDTO> ret, short anno) {
+        String roundName = EnumAPI2.RoundTennis.values()[giornata - 1].key;
+        List<Map<String, Object>> cr = (List<Map<String, Object>>) data.get("competitionRounds");
+        if (cr == null) {
+            log.warn("Roland Garros: competitionRounds non trovato nella risposta API");
+            return;
+        }
+        List<Map<String, Object>> matches = cr.stream()
+                .filter(map -> roundName.equals(map.get("name")))
+                .map(map -> (List<Map<String, Object>>) map.get("match"))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElseGet(ArrayList::new);
+
+        for (Map<String, Object> match : matches) {
+            try {
+                // Salta i match di doppio: nel singolare ciascuna entry ha esattamente 1 giocatore.
+                // Nel doppio firstEntry.players ha 2 elementi → nomi abbreviati diversi dal singolare
+                // produrrebbero sigle duplicate (es. "C._ALCARAZ" vs "CARLOS_ALCARAZ").
+                Map<?, ?> firstEntryCheck = (Map<?, ?>) match.get("firstEntry");
+                if (firstEntryCheck == null) {
+                    log.debug("Roland Garros giornata {}: skip match senza firstEntry", giornata);
+                    continue;
+                }
+                List<?> firstPlayers = (List<?>) firstEntryCheck.get("players");
+                if (firstPlayers == null || firstPlayers.size() != 1) {
+                    log.debug("Roland Garros giornata {}: skip match non-singolo (players={})",
+                            giornata, firstPlayers == null ? "null" : firstPlayers.size());
+                    continue;
+                }
+
+                String dateStr = match.get("date") != null
+                        ? match.get("date").toString()
+                        : match.get("utcDate").toString();
+                OffsetDateTime odt = OffsetDateTime.parse(dateStr);
+                LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+                String status = match.get("status").toString();
+                Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+                Result resultHome = getResultTennis(match, "first", statoPartita);
+                Result resultAway = getResultTennis(match, "second", statoPartita);
+                PartitaDTO dto = PartitaDTO.builder()
+                        .sportId(EnumAPI2.Sport.TENNIS.name())
+                        .campionatoId(campionato)
+                        .giornata(giornata)
+                        .orario(romaTime)
+                        .stato(statoPartita)
+                        .casaSigla(toTennisSigla(resultHome.team()))
+                        .casaNome(resultHome.team())
+                        .fuoriSigla(toTennisSigla(resultAway.team()))
+                        .fuoriNome(resultAway.team())
+                        .scoreCasa(resultHome.teamScore())
+                        .scoreFuori(resultAway.teamScore())
+                        .anno(anno)
+                        .build();
+                log.debug("Roland Garros partita: {} vs {}", dto.getCasaNome(), dto.getFuoriNome());
+                ret.add(dto);
+            } catch (Exception e) {
+                log.warn("Errore elaborazione partita Roland Garros giornata {}: {}", giornata, e.getMessage());
+            }
+        }
+    }
+
+    /** Converte il displayName del tennista in sigla uppercase con underscore: "Jannik Sinner" → "JANNIK_SINNER" */
+    private static String toTennisSigla(String displayName) {
+        if (displayName == null) return "";
+        return displayName.toUpperCase().replace(' ', '_').replace('-', '_');
     }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
