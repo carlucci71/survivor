@@ -514,6 +514,16 @@
     "BACK_HOME": "Back to Home",
     "ERROR_GENERIC": "An error occurred. Please try again."
   },
+  "RICHIESTA_INGRESSO": {
+    "TITLE": "Request to join",
+    "SUBTITLE": "You are about to send a request to join this league. The creator will need to approve it.",
+    "ROUND": "Round",
+    "PARTICIPANTS": "{{count}} participants",
+    "SEND_BTN": "Send request",
+    "SUCCESS_TITLE": "Request sent!",
+    "SUCCESS_DESC": "Your request for {{name}} has been sent. You will receive a notification as soon as the creator approves it.",
+    "SUCCESS_BTN": "Great!"
+  },
   "RICHIESTE": {
     "PAGE_TITLE": "Join requests",
     "EMPTY": "No requests for your leagues",
@@ -539,7 +549,16 @@
     "ALREADY_PENDING": "You already have a pending request for this league",
     "LEGA_FULL": "The league is full",
     "REQUEST_BUTTON": "Request to join",
-    "CANCEL_REQUEST_BUTTON": "Cancel request"
+    "CANCEL_REQUEST_BUTTON": "Cancel request",
+    "PENDING_TITLE": "Request sent!",
+    "PENDING_DESC": "Your request to join \"{{lega}}\" is waiting for leader approval.",
+    "SENT_ON": "Sent on",
+    "POLLING_HINT": "Checking for updates automatically...",
+    "APPROVED_TITLE": "You've been accepted!",
+    "APPROVED_DESC": "The leader approved your request. You can now enter \"{{lega}}\"!",
+    "GO_TO_LEGA": "Go to league",
+    "REJECTED_TITLE": "Request not approved",
+    "REJECTED_DESC": "The leader rejected your request for \"{{lega}}\"."
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Service Unavailable",
@@ -713,7 +732,12 @@
     "NO_DATA": "League information not available.",
     "INVITE_TITLE": "You've been invited!",
     "INVITE_SUBTITLE": "The link brought you directly to this league",
-    "ALREADY_IN_LEGA": "You are already in this league!"
+    "ALREADY_IN_LEGA": "You are already in this league!",
+    "APPROVAL_REQUIRED_DESC": "This league requires leader approval to join.",
+    "JOIN_NOW": "Join now",
+    "REQUEST_ACCESS": "Request access",
+    "SENDING": "Sending...",
+    "BACK_TO_HOME": "Back to home"
   },
   "SUSPENSIONS": {
     "TITLE": "Manage Suspensions",

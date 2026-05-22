@@ -291,6 +291,17 @@ $radius-sm: 10px;
     box-shadow: 0 4px 10px rgba(10, 61, 145, 0.1);
   }
 
+  &--terminated {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: $border !important;
+    background: #F3F4F6 !important;
+    pointer-events: none;
+
+    .cn-camp-name { color: $muted; font-weight: 500; }
+    .cn-camp-info { color: $muted; opacity: 0.7; }
+  }
+
   &--active {
     border-color: $blue !important;
     background: linear-gradient(135deg, rgba(10, 61, 145, 0.06), rgba(79, 195, 247, 0.08)) !important;
@@ -299,6 +310,18 @@ $radius-sm: 10px;
     .cn-camp-name { color: $blue; font-weight: 700; }
     .cn-camp-info { color: rgba(10, 61, 145, 0.7); }
   }
+}
+
+.cn-camp-ended-tag {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #B91C1C;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .cn-camp-name {
