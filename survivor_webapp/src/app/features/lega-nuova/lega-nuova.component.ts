@@ -294,7 +294,23 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     });
   }
 
+  isCampionatoTerminato(c: Campionato): boolean {
+    if (!c.giornataDaGiocare || !c.numGiornate) return false;
+    if (c.giornataDaGiocare > c.numGiornate) return true;
+    // giornataDaGiocare === numGiornate: può essere l'ultima da giocare (futuro) o terminato (passato)
+    // usiamo iniziGiornate per capire se l'ultima giornata è già iniziata
+    if (c.giornataDaGiocare === c.numGiornate && c.iniziGiornate?.length) {
+      const lastIdx = c.numGiornate - 1;
+      // Se l'indice esatto non esiste (alcuni campionati hanno meno entry di numGiornate),
+      // usiamo l'ultima entry disponibile come proxy
+      const idx = Math.min(lastIdx, c.iniziGiornate.length - 1);
+      return new Date(c.iniziGiornate[idx]) < new Date();
+    }
+    return false;
+  }
+
   selectCampionato(c: Campionato): void {
+    if (this.isCampionatoTerminato(c)) return;
     this.campionatoSel = c;
     this.campionatoTouched = true;
     this.onCampionatoChange();

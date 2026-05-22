@@ -1,32 +1,42 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LegaService } from '../../core/services/lega.service';
-import { Lega, StatoLega } from '../../core/models/interfaces.model';
+import { Lega, LegaJoinRequest, StatoLega } from '../../core/models/interfaces.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LegaCardComponent } from '../../shared/components/lega-card/lega-card.component';
 import { UtilService } from '../../core/services/util.service';
 import { ConfermaJoinDialogComponent } from '../../shared/components/conferma-join-dialog.component';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { forkJoin } from 'rxjs';
+
+type InvitedState = 'none' | 'pending' | 'approved' | 'rejected';
 
 @Component({
   selector: 'app-lega-join',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, MatSnackBarModule, LegaCardComponent, TranslateModule],
+  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule, LegaCardComponent, TranslateModule],
   templateUrl: './lega-join.component.html',
   styleUrls: ['./lega-join.component.scss'],
 })
-export class LegaJoinComponent implements OnInit, AfterViewInit {
+export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   leghe: Lega[] = [];
   invitedLega: Lega | null = null;
   invitedLegaLoading = false;
+  pendingLegaIds = new Set<number>();
+  invitedJoinState: InvitedState = 'none';
+  invitedJoinRequest: LegaJoinRequest | null = null;
+
+  private invitedPollInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly INVITED_POLL_MS = 20000;
 
   filterSport = '';
   filterCampionato = '';
@@ -83,7 +93,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
+    public router: Router,
     private authService: AuthService,
     private legaService: LegaService,
     private utilService: UtilService,
@@ -97,9 +107,12 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
     const legaIdStr = this.route.snapshot.queryParamMap.get('legaId');
     if (legaIdStr) {
       this.invitedLegaLoading = true;
-      this.legaService.getLegaById(Number(legaIdStr)).subscribe({
-        next: (lega) => {
-          // Se l'utente è già nella lega, redirect diretto alla pagina lega
+      forkJoin({
+        lega: this.legaService.getLegaById(Number(legaIdStr)),
+        richieste: this.legaService.mieRichieste(),
+      }).subscribe({
+        next: ({ lega, richieste }) => {
+          richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
           if (lega.ruoloGiocatoreLega?.value !== 'NESSUNO') {
             this.snackBar.open(this.translate.instant('JOIN_LEAGUE.ALREADY_IN_LEGA'), '', { duration: 3000 });
             this.router.navigate(['/lega', lega.id]);
@@ -107,9 +120,20 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
           }
           this.invitedLega = lega;
           this.invitedLegaLoading = false;
+          const existing = richieste.find(r => r.legaId === lega.id);
+          if (existing) {
+            this.invitedJoinRequest = existing;
+            this.invitedJoinState = this.mapStatoInvited(existing.stato);
+            if (existing.stato === 'PENDING') this.startInvitedPolling(lega.id);
+            if (existing.stato === 'APPROVED') this.router.navigate(['/lega', lega.id]);
+          }
         },
-        error: () => {
-          this.invitedLegaLoading = false;
+        error: () => { this.invitedLegaLoading = false; }
+      });
+    } else {
+      this.legaService.mieRichieste().subscribe({
+        next: (richieste) => {
+          richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
         }
       });
     }
@@ -125,6 +149,41 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
       next: (leghe) => (this.leghe = leghe),
       error: (err) => console.error('Errore caricamento leghe libere', err),
     });
+  }
+
+  private mapStatoInvited(stato: string): InvitedState {
+    if (stato === 'PENDING') return 'pending';
+    if (stato === 'APPROVED') return 'approved';
+    if (stato === 'REJECTED') return 'rejected';
+    return 'none';
+  }
+
+  private startInvitedPolling(legaId: number): void {
+    this.stopInvitedPolling();
+    this.invitedPollInterval = setInterval(() => {
+      this.legaService.mieRichieste().subscribe({
+        next: (richieste) => {
+          const req = richieste.find(r => r.legaId === legaId);
+          if (req && req.stato !== 'PENDING') {
+            this.invitedJoinRequest = req;
+            this.invitedJoinState = this.mapStatoInvited(req.stato);
+            this.stopInvitedPolling();
+            if (req.stato === 'APPROVED') this.router.navigate(['/lega', legaId]);
+          }
+        }
+      });
+    }, this.INVITED_POLL_MS);
+  }
+
+  private stopInvitedPolling(): void {
+    if (this.invitedPollInterval) {
+      clearInterval(this.invitedPollInterval);
+      this.invitedPollInterval = null;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.stopInvitedPolling();
   }
   getGiocaIcon(idSport: string): string {
     return this.utilService.getGiocaIcon(idSport);
@@ -148,6 +207,11 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
 
     // Lega con accesso su approvazione (pubblica o privata) → mostra dialog di conferma
     if (!lega.accessoLibero) {
+      // Blocca re-submit se c'è già una richiesta pending
+      if (this.pendingLegaIds.has(lega.id)) {
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.ALREADY_PENDING'), '', { duration: 4000 });
+        return;
+      }
       import('../../shared/components/richiedi-ingresso-dialog.component').then(m => {
         const ref = this.dialog.open(m.RichiediIngressoDialogComponent, {
           width: '400px',
@@ -159,18 +223,32 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
           if (!confirmed) return;
           this.legaService.richiediIngresso(lega.id).subscribe({
             next: () => {
-              this.dialog.open(m.RichiediIngressoDialogComponent, {
-                width: '400px',
-                maxWidth: '95vw',
-                data: { lega, success: true },
-                autoFocus: false
-              });
+              this.pendingLegaIds.add(lega.id);
+              if (this.invitedLega?.id === lega.id) {
+                this.invitedJoinState = 'pending';
+                this.startInvitedPolling(lega.id);
+              } else {
+                this.dialog.open(m.RichiediIngressoDialogComponent, {
+                  width: '400px',
+                  maxWidth: '95vw',
+                  data: { lega, success: true },
+                  autoFocus: false
+                });
+              }
             },
             error: (err) => {
               const code = err?.error?.message as string | undefined;
               let msg = this.translate.instant('COMMON.ERROR_GENERIC');
               if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
-              else if (code === 'REQUEST_ALREADY_EXISTS') msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
+              else if (code === 'REQUEST_ALREADY_EXISTS') {
+                this.pendingLegaIds.add(lega.id);
+                if (this.invitedLega?.id === lega.id) {
+                  this.invitedJoinState = 'pending';
+                  this.startInvitedPolling(lega.id);
+                  return;
+                }
+                msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
+              }
               this.snackBar.open(msg, '', { duration: 4000 });
             }
           });

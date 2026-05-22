@@ -602,6 +602,16 @@
     "OPTIONAL": "Opzionale",
     "ERROR_GENERIC": "Si è verificato un errore. Riprova."
   },
+  "RICHIESTA_INGRESSO": {
+    "TITLE": "Richiedi ingresso",
+    "SUBTITLE": "Stai per inviare una richiesta per unirti a questa lega. Il creatore dovrà approvarla.",
+    "ROUND": "Giornata",
+    "PARTICIPANTS": "{{count}} partecipanti",
+    "SEND_BTN": "Invia richiesta",
+    "SUCCESS_TITLE": "Richiesta inviata!",
+    "SUCCESS_DESC": "La tua richiesta per {{name}} è stata inviata. Riceverai una notifica non appena il creatore la approverà.",
+    "SUCCESS_BTN": "Perfetto!"
+  },
   "RICHIESTE": {
     "PAGE_TITLE": "Richieste di ingresso",
     "EMPTY": "Nessuna richiesta per le tue leghe",
@@ -627,7 +637,16 @@
     "ALREADY_PENDING": "Hai già una richiesta in attesa per questa lega",
     "LEGA_FULL": "La lega è al completo",
     "REQUEST_BUTTON": "Richiedi ingresso",
-    "CANCEL_REQUEST_BUTTON": "Annulla richiesta"
+    "CANCEL_REQUEST_BUTTON": "Annulla richiesta",
+    "PENDING_TITLE": "Richiesta inviata!",
+    "PENDING_DESC": "La tua richiesta per la lega \"{{lega}}\" è in attesa di approvazione dal leader.",
+    "SENT_ON": "Inviata il",
+    "POLLING_HINT": "Aggiornamento automatico in corso...",
+    "APPROVED_TITLE": "Sei stato accettato!",
+    "APPROVED_DESC": "Il leader ha approvato la tua richiesta. Puoi entrare in \"{{lega}}\"!",
+    "GO_TO_LEGA": "Vai alla lega",
+    "REJECTED_TITLE": "Richiesta non approvata",
+    "REJECTED_DESC": "Il leader ha rifiutato la tua richiesta per la lega \"{{lega}}\"."
   },
   "SERVICE_UNAVAILABLE": {
     "TITLE": "Servizio non disponibile",
@@ -802,7 +821,12 @@
     "NO_DATA": "Informazioni lega non disponibili.",
     "INVITE_TITLE": "Sei stato invitato!",
     "INVITE_SUBTITLE": "Il link ti ha portato direttamente a questa lega",
-    "ALREADY_IN_LEGA": "Sei già in questa lega!"
+    "ALREADY_IN_LEGA": "Sei già in questa lega!",
+    "APPROVAL_REQUIRED_DESC": "Questa lega richiede l'approvazione del leader per entrare.",
+    "JOIN_NOW": "Entra ora",
+    "REQUEST_ACCESS": "Richiedi accesso",
+    "SENDING": "Invio in corso...",
+    "BACK_TO_HOME": "Torna alla home"
   },
   "SUSPENSIONS": {
     "TITLE": "Gestisci Sospensioni",
