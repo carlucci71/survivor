@@ -801,7 +801,8 @@
     "ERROR_LOAD": "Impossibile caricare i dati della lega",
     "NO_DATA": "Informazioni lega non disponibili.",
     "INVITE_TITLE": "Sei stato invitato!",
-    "INVITE_SUBTITLE": "Il link ti ha portato direttamente a questa lega"
+    "INVITE_SUBTITLE": "Il link ti ha portato direttamente a questa lega",
+    "ALREADY_IN_LEGA": "Sei già in questa lega!"
   },
   "SUSPENSIONS": {
     "TITLE": "Gestisci Sospensioni",

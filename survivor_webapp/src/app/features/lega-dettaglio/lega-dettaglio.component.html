@@ -30,6 +30,14 @@
                   <span class="recap-mini-link__arrow">›</span>
                 </button>
               }
+              @if (isDaAvviare() && (isLeaderLega() || isAdmin())) {
+                <button mat-icon-button
+                  class="recap-help-btn recap-share-btn"
+                  (click)="shareLink()"
+                  [matTooltip]="'COMMON.SHARE_LINK' | translate">
+                  <mat-icon>ios_share</mat-icon>
+                </button>
+              }
               <button *ngIf="isInLega() && !isTerminata()"
                 mat-icon-button
                 class="recap-help-btn"

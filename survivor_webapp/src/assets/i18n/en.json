@@ -712,7 +712,8 @@
     "ERROR_LOAD": "Unable to load league data",
     "NO_DATA": "League information not available.",
     "INVITE_TITLE": "You've been invited!",
-    "INVITE_SUBTITLE": "The link brought you directly to this league"
+    "INVITE_SUBTITLE": "The link brought you directly to this league",
+    "ALREADY_IN_LEGA": "You are already in this league!"
   },
   "SUSPENSIONS": {
     "TITLE": "Manage Suspensions",
