@@ -487,7 +487,7 @@ export class InvitaUtentiDialogComponent {
   }
 
   shareLink(): void {
-    const url = environment.baseUrl + '/join/' + this.data.legaId;
+    const url = environment.baseUrl + '/joinLega?legaId=' + this.data.legaId;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.data.legaNome}" e dimostra chi è il vero campione! 💪`,
