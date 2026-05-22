@@ -95,7 +95,7 @@
 
 			<!-- ── Empty state: nessuna lega disponibile ── -->
 			<ng-template #noLegheBlock>
-				<div class="empty-state empty-state--no-leagues">
+				<div *ngIf="!invitedLega && !invitedLegaLoading" class="empty-state empty-state--no-leagues">
 					<div class="es-illustration">
 						<div class="es-bg-circle es-bg-circle--1"></div>
 						<div class="es-bg-circle es-bg-circle--2"></div>
