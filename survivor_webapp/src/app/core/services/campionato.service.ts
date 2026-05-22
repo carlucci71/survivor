@@ -52,6 +52,7 @@ export class CampionatoService {
     ) {
       const label = this.desGiornate[campionato][index];
       const mondialiMap: { [key: string]: string } = {
+        // Mondiali / Calcio
         'Girone - Giornata 1': this.translate.instant('LEAGUE.ROUND_LABELS.GROUP_ROUND') + ' 1',
         'Girone - Giornata 2': this.translate.instant('LEAGUE.ROUND_LABELS.GROUP_ROUND') + ' 2',
         'Girone - Giornata 3': this.translate.instant('LEAGUE.ROUND_LABELS.GROUP_ROUND') + ' 3',
@@ -60,6 +61,12 @@ export class CampionatoService {
         'Quarti di finale':    this.translate.instant('LEAGUE.ROUND_LABELS.QUARTERFINALS'),
         'Semifinali':          this.translate.instant('LEAGUE.ROUND_LABELS.SEMIFINALS'),
         'Finale':              this.translate.instant('LEAGUE.ROUND_LABELS.FINAL'),
+        // Tennis
+        '64-esimi':  this.translate.instant('LEAGUE.ROUND_LABELS.TENNIS.ROUND_OF_128'),
+        '32-esimi':  this.translate.instant('LEAGUE.ROUND_LABELS.TENNIS.ROUND_OF_64'),
+        '16-esimi':  this.translate.instant('LEAGUE.ROUND_LABELS.TENNIS.ROUND_OF_32'),
+        'Ottavi':    this.translate.instant('LEAGUE.ROUND_LABELS.TENNIS.ROUND_OF_16'),
+        'Quarti':    this.translate.instant('LEAGUE.ROUND_LABELS.TENNIS.QUARTERFINALS'),
       };
       if (mondialiMap[label]) return mondialiMap[label];
       return label

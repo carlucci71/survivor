@@ -319,16 +319,7 @@ public class CacheableService {
      * Non funzionava ed ho rimosso @Transactional
      */
     // @Transactional
-    public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {
-        // Per il Roland Garros non ci sono partite sull'API esterna (calendario non ancora disponibile):
-        // restituiamo il campionato così com'è, con giornata 1 come corrente.
-        if ("ROLAND_GARROS".equals(campionatoDTO.getId())) {
-            campionatoDTO.setGiornataDaGiocare(1);
-            campionatoDTO.setIniziGiornate(new ArrayList<>());
-            return campionatoDTO;
-        }
-
-        List<LocalDateTime> iniziGiornate = new ArrayList<>();
+    public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {        List<LocalDateTime> iniziGiornate = new ArrayList<>();
         Integer giornataDaGiocare = null;
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
             List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);

@@ -365,13 +365,14 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   // Mapping foto tennisti (sigla → file)
   private readonly tennisPhotos: { [key: string]: string } = {
+    // ── Cognome solo (legacy / altri tornei) ──────────────────────
     'ALCARAZ': 'ALCARAZ.png',
     'BUBLIK': 'BUBLIK.png',
     'CERUNDOLO': 'CERUNDOLO.png',
     'DARDERI': 'DARDERI.png',
     'DE_MINAUR': 'DE_MIINAUR.png',
-    'DE MINAUR': 'DE_MIINAUR.png', // Alias senza underscore
-    'DEMINAUR': 'DE_MIINAUR.png',  // Alias senza spazi
+    'DE MINAUR': 'DE_MIINAUR.png',
+    'DEMINAUR': 'DE_MIINAUR.png',
     'DJOKOVIC': 'DJOKOVIC.png',
     'FRITZ': 'FRITZ.png',
     'MEDVEDEV': 'MEDVEDEV.png',
@@ -383,6 +384,77 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SINNER': 'SINNER.png',
     'TIEN': 'TIEN.png',
     'ZVEREV': 'ZVEREV.webp',
+    // ── Nome completo UPPERCASE (sigla Roland Garros) ──────────────
+    'JANNIK_SINNER': 'jannik_sinner.png',
+    'CARLOS_ALCARAZ': 'carlos_alcaraz.png',
+    'NOVAK_DJOKOVIC': 'novak_djokovic.png',
+    'DANIIL_MEDVEDEV': 'daniil_medvedev.png',
+    'ALEXANDER_ZVEREV': 'alexander_zverev.png',
+    'CASPER_RUUD': 'casper_ruud.png',
+    'HOLGER_RUNE': 'holger_rune.png',
+    'HUBERT_HURKACZ': 'hubert_hurkacz.png',
+    'TAYLOR_FRITZ': 'taylor_fritz.png',
+    'TOMMY_PAUL': 'tommy_paul.png',
+    'BEN_SHELTON': 'ben_shelton.png',
+    'JACK_DRAPER': 'jack_draper.png',
+    'ANDREY_RUBLEV': 'andrey_rublev.png',
+    'ALEX_DE_MINAUR': 'alex_de_minaur.png',
+    'STEFANOS_TSITSIPAS': 'stefanos_tsitsipas.png',
+    'ARTHUR_FILS': 'arthur_fils.png',
+    'SEBASTIAN_BAEZ': 'sebastian_baez.png',
+    'SEBASTIAN_KORDA': 'sebastian_korda.png',
+    'FRANCES_TIAFOE': 'frances_tiafoe.png',
+    'ALEJANDRO_DAVIDOVICH_FOKINA': 'alejandro_davidovich_fokina.png',
+    'ALEJANDRO_TABILO': 'alejandro_tabilo.png',
+    'FELIX_AUGER_ALIASSIME': 'felix_auger-aliassime.png',
+    'FRANCISCO_CERUNDOLO': 'francisco_cerundolo.png',
+    'JUAN_MANUEL_CERUNDOLO': 'juan_manuel_cerundolo.png',
+    'LORENZO_MUSETTI': 'lorenzo_musetti.png',
+    'LORENZO_SONEGO': 'lorenzo_sonego.png',
+    'FABIAN_MAROZSAN': 'fabian_marozsan.png',
+    'MIOMIR_KECMANOVIC': 'miomir_kecmanovic.png',
+    'KAREN_KHACHANOV': 'karen_khachanov.png',
+    'UGO_HUMBERT': 'ugo_humbert.png',
+    'CORENTIN_MOUTET': 'corentin_moutet.png',
+    'MATTEO_BERRETTINI': 'matteo_berrettini.png',
+    'NUNO_BORGES': 'nuno_borges.png',
+    'TALLON_GRIEKSPOOR': 'tallon_griekspoor.png',
+    'ALEXANDER_BUBLIK': 'alexander_bublik.png',
+    'BRANDON_NAKASHIMA': 'brandon_nakashima.png',
+    'TOMAS_MACHAC': 'tomas_machac.png',
+    'JIRI_LEHECKA': 'jiri_lehecka.png',
+    'ALEXEI_POPYRIN': 'alexei_popyrin.png',
+    'ALEKSANDAR_VUKIC': 'aleksandar_vukic.png',
+    'ALEKSANDAR_KOVACEVIC': 'aleksandar_kovacevic.png',
+    'BOTIC_VAN_DE_ZANDSCHULP': 'botic_van_de_zandschulp.png',
+    'CAMERON_NORRIE': 'cameron_norrie.png',
+    'DENIS_SHAPOVALOV': 'denis_shapovalov.png',
+    'JAUME_MUNAR': 'jaume_munar.png',
+    'RINKY_HIJIKATA': 'rinky_hijikata.png',
+    'ARTHUR_RINDERKNECH': 'arthur_rinderknech.png',
+    'DAMIR_DZUMHUR': 'damir_dzumhur.png',
+    'DANIEL_ALTMAIER': 'daniel_altmaier.png',
+    'MARCOS_GIRON': 'marcos_giron.png',
+    'MARTON_FUCSOVICS': 'marton_fucsovics.png',
+    'LUCA_VAN_ASSCHE': 'luca_van_assche.png',
+    'KAMIL_MAJCHRZAK': 'kamil_majchrzak.png',
+    'QUENTIN_HALYS': 'quentin_halys.png',
+    'JENSON_BROOKSBY': 'jenson_brooksby.png',
+    'REILLY_OPELKA': 'reilly_opelka.png',
+    'YANNICK_HANFMANN': 'yannick_hanfmann.png',
+    'ZIZOU_BERGS': 'zizou_bergs.png',
+    'JAMES_DUCKWORTH': 'james_duckworth.png',
+    'PABLO_CARRENO_BUSTA': 'pablo_carreno_busta.png',
+    'JAN_LENNARD_STRUFF': 'jan-lennard_struff.png',
+    'SEBASTIAN_OFNER': 'sebastian_ofner.png',
+    'TOMAS_MARTIN_ETCHEVERRY': 'tomas_martin_etcheverry.png',
+    'ROBERTO_BAUTISTA_AGUT': 'roberto_bautista_agut.png',
+    'YIBING_WU': 'yibing_wu.png',
+    'CAMILO_UGO_CARABELLI': 'camilo_ugo_carabelli.png',
+    'ALEXANDER_SHEVCHENKO': 'alexander_shevchenko.png',
+    'ALEXANDR_SHEVCHENKO': 'alexander_shevchenko.png',
+    'LUCIANO_DARDERI': 'DARDERI.png',
+    'ADRIAN_MANNARINO': 'adrian_mannarino.png',
   };
 
   // Mapping loghi NBA basket (sigla → file)
@@ -428,11 +500,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     const campionatoId = this.lega?.campionato?.id;
     const calcioId = campionatoId; //SERIE_A, SERIE_B, LIGA
     if (sportId === 'TENNIS') {
-      // Per il Roland Garros la sigla è già nel formato "jannik_sinner"
-      if (campionatoId === 'ROLAND_GARROS') {
-        return `assets/logos/tennis/${sigla}.png`;
-      }
-
       const original = sigla.toUpperCase().trim();
       const withUnderscore = original.replace(/\s+/g, '_');
       const withoutSpaces = original.replace(/\s+/g, '');
@@ -461,6 +528,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
         return `assets/logos/tennis/${photoFile}`;
       }
 
+      // Nessuna foto trovata → usa placeholder direttamente (evita 404)
       return 'assets/logos/tennis/placeholder.svg';
     }
 
@@ -543,7 +611,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       this.currentLang = event.lang;
     });
     this.giocatore = data.giocatore;
-    this.squadreDisponibili = data.squadreDisponibili || [];
+    // Dedup by sigla: rimuove eventuali duplicati già dalla sorgente
+    const seenSigle = new Set<string>();
+    this.squadreDisponibili = (data.squadreDisponibili || []).filter(s => {
+      if (!s?.sigla || seenSigle.has(s.sigla)) return false;
+      seenSigle.add(s.sigla);
+      return true;
+    });
     // Se c'è una squadra già selezionata per questa giornata, selezionala
     this.squadraSelezionata = data.squadraCorrenteId || null;
     this.statoGiornataCorrente = data.statoGiornataCorrente;
@@ -560,14 +634,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
-    // Per il Roland Garros non ci sono partite: saltiamo il filtro per giornata
-    if (this.lega.campionato?.id !== 'ROLAND_GARROS') {
-      this.getSquadreByCampionatoAndGiornata(
-        this.lega.campionato!.id,
-        this.lega.anno,
-        this.data.giornata
-      );
-    }
+    this.getSquadreByCampionatoAndGiornata(
+      this.lega.campionato!.id,
+      this.lega.anno,
+      this.data.giornata
+    );
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati(this.squadraSelezionata);
       this.mostraProssimePartite();
@@ -622,6 +693,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             const sdSigla = sd.sigla;
             return sdSigla ? returnedSigle.has(sdSigla) : false;
           });
+          // Ricostruisci squadreConPartite con la lista filtrata se già disponibile
+          if (this.prossimaGiornata.length > 0) {
+            this.caricaPartitePerTutteSquadre();
+          }
         },
         error: (error) => {
           console.error(
@@ -1073,9 +1148,16 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
 
+    // Deduplica per sigla: evita duplicati indipendentemente dalla fonte
+    const seen = new Set<string>();
+    const uniqueSquadre = this.squadreDisponibili.filter(s => {
+      if (!s.sigla || seen.has(s.sigla)) return false;
+      seen.add(s.sigla);
+      return true;
+    });
 
     // Inizializza subito le squadre con i dati base
-    this.squadreConPartite = this.squadreDisponibili.map(squadra => {
+    this.squadreConPartite = uniqueSquadre.map(squadra => {
       const squadraConPartite = {
         ...squadra,
         prossimaPartita: null as Partita | null,
@@ -1121,7 +1203,14 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   filtraSquadre(): void {
     const isTennis = this.lega?.campionato?.sport?.id === 'TENNIS';
     const isRolandGarros = this.lega?.campionato?.id === 'ROLAND_GARROS';
-    let squadreDaFiltrare = [...this.squadreConPartite];
+
+    // Dedup definitivo: garantisce assenza duplicati prima del render
+    const seenInFilter = new Set<string>();
+    let squadreDaFiltrare = this.squadreConPartite.filter(s => {
+      if (!s.sigla || seenInFilter.has(s.sigla)) return false;
+      seenInFilter.add(s.sigla);
+      return true;
+    });
 
     // Per il tennis (escluso Roland Garros), mostra solo i giocatori ancora in gara (con prossima partita)
     if (isTennis && !isRolandGarros) {
@@ -1390,6 +1479,29 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (score >= 70) return '#16A34A';
     if (score >= 45) return '#D97706';
     return '#DC2626';
+  }
+
+  /**
+   * Restituisce la classe CSS per scalare il font del nome in base alla sua lunghezza.
+   * Nomi corti (<= 15 car.) → dimensione normale.
+   * Nomi medi (16-22 car.)  → leggermente ridotta (name-sm).
+   * Nomi lunghi (> 22 car.) → ancora più ridotta (name-xs).
+   */
+  getNameClass(nome: string): string {
+    const len = (nome || '').length;
+    if (len > 22) return 'name-xs';
+    if (len > 15) return 'name-sm';
+    return '';
+  }
+
+  /**
+   * Restituisce la classe CSS per scalare il font del testo "vs avversario".
+   * Usata per evitare troncature eccessive su nomi lunghi.
+   */
+  getVsClass(nome: string): string {
+    const len = (nome || '').length;
+    if (len > 18) return 'vs-long';
+    return '';
   }
 
 }

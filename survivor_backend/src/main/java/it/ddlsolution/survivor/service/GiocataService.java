@@ -78,7 +78,15 @@ public class GiocataService {
 
         Squadra squadra = null;
         if (!ObjectUtils.isEmpty(request.getSquadraSigla())) {
-            squadra = squadraService.findBySiglaAndNazione(request.getSquadraSigla(), lega.getCampionato().getNazione());
+            String sport = lega.getCampionato().getSport() != null ? lega.getCampionato().getSport().getId() : null;
+            if ("TENNIS".equals(sport)) {
+                // Per i campionati tennis (es. Roland Garros) i giocatori non sono nella
+                // tabella squadra: li trova o li crea al volo tramite sigla + campionato.
+                squadra = squadraService.findOrCreateBySiglaAndCampionato(
+                        request.getSquadraSigla(), lega.getCampionato());
+            } else {
+                squadra = squadraService.findBySiglaAndNazione(request.getSquadraSigla(), lega.getCampionato().getNazione());
+            }
         }
 
         GiocatoreDTO dto = giocatoreMapper.toDTO(giocatore);
