@@ -3,6 +3,22 @@
 
 	<main class="main-content">
 
+		<!-- ── Lega da invito (link condiviso) ── -->
+		<section class="invite-section" *ngIf="invitedLega">
+			<div class="invite-header">
+				<mat-icon class="invite-icon">link</mat-icon>
+				<div>
+					<h2 class="invite-title">{{ 'JOIN_LEAGUE.INVITE_TITLE' | translate }}</h2>
+					<p class="invite-subtitle">{{ 'JOIN_LEAGUE.INVITE_SUBTITLE' | translate }}</p>
+				</div>
+			</div>
+			<app-lega-card [lega]="invitedLega" (action)="seleziona($event)"></app-lega-card>
+		</section>
+
+		<section class="invite-section invite-section--loading" *ngIf="invitedLegaLoading">
+			<p>{{ 'JOIN_LEAGUE.LOADING' | translate }}</p>
+		</section>
+
 		<!-- ── Filter bar ── -->
 		<section class="filters-bar" *ngIf="leghe?.length">
 
@@ -91,11 +107,9 @@
 					<p class="es-desc">{{ 'JOIN_LEAGUE.EMPTY_NO_LEAGUES_DESC' | translate }}</p>
 					<div class="es-actions">
 						<button class="es-btn es-btn--secondary" (click)="goBack()">
-							<mat-icon>arrow_back</mat-icon>
 							{{ 'JOIN_LEAGUE.EMPTY_BACK' | translate }}
 						</button>
 						<button class="es-btn es-btn--primary" (click)="goCreLega()">
-							<mat-icon>add_circle_outline</mat-icon>
 							{{ 'JOIN_LEAGUE.EMPTY_CREATE_CTA' | translate }}
 						</button>
 					</div>

@@ -799,7 +799,9 @@
     "LOADING": "Caricamento informazioni lega...",
     "ERROR_INVALID_ID": "ID lega non valido",
     "ERROR_LOAD": "Impossibile caricare i dati della lega",
-    "NO_DATA": "Informazioni lega non disponibili."
+    "NO_DATA": "Informazioni lega non disponibili.",
+    "INVITE_TITLE": "Sei stato invitato!",
+    "INVITE_SUBTITLE": "Il link ti ha portato direttamente a questa lega"
   },
   "SUSPENSIONS": {
     "TITLE": "Gestisci Sospensioni",
