@@ -99,6 +99,12 @@ export class LegaJoinComponent implements OnInit, AfterViewInit {
       this.invitedLegaLoading = true;
       this.legaService.getLegaById(Number(legaIdStr)).subscribe({
         next: (lega) => {
+          // Se l'utente è già nella lega, redirect diretto alla pagina lega
+          if (lega.ruoloGiocatoreLega?.value !== 'NESSUNO') {
+            this.snackBar.open(this.translate.instant('JOIN_LEAGUE.ALREADY_IN_LEGA'), '', { duration: 3000 });
+            this.router.navigate(['/lega', lega.id]);
+            return;
+          }
           this.invitedLega = lega;
           this.invitedLegaLoading = false;
         },
