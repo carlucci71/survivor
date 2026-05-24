@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 
 // DIALOG CONTATTI
 @Component({
@@ -1259,6 +1260,10 @@ export class ChiSiamoDialogComponent implements OnInit{
             <span>© {{ currentYear }} DDL Solutions</span>
           </div>
 
+          <div class="footer-copyright" *ngIf="isMobile">
+            <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link">https://liberaleidee.it/survivor/</a>
+          </div>
+
 
         </div>
       </div>
@@ -1505,6 +1510,7 @@ export class ChiSiamoDialogComponent implements OnInit{
 export class FooterComponent  {
   currentLang: string;
   currentYear: number = new Date().getFullYear();
+  isMobile: boolean = Capacitor.getPlatform() !== 'web';
 
   constructor(
     private dialog: MatDialog,
