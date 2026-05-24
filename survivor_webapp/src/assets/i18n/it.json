@@ -750,7 +750,6 @@
     "MODE_CAMPIONATO_LABEL": "Campionato",
     "MODE_CAMPIONATO_DESC": "Vittoria 3 pt · Pareggio 1 pt · Sconfitta 0 pt. Vince chi accumula più punti.",
     "GIORNATA_FINALE_REQUIRED": "In modalità Campionato la giornata finale è obbligatoria",
-
     "ACCESS_APPROVAL_LABEL": "Su approvazione",
     "ACCESS_APPROVAL_DESC": "Il leader approva o rifiuta ogni richiesta",
     "ACCESS_FREE_LABEL": "Accesso libero",
@@ -761,30 +760,81 @@
     "VITA": "vita",
     "VITE": "vite",
     "LIVES_WARN": {
-      "MAX": { "EMOJI": "💀", "TEXT": "Prima o poi bisogna morire. Nessuno è immortale — neanche tu. Questo è il massimo consentito." },
+      "MAX": {
+        "EMOJI": "💀",
+        "TEXT": "Prima o poi bisogna morire. Nessuno è immortale — neanche tu. Questo è il massimo consentito."
+      },
       "6": {
-        "0": { "EMOJI": "😏", "TEXT": "Sei sicuro di valere 6 vite? Chiediti perché..." },
-        "1": { "EMOJI": "🤔", "TEXT": "6 vite. Ottimismo o autoconsapevolezza zero?" },
-        "2": { "EMOJI": "👀", "TEXT": "Gli altri giocatori ti stanno già un po' odiando." },
-        "3": { "EMOJI": "🎭", "TEXT": "Sei errori gratuiti. Una scelta... artistica." }
+        "0": {
+          "EMOJI": "😏",
+          "TEXT": "Sei sicuro di valere 6 vite? Chiediti perché..."
+        },
+        "1": {
+          "EMOJI": "🤔",
+          "TEXT": "6 vite. Ottimismo o autoconsapevolezza zero?"
+        },
+        "2": {
+          "EMOJI": "👀",
+          "TEXT": "Gli altri giocatori ti stanno già un po' odiando."
+        },
+        "3": {
+          "EMOJI": "🎭",
+          "TEXT": "Sei errori gratuiti. Una scelta... artistica."
+        }
       },
       "7": {
-        "0": { "EMOJI": "🐱", "TEXT": "I gatti ne hanno 9. Stai pericolosamente avanzando." },
-        "1": { "EMOJI": "🦸", "TEXT": "Supereroe confermato. Manca solo il mantello." },
-        "2": { "EMOJI": "🎮", "TEXT": "Difficoltà: «bambino». Almeno confessalo agli amici." },
-        "3": { "EMOJI": "💅", "TEXT": "7 vite. Dai, non è neanche più una sfida." }
+        "0": {
+          "EMOJI": "🐱",
+          "TEXT": "I gatti ne hanno 9. Stai pericolosamente avanzando."
+        },
+        "1": {
+          "EMOJI": "🦸",
+          "TEXT": "Supereroe confermato. Manca solo il mantello."
+        },
+        "2": {
+          "EMOJI": "🎮",
+          "TEXT": "Difficoltà: «bambino». Almeno confessalo agli amici."
+        },
+        "3": {
+          "EMOJI": "💅",
+          "TEXT": "7 vite. Dai, non è neanche più una sfida."
+        }
       },
       "8": {
-        "0": { "EMOJI": "💀", "TEXT": "8 vite? La morte ti sta evitando per pietà." },
-        "1": { "EMOJI": "😰", "TEXT": "Otto vite. Praticamente hai paura del gioco stesso." },
-        "2": { "EMOJI": "🙈", "TEXT": "Gli avversari hanno già smesso di sperare. Grazie." },
-        "3": { "EMOJI": "🤦", "TEXT": "Questo non è Survivor, è una passeggiata nel parco." }
+        "0": {
+          "EMOJI": "💀",
+          "TEXT": "8 vite? La morte ti sta evitando per pietà."
+        },
+        "1": {
+          "EMOJI": "😰",
+          "TEXT": "Otto vite. Praticamente hai paura del gioco stesso."
+        },
+        "2": {
+          "EMOJI": "🙈",
+          "TEXT": "Gli avversari hanno già smesso di sperare. Grazie."
+        },
+        "3": {
+          "EMOJI": "🤦",
+          "TEXT": "Questo non è Survivor, è una passeggiata nel parco."
+        }
       },
       "9": {
-        "0": { "EMOJI": "😱", "TEXT": "NOVE VITE. Come un gatto, ma meno dignitoso." },
-        "1": { "EMOJI": "🐈", "TEXT": "Sei ufficialmente un gatto. Miagola almeno." },
-        "2": { "EMOJI": "🚨", "TEXT": "Stai giocando o vuoi vincere per sfinimento degli avversari?" },
-        "3": { "EMOJI": "⚠️", "TEXT": "Il fair play ti sta guardando con profonda delusione." }
+        "0": {
+          "EMOJI": "😱",
+          "TEXT": "NOVE VITE. Come un gatto, ma meno dignitoso."
+        },
+        "1": {
+          "EMOJI": "🐈",
+          "TEXT": "Sei ufficialmente un gatto. Miagola almeno."
+        },
+        "2": {
+          "EMOJI": "🚨",
+          "TEXT": "Stai giocando o vuoi vincere per sfinimento degli avversari?"
+        },
+        "3": {
+          "EMOJI": "⚠️",
+          "TEXT": "Il fair play ti sta guardando con profonda delusione."
+        }
       }
     }
   },
@@ -888,48 +938,168 @@
       "FORMULA_OPP_STRONG": "Forza avv.",
       "FORMULA_UPSET_TOTAL": "Potenziale =",
       "TOP_REASONS": {
-        "0":  { "EMOJI": "🧮", "TEXT": "L'algoritmo ha scricchiolato un po', poi ha sputato fuori questo nome. Fidati." },
-        "1":  { "EMOJI": "📊", "TEXT": "Win rate, goal balance, vantaggio campo... la matematica dice sì. Fidati della matematica." },
-        "2":  { "EMOJI": "🤓", "TEXT": "Ho impiegato 0,3 secondi ad elaborare 40 variabili. Questa è la risposta. Prego." },
-        "3":  { "EMOJI": "💡", "TEXT": "Non è un'opinione — è statistica. E la statistica raramente si scusa." },
-        "4":  { "EMOJI": "🏆", "TEXT": "Top pick secondo il nostro sofisticatissimo algoritmo. Che poi sono solo dei conti, ma fa scena." },
-        "5":  { "EMOJI": "🎯", "TEXT": "Oggettivamente la scelta migliore. Soggettivamente... ancora la scelta migliore." },
-        "6":  { "EMOJI": "🔢", "TEXT": "Win rate alto, avversario debole, gioca in casa. Tre su tre. Raro come un terno al lotto." },
-        "7":  { "EMOJI": "🤖", "TEXT": "Il robot ha parlato. E il robot ha letto l'intera classifica stagionale. Almeno ascoltalo." },
-        "8":  { "EMOJI": "📈", "TEXT": "La curva di forma punta verso l'alto. Che è esattamente quello che ci piace vedere." },
-        "9":  { "EMOJI": "🧠", "TEXT": "La mia logica computazionale ha analizzato questa squadra. La tua pancia cosa dice? Bene, ignora la pancia." },
-        "10": { "EMOJI": "⚡", "TEXT": "Squadra in forma, avversario in crisi, campo amico. Aspetti altro?" },
-        "11": { "EMOJI": "🔬", "TEXT": "Analisi scientifica completata. Consulto: prendila. Seconda opinione: prendila." },
-        "12": { "EMOJI": "🎲", "TEXT": "Questa non è fortuna, è statistica applicata. Differenza enorme. Tipo, enorme." },
-        "13": { "EMOJI": "🏅", "TEXT": "Prima scelta del giorno secondo i numeri. Il che vuol dire che noi siamo bravi, e tu dovresti fidarti." },
-        "14": { "EMOJI": "💻", "TEXT": "Ho fatto i conti. Tu non li hai fatti. Fiducia totale, occhi chiusi, avanti." },
-        "15": { "EMOJI": "📉", "TEXT": "L'avversario è in caduta libera. È quasi gentile metterli nella stessa frase." },
-        "16": { "EMOJI": "🌟", "TEXT": "Forma strepitosa, gioca in casa, avversario moscio. La trinità perfetta." },
-        "17": { "EMOJI": "🤷", "TEXT": "Non prometto nulla — la matematica neanche. Ma le probabilità sono tutte dalla tua parte." },
-        "18": { "EMOJI": "🎓", "TEXT": "Questa scelta ha una motivazione accademica. Okay no, però i numeri la supportano forte." },
-        "19": { "EMOJI": "📱", "TEXT": "L'app ha deciso per te. Più o meno. Hai ancora il libero arbitrio. Ma considera." }
+        "0": {
+          "EMOJI": "🧮",
+          "TEXT": "L'algoritmo ha scricchiolato un po', poi ha sputato fuori questo nome. Fidati."
+        },
+        "1": {
+          "EMOJI": "📊",
+          "TEXT": "Win rate, goal balance, vantaggio campo... la matematica dice sì. Fidati della matematica."
+        },
+        "2": {
+          "EMOJI": "🤓",
+          "TEXT": "Ho impiegato 0,3 secondi ad elaborare 40 variabili. Questa è la risposta. Prego."
+        },
+        "3": {
+          "EMOJI": "💡",
+          "TEXT": "Non è un'opinione — è statistica. E la statistica raramente si scusa."
+        },
+        "4": {
+          "EMOJI": "🏆",
+          "TEXT": "Top pick secondo il nostro sofisticatissimo algoritmo. Che poi sono solo dei conti, ma fa scena."
+        },
+        "5": {
+          "EMOJI": "🎯",
+          "TEXT": "Oggettivamente la scelta migliore. Soggettivamente... ancora la scelta migliore."
+        },
+        "6": {
+          "EMOJI": "🔢",
+          "TEXT": "Win rate alto, avversario debole, gioca in casa. Tre su tre. Raro come un terno al lotto."
+        },
+        "7": {
+          "EMOJI": "🤖",
+          "TEXT": "Il robot ha parlato. E il robot ha letto l'intera classifica stagionale. Almeno ascoltalo."
+        },
+        "8": {
+          "EMOJI": "📈",
+          "TEXT": "La curva di forma punta verso l'alto. Che è esattamente quello che ci piace vedere."
+        },
+        "9": {
+          "EMOJI": "🧠",
+          "TEXT": "La mia logica computazionale ha analizzato questa squadra. La tua pancia cosa dice? Bene, ignora la pancia."
+        },
+        "10": {
+          "EMOJI": "⚡",
+          "TEXT": "Squadra in forma, avversario in crisi, campo amico. Aspetti altro?"
+        },
+        "11": {
+          "EMOJI": "🔬",
+          "TEXT": "Analisi scientifica completata. Consulto: prendila. Seconda opinione: prendila."
+        },
+        "12": {
+          "EMOJI": "🎲",
+          "TEXT": "Questa non è fortuna, è statistica applicata. Differenza enorme. Tipo, enorme."
+        },
+        "13": {
+          "EMOJI": "🏅",
+          "TEXT": "Prima scelta del giorno secondo i numeri. Il che vuol dire che noi siamo bravi, e tu dovresti fidarti."
+        },
+        "14": {
+          "EMOJI": "💻",
+          "TEXT": "Ho fatto i conti. Tu non li hai fatti. Fiducia totale, occhi chiusi, avanti."
+        },
+        "15": {
+          "EMOJI": "📉",
+          "TEXT": "L'avversario è in caduta libera. È quasi gentile metterli nella stessa frase."
+        },
+        "16": {
+          "EMOJI": "🌟",
+          "TEXT": "Forma strepitosa, gioca in casa, avversario moscio. La trinità perfetta."
+        },
+        "17": {
+          "EMOJI": "🤷",
+          "TEXT": "Non prometto nulla — la matematica neanche. Ma le probabilità sono tutte dalla tua parte."
+        },
+        "18": {
+          "EMOJI": "🎓",
+          "TEXT": "Questa scelta ha una motivazione accademica. Okay no, però i numeri la supportano forte."
+        },
+        "19": {
+          "EMOJI": "📱",
+          "TEXT": "L'app ha deciso per te. Più o meno. Hai ancora il libero arbitrio. Ma considera."
+        }
       },
       "UNDERDOG_REASONS": {
-        "0":  { "EMOJI": "🎲", "TEXT": "Non è una scelta sicura. È una scelta coraggiosa. Grande differenza." },
-        "1":  { "EMOJI": "🃏", "TEXT": "Statisticamente improbabile. Emotivamente però... c'è qualcosa." },
-        "2":  { "EMOJI": "🎰", "TEXT": "Gioca in casa contro i grandi. Esattamente il tipo di partita che fa impazzire i pronostici." },
-        "3":  { "EMOJI": "🦾", "TEXT": "L'algoritmo dice che potrebbe sorprendere. Il tuo istinto probabilmente lo sa già." },
-        "4":  { "EMOJI": "🐉", "TEXT": "Debole in classifica ma con il vantaggio del campo... chi lo sa? La storia del calcio è piena di ribaltoni." },
-        "5":  { "EMOJI": "🌪️", "TEXT": "Caos controllato. O almeno, controllato quanto può essere il calcio." },
-        "6":  { "EMOJI": "😈", "TEXT": "La scelta che nessuno si aspetterebbe. Geniale se va bene, dimenticabile se no." },
-        "7":  { "EMOJI": "🚀", "TEXT": "Alto rischio, alto reward. O come diciamo noi: forse sì, forse boom." },
-        "8":  { "EMOJI": "🎭", "TEXT": "L'underdog della giornata. Se vince, tu diventi leggenda. Se perde, tutti dimenticheranno." },
-        "9":  { "EMOJI": "💣", "TEXT": "Consiglio ad alto rischio. Lo sappiamo. Siamo trasparenti su questo." },
-        "10": { "EMOJI": "🌈", "TEXT": "Le sorprese non si prevedono. Ma si possono intuire. Oggi l'intuizione punta qui." },
-        "11": { "EMOJI": "🏠", "TEXT": "Gioca in casa. E in casa si combatte diversamente. Chiedi agli ultras." },
-        "12": { "EMOJI": "🦴", "TEXT": "Sfavorita sì. Ma con cuore, voglia e il vantaggio del proprio stadio? Forse la storia cambia." },
-        "13": { "EMOJI": "🎯", "TEXT": "Non è il tiro più sicuro. Ma potrebbe essere quello più soddisfacente." },
-        "14": { "EMOJI": "🐴", "TEXT": "Il cavallo nero della giornata. Se arriva, racconta questa storia per anni." },
-        "15": { "EMOJI": "🧨", "TEXT": "Rischia con cognizione di causa. L'algoritmo ha trovato qualcosa qui. Degno di nota." },
-        "16": { "EMOJI": "🛸", "TEXT": "Questa scelta viene da un'altra dimensione. Quella dei ribaltoni epici." },
-        "17": { "EMOJI": "🤯", "TEXT": "Non ci sperare troppo. Ma nemmeno troppo poco. Ecco, quel range lì." },
-        "18": { "EMOJI": "⚡", "TEXT": "L'avversario è forte, ok. Ma sono in casa. E la casa dà forza. I numeri lo confermano un po'." },
-        "19": { "EMOJI": "🎪", "TEXT": "Il calcio è bello perché non è mai scontato. Questa squadra è la prova." }
+        "0": {
+          "EMOJI": "🎲",
+          "TEXT": "Non è una scelta sicura. È una scelta coraggiosa. Grande differenza."
+        },
+        "1": {
+          "EMOJI": "🃏",
+          "TEXT": "Statisticamente improbabile. Emotivamente però... c'è qualcosa."
+        },
+        "2": {
+          "EMOJI": "🎰",
+          "TEXT": "Gioca in casa contro i grandi. Esattamente il tipo di partita che fa impazzire i pronostici."
+        },
+        "3": {
+          "EMOJI": "🦾",
+          "TEXT": "L'algoritmo dice che potrebbe sorprendere. Il tuo istinto probabilmente lo sa già."
+        },
+        "4": {
+          "EMOJI": "🐉",
+          "TEXT": "Debole in classifica ma con il vantaggio del campo... chi lo sa? La storia del calcio è piena di ribaltoni."
+        },
+        "5": {
+          "EMOJI": "🌪️",
+          "TEXT": "Caos controllato. O almeno, controllato quanto può essere il calcio."
+        },
+        "6": {
+          "EMOJI": "😈",
+          "TEXT": "La scelta che nessuno si aspetterebbe. Geniale se va bene, dimenticabile se no."
+        },
+        "7": {
+          "EMOJI": "🚀",
+          "TEXT": "Alto rischio, alto reward. O come diciamo noi: forse sì, forse boom."
+        },
+        "8": {
+          "EMOJI": "🎭",
+          "TEXT": "L'underdog della giornata. Se vince, tu diventi leggenda. Se perde, tutti dimenticheranno."
+        },
+        "9": {
+          "EMOJI": "💣",
+          "TEXT": "Consiglio ad alto rischio. Lo sappiamo. Siamo trasparenti su questo."
+        },
+        "10": {
+          "EMOJI": "🌈",
+          "TEXT": "Le sorprese non si prevedono. Ma si possono intuire. Oggi l'intuizione punta qui."
+        },
+        "11": {
+          "EMOJI": "🏠",
+          "TEXT": "Gioca in casa. E in casa si combatte diversamente. Chiedi agli ultras."
+        },
+        "12": {
+          "EMOJI": "🦴",
+          "TEXT": "Sfavorita sì. Ma con cuore, voglia e il vantaggio del proprio stadio? Forse la storia cambia."
+        },
+        "13": {
+          "EMOJI": "🎯",
+          "TEXT": "Non è il tiro più sicuro. Ma potrebbe essere quello più soddisfacente."
+        },
+        "14": {
+          "EMOJI": "🐴",
+          "TEXT": "Il cavallo nero della giornata. Se arriva, racconta questa storia per anni."
+        },
+        "15": {
+          "EMOJI": "🧨",
+          "TEXT": "Rischia con cognizione di causa. L'algoritmo ha trovato qualcosa qui. Degno di nota."
+        },
+        "16": {
+          "EMOJI": "🛸",
+          "TEXT": "Questa scelta viene da un'altra dimensione. Quella dei ribaltoni epici."
+        },
+        "17": {
+          "EMOJI": "🤯",
+          "TEXT": "Non ci sperare troppo. Ma nemmeno troppo poco. Ecco, quel range lì."
+        },
+        "18": {
+          "EMOJI": "⚡",
+          "TEXT": "L'avversario è forte, ok. Ma sono in casa. E la casa dà forza. I numeri lo confermano un po'."
+        },
+        "19": {
+          "EMOJI": "🎪",
+          "TEXT": "Il calcio è bello perché non è mai scontato. Questa squadra è la prova."
+        }
       }
     }
   },
@@ -1035,7 +1205,7 @@
     "SUBTITLE_ONE": "Ha resistito fino alla fine",
     "SUBTITLE_MANY": "Loro hanno resistito fino alla fine",
     "SHARE_TITLE": "Condividi immagine",
-    "SHARE_CARD_SUB": "SURVIVOR \u2022 Lega Terminata",
+    "SHARE_CARD_SUB": "SURVIVOR • Lega Terminata",
     "FRASI": [
       "Ok ok, lo sappiamo già 😎",
       "Chiudi e vai a brindare! 🍾",
@@ -1379,5 +1549,9 @@
     "FAQ_A7": "No, i tuoi trofei e le statistiche sono visibili anche agli altri dalla tua scheda profilo pubblica.",
     "FAQ_Q8": "Posso uscire da una lega?",
     "FAQ_A8": "Sì, puoi abbandonare una lega dal suo pannello. Se sei il Leader con partecipanti attivi, valuta di trasferire il ruolo prima di uscire."
+  },
+  "SUPPORT": {
+    "CONTACT_NOTE": "Risponderemo entro 48 ore lavorative.",
+    "LINKS_TITLE": "Link Utili"
   }
 }

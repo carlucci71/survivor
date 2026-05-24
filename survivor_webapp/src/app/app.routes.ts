@@ -33,6 +33,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/public/guida.component').then(m => m.GuidaComponent)
   },
   {
+    path: 'support',
+    loadComponent: () => import('./features/public/support.component').then(m => m.SupportComponent)
+  },
+  {
     path: 'magic-redirect',
     loadComponent: () => import('./features/public/magic-redirect.component').then(m => m.MagicRedirectComponent)
   },
