@@ -18,3 +18,7 @@ Scegli App Store Connect > Upload, conferma e invia: attende "Processing" (pochi
 
 Vai su App Store Connect > La tua app > TestFlight: la build appare. 
 Assegna a Internal Testing (per colleghi nel team) o External.	
+
+
+----------------
+pwsh -File rilascio-test.ps1 
