@@ -31,10 +31,17 @@
 
   <mat-card-actions>
     @if (!lega?.accessoLibero) {
-      <button class="join-request-btn" (click)="onAction()">
-        <mat-icon>how_to_reg</mat-icon>
-        <span>{{ 'JOIN_REQUEST.REQUEST_BUTTON' | translate }}</span>
-      </button>
+      @if (isPending) {
+        <button class="join-request-btn join-request-btn--pending" disabled>
+          <mat-icon>hourglass_top</mat-icon>
+          <span>{{ 'JOIN_REQUEST.ALREADY_PENDING' | translate }}</span>
+        </button>
+      } @else {
+        <button class="join-request-btn" (click)="onAction()">
+          <mat-icon>how_to_reg</mat-icon>
+          <span>{{ 'JOIN_REQUEST.REQUEST_BUTTON' | translate }}</span>
+        </button>
+      }
     } @else {
       <button mat-raised-button color="primary" (click)="onAction()">
         <mat-icon>{{ getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>

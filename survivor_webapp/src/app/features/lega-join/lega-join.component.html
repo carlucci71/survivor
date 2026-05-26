@@ -15,7 +15,7 @@
 						<p class="invite-subtitle">{{ 'JOIN_LEAGUE.INVITE_SUBTITLE' | translate }}</p>
 					</div>
 				</div>
-				<app-lega-card [lega]="invitedLega" (action)="seleziona($event)"></app-lega-card>
+				<app-lega-card [lega]="invitedLega" [isPending]="pendingLegaIds.has(invitedLega!.id)" (action)="seleziona($event)"></app-lega-card>
 			</ng-container>
 
 			<!-- Stato: in attesa di approvazione -->
@@ -123,7 +123,7 @@
 		<section class="leghe-section" *ngIf="legheFiltrate.length > 0; else emptyState">
 			<div class="leghe-groups">
 				<div class="edizioni-list">
-					<app-lega-card *ngFor="let l of legheFiltrate" [lega]="l" (action)="seleziona($event)"></app-lega-card>
+					<app-lega-card *ngFor="let l of legheFiltrate" [lega]="l" [isPending]="pendingLegaIds.has(l.id)" (action)="seleziona($event)"></app-lega-card>
 				</div>
 			</div>
 		</section>

@@ -623,9 +623,9 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 
     /* ── RESPONSIVE ─────────────────────────────────── */
     @media (max-width: 900px) {
-      .guida-nav { display: none; position: fixed; top: 0; left: 0; height: 100vh; z-index: 300; transition: transform .25s; transform: translateX(-100%); }
+      .guida-nav { display: none; position: fixed; top: 72px; left: 0; height: calc(100vh - 72px); z-index: 300; transition: transform .25s; transform: translateX(-100%); overflow-y: auto; }
       .guida-nav.open { display: flex; transform: translateX(0); }
-      .nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 299; }
+      .nav-overlay { position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.35); z-index: 299; }
       .guida-main { padding: 20px 16px 80px; }
       .hero { padding: 26px 20px; }
       .hero h1 { font-size: 26px; }
