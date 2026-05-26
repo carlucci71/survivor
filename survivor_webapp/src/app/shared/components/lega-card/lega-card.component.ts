@@ -17,6 +17,7 @@ import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe'
 })
 export class LegaCardComponent {
   @Input() lega!: Lega | null;
+  @Input() isPending: boolean = false;
   @Output() action = new EventEmitter<Lega>();
   constructor(
     private utilService: UtilService
