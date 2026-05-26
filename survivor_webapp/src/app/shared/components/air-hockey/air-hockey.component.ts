@@ -168,6 +168,16 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       font-family: "Rajdhani", sans-serif; font-size: 9px; letter-spacing: 2px;
       color: rgba(255,255,255,0.2); pointer-events: none; white-space: nowrap;
     }
+    /* Schermi molto stretti (≤ 400px): riduci score e close */
+    @media (max-width: 400px) {
+      .ah-score { font-size: 28px !important; }
+      .ah-label { font-size: 8px !important; letter-spacing: 2px !important; }
+      .ah-rule { display: none; }
+      .ah-sep { font-size: 18px !important; }
+      .ah-close-btn { padding: 7px 10px !important; font-size: 11px !important; letter-spacing: 0.5px !important; }
+      .ah-score-bar { padding: 6px 10px !important; gap: 6px !important; }
+      .ah-overlay { padding: 10px 8px !important; gap: 8px !important; }
+    }
     @keyframes ahPulse { 0%,100%{ opacity: 0.4 } 50%{ opacity: 1 } }
   `]
 })
