@@ -221,6 +221,8 @@ export class AirHockeyComponent implements AfterViewInit, OnDestroy {
     CV.width = 760; CV.height = 520;
     const W = 760, H = 520;
 
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
     const gameoverEl = document.getElementById('ah-gameover-screen')!;
     const goWho      = document.getElementById('ah-go-who')!;
     const goFinal    = document.getElementById('ah-go-final')!;
@@ -314,7 +316,7 @@ export class AirHockeyComponent implements AfterViewInit, OnDestroy {
     const CX=W/2, CY=H/2;
     const GOAL_W=160, GOAL_DEPTH=20;
     const GOAL_Y1=CY-GOAL_W/2, GOAL_Y2=CY+GOAL_W/2;
-    const PUCK_R=14, MALLET_R=24, MAX_SCORE=7;
+    const PUCK_R=isMobile?20:14, MALLET_R=isMobile?40:24, MAX_SCORE=7;
     const FRICTION=0.995, WALL_BOUNCE=0.82;
     const CPU_SPEED=4.6, CPU_REACT=0.62, CPU_ERROR_Y=26, CPU_MISTAKE_CHANCE=0.018, CPU_MISTAKE_DUR=42;
 
