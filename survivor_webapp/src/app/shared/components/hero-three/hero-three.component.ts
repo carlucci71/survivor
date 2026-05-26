@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
 
 @Component({
   selector: 'app-hero-three',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AirHockeyComponent],
   template: `
     <div class="hero" [attr.data-sport]="active">
 
@@ -84,10 +85,13 @@ import { CommonModule } from '@angular/common';
       <div class="content">
         <span class="eyebrow">Win or Go Home</span>
 
-        <h1 class="title">
+        <h1 class="title" (click)="onTitleTap()">
           <span class="tw">SUR</span><span class="tc">VI</span><span class="tw tl">VOR</span>
         </h1>
       </div>
+
+      <!-- Easter egg: Air Hockey (7 tap sul titolo) -->
+      <app-air-hockey *ngIf="showGame" (close)="showGame = false"></app-air-hockey>
 
       <!-- Sport indicator dots (bottom right) -->
       <div class="sport-dots" aria-hidden="true">
@@ -478,7 +482,10 @@ import { CommonModule } from '@angular/common';
 })
 export class HeroThreeComponent implements OnInit, OnDestroy {
   active = 0;
+  showGame = false;
   private timer: any;
+  private tapCount = 0;
+  private tapTimer: any;
 
   ngOnInit(): void {
     this.timer = setInterval(() => {
@@ -488,5 +495,17 @@ export class HeroThreeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearInterval(this.timer);
+    clearTimeout(this.tapTimer);
+  }
+
+  onTitleTap(): void {
+    this.tapCount++;
+    clearTimeout(this.tapTimer);
+    if (this.tapCount >= 7) {
+      this.tapCount = 0;
+      this.showGame = true;
+    } else {
+      this.tapTimer = setTimeout(() => { this.tapCount = 0; }, 800);
+    }
   }
 }
