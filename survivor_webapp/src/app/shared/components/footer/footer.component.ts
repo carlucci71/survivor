@@ -1236,32 +1236,33 @@ export class ChiSiamoDialogComponent implements OnInit{
             <a href="#" class="footer-link" (click)="openContatti($event)">{{ 'FOOTER.CONTACT' | translate }}</a>
           </nav>
 
-          <!-- SELETTORE LINGUA -->
-          <div class="language-selector">
-            <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn">
-              <span class="lang-text">{{ getCurrentLangName() }}</span>
-              <mat-icon>arrow_drop_down</mat-icon>
-            </button>
-
-            <mat-menu #langMenu="matMenu" class="lang-menu">
-              <button mat-menu-item (click)="changeLanguage('it')" [class.active]="currentLang === 'it'">
-                <span>Italiano</span>
-                <mat-icon *ngIf="currentLang === 'it'" class="check-icon">check</mat-icon>
+          <!-- SELETTORE LINGUA + WEBAPP -->
+          <div class="footer-bottom-row">
+            <div class="language-selector">
+              <button mat-button [matMenuTriggerFor]="langMenu" class="lang-btn">
+                <span class="lang-text">{{ getCurrentLangName() }}</span>
+                <mat-icon>arrow_drop_down</mat-icon>
               </button>
-              <button mat-menu-item (click)="changeLanguage('en')" [class.active]="currentLang === 'en'">
-                <span>English</span>
-                <mat-icon *ngIf="currentLang === 'en'" class="check-icon">check</mat-icon>
-              </button>
-            </mat-menu>
-          </div>
 
-          <!-- COPYRIGHT -->
-          <div class="footer-copyright">
-            <span>© {{ currentYear }} DDL Solutions</span>
-          </div>
+              <mat-menu #langMenu="matMenu" class="lang-menu">
+                <button mat-menu-item (click)="changeLanguage('it')" [class.active]="currentLang === 'it'">
+                  <span>Italiano</span>
+                  <mat-icon *ngIf="currentLang === 'it'" class="check-icon">check</mat-icon>
+                </button>
+                <button mat-menu-item (click)="changeLanguage('en')" [class.active]="currentLang === 'en'">
+                  <span>English</span>
+                  <mat-icon *ngIf="currentLang === 'en'" class="check-icon">check</mat-icon>
+                </button>
+              </mat-menu>
+            </div>
 
-          <div class="footer-copyright" *ngIf="isMobile">
-            <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link">https://liberaleidee.it/survivor/</a>
+            <span class="separator">|</span>
+
+            <!-- LINK WEBAPP (solo mobile) -->
+            <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
+              <mat-icon>open_in_new</mat-icon>
+              <span>Web App</span>
+            </a>
           </div>
 
 
@@ -1419,6 +1420,26 @@ export class ChiSiamoDialogComponent implements OnInit{
 
         .subtitle {
           font-size: 0.6rem;
+        }
+      }
+    }
+
+    /* RIGA INFERIORE: LINGUA + WEBAPP */
+    .footer-bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .webapp-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        mat-icon {
+          font-size: 15px;
+          width: 15px;
+          height: 15px;
+          vertical-align: middle;
         }
       }
     }
