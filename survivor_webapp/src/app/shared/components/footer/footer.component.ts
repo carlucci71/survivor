@@ -1256,13 +1256,14 @@ export class ChiSiamoDialogComponent implements OnInit{
               </mat-menu>
             </div>
 
-            <span class="separator">|</span>
-
             <!-- LINK WEBAPP (solo mobile) -->
-            <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
-              <mat-icon>open_in_new</mat-icon>
-              <span>Web App</span>
-            </a>
+            <ng-container *ngIf="isMobile">
+              <span class="separator">|</span>
+              <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
+                <mat-icon>open_in_new</mat-icon>
+                <span>Web App</span>
+              </a>
+            </ng-container>
           </div>
 
 
