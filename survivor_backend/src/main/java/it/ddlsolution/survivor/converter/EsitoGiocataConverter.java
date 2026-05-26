@@ -16,12 +16,13 @@ public class EsitoGiocataConverter implements AttributeConverter<Enumeratori.Esi
 
     @Override
     public Enumeratori.EsitoGiocata convertToEntityAttribute(String dbData) {
-        if (dbData==null) return null;
+        if (dbData == null) return null;
         if (dbData.trim().equals("")) return null;
-        try{
+        // Retrocompatibilità: "PA" era la vecchia abbreviazione di PAREGGIO
+        if (dbData.trim().equals("PA")) return Enumeratori.EsitoGiocata.PAREGGIO;
+        try {
             return Enumeratori.EsitoGiocata.valueOf(dbData);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.info("Errore con codice: " + dbData);
             throw e;
         }

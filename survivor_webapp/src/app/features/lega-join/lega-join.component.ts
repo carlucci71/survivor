@@ -114,7 +114,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
         next: ({ lega, richieste }) => {
           richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
           if (lega.ruoloGiocatoreLega?.value !== 'NESSUNO') {
-            this.snackBar.open(this.translate.instant('JOIN_LEAGUE.ALREADY_IN_LEGA'), '', { duration: 3000 });
+            this.snackBar.open(this.translate.instant('JOIN_LEAGUE.ALREADY_IN_LEGA'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--info'] });
             this.router.navigate(['/lega', lega.id]);
             return;
           }
@@ -209,7 +209,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!lega.accessoLibero) {
       // Blocca re-submit se c'è già una richiesta pending
       if (this.pendingLegaIds.has(lega.id)) {
-        this.snackBar.open(this.translate.instant('JOIN_REQUEST.ALREADY_PENDING'), '', { duration: 4000 });
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.ALREADY_PENDING'), '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--info'] });
         return;
       }
       import('../../shared/components/richiedi-ingresso-dialog.component').then(m => {
@@ -249,7 +249,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 msg = this.translate.instant('JOIN_REQUEST.ALREADY_PENDING');
               }
-              this.snackBar.open(msg, '', { duration: 4000 });
+              this.snackBar.open(msg, '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
             }
           });
         });

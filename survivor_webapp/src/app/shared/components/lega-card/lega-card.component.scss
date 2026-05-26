@@ -178,6 +178,27 @@
   &:active {
     transform: translateY(0);
   }
+
+  &--pending {
+    background: rgba(10, 61, 145, 0.15);
+    color: rgba(10, 61, 145, 0.6);
+    box-shadow: none;
+    cursor: not-allowed;
+    border: 1.5px dashed rgba(10, 61, 145, 0.3);
+
+    mat-icon {
+      animation: spin 1.8s linear infinite;
+    }
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+    }
+  }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 

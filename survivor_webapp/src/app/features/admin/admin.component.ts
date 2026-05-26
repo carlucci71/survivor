@@ -112,11 +112,11 @@ export class AdminComponent implements OnInit {
   approva(req: LegaJoinRequest): void {
     this.legaService.approvaRichiesta(req.legaId, req.id).subscribe({
       next: () => {
-        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--success'] });
         this.caricaRichieste();
       },
       error: (err) => {
-        this.snackBar.open(err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC'), '', { duration: 4000 });
+        this.snackBar.open(err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC'), '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       }
     });
   }
@@ -124,11 +124,11 @@ export class AdminComponent implements OnInit {
   rifiuta(req: LegaJoinRequest): void {
     this.legaService.rifiutaRichiesta(req.legaId, req.id).subscribe({
       next: () => {
-        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--info'] });
         this.caricaRichieste();
       },
       error: (err) => {
-        this.snackBar.open(err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC'), '', { duration: 4000 });
+        this.snackBar.open(err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC'), '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       }
     });
   }

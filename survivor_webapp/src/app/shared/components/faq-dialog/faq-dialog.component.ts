@@ -188,7 +188,10 @@ import { TranslateModule } from '@ngx-translate/core';
       padding-right: 40px;
 
       .title-icon {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        width: 1.8rem;
+        height: 1.8rem;
+        flex-shrink: 0;
         color: #4FC3F7;
       }
 

@@ -464,6 +464,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
           this.confirmationMessage = true;
           this.legaCreataId = lega.id;
 
+          // Scroll to top immediato alla schermata di conferma
+          window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+
           // Reset del viewport per iOS - previene lo zoom
           setTimeout(() => {
             this.resetViewportForIOS();
