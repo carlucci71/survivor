@@ -84,12 +84,12 @@ export class RichiesteLeaderComponent implements OnInit {
   approva(req: LegaJoinRequest): void {
     this.legaService.approvaRichiesta(req.legaId, req.id).subscribe({
       next: () => {
-        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.APPROVED_OK'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--success'] });
         this.carica();
       },
       error: (err) => {
         const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
-        this.snackBar.open(msg, '', { duration: 4000 });
+        this.snackBar.open(msg, '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       }
     });
   }
@@ -97,12 +97,12 @@ export class RichiesteLeaderComponent implements OnInit {
   rifiuta(req: LegaJoinRequest): void {
     this.legaService.rifiutaRichiesta(req.legaId, req.id).subscribe({
       next: () => {
-        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000 });
+        this.snackBar.open(this.translate.instant('JOIN_REQUEST.REJECTED_OK'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--info'] });
         this.carica();
       },
       error: (err) => {
         const msg = err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC');
-        this.snackBar.open(msg, '', { duration: 4000 });
+        this.snackBar.open(msg, '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       }
     });
   }
