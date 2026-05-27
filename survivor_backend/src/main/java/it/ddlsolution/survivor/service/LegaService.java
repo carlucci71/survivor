@@ -510,7 +510,16 @@ public class LegaService {
                             }
                         }
                     }
-                    if (statoGiornata == Enumeratori.StatoPartita.TERMINATA) {
+                    // Avanza anche quando tutte le giocate dei giocatori hanno già un esito,
+                    // indipendentemente dallo stato globale del round (es. tennis con partite Cancelled).
+                    final int gcFinal = nuovaGiornataCalcolata;
+                    List<GiocataDTO> tutteLeGiocateDelRound = legaDTO.getGiocatori().stream()
+                            .flatMap(g -> g.getGiocate().stream()
+                                    .filter(gg -> gg.getLegaId().equals(idLega) && gg.getGiornata() + giornataIniziale - 1 == gcFinal))
+                            .collect(Collectors.toList());
+                    boolean tuttiGiocatoriRisolti = !tutteLeGiocateDelRound.isEmpty()
+                            && tutteLeGiocateDelRound.stream().allMatch(gg -> gg.getEsito() != null);
+                    if (statoGiornata == Enumeratori.StatoPartita.TERMINATA || tuttiGiocatoriRisolti) {
                         legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
                     }
                 }
