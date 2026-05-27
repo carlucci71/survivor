@@ -390,12 +390,38 @@ public class LegaService {
             log.warn("calcola: getLegaDTO ha restituito giocatori null per lega {} (stato={})", idLega, legaDTO.getStato());
             return legaDTO;
         }
+        // Early exit: se in modalità survivor rimane ≤ 1 giocatore attivo, termina la lega subito
+        // senza avanzare il round né inserire pick automatici (il vincitore è già noto).
+        boolean isSurvivorDaTerminare = legaDTO.getModalita() != Enumeratori.ModalitaLega.CAMPIONATO
+                && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA
+                && legaDTO.getGiocatori().stream()
+                        .filter(g -> g.getStatiPerLega().get(idLega) == Enumeratori.StatoGiocatore.ATTIVO)
+                        .count() <= 1;
+        if (isSurvivorDaTerminare) {
+            salva(legaDTO, null);
+            return getLegaDTO(idLega, true, userId);
+        }
         int giocateDaCalcolare = 0;
         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
             giocateDaCalcolare += giocatoreDTO.getGiocate().stream().filter(g -> g.getEsito() == null).count();
         }
+        // Terzo caso: il round è IN_CORSO (es. tennis con partite Cancelled che bloccano TERMINATA)
+        // ma tutte le giocate dei partecipanti hanno già un esito e giornataCalcolata non è ancora avanzata.
+        final int giornataCorrenteCheck = legaDTO.getGiornataCorrente();
+        final int giornataInizialeCheck = legaDTO.getGiornataIniziale();
+        List<GiocataDTO> giocateRoundCorrente = legaDTO.getGiocatori().stream()
+                .flatMap(g -> g.getGiocate().stream()
+                        .filter(gg -> gg.getLegaId().equals(idLega) && gg.getGiornata() + giornataInizialeCheck - 1 == giornataCorrenteCheck))
+                .collect(Collectors.toList());
+        boolean giornataAncoraNoCalcolata = legaDTO.getGiornataCalcolata() == null
+                || legaDTO.getGiornataCalcolata() < legaDTO.getGiornataCorrente();
+        boolean tuttiRisoltiPerAvanzamento = !giocateRoundCorrente.isEmpty()
+                && giocateRoundCorrente.stream().allMatch(gg -> gg.getEsito() != null)
+                && giornataAncoraNoCalcolata
+                && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA;
         if ((legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA)
                 || (giocateDaCalcolare > 0 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA)
+                || tuttiRisoltiPerAvanzamento
         ) {
             CampionatoDTO campionatoDTO = campionatoService.refreshCampionato(legaDTO.getCampionato(), legaDTO.getAnno());
             legaDTO.setCampionato(campionatoDTO);
