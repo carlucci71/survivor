@@ -566,7 +566,7 @@ public class LegaService {
     private Integer calcolaPuntiCampionato(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return 0;
         Optional<PartitaDTO> optPartita = partite.stream()
-                .filter(p -> p.getCasaSigla().equals(squadraSigla) || p.getFuoriSigla().equals(squadraSigla))
+                .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
                 .findFirst();
         if (optPartita.isEmpty()) return 0;
@@ -576,7 +576,7 @@ public class LegaService {
         Integer sc = p.getScoreCasa();
         Integer sf = p.getScoreFuori();
         if (sc == null || sf == null) return 0;
-        if (p.getCasaSigla().equals(squadraSigla)) {
+        if (p.getCasaSigla().equalsIgnoreCase(squadraSigla)) {
             return sc > sf ? 3 : sc.equals(sf) ? 1 : 0;
         } else {
             return sf > sc ? 3 : sf.equals(sc) ? 1 : 0;
@@ -591,7 +591,7 @@ public class LegaService {
         if (squadraSigla == null) return Enumeratori.EsitoGiocata.KO;
         Optional<PartitaDTO> optPartitaDTO = partite
                 .stream()
-                .filter(p -> p.getCasaSigla().equals(squadraSigla) || p.getFuoriSigla().equals(squadraSigla))
+                .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
                 .findFirst();
         if (optPartitaDTO.isEmpty()) return Enumeratori.EsitoGiocata.KO;
@@ -602,7 +602,7 @@ public class LegaService {
         Integer scoreFuori = partitaDTO.getScoreFuori();
         if (scoreCasa == null || scoreFuori == null) return Enumeratori.EsitoGiocata.KO;
         if (scoreCasa.equals(scoreFuori)) return Enumeratori.EsitoGiocata.PAREGGIO;
-        boolean isVincente = partitaDTO.getCasaSigla().equals(squadraSigla)
+        boolean isVincente = partitaDTO.getCasaSigla().equalsIgnoreCase(squadraSigla)
                 ? scoreCasa > scoreFuori
                 : scoreFuori > scoreCasa;
         return isVincente ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
@@ -612,7 +612,7 @@ public class LegaService {
         Boolean ret = null;
         Optional<PartitaDTO> optPartitaDTO = partite
                 .stream()
-                .filter(p -> p.getCasaSigla().equals(squadraSigla) || p.getFuoriSigla().equals(squadraSigla))
+                .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
                 .findFirst();
 
@@ -626,14 +626,14 @@ public class LegaService {
                     String fuori = partitaDTO.getFuoriSigla();
                     Integer scoreCasa = partitaDTO.getScoreCasa();
                     Integer scoreFuori = partitaDTO.getScoreFuori();
-                    if (casa.equals(squadraSigla)) {
+                    if (casa.equalsIgnoreCase(squadraSigla)) {
                         if (scoreCasa > scoreFuori) {
                             ret = true;
                         } else {
                             ret = false;
                         }
                     }
-                    if (fuori.equals(squadraSigla)) {
+                    if (fuori.equalsIgnoreCase(squadraSigla)) {
                         if (scoreFuori > scoreCasa) {
                             ret = true;
                         } else {
