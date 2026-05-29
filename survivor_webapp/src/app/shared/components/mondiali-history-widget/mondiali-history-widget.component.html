@@ -1,0 +1,114 @@
+<div class="history-widget">
+
+  <!-- Toggle header -->
+  <button class="hw-toggle" (click)="open = !open" [attr.aria-expanded]="open">
+    <span class="hw-toggle-left">
+      <span class="hw-trophy">🏆</span>
+      <span class="hw-title">Albo d'oro Mondiali</span>
+    </span>
+    <mat-icon class="hw-chevron" [class.hw-chevron--open]="open">expand_more</mat-icon>
+  </button>
+
+  <!-- Collapsible body -->
+  <div class="hw-body" *ngIf="open" [@expandCollapse]>
+
+  <!-- Year selector -->
+  <div class="year-scroll">
+    <div class="year-track">
+      <button
+        *ngFor="let year of years"
+        class="year-btn"
+        [class.year-btn--active]="selectedYear === year"
+        [class.year-btn--current]="year === 2026"
+        [class.year-btn--no-data]="!hasData(year) && year !== 2026"
+        (click)="selectYear(year)"
+      >
+        {{ year }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Match card - has data -->
+  <div
+    class="match-card"
+    *ngIf="selectedFinal && !isCurrentEdition"
+    [@cardAnim]="selectedYear"
+  >
+    <div class="match-subtitle">Finale · {{ selectedFinal.date }}</div>
+
+    <div class="match-body">
+
+      <!-- Home team -->
+      <div class="team" [class.team--winner]="isWinner(selectedFinal.home, selectedFinal)">
+        <div class="team-badge">
+          <img
+            *ngIf="selectedFinal.home.logo"
+            [src]="selectedFinal.home.logo"
+            [alt]="selectedFinal.home.name"
+            class="team-logo"
+          />
+          <span *ngIf="!selectedFinal.home.logo" class="team-flag-emoji">{{ selectedFinal.home.flag }}</span>
+        </div>
+        <span class="team-name">{{ selectedFinal.home.name }}</span>
+        <span class="winner-crown" *ngIf="isWinner(selectedFinal.home, selectedFinal)">👑</span>
+      </div>
+
+      <!-- Score -->
+      <div class="score-block">
+        <div class="score-row">
+          <span class="score-num" [class.score-num--gold]="isWinner(selectedFinal.home, selectedFinal)">{{ selectedFinal.home.score }}</span>
+          <span class="score-pens" *ngIf="selectedFinal.home.penalties != null">({{ selectedFinal.home.penalties }})</span>
+          <span class="score-sep">–</span>
+          <span class="score-pens" *ngIf="selectedFinal.away.penalties != null">({{ selectedFinal.away.penalties }})</span>
+          <span class="score-num" [class.score-num--gold]="isWinner(selectedFinal.away, selectedFinal)">{{ selectedFinal.away.score }}</span>
+        </div>
+        <span class="result-type" *ngIf="resultTypeLabel">{{ resultTypeLabel }}</span>
+      </div>
+
+      <!-- Away team -->
+      <div class="team team--right" [class.team--winner]="isWinner(selectedFinal.away, selectedFinal)">
+        <div class="team-badge">
+          <img
+            *ngIf="selectedFinal.away.logo"
+            [src]="selectedFinal.away.logo"
+            [alt]="selectedFinal.away.name"
+            class="team-logo"
+          />
+          <span *ngIf="!selectedFinal.away.logo" class="team-flag-emoji">{{ selectedFinal.away.flag }}</span>
+        </div>
+        <span class="team-name">{{ selectedFinal.away.name }}</span>
+        <span class="winner-crown" *ngIf="isWinner(selectedFinal.away, selectedFinal)">👑</span>
+      </div>
+
+    </div>
+
+    <!-- Winner banner -->
+    <div class="winner-banner" [@cardAnim]="selectedYear">
+      <span class="winner-label">
+        🏆 {{ selectedFinal.winnerName }}
+        <span *ngIf="resultTypeLabel" class="winner-detail"> · {{ resultTypeLabel }}</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- In corso -->
+  <div class="state-card" *ngIf="isCurrentEdition" [@cardAnim]="selectedYear">
+    <span class="state-icon">⚽</span>
+    <div class="state-body">
+      <div class="state-title">Mondiale 2026 — in corso</div>
+      <div class="state-sub">La storia si sta scrivendo...</div>
+    </div>
+  </div>
+
+  <!-- Dati non ancora disponibili -->
+  <div class="state-card state-card--dim" *ngIf="!selectedFinal && !isCurrentEdition" [@cardAnim]="selectedYear">
+    <span class="state-icon">📖</span>
+    <div class="state-body">
+      <div class="state-title">Edizione {{ selectedYear }}</div>
+      <div class="state-sub">Dati storici in arrivo</div>
+    </div>
+  </div>
+
+  </div><!-- /hw-body -->
+
+</div>

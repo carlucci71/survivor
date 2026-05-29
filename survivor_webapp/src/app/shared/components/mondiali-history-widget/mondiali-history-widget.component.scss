@@ -1,0 +1,352 @@
+:host {
+  display: block;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 4px 0;
+}
+
+// ── Toggle header ─────────────────────────────────────────────────────────
+.hw-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 2px;
+  border-radius: 8px;
+  transition: background 0.18s;
+  outline: none;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.hw-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.hw-trophy {
+  font-size: 16px;
+}
+
+.hw-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.hw-chevron {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.3);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.hw-body {
+  padding-bottom: 4px;
+}
+
+// ── Year selector ─────────────────────────────────────────────────────────
+.year-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 14px;
+  padding-bottom: 4px;
+
+  // Custom scrollbar
+  &::-webkit-scrollbar { height: 2px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+  }
+}
+
+.year-track {
+  display: flex;
+  gap: 6px;
+  width: max-content;
+}
+
+.year-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 13px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  white-space: nowrap;
+  font-family: inherit;
+  outline: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  &--active {
+    background: rgba(245, 197, 66, 0.18) !important;
+    border-color: rgba(245, 197, 66, 0.55) !important;
+    color: #f5c542 !important;
+  }
+
+  &--current {
+    border-color: rgba(76, 201, 120, 0.35);
+    color: rgba(76, 201, 120, 0.75);
+
+    &.year-btn--active {
+      background: rgba(76, 201, 120, 0.15) !important;
+      border-color: rgba(76, 201, 120, 0.6) !important;
+      color: #4cc978 !important;
+    }
+  }
+
+  &--no-data {
+    opacity: 0.45;
+  }
+}
+
+// ── Match card ────────────────────────────────────────────────────────────
+.match-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.match-subtitle {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  padding: 12px 16px 0;
+}
+
+.match-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 10px 14px;
+}
+
+// ── Team column ───────────────────────────────────────────────────────────
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  transition: background 0.2s;
+
+  &--right {
+    align-items: center;
+  }
+
+  &--winner {
+    background: rgba(245, 197, 66, 0.07);
+  }
+}
+
+.team-badge {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.team-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+
+  .team--winner & {
+    border-color: rgba(245, 197, 66, 0.45);
+    box-shadow: 0 0 18px rgba(245, 197, 66, 0.18);
+  }
+}
+
+.team-flag-emoji {
+  font-size: 44px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.team-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.65);
+  word-break: break-word;
+
+  .team--winner & {
+    color: #f5c542;
+  }
+}
+
+.winner-crown {
+  font-size: 14px;
+  line-height: 1;
+}
+
+// ── Score ─────────────────────────────────────────────────────────────────
+.score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px;
+}
+
+.score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.score-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.45);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+
+  &--gold {
+    color: #f5c542;
+  }
+}
+
+.score-pens {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.3);
+  align-self: center;
+  padding: 0 1px;
+}
+
+.score-sep {
+  font-size: 26px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.2);
+  padding: 0 3px;
+  line-height: 1;
+}
+
+.result-type {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+// ── Winner banner ─────────────────────────────────────────────────────────
+.winner-banner {
+  text-align: center;
+  padding: 8px 16px 12px;
+  border-top: 1px solid rgba(245, 197, 66, 0.12);
+  background: rgba(245, 197, 66, 0.05);
+}
+
+.winner-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f5c542;
+  letter-spacing: 0.2px;
+}
+
+.winner-detail {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+// ── State cards ───────────────────────────────────────────────────────────
+.state-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  margin-bottom: 4px;
+
+  &--dim {
+    opacity: 0.65;
+  }
+}
+
+.state-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.state-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.state-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.state-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+@media (max-width: 360px) {
+  .team-badge,
+  .team-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .team-flag-emoji {
+    font-size: 36px;
+  }
+
+  .score-num {
+    font-size: 26px;
+  }
+
+  .team-name {
+    font-size: 11px;
+  }
+
+  .score-sep {
+    font-size: 20px;
+  }
+}

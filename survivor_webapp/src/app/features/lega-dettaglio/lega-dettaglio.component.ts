@@ -57,6 +57,8 @@ import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
 import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component';
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
+import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
+import { MondialiHistoryWidgetComponent } from '../../shared/components/mondiali-history-widget/mondiali-history-widget.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -84,6 +86,8 @@ import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
     TranslateLeagueDataPipe,
     LeaderTutorialComponent,
     PlayerTutorialComponent,
+    MondialiGroupsTickerComponent,
+    MondialiHistoryWidgetComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
