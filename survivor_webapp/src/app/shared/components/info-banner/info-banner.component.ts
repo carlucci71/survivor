@@ -2745,9 +2745,6 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
         }, 240);
       };
 
-      // Auto-close dopo 8 secondi
-      setTimeout(dismiss, 8000);
-
       // Tasto chiudi: usa 'click' (affidabile sia desktop che mobile)
       closeBtn.addEventListener('click', dismiss, { once: true });
 
