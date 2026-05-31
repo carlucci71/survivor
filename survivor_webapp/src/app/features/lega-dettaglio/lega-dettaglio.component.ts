@@ -87,7 +87,6 @@ import { MondialiHistoryWidgetComponent } from '../../shared/components/mondiali
     LeaderTutorialComponent,
     PlayerTutorialComponent,
     MondialiGroupsTickerComponent,
-    MondialiHistoryWidgetComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
