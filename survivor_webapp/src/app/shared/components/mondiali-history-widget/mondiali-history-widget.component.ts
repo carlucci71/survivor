@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 export interface FinalTeam {
@@ -23,7 +25,7 @@ export interface WorldCupFinal {
 @Component({
   selector: 'app-mondiali-history-widget',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
   templateUrl: './mondiali-history-widget.component.html',
   styleUrls: ['./mondiali-history-widget.component.scss'],
   animations: [
@@ -47,7 +49,11 @@ export interface WorldCupFinal {
 })
 export class MondialiHistoryWidgetComponent {
 
-  open = false;
+  constructor(@Optional() private readonly dialogRef?: MatDialogRef<MondialiHistoryWidgetComponent>) {}
+
+  close(): void {
+    this.dialogRef?.close();
+  }
 
   readonly years = [2026, 2022, 2018, 2014, 2010, 2006, 2002, 1998, 1994, 1990, 1986, 1982, 1978, 1974, 1970, 1966, 1962, 1958, 1954, 1950, 1938, 1934, 1930];
 
@@ -81,15 +87,15 @@ export class MondialiHistoryWidgetComponent {
     {
       year: 2010,
       date: '11 lug 2010',
-      home: { name: 'Olanda', score: 0, logo: 'assets/logos/calcio/mondiali/olanda.png' },
-      away: { name: 'Spagna', score: 1, logo: 'assets/logos/calcio/mondiali/spagna.png' },
+      home: { name: 'Spagna', score: 1, logo: 'assets/logos/calcio/mondiali/spagna.png' },
+      away: { name: 'Olanda', score: 0, logo: 'assets/logos/calcio/mondiali/olanda.png' },
       resultType: 'AET',
       winnerName: 'Spagna',
     },
     {
       year: 2006,
       date: '9 lug 2006',
-      home: { name: 'Italia',  score: 1, penalties: 5, flag: '🇮🇹' },
+      home: { name: 'Italia',  score: 1, penalties: 5, logo: 'assets/logos/calcio/mondiali/italia.png' },
       away: { name: 'Francia', score: 1, penalties: 3, logo: 'assets/logos/calcio/mondiali/francia.png' },
       resultType: 'AP',
       winnerName: 'Italia',
@@ -114,7 +120,7 @@ export class MondialiHistoryWidgetComponent {
       year: 1994,
       date: '17 lug 1994',
       home: { name: 'Brasile', score: 0, penalties: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Italia',  score: 0, penalties: 2, flag: '🇮🇹' },
+      away: { name: 'Italia',  score: 0, penalties: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
       resultType: 'AP',
       winnerName: 'Brasile',
     },
@@ -137,7 +143,7 @@ export class MondialiHistoryWidgetComponent {
     {
       year: 1982,
       date: '11 lug 1982',
-      home: { name: 'Italia',         score: 3, flag: '🇮🇹' },
+      home: { name: 'Italia',         score: 3, logo: 'assets/logos/calcio/mondiali/italia.png' },
       away: { name: 'Germania Ovest', score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
       resultType: 'FT',
       winnerName: 'Italia',
@@ -162,7 +168,7 @@ export class MondialiHistoryWidgetComponent {
       year: 1970,
       date: '21 giu 1970',
       home: { name: 'Brasile', score: 4, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Italia',  score: 1, flag: '🇮🇹' },
+      away: { name: 'Italia',  score: 1, logo: 'assets/logos/calcio/mondiali/italia.png' },
       resultType: 'FT',
       winnerName: 'Brasile',
     },
@@ -178,7 +184,7 @@ export class MondialiHistoryWidgetComponent {
       year: 1962,
       date: '17 giu 1962',
       home: { name: 'Brasile',        score: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Cecoslovacchia', score: 1, flag: '🇨🇿' },
+      away: { name: 'Cecoslovacchia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
       resultType: 'FT',
       winnerName: 'Brasile',
     },    {
@@ -193,7 +199,7 @@ export class MondialiHistoryWidgetComponent {
       year: 1954,
       date: '4 lug 1954',
       home: { name: 'Germania Ovest', score: 3, logo: 'assets/logos/calcio/mondiali/germania.png' },
-      away: { name: 'Ungheria',       score: 2, flag: '\uD83C\uDDED\uD83C\uDDFA' },
+      away: { name: 'Ungheria',       score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
       resultType: 'FT',
       winnerName: 'Germania Ovest',
     },
@@ -208,16 +214,16 @@ export class MondialiHistoryWidgetComponent {
     {
       year: 1938,
       date: '19 giu 1938',
-      home: { name: 'Italia',   score: 4, flag: '\uD83C\uDDEE\uD83C\uDDF9' },
-      away: { name: 'Ungheria', score: 2, flag: '\uD83C\uDDED\uD83C\uDDFA' },
+      home: { name: 'Italia',   score: 4, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Ungheria', score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
       resultType: 'FT',
       winnerName: 'Italia',
     },
     {
       year: 1934,
       date: '10 giu 1934',
-      home: { name: 'Italia',         score: 2, flag: '\uD83C\uDDEE\uD83C\uDDF9' },
-      away: { name: 'Cecoslovacchia', score: 1, flag: '\uD83C\uDDE8\uD83C\uDDFF' },
+      home: { name: 'Italia',         score: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Cecoslovacchia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
       resultType: 'AET',
       winnerName: 'Italia',
     },
@@ -239,8 +245,14 @@ export class MondialiHistoryWidgetComponent {
   }
 
   get resultTypeLabel(): string {
-    switch (this.selectedFinal?.resultType) {
-      case 'AP':  return 'd.c.r.';
+    const f = this.selectedFinal;
+    if (!f) return '';
+    switch (f.resultType) {
+      case 'AP': {
+        const ph = f.home.penalties ?? 0;
+        const pa = f.away.penalties ?? 0;
+        return `d.c.r. (${ph} – ${pa})`;
+      }
       case 'AET': return 'd.t.s.';
       default:    return '';
     }

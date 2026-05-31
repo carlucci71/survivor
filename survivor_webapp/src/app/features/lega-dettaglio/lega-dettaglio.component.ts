@@ -611,6 +611,17 @@ export class LegaDettaglioComponent implements OnDestroy {
     return map[campionatoId] || null;
   }
 
+  openMondialiAlboOro(): void {
+    this.dialog.open(MondialiHistoryWidgetComponent, {
+      width: '95vw',
+      maxWidth: '460px',
+      maxHeight: '90dvh',
+      panelClass: 'mondiali-albo-oro-panel',
+      autoFocus: false,
+      disableClose: false,
+    });
+  }
+
   // ── Progressione lega ─────────────────────────────────────────────────────
 
   getEffectiveGiornataFinale(): number {

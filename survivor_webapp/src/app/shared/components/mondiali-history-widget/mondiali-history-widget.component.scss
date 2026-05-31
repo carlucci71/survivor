@@ -1,62 +1,62 @@
 :host {
   display: block;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  padding: 4px 0;
+  background: #0d1b2a;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
-// ── Toggle header ─────────────────────────────────────────────────────────
-.hw-toggle {
+// ── Dialog header ─────────────────────────────────────────────────────────
+.hw-dialog-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 10px 2px;
-  border-radius: 8px;
-  transition: background 0.18s;
-  outline: none;
-  font-family: inherit;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.05);
-  }
+  padding: 16px 16px 12px 20px;
+  border-bottom: 1px solid rgba(245, 197, 66, 0.15);
+  background: rgba(245, 197, 66, 0.05);
+  flex-shrink: 0;
 }
 
-.hw-toggle-left {
+.hw-header-left {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 9px;
 }
 
 .hw-trophy {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .hw-title {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.9px;
-  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.hw-chevron {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  color: rgba(255, 255, 255, 0.3);
-  transition: transform 0.25s ease;
-  flex-shrink: 0;
+.hw-close-btn {
+  color: rgba(255, 255, 255, 0.45);
+  width: 36px;
+  height: 36px;
+  line-height: 1;
 
-  &--open {
-    transform: rotate(180deg);
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
   }
 }
 
 .hw-body {
-  padding-bottom: 4px;
+  padding: 16px 16px 20px;
+  overflow-y: auto;
+  max-height: calc(90dvh - 70px);
 }
 
 // ── Year selector ─────────────────────────────────────────────────────────
@@ -82,12 +82,12 @@
 }
 
 .year-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 20px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 5px 13px;
   cursor: pointer;
   transition: background 0.18s, color 0.18s, border-color 0.18s;
@@ -96,29 +96,30 @@
   outline: none;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
   }
 
   &--active {
-    background: rgba(245, 197, 66, 0.18) !important;
-    border-color: rgba(245, 197, 66, 0.55) !important;
+    background: rgba(245, 197, 66, 0.25) !important;
+    border-color: rgba(245, 197, 66, 0.7) !important;
     color: #f5c542 !important;
   }
 
   &--current {
-    border-color: rgba(76, 201, 120, 0.35);
-    color: rgba(76, 201, 120, 0.75);
+    background: rgba(76, 201, 120, 0.18);
+    border-color: rgba(76, 201, 120, 0.5);
+    color: #4cc978;
 
     &.year-btn--active {
-      background: rgba(76, 201, 120, 0.15) !important;
-      border-color: rgba(76, 201, 120, 0.6) !important;
+      background: rgba(76, 201, 120, 0.28) !important;
+      border-color: rgba(76, 201, 120, 0.75) !important;
       color: #4cc978 !important;
     }
   }
 
   &--no-data {
-    opacity: 0.45;
+    opacity: 0.55;
   }
 }
 

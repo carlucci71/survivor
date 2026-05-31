@@ -1,16 +1,18 @@
 <div class="history-widget">
 
-  <!-- Toggle header -->
-  <button class="hw-toggle" (click)="open = !open" [attr.aria-expanded]="open">
-    <span class="hw-toggle-left">
+  <!-- Dialog header -->
+  <div class="hw-dialog-header">
+    <div class="hw-header-left">
       <span class="hw-trophy">🏆</span>
       <span class="hw-title">Albo d'oro Mondiali</span>
-    </span>
-    <mat-icon class="hw-chevron" [class.hw-chevron--open]="open">expand_more</mat-icon>
-  </button>
+    </div>
+    <button class="hw-close-btn" (click)="close()" mat-icon-button aria-label="Chiudi">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-  <!-- Collapsible body -->
-  <div class="hw-body" *ngIf="open" [@expandCollapse]>
+  <!-- Body -->
+  <div class="hw-body">
 
   <!-- Year selector -->
   <div class="year-scroll">
@@ -57,9 +59,7 @@
       <div class="score-block">
         <div class="score-row">
           <span class="score-num" [class.score-num--gold]="isWinner(selectedFinal.home, selectedFinal)">{{ selectedFinal.home.score }}</span>
-          <span class="score-pens" *ngIf="selectedFinal.home.penalties != null">({{ selectedFinal.home.penalties }})</span>
           <span class="score-sep">–</span>
-          <span class="score-pens" *ngIf="selectedFinal.away.penalties != null">({{ selectedFinal.away.penalties }})</span>
           <span class="score-num" [class.score-num--gold]="isWinner(selectedFinal.away, selectedFinal)">{{ selectedFinal.away.score }}</span>
         </div>
         <span class="result-type" *ngIf="resultTypeLabel">{{ resultTypeLabel }}</span>
