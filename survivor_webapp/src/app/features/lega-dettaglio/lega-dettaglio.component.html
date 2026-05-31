@@ -54,7 +54,9 @@
             </span>
             <span class="recap-dot">·</span>
             @if (getTorneoLogo(lega.campionato?.id)) {
-              <span class="recap-torneo-logo-wrap">
+              <span class="recap-torneo-logo-wrap"
+                    [class.recap-torneo-logo-wrap--mondiali]="lega.campionato?.id === 'MONDIALI_2026'"
+                    (click)="lega.campionato?.id === 'MONDIALI_2026' ? openMondialiAlboOro() : null">
                 <img class="recap-torneo-logo"
                      [src]="getTorneoLogo(lega.campionato?.id)"
                      [alt]="(lega.campionato?.id ?? '') | translateLeagueData: 'championship'">
@@ -128,6 +130,11 @@
             </div>
           </div>
         </div>
+
+        <!-- MONDIALI 2026 GROUPS TICKER -->
+        @if (lega.campionato?.id === 'MONDIALI_2026') {
+          <app-mondiali-groups-ticker></app-mondiali-groups-ticker>
+        }
 
         <!-- BARRA AVANZAMENTO LEGA -->
         @if (lega.giornataIniziale != null) {

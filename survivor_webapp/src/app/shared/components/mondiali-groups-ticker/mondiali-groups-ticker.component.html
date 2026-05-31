@@ -1,0 +1,38 @@
+<div class="ticker-outer">
+  <div class="ticker-track">
+    <ng-container *ngFor="let girone of gironi">
+      <div class="group-item">
+        <span class="bullet"></span>
+        <div class="group-chip">
+          <span class="group-label">{{ girone.label }}</span>
+          <div class="team-logos">
+            <img
+              *ngFor="let team of girone.teams"
+              [src]="getLogo(team.sigla)"
+              [alt]="team.nome"
+              [title]="team.nome"
+              class="team-logo"
+            />
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Duplicate for seamless infinite loop -->
+    <ng-container *ngFor="let girone of gironi">
+      <div class="group-item" aria-hidden="true">
+        <span class="bullet"></span>
+        <div class="group-chip">
+          <span class="group-label">{{ girone.label }}</span>
+          <div class="team-logos">
+            <img
+              *ngFor="let team of girone.teams"
+              [src]="getLogo(team.sigla)"
+              [alt]="team.nome"
+              class="team-logo"
+            />
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
