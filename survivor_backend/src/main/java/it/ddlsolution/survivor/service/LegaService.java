@@ -419,6 +419,9 @@ public class LegaService {
                 && giocateRoundCorrente.stream().allMatch(gg -> gg.getEsito() != null)
                 && giornataAncoraNoCalcolata
                 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA;
+        log.info("calcola lega={} statoGiornataCorrente={} giocateDaCalcolare={} stato={} tuttiRisolti={} giornataCalcolata={} giornataCorrente={}",
+                idLega, legaDTO.getStatoGiornataCorrente(), giocateDaCalcolare, legaDTO.getStato(), tuttiRisoltiPerAvanzamento,
+                legaDTO.getGiornataCalcolata(), legaDTO.getGiornataCorrente());
         if ((legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA)
                 || (giocateDaCalcolare > 0 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA)
                 || tuttiRisoltiPerAvanzamento
@@ -432,6 +435,8 @@ public class LegaService {
             List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
             final int giornataIniziale = legaDTO.getGiornataIniziale();
             Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
+            log.info("calcola lega={}: nuovaGiornataCalcolata={} partiteCaricate={} statoGiornata={}",
+                    idLega, nuovaGiornataCalcolata, partite.size(), statoGiornata);
             if (statoGiornata != Enumeratori.StatoPartita.DA_GIOCARE) {
                 if (statoGiornata == Enumeratori.StatoPartita.SOSPESA) {
                     legaDTO.setGiornataCalcolata(nuovaGiornataCalcolata);
@@ -507,6 +512,8 @@ public class LegaService {
                                     GiocataDTO giocataDTO = giocate.get(0);
                                     if (giocataDTO.getEsito() == null) {
                                         esitoCalcolato = calcolaEsitoSurvivor(giocataDTO.getSquadraSigla(), partite);
+                                        log.info("calcola lega={} giocatore={} sigla='{}' esitoCalcolato={}",
+                                                idLega, giocatoreDTO.getId(), giocataDTO.getSquadraSigla(), esitoCalcolato);
                                         if (esitoCalcolato != null) {
                                             giocataDTO.setEsito(esitoCalcolato);
                                         }
@@ -565,13 +572,17 @@ public class LegaService {
      */
     private Integer calcolaPuntiCampionato(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return 0;
-        Optional<PartitaDTO> optPartita = partite.stream()
-                .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
+        List<PartitaDTO> matching = partite.stream()
+                .filter(pm -> pm.getCasaSigla().equalsIgnoreCase(squadraSigla) || pm.getFuoriSigla().equalsIgnoreCase(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                .toList();
+        if (matching.isEmpty()) return 0;
+        // Preferisce il record TERMINATA se disponibile (evita record obsoleti DA_GIOCARE)
+        Optional<PartitaDTO> optTerminata = matching.stream()
+                .filter(pm -> pm.getStato() == Enumeratori.StatoPartita.TERMINATA)
                 .findFirst();
-        if (optPartita.isEmpty()) return 0;
-        PartitaDTO p = optPartita.get();
-        if (p.getStato() != Enumeratori.StatoPartita.TERMINATA) return null;
+        if (optTerminata.isEmpty()) return null;
+        PartitaDTO p = optTerminata.get();
         if (Boolean.TRUE.equals(p.getForzata())) return 3;
         Integer sc = p.getScoreCasa();
         Integer sf = p.getScoreFuori();
@@ -589,14 +600,23 @@ public class LegaService {
      */
     private Enumeratori.EsitoGiocata calcolaEsitoSurvivor(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return Enumeratori.EsitoGiocata.KO;
-        Optional<PartitaDTO> optPartitaDTO = partite
+        List<PartitaDTO> matching = partite
                 .stream()
                 .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
                 .sorted(Comparator.comparing(PartitaDTO::getOrario))
+                .toList();
+        if (matching.isEmpty()) return Enumeratori.EsitoGiocata.KO;
+        if (matching.size() > 1) {
+            log.warn("calcolaEsitoSurvivor: trovati {} record per '{}', preferisco TERMINATA. Pulire record obsoleti in DB.",
+                    matching.size(), squadraSigla);
+        }
+        // Preferisce il record TERMINATA: evita che record DA_GIOCARE obsoleti (opponent cambiato)
+        // coprano il match già concluso con sigla fuoriSigla/casaSigla invariata.
+        Optional<PartitaDTO> optTerminata = matching.stream()
+                .filter(p -> p.getStato() == Enumeratori.StatoPartita.TERMINATA)
                 .findFirst();
-        if (optPartitaDTO.isEmpty()) return Enumeratori.EsitoGiocata.KO;
-        PartitaDTO partitaDTO = optPartitaDTO.get();
-        if (partitaDTO.getStato() != Enumeratori.StatoPartita.TERMINATA) return null;
+        if (optTerminata.isEmpty()) return null; // nessun match concluso ancora
+        PartitaDTO partitaDTO = optTerminata.get();
         if (Boolean.TRUE.equals(partitaDTO.getForzata())) return Enumeratori.EsitoGiocata.OK;
         Integer scoreCasa = partitaDTO.getScoreCasa();
         Integer scoreFuori = partitaDTO.getScoreFuori();

@@ -35,10 +35,13 @@ public class SquadraController {
     @GetMapping(value = "/calendario/{campionatoId}/squadreDisponibili/{anno}/{giornata}")
     public ResponseEntity<List<String>> squadreDisponibili(@PathVariable String campionatoId, @PathVariable Short anno, @PathVariable Integer giornata) {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
-        List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, giornata, anno);
-        List<String> nomiSquadre = new ArrayList<>(partite.stream().map(PartitaDTO::getCasaSigla).toList());
-        nomiSquadre.addAll(partite.stream().map(PartitaDTO::getFuoriSigla).toList());
-        return ResponseEntity.ok(nomiSquadre);
+        // Recupera le partite del turno corrente con refresh dall'API esterna,
+        // così se il DB ha dati parziali o stantii vengono aggiornati al volo.
+        List<PartitaDTO> partite = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
+        List<String> siglaList = new ArrayList<>();
+        partite.stream().map(PartitaDTO::getCasaSigla).filter(s -> s != null && !s.isBlank()).forEach(siglaList::add);
+        partite.stream().map(PartitaDTO::getFuoriSigla).filter(s -> s != null && !s.isBlank()).forEach(siglaList::add);
+        return ResponseEntity.ok(siglaList);
     }
 
     @GetMapping("/search/{nome}")

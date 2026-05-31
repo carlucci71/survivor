@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.text.Normalizer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -277,15 +278,17 @@ public class CalendarioAPI2 implements ICalendario {
                         .giornata(giornata)
                         .orario(romaTime)
                         .stato(statoPartita)
-                        .casaSigla(toTennisSigla(resultHome.team()))
+                        .casaSigla(siglaDaPlayerId(resultHome.teamCode(), resultHome.team()))
                         .casaNome(resultHome.team())
-                        .fuoriSigla(toTennisSigla(resultAway.team()))
+                        .fuoriSigla(siglaDaPlayerId(resultAway.teamCode(), resultAway.team()))
                         .fuoriNome(resultAway.team())
                         .scoreCasa(resultHome.teamScore())
                         .scoreFuori(resultAway.teamScore())
                         .anno(anno)
                         .build();
-                log.debug("Roland Garros partita: {} vs {}", dto.getCasaNome(), dto.getFuoriNome());
+                log.info("Roland Garros g{} partita: {} ({}) vs {} ({}) stato={} score={}-{}",
+                        giornata, dto.getCasaNome(), dto.getCasaSigla(), dto.getFuoriNome(), dto.getFuoriSigla(),
+                        dto.getStato(), dto.getScoreCasa(), dto.getScoreFuori());
                 ret.add(dto);
             } catch (Exception e) {
                 log.warn("Errore elaborazione partita Roland Garros giornata {}: {}", giornata, e.getMessage());
@@ -293,10 +296,52 @@ public class CalendarioAPI2 implements ICalendario {
         }
     }
 
-    /** Converte il displayName del tennista in sigla uppercase con underscore: "Jannik Sinner" → "JANNIK_SINNER" */
-    private static String toTennisSigla(String displayName) {
+    /**
+     * Converte il displayName del tennista nella sigla DB.
+     * Convenzione: UPPERCASE, spazi→'_', trattini→'_', accenti rimossi.
+     * Esempi:
+     *   "Jannik Sinner"           → "JANNIK_SINNER"
+     *   "Felix Auger-Aliassime"   → "FELIX_AUGER_ALIASSIME"
+     *   "Félix Auger-Aliassime"   → "FELIX_AUGER_ALIASSIME"  (accento normalizzato)
+     *   "Gaël Monfils"            → "GAEL_MONFILS"           (accento normalizzato)
+     *   "Jan-Lennard Struff"      → "JAN_LENNARD_STRUFF"
+     *
+     * IMPORTANTE: questa funzione è la fonte di verità per la sigla dei tennisti nel progetto.
+     * Quando aggiungi un nuovo tennista al DB/enum, usa sempre questa funzione per derivare la sigla.
+     */
+    static String toTennisSigla(String displayName) {
         if (displayName == null) return "";
-        return displayName.toUpperCase().replace(' ', '_').replace('-', '_');
+        // 1. Decomposizione NFD: separa il carattere base dal suo segno diacritico
+        //    es. "é" → "e" + combining-accent
+        // 2. Rimuove tutti i combining diacritical marks (classe Unicode InCombiningDiacriticalMarks)
+        String withoutAccents = Normalizer.normalize(displayName, Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return withoutAccents.toUpperCase().replace('-', '_').replace(' ', '_');
+    }
+
+    /**
+     * Ritorna la sigla DB di un tennista per il Roland Garros cercando prima nell'enum
+     * SquadreTennis_API2 tramite playerId (stabile, non cambia mai) e ricadendo su
+     * toTennisSigla(displayName) se il giocatore non è ancora censito nell'enum.
+     *
+     * Il lookup per playerId è preferibile perché il displayName dell'API esterna può variare
+     * (es. "Felix" vs "Félix", abbreviazioni, diversi formati per giocatori con doppio cognome).
+     *
+     * NOTA: le costanti di SquadreTennis_API2 DEVONO avere lo stesso nome che toTennisSigla
+     * produrrebbe per quel giocatore (es. FELIX_AUGER_ALIASSIME, non FELIX_AUGERALIASSIME).
+     */
+    private static String siglaDaPlayerId(String playerId, String displayName) {
+        for (SquadreTennis_API2 player : SquadreTennis_API2.values()) {
+            if (player.getSiglaEsterna().equals(playerId)) {
+                return player.name();
+            }
+        }
+        // Fallback: giocatore non censito nell'enum → deriva la sigla dal displayName normalizzato.
+        // Aggiungere il giocatore a SquadreTennis_API2 per garantire la sigla corretta nel tempo.
+        String siglaFallback = toTennisSigla(displayName);
+        log.warn("Roland Garros: playerId {} ('{}') non trovato in SquadreTennis_API2 → sigla fallback '{}'." +
+                " Aggiungere ASAP all'enum.", playerId, displayName, siglaFallback);
+        return siglaFallback;
     }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
