@@ -2,11 +2,30 @@ package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 
-//NEL NAME VA IL NOME DB E IN SIGLA QUELLO DELL'API.
-//CENSIRE TUTTE LE SQUADRE CHE HANNO GIOCATO IN TENNIS
+/**
+ * Mappa playerId API → sigla DB per i tennisti.
+ *
+ * ╔══════════════════════════════════════════════════════════════════════════════╗
+ * ║  CONVENZIONE SIGLA (allineata a CalendarioAPI2.toTennisSigla)               ║
+ * ║  displayName.stripAccents().toUpperCase().replace('-','_').replace(' ','_') ║
+ * ║                                                                             ║
+ * ║  Esempi:                                                                    ║
+ * ║    "Jannik Sinner"          → JANNIK_SINNER                                 ║
+ * ║    "Felix Auger-Aliassime"  → FELIX_AUGER_ALIASSIME   (trattino → _)        ║
+ * ║    "Jan-Lennard Struff"     → JAN_LENNARD_STRUFF      (trattino → _)        ║
+ * ║    "Gaël Monfils"           → GAEL_MONFILS            (accento rimosso)     ║
+ * ║                                                                             ║
+ * ║  Per aggiungere un nuovo giocatore:                                         ║
+ * ║    1. Prendi il playerId dall'API (campo "playerId" in firstEntry.players)  ║
+ * ║    2. Applica la regola sopra al displayName per ottenere la sigla          ║
+ * ║    3. Aggiungi la riga: SIGLA_CALCOLATA("playerId"),                        ║
+ * ║    4. Inserisci in DB: INSERT INTO squadra (sigla, nome, id_campionato)     ║
+ * ║       VALUES ('SIGLA_CALCOLATA', 'displayName', 'ROLAND_GARROS');           ║
+ * ╚══════════════════════════════════════════════════════════════════════════════╝
+ */
 enum SquadreTennis_API2 implements IEnumSquadre {
-//JANNIK_SINNER è DB
-//[{"playerId":"33848","displayName":"Jannik Sinner","firstName":"Jannik","lastName":"Sinner","nationality":"ITA","initials":""}]
+// playerId trovabile dalla risposta API: firstEntry.players[0].playerId
+// Esempio: [{"playerId":"33848","displayName":"Jannik Sinner","firstName":"Jannik","lastName":"Sinner"}]
 JANNIK_SINNER("33848"),
         MATEJ_DODIG("36699"),
         BENJAMIN_HASSAN("33150"),
@@ -239,8 +258,8 @@ JANNIK_SINNER("33848"),
         NIKOLOZ_BASILASHVILI("1885"),
         JUNCHENG_SHANG("34585"),
         ALEJANDRO_DAVIDOVICH_FOKINA("33251"),
-        JANLENNARD_STRUFF("23433"),
-        FELIX_AUGERALIASSIME("32005"),
+        JAN_LENNARD_STRUFF("23433"),  // era JANLENNARD_STRUFF - allineato alla convention toTennisSigla
+        FELIX_AUGER_ALIASSIME("32005"),  // era FELIX_AUGERALIASSIME - allineato alla convention toTennisSigla
         ALEJANDRO_TABILO("32740"),
         ROBERTO_CARBALLES_BAENA("3824"),
         JAMES_DUCKWORTH("6452"),

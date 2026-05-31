@@ -64,17 +64,23 @@ public class SquadraService {
     }
 
     /**
-     * Estrae i giocatori dal tabellone Roland Garros (giornata 1 = draw completo).
-     * Prima tenta da DB/cache; in fallback chiama direttamente l'API tabellone.
+     * Estrae i giocatori dal tabellone Roland Garros.
+     * Strategia a cascata:
+     * 1. Giornata 1 da DB/cache (draw completo = 128 giocatori)
+     * 2. Se vuota → fallback API per giornata 1
+     * 3. Se ancora vuota → usa TUTTE le giornate in DB/cache (unione di tutti i round)
+     *    Garantisce che i giocatori ancora in gara (es. ottavi) siano sempre visibili
+     *    anche quando il round 1 non è più disponibile nell'API esterna.
      */
     private List<SquadraDTO> getPlayersFromTabellone(String campionatoId, short anno) {
-        // Prova prima dalla cache/DB (populate da processCampionatoTransactional)
+        // Usa la union di TUTTI i round in DB/cache: questo garantisce che giocatori
+        // entrati come Lucky Losers o Qualifiers in round successivi al round 1
+        // (e quindi assenti dalla giornata 1) vengano comunque inclusi nella lista.
         List<PartitaDTO> partite = cacheableProvider.getIfAvailable().getPartiteCampionatoAnno(campionatoId, anno);
-        List<PartitaDTO> giornata1 = partite.stream().filter(p -> p.getGiornata() == 1).toList();
 
-        if (giornata1.isEmpty()) {
-            // Fallback: chiama il calendario API direttamente
-            log.info("Roland Garros: partite non ancora in DB, chiamo API tabellone direttamente");
+        if (partite.isEmpty()) {
+            // Fallback: nessun dato in DB, chiama direttamente l'API per giornata 1
+            log.info("Roland Garros: nessuna partita in DB, chiamo API tabellone direttamente");
             ICalendario calendario = calendarioProvider.getIfAvailable();
             if (calendario != null) {
                 try {
@@ -85,14 +91,15 @@ public class SquadraService {
                     campDto.setSport(sport);
                     campDto.setSquadre(new ArrayList<>());
                     campDto.setAnnoCorrente(anno);
-                    giornata1 = calendario.getPartite(campDto, 1, anno);
+                    partite = calendario.getPartite(campDto, 1, anno);
                 } catch (Exception e) {
                     log.warn("Roland Garros fallback API call failed: {}", e.getMessage());
                 }
             }
         }
 
-        return extractPlayersFromPartite(giornata1, campionatoId);
+        log.info("Roland Garros: costruisco lista giocatori da {} partite totali su tutti i round", partite.size());
+        return extractPlayersFromPartite(partite, campionatoId);
     }
 
     /** Estrae giocatori unici da una lista di partite (casaSigla+fuoriSigla). */
