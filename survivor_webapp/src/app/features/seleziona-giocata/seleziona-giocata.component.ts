@@ -693,6 +693,17 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             const sdSigla = sd.sigla;
             return sdSigla ? returnedSigle.has(sdSigla) : false;
           });
+          // Aggiunge eventuali giocatori del round corrente non presenti nella lista iniziale
+          // (es. sigla cambiata tra round precedenti e round corrente, o Lucky Losers nuovi)
+          const existingSigle = new Set(this.squadreDisponibili.map(sd => sd.sigla));
+          returnedSigle.forEach((sigla: string) => {
+            if (!existingSigle.has(sigla)) {
+              const nome = sigla.split('_')
+                .map((w: string) => w.length > 0 ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w)
+                .join(' ');
+              this.squadreDisponibili.push({ sigla, nome } as any);
+            }
+          });
           // Ricostruisci squadreConPartite con la lista filtrata se già disponibile
           if (this.prossimaGiornata.length > 0) {
             this.caricaPartitePerTutteSquadre();
