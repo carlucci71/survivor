@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
-import { Lega, Giocata, StatoLega } from '../../../core/models/interfaces.model';
+import { Lega, Giocata, StatoLega, StatoPartita } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
 import { TranslateLeagueDataPipe } from '../../pipes/translate-league-data.pipe';
 import { TranslateModule } from '@ngx-translate/core';
@@ -206,7 +206,11 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
         // La giocata da visualizzare: corrente se esiste, altrimenti l'ultima nota dalla cache
         const displayGiocata: Giocata | null = mia ?? this.lastKnownGiocata.get(legaId) ?? null;
-        const isLastResult = !mia && !!displayGiocata; // stiamo mostrando il risultato passato
+        // isLastResult = true solo se il prossimo round è già iniziato (IN_CORSO/TERMINATA).
+        // Se il round corrente è DA_GIOCARE (non ancora partito), trattiamo la pick precedente
+        // come "attiva" così la home mostra la scelta effettuata invece di "Gioca Ora".
+        const isLastResult = !mia && !!displayGiocata
+          && l.statoGiornataCorrente?.value !== StatoPartita.DA_GIOCARE.value;
         const displayEsito = displayGiocata?.esito;
 
         // Giornata assoluta da mostrare sul badge
