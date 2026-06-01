@@ -2585,7 +2585,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
 
     // Caso 3: Voto pubblico (mostra squadra)
-    return this.getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla;
+    const nome = this.getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla;
+    return this.squadraService.formatNomeSquadra(nome);
   }
 
   getGiocaIcon(): string {
