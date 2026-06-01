@@ -69,7 +69,14 @@ export class SquadraService {
       'HOUSTON ROCKETS': 'ROCKETS',
     };
     const upper = formatted.toUpperCase();
-    return abbreviazioni[upper] ?? formatted;
+    if (abbreviazioni[upper]) return abbreviazioni[upper];
+    // Se il nome è tutto maiuscolo (es. "JOAO FONSECA" da sigla tennis), converti in title-case
+    if (formatted === formatted.toUpperCase() && formatted !== formatted.toLowerCase()) {
+      formatted = formatted.split(' ')
+        .map(w => w.length > 0 ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w)
+        .join(' ');
+    }
+    return formatted;
   }
 
   getSquadreByCampionatoAndGiornata(campionatoId: string, anno: number, giornata: number): Observable<string[]> {
