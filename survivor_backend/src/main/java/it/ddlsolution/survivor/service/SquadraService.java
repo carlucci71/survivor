@@ -147,7 +147,14 @@ public class SquadraService {
 
         SquadraDTO dto = new SquadraDTO();
         dto.setSigla(sigla);
-        dto.setNome(nome != null ? nome : sigla);
+        // Se casaNome è null o identico alla sigla (dati storici senza nome), derivo il nome
+        // dalla sigla con title-case: "NOVAK_DJOKOVIC" → "Novak Djokovic"
+        String displayNome = (nome != null && !nome.equalsIgnoreCase(sigla))
+                ? nome
+                : Arrays.stream(sigla.split("_"))
+                        .map(w -> w.isEmpty() ? w : Character.toUpperCase(w.charAt(0)) + w.substring(1).toLowerCase())
+                        .collect(Collectors.joining(" "));
+        dto.setNome(displayNome);
         dto.setIdCampionato(campionatoId);
         bySignla.put(sigla, dto);
         if (!normKey.isEmpty()) {
