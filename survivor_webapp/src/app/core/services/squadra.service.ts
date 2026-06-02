@@ -14,18 +14,21 @@ export class SquadraService {
   constructor(private http: HttpClient) {}
 
   getSquadreByCampionato(campionatoId: string, anno: number): Observable<any[]> {
-    if (this.cache.has(campionatoId)) {
-      return of(this.cache.get(campionatoId)!);
+    const cacheKey = `${campionatoId}_${anno}`;
+    if (this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey)!);
     }
     return this.http.get<any[]>(`${this.apiUrl}/campionato/${campionatoId}/${anno}`).pipe(
       tap(squadre => {
-        this.cache.set(campionatoId, squadre);
-  })
+        this.cache.set(cacheKey, squadre);
+      })
     );
   }
 
-  getSquadraNomeBySigla(squadraSigla: string|null, campionatoId: string): string|null {
-    const squadre = this.cache.get(campionatoId);
+  getSquadraNomeBySigla(squadraSigla: string|null, campionatoId: string, anno?: number): string|null {
+    const cacheKey = anno ? `${campionatoId}_${anno}` : campionatoId;
+    const squadre = this.cache.get(cacheKey)
+      ?? this.cache.get(campionatoId); // fallback chiave legacy
     if (squadre) {
       const squadra = squadre.find(s => s.sigla === squadraSigla);
       return squadra ? squadra.nome : squadraSigla;
