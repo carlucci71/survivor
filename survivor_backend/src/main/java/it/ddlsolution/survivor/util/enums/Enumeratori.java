@@ -164,8 +164,8 @@ public class Enumeratori {
         GIRONI_1("Girone - Giornata 1"),
         GIRONI_2("Girone - Giornata 2"),
         GIRONI_3("Girone - Giornata 3"),
-        SEDICESIMI("Sedicesimi di finale"),
-        OTTAVI("Ottavi di finale"),
+        TRENTADUESIMI("Trentaduesimi di finale"),   // Round of 32 (giornata 4)
+        SEDICESIMI("Sedicesimi di finale"),          // Round of 16 (giornata 5)
         QUARTI("Quarti di finale"),
         SEMIFINALI("Semifinali"),
         FINALE("Finale");

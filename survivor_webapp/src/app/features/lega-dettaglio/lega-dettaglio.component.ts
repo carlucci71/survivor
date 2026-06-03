@@ -1157,7 +1157,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!this.lega?.campionato?.id) return sigla;
     return this.squadraService.getSquadraNomeBySigla(
       sigla,
-      this.lega?.campionato?.id
+      this.lega.campionato.id,
+      this.lega.anno  // necessario dopo fix cache (chiave campionatoId_anno)
     );
   }
 
