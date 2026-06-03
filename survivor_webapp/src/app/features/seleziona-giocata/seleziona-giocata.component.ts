@@ -689,23 +689,27 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
             if (v) returnedSigle.add(v);
             return;
           });
+          // Confronto case-insensitive: evita mismatch tra sigla DB e sigla API
+          // (es. "JANNIK_SINNER" vs "jannik_sinner", o "C._ALCARAZ" vs "CARLOS_ALCARAZ")
+          const returnedSigleUpper = new Set([...returnedSigle].map(s => s.toUpperCase()));
           this.squadreDisponibili = this.squadreDisponibili.filter((sd) => {
             const sdSigla = sd.sigla;
-            return sdSigla ? returnedSigle.has(sdSigla) : false;
+            return sdSigla ? (returnedSigle.has(sdSigla) || returnedSigleUpper.has(sdSigla.toUpperCase())) : false;
           });
           // Aggiunge eventuali giocatori del round corrente non presenti nella lista iniziale
           // (es. sigla cambiata tra round precedenti e round corrente, o Lucky Losers nuovi)
-          const existingSigle = new Set(this.squadreDisponibili.map(sd => sd.sigla));
+          const existingSigle = new Set(this.squadreDisponibili.map(sd => sd.sigla?.toUpperCase()));
           // Ricava siglas già usate dalla lista originale del dialog (per marcarle alreadyUsed)
+          // Confronto uppercase per robustezza contro varianti di sigla
           const alreadyUsedSigle = new Set<string>(
-            (this.data.squadreDisponibili || []).filter((s: any) => s?.alreadyUsed && s.sigla).map((s: any) => s.sigla)
+            (this.data.squadreDisponibili || []).filter((s: any) => s?.alreadyUsed && s.sigla).map((s: any) => s.sigla.toUpperCase())
           );
           returnedSigle.forEach((sigla: string) => {
-            if (!existingSigle.has(sigla)) {
+            if (!existingSigle.has(sigla.toUpperCase())) {
               const nome = sigla.split('_')
                 .map((w: string) => w.length > 0 ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w)
                 .join(' ');
-              this.squadreDisponibili.push({ sigla, nome, alreadyUsed: alreadyUsedSigle.has(sigla) } as any);
+              this.squadreDisponibili.push({ sigla, nome, alreadyUsed: alreadyUsedSigle.has(sigla.toUpperCase()) } as any);
             }
           });
           // Ricostruisci squadreConPartite con la lista filtrata se già disponibile

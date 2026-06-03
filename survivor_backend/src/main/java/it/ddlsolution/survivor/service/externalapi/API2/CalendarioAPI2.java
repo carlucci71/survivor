@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.text.Normalizer;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 
@@ -239,12 +240,36 @@ public class CalendarioAPI2 implements ICalendario {
             log.warn("Roland Garros: competitionRounds non trovato nella risposta API");
             return;
         }
+
+        // Ricerca con il nome primario. Per i round finali (QF/SF/F) l'API potrebbe usare
+        // la notazione "1-X-final" invece di "quarter-finals"/"semi-finals"/"final":
+        //   giornata 5 (QF) → "1-8-final" oppure "quarter-finals"
+        //   giornata 6 (SF) → "1-4-final" oppure "semi-finals"
+        //   giornata 7 (F)  → "1-2-final" oppure "final"
+        List<String> candidateNames = new ArrayList<>();
+        candidateNames.add(roundName);
+        int playersLeft = (int) Math.pow(2, EnumAPI2.RoundTennis.values().length - giornata + 1);
+        String altName = "1-" + playersLeft + "-final";
+        if (!altName.equals(roundName)) {
+            candidateNames.add(altName);
+        }
+
         List<Map<String, Object>> matches = cr.stream()
-                .filter(map -> roundName.equals(map.get("name")))
+                .filter(map -> candidateNames.stream().anyMatch(n -> n.equals(map.get("name"))))
                 .map(map -> (List<Map<String, Object>>) map.get("match"))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseGet(ArrayList::new);
+
+        if (matches.isEmpty()) {
+            List<String> available = cr.stream()
+                    .map(map -> String.valueOf(map.get("name")))
+                    .collect(Collectors.toList());
+            log.warn("Roland Garros giornata {}: round '{}' (alias {}) non trovato nei competitionRounds. " +
+                     "Rounds disponibili nell'API: {}. Aggiornare RoundTennis enum se necessario.",
+                     giornata, roundName, altName, available);
+            return;
+        }
 
         for (Map<String, Object> match : matches) {
             try {
@@ -263,13 +288,33 @@ public class CalendarioAPI2 implements ICalendario {
                     continue;
                 }
 
-                String dateStr = match.get("date") != null
-                        ? match.get("date").toString()
-                        : match.get("utcDate").toString();
-                OffsetDateTime odt = OffsetDateTime.parse(dateStr);
-                LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
-                String status = match.get("status").toString();
-                Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+                // Data: fallback a now() se né "date" né "utcDate" sono presenti
+                LocalDateTime romaTime;
+                Object dateObj = match.get("date") != null ? match.get("date") : match.get("utcDate");
+                if (dateObj != null) {
+                    OffsetDateTime odt = OffsetDateTime.parse(dateObj.toString());
+                    romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+                } else {
+                    log.warn("Roland Garros giornata {}: data assente nel match, uso now() come fallback", giornata);
+                    romaTime = LocalDateTime.now(ZoneId.of("Europe/Rome"));
+                }
+
+                // Status: gestione robusta di valori sconosciuti
+                Object statusObj = match.get("status");
+                if (statusObj == null) {
+                    log.warn("Roland Garros giornata {}: status null nel match, salto", giornata);
+                    continue;
+                }
+                String status = statusObj.toString();
+                Enumeratori.StatoPartita statoPartita;
+                try {
+                    statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+                } catch (IllegalArgumentException iae) {
+                    log.warn("Roland Garros giornata {}: status '{}' non mappato in StatoPartitaAP2, " +
+                             "trattato come DA_GIOCARE. Aggiungere all'enum se necessario.", giornata, status);
+                    statoPartita = Enumeratori.StatoPartita.DA_GIOCARE;
+                }
+
                 Result resultHome = getResultTennis(match, "first", statoPartita);
                 Result resultAway = getResultTennis(match, "second", statoPartita);
                 PartitaDTO dto = PartitaDTO.builder()
@@ -291,7 +336,8 @@ public class CalendarioAPI2 implements ICalendario {
                         dto.getStato(), dto.getScoreCasa(), dto.getScoreFuori());
                 ret.add(dto);
             } catch (Exception e) {
-                log.warn("Errore elaborazione partita Roland Garros giornata {}: {}", giornata, e.getMessage());
+                log.warn("Errore elaborazione partita Roland Garros giornata {} (match={}): {}",
+                         giornata, match.get("id"), e.getMessage());
             }
         }
     }
@@ -357,40 +403,11 @@ public class CalendarioAPI2 implements ICalendario {
             OffsetDateTime odt = OffsetDateTime.parse(match.get("date").toString());
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
             String status = match.get("status").toString();
-            if (match.get("matchId").toString().equals("386621")
-                    || match.get("matchId").toString().equals("386607")
-                    || match.get("matchId").toString().equals("360665")
-                    || match.get("matchId").toString().equals("360681")
-                    || match.get("matchId").toString().equals("360690")
-                    || match.get("matchId").toString().equals("386620")
-                    || match.get("matchId").toString().equals("386664")
-                    || match.get("matchId").toString().equals("386675")
-                    || match.get("matchId").toString().equals("400942")
-                    || match.get("matchId").toString().equals("400949")
-                    || match.get("matchId").toString().equals("400976")
-                    || match.get("matchId").toString().equals("396446")
-                    || match.get("matchId").toString().equals("396456")
-                    || match.get("matchId").toString().equals("396499")
-                    || match.get("matchId").toString().equals("396552")
-                    || match.get("matchId").toString().equals("396556")
-                    || match.get("matchId").toString().equals("414228")
-            ) {
-                status = EnumAPI2.StatoPartitaAP2.FINISHED.name();
-            }
-
-            if (!status.equals("FINISHED")) {
-                System.out.println(match.get("matchId").toString());
-                System.out.println();
-            }
 
             Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
 
             Result resultHome = getResultTennis(match, "first", statoPartita);
             Result resultAway = getResultTennis(match, "second", statoPartita);
-
-            if (match.get("matchId").toString().equals("414341")){
-                resultAway=new Result(resultAway.team, resultAway.teamCode, 3);
-            }
 
             PartitaDTO calendarioDTO = PartitaDTO.builder()
                     .sportId(sport)
@@ -398,19 +415,15 @@ public class CalendarioAPI2 implements ICalendario {
                     .giornata(giornata)
                     .orario(romaTime)
                     .stato(statoPartita)
-                    //.casaSigla(resultHome.teamCode())
                     .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla())
-                    .casaNome(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getNome())
-//                    .fuoriSigla(resultAway.teamCode())
-                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
-                    .fuoriNome(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getNome())
                     .casaNome(resultHome.team())
+                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
                     .fuoriNome(resultAway.team())
                     .scoreCasa(resultHome.teamScore())
                     .scoreFuori(resultAway.teamScore())
                     .anno(anno)
                     .build();
-            log.info("calendarioDTO = " + calendarioDTO);
+            log.debug("elaboraTennis calendarioDTO={}", calendarioDTO);
             ret.add(calendarioDTO);
         }
     }
