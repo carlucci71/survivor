@@ -137,6 +137,13 @@ mat-toolbar.header {
   color: var(--header-text) !important;
 }
 
+/* Android edge-to-edge (API 35+ / Capacitor 7): il WebView si estende dietro
+   la status bar. La classe .capacitor-native viene aggiunta da main.ts a runtime
+   solo nelle app native, così il padding si applica solo lì e non sul web. */
+.capacitor-native app-header .header {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
 .mat-mdc-progress-spinner circle {
   stroke: #4FC3F7 !important;
 }

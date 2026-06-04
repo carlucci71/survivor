@@ -32,6 +32,10 @@ bootstrapApplication(AppComponent, appConfig)
 
     // Configura la StatusBar su mobile nativo (iOS/Android)
     if (typeof window !== 'undefined' && (window as any).Capacitor) {
+      // Aggiunge classe al body per applicare padding safe-area via CSS.
+      // Necessario su Android 15+ (edge-to-edge forzato dall'OS) dove
+      // setOverlaysWebView({ overlay: false }) non impedisce l'overlap.
+      document.body.classList.add('capacitor-native');
       StatusBar.setOverlaysWebView({ overlay: false }).catch(() => {
         // Ignora errore se non supportato
       });

@@ -712,6 +712,33 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
               this.squadreDisponibili.push({ sigla, nome, alreadyUsed: alreadyUsedSigle.has(sigla.toUpperCase()) } as any);
             }
           });
+          // Ri-valida alreadyUsed su tutta la lista usando le giocate effettive del giocatore.
+          // Garantisce che giocatori già scelti vengano marcati correttamente anche in caso di:
+          // - sigla mismatch tra this.squadre e le giocate salvate
+          // - giocatori non presenti in this.squadre (cache stale, Lucky Losers aggiunti dopo)
+          {
+            const currentGiornata = this.data.giornata;
+            const prevPicks = ((this.data.giocatore?.giocate || []) as any[])
+              .filter((g: any) => Number(g?.giornata) !== currentGiornata && g?.squadraSigla)
+              .sort((a: any, b: any) => Number(a.giornata) - Number(b.giornata))
+              .map((g: any) => (g.squadraSigla as string).toUpperCase());
+
+            let usedSigle: Set<string>;
+            if (this.lega?.modalita === 'CAMPIONATO') {
+              // Ciclo: blocca solo i pick del ciclo corrente; si azzera quando si usano tutte le squadre
+              const numSquadre = (this.data.squadreDisponibili || []).length || this.squadreDisponibili.length;
+              const cycleStart = numSquadre > 0 ? Math.floor(prevPicks.length / numSquadre) * numSquadre : 0;
+              usedSigle = new Set<string>(prevPicks.slice(cycleStart));
+            } else {
+              // SURVIVOR: blacklist globale — qualsiasi pick precedente è bloccato
+              usedSigle = new Set<string>(prevPicks);
+            }
+
+            this.squadreDisponibili = this.squadreDisponibili.map((s: any) => ({
+              ...s,
+              alreadyUsed: s.alreadyUsed || usedSigle.has(s.sigla?.toUpperCase())
+            }));
+          }
           // Ricostruisci squadreConPartite con la lista filtrata se già disponibile
           if (this.prossimaGiornata.length > 0) {
             this.caricaPartitePerTutteSquadre();
