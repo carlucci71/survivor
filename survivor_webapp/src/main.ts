@@ -43,26 +43,34 @@ bootstrapApplication(AppComponent, appConfig)
       StatusBar.setStyle({ style: Style.Light }).catch(() => {});
     }
 
-    // Handle deep links like survivor://auth/verify?... and route into the Angular app
-    App.addListener('appUrlOpen', ({ url }: { url: string }) => {
+    // Handle deep links like survivor://auth/verify?...
+    const handleDeepLinkUrl = (url: string) => {
       try {
         const parsed = new URL(url);
         const path = parsed.pathname.toLowerCase();
         const host = parsed.host.toLowerCase();
-        //console.info('[DeepLink] appUrlOpen', { url, host, path });
-
-        // For survivor://auth/verify?... the host is "auth" and the path is "/verify"
+        // survivor://auth/verify → host='auth', path='/verify'
         const isVerify = (host === 'auth' && path.startsWith('/verify')) || path.startsWith('/auth/verify');
-
         if (isVerify) {
           const token = parsed.searchParams.get('token');
           const codiceTipoMagicLink = parsed.searchParams.get('codiceTipoMagicLink') || '';
-          //console.info('[DeepLink] routing to /auth/verify', { token: !!token, codiceTipoMagicLink });
           router.navigate(['/auth/verify'], { queryParams: { token, codiceTipoMagicLink } });
         }
       } catch (e) {
         console.error('Failed to handle deep link', e);
       }
+    };
+
+    // Cold start: app era chiusa quando è stato cliccato il link (getLaunchUrl)
+    App.getLaunchUrl().then((result) => {
+      if (result?.url) {
+        handleDeepLinkUrl(result.url);
+      }
+    }).catch(() => {});
+
+    // Warm start: app era in background (appUrlOpen)
+    App.addListener('appUrlOpen', ({ url }: { url: string }) => {
+      handleDeepLinkUrl(url);
     });
 
     // iOS webview sometimes calculates layout wrong on first load.
