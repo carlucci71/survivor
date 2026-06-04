@@ -1,8 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
-import { App } from '@capacitor/app';
-import { Router } from '@angular/router';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 // Mark certain passive-friendly events as passive by default to avoid
@@ -28,8 +26,6 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 
 bootstrapApplication(AppComponent, appConfig)
   .then(appRef => {
-    const router = appRef.injector.get(Router);
-
     // Configura la StatusBar su mobile nativo (iOS/Android)
     if (typeof window !== 'undefined' && (window as any).Capacitor) {
       // Aggiunge classe al body per applicare padding safe-area via CSS.
@@ -42,36 +38,6 @@ bootstrapApplication(AppComponent, appConfig)
       StatusBar.setBackgroundColor({ color: '#0A3D91' }).catch(() => {});
       StatusBar.setStyle({ style: Style.Light }).catch(() => {});
     }
-
-    // Handle deep links like survivor://auth/verify?...
-    const handleDeepLinkUrl = (url: string) => {
-      try {
-        const parsed = new URL(url);
-        const path = parsed.pathname.toLowerCase();
-        const host = parsed.host.toLowerCase();
-        // survivor://auth/verify → host='auth', path='/verify'
-        const isVerify = (host === 'auth' && path.startsWith('/verify')) || path.startsWith('/auth/verify');
-        if (isVerify) {
-          const token = parsed.searchParams.get('token');
-          const codiceTipoMagicLink = parsed.searchParams.get('codiceTipoMagicLink') || '';
-          router.navigate(['/auth/verify'], { queryParams: { token, codiceTipoMagicLink } });
-        }
-      } catch (e) {
-        console.error('Failed to handle deep link', e);
-      }
-    };
-
-    // Cold start: app era chiusa quando è stato cliccato il link (getLaunchUrl)
-    App.getLaunchUrl().then((result) => {
-      if (result?.url) {
-        handleDeepLinkUrl(result.url);
-      }
-    }).catch(() => {});
-
-    // Warm start: app era in background (appUrlOpen)
-    App.addListener('appUrlOpen', ({ url }: { url: string }) => {
-      handleDeepLinkUrl(url);
-    });
 
     // iOS webview sometimes calculates layout wrong on first load.
     // Trigger a resize and update a CSS --vh variable shortly after startup
