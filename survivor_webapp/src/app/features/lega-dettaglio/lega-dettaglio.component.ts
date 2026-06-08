@@ -2547,13 +2547,11 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (giocata.pubblica === true) return false;
 
     // Se siamo nella giornata corrente e il countdown non è ancora scaduto,
-    // le scelte private sono visibili solo al giocatore stesso e al leader/admin
+    // le scelte private sono visibili solo al giocatore stesso (nemmeno il leader)
     if (giornata === (this.lega?.giornataCorrente || 0) && !this.countdownExpired) {
-      if (!this.isLeaderLega() && !this.isAdmin()) {
-        const currentUserId = this.authService.getCurrentUser()?.id;
-        if (!giocatore || giocatore.user?.id !== currentUserId) {
-          return true;
-        }
+      const currentUserId = this.authService.getCurrentUser()?.id;
+      if (!giocatore || giocatore.user?.id !== currentUserId) {
+        return true;
       }
     }
 

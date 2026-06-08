@@ -5206,18 +5206,15 @@
 
 		// Badge per voto privato - stile elegante e minimale
 		.private-vote-badge {
-			font-size: 0.7rem;
+			font-size: 0.85rem;
 			font-weight: 600;
 			color: #6B7280;
 			background: linear-gradient(135deg, rgba(107, 114, 128, 0.06), rgba(107, 114, 128, 0.10));
-			padding: 4px 10px;
+			padding: 4px 8px;
 			border-radius: 8px;
-			display: inline-block;
-			letter-spacing: 0.3px;
-			/* allow breaking only at natural break points (spaces) */
-			white-space: normal;
-			overflow-wrap: normal;
-			word-break: normal;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
 			border: 1px solid rgba(107, 114, 128, 0.15);
 			transition: all 0.2s ease;
 			cursor: default;

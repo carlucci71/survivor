@@ -581,7 +581,7 @@
                           <!-- Mostra logo+nome o badge "Voto Privato" se nascosta -->
                           @if (shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                             <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">
-                              {{ getDisplaySquadraNome(giocatore, giornata) }}
+                              🔒
                             </span>
                           } @else {
                             <div class="team-pick-cell"
