@@ -4,9 +4,9 @@
   <div class="hw-dialog-header">
     <div class="hw-header-left">
       <span class="hw-trophy">🏆</span>
-      <span class="hw-title">Albo d'oro Mondiali</span>
+      <span class="hw-title">{{ 'MONDIALI_HISTORY.TITLE' | translate }}</span>
     </div>
-    <button class="hw-close-btn" (click)="close()" mat-icon-button aria-label="Chiudi">
+    <button class="hw-close-btn" (click)="close()" mat-icon-button [attr.aria-label]="'MONDIALI_HISTORY.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -36,7 +36,7 @@
     *ngIf="selectedFinal && !isCurrentEdition"
     [@cardAnim]="selectedYear"
   >
-    <div class="match-subtitle">Finale · {{ selectedFinal.date }}</div>
+    <div class="match-subtitle">{{ 'MONDIALI_HISTORY.FINAL_LABEL' | translate }} · {{ getFinalDate() }}</div>
 
     <div class="match-body">
 
@@ -46,12 +46,12 @@
           <img
             *ngIf="selectedFinal.home.logo"
             [src]="selectedFinal.home.logo"
-            [alt]="selectedFinal.home.name"
+            [alt]="getTeamName(selectedFinal.home)"
             class="team-logo"
           />
           <span *ngIf="!selectedFinal.home.logo" class="team-flag-emoji">{{ selectedFinal.home.flag }}</span>
         </div>
-        <span class="team-name">{{ selectedFinal.home.name }}</span>
+        <span class="team-name">{{ getTeamName(selectedFinal.home) }}</span>
         <span class="winner-crown" *ngIf="isWinner(selectedFinal.home, selectedFinal)">👑</span>
       </div>
 
@@ -71,12 +71,12 @@
           <img
             *ngIf="selectedFinal.away.logo"
             [src]="selectedFinal.away.logo"
-            [alt]="selectedFinal.away.name"
+            [alt]="getTeamName(selectedFinal.away)"
             class="team-logo"
           />
           <span *ngIf="!selectedFinal.away.logo" class="team-flag-emoji">{{ selectedFinal.away.flag }}</span>
         </div>
-        <span class="team-name">{{ selectedFinal.away.name }}</span>
+        <span class="team-name">{{ getTeamName(selectedFinal.away) }}</span>
         <span class="winner-crown" *ngIf="isWinner(selectedFinal.away, selectedFinal)">👑</span>
       </div>
 
@@ -85,7 +85,7 @@
     <!-- Winner banner -->
     <div class="winner-banner" [@cardAnim]="selectedYear">
       <span class="winner-label">
-        🏆 {{ selectedFinal.winnerName }}
+        🏆 {{ getWinnerName() }}
         <span *ngIf="resultTypeLabel" class="winner-detail"> · {{ resultTypeLabel }}</span>
       </span>
     </div>
@@ -95,8 +95,8 @@
   <div class="state-card" *ngIf="isCurrentEdition" [@cardAnim]="selectedYear">
     <span class="state-icon">⚽</span>
     <div class="state-body">
-      <div class="state-title">Mondiale 2026 — in corso</div>
-      <div class="state-sub">La storia si sta scrivendo...</div>
+      <div class="state-title">{{ 'MONDIALI_HISTORY.CURRENT_TITLE' | translate }}</div>
+      <div class="state-sub">{{ 'MONDIALI_HISTORY.CURRENT_SUB' | translate }}</div>
     </div>
   </div>
 
@@ -104,8 +104,8 @@
   <div class="state-card state-card--dim" *ngIf="!selectedFinal && !isCurrentEdition" [@cardAnim]="selectedYear">
     <span class="state-icon">📖</span>
     <div class="state-body">
-      <div class="state-title">Edizione {{ selectedYear }}</div>
-      <div class="state-sub">Dati storici in arrivo</div>
+      <div class="state-title">{{ 'MONDIALI_HISTORY.EDITION' | translate: { year: selectedYear } }}</div>
+      <div class="state-sub">{{ 'MONDIALI_HISTORY.NO_DATA_SUB' | translate }}</div>
     </div>
   </div>
 

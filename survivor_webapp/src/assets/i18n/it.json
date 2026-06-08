@@ -49,6 +49,17 @@
     "NBA_RS": "NBA Reg. Season",
     "MONDIALI_2026": "Mondiali 2026"
   },
+  "MONDIALI_HISTORY": {
+    "TITLE": "Albo d'Oro Mondiali",
+    "CLOSE": "Chiudi",
+    "FINAL_LABEL": "Finale",
+    "CURRENT_TITLE": "Mondiale 2026 — in corso",
+    "CURRENT_SUB": "La storia si sta scrivendo...",
+    "EDITION": "Edizione {{year}}",
+    "NO_DATA_SUB": "Dati storici in arrivo",
+    "RESULT_AET": "d.t.s.",
+    "RESULT_PSO": "d.c.r."
+  },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
     "GIOCATORE": "Giocatore",
