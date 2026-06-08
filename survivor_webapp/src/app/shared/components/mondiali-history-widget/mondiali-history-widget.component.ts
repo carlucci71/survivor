@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 export interface FinalTeam {
   name: string;
+  nameEn: string;
   score: number;
   penalties?: number;
   logo?: string;
@@ -16,16 +18,18 @@ export interface FinalTeam {
 export interface WorldCupFinal {
   year: number;
   date: string;
+  dateEn: string;
   home: FinalTeam;
   away: FinalTeam;
   resultType: 'FT' | 'AET' | 'AP';
   winnerName: string;
+  winnerNameEn: string;
 }
 
 @Component({
   selector: 'app-mondiali-history-widget',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
   templateUrl: './mondiali-history-widget.component.html',
   styleUrls: ['./mondiali-history-widget.component.scss'],
   animations: [
@@ -49,7 +53,10 @@ export interface WorldCupFinal {
 })
 export class MondialiHistoryWidgetComponent {
 
-  constructor(@Optional() private readonly dialogRef?: MatDialogRef<MondialiHistoryWidgetComponent>) {}
+  constructor(
+    private readonly translate: TranslateService,
+    @Optional() private readonly dialogRef?: MatDialogRef<MondialiHistoryWidgetComponent>
+  ) {}
 
   close(): void {
     this.dialogRef?.close();
@@ -62,178 +69,178 @@ export class MondialiHistoryWidgetComponent {
   private readonly finals: WorldCupFinal[] = [
     {
       year: 2022,
-      date: '18 dic 2022',
-      home: { name: 'Argentina', score: 3, penalties: 4, logo: 'assets/logos/calcio/mondiali/argentina.png' },
-      away: { name: 'Francia',   score: 3, penalties: 2, logo: 'assets/logos/calcio/mondiali/francia.png' },
+      date: '18 dic 2022', dateEn: 'Dec 18, 2022',
+      home: { name: 'Argentina', nameEn: 'Argentina', score: 3, penalties: 4, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      away: { name: 'Francia',   nameEn: 'France',    score: 3, penalties: 2, logo: 'assets/logos/calcio/mondiali/francia.png' },
       resultType: 'AP',
-      winnerName: 'Argentina',
+      winnerName: 'Argentina', winnerNameEn: 'Argentina',
     },
     {
       year: 2018,
-      date: '15 lug 2018',
-      home: { name: 'Francia',  score: 4, logo: 'assets/logos/calcio/mondiali/francia.png' },
-      away: { name: 'Croazia',  score: 2, logo: 'assets/logos/calcio/mondiali/croazia.png' },
+      date: '15 lug 2018', dateEn: 'Jul 15, 2018',
+      home: { name: 'Francia',  nameEn: 'France',  score: 4, logo: 'assets/logos/calcio/mondiali/francia.png' },
+      away: { name: 'Croazia',  nameEn: 'Croatia', score: 2, logo: 'assets/logos/calcio/mondiali/croazia.png' },
       resultType: 'FT',
-      winnerName: 'Francia',
+      winnerName: 'Francia', winnerNameEn: 'France',
     },
     {
       year: 2014,
-      date: '13 lug 2014',
-      home: { name: 'Germania',  score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
-      away: { name: 'Argentina', score: 0, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      date: '13 lug 2014', dateEn: 'Jul 13, 2014',
+      home: { name: 'Germania',  nameEn: 'Germany',   score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      away: { name: 'Argentina', nameEn: 'Argentina', score: 0, logo: 'assets/logos/calcio/mondiali/argentina.png' },
       resultType: 'AET',
-      winnerName: 'Germania',
+      winnerName: 'Germania', winnerNameEn: 'Germany',
     },
     {
       year: 2010,
-      date: '11 lug 2010',
-      home: { name: 'Spagna', score: 1, logo: 'assets/logos/calcio/mondiali/spagna.png' },
-      away: { name: 'Olanda', score: 0, logo: 'assets/logos/calcio/mondiali/olanda.png' },
+      date: '11 lug 2010', dateEn: 'Jul 11, 2010',
+      home: { name: 'Spagna', nameEn: 'Spain',        score: 1, logo: 'assets/logos/calcio/mondiali/spagna.png' },
+      away: { name: 'Olanda', nameEn: 'Netherlands',  score: 0, logo: 'assets/logos/calcio/mondiali/olanda.png' },
       resultType: 'AET',
-      winnerName: 'Spagna',
+      winnerName: 'Spagna', winnerNameEn: 'Spain',
     },
     {
       year: 2006,
-      date: '9 lug 2006',
-      home: { name: 'Italia',  score: 1, penalties: 5, logo: 'assets/logos/calcio/mondiali/italia.png' },
-      away: { name: 'Francia', score: 1, penalties: 3, logo: 'assets/logos/calcio/mondiali/francia.png' },
+      date: '9 lug 2006', dateEn: 'Jul 9, 2006',
+      home: { name: 'Italia',  nameEn: 'Italy',  score: 1, penalties: 5, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Francia', nameEn: 'France', score: 1, penalties: 3, logo: 'assets/logos/calcio/mondiali/francia.png' },
       resultType: 'AP',
-      winnerName: 'Italia',
+      winnerName: 'Italia', winnerNameEn: 'Italy',
     },
     {
       year: 2002,
-      date: '30 giu 2002',
-      home: { name: 'Germania', score: 0, logo: 'assets/logos/calcio/mondiali/germania.png' },
-      away: { name: 'Brasile',  score: 2, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      date: '30 giu 2002', dateEn: 'Jun 30, 2002',
+      home: { name: 'Germania', nameEn: 'Germany', score: 0, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      away: { name: 'Brasile',  nameEn: 'Brazil',  score: 2, logo: 'assets/logos/calcio/mondiali/brasile.png' },
       resultType: 'FT',
-      winnerName: 'Brasile',
+      winnerName: 'Brasile', winnerNameEn: 'Brazil',
     },
     {
       year: 1998,
-      date: '12 lug 1998',
-      home: { name: 'Brasile', score: 0, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Francia', score: 3, logo: 'assets/logos/calcio/mondiali/francia.png' },
+      date: '12 lug 1998', dateEn: 'Jul 12, 1998',
+      home: { name: 'Brasile', nameEn: 'Brazil', score: 0, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      away: { name: 'Francia', nameEn: 'France', score: 3, logo: 'assets/logos/calcio/mondiali/francia.png' },
       resultType: 'FT',
-      winnerName: 'Francia',
+      winnerName: 'Francia', winnerNameEn: 'France',
     },
     {
       year: 1994,
-      date: '17 lug 1994',
-      home: { name: 'Brasile', score: 0, penalties: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Italia',  score: 0, penalties: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      date: '17 lug 1994', dateEn: 'Jul 17, 1994',
+      home: { name: 'Brasile', nameEn: 'Brazil', score: 0, penalties: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      away: { name: 'Italia',  nameEn: 'Italy',  score: 0, penalties: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
       resultType: 'AP',
-      winnerName: 'Brasile',
+      winnerName: 'Brasile', winnerNameEn: 'Brazil',
     },
     {
       year: 1990,
-      date: '8 lug 1990',
-      home: { name: 'Germania Ovest', score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
-      away: { name: 'Argentina',      score: 0, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      date: '8 lug 1990', dateEn: 'Jul 8, 1990',
+      home: { name: 'Germania Ovest', nameEn: 'West Germany', score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      away: { name: 'Argentina',      nameEn: 'Argentina',    score: 0, logo: 'assets/logos/calcio/mondiali/argentina.png' },
       resultType: 'FT',
-      winnerName: 'Germania Ovest',
+      winnerName: 'Germania Ovest', winnerNameEn: 'West Germany',
     },
     {
       year: 1986,
-      date: '29 giu 1986',
-      home: { name: 'Argentina',      score: 3, logo: 'assets/logos/calcio/mondiali/argentina.png' },
-      away: { name: 'Germania Ovest', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      date: '29 giu 1986', dateEn: 'Jun 29, 1986',
+      home: { name: 'Argentina',      nameEn: 'Argentina',    score: 3, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      away: { name: 'Germania Ovest', nameEn: 'West Germany', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
       resultType: 'FT',
-      winnerName: 'Argentina',
+      winnerName: 'Argentina', winnerNameEn: 'Argentina',
     },
     {
       year: 1982,
-      date: '11 lug 1982',
-      home: { name: 'Italia',         score: 3, logo: 'assets/logos/calcio/mondiali/italia.png' },
-      away: { name: 'Germania Ovest', score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      date: '11 lug 1982', dateEn: 'Jul 11, 1982',
+      home: { name: 'Italia',         nameEn: 'Italy',        score: 3, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Germania Ovest', nameEn: 'West Germany', score: 1, logo: 'assets/logos/calcio/mondiali/germania.png' },
       resultType: 'FT',
-      winnerName: 'Italia',
+      winnerName: 'Italia', winnerNameEn: 'Italy',
     },
     {
       year: 1978,
-      date: '25 giu 1978',
-      home: { name: 'Argentina', score: 3, logo: 'assets/logos/calcio/mondiali/argentina.png' },
-      away: { name: 'Olanda',    score: 1, logo: 'assets/logos/calcio/mondiali/olanda.png' },
+      date: '25 giu 1978', dateEn: 'Jun 25, 1978',
+      home: { name: 'Argentina', nameEn: 'Argentina',   score: 3, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      away: { name: 'Olanda',    nameEn: 'Netherlands', score: 1, logo: 'assets/logos/calcio/mondiali/olanda.png' },
       resultType: 'AET',
-      winnerName: 'Argentina',
+      winnerName: 'Argentina', winnerNameEn: 'Argentina',
     },
     {
       year: 1974,
-      date: '7 lug 1974',
-      home: { name: 'Olanda',         score: 1, logo: 'assets/logos/calcio/mondiali/olanda.png' },
-      away: { name: 'Germania Ovest', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      date: '7 lug 1974', dateEn: 'Jul 7, 1974',
+      home: { name: 'Olanda',         nameEn: 'Netherlands',  score: 1, logo: 'assets/logos/calcio/mondiali/olanda.png' },
+      away: { name: 'Germania Ovest', nameEn: 'West Germany', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
       resultType: 'FT',
-      winnerName: 'Germania Ovest',
+      winnerName: 'Germania Ovest', winnerNameEn: 'West Germany',
     },
     {
       year: 1970,
-      date: '21 giu 1970',
-      home: { name: 'Brasile', score: 4, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Italia',  score: 1, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      date: '21 giu 1970', dateEn: 'Jun 21, 1970',
+      home: { name: 'Brasile', nameEn: 'Brazil', score: 4, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      away: { name: 'Italia',  nameEn: 'Italy',  score: 1, logo: 'assets/logos/calcio/mondiali/italia.png' },
       resultType: 'FT',
-      winnerName: 'Brasile',
+      winnerName: 'Brasile', winnerNameEn: 'Brazil',
     },
     {
       year: 1966,
-      date: '30 lug 1966',
-      home: { name: 'Inghilterra',    score: 4, logo: 'assets/logos/calcio/mondiali/inghilterra.png' },
-      away: { name: 'Germania Ovest', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      date: '30 lug 1966', dateEn: 'Jul 30, 1966',
+      home: { name: 'Inghilterra',    nameEn: 'England',      score: 4, logo: 'assets/logos/calcio/mondiali/inghilterra.png' },
+      away: { name: 'Germania Ovest', nameEn: 'West Germany', score: 2, logo: 'assets/logos/calcio/mondiali/germania.png' },
       resultType: 'AET',
-      winnerName: 'Inghilterra',
+      winnerName: 'Inghilterra', winnerNameEn: 'England',
     },
     {
       year: 1962,
-      date: '17 giu 1962',
-      home: { name: 'Brasile',        score: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Cecoslovacchia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
+      date: '17 giu 1962', dateEn: 'Jun 17, 1962',
+      home: { name: 'Brasile',        nameEn: 'Brazil',         score: 3, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      away: { name: 'Cecoslovacchia', nameEn: 'Czechoslovakia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
       resultType: 'FT',
-      winnerName: 'Brasile',
+      winnerName: 'Brasile', winnerNameEn: 'Brazil',
     },    {
       year: 1958,
-      date: '29 giu 1958',
-      home: { name: 'Brasile', score: 5, logo: 'assets/logos/calcio/mondiali/brasile.png' },
-      away: { name: 'Svezia',  score: 2, logo: 'assets/logos/calcio/mondiali/svezia.png' },
+      date: '29 giu 1958', dateEn: 'Jun 29, 1958',
+      home: { name: 'Brasile', nameEn: 'Brazil', score: 5, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      away: { name: 'Svezia',  nameEn: 'Sweden', score: 2, logo: 'assets/logos/calcio/mondiali/svezia.png' },
       resultType: 'FT',
-      winnerName: 'Brasile',
+      winnerName: 'Brasile', winnerNameEn: 'Brazil',
     },
     {
       year: 1954,
-      date: '4 lug 1954',
-      home: { name: 'Germania Ovest', score: 3, logo: 'assets/logos/calcio/mondiali/germania.png' },
-      away: { name: 'Ungheria',       score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
+      date: '4 lug 1954', dateEn: 'Jul 4, 1954',
+      home: { name: 'Germania Ovest', nameEn: 'West Germany', score: 3, logo: 'assets/logos/calcio/mondiali/germania.png' },
+      away: { name: 'Ungheria',       nameEn: 'Hungary',      score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
       resultType: 'FT',
-      winnerName: 'Germania Ovest',
+      winnerName: 'Germania Ovest', winnerNameEn: 'West Germany',
     },
     {
       year: 1950,
-      date: '16 lug 1950',
-      home: { name: 'Uruguay', score: 2, logo: 'assets/logos/calcio/mondiali/uruguay.png' },
-      away: { name: 'Brasile', score: 1, logo: 'assets/logos/calcio/mondiali/brasile.png' },
+      date: '16 lug 1950', dateEn: 'Jul 16, 1950',
+      home: { name: 'Uruguay', nameEn: 'Uruguay', score: 2, logo: 'assets/logos/calcio/mondiali/uruguay.png' },
+      away: { name: 'Brasile', nameEn: 'Brazil',  score: 1, logo: 'assets/logos/calcio/mondiali/brasile.png' },
       resultType: 'FT',
-      winnerName: 'Uruguay',
+      winnerName: 'Uruguay', winnerNameEn: 'Uruguay',
     },
     {
       year: 1938,
-      date: '19 giu 1938',
-      home: { name: 'Italia',   score: 4, logo: 'assets/logos/calcio/mondiali/italia.png' },
-      away: { name: 'Ungheria', score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
+      date: '19 giu 1938', dateEn: 'Jun 19, 1938',
+      home: { name: 'Italia',   nameEn: 'Italy',   score: 4, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Ungheria', nameEn: 'Hungary', score: 2, logo: 'assets/logos/calcio/mondiali/ungheria.png' },
       resultType: 'FT',
-      winnerName: 'Italia',
+      winnerName: 'Italia', winnerNameEn: 'Italy',
     },
     {
       year: 1934,
-      date: '10 giu 1934',
-      home: { name: 'Italia',         score: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
-      away: { name: 'Cecoslovacchia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
+      date: '10 giu 1934', dateEn: 'Jun 10, 1934',
+      home: { name: 'Italia',         nameEn: 'Italy',         score: 2, logo: 'assets/logos/calcio/mondiali/italia.png' },
+      away: { name: 'Cecoslovacchia', nameEn: 'Czechoslovakia', score: 1, logo: 'assets/logos/calcio/mondiali/slovacchia.png' },
       resultType: 'AET',
-      winnerName: 'Italia',
+      winnerName: 'Italia', winnerNameEn: 'Italy',
     },
     {
       year: 1930,
-      date: '30 lug 1930',
-      home: { name: 'Uruguay',   score: 4, logo: 'assets/logos/calcio/mondiali/uruguay.png' },
-      away: { name: 'Argentina', score: 2, logo: 'assets/logos/calcio/mondiali/argentina.png' },
+      date: '30 lug 1930', dateEn: 'Jul 30, 1930',
+      home: { name: 'Uruguay',   nameEn: 'Uruguay',   score: 4, logo: 'assets/logos/calcio/mondiali/uruguay.png' },
+      away: { name: 'Argentina', nameEn: 'Argentina', score: 2, logo: 'assets/logos/calcio/mondiali/argentina.png' },
       resultType: 'FT',
-      winnerName: 'Uruguay',
+      winnerName: 'Uruguay', winnerNameEn: 'Uruguay',
     },  ];
 
   get selectedFinal(): WorldCupFinal | null {
@@ -244,6 +251,26 @@ export class MondialiHistoryWidgetComponent {
     return this.selectedYear === 2026;
   }
 
+  private get isEn(): boolean {
+    return this.translate.currentLang === 'en';
+  }
+
+  getTeamName(team: FinalTeam): string {
+    return this.isEn ? team.nameEn : team.name;
+  }
+
+  getFinalDate(): string {
+    const f = this.selectedFinal;
+    if (!f) return '';
+    return this.isEn ? f.dateEn : f.date;
+  }
+
+  getWinnerName(): string {
+    const f = this.selectedFinal;
+    if (!f) return '';
+    return this.isEn ? f.winnerNameEn : f.winnerName;
+  }
+
   get resultTypeLabel(): string {
     const f = this.selectedFinal;
     if (!f) return '';
@@ -251,9 +278,9 @@ export class MondialiHistoryWidgetComponent {
       case 'AP': {
         const ph = f.home.penalties ?? 0;
         const pa = f.away.penalties ?? 0;
-        return `d.c.r. (${ph} – ${pa})`;
+        return `${this.translate.instant('MONDIALI_HISTORY.RESULT_PSO')} (${ph} – ${pa})`;
       }
-      case 'AET': return 'd.t.s.';
+      case 'AET': return this.translate.instant('MONDIALI_HISTORY.RESULT_AET');
       default:    return '';
     }
   }
