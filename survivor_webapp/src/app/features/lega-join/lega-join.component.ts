@@ -103,16 +103,17 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadLegheLibere();
     const legaIdStr = this.route.snapshot.queryParamMap.get('legaId');
     if (legaIdStr) {
       this.invitedLegaLoading = true;
       forkJoin({
         lega: this.legaService.getLegaById(Number(legaIdStr)),
         richieste: this.legaService.mieRichieste(),
+        leghe: this.legaService.legheLibere(),
       }).subscribe({
-        next: ({ lega, richieste }) => {
+        next: ({ lega, richieste, leghe }) => {
           richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
+          this.leghe = leghe;
           if (lega.ruoloGiocatoreLega?.value !== 'NESSUNO') {
             this.snackBar.open(this.translate.instant('JOIN_LEAGUE.ALREADY_IN_LEGA'), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--info'] });
             this.router.navigate(['/lega', lega.id]);
@@ -131,10 +132,15 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
         error: () => { this.invitedLegaLoading = false; }
       });
     } else {
-      this.legaService.mieRichieste().subscribe({
-        next: (richieste) => {
+      forkJoin({
+        leghe: this.legaService.legheLibere(),
+        richieste: this.legaService.mieRichieste(),
+      }).subscribe({
+        next: ({ leghe, richieste }) => {
           richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
-        }
+          this.leghe = leghe;
+        },
+        error: (err) => console.error('Errore caricamento leghe libere', err),
       });
     }
   }
@@ -142,13 +148,6 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     // Scrolla la pagina in alto all'apertura del componente
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-
-  private loadLegheLibere(): void {
-    this.legaService.legheLibere().subscribe({
-      next: (leghe) => (this.leghe = leghe),
-      error: (err) => console.error('Errore caricamento leghe libere', err),
-    });
   }
 
   private mapStatoInvited(stato: string): InvitedState {

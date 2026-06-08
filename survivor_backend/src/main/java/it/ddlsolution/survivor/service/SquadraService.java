@@ -239,12 +239,19 @@ public class SquadraService {
 
     @Transactional(readOnly = true)
     public List<SquadraDTO> getBySport(String sportId) {
-        // Filtra le squadre in base allo sport
+        // Filtra le squadre in base allo sport, deduplicando per nome
+        // (es. lo stesso tennista può comparire in più campionati)
         return cacheableProvider.getIfAvailable().allCampionati()
                 .stream()
                 .filter(c -> sportId.equals(c.getSport().getId()))
                 .flatMap(c -> c.getSquadre().stream())
-                .distinct()
+                .collect(Collectors.toMap(
+                        SquadraDTO::getNome,
+                        s -> s,
+                        (s1, s2) -> s1,
+                        LinkedHashMap::new
+                ))
+                .values().stream()
                 .sorted(Comparator.comparing(SquadraDTO::getNome))
                 .toList();
     }

@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  ambiente: 'MOBILE',
+  production: false,
+  ambiente: 'DEV-MOBILE',
   mobile: true,
   apiUrl: 'https://liberaleidee.it/api/survivorBe',
   baseUrl: 'https://liberaleidee.it/survivor',

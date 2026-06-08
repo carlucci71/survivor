@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { LoadingOverlayComponent } from './core/components/loading-overlay.component';
 import { FooterComponent } from './shared/components/footer/footer.component';
 import { PushService } from './core/services/push.service';
 import { DOCUMENT } from '@angular/common';
 import { environment } from '../environments/environment';
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private readonly pushService: PushService,
-    @Inject(DOCUMENT) private readonly document: Document
+    @Inject(DOCUMENT) private readonly document: Document,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -27,6 +29,38 @@ export class AppComponent implements OnInit {
 
     // Cambia il favicon in base all'ambiente
     this.setFavicon(envTheme);
+
+    // Deep link handling (solo su app nativa Capacitor)
+    if ((window as any).Capacitor) {
+      // Cold start: app era chiusa quando è stato cliccato il link
+      App.getLaunchUrl().then((result) => {
+        if (result?.url) {
+          this.handleDeepLinkUrl(result.url);
+        }
+      }).catch(() => {});
+
+      // Warm start: app era in background
+      App.addListener('appUrlOpen', ({ url }: { url: string }) => {
+        this.handleDeepLinkUrl(url);
+      });
+    }
+  }
+
+  private handleDeepLinkUrl(url: string): void {
+    try {
+      const parsed = new URL(url);
+      const path = parsed.pathname.toLowerCase();
+      const host = parsed.host.toLowerCase();
+      // survivor://auth/verify → host='auth', path='/verify'
+      const isVerify = (host === 'auth' && path.startsWith('/verify')) || path.startsWith('/auth/verify');
+      if (isVerify) {
+        const token = parsed.searchParams.get('token');
+        const codiceTipoMagicLink = parsed.searchParams.get('codiceTipoMagicLink') || '';
+        this.router.navigate(['/auth/verify'], { queryParams: { token, codiceTipoMagicLink } });
+      }
+    } catch (e) {
+      console.error('Failed to handle deep link', e);
+    }
   }
 
   private setFavicon(theme: string): void {

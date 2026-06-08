@@ -36,7 +36,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": ["html2canvas"]
           },
           "configurations": {
             "production": {
@@ -73,9 +74,9 @@
             }
             ,
             "mobile": {
-              "optimization": true,
-              "extractLicenses": true,
-              "sourceMap": false,
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
               "outputHashing": "all",
               "fileReplacements": [
                 {

@@ -945,7 +945,65 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
       .toUpperCase();
   }
 
+  private get isMondiali(): boolean {
+    return this.lega?.campionato?.id === 'MONDIALI_2026';
+  }
+
+  private readonly mondialiNomiEn: { [key: string]: string } = {
+    'Algeria': 'Algeria',
+    'Arabia Saudita': 'Saudi Arabia',
+    'Argentina': 'Argentina',
+    'Australia': 'Australia',
+    'Austria': 'Austria',
+    'Belgio': 'Belgium',
+    'Bosnia ed Erzegovina': 'Bosnia and Herzegovina',
+    'Brasile': 'Brazil',
+    'Canada': 'Canada',
+    'Capo Verde': 'Cape Verde',
+    'Colombia': 'Colombia',
+    'Congo (Rep. Dem.)': 'DR Congo',
+    'Corea del Sud': 'South Korea',
+    "Costa d'Avorio": 'Ivory Coast',
+    'Croazia': 'Croatia',
+    'Curaçao': 'Curaçao',
+    'Ecuador': 'Ecuador',
+    'Egitto': 'Egypt',
+    'Francia': 'France',
+    'Germania': 'Germany',
+    'Ghana': 'Ghana',
+    'Giappone': 'Japan',
+    'Giordania': 'Jordan',
+    'Haiti': 'Haiti',
+    'Inghilterra': 'England',
+    'Iran': 'Iran',
+    'Iraq': 'Iraq',
+    'Marocco': 'Morocco',
+    'Messico': 'Mexico',
+    'Norvegia': 'Norway',
+    'Nuova Zelanda': 'New Zealand',
+    'Olanda': 'Netherlands',
+    'Panama': 'Panama',
+    'Paraguay': 'Paraguay',
+    'Portogallo': 'Portugal',
+    'Qatar': 'Qatar',
+    'Repubblica Ceca': 'Czech Republic',
+    'Scozia': 'Scotland',
+    'Senegal': 'Senegal',
+    'Spagna': 'Spain',
+    'Stati Uniti': 'United States',
+    'Sudafrica': 'South Africa',
+    'Svezia': 'Sweden',
+    'Svizzera': 'Switzerland',
+    'Tunisia': 'Tunisia',
+    'Uruguay': 'Uruguay',
+    'Uzbekistan': 'Uzbekistan',
+  };
+
   formatNomeSquadra(nome: string): string {
+    if (this.isMondiali && this.currentLang === 'en') {
+      const en = this.mondialiNomiEn[nome];
+      if (en) return en;
+    }
     return this.squadraService.formatNomeSquadra(nome);
   }
 
