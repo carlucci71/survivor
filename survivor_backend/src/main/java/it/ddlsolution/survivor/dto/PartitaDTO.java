@@ -26,6 +26,8 @@ public class PartitaDTO {
     private String aliasGiornataCasa;
     private String aliasGiornataFuori;
     private short anno;
+    /** Sigla del vincitore determinato da supplementari o rigori (solo knockout, null nelle fasi a gironi) */
+    private String vincitoreSigla;
     @Getter(onMethod_=@JsonProperty("forzata"))
     private boolean forzata;
 
