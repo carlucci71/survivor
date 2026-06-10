@@ -194,8 +194,20 @@ public class CalendarioAPI2 implements ICalendario {
             Result resultHome = getResult(match, "home", statoPartita);
             Result resultAway = getResult(match, "away", statoPartita);
 
+            String casaSigla = getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla();
+            String fuoriSigla = getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla();
+
             OffsetDateTime odt = OffsetDateTime.parse(match.get("utcDate").toString());
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+
+            // Fase knockout (giornata > gironi): determina il vincitore anche in caso di parità
+            // (supplementari/rigori), così l'esito non viene mai calcolato come PAREGGIO
+            String vincitoreSigla = null;
+            if (giornata > EnumAPI2.RoundMondiali.GIRONI_END
+                    && statoPartita == Enumeratori.StatoPartita.TERMINATA) {
+                vincitoreSigla = detectKnockoutWinner(match, casaSigla, fuoriSigla,
+                        resultHome.teamScore(), resultAway.teamScore());
+            }
 
             return PartitaDTO.builder()
                     .sportId(EnumAPI2.Sport.CALCIO.name())
@@ -203,18 +215,83 @@ public class CalendarioAPI2 implements ICalendario {
                     .giornata(giornata)
                     .orario(romaTime)
                     .stato(statoPartita)
-                    .casaSigla(getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla())
+                    .casaSigla(casaSigla)
                     .casaNome(resultHome.team())
-                    .fuoriSigla(getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla())
+                    .fuoriSigla(fuoriSigla)
                     .fuoriNome(resultAway.team())
                     .scoreCasa(resultHome.teamScore())
                     .scoreFuori(resultAway.teamScore())
+                    .vincitoreSigla(vincitoreSigla)
                     .anno(anno)
                     .build();
         } catch (Exception e) {
             log.warn("Errore elaborazione partita Mondiali: {}", e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Per le fasi knockout dei Mondiali, determina la sigla del vincitore anche in caso di
+     * parità nel punteggio (supplementari o rigori).
+     * Strategia a cascata:
+     *  1. Se i punteggi sono già diversi, il vincitore è determinato dal punteggio normale.
+     *  2. Campo matchWinner / winner a livello partita (valore "homeTeam"/"awayTeam" o "1"/"2").
+     *  3. homeTeam.scores.penalties vs awayTeam.scores.penalties.
+     * Restituisce null se il vincitore non è determinabile (es. partita non ancora terminata).
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private String detectKnockoutWinner(Map<String, Object> match,
+                                        String casaSigla, String fuoriSigla,
+                                        Integer scoreCasa, Integer scoreFuori) {
+        // 1. Punteggi già diversi: vince chi ha segnato di più (include i gol nei supplementari)
+        if (scoreCasa != null && scoreFuori != null && !scoreCasa.equals(scoreFuori)) {
+            return scoreCasa > scoreFuori ? casaSigla : fuoriSigla;
+        }
+
+        // 2. Campo matchWinner / winner a livello match
+        for (String key : new String[]{"matchWinner", "winner", "matchResult"}) {
+            Object val = match.get(key);
+            if (val instanceof String) {
+                String w = val.toString().toLowerCase();
+                if (w.contains("home") || w.equals("1")) return casaSigla;
+                if (w.contains("away") || w.equals("2")) return fuoriSigla;
+            } else if (val instanceof Map) {
+                // es. "winner": {"side": "home"}
+                Object side = ((Map) val).get("side");
+                if (side == null) side = ((Map) val).get("teamSide");
+                if (side != null) {
+                    String s = side.toString().toLowerCase();
+                    if (s.contains("home") || s.equals("1")) return casaSigla;
+                    if (s.contains("away") || s.equals("2")) return fuoriSigla;
+                }
+            }
+        }
+
+        // 3. homeTeam.scores.penalties vs awayTeam.scores.penalties
+        try {
+            Map homeTeam = (Map) match.get("homeTeam");
+            if (homeTeam == null) homeTeam = (Map) match.get("teamHome");
+            Map awayTeam = (Map) match.get("awayTeam");
+            if (awayTeam == null) awayTeam = (Map) match.get("teamAway");
+            if (homeTeam != null && awayTeam != null) {
+                Map homeScores = (Map) homeTeam.get("scores");
+                Map awayScores = (Map) awayTeam.get("scores");
+                if (homeScores != null && awayScores != null) {
+                    Object hPen = homeScores.get("penalties");
+                    Object aPen = awayScores.get("penalties");
+                    if (hPen != null && aPen != null) {
+                        int hp = Integer.parseInt(hPen.toString());
+                        int ap = Integer.parseInt(aPen.toString());
+                        if (hp != ap) return hp > ap ? casaSigla : fuoriSigla;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("detectKnockoutWinner: errore lettura rigori per {} vs {}: {}",
+                    casaSigla, fuoriSigla, e.getMessage());
+        }
+
+        return null;
     }
 
     // -------------------------------------------------------------------------
