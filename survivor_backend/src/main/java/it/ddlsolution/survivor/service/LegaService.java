@@ -621,7 +621,16 @@ public class LegaService {
         Integer scoreCasa = partitaDTO.getScoreCasa();
         Integer scoreFuori = partitaDTO.getScoreFuori();
         if (scoreCasa == null || scoreFuori == null) return Enumeratori.EsitoGiocata.KO;
-        if (scoreCasa.equals(scoreFuori)) return Enumeratori.EsitoGiocata.PAREGGIO;
+        if (scoreCasa.equals(scoreFuori)) {
+            // Fase knockout (es. Mondiali): controlla se il vincitore è stato determinato
+            // da supplementari o rigori (vincitoreSigla impostato dall'API)
+            if (partitaDTO.getVincitoreSigla() != null) {
+                return partitaDTO.getVincitoreSigla().equalsIgnoreCase(squadraSigla)
+                        ? Enumeratori.EsitoGiocata.OK
+                        : Enumeratori.EsitoGiocata.KO;
+            }
+            return Enumeratori.EsitoGiocata.PAREGGIO;
+        }
         boolean isVincente = partitaDTO.getCasaSigla().equalsIgnoreCase(squadraSigla)
                 ? scoreCasa > scoreFuori
                 : scoreFuori > scoreCasa;
