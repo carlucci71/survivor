@@ -47,13 +47,13 @@
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
     "NBA_RS": "NBA Reg. Season",
-    "MONDIALI_2026": "World Cup 2026"
+    "MONDIALI_2026": "International Cup 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "World Cup Hall of Fame",
+    "TITLE": "International Cup Hall of Fame",
     "CLOSE": "Close",
     "FINAL_LABEL": "Final",
-    "CURRENT_TITLE": "World Cup 2026 — Ongoing",
+    "CURRENT_TITLE": "International Cup 2026 — Ongoing",
     "CURRENT_SUB": "History is being written...",
     "EDITION": "Edition {{year}}",
     "NO_DATA_SUB": "Historical data coming soon",

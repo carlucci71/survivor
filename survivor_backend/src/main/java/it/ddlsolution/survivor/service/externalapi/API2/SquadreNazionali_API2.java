@@ -2,7 +2,7 @@ package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.service.externalapi.IEnumSquadre;
 
-// Le sigla API coincidono con quelle del DB per le nazionali FIFA
+// Le sigla API coincidono con quelle del DB per le nazionali
 // Squadre dei Mondiali 2026 (48 squadre, 12 gironi A-L)
 enum SquadreNazionali_API2 implements IEnumSquadre {
 

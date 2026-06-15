@@ -7,8 +7,10 @@ ON CONFLICT (codice) DO NOTHING;
 
 -- 2. Campionato Mondiali 2026 (8 giornate: 3 gironi + 5 knockout)
 INSERT INTO campionato (id, id_sport, nome, nazione, num_giornate, anno_corrente)
-VALUES ('MONDIALI_2026', 'CALCIO', 'FIFA World Cup 2026', 'MONDO', 8, 2026)
+VALUES ('MONDIALI_2026', 'CALCIO', 'International Cup 2026', 'MONDO', 8, 2026)
 ON CONFLICT (id) DO NOTHING;
+
+UPDATE campionato SET nome = 'International Cup 2026' WHERE id = 'MONDIALI_2026';
 
 -- 3. Aggiunge constraint UNIQUE su (sigla, nazione) se non esiste già
 DO $$
