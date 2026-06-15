@@ -325,7 +325,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       'SERIE_A':       'assets/logos/calcio/tornei/serie_A.png',
       'SERIE_B':       'assets/logos/calcio/tornei/serie_b.png',
       'LIGA':          'assets/logos/calcio/tornei/liga.png',
-      'MONDIALI_2026': 'assets/logos/calcio/tornei/mondiali.jpg',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
       'NBA_RS':        'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN':      'assets/logos/tennis/tornei/Australian Open.png',
       'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',

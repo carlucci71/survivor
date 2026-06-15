@@ -47,13 +47,13 @@
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
     "NBA_RS": "NBA Reg. Season",
-    "MONDIALI_2026": "World Cup 2026"
+    "MONDIALI_2026": "International Cup 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "World Cup Hall of Fame",
+    "TITLE": "International Cup Hall of Fame",
     "CLOSE": "Close",
     "FINAL_LABEL": "Final",
-    "CURRENT_TITLE": "World Cup 2026 — Ongoing",
+    "CURRENT_TITLE": "International Cup 2026 — Ongoing",
     "CURRENT_SUB": "History is being written...",
     "EDITION": "Edition {{year}}",
     "NO_DATA_SUB": "Historical data coming soon",
@@ -1576,7 +1576,7 @@
     "DECISIVE_POINT": "\u26a1  GAME POINT  \u26a1",
     "SPEED_MSGS": ["SPEED UP!", "FASTER!!", "NO MERCY!", "LIGHT SPEED!", "HOLD ON!!", "GO GO GO!!"],
     "WIN_PHRASES": [
-      "Living legend. Someone call FIFA.",
+      "Living legend. History will remember you.",
       "You beat the machine. Life is yours.",
       "The CPU has already updated its resume.",
       "What a shot! Pure brute force.",

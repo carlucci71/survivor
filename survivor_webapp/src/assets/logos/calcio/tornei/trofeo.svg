@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 384">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD86B"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+  </defs>
+  <!-- handles -->
+  <path d="M90 70 C40 70 30 140 80 160 L100 130 C75 115 80 85 105 85 Z" fill="url(#gold)"/>
+  <path d="M294 70 C344 70 354 140 304 160 L284 130 C309 115 304 85 279 85 Z" fill="url(#gold)"/>
+  <!-- cup bowl -->
+  <path d="M105 60 H279 C279 160 240 200 200 215 V250 H184 V215 C144 200 105 160 105 60 Z" fill="url(#gold)"/>
+  <!-- star -->
+  <path d="M192 110 L201 130 L223 132 L207 147 L212 169 L192 158 L172 169 L177 147 L161 132 L183 130 Z" fill="#fff" opacity="0.85"/>
+  <!-- stem -->
+  <rect x="172" y="250" width="40" height="30" fill="url(#gold)"/>
+  <!-- base -->
+  <path d="M120 280 H264 L250 340 H134 Z" fill="url(#gold)"/>
+  <rect x="124" y="290" width="136" height="12" fill="#8a6508"/>
+  <rect x="118" y="312" width="148" height="12" fill="#8a6508"/>
+</svg>
