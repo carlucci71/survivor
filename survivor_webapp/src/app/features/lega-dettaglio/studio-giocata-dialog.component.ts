@@ -11,7 +11,23 @@ export interface StudioGiocataDialogData {
   partite: Partita[];
   classifica: ClassificaRow[];
   giornataLabel: string;
+  campionatoId?: string;
 }
+
+const MONDIALI_GIRONI: { label: string; teams: string[] }[] = [
+  { label: 'A', teams: ['MES', 'SAF', 'COR', 'CEC'] },
+  { label: 'B', teams: ['CAN', 'BOS', 'QAT', 'SVI'] },
+  { label: 'C', teams: ['BRA', 'MAR', 'HAI', 'SCO'] },
+  { label: 'D', teams: ['USA', 'PAR', 'AUS', 'TUR'] },
+  { label: 'E', teams: ['GER', 'CUR', 'CIV', 'ECU'] },
+  { label: 'F', teams: ['OLA', 'JAP', 'SVE', 'TUN'] },
+  { label: 'G', teams: ['BEL', 'EGI', 'IRA', 'NZE'] },
+  { label: 'H', teams: ['SPA', 'CPV', 'SAU', 'URU'] },
+  { label: 'I', teams: ['FRA', 'SEN', 'IRQ', 'NOR'] },
+  { label: 'J', teams: ['ARG', 'ALG', 'AUT', 'GIO'] },
+  { label: 'K', teams: ['POR', 'COD', 'UZB', 'COL'] },
+  { label: 'L', teams: ['ING', 'CRO', 'GHA', 'PAN'] },
+];
 
 @Component({
   selector: 'app-studio-giocata-dialog',
@@ -40,86 +56,183 @@ export interface StudioGiocataDialogData {
 
       <!-- Calendario -->
       @if (tab === 'calendario') {
-        <div class="sg-body">
-          @if (data.partite.length === 0) {
-            <div class="sg-empty">
-              <mat-icon>sports_soccer</mat-icon>
-              <span>Nessuna partita trovata</span>
-            </div>
-          }
-          @for (p of data.partite; track p.casaSigla + p.giornata) {
-            <div class="sg-match"
-                 [class.terminata]="p.stato.value === 'TERMINATA'"
-                 [class.in-corso]="p.stato.value === 'IN_CORSO'">
-              <div class="sg-match-meta">
-                <span class="sg-match-time">{{ p.orario | date:'EEE d MMM · HH:mm' }}</span>
-                @if (p.stato.value === 'IN_CORSO') {
-                  <span class="sg-badge live">● LIVE</span>
-                } @else if (p.stato.value === 'TERMINATA') {
-                  <span class="sg-badge fin">FIN</span>
-                }
-              </div>
-              <div class="sg-match-row">
-                <div class="sg-team-block home">
-                  <span class="sg-team-name">{{ p.casaNome }}</span>
-                </div>
-                @if (p.stato.value === 'TERMINATA' || p.stato.value === 'IN_CORSO') {
-                  <div class="sg-score">
-                    <span class="sc">{{ p.scoreCasa }}</span>
-                    <span class="sep">–</span>
-                    <span class="sc">{{ p.scoreFuori }}</span>
+
+        <!-- ── Mondiali: calendario per girone ── -->
+        @if (isMondialiGironi) {
+          <div class="sg-groups-wrap">
+            @if (data.partite.length === 0) {
+              <div class="sg-empty"><mat-icon>sports_soccer</mat-icon><span>Nessuna partita trovata</span></div>
+            } @else {
+              @for (g of gironiCalendario; track g.label) {
+                @if (g.partite.length > 0) {
+                  <div class="sg-cal-group">
+                    <div class="sg-group-header sg-cal-group-header">
+                      <span class="sg-group-badge">{{ g.label }}</span>
+                      <span class="sg-group-title">Gruppo {{ g.label }}</span>
+                    </div>
+                    @for (p of g.partite; track p.casaSigla + p.giornata) {
+                      <div class="sg-match"
+                           [class.terminata]="p.stato.value === 'TERMINATA'"
+                           [class.in-corso]="p.stato.value === 'IN_CORSO'">
+                        <div class="sg-match-meta">
+                          <span class="sg-match-time">{{ p.orario | date:'EEE d MMM · HH:mm' }}</span>
+                          @if (p.stato.value === 'IN_CORSO') {
+                            <span class="sg-badge live">● LIVE</span>
+                          } @else if (p.stato.value === 'TERMINATA') {
+                            <span class="sg-badge fin">FIN</span>
+                          }
+                        </div>
+                        <div class="sg-match-row">
+                          <div class="sg-team-block home">
+                            <span class="sg-team-name">{{ p.casaNome }}</span>
+                          </div>
+                          @if (p.stato.value === 'TERMINATA' || p.stato.value === 'IN_CORSO') {
+                            <div class="sg-score">
+                              <span class="sc">{{ p.scoreCasa }}</span>
+                              <span class="sep">–</span>
+                              <span class="sc">{{ p.scoreFuori }}</span>
+                            </div>
+                          } @else {
+                            <div class="sg-vs">VS</div>
+                          }
+                          <div class="sg-team-block away">
+                            <span class="sg-team-name">{{ p.fuoriNome }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
                   </div>
-                } @else {
-                  <div class="sg-vs">VS</div>
                 }
-                <div class="sg-team-block away">
-                  <span class="sg-team-name">{{ p.fuoriNome }}</span>
+              }
+            }
+          </div>
+
+        <!-- ── Altre competizioni: calendario flat ── -->
+        } @else {
+          <div class="sg-body">
+            @if (data.partite.length === 0) {
+              <div class="sg-empty">
+                <mat-icon>sports_soccer</mat-icon>
+                <span>Nessuna partita trovata</span>
+              </div>
+            }
+            @for (p of data.partite; track p.casaSigla + p.giornata) {
+              <div class="sg-match"
+                   [class.terminata]="p.stato.value === 'TERMINATA'"
+                   [class.in-corso]="p.stato.value === 'IN_CORSO'">
+                <div class="sg-match-meta">
+                  <span class="sg-match-time">{{ p.orario | date:'EEE d MMM · HH:mm' }}</span>
+                  @if (p.stato.value === 'IN_CORSO') {
+                    <span class="sg-badge live">● LIVE</span>
+                  } @else if (p.stato.value === 'TERMINATA') {
+                    <span class="sg-badge fin">FIN</span>
+                  }
+                </div>
+                <div class="sg-match-row">
+                  <div class="sg-team-block home">
+                    <span class="sg-team-name">{{ p.casaNome }}</span>
+                  </div>
+                  @if (p.stato.value === 'TERMINATA' || p.stato.value === 'IN_CORSO') {
+                    <div class="sg-score">
+                      <span class="sc">{{ p.scoreCasa }}</span>
+                      <span class="sep">–</span>
+                      <span class="sc">{{ p.scoreFuori }}</span>
+                    </div>
+                  } @else {
+                    <div class="sg-vs">VS</div>
+                  }
+                  <div class="sg-team-block away">
+                    <span class="sg-team-name">{{ p.fuoriNome }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
+        }
+
       }
 
       <!-- Classifica -->
       @if (tab === 'classifica') {
-        <div class="sg-standings-wrap">
-          @if (data.classifica.length === 0) {
-            <div class="sg-empty"><mat-icon>leaderboard</mat-icon><span>Classifica non disponibile</span></div>
-          } @else {
-            <div class="sg-standings-head">
-              <span class="sth-rank">#</span>
-              <span class="sth-team">{{ 'LEAGUE.STUDIO.TEAM' | translate }}</span>
-              <span class="sth-num">PG</span>
-              <span class="sth-num">V</span>
-              <span class="sth-num">N</span>
-              <span class="sth-num">P</span>
-              <span class="sth-num">GD</span>
-              <span class="sth-pts">PT</span>
-            </div>
-            <div class="sg-standings-body">
-              @for (row of data.classifica; track row.sigla; let i = $index) {
-                <div class="sg-standing-row" [class.pos1]="i===0" [class.pos2]="i===1" [class.pos3]="i===2">
-                  <span class="sth-rank medal">
-                    @if (i === 0) { 🥇 }
-                    @else if (i === 1) { 🥈 }
-                    @else if (i === 2) { 🥉 }
-                    @else { {{ i + 1 }} }
-                  </span>
-                  <span class="sth-team">{{ row.nome }}</span>
-                  <span class="sth-num">{{ row.pj }}</span>
-                  <span class="sth-num">{{ row.v }}</span>
-                  <span class="sth-num">{{ row.n }}</span>
-                  <span class="sth-num">{{ row.p }}</span>
-                  <span class="sth-num gd" [class.pos]="row.gf - row.gs > 0" [class.neg]="row.gf - row.gs < 0">
-                    {{ row.gf - row.gs > 0 ? '+' : '' }}{{ row.gf - row.gs }}
-                  </span>
-                  <span class="sth-pts">{{ row.punti }}</span>
-                </div>
-              }
-            </div>
-          }
-        </div>
+
+        <!-- ── Mondiali: classifica per girone ── -->
+        @if (isMondialiGironi) {
+          <div class="sg-groups-wrap">
+            @if (data.classifica.length === 0) {
+              <div class="sg-empty"><mat-icon>leaderboard</mat-icon><span>Classifica non disponibile</span></div>
+            } @else {
+              <div class="sg-groups-grid">
+                @for (g of gironiClassifica; track g.label) {
+                  <div class="sg-group-card">
+                    <div class="sg-group-header">
+                      <span class="sg-group-badge">{{ g.label }}</span>
+                      <span class="sg-group-title">Gruppo {{ g.label }}</span>
+                    </div>
+                    <div class="sg-group-head-row">
+                      <span class="sgr-pos">#</span>
+                      <span class="sgr-team">{{ 'LEAGUE.STUDIO.TEAM' | translate }}</span>
+                      <span class="sgr-num">V</span>
+                      <span class="sgr-num">N</span>
+                      <span class="sgr-num">P</span>
+                      <span class="sgr-pts">PT</span>
+                    </div>
+                    @for (row of g.rows; track row.sigla; let i = $index) {
+                      <div class="sg-group-row" [class.qualify]="i < 2" [class.sgr-last]="i === g.rows.length - 1">
+                        <span class="sgr-pos">{{ i + 1 }}</span>
+                        <span class="sgr-team">{{ row.nome }}</span>
+                        <span class="sgr-num">{{ row.v }}</span>
+                        <span class="sgr-num">{{ row.n }}</span>
+                        <span class="sgr-num">{{ row.p }}</span>
+                        <span class="sgr-pts">{{ row.punti }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+        <!-- ── Altre competizioni: classifica flat ── -->
+        } @else {
+          <div class="sg-standings-wrap">
+            @if (data.classifica.length === 0) {
+              <div class="sg-empty"><mat-icon>leaderboard</mat-icon><span>Classifica non disponibile</span></div>
+            } @else {
+              <div class="sg-standings-head">
+                <span class="sth-rank">#</span>
+                <span class="sth-team">{{ 'LEAGUE.STUDIO.TEAM' | translate }}</span>
+                <span class="sth-num">PG</span>
+                <span class="sth-num">V</span>
+                <span class="sth-num">N</span>
+                <span class="sth-num">P</span>
+                <span class="sth-num">GD</span>
+                <span class="sth-pts">PT</span>
+              </div>
+              <div class="sg-standings-body">
+                @for (row of data.classifica; track row.sigla; let i = $index) {
+                  <div class="sg-standing-row" [class.pos1]="i===0" [class.pos2]="i===1" [class.pos3]="i===2">
+                    <span class="sth-rank medal">
+                      @if (i === 0) { 🥇 }
+                      @else if (i === 1) { 🥈 }
+                      @else if (i === 2) { 🥉 }
+                      @else { {{ i + 1 }} }
+                    </span>
+                    <span class="sth-team">{{ row.nome }}</span>
+                    <span class="sth-num">{{ row.pj }}</span>
+                    <span class="sth-num">{{ row.v }}</span>
+                    <span class="sth-num">{{ row.n }}</span>
+                    <span class="sth-num">{{ row.p }}</span>
+                    <span class="sth-num gd" [class.pos]="row.gf - row.gs > 0" [class.neg]="row.gf - row.gs < 0">
+                      {{ row.gf - row.gs > 0 ? '+' : '' }}{{ row.gf - row.gs }}
+                    </span>
+                    <span class="sth-pts">{{ row.punti }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
       }
     </div>
   `,
@@ -429,6 +542,151 @@ export interface StudioGiocataDialogData {
         padding: 8px 8px;
       }
     }
+
+    /* ── Gironi Mondiali ─────────────────────────── */
+    .sg-groups-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 10px 12px;
+    }
+
+    .sg-cal-group {
+      margin-bottom: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid #E8EEF8;
+      box-shadow: 0 2px 8px rgba(10,61,145,0.05);
+
+      .sg-match {
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid #F1F5F9;
+        box-shadow: none;
+        border-left: 4px solid #CBD5E1;
+
+        &:last-child { border-bottom: none; }
+        &.in-corso { border-left-color: #4FC3F7; }
+        &:hover { transform: none; box-shadow: none; background: #F8FAFF; }
+      }
+    }
+
+    .sg-cal-group-header {
+      border-radius: 0;
+    }
+
+    .sg-groups-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sg-group-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1.5px solid #E8EEF8;
+      box-shadow: 0 2px 8px rgba(10,61,145,0.05);
+      overflow: hidden;
+    }
+
+    .sg-group-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #1976D2 100%);
+    }
+
+    .sg-group-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.22);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    .sg-group-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .sg-group-head-row {
+      display: grid;
+      grid-template-columns: 18px 1fr 20px 20px 20px 24px;
+      gap: 2px;
+      padding: 4px 8px;
+      background: #F1F5F9;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .sg-group-row {
+      display: grid;
+      grid-template-columns: 18px 1fr 20px 20px 20px 24px;
+      gap: 2px;
+      padding: 5px 8px;
+      border-bottom: 1px solid #F1F5F9;
+      align-items: center;
+      transition: background 0.12s;
+
+      &.sgr-last { border-bottom: none; }
+      &.qualify { background: linear-gradient(90deg, rgba(10,61,145,0.04) 0%, #fff 100%); }
+      &:hover { background: #F8FAFF; }
+    }
+
+    .sgr-pos {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-align: center;
+      .sg-group-head-row & { color: #64748B; }
+    }
+
+    .sgr-team {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #1E293B;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      .sg-group-head-row & {
+        font-size: 0.58rem;
+        font-weight: 700;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+    }
+
+    .sgr-num {
+      font-size: 0.6rem;
+      font-weight: 400;
+      color: #475569;
+      text-align: center;
+      .sg-group-head-row & { font-size: 0.58rem; font-weight: 700; color: #64748B; }
+    }
+
+    .sgr-pts {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #0A3D91;
+      text-align: center;
+      .sg-group-head-row & { font-size: 0.58rem; font-weight: 700; color: #64748B; }
+    }
+
+    /* 1 colonna su schermi molto stretti */
+    @media (max-width: 340px) {
+      .sg-groups-grid { grid-template-columns: 1fr; }
+    }
   `]
 })
 export class StudioGiocataDialogComponent {
@@ -440,6 +698,40 @@ export class StudioGiocataDialogComponent {
   ) {}
 
   close(): void { this.dialogRef.close(); }
+
+  get isMondialiGironi(): boolean {
+    return this.data.campionatoId === 'MONDIALI_2026';
+  }
+
+  get gironiCalendario(): { label: string; partite: Partita[] }[] {
+    const siglaToGirone = new Map<string, string>();
+    for (const g of MONDIALI_GIRONI) {
+      for (const s of g.teams) siglaToGirone.set(s, g.label);
+    }
+    const map = new Map<string, Partita[]>();
+    for (const g of MONDIALI_GIRONI) map.set(g.label, []);
+    for (const p of this.data.partite) {
+      const label = siglaToGirone.get(p.casaSigla) ?? siglaToGirone.get(p.fuoriSigla);
+      if (label) map.get(label)!.push(p);
+    }
+    return MONDIALI_GIRONI.map(g => ({ label: g.label, partite: map.get(g.label)! }));
+  }
+
+  get gironiClassifica(): { label: string; rows: ClassificaRow[] }[] {
+    return MONDIALI_GIRONI.map(g => ({
+      label: g.label,
+      rows: g.teams
+        .map(sigla => this.data.classifica.find(r => r.sigla === sigla))
+        .filter((r): r is ClassificaRow => !!r)
+        .sort((a, b) => {
+          if (b.punti !== a.punti) return b.punti - a.punti;
+          const gdA = a.gf - a.gs;
+          const gdB = b.gf - b.gs;
+          if (gdB !== gdA) return gdB - gdA;
+          return b.gf - a.gf;
+        })
+    }));
+  }
 
   getInitials(nome: string): string {
     if (!nome) return '?';

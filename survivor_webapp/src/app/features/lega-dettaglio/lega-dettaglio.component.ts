@@ -492,7 +492,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Se i dati sono già pronti apre subito, altrimenti aspetta il caricamento
     if (this.studioCaricato) {
       this.dialog.open(StudioGiocataDialogComponent, {
-        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
         panelClass: 'studio-dialog-panel',
         maxWidth: '520px',
         width: '96vw',
@@ -509,7 +509,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (this.studioCaricato) {
           clearInterval(waitOpen);
           this.dialog.open(StudioGiocataDialogComponent, {
-            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label },
+            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
             panelClass: 'studio-dialog-panel',
             maxWidth: '520px',
             width: '96vw',
