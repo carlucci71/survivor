@@ -5567,16 +5567,21 @@
 
 // Link "Mostra Risultati" - Desktop/Tablet
 .show-results-bar {
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 4px 6px;
+  display: none; // rimpiazzata da vc-row
 }
 
 // Link "Mostra Risultati" - Mobile/Cards
 .show-results-bar-mobile {
+  display: none; // rimpiazzata da vc-row
+}
+
+// Riga fantasmino + show results
+.vc-row {
   display: flex;
-  justify-content: flex-end;
-  padding: 4px 0 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0 6px 10px;
+  min-height: 28px;
 }
 
 .show-results-link {
@@ -7516,3 +7521,74 @@
 	.studio-team, .studio-standing-row .sth-team { font-size: 0.82rem; }
 }
 
+
+
+// --- Vote emoji button + strip ----------------------------------------------
+.vc-wrap { position: relative; }
+
+.vc-emoji-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 1.35rem;
+  line-height: 1;
+  background: none;
+  border: 1px solid rgba(10, 61, 145, 0.13);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover, &--open {
+    background: rgba(10, 61, 145, 0.05);
+    border-color: rgba(10, 61, 145, 0.25);
+  }
+}
+
+.vc-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px 7px 10px;
+  background: rgba(79, 195, 247, 0.06);
+  border-top: 1px solid rgba(10, 61, 145, 0.08);
+  border-bottom: 1px solid rgba(10, 61, 145, 0.08);
+  animation: vcPop 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.vc-strip__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(10, 61, 145, 0.55);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.vc-strip__scroll {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.vc-strip__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  background: #fff;
+  border: 1.5px solid rgba(10, 61, 145, 0.15);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #0A3D91;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@keyframes vcPop {
+  from { opacity: 0; transform: scale(0.97) translateY(-3px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}

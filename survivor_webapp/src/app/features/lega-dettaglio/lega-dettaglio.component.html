@@ -454,13 +454,31 @@
         <div class="excel-table-wrapper desktop-tablet-only">
 
         <!-- Link Mostra Risultati — solo admin/leader (per forzature) -->
-        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-          <div class="show-results-bar">
+        <!-- Riga: fantasmino a sinistra + show results a destra -->
+        <div class="vc-row">
+          @if (isAvviata()) {
+            @let voto = getGiocatoriAttiviPerGiornata();
+            @if (voto.nonVotanti.length > 0) {
+              <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
+                      title="Senza scelta">👻</button>
+            }
+          }
+          @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
               <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
             </button>
-          </div>
+          }
+        </div>
+        @if (showVotePanel && vcNonVotanti.length > 0) {
+            <div class="vc-strip">
+              <span class="vc-strip__label">senza scelta</span>
+              <div class="vc-strip__scroll">
+                @for (g of vcNonVotanti; track $index) {
+                  <span class="vc-strip__chip">{{ g.nickname }}</span>
+                }
+              </div>
+            </div>
         }
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
@@ -783,17 +801,32 @@
           </div>
         }
 
-        <!-- Link Mostra Risultati mobile — solo admin/leader (per forzature) -->
-        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-          <div class="show-results-bar-mobile">
+        <!-- Riga: fantasmino a sinistra + show results a destra -->
+        <div class="vc-row">
+          @if (isAvviata()) {
+            @let voto = getGiocatoriAttiviPerGiornata();
+            @if (voto.nonVotanti.length > 0) {
+              <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
+                      title="Senza scelta">👻</button>
+            }
+          }
+          @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
               <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
             </button>
-          </div>
+          }
+        </div>
+        @if (showVotePanel && vcNonVotanti.length > 0) {
+            <div class="vc-strip">
+              <span class="vc-strip__label">senza scelta</span>
+              <div class="vc-strip__scroll">
+                @for (g of vcNonVotanti; track $index) {
+                  <span class="vc-strip__chip">{{ g.nickname }}</span>
+                }
+              </div>
+            </div>
         }
-
-        <!-- LISTA GIOCATORI FILTRATI -->
         <ng-container *ngFor="let giocatore of getFilteredPlayers(); trackBy: trackByGiocatoreId; let isFirst = first">
         <div class="player-card-mobile"
           [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"

@@ -1632,6 +1632,42 @@ export class LegaDettaglioComponent implements OnDestroy {
     return contaAttivi;
   }
 
+  // ─── Vote count helpers ──────────────────────────────────────────────────
+
+  showVotePanel = false;
+  vcNonVotanti: Giocatore[] = [];
+
+  toggleVotePanel(event: Event): void {
+    event.stopPropagation();
+    this.showVotePanel = !this.showVotePanel;
+    if (this.showVotePanel) {
+      this.vcNonVotanti = this.getGiocatoriAttiviPerGiornata().nonVotanti;
+    }
+  }
+
+  getNonVotantiLabel(nonVotanti: Giocatore[]): string {
+    return nonVotanti.length + ' senza scelta: ' + nonVotanti.map(g => g.nickname).join(', ');
+  }
+
+  getGiocatoriAttiviPerGiornata(): { votanti: Giocatore[]; nonVotanti: Giocatore[] } {
+    if (!this.lega?.giocatori || !this.lega.giornataCorrente) {
+      return { votanti: [], nonVotanti: [] };
+    }
+    const attivi = this.lega.giocatori.filter(
+      g => g.statiPerLega?.[this.lega?.id ?? 0]?.value === StatoGiocatore.ATTIVO.value
+    );
+    const votanti: Giocatore[] = [];
+    const nonVotanti: Giocatore[] = [];
+    for (const g of attivi) {
+      if (this.getGiocataByGiornataAssoluta(g, this.lega.giornataCorrente)) {
+        votanti.push(g);
+      } else {
+        nonVotanti.push(g);
+      }
+    }
+    return { votanti, nonVotanti };
+  }
+
   termina() {
     this.legaService.termina(Number(this.id)).subscribe({
       next: (lega: Lega) => {
