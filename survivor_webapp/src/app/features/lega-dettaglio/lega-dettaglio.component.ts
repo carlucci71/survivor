@@ -217,6 +217,16 @@ export class LegaDettaglioComponent implements OnDestroy {
   // Mappa delle partite forzate {giornata_squadraSigla: boolean}
   partiteForzate: Map<string, boolean> = new Map();
 
+  // Mappa dei dati completi delle partite {giornata_squadraSigla: Partita}
+  partiteDataMap: Map<string, Partita> = new Map();
+
+  // ─── Matchup popup (mostra avversario per propria giocata) ────────────────
+  matchupPopupGiocata: Giocata | null = null;
+  matchupPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
+  matchupPopupBelow = false;
+  private matchupPopupJustOpened = false;
+  private matchupAutoCloseTimer: any = null;
+
   // Partite della prossima giornata per il ticker del widget campionato
   tickerPartite: { casa: string; fuori: string; orario: Date | null }[] = [];
 
@@ -572,11 +582,92 @@ export class LegaDettaglioComponent implements OnDestroy {
               this.partiteForzate.set(`${g}_${p.casaSigla}`, false);
               this.partiteForzate.set(`${g}_${p.fuoriSigla}`, false);
             }
+            // Salva i dati completi della partita per il matchup popup
+            const partitaObj = p as Partita;
+            this.partiteDataMap.set(`${g}_${p.casaSigla}`, partitaObj);
+            this.partiteDataMap.set(`${g}_${p.fuoriSigla}`, partitaObj);
           });
         },
         error: () => {}
       });
     }
+  }
+
+  /** Restituisce i dati della partita per una giocata (giornata assoluta + sigla squadra) */
+  getPartitaForGiocata(giornata: number | undefined, squadraSigla: string | undefined): Partita | null {
+    if (!giornata || !squadraSigla) return null;
+    return this.partiteDataMap.get(`${giornata}_${squadraSigla}`) ?? null;
+  }
+
+  /** Restituisce la sigla e il nome dell'avversario per la propria giocata */
+  getAvversarioInfo(giocata: Giocata): { sigla: string; nome: string; isHome: boolean } | null {
+    const partita = this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla);
+    if (!partita) return null;
+    const isCasa = partita.casaSigla === giocata.squadraSigla;
+    return {
+      sigla: isCasa ? partita.fuoriSigla : partita.casaSigla,
+      nome: isCasa ? (partita.fuoriNome || partita.fuoriSigla) : (partita.casaNome || partita.casaSigla),
+      isHome: isCasa,
+    };
+  }
+
+  /** Apre il matchup popup per la propria giocata (invece del picker emoji) */
+  openMatchupPopup(giocata: Giocata, event: MouseEvent | TouchEvent): void {
+    if (!giocata) return;
+    event.stopPropagation();
+
+    // Se i dati della partita non sono in cache, prova a caricarli
+    if (!this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla)) {
+      if (this.lega?.campionato?.id && this.lega.anno && giocata.giornata) {
+        this.campionatoService.partiteDellaGiornata(
+          this.lega.campionato.id!,
+          this.lega.anno,
+          giocata.giornata
+        ).subscribe({
+          next: (partite: any[]) => {
+            partite?.forEach((p: any) => {
+              const partitaObj = p as Partita;
+              this.partiteDataMap.set(`${giocata.giornata}_${p.casaSigla}`, partitaObj);
+              this.partiteDataMap.set(`${giocata.giornata}_${p.fuoriSigla}`, partitaObj);
+            });
+            this._showMatchupPopup(giocata, event);
+          },
+          error: () => { this._showMatchupPopup(giocata, event); }
+        });
+        return;
+      }
+    }
+    this._showMatchupPopup(giocata, event);
+  }
+
+  private _showMatchupPopup(giocata: Giocata, event: MouseEvent | TouchEvent): void {
+    if (this.matchupAutoCloseTimer) { clearTimeout(this.matchupAutoCloseTimer); }
+    const el = event.currentTarget as HTMLElement;
+    const rect = el.getBoundingClientRect();
+    const POPUP_W = 240;
+    const HALF_W = POPUP_W / 2;
+    const MARGIN = 8;
+    const rawLeft = rect.left + rect.width / 2;
+    const clampedLeft = Math.min(Math.max(rawLeft, HALF_W + MARGIN), window.innerWidth - HALF_W - MARGIN);
+    const POPUP_H = 100;
+    const showBelow = rect.top < POPUP_H + 10;
+    this.matchupPopupBelow = showBelow;
+    this.matchupPopupStyle = {
+      top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
+      left: `${clampedLeft}px`
+    };
+    this.matchupPopupGiocata = giocata;
+    this.matchupPopupJustOpened = true;
+    setTimeout(() => { this.matchupPopupJustOpened = false; }, 400);
+    this.matchupAutoCloseTimer = setTimeout(() => {
+      this.matchupPopupGiocata = null;
+      this.matchupAutoCloseTimer = null;
+    }, 5000);
+  }
+
+  closeMatchupPopup(): void {
+    if (this.matchupAutoCloseTimer) { clearTimeout(this.matchupAutoCloseTimer); }
+    this.matchupPopupGiocata = null;
   }
 
   getDesGiornataTitle(index: number): string {
@@ -1830,10 +1921,11 @@ export class LegaDettaglioComponent implements OnDestroy {
 
   @HostListener('document:click')
   onDocumentClick(): void {
-    if (this.popupJustOpened) return;
+    if (this.popupJustOpened || this.matchupPopupJustOpened) return;
     this.activeReactionKey = null;
     this.activeGiocata = null;
     this.closeBadgeAutori();
+    if (this.matchupPopupGiocata) { this.closeMatchupPopup(); }
   }
 
   openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {

@@ -6630,6 +6630,157 @@
   margin: 4px 0;
 }
 
+// ─── MATCHUP POPUP ─────────────────────────────────────────────────────────
+.matchup-popup-global {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 10px));
+  z-index: 9999;
+  background: #ffffff;
+  border: 1px solid rgba(10, 61, 145, 0.12);
+  border-radius: 18px;
+  padding: 10px 14px 12px;
+  min-width: 200px;
+  max-width: 260px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.18),
+    0 3px 10px rgba(0, 0, 0, 0.10),
+    0 0 0 1px rgba(10, 61, 145, 0.04);
+  user-select: none;
+  pointer-events: auto;
+
+  &--below {
+    transform: translate(-50%, 10px);
+
+    &::after {
+      top: auto;
+      bottom: 100%;
+      border-top: none;
+      border-bottom: 7px solid #ffffff;
+    }
+  }
+
+  // Ponte trasparente
+  &::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background: transparent;
+  }
+
+  // Freccina
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid #ffffff;
+    pointer-events: none;
+  }
+}
+
+.matchup-popup-label {
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(10, 61, 145, 0.55);
+  margin-bottom: 8px;
+}
+
+.matchup-popup-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.matchup-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+
+  &--mine .matchup-name {
+    font-weight: 700;
+    color: #0a3d91;
+  }
+
+  &--opponent .matchup-name {
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.matchup-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.matchup-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+
+  &--loading {
+    color: rgba(0, 0, 0, 0.3);
+    font-style: italic;
+  }
+}
+
+.matchup-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.matchup-vs-text {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.35);
+}
+
+.matchup-result {
+  font-size: 1rem;
+  font-weight: 900;
+  line-height: 1;
+
+  &--ok {
+    color: #22c55e;
+  }
+
+  &--ko {
+    color: #ef4444;
+  }
+
+  &--pareggio {
+    color: #f59e0b;
+  }
+}
+
+// Cursore pointer sulla propria giocata
+.own-giocata-clickable {
+  cursor: pointer !important;
+}
+
 .reaction-emoji-grid {
   display: grid;
   grid-template-columns: repeat(4, 34px);
