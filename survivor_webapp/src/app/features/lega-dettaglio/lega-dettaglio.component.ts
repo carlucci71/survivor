@@ -662,7 +662,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.matchupAutoCloseTimer = setTimeout(() => {
       this.matchupPopupGiocata = null;
       this.matchupAutoCloseTimer = null;
-    }, 5000);
+    }, 4000);
   }
 
   closeMatchupPopup(): void {

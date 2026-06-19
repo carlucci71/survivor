@@ -6638,7 +6638,7 @@
   background: #ffffff;
   border: 1px solid rgba(10, 61, 145, 0.12);
   border-radius: 18px;
-  padding: 10px 14px 12px;
+  padding: 16px 14px 12px;
   min-width: 200px;
   max-width: 260px;
   box-shadow:
@@ -6779,6 +6779,26 @@
 // Cursore pointer sulla propria giocata
 .own-giocata-clickable {
   cursor: pointer !important;
+}
+
+.matchup-close-btn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.35);
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.06);
+  }
 }
 
 .reaction-emoji-grid {

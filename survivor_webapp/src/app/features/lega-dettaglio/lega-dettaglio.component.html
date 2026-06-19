@@ -1116,6 +1116,7 @@
     [style.top]="matchupPopupStyle.top"
     [style.left]="matchupPopupStyle.left"
     (click)="$event.stopPropagation()">
+    <button class="matchup-close-btn" (click)="closeMatchupPopup()" aria-label="Chiudi">✕</button>
     <div class="matchup-popup-label">
       {{ getDesGiornataTitle(matchupPopupGiocata.giornata ?? 0) }}
     </div>
