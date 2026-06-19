@@ -1116,9 +1116,7 @@
     [style.top]="matchupPopupStyle.top"
     [style.left]="matchupPopupStyle.left"
     (click)="$event.stopPropagation()">
-    <div class="matchup-popup-label">
-      {{ getDesGiornataTitle(matchupPopupGiocata.giornata ?? 0) }}
-    </div>
+    <button class="matchup-close-btn" (click)="closeMatchupPopup()" aria-label="Chiudi">✕</button>
     <div class="matchup-popup-teams">
       <!-- Mia squadra -->
       <div class="matchup-team matchup-team--mine">
@@ -1127,18 +1125,21 @@
         }
         <span class="matchup-name">{{ getSquadraNomeSenzaCitta(matchupPopupGiocata.squadraSigla) || matchupPopupGiocata.squadraSigla }}</span>
       </div>
-      <!-- VS -->
+      <!-- Centro: score o VS -->
       <div class="matchup-vs">
-        @if (getAvversarioInfo(matchupPopupGiocata)) {
-          @if (matchupPopupGiocata.esito === 'OK') {
-            <span class="matchup-result matchup-result--ok">✓</span>
-          } @else if (matchupPopupGiocata.esito === 'KO') {
-            <span class="matchup-result matchup-result--ko">✗</span>
-          } @else if (matchupPopupGiocata.esito === 'PAREGGIO') {
-            <span class="matchup-result matchup-result--pareggio">=</span>
-          } @else {
-            <span class="matchup-vs-text">vs</span>
-          }
+        @if (matchupPopupGiocata.esito && getMatchupScore(matchupPopupGiocata); as score) {
+          <div class="matchup-score-block"
+            [class.matchup-score-block--ok]="matchupPopupGiocata.esito === 'OK'"
+            [class.matchup-score-block--ko]="matchupPopupGiocata.esito === 'KO'"
+            [class.matchup-score-block--pareggio]="matchupPopupGiocata.esito === 'PAREGGIO'">
+            <span class="matchup-score">{{ score.mio }} - {{ score.loro }}</span>
+          </div>
+        } @else if (matchupPopupGiocata.esito === 'OK') {
+          <span class="matchup-result matchup-result--ok">✓</span>
+        } @else if (matchupPopupGiocata.esito === 'KO') {
+          <span class="matchup-result matchup-result--ko">✗</span>
+        } @else if (matchupPopupGiocata.esito === 'PAREGGIO') {
+          <span class="matchup-result matchup-result--pareggio">=</span>
         } @else {
           <span class="matchup-vs-text">vs</span>
         }
