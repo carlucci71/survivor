@@ -662,7 +662,19 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.matchupAutoCloseTimer = setTimeout(() => {
       this.matchupPopupGiocata = null;
       this.matchupAutoCloseTimer = null;
-    }, 5000);
+    }, 4000);
+  }
+
+  /** Restituisce il punteggio della partita nella prospettiva dell'utente (mio score - loro score) */
+  getMatchupScore(giocata: Giocata): { mio: number; loro: number } | null {
+    const partita = this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla);
+    if (!partita || partita.scoreCasa == null || partita.scoreFuori == null) return null;
+    if (!giocata.esito) return null;
+    const isCasa = partita.casaSigla === giocata.squadraSigla;
+    return {
+      mio: isCasa ? partita.scoreCasa : partita.scoreFuori,
+      loro: isCasa ? partita.scoreFuori : partita.scoreCasa,
+    };
   }
 
   closeMatchupPopup(): void {

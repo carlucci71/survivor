@@ -6747,7 +6747,38 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 28px;
+  width: 54px;
+}
+
+.matchup-score-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 3px 6px;
+  background: rgba(0, 0, 0, 0.05);
+
+  &--ok {
+    background: rgba(34, 197, 94, 0.15);
+    .matchup-score { color: #16a34a; }
+  }
+
+  &--ko {
+    background: rgba(239, 68, 68, 0.15);
+    .matchup-score { color: #dc2626; }
+  }
+
+  &--pareggio {
+    background: rgba(245, 158, 11, 0.15);
+    .matchup-score { color: #d97706; }
+  }
+}
+
+.matchup-score {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
 .matchup-vs-text {
@@ -6779,6 +6810,26 @@
 // Cursore pointer sulla propria giocata
 .own-giocata-clickable {
   cursor: pointer !important;
+}
+
+.matchup-close-btn {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.6rem;
+  color: rgba(0, 0, 0, 0.25);
+  padding: 1px 3px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.05);
+  }
 }
 
 .reaction-emoji-grid {
