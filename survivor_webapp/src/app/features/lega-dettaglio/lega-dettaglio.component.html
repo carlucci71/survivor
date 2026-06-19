@@ -454,13 +454,31 @@
         <div class="excel-table-wrapper desktop-tablet-only">
 
         <!-- Link Mostra Risultati — solo admin/leader (per forzature) -->
-        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-          <div class="show-results-bar">
+        <!-- Riga: fantasmino a sinistra + show results a destra -->
+        <div class="vc-row">
+          @if (isAvviata()) {
+            @let voto = getGiocatoriAttiviPerGiornata();
+            @if (voto.nonVotanti.length > 0) {
+              <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
+                      title="Senza scelta">👻</button>
+            }
+          }
+          @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
               <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
             </button>
-          </div>
+          }
+        </div>
+        @if (showVotePanel && vcNonVotanti.length > 0) {
+            <div class="vc-strip">
+              <span class="vc-strip__label">senza scelta</span>
+              <div class="vc-strip__scroll">
+                @for (g of vcNonVotanti; track $index) {
+                  <span class="vc-strip__chip">{{ g.nickname }}</span>
+                }
+              </div>
+            </div>
         }
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
@@ -572,12 +590,14 @@
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"
-                          (mouseenter)="openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
+                          (mouseenter)="isCurrentUserGiocatore(giocatore) ? null : openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
                           (mouseleave)="closeReactionPopupDelayed()"
-                          (touchstart)="startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
+                          (click)="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : null"
+                          (touchstart)="isCurrentUserGiocatore(giocatore) ? null : startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
                           (touchend)="cancelLongPress()"
                           (touchmove)="cancelLongPress()"
-                          (contextmenu)="$event.preventDefault()">
+                          (contextmenu)="$event.preventDefault()"
+                          [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)">
                           <!-- Mostra logo+nome o badge "Voto Privato" se nascosta -->
                           @if (shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                             <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">
@@ -783,17 +803,32 @@
           </div>
         }
 
-        <!-- Link Mostra Risultati mobile — solo admin/leader (per forzature) -->
-        @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-          <div class="show-results-bar-mobile">
+        <!-- Riga: fantasmino a sinistra + show results a destra -->
+        <div class="vc-row">
+          @if (isAvviata()) {
+            @let voto = getGiocatoriAttiviPerGiornata();
+            @if (voto.nonVotanti.length > 0) {
+              <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
+                      title="Senza scelta">👻</button>
+            }
+          }
+          @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()">
               <mat-icon class="results-icon">sports_score</mat-icon>
               <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
             </button>
-          </div>
+          }
+        </div>
+        @if (showVotePanel && vcNonVotanti.length > 0) {
+            <div class="vc-strip">
+              <span class="vc-strip__label">senza scelta</span>
+              <div class="vc-strip__scroll">
+                @for (g of vcNonVotanti; track $index) {
+                  <span class="vc-strip__chip">{{ g.nickname }}</span>
+                }
+              </div>
+            </div>
         }
-
-        <!-- LISTA GIOCATORI FILTRATI -->
         <ng-container *ngFor="let giocatore of getFilteredPlayers(); trackBy: trackByGiocatoreId; let isFirst = first">
         <div class="player-card-mobile"
           [class.eliminato-row]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value"
@@ -888,7 +923,8 @@
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
-                       (click)="openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
+                       [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)"
+                       (click)="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
                     } @else {
@@ -1069,6 +1105,55 @@
           <span class="voti-sheet-nick">{{ nick }}</span>
         </div>
       }
+    </div>
+  </div>
+}
+
+<!-- Matchup popup: mostra avversario quando l'utente clicca sulla propria giocata -->
+@if(matchupPopupGiocata !== null) {
+  <div class="matchup-popup-global"
+    [class.matchup-popup-global--below]="matchupPopupBelow"
+    [style.top]="matchupPopupStyle.top"
+    [style.left]="matchupPopupStyle.left"
+    (click)="$event.stopPropagation()">
+    <div class="matchup-popup-label">
+      {{ getDesGiornataTitle(matchupPopupGiocata.giornata ?? 0) }}
+    </div>
+    <div class="matchup-popup-teams">
+      <!-- Mia squadra -->
+      <div class="matchup-team matchup-team--mine">
+        @if (getTeamLogo(matchupPopupGiocata.squadraSigla)) {
+          <img class="matchup-logo" [src]="getTeamLogo(matchupPopupGiocata.squadraSigla)!" [alt]="getSquadraNome(matchupPopupGiocata.squadraSigla) || ''" (error)="$any($event.target).style.display='none'">
+        }
+        <span class="matchup-name">{{ getSquadraNomeSenzaCitta(matchupPopupGiocata.squadraSigla) || matchupPopupGiocata.squadraSigla }}</span>
+      </div>
+      <!-- VS -->
+      <div class="matchup-vs">
+        @if (getAvversarioInfo(matchupPopupGiocata)) {
+          @if (matchupPopupGiocata.esito === 'OK') {
+            <span class="matchup-result matchup-result--ok">✓</span>
+          } @else if (matchupPopupGiocata.esito === 'KO') {
+            <span class="matchup-result matchup-result--ko">✗</span>
+          } @else if (matchupPopupGiocata.esito === 'PAREGGIO') {
+            <span class="matchup-result matchup-result--pareggio">=</span>
+          } @else {
+            <span class="matchup-vs-text">vs</span>
+          }
+        } @else {
+          <span class="matchup-vs-text">vs</span>
+        }
+      </div>
+      <!-- Avversario -->
+      <div class="matchup-team matchup-team--opponent">
+        @if (getAvversarioInfo(matchupPopupGiocata); as avv) {
+          @if (getTeamLogo(avv.sigla)) {
+            <img class="matchup-logo" [src]="getTeamLogo(avv.sigla)!" [alt]="avv.nome" (error)="$any($event.target).style.display='none'">
+          }
+          <span class="matchup-name">{{ getSquadraNomeSenzaCitta(avv.sigla) || avv.nome }}</span>
+        } @else {
+          <span class="matchup-name matchup-name--loading">...</span>
+        }
+      </div>
     </div>
   </div>
 }

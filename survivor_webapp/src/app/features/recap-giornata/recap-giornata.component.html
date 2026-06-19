@@ -105,6 +105,30 @@
         <div class="slide__inner">
           <h2 class="slide__title">{{ 'RECAP.PICKS_TITLE' | translate }}</h2>
           <p class="slide__subtitle">{{ 'RECAP.ROUND_LABEL' | translate }} {{ recap.giornataRelativa }} · {{ recap.totaleMembri }} {{ 'RECAP.PLAYERS' | translate }}</p>
+
+          <!-- ── Vote count pill ─────────────────────────────────────────── -->
+          <div class="vote-count-bar">
+            <span class="vote-count-bar__voted">
+              <span class="vcp-dot vcp-dot--ok"></span>
+              {{ votantiCount }} {{ votantiCount === 1 ? 'ha votato' : 'hanno votato' }}
+            </span>
+            @if (nonVotanti.length > 0) {
+              <button class="vote-count-bar__missing" (click)="toggleNonVotanti($event)">
+                <span class="vcp-dot vcp-dot--miss"></span>
+                {{ nonVotanti.length }} senza scelta
+                <span class="vcp-chevron" [class.vcp-chevron--open]="showNonVotanti">▾</span>
+              </button>
+            }
+          </div>
+          @if (showNonVotanti && nonVotanti.length > 0) {
+            <div class="non-votanti-list">
+              @for (p of nonVotanti; track p.nickname) {
+                <span class="non-votanti-chip">{{ p.nickname }}</span>
+              }
+            </div>
+          }
+          <!-- ─────────────────────────────────────────────────────────────── -->
+
           <div class="picks-list" [@staggerCards]="recap.picks.length">
             @for (pick of recap.picks; track pick.nickname) {
               <div class="pick-row"
