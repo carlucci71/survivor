@@ -159,6 +159,22 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     return this.recap?.picks.some(p => p.viteCorrente != null && p.viteCorrente > 1) ?? false;
   }
 
+  get nonVotanti(): RecapPickEntry[] {
+    return this.recap?.picks.filter(p => !p.squadraNome) ?? [];
+  }
+
+  get votantiCount(): number {
+    return this.recap?.picks.filter(p => !!p.squadraNome).length ?? 0;
+  }
+
+  showNonVotanti = false;
+
+  toggleNonVotanti(event: Event): void {
+    event.stopPropagation();
+    this.showNonVotanti = !this.showNonVotanti;
+    this.cdr.detectChanges();
+  }
+
   ngOnInit(): void {
     const legaId = Number(this.route.snapshot.paramMap.get('legaId'));
     const giornata = Number(this.route.snapshot.paramMap.get('giornata'));
