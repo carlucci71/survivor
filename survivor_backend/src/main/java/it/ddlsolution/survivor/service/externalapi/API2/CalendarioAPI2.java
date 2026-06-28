@@ -213,8 +213,25 @@ public class CalendarioAPI2 implements ICalendario {
             Result resultHome = getResult(match, "home", statoPartita);
             Result resultAway = getResult(match, "away", statoPartita);
 
-            String casaSigla = getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla();
-            String fuoriSigla = getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla();
+            String homeTeamCode = resultHome.teamCode();
+            String awayTeamCode = resultAway.teamCode();
+
+            if (homeTeamCode.equals("RDC")){
+                homeTeamCode="COD";
+            }
+            if (awayTeamCode.equals("RDC")){
+                awayTeamCode="COD";
+            }
+            if (homeTeamCode.equals("BIH")){
+                homeTeamCode="BOS";
+            }
+            if (awayTeamCode.equals("BIH")){
+                awayTeamCode="BOS";
+            }
+
+
+            String casaSigla = getSquadraDTO(homeTeamCode, campionato, squadreCampionato).getSigla();
+            String fuoriSigla = getSquadraDTO(awayTeamCode, campionato, squadreCampionato).getSigla();
 
             OffsetDateTime odt = OffsetDateTime.parse(match.get("utcDate").toString());
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
