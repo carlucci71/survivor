@@ -119,7 +119,7 @@ class EnumAPI2 {
         G1("groups", "1"),    // Giornata 1 gironi
         G2("groups", "2"),    // Giornata 2 gironi
         G3("groups", "3"),    // Giornata 3 gironi
-        R32("knockout", "1"), // Ottavi di finale (da verificare con API reale)
+        R32("playoffs", "round-of-32"), // Ottavi di finale (da verificare con API reale)
         R16("knockout", "2"), // Sedicesimi di finale (da verificare)
         QF("knockout", "3"),  // Quarti di finale (da verificare)
         SF("knockout", "4"),  // Semifinali (da verificare)
