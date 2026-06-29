@@ -321,6 +321,8 @@ public class CacheableService {
     // @Transactional
     public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {        List<LocalDateTime> iniziGiornate = new ArrayList<>();
         Integer giornataDaGiocare = null;
+        Integer lastRoundWithData = null;
+        Enumeratori.StatoPartita lastStatus = null;
         for (int giornata = 1; giornata <= campionatoDTO.getNumGiornate(); giornata++) {
             List<PartitaDTO> partiteDTO = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
 
@@ -335,16 +337,29 @@ public class CacheableService {
 
                 Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                 log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);
+                lastRoundWithData = giornata;
+                lastStatus = statoGiornata;
                 if (giornataDaGiocare == null && (statoGiornata == Enumeratori.StatoPartita.DA_GIOCARE)) {
                     giornataDaGiocare = giornata;
                 }
             }
         }
-        if (giornataDaGiocare==null){
-            // Se non sono state trovate partite future, il campionato non è ancora
-            // iniziato (iniziGiornate vuoto) oppure è già concluso.
-            // Nel primo caso partiamo dalla giornata 1, nel secondo dall'ultima.
-            giornataDaGiocare = iniziGiornate.isEmpty() ? 1 : campionatoDTO.getNumGiornate();
+        if (giornataDaGiocare == null) {
+            if (lastRoundWithData == null) {
+                // Nessun dato disponibile: campionato non ancora iniziato
+                giornataDaGiocare = 1;
+            } else if (lastStatus == Enumeratori.StatoPartita.IN_CORSO) {
+                // Giornata corrente in corso; le fasi successive non hanno ancora dati
+                // (es. Mondiali 2026 durante il R32: R16-F non hanno ancora date/partite)
+                giornataDaGiocare = lastRoundWithData;
+            } else if (lastStatus == Enumeratori.StatoPartita.TERMINATA) {
+                // Ultima giornata con dati già conclusa; la successiva non ha ancora dati
+                int next = lastRoundWithData + 1;
+                giornataDaGiocare = next <= campionatoDTO.getNumGiornate() ? next : campionatoDTO.getNumGiornate();
+            } else {
+                // Fallback sicuro
+                giornataDaGiocare = campionatoDTO.getNumGiornate();
+            }
         }
         campionatoDTO.setGiornataDaGiocare(giornataDaGiocare);
         campionatoDTO.setIniziGiornate(iniziGiornate);

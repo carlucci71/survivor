@@ -128,6 +128,7 @@ export class LegaDettaglioComponent implements OnDestroy {
    */
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
 
+
   readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
 
   activeReactionKey: string | null = null;
@@ -779,14 +780,15 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.isCampionato()) {
       const compactMap: Record<string, string> = {
         // Mondiali / Calcio
-        'Girone - Giornata 1': 'G.1',
-        'Girone - Giornata 2': 'G.2',
-        'Girone - Giornata 3': 'G.3',
-        'Sedicesimi di finale': '32°',
-        'Ottavi di finale': '16°',
-        'Quarti di finale': 'QF',
-        'Semifinali': 'SF',
-        'Finale': 'F',
+        'Girone - Giornata 1':     'G.1',
+        'Girone - Giornata 2':     'G.2',
+        'Girone - Giornata 3':     'G.3',
+        'Trentaduesimi di finale': 'R32',
+        'Sedicesimi di finale':    'R16',
+        'Ottavi di finale':        'R16',
+        'Quarti di finale':        'QF',
+        'Semifinali':              'SF',
+        'Finale':                  'F',
         // Tennis
         '64-esimi': 'R128',
         '32-esimi': 'R64',

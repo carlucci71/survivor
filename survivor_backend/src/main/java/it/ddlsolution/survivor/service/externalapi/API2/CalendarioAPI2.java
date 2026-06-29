@@ -149,39 +149,29 @@ public class CalendarioAPI2 implements ICalendario {
         List<Map<String, Object>> games = (List<Map<String, Object>>) gamesObj;
 
         for (Map<String, Object> game : games) {
-            if (giornata == 4){
-                List<Object> matchesList = (List<Object>) game.get("firstLeg");
-                for (Object matchesEntry : matchesList) {
-                    if (matchesEntry instanceof Map) {
-                        Map<String, Object> matchesMap = (Map<String, Object>) matchesEntry;
-                        // La risposta dei gironi raggruppa le partite per lettera di gruppo (A, B, ..., L)
-                        // La risposta del knockout potrebbe non avere chiavi di gruppo
-                        for (Map.Entry<String, Object> entry : matchesMap.entrySet()) {
-                            List<Map<String, Object>> matchList = toMatchList(entry.getValue());
-                            for (Map<String, Object> match : matchList) {
-                                PartitaDTO dto = buildPartitaMondiali(campionato, giornata, match, squadreCampionato, anno);
-                                if (dto != null) ret.add(dto);
-                            }
-                        }
-                    }
-                }
+            // L'API Gazzetta usa "matches" nei gironi e "firstLeg" negli ottavi (R32).
+            // Per le fasi successive la chiave potrebbe variare: proviamo entrambe in ordine.
+            List<Object> matchesList = null;
+            if (game.get("matches") instanceof List) {
+                matchesList = (List<Object>) game.get("matches");
+            } else if (game.get("firstLeg") instanceof List) {
+                matchesList = (List<Object>) game.get("firstLeg");
             }
-            else {
-                Object matchesObj = game.get("matches");
-                if (!(matchesObj instanceof List)) continue;
-                List<Object> matchesList = (List<Object>) matchesObj;
+            if (matchesList == null) {
+                log.warn("elaboraMondiali giornata={}: nessuna chiave 'matches'/'firstLeg' trovata. Chiavi presenti: {}", giornata, game.keySet());
+                continue;
+            }
 
-                for (Object matchesEntry : matchesList) {
-                    if (matchesEntry instanceof Map) {
-                        Map<String, Object> matchesMap = (Map<String, Object>) matchesEntry;
-                        // La risposta dei gironi raggruppa le partite per lettera di gruppo (A, B, ..., L)
-                        // La risposta del knockout potrebbe non avere chiavi di gruppo
-                        for (Map.Entry<String, Object> entry : matchesMap.entrySet()) {
-                            List<Map<String, Object>> matchList = toMatchList(entry.getValue());
-                            for (Map<String, Object> match : matchList) {
-                                PartitaDTO dto = buildPartitaMondiali(campionato, giornata, match, squadreCampionato, anno);
-                                if (dto != null) ret.add(dto);
-                            }
+            for (Object matchesEntry : matchesList) {
+                if (matchesEntry instanceof Map) {
+                    Map<String, Object> matchesMap = (Map<String, Object>) matchesEntry;
+                    // La risposta dei gironi raggruppa le partite per lettera di gruppo (A, B, ..., L)
+                    // La risposta del knockout potrebbe non avere chiavi di gruppo
+                    for (Map.Entry<String, Object> entry : matchesMap.entrySet()) {
+                        List<Map<String, Object>> matchList = toMatchList(entry.getValue());
+                        for (Map<String, Object> match : matchList) {
+                            PartitaDTO dto = buildPartitaMondiali(campionato, giornata, match, squadreCampionato, anno);
+                            if (dto != null) ret.add(dto);
                         }
                     }
                 }
@@ -215,20 +205,6 @@ public class CalendarioAPI2 implements ICalendario {
 
             String homeTeamCode = resultHome.teamCode();
             String awayTeamCode = resultAway.teamCode();
-
-            if (homeTeamCode.equals("RDC")){
-                homeTeamCode="COD";
-            }
-            if (awayTeamCode.equals("RDC")){
-                awayTeamCode="COD";
-            }
-            if (homeTeamCode.equals("BIH")){
-                homeTeamCode="BOS";
-            }
-            if (awayTeamCode.equals("BIH")){
-                awayTeamCode="BOS";
-            }
-
 
             String casaSigla = getSquadraDTO(homeTeamCode, campionato, squadreCampionato).getSigla();
             String fuoriSigla = getSquadraDTO(awayTeamCode, campionato, squadreCampionato).getSigla();
