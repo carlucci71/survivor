@@ -14,7 +14,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
 
     // Girone B
     CAN("CAN"),      // Canada
-    BOS("BOS"),      // Bosnia ed Erzegovina
+    BOS("BIH"),      // Bosnia ed Erzegovina
     QAT("QAT"),      // Qatar
     SVI("SVI"),      // Svizzera
 
@@ -68,7 +68,7 @@ enum SquadreNazionali_API2 implements IEnumSquadre {
 
     // Girone K
     POR("POR"),      // Portogallo
-    COD("COD"),      // Congo (Rep. Dem.)
+    COD("RDC"),      // Congo (Rep. Dem.)
     COL("COL"),      // Colombia
     UZB("UZB"),      // Uzbekistan
 
