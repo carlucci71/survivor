@@ -581,7 +581,22 @@
     "MANY_LIVES": "vite",
     "MANAGE_LIVES_CANCEL": "Annulla",
     "MANAGE_LIVES_SAVE": "Salva",
-    "MANAGE_LIVES_SAVING": "Salvataggio…"
+    "MANAGE_LIVES_SAVING": "Salvataggio…",
+    "WHO_VOTED": "Chi ha votato:",
+    "WHO_VOTED_LIKE_ME": "Chi ha votato come te?",
+    "NO_CHOICE": "senza scelta",
+    "YOUR_PICK": "La tua pick",
+    "RESULTS_AT_ROUND_END": "Risultati a fine giornata"
+  },
+  "ME": {
+    "PLAYER_TITLE": "Giocatore",
+    "NAME_LABEL": "Nome",
+    "SAVING": "Salvataggio...",
+    "CONFIRM_BTN": "Conferma",
+    "NAME_INVALID": "Inserisci un nome valido",
+    "NAME_NOT_CHANGED": "Il nome non è cambiato",
+    "NAME_UPDATED": "Nome aggiornato",
+    "NAME_UPDATE_ERROR": "Impossibile aggiornare il nome, riprova più tardi"
   },
   "COMMON": {
     "SOCCER": "Calcio",
@@ -706,7 +721,15 @@
     "MAGIC_LINK_SENT": "Ti abbiamo inviato un link per accedere",
     "CLICK_LINK": "Clicca sul link nella email per entrare",
     "TERMS_DECLARATION": "Dichiaro di aver letto e accettato i",
-    "AGE_DISCLAIMER": "L'applicazione è destinata esclusivamente a utenti di età pari o superiore a 14 anni."
+    "AGE_DISCLAIMER": "L'applicazione è destinata esclusivamente a utenti di età pari o superiore a 14 anni.",
+    "VERIFY_LOADING": "Verifica in corso...",
+    "VERIFY_LOADING_SUBTITLE": "Stiamo autenticando il tuo accesso, un momento.",
+    "VERIFY_SUCCESS_TITLE": "Accesso riuscito!",
+    "VERIFY_ALREADY_TITLE": "Sei già dentro!",
+    "VERIFY_ALREADY_SUBTITLE": "Sei già autenticato. Questo link è già stato usato.",
+    "GO_HOME": "Vai alla home",
+    "VERIFY_ERROR_TITLE": "Link non valido",
+    "BACK_TO_LOGIN": "Torna al login"
   },
   "CREATE_LEAGUE": {
     "TITLE": "Crea Nuova Lega",
@@ -896,6 +919,12 @@
     "NO_SUSPENSIONS": "Nessuna sospensione definita"
   },
   "PLAY": {
+    "CONFIRM_REMOVE": {
+      "TITLE": "Annulla la tua scelta?",
+      "BODY": "La tua selezione verrà rimossa e potrai scegliere un'altra squadra.",
+      "CANCEL": "No, tieni",
+      "CONFIRM": "Sì, rimuovi"
+    },
     "CONFIRM_CHANGE_TITLE": "Conferma modifica",
     "CONFIRM_CHANGE_MESSAGE": "Sei sicuro di voler cambiare questa assegnazione anche se la giornata è iniziata?",
     "SELECT_TEAM": "Seleziona squadra",

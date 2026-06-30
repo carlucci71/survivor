@@ -11,10 +11,11 @@ import { GiocatoreService } from '../../core/services/giocatore.service';
 import { Giocatore } from '../../core/models/interfaces.model';
 import { finalize } from 'rxjs';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-me',
-  imports: [HeaderComponent, MatCard, MatCardHeader, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton, MatIcon],
+  imports: [HeaderComponent, MatCard, MatCardHeader, MatFormField, MatLabel, FormsModule, MatFormFieldModule, MatInputModule, MatButton, MatIcon, TranslateModule],
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss']
 })
@@ -46,7 +47,8 @@ export class MeComponent implements OnDestroy {
   constructor(
     private giocatoreService: GiocatoreService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -104,13 +106,13 @@ export class MeComponent implements OnDestroy {
 
     if (!nomePulito) {
       this.feedbackType = 'error';
-      this.feedbackMessage = 'Inserisci un nome valido';
+      this.feedbackMessage = this.translate.instant('ME.NAME_INVALID');
       return;
     }
 
     if (nomePulito === this.me.nickname) {
       this.feedbackType = 'error';
-      this.feedbackMessage = 'Il nome non è cambiato';
+      this.feedbackMessage = this.translate.instant('ME.NAME_NOT_CHANGED');
       return;
     }
 
@@ -127,11 +129,11 @@ export class MeComponent implements OnDestroy {
           this.me = giocatore;
           this.nickname = giocatore.nickname;
           this.feedbackType = 'success';
-          this.feedbackMessage = 'Nome aggiornato';
+          this.feedbackMessage = this.translate.instant('ME.NAME_UPDATED');
         },
         error: () => {
           this.feedbackType = 'error';
-          this.feedbackMessage = 'Impossibile aggiornare il nome, riprova più tardi';
+          this.feedbackMessage = this.translate.instant('ME.NAME_UPDATE_ERROR');
         }
       });
   }

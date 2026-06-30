@@ -11,8 +11,8 @@
       <div class="vc-icon-wrap vc-icon-wrap--loading">
         <div class="vc-spinner"></div>
       </div>
-      <h2 class="vc-title">Verifica in corso...</h2>
-      <p class="vc-subtitle">Stiamo autenticando il tuo accesso, un momento.</p>
+      <h2 class="vc-title">{{ 'AUTH.VERIFY_LOADING' | translate }}</h2>
+      <p class="vc-subtitle">{{ 'AUTH.VERIFY_LOADING_SUBTITLE' | translate }}</p>
     }
 
     <!-- SUCCESS -->
@@ -20,7 +20,7 @@
       <div class="vc-icon-wrap vc-icon-wrap--success">
         <span class="vc-emoji">&#10003;</span>
       </div>
-      <h2 class="vc-title">Accesso riuscito!</h2>
+      <h2 class="vc-title">{{ 'AUTH.VERIFY_SUCCESS_TITLE' | translate }}</h2>
       <p class="vc-subtitle">{{ message }}</p>
       <div class="vc-loader-bar"><div class="vc-loader-fill"></div></div>
     }
@@ -30,9 +30,9 @@
       <div class="vc-icon-wrap vc-icon-wrap--info">
         <span class="vc-emoji">&#128075;</span>
       </div>
-      <h2 class="vc-title">Sei già dentro!</h2>
-      <p class="vc-subtitle">Sei già autenticato. Questo link è già stato usato.</p>
-      <a class="vc-btn vc-btn--primary" routerLink="/home">Vai alla home</a>
+      <h2 class="vc-title">{{ 'AUTH.VERIFY_ALREADY_TITLE' | translate }}</h2>
+      <p class="vc-subtitle">{{ 'AUTH.VERIFY_ALREADY_SUBTITLE' | translate }}</p>
+      <a class="vc-btn vc-btn--primary" routerLink="/home">{{ 'AUTH.GO_HOME' | translate }}</a>
     }
 
     <!-- ERROR -->
@@ -40,9 +40,9 @@
       <div class="vc-icon-wrap vc-icon-wrap--error">
         <span class="vc-emoji">&#10060;</span>
       </div>
-      <h2 class="vc-title">Link non valido</h2>
+      <h2 class="vc-title">{{ 'AUTH.VERIFY_ERROR_TITLE' | translate }}</h2>
       <p class="vc-subtitle">{{ message }}</p>
-      <a class="vc-btn vc-btn--primary" routerLink="/auth/login">Torna al login</a>
+      <a class="vc-btn vc-btn--primary" routerLink="/auth/login">{{ 'AUTH.BACK_TO_LOGIN' | translate }}</a>
     }
 
   </div>

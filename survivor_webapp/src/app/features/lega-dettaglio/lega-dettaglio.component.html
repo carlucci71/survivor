@@ -306,7 +306,7 @@
             @if (getCurrentGiocatore(); as me) {
               @if (getGiocataByGiornataAssoluta(me, lega.giornataCorrente); as giocata) {
                 @if (!shouldHideGiocata(giocata, lega.giornataCorrente, me)) {
-                  <span class="rlb__pick-label">La tua pick</span>
+                  <span class="rlb__pick-label">{{ 'LEAGUE.YOUR_PICK' | translate }}</span>
                   <div class="rlb__team-row">
                     @if (getTeamLogo(giocata.squadraSigla); as logo) {
                       <img class="rlb__logo" [src]="logo" [alt]="giocata.squadraSigla" (error)="onLogoError($event)">
@@ -325,7 +325,7 @@
                 }
               }
             }
-            <span class="rlb__hint">Risultati a fine giornata</span>
+            <span class="rlb__hint">{{ 'LEAGUE.RESULTS_AT_ROUND_END' | translate }}</span>
           </div>
         </div>
       }
@@ -472,7 +472,7 @@
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {
             <div class="vc-strip">
-              <span class="vc-strip__label">senza scelta</span>
+              <span class="vc-strip__label">{{ 'LEAGUE.NO_CHOICE' | translate }}</span>
               <div class="vc-strip__scroll">
                 @for (g of vcNonVotanti; track $index) {
                   <span class="vc-strip__chip">{{ g.nickname }}</span>
@@ -483,7 +483,7 @@
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
           <div class="voti-chips-row">
-            <span class="voti-chips-label">Chi ha votato:</span>
+            <span class="voti-chips-label">{{ 'LEAGUE.WHO_VOTED' | translate }}</span>
             <div class="voti-chips-scroll">
               @for (entry of getVotiPerSquadra(); track entry.sigla) {
                 <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
@@ -555,7 +555,7 @@
                         @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
                           <button class="same-pick-btn"
                                   (click)="$event.stopPropagation(); openSamePickDialog()"
-                                  matTooltip="Chi ha votato come te?">
+                                  [matTooltip]="'LEAGUE.WHO_VOTED_LIKE_ME' | translate">
                             <mat-icon class="same-pick-icon">group</mat-icon>
                             <span class="same-pick-count">{{ getSamePickForCurrentUser()!.nicknames.length }}</span>
                           </button>
@@ -780,7 +780,7 @@
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
           <div class="voti-chips-row">
-            <span class="voti-chips-label">Chi ha votato:</span>
+            <span class="voti-chips-label">{{ 'LEAGUE.WHO_VOTED' | translate }}</span>
             <div class="voti-chips-scroll">
               @for (entry of getVotiPerSquadra(); track entry.sigla) {
                 <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
@@ -821,7 +821,7 @@
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {
             <div class="vc-strip">
-              <span class="vc-strip__label">senza scelta</span>
+              <span class="vc-strip__label">{{ 'LEAGUE.NO_CHOICE' | translate }}</span>
               <div class="vc-strip__scroll">
                 @for (g of vcNonVotanti; track $index) {
                   <span class="vc-strip__chip">{{ g.nickname }}</span>

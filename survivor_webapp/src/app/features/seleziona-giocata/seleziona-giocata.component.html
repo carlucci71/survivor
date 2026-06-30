@@ -14,11 +14,11 @@
         <div class="remove-confirm-icon-wrap">
           <mat-icon class="remove-confirm-icon">remove_circle_outline</mat-icon>
         </div>
-        <h3 class="remove-confirm-title">Annulla la tua scelta?</h3>
-        <p class="remove-confirm-msg">La tua selezione verrà rimossa e potrai scegliere un’altra squadra.</p>
+        <h3 class="remove-confirm-title">{{ 'PLAY.CONFIRM_REMOVE.TITLE' | translate }}</h3>
+        <p class="remove-confirm-msg">{{ 'PLAY.CONFIRM_REMOVE.BODY' | translate }}</p>
         <div class="remove-confirm-actions">
           <button class="remove-btn remove-btn--cancel" (click)="annullaRimozione()">
-            No, tieni
+            {{ 'PLAY.CONFIRM_REMOVE.CANCEL' | translate }}
           </button>
           <button class="remove-btn remove-btn--confirm" (click)="confermaRimozione()" [disabled]="_eliminaLoading">
             @if (_eliminaLoading) {
@@ -26,7 +26,7 @@
             } @else {
               <mat-icon>delete_outline</mat-icon>
             }
-            Sì, rimuovi
+            {{ 'PLAY.CONFIRM_REMOVE.CONFIRM' | translate }}
           </button>
         </div>
       </div>
