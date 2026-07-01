@@ -58,7 +58,8 @@
     "EDITION": "Edition {{year}}",
     "NO_DATA_SUB": "Historical data coming soon",
     "RESULT_AET": "a.e.t.",
-    "RESULT_PSO": "p.s.o."
+    "RESULT_PSO": "p.s.o.",
+    "GROUP": "Group"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
@@ -1195,6 +1196,7 @@
   "ROUND_RESULTS": {
     "TITLE": "Results",
     "SHOW_RESULTS": "Show results",
+    "MANAGE_ROUND": "Manage round",
     "NO_MATCHES": "No matches found",
     "FORCE": "Force",
     "FORCED": "Forced ✓",

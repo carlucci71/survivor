@@ -58,7 +58,8 @@
     "EDITION": "Edizione {{year}}",
     "NO_DATA_SUB": "Dati storici in arrivo",
     "RESULT_AET": "d.t.s.",
-    "RESULT_PSO": "d.c.r."
+    "RESULT_PSO": "d.c.r.",
+    "GROUP": "Gruppo"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
@@ -1200,6 +1201,7 @@
   "ROUND_RESULTS": {
     "TITLE": "Risultati",
     "SHOW_RESULTS": "Mostra risultati",
+    "MANAGE_ROUND": "Gestisci giornata",
     "NO_MATCHES": "Nessuna partita trovata",
     "FORCE": "Forza",
     "FORCED": "Forzata ✓",

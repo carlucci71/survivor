@@ -1,10 +1,8 @@
 :host {
   display: block;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(20, 20, 60, 0.95) 0%, rgba(30, 30, 80, 0.92) 100%);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px 0;
+  background: transparent;
+  padding: 8px 0 4px;
 }
 
 .ticker-outer {
@@ -43,10 +41,10 @@
 }
 
 .bullet {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #f5c542;
+  background: rgba(10, 61, 145, 0.3);
   flex-shrink: 0;
 }
 
@@ -54,20 +52,22 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 10px;
-  border-radius: 8px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(10, 61, 145, 0.06);
+  border: 1px solid rgba(10, 61, 145, 0.12);
   cursor: default;
   transition: background 0.2s;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(10, 61, 145, 0.11);
   }
 }
 
 .group-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.9);
+  color: #0A3D91;
   white-space: nowrap;
   letter-spacing: 0.3px;
 }
