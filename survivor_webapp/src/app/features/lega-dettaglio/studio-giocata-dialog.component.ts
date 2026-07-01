@@ -29,6 +29,21 @@ const MONDIALI_GIRONI: { label: string; teams: string[] }[] = [
   { label: 'L', teams: ['ING', 'CRO', 'GHA', 'PAN'] },
 ];
 
+const MONDIALI_TEAM_NAMES: Record<string, string> = {
+  'MES': 'Messico', 'SAF': 'Sudafrica', 'COR': 'Corea del Sud', 'CEC': 'Rep. Ceca',
+  'CAN': 'Canada', 'BOS': 'Bosnia-Erzegovina', 'QAT': 'Qatar', 'SVI': 'Svizzera',
+  'BRA': 'Brasile', 'MAR': 'Marocco', 'HAI': 'Haiti', 'SCO': 'Scozia',
+  'USA': 'Stati Uniti', 'PAR': 'Paraguay', 'AUS': 'Australia', 'TUR': 'Turchia',
+  'GER': 'Germania', 'CUR': 'Curaçao', 'CIV': "Costa d'Avorio", 'ECU': 'Ecuador',
+  'OLA': 'Olanda', 'JAP': 'Giappone', 'SVE': 'Svezia', 'TUN': 'Tunisia',
+  'BEL': 'Belgio', 'EGI': 'Egitto', 'IRA': 'Iran', 'NZE': 'Nuova Zelanda',
+  'SPA': 'Spagna', 'CPV': 'Capo Verde', 'SAU': 'Arabia Saudita', 'URU': 'Uruguay',
+  'FRA': 'Francia', 'SEN': 'Senegal', 'IRQ': 'Iraq', 'NOR': 'Norvegia',
+  'ARG': 'Argentina', 'ALG': 'Algeria', 'AUT': 'Austria', 'GIO': 'Giordania',
+  'POR': 'Portogallo', 'COD': 'Congo RD', 'UZB': 'Uzbekistan', 'COL': 'Colombia',
+  'ING': 'Inghilterra', 'CRO': 'Croazia', 'GHA': 'Ghana', 'PAN': 'Panama',
+};
+
 @Component({
   selector: 'app-studio-giocata-dialog',
   standalone: true,
@@ -723,8 +738,11 @@ export class StudioGiocataDialogComponent {
     return MONDIALI_GIRONI.map(g => ({
       label: g.label,
       rows: g.teams
-        .map(sigla => this.data.classifica.find(r => r.sigla === sigla))
-        .filter((r): r is ClassificaRow => !!r)
+        .map(sigla => this.data.classifica.find(r => r.sigla === sigla) ?? {
+          sigla,
+          nome: MONDIALI_TEAM_NAMES[sigla] ?? sigla,
+          pj: 0, v: 0, n: 0, p: 0, punti: 0, gf: 0, gs: 0
+        })
         .sort((a, b) => {
           if (b.punti !== a.punti) return b.punti - a.punti;
           const gdA = a.gf - a.gs;

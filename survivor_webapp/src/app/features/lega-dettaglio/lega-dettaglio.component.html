@@ -5,7 +5,7 @@
   @if (showPlayerTutorial) {
     <app-player-tutorial (dismissed)="onPlayerTutorialDismissed()"></app-player-tutorial>
   }
-  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
+  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content lega-dettaglio-scroll">
 
@@ -66,6 +66,18 @@
             <span class="recap-dot">·</span>
             <span class="recap-year">{{ lega.anno }}</span>
           </div>
+          <div class="recap-meta-row">
+            @if (lega.ruoloGiocatoreLega) {
+              <span class="recap-meta-chip">
+                <mat-icon class="rmc-icon">person</mat-icon>
+                {{ 'PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate }}
+              </span>
+            }
+            <span class="recap-meta-chip" [class.recap-meta-chip--public]="lega.pubblica">
+              <mat-icon class="rmc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
+              {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
+            </span>
+          </div>
         </div>
 
         <div class="recap-info-grid">
@@ -87,13 +99,6 @@
             </div>
           </div>
           }
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">person</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.YOUR_ROLE' | translate }}</span>
-              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? ('PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate) : '' }}</span>
-            </div>
-          </div>
           <div class="recap-chip recap-chip--stato">
             <mat-icon class="rc-icon">{{ lega.stato.value === 'AVVIATA' ? 'play_circle' : lega.stato.value === 'TERMINATA' ? 'flag' : 'schedule' }}</mat-icon>
             <div class="rc-content">
@@ -117,15 +122,6 @@
               <span class="rc-value rc-value--iscritti">
                 {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}
                 @if (lega.maxPartecipanti) {<span class="rc-max"> / {{ lega.maxPartecipanti }}</span>}
-              </span>
-            </div>
-          </div>
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.VISIBILITY' | translate }}</span>
-              <span class="rc-value" [class.rc-value--pubblica]="lega.pubblica" [class.rc-value--privata]="!lega.pubblica">
-                {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
               </span>
             </div>
           </div>
@@ -160,12 +156,6 @@
           </div>
           <div class="lp-footer">
             <span class="lp-footer-start">{{ getDesGiornataTitle(lega.giornataIniziale) }}</span>
-            @if (lega.giornataDaGiocare && lega.giornataDaGiocare <= (lega.campionato?.numGiornate ?? 999)) {
-            <span class="lp-championship-label">
-              <mat-icon class="lp-champ-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
-              {{ 'LEAGUE.CHAMPIONSHIP_ROUND_LABEL' | translate }}: {{ getDesGiornataTitle(lega.giornataDaGiocare) }}
-            </span>
-            }
             <span class="lp-footer-end">{{ getDesGiornataTitle(getEffectiveGiornataFinale()) }}</span>
           </div>
         </div>
@@ -230,28 +220,37 @@
 
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
       <div class="admin-actions">
-        <div class="admin-action-item" (click)="calcolaGiornata()">
+        <div class="admin-action-item admin-action-item--primary"
+             [class.admin-action-item--inactive]="!countdownExpired"
+             (click)="countdownExpired && calcolaGiornata()">
+          @if (countdownExpired) {
+            <span class="calcola-p calcola-p1"></span>
+            <span class="calcola-p calcola-p2"></span>
+            <span class="calcola-p calcola-p3"></span>
+          }
           <mat-icon class="calcola-icon">calculate</mat-icon>
           <span class="action-label">{{ 'LEAGUE.CALCULATE' | translate }}</span>
         </div>
-        <div class="admin-action-item" (click)="undoCalcolaGiornata()">
-          <mat-icon class="calcola-icon">undo</mat-icon>
-          <span class="action-label">{{ 'COMMON.CANCEL' | translate }}</span>
+        <div class="admin-secondary-row">
+          <div class="admin-action-item" (click)="undoCalcolaGiornata()">
+            <mat-icon class="calcola-icon">undo</mat-icon>
+            <span class="action-label">{{ 'COMMON.CANCEL' | translate }}</span>
+          </div>
+          <div class="admin-action-item" (click)="sospensioni()">
+            <mat-icon class="calcola-icon">pause_circle</mat-icon>
+            <span class="action-label">{{ 'LEAGUE.SUSPENSIONS' | translate }}</span>
+          </div>
+          @if (isChiudibile()){
+          <div class="admin-action-item" (click)="termina()">
+            <mat-icon class="calcola-icon">lock</mat-icon>
+            <span class="action-label">{{ 'COMMON.CLOSE' | translate }}</span>
+          </div>
+          }
+          @if (lega.campionato?.id && countdownExpired && !isTerminata() && !isCurrentUserEliminato()) {
+          <button class="studio-fab-btn studio-fab-btn--admin" (click)="apriStudio()"
+                  [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
+          }
         </div>
-        <div class="admin-action-item" (click)="sospensioni()">
-          <mat-icon class="calcola-icon">pause_circle</mat-icon>
-          <span class="action-label">{{ 'LEAGUE.SUSPENSIONS' | translate }}</span>
-        </div>
-        @if (isChiudibile()){
-        <div class="admin-action-item" (click)="termina()">
-          <mat-icon class="calcola-icon">lock</mat-icon>
-          <span class="action-label">{{ 'COMMON.CLOSE' | translate }}</span>
-        </div>
-        }
-        @if (lega.campionato?.id && countdownExpired && !isTerminata() && !isCurrentUserEliminato()) {
-        <button class="studio-fab-btn studio-fab-btn--admin" (click)="apriStudio()"
-                [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
-        }
       </div>
       } @if (isTerminata() && notExistsNuovaEdizione() ){
       <div class="admin-actions admin-actions-small">
