@@ -671,25 +671,56 @@ mat-dialog-actions {
 
 
 /* CLASSE CUSTOM PER DIALOG SELEZIONE GIOCATA - FORZA SCROLL */
+/* Nota: ViewEncapsulation.None fa sì che il CSS del componente (.seleziona-giocata-dialog
+   con background:#FFF) si applichi anche al .cdk-overlay-pane. Usiamo .cdk-overlay-pane
+   per avere specificità maggiore e annullare quel background sul pane. */
+.cdk-overlay-pane.seleziona-giocata-dialog {
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
 .seleziona-giocata-dialog {
   max-height: 95vh !important;
+  // Override CSS variable usata da Angular Material per il bg della surface
+  --mdc-dialog-container-color: transparent;
 
   .mat-mdc-dialog-container,
-  .mat-dialog-container {
+  .mat-dialog-container,
+  .mdc-dialog {
     padding: 0 !important;
     max-height: 95vh !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 16px !important;
   }
 
   .mat-mdc-dialog-surface,
-  .mat-dialog-surface {
+  .mat-dialog-surface,
+  .mdc-dialog__surface {
     padding: 0 !important;
     max-height: 95vh !important;
     height: auto !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 16px !important;
+  }
+
+  .mdc-dialog__container {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  // Host element del componente Angular
+  app-seleziona-giocata {
+    display: block !important;
+    background: transparent !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    height: auto !important;
   }
 }
 

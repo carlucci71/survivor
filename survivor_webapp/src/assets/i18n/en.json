@@ -58,7 +58,8 @@
     "EDITION": "Edition {{year}}",
     "NO_DATA_SUB": "Historical data coming soon",
     "RESULT_AET": "a.e.t.",
-    "RESULT_PSO": "p.s.o."
+    "RESULT_PSO": "p.s.o.",
+    "GROUP": "Group"
   },
   "PLAYER_ROLES": {
     "LEADER": "Leader",
@@ -426,6 +427,7 @@
     "HEAD_TO_HEAD": "Head to head",
     "ROUND_LABELS": {
       "GROUP_ROUND": "Group Stage - Matchday",
+      "ROUND_OF_64": "Round of 64",
       "ROUND_OF_32": "Round of 32",
       "ROUND_OF_16": "Round of 16",
       "QUARTERFINALS": "Quarterfinals",
@@ -494,7 +496,22 @@
     "MANY_LIVES": "lives",
     "MANAGE_LIVES_CANCEL": "Cancel",
     "MANAGE_LIVES_SAVE": "Save",
-    "MANAGE_LIVES_SAVING": "Saving…"
+    "MANAGE_LIVES_SAVING": "Saving…",
+    "WHO_VOTED": "Who voted:",
+    "WHO_VOTED_LIKE_ME": "Who voted like you?",
+    "NO_CHOICE": "no pick",
+    "YOUR_PICK": "Your pick",
+    "RESULTS_AT_ROUND_END": "Results at end of round"
+  },
+  "ME": {
+    "PLAYER_TITLE": "Player",
+    "NAME_LABEL": "Name",
+    "SAVING": "Saving...",
+    "CONFIRM_BTN": "Confirm",
+    "NAME_INVALID": "Enter a valid name",
+    "NAME_NOT_CHANGED": "Name not changed",
+    "NAME_UPDATED": "Name updated",
+    "NAME_UPDATE_ERROR": "Unable to update name, please try again later"
   },
   "COMMON": {
     "SOCCER": "Soccer",
@@ -618,7 +635,15 @@
     "MAGIC_LINK_SENT": "We've sent you a login link",
     "CLICK_LINK": "Click the link in the email to sign in",
     "TERMS_DECLARATION": "I declare that I have read and accepted the",
-    "AGE_DISCLAIMER": "The application is intended exclusively for users aged 14 or over."
+    "AGE_DISCLAIMER": "The application is intended exclusively for users aged 14 or over.",
+    "VERIFY_LOADING": "Verifying...",
+    "VERIFY_LOADING_SUBTITLE": "Authenticating your access, just a moment.",
+    "VERIFY_SUCCESS_TITLE": "Login successful!",
+    "VERIFY_ALREADY_TITLE": "You're already in!",
+    "VERIFY_ALREADY_SUBTITLE": "You're already authenticated. This link has already been used.",
+    "GO_HOME": "Go to home",
+    "VERIFY_ERROR_TITLE": "Invalid link",
+    "BACK_TO_LOGIN": "Back to login"
   },
   "CREATE_LEAGUE": {
     "TITLE": "Create New League",
@@ -808,6 +833,12 @@
     "NO_SUSPENSIONS": "No suspensions defined"
   },
   "PLAY": {
+    "CONFIRM_REMOVE": {
+      "TITLE": "Remove your pick?",
+      "BODY": "Your selection will be removed and you can choose another team.",
+      "CANCEL": "No, keep it",
+      "CONFIRM": "Yes, remove"
+    },
     "CONFIRM_CHANGE_TITLE": "Confirm change",
     "CONFIRM_CHANGE_MESSAGE": "Are you sure you want to change this assignment even if the round has started?",
     "SELECT_TEAM": "Select team",
@@ -1165,6 +1196,7 @@
   "ROUND_RESULTS": {
     "TITLE": "Results",
     "SHOW_RESULTS": "Show results",
+    "MANAGE_ROUND": "Manage round",
     "NO_MATCHES": "No matches found",
     "FORCE": "Force",
     "FORCED": "Forced ✓",

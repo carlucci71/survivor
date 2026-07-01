@@ -1,6 +1,6 @@
 <div class="me-dettaglio-container">
   <app-header
-    title="Giocatore"
+    [title]="'ME.PLAYER_TITLE' | translate"
     visHome="S"
     visLogout="N"
     (back)="goBack()"
@@ -17,7 +17,7 @@
             -->
           <form class="me-form" (ngSubmit)="confermaNome()">
             <mat-form-field class="me-full-width">
-              <mat-label>Nome</mat-label>
+              <mat-label>{{ 'ME.NAME_LABEL' | translate }}</mat-label>
               <input
                 matInput
                 [(ngModel)]="nickname"
@@ -34,7 +34,7 @@
                 [disabled]="!nomeModificato || isSaving"
                 (click)="confermaNome()"
               >
-                {{ isSaving ? 'Salvataggio...' : 'Conferma' }}
+                {{ isSaving ? ('ME.SAVING' | translate) : ('ME.CONFIRM_BTN' | translate) }}
               </button>
 
           @if (feedbackMessage ) {

@@ -181,7 +181,6 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
         if (isAttiva) {
           return l.giornataDaGiocare > 0 ||
             l.miaGiocataCorrente?.esito === 'KO' ||
-            this.lastKnownGiocata.has(l.id ?? 0) ||
             !!l.miaUltimaGiocataConEsito;
         }
         return false;
