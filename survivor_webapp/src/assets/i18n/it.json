@@ -514,8 +514,8 @@
     "HEAD_TO_HEAD": "Testa a testa",
     "ROUND_LABELS": {
       "GROUP_ROUND": "Girone - Giornata",
-      "ROUND_OF_32": "Ottavi di finale",
-      "ROUND_OF_16": "Sedicesimi di finale",
+      "ROUND_OF_32": "Sedicesimi di finale",
+      "ROUND_OF_16": "Ottavi di finale",
       "QUARTERFINALS": "Quarti di finale",
       "SEMIFINALS": "Semifinali",
       "FINAL": "Finale",
