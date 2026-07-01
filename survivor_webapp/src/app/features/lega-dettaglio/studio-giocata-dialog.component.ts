@@ -282,10 +282,12 @@ const MONDIALI_GIRONI: { label: string; teams: string[] }[] = [
       justify-content: center;
       cursor: pointer;
       color: #fff;
+      -webkit-appearance: none;
+      appearance: none;
       transition: background 0.18s, transform 0.18s;
       padding: 0;
       flex-shrink: 0;
-      mat-icon { font-size: 18px; width: 18px; height: 18px; }
+      mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; line-height: 18px; }
       &:hover { background: rgba(255,255,255,0.28); transform: scale(1.08); }
     }
 
