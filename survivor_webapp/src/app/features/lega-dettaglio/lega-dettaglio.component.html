@@ -5,7 +5,7 @@
   @if (showPlayerTutorial) {
     <app-player-tutorial (dismissed)="onPlayerTutorialDismissed()"></app-player-tutorial>
   }
-  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" [showSlogan]="true" (back)="goBack()" (logout)="logout()"></app-header>
+  <app-header [title]="'LEAGUE.LEAGUE_DETAILS' | translate" (back)="goBack()" (logout)="logout()"></app-header>
 
   <main class="main-content lega-dettaglio-scroll">
 
@@ -20,6 +20,14 @@
       } @if (lega) {
       <mat-card class="lega-card">
         <div class="recap-header">
+          <div class="rh-particles" aria-hidden="true">
+            <span class="rh-p rh-p1"></span>
+            <span class="rh-p rh-p2"></span>
+            <span class="rh-p rh-p3"></span>
+            <span class="rh-p rh-p4"></span>
+            <span class="rh-p rh-p5"></span>
+            <span class="rh-p rh-p6"></span>
+          </div>
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
             <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <div class="recap-actions">
@@ -66,70 +74,25 @@
             <span class="recap-dot">·</span>
             <span class="recap-year">{{ lega.anno }}</span>
           </div>
+          <div class="recap-meta-row">
+            @if (lega.ruoloGiocatoreLega) {
+              <span class="recap-meta-chip">
+                <mat-icon class="rmc-icon">person</mat-icon>
+                {{ 'PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate }}
+              </span>
+            }
+            <span class="recap-meta-chip" [class.recap-meta-chip--public]="lega.pubblica">
+              <mat-icon class="rmc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
+              {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
+            </span>
+            <span class="recap-meta-chip">
+              <mat-icon class="rmc-icon">group</mat-icon>
+              {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}{{ lega.maxPartecipanti ? ' / ' + lega.maxPartecipanti : '' }}
+            </span>
+          </div>
         </div>
 
-        <div class="recap-info-grid">
-          @if (lega.giornataCalcolata) {
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">check_circle</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.CALCULATED_ROUND' | translate }}</span>
-              <span class="rc-value">{{ getDesGiornataTitle(lega.giornataCalcolata) }}</span>
-            </div>
-          </div>
-          }
-          @if (lega.giornataDaGiocare <= lega.campionato?.numGiornate!!) {
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">event</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.NEXT_CHAMPIONSHIP_ROUND' | translate }}</span>
-              <span class="rc-value">{{ getDesGiornataTitle(lega.giornataDaGiocare) }}</span>
-            </div>
-          </div>
-          }
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">person</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.YOUR_ROLE' | translate }}</span>
-              <span class="rc-value">{{ lega.ruoloGiocatoreLega ? ('PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate) : '' }}</span>
-            </div>
-          </div>
-          <div class="recap-chip recap-chip--stato">
-            <mat-icon class="rc-icon">{{ lega.stato.value === 'AVVIATA' ? 'play_circle' : lega.stato.value === 'TERMINATA' ? 'flag' : 'schedule' }}</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.LEAGUE_STATE' | translate }}</span>
-              <span class="rc-value rc-value--stato" [class.stato-avviata]="lega.stato.value === 'AVVIATA'" [class.stato-terminata]="lega.stato.value === 'TERMINATA'">{{ 'LEAGUE_STATUS.' + lega.stato.value | translate }}</span>
-            </div>
-          </div>
-          @if (lega.giornataFinale) {
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">emoji_events</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.FINAL_ROUND' | translate }}</span>
-              <span class="rc-value">{{ lega.giornataFinale }}</span>
-            </div>
-          </div>
-          }
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">group</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.NUM_MEMBERS' | translate }}</span>
-              <span class="rc-value rc-value--iscritti">
-                {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}
-                @if (lega.maxPartecipanti) {<span class="rc-max"> / {{ lega.maxPartecipanti }}</span>}
-              </span>
-            </div>
-          </div>
-          <div class="recap-chip">
-            <mat-icon class="rc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
-            <div class="rc-content">
-              <span class="rc-label">{{ 'LEAGUE.VISIBILITY' | translate }}</span>
-              <span class="rc-value" [class.rc-value--pubblica]="lega.pubblica" [class.rc-value--privata]="!lega.pubblica">
-                {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
-              </span>
-            </div>
-          </div>
-        </div>
+
 
         <!-- MONDIALI 2026 GROUPS TICKER -->
         @if (lega.campionato?.id === 'MONDIALI_2026') {
@@ -160,12 +123,6 @@
           </div>
           <div class="lp-footer">
             <span class="lp-footer-start">{{ getDesGiornataTitle(lega.giornataIniziale) }}</span>
-            @if (lega.giornataDaGiocare && lega.giornataDaGiocare <= (lega.campionato?.numGiornate ?? 999)) {
-            <span class="lp-championship-label">
-              <mat-icon class="lp-champ-icon">{{ lega.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
-              {{ 'LEAGUE.CHAMPIONSHIP_ROUND_LABEL' | translate }}: {{ getDesGiornataTitle(lega.giornataDaGiocare) }}
-            </span>
-            }
             <span class="lp-footer-end">{{ getDesGiornataTitle(getEffectiveGiornataFinale()) }}</span>
           </div>
         </div>
@@ -230,28 +187,37 @@
 
       @if (isAdmin() || this.isLeaderLega()) { @if (isAvviata()){
       <div class="admin-actions">
-        <div class="admin-action-item" (click)="calcolaGiornata()">
+        <div class="admin-action-item admin-action-item--primary"
+             [class.admin-action-item--inactive]="!countdownExpired"
+             (click)="countdownExpired && calcolaGiornata()">
+          @if (countdownExpired) {
+            <span class="calcola-p calcola-p1"></span>
+            <span class="calcola-p calcola-p2"></span>
+            <span class="calcola-p calcola-p3"></span>
+          }
           <mat-icon class="calcola-icon">calculate</mat-icon>
           <span class="action-label">{{ 'LEAGUE.CALCULATE' | translate }}</span>
         </div>
-        <div class="admin-action-item" (click)="undoCalcolaGiornata()">
-          <mat-icon class="calcola-icon">undo</mat-icon>
-          <span class="action-label">{{ 'COMMON.CANCEL' | translate }}</span>
+        <div class="admin-secondary-row">
+          <div class="admin-action-item" (click)="undoCalcolaGiornata()">
+            <mat-icon class="calcola-icon">undo</mat-icon>
+            <span class="action-label">{{ 'COMMON.CANCEL' | translate }}</span>
+          </div>
+          <div class="admin-action-item" (click)="sospensioni()">
+            <mat-icon class="calcola-icon">pause_circle</mat-icon>
+            <span class="action-label">{{ 'LEAGUE.SUSPENSIONS' | translate }}</span>
+          </div>
+          @if (isChiudibile()){
+          <div class="admin-action-item" (click)="termina()">
+            <mat-icon class="calcola-icon">lock</mat-icon>
+            <span class="action-label">{{ 'COMMON.CLOSE' | translate }}</span>
+          </div>
+          }
+          @if (lega.campionato?.id && countdownExpired && !isTerminata() && !isCurrentUserEliminato()) {
+          <button class="studio-fab-btn studio-fab-btn--admin" (click)="apriStudio()"
+                  [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
+          }
         </div>
-        <div class="admin-action-item" (click)="sospensioni()">
-          <mat-icon class="calcola-icon">pause_circle</mat-icon>
-          <span class="action-label">{{ 'LEAGUE.SUSPENSIONS' | translate }}</span>
-        </div>
-        @if (isChiudibile()){
-        <div class="admin-action-item" (click)="termina()">
-          <mat-icon class="calcola-icon">lock</mat-icon>
-          <span class="action-label">{{ 'COMMON.CLOSE' | translate }}</span>
-        </div>
-        }
-        @if (lega.campionato?.id && countdownExpired && !isTerminata() && !isCurrentUserEliminato()) {
-        <button class="studio-fab-btn studio-fab-btn--admin" (click)="apriStudio()"
-                [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
-        }
       </div>
       } @if (isTerminata() && notExistsNuovaEdizione() ){
       <div class="admin-actions admin-actions-small">
@@ -306,7 +272,7 @@
             @if (getCurrentGiocatore(); as me) {
               @if (getGiocataByGiornataAssoluta(me, lega.giornataCorrente); as giocata) {
                 @if (!shouldHideGiocata(giocata, lega.giornataCorrente, me)) {
-                  <span class="rlb__pick-label">La tua pick</span>
+                  <span class="rlb__pick-label">{{ 'LEAGUE.YOUR_PICK' | translate }}</span>
                   <div class="rlb__team-row">
                     @if (getTeamLogo(giocata.squadraSigla); as logo) {
                       <img class="rlb__logo" [src]="logo" [alt]="giocata.squadraSigla" (error)="onLogoError($event)">
@@ -325,7 +291,7 @@
                 }
               }
             }
-            <span class="rlb__hint">Risultati a fine giornata</span>
+            <span class="rlb__hint">{{ 'LEAGUE.RESULTS_AT_ROUND_END' | translate }}</span>
           </div>
         </div>
       }
@@ -464,15 +430,12 @@
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-            <button class="show-results-link" (click)="apriRisultatiGiornata()">
-              <mat-icon class="results-icon">sports_score</mat-icon>
-              <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
-            </button>
+            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">📊</button>
           }
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {
             <div class="vc-strip">
-              <span class="vc-strip__label">senza scelta</span>
+              <span class="vc-strip__label">{{ 'LEAGUE.NO_CHOICE' | translate }}</span>
               <div class="vc-strip__scroll">
                 @for (g of vcNonVotanti; track $index) {
                   <span class="vc-strip__chip">{{ g.nickname }}</span>
@@ -483,7 +446,7 @@
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
           <div class="voti-chips-row">
-            <span class="voti-chips-label">Chi ha votato:</span>
+            <span class="voti-chips-label">{{ 'LEAGUE.WHO_VOTED' | translate }}</span>
             <div class="voti-chips-scroll">
               @for (entry of getVotiPerSquadra(); track entry.sigla) {
                 <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
@@ -555,7 +518,7 @@
                         @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
                           <button class="same-pick-btn"
                                   (click)="$event.stopPropagation(); openSamePickDialog()"
-                                  matTooltip="Chi ha votato come te?">
+                                  [matTooltip]="'LEAGUE.WHO_VOTED_LIKE_ME' | translate">
                             <mat-icon class="same-pick-icon">group</mat-icon>
                             <span class="same-pick-count">{{ getSamePickForCurrentUser()!.nicknames.length }}</span>
                           </button>
@@ -780,7 +743,7 @@
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
           <div class="voti-chips-row">
-            <span class="voti-chips-label">Chi ha votato:</span>
+            <span class="voti-chips-label">{{ 'LEAGUE.WHO_VOTED' | translate }}</span>
             <div class="voti-chips-scroll">
               @for (entry of getVotiPerSquadra(); track entry.sigla) {
                 <button class="voti-chip" [ngClass]="getVotiChipClass(entry.sigla)" (click)="openVotiSheet(entry)">
@@ -813,15 +776,12 @@
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-            <button class="show-results-link" (click)="apriRisultatiGiornata()">
-              <mat-icon class="results-icon">sports_score</mat-icon>
-              <span>{{ 'ROUND_RESULTS.SHOW_RESULTS' | translate }}</span>
-            </button>
+            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">📊</button>
           }
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {
             <div class="vc-strip">
-              <span class="vc-strip__label">senza scelta</span>
+              <span class="vc-strip__label">{{ 'LEAGUE.NO_CHOICE' | translate }}</span>
               <div class="vc-strip__scroll">
                 @for (g of vcNonVotanti; track $index) {
                   <span class="vc-strip__chip">{{ g.nickname }}</span>
@@ -1297,3 +1257,4 @@
   </div>
 }
 </div>
+
