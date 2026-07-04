@@ -177,6 +177,10 @@ public class UtilCalendarioService {
                         partiteDiCampionatoDellaGiornata.add(partitaFromWeb);
                     }
                 }
+                // Invalida il cache dopo aver salvato le partite, così le letture successive
+                // (es. partiteDellaGiornata, round-results-dialog) vedono i dati aggiornati.
+                cacheableProvider.getIfAvailable().clearCachePartite(campionatoDTO.getId(), anno);
+                log.info("Cache partite invalidata per {} anno={} dopo aggiornamento giornata {}", campionatoDTO.getId(), anno, giornata);
             }
         }
         return partiteDiCampionatoDellaGiornata;

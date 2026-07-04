@@ -634,10 +634,16 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.isMobile = window.matchMedia('(max-width: 700px)').matches;
+    // NB: qui serve la giornata ASSOLUTA del campionato (es. 5 = ottavi di finale),
+    // non la giornata RELATIVA (this.data.giornata) usata per salvare/recuperare le
+    // giocate del giocatore. Le due possono divergere quando la lega non inizia dalla
+    // giornata 1 del torneo (giornataIniziale > 1): usare quella relativa qui
+    // interrogava il calendario reale sul round sbagliato (es. girone anziché ottavi),
+    // mostrando tutte le squadre invece delle sole squadre della giornata corrente.
     this.getSquadreByCampionatoAndGiornata(
       this.lega.campionato!.id,
       this.lega.anno,
-      this.data.giornata
+      this.lega.giornataCorrente
     );
     if (this.squadraSelezionata) {
       this.mostraUltimiRisultati(this.squadraSelezionata);
@@ -739,16 +745,25 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
               alreadyUsed: s.alreadyUsed || usedSigle.has(s.sigla?.toUpperCase())
             }));
           }
-          // Ricostruisci squadreConPartite con la lista filtrata se già disponibile
-          if (this.prossimaGiornata.length > 0) {
-            this.caricaPartitePerTutteSquadre();
-          }
+          // Ricostruisci sempre squadreConPartite con la lista appena filtrata.
+          // NB: non condizionare a "prossimaGiornata già caricata" — le due chiamate
+          // (squadre disponibili e partite della giornata) partono in parallelo da
+          // ngOnInit, quindi se questa risposta arriva prima non va saltata la
+          // ricostruzione: altrimenti caricaProssimaGiornata() la sovrascriverebbe
+          // subito dopo usando ancora la lista NON filtrata (tutte le squadre)
+          // e il round successivo con la lista filtrata potrebbe non arrivare mai
+          // (se ad es. l'altra chiamata fallisce), lasciando in UI tutte le squadre.
+          this.caricaPartitePerTutteSquadre();
         },
         error: (error) => {
-          console.error(
-            'Errore nel caricamento delle squadre del campionato:',
-            error
-          );
+          console.error('Errore nel caricamento delle squadre del campionato:', error);
+          // Svuota la lista invece di mostrare tutte le squadre:
+          // mostrare squadre non disponibili per questo round sarebbe peggio di non mostrarne nessuna.
+          this.squadreDisponibili = [];
+          // Ricostruisci anche qui: se caricaProssimaGiornata() era già arrivata prima
+          // e aveva popolato squadreConPartite con la lista NON filtrata, senza questa
+          // chiamata l'utente continuerebbe a vedere tutte le squadre invece di una lista vuota.
+          this.caricaPartitePerTutteSquadre();
         },
       });
   }

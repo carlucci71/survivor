@@ -1,7 +1,7 @@
 <div class="seleziona-giocata-dialog">
   <!-- Header Colorato Uniforme -->
   <div class="dialog-header">
-    <h2 class="dialog-title">{{ getDesGiornataTitle(data.giornata) }}</h2>
+    <h2 class="dialog-title">{{ getDesGiornataTitle(lega.giornataCorrente) }}</h2>
     <button mat-icon-button class="close-btn" (click)="chiudi()" [attr.aria-label]="'COMMON.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
