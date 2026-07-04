@@ -52,6 +52,9 @@ public class CalendarioAPI2 implements ICalendario {
     @Value("${external-api.calendario.implementation.API2.url-calendar-mondiali}")
     String urlCalendarMondiali;
 
+    @Value("${external-api.calendario.implementation.API2.url-calendar-mondiali-knockout}")
+    String urlCalendarMondialiKnockout;
+
     @Value("${external-api.calendario.implementation.API2.url-calendar-roland-garros}")
     String urlCalendarRolandGarros;
 
@@ -129,15 +132,53 @@ public class CalendarioAPI2 implements ICalendario {
         List<SquadraDTO> squadre = campionatoDTO.getSquadre();
         EnumAPI2.RoundMondiali round = EnumAPI2.RoundMondiali.fromGiornata(giornata);
         int competitionId = EnumAPI2.Campionato.MONDIALI_2026.id.get(Integer.valueOf(anno));
-        String urlResolved = String.format(urlCalendarMondiali,
+        // R16+ usano il nuovo URL mc-public-api.gazzetta.it; gironi e R32 usano api2-mtc
+        String urlBase = round.usaUrlKnockout() ? urlCalendarMondialiKnockout : urlCalendarMondiali;
+        String urlResolved = String.format(urlBase,
                 EnumAPI2.Sport.CALCIO.id,
                 competitionId,
                 round.phase,
                 round.subphase);
-        log.info("Mondiali getPartite giornata={} url={}", giornata, urlResolved);
+        log.info("Mondiali getPartite giornata={} round={} url={}", giornata, round.name(), urlResolved);
         Map response = utility.callUrl(urlResolved, Map.class);
-        Map m = (Map) response.get("data");
+        Object dataObj = response.get("data");
+        if (!(dataObj instanceof Map)) {
+            log.warn("Mondiali giornata={} round={}: risposta API inattesa — 'data' non è una Map. Chiavi risposta: {}",
+                    giornata, round.name(), response.keySet());
+            return ret;
+        }
+        Map m = (Map) dataObj;
+        log.warn("DEBUG elaboraMondiali giornata={} data.keys={}", giornata, m.keySet());
+        Object gamesRaw = m.get("games");
+        if (gamesRaw instanceof List) {
+            List<?> gamesList = (List<?>) gamesRaw;
+            log.warn("DEBUG games.size={}", gamesList.size());
+            if (!gamesList.isEmpty() && gamesList.get(0) instanceof Map) {
+                Map<?,?> firstGame = (Map<?,?>) gamesList.get(0);
+                log.warn("DEBUG games[0].keys={}", firstGame.keySet());
+                // Dump up to 2 entries per key per game to understand structure
+                for (Map.Entry<?,?> e : firstGame.entrySet()) {
+                    Object val = e.getValue();
+                    if (val instanceof List) {
+                        List<?> list = (List<?>) val;
+                        log.warn("DEBUG games[0]['{}'] = List size={}, first={}", e.getKey(), list.size(),
+                                list.isEmpty() ? "empty" : (list.get(0) instanceof Map ? ((Map<?,?>)list.get(0)).keySet() : list.get(0)));
+                    } else {
+                        log.warn("DEBUG games[0]['{}'] = {}", e.getKey(), val);
+                    }
+                }
+            }
+        } else {
+            log.warn("DEBUG games is not a List: {}", gamesRaw == null ? "null" : gamesRaw.getClass());
+        }
         elaboraMondiali(campionatoDTO.getId(), giornata, m, ret, squadre, anno);
+        if (ret.isEmpty()) {
+            log.warn("Mondiali giornata={} round={}: nessuna partita estratta. " +
+                     "Verificare phase='{}' subphase='{}' — potrebbe essere cambiato nell'API Gazzetta.",
+                     giornata, round.name(), round.phase, round.subphase);
+        } else {
+            log.info("Mondiali giornata={} round={}: {} partite estratte.", giornata, round.name(), ret.size());
+        }
         return ret;
     }
 

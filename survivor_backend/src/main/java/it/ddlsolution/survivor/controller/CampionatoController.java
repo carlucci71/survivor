@@ -42,7 +42,10 @@ public class CampionatoController {
     @GetMapping(value = "/partiteDellaGiornata/{campionatoId}/{anno}/{giornata}")
     public ResponseEntity<List<PartitaDTO>> partiteDellaGiornata(@PathVariable String campionatoId,@PathVariable Short anno, @PathVariable Integer giornata) {
         CampionatoDTO campionatoDTO = campionatoService.getCampionato(campionatoId);
-        List<PartitaDTO> squadraDTOListMap = utilCalendarioService.partiteDellaGiornata(campionatoDTO, giornata, anno);
+        // Usa il path con refresh dall'API esterna: popola il DB al primo accesso per una nuova giornata,
+        // e mantiene i dati aggiornati per le partite ancora in corso.
+        // Per le giornate già completamente TERMINATA, la cache viene usata direttamente.
+        List<PartitaDTO> squadraDTOListMap = utilCalendarioService.partiteCampionatoDellaGiornataWithRefreshFromWeb(campionatoDTO, giornata, anno);
         return ResponseEntity.ok(squadraDTOListMap);
     }
 
