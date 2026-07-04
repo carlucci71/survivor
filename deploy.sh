@@ -17,9 +17,9 @@ echo "🔄 Restart backend..."
 #pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
 pm2 restart survivor-backend
 
-#echo "🔄 Reload nginx..."
-#sudo nginx -t && sudo systemctl reload nginx
-sudo /usr/sbin/nginx -s reload
+echo "🔄 Aggiorno config nginx..."
+sudo cp /home/survivor/github/survivor/ngnix/liberaleidee.it /etc/nginx/sites-available/liberaleidee.it
+sudo /usr/sbin/nginx -t && sudo /usr/sbin/nginx -s reload
 
 
 
