@@ -51,6 +51,7 @@ external-api:
       API2:
         url-calendar: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&day=%s&seasonId=%s
         url-calendar-mondiali: https://api2-mtc.gazzetta.it/api/v1/sports/calendar?sportId=%s&competitionId=%s&phase=%s&subphase=%s
+        url-calendar-mondiali-knockout: https://mc-public-api.gazzetta.it/api/sports/v1/calendar?sportId=%s&competitionId=%s&phase=%s&subphase=%s
         url-calendar-roland-garros: https://mc-public-api.gazzetta.it/api/sports/v1/standing/tennis?sportId=8&competitionId=12394&phase=2
         url-info: https://api2-mtc.gazzetta.it/api/v1/info/competition?sportId=%s&competitionId=%s
       THE-SPORTS-DB:

@@ -2410,12 +2410,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!this.lega || !this.lega.campionato?.id) return;
 
     this.campionatoService
-      .calendario(
+      .partiteDellaGiornata(
         this.lega.campionato.id,
-        '',
         this.lega.anno,
-        this.lega.giornataCorrente,
-        true
+        this.lega.giornataCorrente
       )
       .subscribe({
         next: (partite) => {

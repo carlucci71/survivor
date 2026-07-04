@@ -114,16 +114,17 @@ class EnumAPI2 {
     }
 
     // Mapping giornata (1-based) → phase + subphase della Gazzetta API per i Mondiali 2026
-    // Le fasi knockout (giornate 4-8) sono da verificare quando sarà disponibile la fase eliminazione
+    // Valori confermati: G1-G3 (gironi), R32 (trentaduesimi), R16 (ottavi).
+    // QF/SF/F: subphase inferita dal pattern camelCase dell'API — verificare al primo utilizzo.
     enum RoundMondiali {
-        G1("groups", "1"),    // Giornata 1 gironi
-        G2("groups", "2"),    // Giornata 2 gironi
-        G3("groups", "3"),    // Giornata 3 gironi
-        R32("playoffs", "round-of-32"), // Ottavi di finale (da verificare con API reale)
-        R16("knockout", "2"), // Sedicesimi di finale (da verificare)
-        QF("knockout", "3"),  // Quarti di finale (da verificare)
-        SF("knockout", "4"),  // Semifinali (da verificare)
-        F("knockout", "5");   // Finale (da verificare)
+        G1("groups", "1"),              // Giornata 1 gironi
+        G2("groups", "2"),              // Giornata 2 gironi
+        G3("groups", "3"),              // Giornata 3 gironi
+        R32("playoffs", "round-of-32"), // Trentaduesimi di finale ✓ confermato
+        R16("playoffs", "roundOf16"),   // Ottavi di finale ✓ confermato
+        QF("playoffs", "quarterFinals"),// Quarti di finale (da verificare al primo utilizzo)
+        SF("playoffs", "semiFinals"),   // Semifinali (da verificare al primo utilizzo)
+        F("playoffs", "final");         // Finale (da verificare al primo utilizzo)
 
         final String phase;
         final String subphase;
@@ -142,6 +143,11 @@ class EnumAPI2 {
                 throw new IllegalArgumentException("Giornata Mondiali non valida: " + giornata);
             }
             return values[giornata - 1];
+        }
+
+        // True se il round usa il nuovo URL mc-public-api.gazzetta.it
+        boolean usaUrlKnockout() {
+            return this.ordinal() >= R16.ordinal();
         }
     }
 
