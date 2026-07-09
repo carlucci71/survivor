@@ -126,7 +126,7 @@ export class LegaDettaglioComponent implements OnDestroy {
    *
    * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
    */
-  private readonly TEST_MODE_FORCE_HISTORY_ICON = true; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
+  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
 
   readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
