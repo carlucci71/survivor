@@ -126,7 +126,7 @@ export class LegaDettaglioComponent implements OnDestroy {
    *
    * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
    */
-  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
+  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
 
   readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
@@ -315,11 +315,14 @@ export class LegaDettaglioComponent implements OnDestroy {
             this.lega.giornataFinale = 10;
             this.lega.giornataCorrente = 8; // Simulo che siamo alla giornata 8
 
-            // Mock squadre Serie A per le giocate
-            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            // Rileva il campionato e usa le sigla appropriate
+            const isMondiali = this.lega.campionato?.id === 'MONDIALI_2026';
+            const mockSquadre = isMondiali
+              ? ['BRA', 'ARG', 'FRA', 'GER', 'SPA', 'POR', 'ING', 'OLA', 'URU', 'BEL']
+              : ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
             const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
 
-            // Aggiungi giocate mock a TUTTI i giocatori
+            // Aggiungi giocate mock a TUTTI i giocatori (con legaId per il filtro storico)
             this.lega.giocatori?.forEach((giocatore) => {
               giocatore.giocate = [];
 
@@ -329,7 +332,8 @@ export class LegaDettaglioComponent implements OnDestroy {
                   squadraSigla: mockSquadre[i],
                   esito: mockEsiti[i] as any,
                   forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
-                  pubblica: true
+                  pubblica: true,
+                  legaId: this.lega!.id // necessario per il filtro nel dialog storico
                 });
               }
             });
@@ -338,7 +342,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
-          if (this.isCampionato()) this.caricaTickerPartite();
+          if (this.isCampionato() && !this.TEST_MODE_FORCE_HISTORY_ICON) this.caricaTickerPartite();
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
@@ -436,11 +440,14 @@ export class LegaDettaglioComponent implements OnDestroy {
             this.lega.giornataIniziale = 1;
             this.lega.giornataFinale = 10;
 
-            // Mock squadre Serie A
-            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            // Rileva il campionato e usa le sigla appropriate
+            const isMondiali = this.lega.campionato?.id === 'MONDIALI_2026';
+            const mockSquadre = isMondiali
+              ? ['BRA', 'ARG', 'FRA', 'GER', 'SPA', 'POR', 'ING', 'OLA', 'URU', 'BEL']
+              : ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
             const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
 
-            // Aggiungi giocate mock a TUTTI i giocatori
+            // Aggiungi giocate mock a TUTTI i giocatori (con legaId per il filtro storico)
             this.lega.giocatori?.forEach((giocatore) => {
               giocatore.giocate = [];
 
@@ -450,7 +457,8 @@ export class LegaDettaglioComponent implements OnDestroy {
                   squadraSigla: mockSquadre[i],
                   esito: mockEsiti[i] as any,
                   forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
-                  pubblica: true
+                  pubblica: true,
+                  legaId: this.lega!.id
                 });
               }
             });
@@ -1086,22 +1094,13 @@ export class LegaDettaglioComponent implements OnDestroy {
       return true; // Mostra sempre l'icona in modalità test
     }
 
-    if (!giocatore?.giocate || !this.giornataIndices || this.giornataIndices.length === 0) return false;
+    if (!giocatore?.giocate) return false;
 
-    const giornataIniziale = this.lega?.giornataIniziale || 1;
-    const windowStart = this.giornataIndices[0];
     const legaId = this.lega?.id;
 
-    // Mostra storico solo dopo la sesta scelta
+    // Mostra storico dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
     const giocateInLega = giocatore.giocate.filter(g => !legaId || g.legaId === legaId);
-    if (giocateInLega.length < 6) return false;
-
-    // Mostra storico se il giocatore ha giocate in questa lega precedenti alla finestra visibile
-    return giocatore.giocate.some(g => {
-      if (legaId && g.legaId !== legaId) return false;
-      const giornataAssoluta = giornataIniziale + (g.giornata || 0) - 1;
-      return giornataAssoluta < windowStart;
-    });
+    return giocateInLega.length >= 6;
   }
 
   /**
@@ -1342,6 +1341,57 @@ export class LegaDettaglioComponent implements OnDestroy {
     'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
+
+    // MONDIALI 2026 (squadre nazionali)
+    'MONDIALI_2026_BRA': 'mondiali/brasile.png',
+    'MONDIALI_2026_ARG': 'mondiali/argentina.png',
+    'MONDIALI_2026_FRA': 'mondiali/francia.png',
+    'MONDIALI_2026_GER': 'mondiali/germania.png',
+    'MONDIALI_2026_SPA': 'mondiali/spagna.png',
+    'MONDIALI_2026_POR': 'mondiali/portogallo.png',
+    'MONDIALI_2026_ING': 'mondiali/inghilterra.png',
+    'MONDIALI_2026_OLA': 'mondiali/olanda.png',
+    'MONDIALI_2026_URU': 'mondiali/uruguay.png',
+    'MONDIALI_2026_BEL': 'mondiali/belgio.png',
+    'MONDIALI_2026_BIH': 'mondiali/bosnia-erzegovina.png',
+    'MONDIALI_2026_CAN': 'mondiali/canada.png',
+    'MONDIALI_2026_QAT': 'mondiali/qatar.png',
+    'MONDIALI_2026_SVI': 'mondiali/svizzera.png',
+    'MONDIALI_2026_MES': 'mondiali/messico.png',
+    'MONDIALI_2026_SAF': 'mondiali/sudafrica.png',
+    'MONDIALI_2026_COR': 'mondiali/corea.png',
+    'MONDIALI_2026_CEC': 'mondiali/repubblica-ceca.png',
+    'MONDIALI_2026_USA': 'mondiali/stati-uniti.png',
+    'MONDIALI_2026_PAR': 'mondiali/paraguay.png',
+    'MONDIALI_2026_AUS': 'mondiali/australia.png',
+    'MONDIALI_2026_TUR': 'mondiali/turchia.png',
+    'MONDIALI_2026_GER2': 'mondiali/germania.png',
+    'MONDIALI_2026_CUR': 'mondiali/curacao.png',
+    'MONDIALI_2026_CIV': 'mondiali/costa-avorio.png',
+    'MONDIALI_2026_ECU': 'mondiali/ecuador.png',
+    'MONDIALI_2026_JAP': 'mondiali/giappone.png',
+    'MONDIALI_2026_SVE': 'mondiali/svezia.png',
+    'MONDIALI_2026_TUN': 'mondiali/tunisia.png',
+    'MONDIALI_2026_EGI': 'mondiali/egitto.png',
+    'MONDIALI_2026_IRA': 'mondiali/iran.png',
+    'MONDIALI_2026_NZE': 'mondiali/nuova-zelanda.png',
+    'MONDIALI_2026_CPV': 'mondiali/capoverde.png',
+    'MONDIALI_2026_SAU': 'mondiali/arabia-saudita.png',
+    'MONDIALI_2026_SEN': 'mondiali/senegal.png',
+    'MONDIALI_2026_IRQ': 'mondiali/iraq.png',
+    'MONDIALI_2026_NOR': 'mondiali/norvegia.png',
+    'MONDIALI_2026_ALG': 'mondiali/algeria.png',
+    'MONDIALI_2026_AUT': 'mondiali/austria.png',
+    'MONDIALI_2026_GIO': 'mondiali/giordania.png',
+    'MONDIALI_2026_RDC': 'mondiali/congo.png',
+    'MONDIALI_2026_COL': 'mondiali/colombia.png',
+    'MONDIALI_2026_UZB': 'mondiali/uzbekistan.png',
+    'MONDIALI_2026_MAR': 'mondiali/marocco.png',
+    'MONDIALI_2026_SCO': 'mondiali/scozia.png',
+    'MONDIALI_2026_HAI': 'mondiali/haiti.png',
+    'MONDIALI_2026_CRO': 'mondiali/croazia.png',
+    'MONDIALI_2026_GHA': 'mondiali/ghana.png',
+    'MONDIALI_2026_PAN': 'mondiali/panama.png',
   };
 
   // Mapping foto tennisti
