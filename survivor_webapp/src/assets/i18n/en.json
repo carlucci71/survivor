@@ -670,6 +670,7 @@
     "INVITE_EMAIL": "Invite friends via email",
     "EMAIL_PLACEHOLDER": "email@example.com",
     "CHAMPIONSHIP_ENDED": "Unfortunately the championship has ended",
+    "NAME_TAKEN": "League name already taken",
     "WITH_PASSWORD_JOIN": "and join with password",
     "SECTION_IDENTITY": "League Name",
     "SECTION_IDENTITY_DESC": "Give it a name your friends will recognize right away",
@@ -868,6 +869,14 @@
     "HIDE_PICK": "Hide my pick from others",
     "SHOW_PICK": "Make my pick visible",
     "ALREADY_USED": "Already used",
+    "HOME_LABEL": "Home",
+    "DETAILS": {
+      "SEARCH_PLACEHOLDER": "Search team...",
+      "NO_RESULTS": "No results",
+      "NO_MATCHES": "No matches",
+      "NEXT_MATCH_IN": "Next match in",
+      "MATCH_IN_PROGRESS": "Match in progress"
+    },
     "CYCLE_AVAILABLE": "Available this cycle",
     "CYCLE_USED": "Already used this cycle",
     "CONSIGLI": {
