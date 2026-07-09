@@ -47,13 +47,13 @@
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
     "NBA_RS": "NBA Reg. Season",
-    "MONDIALI_2026": "Mondiali 2026"
+    "MONDIALI_2026": "World Tournament 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "Albo d'Oro Mondiali",
+    "TITLE": "Albo d'Oro World Tournament",
     "CLOSE": "Chiudi",
     "FINAL_LABEL": "Finale",
-    "CURRENT_TITLE": "Mondiale 2026 — in corso",
+    "CURRENT_TITLE": "World Tournament 2026 — in corso",
     "CURRENT_SUB": "La storia si sta scrivendo...",
     "EDITION": "Edizione {{year}}",
     "NO_DATA_SUB": "Dati storici in arrivo",
