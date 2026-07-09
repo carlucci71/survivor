@@ -46,7 +46,7 @@ export class PlayerHistoryDialogComponent {
    *
    * 📌 STATO ATTUALE: MOCK DISATTIVATO → Pronto per produzione
    */
-  private readonly ENABLE_MOCK = true; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
+  private readonly ENABLE_MOCK = false; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
   constructor(
     public dialogRef: MatDialogRef<PlayerHistoryDialogComponent>,
