@@ -46,7 +46,7 @@ export class PlayerHistoryDialogComponent {
    *
    * 📌 STATO ATTUALE: MOCK DISATTIVATO → Pronto per produzione
    */
-  private readonly ENABLE_MOCK = false; // ✅ PRODUZIONE: Mock DISABILITATO
+  private readonly ENABLE_MOCK = true; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
   constructor(
     public dialogRef: MatDialogRef<PlayerHistoryDialogComponent>,
@@ -72,7 +72,9 @@ export class PlayerHistoryDialogComponent {
    */
   private calculateGiornateIndices(): void {
     const giornataIniziale = this.data.lega?.giornataIniziale || 1;
-    const giocate = this.data.giocatore.giocate || [];
+    const legaId = this.data.lega?.id;
+    // Filtra per legaId: evita di mescolare giocate di leghe diverse (fix mondiali e multi-sport)
+    const giocate = (this.data.giocatore.giocate || []).filter((g: any) => !legaId || g.legaId === legaId);
 
     if (giocate.length === 0) {
       this.data.giornataIndices = [];
@@ -114,7 +116,19 @@ export class PlayerHistoryDialogComponent {
       (_, i) => giornataIniziale + i
     );
 
-    const mockGiocate = [
+    const isMondiali = this.data.lega?.campionato?.id === 'MONDIALI_2026';
+    const mockGiocate = isMondiali ? [
+      { giornata: 1, squadraSigla: 'BRA', esito: 'OK', forzatura: undefined },
+      { giornata: 2, squadraSigla: 'ARG', esito: 'OK', forzatura: undefined },
+      { giornata: 3, squadraSigla: 'FRA', esito: 'KO', forzatura: undefined },
+      { giornata: 4, squadraSigla: 'GER', esito: 'OK', forzatura: undefined },
+      { giornata: 5, squadraSigla: 'SPA', esito: 'OK', forzatura: 'admin' },
+      { giornata: 6, squadraSigla: 'POR', esito: 'OK', forzatura: undefined },
+      { giornata: 7, squadraSigla: 'ING', esito: 'KO', forzatura: undefined },
+      { giornata: 8, squadraSigla: 'OLA', esito: 'OK', forzatura: undefined },
+      { giornata: 9, squadraSigla: 'URU', esito: undefined, forzatura: undefined },
+      { giornata: 10, squadraSigla: 'BEL', esito: undefined, forzatura: undefined }
+    ] : [
       { giornata: 1, squadraSigla: 'INT', esito: 'OK', forzatura: undefined },
       { giornata: 2, squadraSigla: 'MIL', esito: 'OK', forzatura: undefined },
       { giornata: 3, squadraSigla: 'JUV', esito: 'KO', forzatura: undefined },
@@ -168,6 +182,38 @@ export class PlayerHistoryDialogComponent {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  getPlayerInitial(): string {
+    return (this.data.giocatore.nickname || '?').charAt(0).toUpperCase();
+  }
+
+  getWins(): number {
+    return (this.data.giornataIndices || []).filter(g => this.getGiocataForRound(g)?.esito === 'OK').length;
+  }
+
+  getLosses(): number {
+    return (this.data.giornataIndices || []).filter(g => {
+      const esito = this.getGiocataForRound(g)?.esito;
+      return esito === 'KO' || esito === 'PAREGGIO';
+    }).length;
+  }
+
+  getPending(): number {
+    return (this.data.giornataIndices || []).filter(g => {
+      const giocata = this.getGiocataForRound(g);
+      return giocata?.squadraSigla && !giocata?.esito;
+    }).length;
+  }
+
+  getTotalWithResult(): number {
+    return this.getWins() + this.getLosses();
+  }
+
+  getWinRate(): number {
+    const total = this.getTotalWithResult();
+    if (total === 0) return 0;
+    return Math.round((this.getWins() / total) * 100);
   }
 
   getTeamLogo(sigla: string | null | undefined): string | null {

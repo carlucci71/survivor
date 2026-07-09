@@ -512,7 +512,7 @@
                           <button class="history-toggle-btn history-badge-desktop"
                                   (click)="toggleFullHistory(giocatore, $event)"
                                   [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                            <mat-icon class="history-icon">history</mat-icon>
+                            <mat-icon class="history-icon">leaderboard</mat-icon>
                           </button>
                         }
                         @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
@@ -822,14 +822,6 @@
                 </span>
               }
 
-              <!-- Icona storico completo se ci sono più di 5 giocate -->
-              @if(hasMoreRounds(giocatore)) {
-                <button class="history-toggle-btn-mobile"
-                        (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
-                        [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                  <mat-icon class="history-icon-mobile">history</mat-icon>
-                </button>
-              }
               <!-- Pulsante "Chi ha votato come me" - solo per il tuo utente (mobile) -->
               @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
                 <button class="same-pick-btn same-pick-btn--mobile"
@@ -840,8 +832,16 @@
               }
             </div>
 
-            <!-- Destra: Icona admin + Freccia -->
+            <!-- Destra: Icona storico + admin + Freccia -->
             <div class="player-actions-right">
+              <!-- Icona storico dalla 6ª scelta in poi -->
+              @if(hasMoreRounds(giocatore)) {
+                <button class="history-toggle-btn-mobile"
+                        (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
+                        [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
+                  <mat-icon class="history-icon-mobile">leaderboard</mat-icon>
+                </button>
+              }
               <!-- Icona modifica per leader/admin -->
               @if((isAdmin() || isLeaderLega()) && hasGiocataDisponibile(giocatore)){
                 <mat-icon class="edit-user-icon-mobile"
