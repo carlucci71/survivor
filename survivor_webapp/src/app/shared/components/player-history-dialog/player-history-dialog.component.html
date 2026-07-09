@@ -1,117 +1,119 @@
-<div class="player-history-dialog">
-  <div class="dialog-header">
-    <div class="header-content">
-      <mat-icon class="player-icon">person</mat-icon>
-      <div class="player-info">
-        <h2 class="player-name">{{ data.giocatore.nickname }}</h2>
-        <p class="dialog-subtitle">{{ 'LEAGUE.FULL_HISTORY' | translate }}</p>
-      </div>
+<div class="phd-root">
+
+  <!-- ===== HEADER ===== -->
+  <div class="phd-header">
+    <div class="phd-avatar">{{ getPlayerInitial() }}</div>
+    <div class="phd-title-group">
+      <h2 class="phd-player-name">{{ data.giocatore.nickname }}</h2>
+      <p class="phd-subtitle">{{ 'LEAGUE.FULL_HISTORY' | translate }}</p>
     </div>
-    <button mat-icon-button class="close-btn" (click)="close()">
+    <button class="phd-close-btn" (click)="close()" [attr.aria-label]="'COMMON.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 
-  <div class="dialog-content">
-    <!-- Layout Desktop/Tablet: Righe dinamiche (5 squadre per riga) con "Giornata X" -->
-    <div class="history-rows-layout desktop-only">
-      @for (row of getAllRowsRounds(); track $index) {
-        <div class="history-row">
-          @for (giornata of row; track giornata) {
-            @let giocata = getGiocataForRound(giornata);
-            <div class="history-item"
-                 [class.item-ok]="giocata?.esito === 'OK'"
-                 [class.item-ko]="giocata?.esito === 'KO'"
-                 [class.item-pending]="!giocata?.esito">
-
-              <div class="item-header">
-                <span class="round-number">{{ getGiornataLabelFull(giornata) }}</span>
-                @if(giocata?.esito) {
-                  <mat-icon class="result-icon-small" [class.icon-ok]="giocata.esito === 'OK'" [class.icon-ko]="giocata.esito === 'KO'">
-                    {{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}
-                  </mat-icon>
-                }
-              </div>
-
-              <div class="item-body">
-                @if(giocata?.squadraSigla) {
-                  <div class="team-display">
-                    @if(getTeamLogo(giocata.squadraSigla)) {
-                      <img [src]="getTeamLogo(giocata.squadraSigla)!"
-                           [alt]="getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla"
-                           class="team-logo-inline"
-                           (error)="$any($event.target).style.display='none'">
-                    }
-                    @if(giocata.forzatura) {
-                      <mat-icon class="forced-badge" [matTooltip]="'LEAGUE.FORCED_BY_ADMIN' | translate">
-                        edit
-                      </mat-icon>
-                    }
-                  </div>
-                } @else {
-                  <div class="empty-slot">
-                    <mat-icon>remove</mat-icon>
-                  </div>
-                }
-              </div>
-            </div>
-          }
+  <!-- ===== STATS STRIP ===== -->
+  @if(getTotalWithResult() > 0) {
+    <div class="phd-stats">
+      <div class="phd-stat phd-stat--win">
+        <span class="phd-stat-value">{{ getWins() }}</span>
+        <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_WINS' | translate }}</span>
+      </div>
+      <div class="phd-stat-sep"></div>
+      <div class="phd-stat phd-stat--loss">
+        <span class="phd-stat-value">{{ getLosses() }}</span>
+        <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_LOSSES' | translate }}</span>
+      </div>
+      @if(getPending() > 0) {
+        <div class="phd-stat-sep"></div>
+        <div class="phd-stat phd-stat--pending">
+          <span class="phd-stat-value">{{ getPending() }}</span>
+          <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_PENDING' | translate }}</span>
         </div>
       }
+      <div class="phd-stat-sep"></div>
+      <div class="phd-stat phd-stat--rate">
+        <span class="phd-stat-value">{{ getWinRate() }}%</span>
+        <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_WIN_RATE' | translate }}</span>
+      </div>
     </div>
+  }
 
-    <!-- Layout Mobile: Righe dinamiche (5 squadre per riga) con solo numero -->
-    <div class="history-rows-layout mobile-only">
-      @for (row of getAllRowsRounds(); track $index) {
-        <div class="history-row">
-          @for (giornata of row; track giornata) {
-            @let giocata = getGiocataForRound(giornata);
-            <div class="history-item"
-                 [class.item-ok]="giocata?.esito === 'OK'"
-                 [class.item-ko]="giocata?.esito === 'KO'"
-                 [class.item-pending]="!giocata?.esito">
+  <!-- ===== CARDS ===== -->
+  <div class="phd-content">
+    @if(data.giornataIndices.length === 0) {
+      <div class="phd-empty">
+        <mat-icon>leaderboard</mat-icon>
+        <p>{{ 'LEAGUE.NO_SELECTION' | translate }}</p>
+      </div>
+    }
 
-              <div class="item-header">
-                <span class="round-number">{{ getGiornataLabel(giornata) }}</span>
-                @if(giocata?.esito) {
-                  <mat-icon class="result-icon-small" [class.icon-ok]="giocata.esito === 'OK'" [class.icon-ko]="giocata.esito === 'KO'">
-                    {{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}
-                  </mat-icon>
-                }
-              </div>
+    @for (row of getAllRowsRounds(); track $index) {
+      <div class="phd-row">
+        @for (giornata of row; track giornata) {
+          @let giocata = getGiocataForRound(giornata);
+          <div class="phd-card"
+               [class.phd-card--ok]="giocata?.esito === 'OK'"
+               [class.phd-card--ko]="giocata?.esito === 'KO' || giocata?.esito === 'PAREGGIO'"
+               [class.phd-card--empty]="!giocata?.squadraSigla">
 
-              <div class="item-body">
-                @if(giocata?.squadraSigla) {
-                  <div class="team-display">
-                    @if(getTeamLogo(giocata.squadraSigla)) {
-                      <img [src]="getTeamLogo(giocata.squadraSigla)!"
-                           [alt]="getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla"
-                           class="team-logo-inline"
-                           (error)="$any($event.target).style.display='none'">
-                    }
-                    @if(giocata.forzatura) {
-                      <mat-icon class="forced-badge" [matTooltip]="'LEAGUE.FORCED_BY_ADMIN' | translate">
-                        edit
-                      </mat-icon>
-                    }
-                  </div>
-                } @else {
-                  <div class="empty-slot">
-                    <mat-icon>remove</mat-icon>
-                  </div>
-                }
-              </div>
+            <!-- Numero giornata -->
+            <div class="phd-round-label">
+              <span class="phd-round-full">{{ getGiornataLabelFull(giornata) }}</span>
+              <span class="phd-round-short">{{ getGiornataLabel(giornata) }}</span>
             </div>
-          }
-        </div>
-      }
-    </div>
+
+            <!-- Logo / sigla squadra -->
+            <div class="phd-logo-area">
+              @if(giocata?.squadraSigla) {
+                @if(getTeamLogo(giocata.squadraSigla)) {
+                  <img [src]="getTeamLogo(giocata.squadraSigla)!"
+                       [alt]="getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla"
+                       class="phd-logo"
+                       (error)="$any($event.target).style.display='none'">
+                } @else {
+                  <span class="phd-sigla">{{ giocata.squadraSigla }}</span>
+                }
+                @if(giocata?.forzatura) {
+                  <span class="phd-forced" [matTooltip]="'LEAGUE.FORCED_BY_ADMIN' | translate">
+                    <mat-icon>edit</mat-icon>
+                  </span>
+                }
+              } @else {
+                <span class="phd-no-pick">—</span>
+              }
+            </div>
+
+            <!-- Indicatore risultato -->
+            @if(giocata?.esito) {
+              <div class="phd-result"
+                   [class.phd-result--ok]="giocata.esito === 'OK'"
+                   [class.phd-result--ko]="giocata.esito === 'KO' || giocata.esito === 'PAREGGIO'">
+                <mat-icon>{{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}</mat-icon>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
   </div>
 
-  <div class="dialog-footer">
-    <button mat-raised-button color="primary" (click)="close()">
+  <!-- ===== FOOTER ===== -->
+  <div class="phd-footer">
+    <div class="phd-legend">
+      <span class="phd-legend-item">
+        <mat-icon class="phd-legend-ok">check_circle</mat-icon>{{ 'LEAGUE.LEGEND_WON' | translate }}
+      </span>
+      <span class="phd-legend-item">
+        <mat-icon class="phd-legend-ko">cancel</mat-icon>{{ 'LEAGUE.LEGEND_LOST' | translate }}
+      </span>
+      <span class="phd-legend-item">
+        <mat-icon class="phd-legend-forced">edit</mat-icon>{{ 'LEAGUE.LEGEND_FORCED' | translate }}
+      </span>
+    </div>
+    <button mat-raised-button color="primary" class="phd-close-action" (click)="close()">
       {{ 'COMMON.CLOSE' | translate }}
     </button>
   </div>
-</div>
 
+</div>
