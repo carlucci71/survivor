@@ -1,5 +1,6 @@
 #!/bin/bash
 echo $(TZ='Europe/Rome' date '+%d/%m/%Y %H:%M') > survivor_webapp/src/assets/build_fe.html
+grep -oP 'versionCode \K\d+' survivor_webapp/android/app/build.gradle > survivor_backend/min_version_code.txt
 echo "🔄 Deploy Survivor App"
 
 # Carica variabili ambiente
