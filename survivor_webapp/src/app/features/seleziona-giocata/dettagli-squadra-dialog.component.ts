@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 export interface DettagliSquadraData {
   squadraSelezionata: string;
@@ -35,7 +36,7 @@ export interface DettagliSquadraData {
 @Component({
   selector: 'app-dettagli-squadra-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatButtonModule, MatIconModule, TranslateModule],
   template: `
     <div class="dettagli-dialog" [style.background]="'linear-gradient(135deg, ' + localColors.primary + ', ' + localColors.secondary + ')'">
       <div class="dettagli-header">
@@ -58,7 +59,7 @@ export interface DettagliSquadraData {
                      (input)="onSearchInput()"
                      (focus)="onSearchFocus()"
                      (blur)="closeDropdownDelayed()"
-                     placeholder="Cerca squadra..."
+                     [placeholder]="'PLAY.DETAILS.SEARCH_PLACEHOLDER' | translate"
                      autocomplete="off">
               <button class="sq-clear-btn" (mousedown)="clearSearch()">
                 <mat-icon>close</mat-icon>
@@ -87,7 +88,7 @@ export interface DettagliSquadraData {
             <mat-icon>schedule</mat-icon>
           </div>
           <div class="countdown-content">
-            <span class="countdown-label">Prossima partita tra</span>
+            <span class="countdown-label">{{ 'PLAY.DETAILS.NEXT_MATCH_IN' | translate }}</span>
             <span class="countdown-time">
               {{ countdown }}
             </span>
@@ -118,7 +119,7 @@ export interface DettagliSquadraData {
       <div class="content">
         @if(activeTab === 'ultimi') {
           @if(localUltimi.length === 0) {
-            <div class="no-data">Nessun risultato</div>
+            <div class="no-data">{{ 'PLAY.DETAILS.NO_RESULTS' | translate }}</div>
           } @else {
             @for(r of localUltimi.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
@@ -134,7 +135,7 @@ export interface DettagliSquadraData {
 
         @if(activeTab === 'prossime') {
           @if(localProssime.length === 0) {
-            <div class="no-data">Nessuna partita</div>
+            <div class="no-data">{{ 'PLAY.DETAILS.NO_MATCHES' | translate }}</div>
           } @else {
             @for(r of localProssime.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
@@ -150,7 +151,7 @@ export interface DettagliSquadraData {
 
         @if(activeTab === 'opponent') {
           @if(localUltimiOpponent.length === 0) {
-            <div class="no-data">Nessun risultato</div>
+            <div class="no-data">{{ 'PLAY.DETAILS.NO_RESULTS' | translate }}</div>
           } @else {
             @for(r of localUltimiOpponent.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
@@ -889,7 +890,8 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
 
   constructor(
     public dialogRef: MatDialogRef<DettagliSquadraDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DettagliSquadraData
+    @Inject(MAT_DIALOG_DATA) public data: DettagliSquadraData,
+    private translate: TranslateService
   ) {
     // Imposta l'indice corrente della squadra selezionata
     if (data.allSquadre) {
@@ -995,7 +997,7 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
       const distance = matchTime - now;
 
       if (distance < 0) {
-        this.countdown = 'Partita in corso';
+        this.countdown = this.translate.instant('PLAY.DETAILS.MATCH_IN_PROGRESS');
         this.countdownActive = false;
         if (this.intervalId) clearInterval(this.intervalId);
         return;

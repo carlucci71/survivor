@@ -302,7 +302,7 @@
               @if (isPlayingHome(squadra.sigla)) {
                 <div class="home-badge">
                   <mat-icon class="home-icon">home</mat-icon>
-                  <span class="home-label">CASA</span>
+                  <span class="home-label">{{ 'PLAY.HOME_LABEL' | translate }}</span>
                 </div>
               }
               <div class="jersey-container">
@@ -361,7 +361,7 @@
                 @if (isPlayingHome(squadra.sigla)) {
                   <div class="home-badge">
                     <mat-icon class="home-icon">home</mat-icon>
-                    <span class="home-label">CASA</span>
+                    <span class="home-label">{{ 'PLAY.HOME_LABEL' | translate }}</span>
                   </div>
                 }
                 <div class="jersey-container" [class.tennis-container]="lega.campionato?.sport?.id === 'TENNIS'">
