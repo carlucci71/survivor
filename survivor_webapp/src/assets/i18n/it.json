@@ -47,13 +47,13 @@
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
     "NBA_RS": "NBA Reg. Season",
-    "MONDIALI_2026": "Mondiali 2026"
+    "MONDIALI_2026": "World Tournament 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "Albo d'Oro Mondiali",
+    "TITLE": "Albo d'Oro World Tournament",
     "CLOSE": "Chiudi",
     "FINAL_LABEL": "Finale",
-    "CURRENT_TITLE": "Mondiale 2026 — in corso",
+    "CURRENT_TITLE": "World Tournament 2026 — in corso",
     "CURRENT_SUB": "La storia si sta scrivendo...",
     "EDITION": "Edizione {{year}}",
     "NO_DATA_SUB": "Dati storici in arrivo",
@@ -758,6 +758,7 @@
     "INVITE_EMAIL": "Invita amici via email",
     "EMAIL_PLACEHOLDER": "email@esempio.com",
     "CHAMPIONSHIP_ENDED": "Purtroppo il campionato è terminato",
+    "NAME_TAKEN": "Nome lega già presente",
     "WITH_PASSWORD_JOIN": "ed unirsi con la password",
     "SECTION_IDENTITY": "Nome della lega",
     "SECTION_IDENTITY_DESC": "Dagli un nome che i tuoi amici riconosceranno subito",
@@ -958,6 +959,14 @@
     "HIDE_PICK": "Rendi invisibile la mia giocata",
     "SHOW_PICK": "Rendi visibile la mia giocata",
     "ALREADY_USED": "Già usata",
+    "HOME_LABEL": "Casa",
+    "DETAILS": {
+      "SEARCH_PLACEHOLDER": "Cerca squadra...",
+      "NO_RESULTS": "Nessun risultato",
+      "NO_MATCHES": "Nessuna partita",
+      "NEXT_MATCH_IN": "Prossima partita tra",
+      "MATCH_IN_PROGRESS": "Partita in corso"
+    },
     "CYCLE_AVAILABLE": "Disponibili in questo ciclo",
     "CYCLE_USED": "Già usate in questo ciclo",
     "CONSIGLI": {
