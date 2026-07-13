@@ -444,6 +444,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
       'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',

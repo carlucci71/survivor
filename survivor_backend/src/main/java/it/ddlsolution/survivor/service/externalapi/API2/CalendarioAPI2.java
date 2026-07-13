@@ -93,7 +93,7 @@ public class CalendarioAPI2 implements ICalendario {
             attUrlCalendar = urlCalendar + "&phase=" + faseFromCampionato(enumCampionato);
         } else if (campionato.equals(EnumAPI2.Campionato.TENNIS_AO.name()) || campionato.equals(EnumAPI2.Campionato.TENNIS_W.name())) {
             attUrlCalendar = urlCalendar;
-        } else if (campionato.equals(EnumAPI2.Campionato.SERIE_A.name()) || campionato.equals(EnumAPI2.Campionato.LIGA.name())) {
+        } else if (campionato.equals(EnumAPI2.Campionato.SERIE_A.name()) || campionato.equals(EnumAPI2.Campionato.LIGA.name()) || campionato.equals(EnumAPI2.Campionato.PREMIER_LEAGUE.name())) {
             attUrlCalendar = urlCalendar;
         } else {
             throw new RuntimeException("Campionato da configurare: " + campionato);
