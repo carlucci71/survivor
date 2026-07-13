@@ -108,6 +108,15 @@
                        [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
+                    <button
+                      *ngIf="isLeaderGroup(group)"
+                      type="button"
+                      class="rename-lega-btn"
+                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
+                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
+                      (click)="openRinominaDialog(group, $event)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                     <span class="lega-visibility-badge lega-visibility-badge--private">
                       <mat-icon>lock</mat-icon> {{ 'HOME.BADGE_PRIVATE' | translate }}
                     </span>
@@ -183,6 +192,15 @@
                        [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
+                    <button
+                      *ngIf="isLeaderGroup(group)"
+                      type="button"
+                      class="rename-lega-btn"
+                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
+                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
+                      (click)="openRinominaDialog(group, $event)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                     <span class="lega-visibility-badge lega-visibility-badge--public">
                       <mat-icon>public</mat-icon> {{ 'HOME.BADGE_PUBLIC' | translate }}
                     </span>

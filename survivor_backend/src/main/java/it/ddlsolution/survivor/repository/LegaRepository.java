@@ -25,6 +25,8 @@ public interface LegaRepository extends JpaRepository<Lega, Long> {
 
     Optional<Lega> findByName(String name);
 
+    List<Lega> findAllByName(String name);
+
     @Query("SELECT l.edizione FROM Lega l WHERE l.name = :name")
     List<Integer> findEdizioniByName(@Param("name") String name);
 

@@ -27,7 +27,8 @@
     "BADGE_PRIVATE": "Privata",
     "BADGE_PUBLIC": "Pubblica",
     "TAB_PRIVATE": "Private",
-    "TAB_PUBLIC": "Pubbliche"
+    "TAB_PUBLIC": "Pubbliche",
+    "RENAME_LEAGUE": "Rinomina lega"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Da Avviare",
@@ -44,8 +45,10 @@
     "SERIE_A": "Serie A",
     "SERIE_B": "Serie B",
     "LIGA": "La Liga",
+    "PREMIER_LEAGUE": "Premier League",
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
+    "ROLAND_GARROS": "Roland Garros",
     "NBA_RS": "NBA Reg. Season",
     "MONDIALI_2026": "World Tournament 2026"
   },
@@ -581,6 +584,15 @@
     "CONFIRM_DELETE_CANCEL": "Annulla",
     "CONFIRM_DELETE_CONFIRM": "Sì, elimina",
     "CONFIRM_DELETE_DELETING": "Eliminazione...",
+    "RENAME_LEAGUE_TITLE": "Rinomina lega",
+    "RENAME_LEAGUE_LABEL": "Nome della lega",
+    "RENAME_LEAGUE_SAVE": "Salva",
+    "RENAME_LEAGUE_SAVING": "Salvataggio...",
+    "RENAME_LEAGUE_CANCEL": "Annulla",
+    "RENAME_LEAGUE_EMPTY": "Il nome non può essere vuoto",
+    "RENAME_LEAGUE_TAKEN": "Nome lega già presente",
+    "RENAME_LEAGUE_SUCCESS": "Lega rinominata con successo",
+    "RENAME_LEAGUE_GENERIC_ERROR": "Errore durante la rinomina della lega",
     "PLAYER_JOURNEY": "Percorso Giocatori",
     "VIEW_ALL_JOURNEYS": "Visualizza il percorso di tutti i giocatori",
     "HIDE_JOURNEYS": "Nascondi percorsi",

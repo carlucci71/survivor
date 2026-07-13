@@ -27,7 +27,8 @@
     "BADGE_PRIVATE": "Private",
     "BADGE_PUBLIC": "Public",
     "TAB_PRIVATE": "Private",
-    "TAB_PUBLIC": "Public"
+    "TAB_PUBLIC": "Public",
+    "RENAME_LEAGUE": "Rename league"
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Not Started",
@@ -44,8 +45,10 @@
     "SERIE_A": "Serie A",
     "SERIE_B": "Serie B",
     "LIGA": "La Liga",
+    "PREMIER_LEAGUE": "Premier League",
     "TENNIS_W": "Wimbledon",
     "TENNIS_AO": "Aus. Open",
+    "ROLAND_GARROS": "Roland Garros",
     "NBA_RS": "NBA Reg. Season",
     "MONDIALI_2026": "World Tournament 2026"
   },
@@ -491,6 +494,15 @@
     "CONFIRM_DELETE_CANCEL": "Cancel",
     "CONFIRM_DELETE_CONFIRM": "Yes, delete",
     "CONFIRM_DELETE_DELETING": "Deleting...",
+    "RENAME_LEAGUE_TITLE": "Rename league",
+    "RENAME_LEAGUE_LABEL": "League name",
+    "RENAME_LEAGUE_SAVE": "Save",
+    "RENAME_LEAGUE_SAVING": "Saving...",
+    "RENAME_LEAGUE_CANCEL": "Cancel",
+    "RENAME_LEAGUE_EMPTY": "The name cannot be empty",
+    "RENAME_LEAGUE_TAKEN": "League name already taken",
+    "RENAME_LEAGUE_SUCCESS": "League renamed successfully",
+    "RENAME_LEAGUE_GENERIC_ERROR": "Error renaming the league",
     "PLAYER_JOURNEY": "Player Journey",
     "VIEW_ALL_JOURNEYS": "View all players' journey",
     "HIDE_JOURNEYS": "Hide journeys",

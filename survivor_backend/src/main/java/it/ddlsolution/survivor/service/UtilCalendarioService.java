@@ -162,10 +162,17 @@ public class UtilCalendarioService {
         if (isFirstLoading || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             partiteDiCampionatoDellaGiornata = new ArrayList<>();
-            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
-                    campionatoDTO
-                    , giornata
-                    , anno);
+            List<PartitaDTO> partiteFromWeb;
+            try {
+                partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
+                        campionatoDTO
+                        , giornata
+                        , anno);
+            } catch (Exception e) {
+                log.warn("Errore API recupero partite campionato={} giornata={} anno={}: {}",
+                        campionatoDTO.getId(), giornata, anno, e.getMessage());
+                partiteFromWeb = new ArrayList<>();
+            }
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
                 for (PartitaDTO partitaFromWeb : partiteFromWeb) {

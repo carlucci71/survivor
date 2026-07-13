@@ -480,6 +480,46 @@ h2 {
 	}
 }
 
+// ── Pulsante rinomina lega (icona penna nel titolo, solo leader) ─────────
+.rename-lega-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin-left: 6px;
+	width: 26px;
+	height: 26px;
+	flex-shrink: 0;
+	border: none;
+	border-radius: 50%;
+	background: rgba(10, 61, 145, 0.09);
+	color: #0A3D91;
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.2s ease;
+
+	mat-icon {
+		font-size: 15px;
+		width: 15px;
+		height: 15px;
+	}
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.18);
+		transform: scale(1.06);
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	@media (max-width: 400px) {
+		width: 24px;
+		height: 24px;
+		mat-icon { font-size: 14px; width: 14px; height: 14px; }
+	}
+}
+
 // ── Badge popolarità (4 tier) ────────────────────────────────────────────
 .popolarita-badge {
 	display: inline-flex;

@@ -1132,6 +1132,40 @@ public class LegaService {
 
     }
 
+    /**
+     * Rinomina una lega. Il nome è condiviso da tutte le edizioni della stessa lega
+     * (create tramite {@link #nuovaEdizione}), quindi la rinomina viene propagata
+     * a tutte le edizioni con il nome corrente, per non spezzare il raggruppamento in home.
+     */
+    @Transactional
+    @LoggaDispositiva(tipologia = "rinominaLega")
+    public LegaDTO rinominaLega(Long idLega, String nuovoNome) {
+        if (nuovoNome == null || nuovoNome.trim().isEmpty()) {
+            throw new ManagedException("Il nome della lega non può essere vuoto", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+        String nomePulito = nuovoNome.trim();
+        if (nomePulito.length() > 100) {
+            throw new ManagedException("Il nome della lega non può superare i 100 caratteri", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+
+        Lega lega = legaRepository.findById(idLega)
+                .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
+
+        String vecchioNome = lega.getName();
+        if (!vecchioNome.equals(nomePulito)) {
+            if (!legaRepository.findAllByName(nomePulito).isEmpty()) {
+                throw new ManagedException("Nome lega già presente", ManagedException.InternalCode.CODE_LEGA_PRESENTE);
+            }
+            List<Lega> tutteEdizioni = legaRepository.findAllByName(vecchioNome);
+            tutteEdizioni.forEach(l -> l.setName(nomePulito));
+            legaRepository.saveAll(tutteEdizioni);
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return getLegaDTO(idLega, true, userId);
+    }
+
     @Transactional
     @LoggaDispositiva
     public void eliminaLega(Long idLega) {

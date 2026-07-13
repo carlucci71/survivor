@@ -114,6 +114,11 @@ export class LegaService {
     return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${idLega}`);
   }
 
+  rinominaLega(idLega: number, nome: string): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/rinomina/${idLega}`, { nome })
+      .pipe(map(mapLegaFromBE));
+  }
+
   // ─── Join Requests ────────────────────────────────────────────────────────
 
   richiediIngresso(idLega: number): Observable<LegaJoinRequest> {

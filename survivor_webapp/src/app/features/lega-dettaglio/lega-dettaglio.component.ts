@@ -1320,6 +1320,29 @@ export class LegaDettaglioComponent implements OnDestroy {
     'SERIE_A_UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
     'SERIE_A_VEN': 'VEN.png',       // Venezia
     'SERIE_A_VER': 'VER.png',       // Verona
+    'SERIE_A_FRO': 'FRO.png',       // Frosinone (promosso 2026/27)
+
+    // PREMIER LEAGUE
+    'PREMIER_LEAGUE_ARS': 'inghilterra/arsenal.png',
+    'PREMIER_LEAGUE_AST': 'inghilterra/aston_villa.png',
+    'PREMIER_LEAGUE_AFC': 'inghilterra/bournemouth.webp',
+    'PREMIER_LEAGUE_BRE': 'inghilterra/brentford.png',
+    'PREMIER_LEAGUE_BHA': 'inghilterra/brighton.png',
+    'PREMIER_LEAGUE_CHL': 'inghilterra/chelsea.webp',
+    'PREMIER_LEAGUE_COV': 'inghilterra/coventry.webp',
+    'PREMIER_LEAGUE_CPL': 'inghilterra/crystal_palace.png',
+    'PREMIER_LEAGUE_EVT': 'inghilterra/everton.png',
+    'PREMIER_LEAGUE_FUL': 'inghilterra/fulham.png',
+    'PREMIER_LEAGUE_HUL': 'inghilterra/hull.webp',
+    'PREMIER_LEAGUE_IPS': 'inghilterra/ipswich.png',
+    'PREMIER_LEAGUE_LDS': 'inghilterra/leeds.png',
+    'PREMIER_LEAGUE_LIV': 'inghilterra/liverpool.png',
+    'PREMIER_LEAGUE_MNC': 'inghilterra/manchester_city.png',
+    'PREMIER_LEAGUE_MNU': 'inghilterra/manchester_united.png',
+    'PREMIER_LEAGUE_NEW': 'inghilterra/newcastle.webp',
+    'PREMIER_LEAGUE_NOF': 'inghilterra/forest.png',
+    'PREMIER_LEAGUE_SUN': 'inghilterra/sunderland.png',
+    'PREMIER_LEAGUE_TOT': 'inghilterra/tottenham.png',
 
     // SERIE B (18 squadre)
     'SERIE_B_AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO

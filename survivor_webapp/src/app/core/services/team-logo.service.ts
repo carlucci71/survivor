@@ -18,7 +18,7 @@ export class TeamLogoService {
     'SERIE_A_MIL': 'MIL.png', 'SERIE_A_MON': 'MON.png', 'SERIE_A_NAP': 'NAP.png',
     'SERIE_A_PAR': 'PARMA.png', 'SERIE_A_PIS': 'PISA.png', 'SERIE_A_ROM': 'ROMA.webp',
     'SERIE_A_SAS': 'SASS.png', 'SERIE_A_TOR': 'TORO.png', 'SERIE_A_UDI': 'UDI.png',
-    'SERIE_A_VEN': 'VEN.png', 'SERIE_A_VER': 'VER.png',
+    'SERIE_A_VEN': 'VEN.png', 'SERIE_A_VER': 'VER.png', 'SERIE_A_FRO': 'FRO.png',
     // PREMIER LEAGUE
     'PREMIER_LEAGUE_ARS': 'inghilterra/arsenal.png',
     'PREMIER_LEAGUE_AST': 'inghilterra/aston_villa.png',

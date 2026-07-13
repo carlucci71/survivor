@@ -1009,8 +1009,8 @@
       </div>
       }
 
-      <!-- ELIMINA LEGA - In fondo, discreto -->
-      @if (isDaAvviare() && isLeaderLega()) {
+      <!-- ELIMINA LEGA - In fondo, discreto. Il leader può eliminarla in qualsiasi stato -->
+      @if (isLeaderLega()) {
       <div class="delete-lega-footer">
         <span class="delete-link" (click)="toggleDeleteConfirm()">
           <mat-icon>delete_outline</mat-icon>
