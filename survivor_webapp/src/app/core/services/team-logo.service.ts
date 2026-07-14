@@ -11,6 +11,8 @@ export class TeamLogoService {
     'LIGA_OSA': 'OSA.png', 'LIGA_SEV': 'SIV.png', 'LIGA_GIR': 'GIR.png',
     'LIGA_MLL': 'MAI.png', 'LIGA_LEV': 'LEV.png', 'LIGA_ELC': 'ELC.png',
     'LIGA_GET': 'GET.png', 'LIGA_VAL': 'VAL.png',
+    'LIGA_CEL': 'CELTA_VIGO.png', 'LIGA_DEP': 'DEPORTIVO_LA_CORUNA.webp',
+    'LIGA_MAL': 'MALAGA.png', 'LIGA_RAC': 'RACING_SANTANDER.png',
     'SERIE_A_ATA': 'ATA.png', 'SERIE_A_BOL': 'BOLO.png', 'SERIE_A_CAG': 'CAGL.png',
     'SERIE_A_COM': 'COMO.png', 'SERIE_A_CRE': 'CREMON.png', 'SERIE_A_EMP': 'EMP.png',
     'SERIE_A_FIO': 'FIO.png', 'SERIE_A_GEN': 'GENOA.png', 'SERIE_A_INT': 'INT.png',

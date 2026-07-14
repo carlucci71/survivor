@@ -12,7 +12,7 @@
   @if (loading) {
     <div class="recap-loading">
       <div class="pulse-ring"></div>
-      <span>Caricamento risultati…</span>
+      <span>{{ 'RECAP.LOADING' | translate }}</span>
     </div>
   }
 
@@ -20,11 +20,11 @@
   @if (error) {
     <div class="recap-error">
       <span class="recap-error__icon">😕</span>
-      <p>Impossibile caricare il recap</p>
+      <p>{{ 'RECAP.ERROR_LOAD' | translate }}</p>
       @if (errorDetail) {
         <p class="recap-error__detail">{{ errorDetail }}</p>
       }
-      <button class="btn-outline" (click)="close()">Torna alla lega</button>
+      <button class="btn-outline" (click)="close()">{{ 'RECAP.BACK_TO_LEAGUE' | translate }}</button>
     </div>
   }
 
@@ -44,7 +44,7 @@
     <!-- Header controls -->
     <div class="recap-header">
       <span class="recap-lega-label">{{ recap.legaNome }}</span>
-      <button class="btn-close" (click)="close()" aria-label="Chiudi">✕</button>
+      <button class="btn-close" (click)="close()" [attr.aria-label]="'COMMON.CLOSE' | translate">✕</button>
     </div>
 
     <!-- ════════════════════ SLIDES ════════════════════ -->
@@ -110,12 +110,12 @@
           <div class="vote-count-bar">
             <span class="vote-count-bar__voted">
               <span class="vcp-dot vcp-dot--ok"></span>
-              {{ votantiCount }} {{ votantiCount === 1 ? 'ha votato' : 'hanno votato' }}
+              {{ votantiCount }} {{ (votantiCount === 1 ? 'RECAP.VOTED_ONE' : 'RECAP.VOTED_OTHER') | translate }}
             </span>
             @if (nonVotanti.length > 0) {
               <button class="vote-count-bar__missing" (click)="toggleNonVotanti($event)">
                 <span class="vcp-dot vcp-dot--miss"></span>
-                {{ nonVotanti.length }} senza scelta
+                {{ nonVotanti.length }} {{ 'RECAP.MISSING_PICK' | translate }}
                 <span class="vcp-chevron" [class.vcp-chevron--open]="showNonVotanti">▾</span>
               </button>
             }
@@ -212,7 +212,7 @@
             </div>
           } @else {
               <h2 class="slide__title slide__title--dark">💀 {{ 'RECAP.ELIMINATED_TITLE' | translate }}</h2>
-            <p class="slide__subtitle slide__subtitle--dark">{{ eliminatiQuesta.length }} uscit{{ eliminatiQuesta.length === 1 ? 'o' : 'i' }} questa giornata</p>
+            <p class="slide__subtitle slide__subtitle--dark">{{ eliminatiQuesta.length }} {{ (eliminatiQuesta.length === 1 ? 'RECAP.LEFT_TODAY_ONE' : 'RECAP.LEFT_TODAY_OTHER') | translate }}</p>
             <div class="out__list" [@staggerCards]="eliminatiQuesta.length">
               @for (p of eliminatiQuesta; track p.nickname) {
                 <div class="out-card">
@@ -238,8 +238,8 @@
     @if (currentSlide === 'classifica') {
       <div class="slide slide--classifica" [class.slide--enter-left]="direction === 'left'" [class.slide--enter-right]="direction === 'right'">
         <div class="slide__inner">
-          <h2 class="slide__title">🏆 Classifica</h2>
-          <p class="slide__subtitle">Dopo la giornata {{ recap.giornataRelativa }}</p>
+          <h2 class="slide__title">🏆 {{ 'RECAP.STANDINGS_TITLE' | translate }}</h2>
+          <p class="slide__subtitle">{{ 'RECAP.AFTER_ROUND' | translate }} {{ recap.giornataRelativa }}</p>
           <div class="classifica-list" [@staggerCards]="classificaCampionato.length">
             @for (pick of classificaCampionato; track pick.nickname; let i = $index) {
               <div class="classifica-row" [class.classifica-row--top]="i < 3" [class.classifica-row--primo]="i === 0">
@@ -324,7 +324,7 @@
                   <span class="stat-card__icon">⭐</span>
                   <div class="stat-card__text-block">
                     <span class="stat-card__value">{{ topScorerRound.nickname }}</span>
-                    <span class="stat-card__label">Miglior punteggio · {{ topScorerRound.punti }} pt questa giornata</span>
+                    <span class="stat-card__label">{{ 'RECAP.TOP_SCORE_ROUND' | translate:{ points: topScorerRound.punti } }}</span>
                   </div>
                 </div>
               }
@@ -333,7 +333,7 @@
                   <span class="stat-card__icon">🏆</span>
                   <div class="stat-card__text-block">
                     <span class="stat-card__value">{{ leaderClassifica.nickname }}</span>
-                    <span class="stat-card__label">Leader classifica · {{ leaderClassifica.puntiTotali }} pt totali</span>
+                    <span class="stat-card__label">{{ 'RECAP.LEADER_STANDINGS' | translate:{ points: leaderClassifica.puntiTotali } }}</span>
                   </div>
                 </div>
               }
@@ -341,18 +341,18 @@
                 <div class="stat-card stat-card--green">
                   <span class="stat-card__icon">✅</span>
                   <span class="stat-card__value">{{ okCount }}</span>
-                  <span class="stat-card__label">Vittorie</span>
+                  <span class="stat-card__label">{{ 'RECAP.WINS' | translate }}</span>
                 </div>
                 <div class="stat-card stat-card--red-soft">
                   <span class="stat-card__icon">❌</span>
                   <span class="stat-card__value">{{ koCount }}</span>
-                  <span class="stat-card__label">Sconfitte</span>
+                  <span class="stat-card__label">{{ 'RECAP.LOSSES' | translate }}</span>
                 </div>
               }
               <div class="stat-card stat-card--accent">
                 <span class="stat-card__icon">📊</span>
                 <span class="stat-card__value">{{ avgPuntiRound }}</span>
-                <span class="stat-card__label">Media pt / giornata</span>
+                <span class="stat-card__label">{{ 'RECAP.AVG_POINTS_ROUND' | translate }}</span>
               </div>
               @if (recap.stats.squadraPiuScelta) {
                 <div class="stat-card stat-card--accent stat-card--wide">
@@ -393,7 +393,7 @@
             </p>
           } @else {
             <p class="fine__text">
-              <strong>{{ leaderClassifica?.nickname }}</strong> guida la classifica con <strong>{{ leaderClassifica?.puntiTotali }}</strong> pt.<br>
+              <strong>{{ leaderClassifica?.nickname }}</strong> {{ 'RECAP.LEADS_STANDINGS_WITH' | translate }} <strong>{{ leaderClassifica?.puntiTotali }}</strong> pt.<br>
               {{ 'RECAP.NEXT_CHALLENGE' | translate }}
             </p>
           }
@@ -411,7 +411,7 @@
       <button class="nav-btn nav-btn--prev"
               [class.nav-btn--hidden]="currentIdx === 0"
               (click)="prev()"
-              aria-label="Precedente">‹</button>
+              [attr.aria-label]="'RECAP.PREV_SLIDE' | translate">‹</button>
 
       <div class="nav-dots">
         @for (slide of slides; track slide.id; let i = $index) {
@@ -425,11 +425,11 @@
       @if (currentSlide !== 'fine') {
         <button class="nav-btn nav-btn--next"
                 (click)="next()"
-                aria-label="Successivo">›</button>
+                [attr.aria-label]="'RECAP.NEXT_SLIDE' | translate">›</button>
       } @else {
         <button class="nav-btn nav-btn--share"
                 (click)="share()"
-                aria-label="Condividi"><mat-icon style="font-size:1.1rem;width:1.1rem;height:1.1rem">ios_share</mat-icon></button>
+                [attr.aria-label]="'RECAP.SHARE' | translate"><mat-icon style="font-size:1.1rem;width:1.1rem;height:1.1rem">ios_share</mat-icon></button>
       }
     </div>
 

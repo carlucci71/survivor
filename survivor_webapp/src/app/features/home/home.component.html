@@ -43,7 +43,7 @@
             matSuffix
             mat-icon-button
             (click)="searchText = ''; filterLeghe()"
-            aria-label="Clear search"
+            [attr.aria-label]="'COMMON.CLEAR_SEARCH' | translate"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -175,7 +175,7 @@
             </ng-container>
           </ng-container>
           <ng-template #noPrivate>
-            <mat-card class="no-data"><mat-card-content><p>Nessuna lega privata.</p></mat-card-content></mat-card>
+            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PRIVATE_LEAGUES' | translate }}</p></mat-card-content></mat-card>
           </ng-template>
         </div>
 
@@ -259,7 +259,7 @@
             </ng-container>
           </ng-container>
           <ng-template #noPublic>
-            <mat-card class="no-data"><mat-card-content><p>Nessuna lega pubblica.</p></mat-card-content></mat-card>
+            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PUBLIC_LEAGUES' | translate }}</p></mat-card-content></mat-card>
           </ng-template>
         </div>
 

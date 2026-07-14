@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { LanguageService } from '../../../core/services/language.service';
+import { LanguageService, SUPPORTED_LANGUAGES } from '../../../core/services/language.service';
 import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -1245,13 +1245,9 @@ export class ChiSiamoDialogComponent implements OnInit{
               </button>
 
               <mat-menu #langMenu="matMenu" class="lang-menu">
-                <button mat-menu-item (click)="changeLanguage('it')" [class.active]="currentLang === 'it'">
-                  <span>Italiano</span>
-                  <mat-icon *ngIf="currentLang === 'it'" class="check-icon">check</mat-icon>
-                </button>
-                <button mat-menu-item (click)="changeLanguage('en')" [class.active]="currentLang === 'en'">
-                  <span>English</span>
-                  <mat-icon *ngIf="currentLang === 'en'" class="check-icon">check</mat-icon>
+                <button *ngFor="let lang of supportedLanguages" mat-menu-item (click)="changeLanguage(lang.code)" [class.active]="currentLang === lang.code">
+                  <span>{{ lang.nativeName }}</span>
+                  <mat-icon *ngIf="currentLang === lang.code" class="check-icon">check</mat-icon>
                 </button>
               </mat-menu>
             </div>
@@ -1261,7 +1257,7 @@ export class ChiSiamoDialogComponent implements OnInit{
               <span class="separator">|</span>
               <a href="https://liberaleidee.it/survivor/" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
                 <mat-icon>open_in_new</mat-icon>
-                <span>Web App</span>
+                <span>{{ 'FOOTER.WEB_APP' | translate }}</span>
               </a>
             </ng-container>
           </div>
@@ -1533,6 +1529,7 @@ export class FooterComponent  {
   currentLang: string;
   currentYear: number = new Date().getFullYear();
   isMobile: boolean = Capacitor.getPlatform() !== 'web';
+  readonly supportedLanguages = SUPPORTED_LANGUAGES;
 
   constructor(
     private dialog: MatDialog,
@@ -1556,7 +1553,7 @@ export class FooterComponent  {
   }
 
   getCurrentLangName(): string {
-    return this.currentLang === 'it' ? 'Italiano' : 'English';
+    return this.languageService.getCurrentLanguageName();
   }
 
   openFaq(event: Event) {

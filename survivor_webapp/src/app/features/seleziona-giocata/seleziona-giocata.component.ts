@@ -108,50 +108,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
   activeTab: 'ultimi' | 'prossime' | 'opponent' = 'ultimi';
 
-  // Messaggi simpatici di incoraggiamento dopo la selezione (IT + EN)
-  private encouragementMessages = [
-    { emoji: '🔥', it: 'Grande scelta! Questa squadra è on fire!', en: 'Great pick! This team is on fire!' },
-    { emoji: '💪', it: 'Ottima decisione! Hai le idee chiare!', en: 'Smart move! You know exactly what you want!' },
-    { emoji: '🎯', it: 'Centro! Hai puntato sulla squadra giusta!', en: 'Bullseye! You nailed the right team!' },
-    { emoji: '🏆', it: 'Scelta da campione! La vittoria ti aspetta!', en: 'Champion\'s choice! Victory is waiting for you!' },
-    { emoji: '⚡', it: 'Che grinta! Questa selezione è elettrizzante!', en: 'What energy! This selection is electrifying!' },
-    { emoji: '🚀', it: 'Stai volando alto! Selezione spaziale!', en: 'You\'re flying high! Out-of-this-world pick!' },
-    { emoji: '👏', it: 'Applausi! Una scelta davvero intelligente!', en: 'Applause! A truly smart pick!' },
-    { emoji: '🎲', it: 'I dadi sono lanciati! Che vinca il migliore!', en: 'The dice are cast! May the best win!' },
-    { emoji: '🦁', it: 'Ruggisci come un leone! Scelta coraggiosa!', en: 'Roar like a lion! A bold, courageous choice!' },
-    { emoji: '⭐', it: 'Sei una stella! Selezione da 10 e lode!', en: 'You\'re a star! A perfect 10 pick!' },
-    { emoji: '🧠', it: 'Cervello in azione! Mossa strategica!', en: 'Brain in gear! A proper strategic move!' },
-    { emoji: '🎪', it: 'Benvenuto allo show! Hai scelto i protagonisti!', en: 'Welcome to the show! You picked the headliners!' },
-    { emoji: '🍀', it: 'In bocca al lupo! Che la fortuna sia con te!', en: 'Best of luck! May fortune smile upon you!' },
-    { emoji: '🌟', it: 'Brillante! Questa scelta ti porterà lontano!', en: 'Brilliant! This pick will take you far!' },
-    { emoji: '🏅', it: 'Medaglia d\'oro per questa selezione!', en: 'Gold medal worthy selection!' },
-    { emoji: '🎸', it: 'Rock\'n\'roll! Scelta che spacca!', en: 'Rock \'n\' roll! A pick that absolutely rocks!' },
-    { emoji: '🦅', it: 'Occhio d\'aquila! Hai visto giusto!', en: 'Eagle eye! You saw it perfectly!' },
-    { emoji: '💎', it: 'Hai trovato la gemma! Selezione preziosa!', en: 'You found the gem! A precious pick!' },
-    { emoji: '🌈', it: 'Dopo la pioggia esce l\'arcobaleno! Vai così!', en: 'After the rain comes the rainbow! Keep it up!' },
-    { emoji: '🎬', it: 'Ciak, si gira! Sei il regista della vittoria!', en: 'Action! You\'re directing your own victory!' },
-    { emoji: '😏', it: 'Sempre quella, eh? Grande classico!', en: 'That one again? A true classic move!' },
-    { emoji: '🎰', it: 'Tutto in! Solo i coraggiosi scelgono così!', en: 'All in! Only the brave pick like this!' },
-    { emoji: '🤓', it: 'Analisi tattica completata. Scelta approvata!', en: 'Tactical analysis complete. Pick approved!' },
-    { emoji: '🍕', it: 'Più calda di una pizza appena sfornata!', en: 'Hotter than a fresh pizza out of the oven!' },
-    { emoji: '😎', it: 'Stile innato. Scelta di classe assoluta!', en: 'Born cool. An absolute class act of a pick!' },
-    { emoji: '🐉', it: 'Hai selezionato il drago! Trema chiunque!', en: 'You picked the dragon! Everyone better tremble!' },
-    { emoji: '🧲', it: 'Questa squadra attira vittorie come un magnete!', en: 'This team attracts wins like a magnet!' },
-    { emoji: '🎩', it: 'Abracadabra! Una scelta da vero mago!', en: 'Abracadabra! A pick worthy of a wizard!' },
-    { emoji: '🏄', it: 'Cavalchi l\'onda! Selezione da surfista!', en: 'Riding the wave! A true surfer\'s choice!' },
-    { emoji: '🔮', it: 'Il cristallo magico ha parlato! Scelta ispirata!', en: 'The crystal ball has spoken! An inspired pick!' },
-    { emoji: '🦊', it: 'Furbo come una volpe! Scelta da stratega!', en: 'Sly as a fox! A strategist\'s pick!' },
-    { emoji: '🎻', it: 'Questa scelta è musica per le orecchie!', en: 'This pick is music to my ears!' },
-    { emoji: '🚂', it: 'Il treno del successo è partito! Sei a bordo!', en: 'The success train has left the station! You\'re on it!' },
-    { emoji: '🌋', it: 'Eruzione imminente! Questa squadra è esplosiva!', en: 'Eruption incoming! This team is absolutely explosive!' },
-    { emoji: '🎊', it: 'Festa anticipata! Questa scelta merita i coriandoli!', en: 'Early celebrations! This pick deserves confetti!' },
-    { emoji: '🏰', it: 'Stai costruendo il tuo impero! Scelta solida!', en: 'Building your empire! A rock-solid pick!' },
-    { emoji: '🤝', it: 'Accordo fatto! Una partnership da vincitori!', en: 'Deal done! A winning partnership!' },
-    { emoji: '🏇', it: 'Via di corsa! La vittoria non aspetta!', en: 'Off to the races! Victory won\'t wait!' },
-    { emoji: '🦋', it: 'Ha le ali! Vola verso il trionfo!', en: 'It has wings! Fly towards triumph!' },
-    { emoji: '👑', it: 'Scelta regale! Il trono ti aspetta!', en: 'A royal choice! The throne awaits you!' }
-  ];
-
   // Mappa colori sociali delle squadre per sport
   private readonly teamColors: { [key: string]: { primary: string; secondary: string } } = {
     // CALCIO - Serie A
@@ -264,6 +220,10 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'LIGA_ELC': 'ELC.png',
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
+    'LIGA_CEL': 'CELTA_VIGO.png',
+    'LIGA_DEP': 'DEPORTIVO_LA_CORUNA.webp',
+    'LIGA_MAL': 'MALAGA.png',
+    'LIGA_RAC': 'RACING_SANTANDER.png',
     // SERIE A (20 squadre)
     'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
@@ -913,11 +873,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   }
 
   private showEncouragementMessage(): void {
-    const randomIndex = Math.floor(Math.random() * this.encouragementMessages.length);
-    const selected = this.encouragementMessages[randomIndex];
-    const isEnglish = this.translate.currentLang === 'en';
-    const message = isEnglish ? selected.en : selected.it;
-    this.snackBar.open(`${selected.emoji} ${message}`, '✕', {
+    const messages = this.translate.instant('SELEZIONA_GIOCATA.ENCOURAGEMENT');
+    if (!Array.isArray(messages) || messages.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    const message = messages[randomIndex];
+    this.snackBar.open(message, '✕', {
       duration: 4000,
       horizontalPosition: 'center',
       verticalPosition: 'top',

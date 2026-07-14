@@ -29,7 +29,7 @@ interface TutorialSlide {
   ],
   template: `
     <div class="ob-backdrop" (click)="onBackdropClick($event)">
-      <div class="ob-card" role="dialog" aria-modal="true" aria-label="Leader Tutorial">
+      <div class="ob-card" role="dialog" aria-modal="true" [attr.aria-label]="'LEADER_TUTORIAL.ARIA_LABEL' | translate">
 
         <!-- Badge ruolo -->
         <div class="ob-role-badge">

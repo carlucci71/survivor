@@ -348,7 +348,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     if (lega?.miaGiocataCorrente && lega.statoGiornataCorrente?.value === 'IN_CORSO') {
       return { esitoClass: 'live', esitoLabel: 'LIVE' };
     }
-    return { esitoClass: 'wait', esitoLabel: 'IN ATTESA' };
+    return { esitoClass: 'wait', esitoLabel: 'PENDING' };
   }
 
   onLogoError(event: Event): void {

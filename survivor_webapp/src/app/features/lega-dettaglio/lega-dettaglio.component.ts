@@ -1296,6 +1296,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     'LIGA_ELC': 'ELC.png',
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
+    'LIGA_CEL': 'CELTA_VIGO.png',
+    'LIGA_DEP': 'DEPORTIVO_LA_CORUNA.webp',
+    'LIGA_MAL': 'MALAGA.png',
+    'LIGA_RAC': 'RACING_SANTANDER.png',
     // SERIE A (20 squadre)
     'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
@@ -1854,7 +1858,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel termina della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_TERMINA');
       },
     });
   }
@@ -1865,7 +1869,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel riapri della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_RIAPRI');
       },
     });
   }
@@ -1877,7 +1881,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore in seconda occasione della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_SECONDA_OCCASIONE');
       },
     });
   }
@@ -2150,7 +2154,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel termina della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_TERMINA');
       },
     });
   }
@@ -2216,7 +2220,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.legaService.calcola(Number(this.id)).subscribe({
       next: (lega: Lega) => {
         if (!lega?.id || lega.stato?.value === StatoLega.ERRORE.value) {
-          this.error = 'Errore in calcola della lega';
+          this.error = this.translate.instant('LEAGUE.ERROR_CALCOLA');
           return;
         }
         this.lega = lega;
@@ -2228,7 +2232,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.startCountdown();
       },
       error: (err: any) => {
-        this.error = 'Errore in calcola della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_CALCOLA');
       },
     });
   }
@@ -2248,7 +2252,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore in undocalcola della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_UNDO_CALCOLA');
       },
     });
   }
@@ -2376,7 +2380,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       error: (err) => {
         console.error('Errore durante l\'eliminazione della lega:', err);
         this.isDeleting = false;
-        this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
+        this.error = this.translate.instant('LEAGUE.ERROR_DELETE_LEAGUE') + ': ' + (err.error?.message || err.message);
       }
     });
   }
