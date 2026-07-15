@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { Capacitor } from '@capacitor/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RecapService } from '../../core/services/recap.service';
 import { RecapGiornata, RecapPickEntry } from '../../core/models/interfaces.model';
 
@@ -59,6 +59,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private recapService = inject(RecapService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   recap: RecapGiornata | null = null;
   loading = true;
@@ -181,7 +182,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
 
     if (!legaId || !giornata || isNaN(legaId) || isNaN(giornata)) {
       console.error('[RecapGiornata] Parametri rotta non validi', { legaId, giornata });
-      this.errorDetail = `Parametri non validi: legaId=${legaId}, giornata=${giornata}`;
+      this.errorDetail = `${this.translate.instant('RECAP.INVALID_PARAMS')}: legaId=${legaId}, giornata=${giornata}`;
       this.error = true;
       this.loading = false;
       this.cdr.detectChanges();

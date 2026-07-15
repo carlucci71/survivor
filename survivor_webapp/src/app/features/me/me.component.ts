@@ -30,7 +30,7 @@ export class MeComponent implements OnDestroy {
   showEasterEgg = false;
   easterLit = false;
   easterExtinguished = false;
-  easterInstructionText = 'Swipe fast to strike';
+  easterInstructionText = '';
   easterInstructionOpacity = '1';
   matchTransform = 'translate(0px) rotate(0deg)';
   private easterIsLit = false;
@@ -49,7 +49,9 @@ export class MeComponent implements OnDestroy {
     private router: Router,
     private authService: AuthService,
     private translate: TranslateService
-  ) {}
+  ) {
+    this.easterInstructionText = this.translate.instant('ME.EASTER_SWIPE');
+  }
 
   ngOnInit(): void {
     this.giocatoreService.me().subscribe({
@@ -147,7 +149,7 @@ export class MeComponent implements OnDestroy {
     this.easterHeat = 0;
     this.easterLit = false;
     this.easterExtinguished = false;
-    this.easterInstructionText = 'Swipe fast to strike';
+    this.easterInstructionText = this.translate.instant('ME.EASTER_SWIPE');
     this.easterInstructionOpacity = '1';
     this.matchTransform = 'translate(0px) rotate(0deg)';
     this.easterLastTime = 0;
@@ -159,7 +161,7 @@ export class MeComponent implements OnDestroy {
     this.easterLit = false;
     this.easterExtinguished = false;
     this.easterHeat = 0;
-    this.easterInstructionText = 'Swipe fast to strike';
+    this.easterInstructionText = this.translate.instant('ME.EASTER_SWIPE');
     this.easterInstructionOpacity = '1';
     if (this.easterResetTimeout) { clearTimeout(this.easterResetTimeout); }
     this.stopFireSound();
@@ -215,7 +217,7 @@ export class MeComponent implements OnDestroy {
       this.easterHeat = 0;
       this.easterLit = false;
       this.easterExtinguished = true;
-      this.easterInstructionText = 'Swipe fast to strike';
+      this.easterInstructionText = this.translate.instant('ME.EASTER_SWIPE');
       this.easterInstructionOpacity = '1';
       this.stopFireSound();
       this.playHissSound();
@@ -233,7 +235,7 @@ export class MeComponent implements OnDestroy {
     this.playIgniteSound();
     setTimeout(() => {
       this.easterInstructionOpacity = '0.5';
-      this.easterInstructionText = 'Tap to extinguish';
+      this.easterInstructionText = this.translate.instant('ME.EASTER_TAP');
     }, 2000);
   }
 

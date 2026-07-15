@@ -61,7 +61,7 @@
             <span class="cm-icon">💡</span>
             <span class="cm-title">{{ 'PLAY.CONSIGLI.MODAL_TITLE' | translate }}</span>
           </div>
-          <button class="cm-close" type="button" (click)="chiudiConsigli()" aria-label="Chiudi">
+          <button class="cm-close" type="button" (click)="chiudiConsigli()" [attr.aria-label]="'COMMON.CLOSE' | translate">
             <mat-icon>close</mat-icon>
           </button>
         </div>

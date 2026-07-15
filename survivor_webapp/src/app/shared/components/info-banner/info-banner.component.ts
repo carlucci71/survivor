@@ -43,6 +43,8 @@ import { Squadra } from '../../../core/models/interfaces.model';
         <div class="regola">
           <h3>{{ 'RULES.SECTION_2_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_2_TEXT' | translate }}</p>
+          <p>{{ 'RULES.SECTION_2_P2' | translate }}</p>
+          <p>{{ 'RULES.SECTION_2_P3' | translate }}</p>
         </div>
 
         <!-- 3. Modalità di gioco -->

@@ -426,7 +426,7 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      title="Senza scelta">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
@@ -563,7 +563,7 @@
                           [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)">
                           <!-- Mostra logo+nome o badge "Voto Privato" se nascosta -->
                           @if (shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
-                            <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">
+                            <span class="private-vote-badge" [title]="'LEAGUE.PICK_VISIBLE_AFTER_TIMER' | translate">
                               🔒
                             </span>
                           } @else {
@@ -641,7 +641,7 @@
                         @if(isDaAvviare() && (isAdmin() || isLeaderLega())){
                           <mat-icon class="action-icon delete-icon"
                                     (click)="cancellaGiocatore(giocatore)"
-                                    matTooltip="Rimuovi giocatore">
+                                    [matTooltip]="'LEAGUE.REMOVE_PLAYER_TOOLTIP' | translate">
                             close
                           </mat-icon>
                         }
@@ -772,7 +772,7 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      title="Senza scelta">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
@@ -886,7 +886,7 @@
                        [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)"
                        (click)="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
-                      <span class="private-vote-badge" title="Scelta visibile a tutti quando scade il timer">🔒</span>
+                      <span class="private-vote-badge" [title]="'LEAGUE.PICK_VISIBLE_AFTER_TIMER' | translate">🔒</span>
                     } @else {
                       <div class="team-pick-cell team-pick-cell--mobile" [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''">
                         @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) && getGiocataByGiornataAssoluta(giocatore, giornata)?.pubblica !== false) {
@@ -1009,8 +1009,8 @@
       </div>
       }
 
-      <!-- ELIMINA LEGA - In fondo, discreto -->
-      @if (isDaAvviare() && isLeaderLega()) {
+      <!-- ELIMINA LEGA - In fondo, discreto. Il leader può eliminarla in qualsiasi stato -->
+      @if (isLeaderLega()) {
       <div class="delete-lega-footer">
         <span class="delete-link" (click)="toggleDeleteConfirm()">
           <mat-icon>delete_outline</mat-icon>
@@ -1058,7 +1058,7 @@
       </button>
     </div>
     <div class="voti-sheet-body">
-      <p class="voti-sheet-count">{{ votiSheet.nicknames.length }} giocator{{ votiSheet.nicknames.length === 1 ? 'e' : 'i' }}</p>
+      <p class="voti-sheet-count">{{ votiSheet.nicknames.length }} {{ (votiSheet.nicknames.length === 1 ? 'LEAGUE.PLAYER_ONE' : 'LEAGUE.PLAYER_OTHER') | translate }}</p>
       @for (nick of votiSheet.nicknames; track nick) {
         <div class="voti-sheet-row">
           <span class="voti-sheet-dot"></span>
@@ -1076,7 +1076,7 @@
     [style.top]="matchupPopupStyle.top"
     [style.left]="matchupPopupStyle.left"
     (click)="$event.stopPropagation()">
-    <button class="matchup-close-btn" (click)="closeMatchupPopup()" aria-label="Chiudi">✕</button>
+    <button class="matchup-close-btn" (click)="closeMatchupPopup()" [attr.aria-label]="'COMMON.CLOSE' | translate">✕</button>
     <div class="matchup-popup-teams">
       <!-- Mia squadra -->
       <div class="matchup-team matchup-team--mine">

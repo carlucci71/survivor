@@ -40,6 +40,7 @@ public class SecurityConfig {
                         // Permetti auth endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/versione").permitAll()
+                        .requestMatchers("/versione/minima").permitAll()
                         .requestMatchers("/util/connessioni").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers( "/admin/**").hasRole("ADMIN")

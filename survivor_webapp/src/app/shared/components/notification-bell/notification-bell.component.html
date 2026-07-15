@@ -27,7 +27,7 @@
       @if (unreadCount > 0) {
         <button mat-icon-button class="nb-mark-all-btn"
           (click)="markAllAsRead(); $event.stopPropagation()"
-          matTooltip="Segna tutte come lette">
+          [matTooltip]="'NOTIFICATIONS.MARK_ALL_READ' | translate">
           <mat-icon>done_all</mat-icon>
         </button>
         <span class="nb-header-count">{{ unreadCount }}</span>
