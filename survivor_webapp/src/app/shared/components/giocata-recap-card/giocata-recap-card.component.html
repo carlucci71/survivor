@@ -18,7 +18,7 @@
 
     <!-- League pills switcher (solo se >1 lega) -->
     @if (legheAttive.length > 1) {
-      <div class="league-pills" role="tablist" aria-label="Seleziona lega">
+      <div class="league-pills" role="tablist" [attr.aria-label]="'COMMON.SELECT_LEAGUE' | translate">
         @for (item of legheAttive; track item.lega.id; let i = $index) {
           <button
             class="league-pill"
@@ -53,7 +53,7 @@
       matRipple
       (click)="goToLega()"
       role="button"
-      aria-label="Vai alla lega"
+      [attr.aria-label]="'COMMON.GO_TO_LEAGUE' | translate"
     >
       <!-- Overlay animazione risultato -->
       @if (showFlash) {

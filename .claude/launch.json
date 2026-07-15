@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "survivor_webapp",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "survivor_webapp", "run", "start"],
+      "port": 4200
+    }
+  ]
+}

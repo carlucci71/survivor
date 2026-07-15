@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
@@ -51,18 +51,19 @@ export class LoginComponent implements AfterViewInit {
   }
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) { }
 
   onSubmit(): void {
     if (!this.email) {
-      this.message = 'Inserisci un indirizzo email valido';
+      this.message = this.translate.instant('AUTH.EMAIL_INVALID');
       this.isSuccess = false;
       return;
     }
 
     if (!this.termsAccepted) {
-      this.message = 'Devi accettare i Termini e Condizioni per continuare';
+      this.message = this.translate.instant('AUTH.TERMS_REQUIRED');
       this.isSuccess = false;
       return;
     }
@@ -75,7 +76,7 @@ export class LoginComponent implements AfterViewInit {
           window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
         },
         error: (error) => {
-          this.message = 'Errore durante l\'invio del magic link';
+          this.message = this.translate.instant('AUTH.MAGIC_LINK_SEND_ERROR');
           this.isSuccess = false;
         }
       });
@@ -88,9 +89,9 @@ export class LoginComponent implements AfterViewInit {
         },
         error: (error) => {
           if (error.status === 404) {
-            this.message = 'Email non trovata. Devi prima registrarti.';
+            this.message = this.translate.instant('AUTH.EMAIL_NOT_FOUND');
           } else {
-            this.message = error.error?.message || 'Errore durante l\'accesso';
+            this.message = error.error?.message || this.translate.instant('AUTH.LOGIN_ERROR_GENERIC');
           }
           this.isSuccess = false;
         }

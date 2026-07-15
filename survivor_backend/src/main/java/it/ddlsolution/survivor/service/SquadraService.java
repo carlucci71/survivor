@@ -50,6 +50,11 @@ public class SquadraService {
             squadre = squadraRepository.findAllByIdCampionato(campionatoId);
         } else {
             squadre = squadraRepository.findByNazioneOfCampionatoAndAnno(campionatoId, anno);
+            // Fallback: se non ci sono partite ancora caricate per questo anno,
+            // restituisce tutte le squadre registrate per il campionato
+            if (squadre.isEmpty()) {
+                squadre = squadraRepository.findAllByIdCampionato(campionatoId);
+            }
         }
         return squadraMapper.toDTOList(squadre)
                 .stream()

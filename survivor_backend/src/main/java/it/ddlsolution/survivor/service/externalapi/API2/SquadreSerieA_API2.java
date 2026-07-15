@@ -25,6 +25,7 @@ enum SquadreSerieA_API2 implements IEnumSquadre {
         TOR("TOR"),
         UDI("UDI"),
         EMP("EMP"),
+        FRO("FRO"),
         VEN("VEN"),
         VER("VER"),
         MON("MONZ");
