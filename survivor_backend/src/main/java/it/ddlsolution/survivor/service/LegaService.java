@@ -432,6 +432,10 @@ public class LegaService {
             if (nuovaGiornataCalcolata > campionatoDTO.getNumGiornate()) {
                 nuovaGiornataCalcolata = campionatoDTO.getNumGiornate();
             }
+            // Rispetta il numero massimo di turni scelto dal creatore della lega (anche in Survivor)
+            if (legaDTO.getGiornataFinale() != null && nuovaGiornataCalcolata > legaDTO.getGiornataFinale()) {
+                nuovaGiornataCalcolata = legaDTO.getGiornataFinale();
+            }
             List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
             final int giornataIniziale = legaDTO.getGiornataIniziale();
             Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
@@ -489,57 +493,109 @@ public class LegaService {
                         //   PAREGGIO        → consuma 1 vita se disponibile; se 0 vite → eliminato
                         //   KO (sconfitta)  → eliminato immediatamente, indipendentemente dalle vite
                         //   Nessuna pick    → trattata come KO → eliminato immediatamente
+                        //
+                        // Le eliminazioni vengono APPLICATE solo quando l'esito di TUTTI i giocatori
+                        // ancora attivi per questo turno è noto (partite di tutti terminate): altrimenti
+                        // si rischia di dichiarare un vincitore/eliminare qualcuno mentre altre partite
+                        // dello stesso turno (votate da altri giocatori attivi) sono ancora da giocare.
+                        // Se applicando le eliminazioni TUTTI i giocatori ancora attivi risulterebbero
+                        // eliminati nello stesso turno, nessuno viene eliminato: il turno azzera il gruppo
+                        // e la lega termina dichiarandoli ex aequo (gestito in calcolaStatoLega).
+                        Map<Long, Enumeratori.EsitoGiocata> esitoPerGiocatore = new HashMap<>();
+                        boolean turnoCompletoPerAttivi = true;
                         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                             Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
-                            if (statoGiocatore != Enumeratori.StatoGiocatore.ELIMINATO) {
-                                final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
-                                List<GiocataDTO> giocate = giocatoreDTO
-                                        .getGiocate()
-                                        .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
-                                        .filter(g -> g.getLegaId().equals(idLega) && g.getGiornata() + giornataIniziale - 1 == gc)
-                                        .toList();
-                                Enumeratori.EsitoGiocata esitoCalcolato = null;
-                                if (giocate.size() == 0) {
-                                    // Nessuna pick: KO diretto
-                                    esitoCalcolato = Enumeratori.EsitoGiocata.KO;
-                                    GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
-                                    giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
-                                    giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
-                                    giocataRequestDTO.setLegaId(idLega);
-                                    giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
-                                    inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
-                                } else if (giocate.size() == 1) {
-                                    GiocataDTO giocataDTO = giocate.get(0);
-                                    if (giocataDTO.getEsito() == null) {
-                                        esitoCalcolato = calcolaEsitoSurvivor(giocataDTO.getSquadraSigla(), partite);
-                                        log.info("calcola lega={} giocatore={} sigla='{}' esitoCalcolato={}",
-                                                idLega, giocatoreDTO.getId(), giocataDTO.getSquadraSigla(), esitoCalcolato);
-                                        if (esitoCalcolato != null) {
-                                            giocataDTO.setEsito(esitoCalcolato);
-                                        }
+                            if (statoGiocatore == Enumeratori.StatoGiocatore.ELIMINATO) {
+                                continue;
+                            }
+                            final Integer gc = Integer.valueOf(nuovaGiornataCalcolata);
+                            List<GiocataDTO> giocate = giocatoreDTO
+                                    .getGiocate()
+                                    .stream().sorted(Comparator.comparing(GiocataDTO::getGiornata))
+                                    .filter(g -> g.getLegaId().equals(idLega) && g.getGiornata() + giornataIniziale - 1 == gc)
+                                    .toList();
+                            Enumeratori.EsitoGiocata esito = null;
+                            if (giocate.size() == 0) {
+                                // Nessuna pick: KO diretto, non dipende da altre partite del turno
+                                esito = Enumeratori.EsitoGiocata.KO;
+                                GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
+                                giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
+                                giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
+                                giocataRequestDTO.setLegaId(idLega);
+                                giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
+                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
+                            } else if (giocate.size() == 1) {
+                                GiocataDTO giocataDTO = giocate.get(0);
+                                if (giocataDTO.getEsito() == null) {
+                                    Enumeratori.EsitoGiocata esitoCalcolato = calcolaEsitoSurvivor(giocataDTO.getSquadraSigla(), partite);
+                                    log.info("calcola lega={} giocatore={} sigla='{}' esitoCalcolato={}",
+                                            idLega, giocatoreDTO.getId(), giocataDTO.getSquadraSigla(), esitoCalcolato);
+                                    if (esitoCalcolato != null) {
+                                        giocataDTO.setEsito(esitoCalcolato);
                                     }
                                 }
-                                if (esitoCalcolato == Enumeratori.EsitoGiocata.KO ) {
-                                    // Sconfitta: eliminazione immediata indipendentemente dalle vite
-                                    giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
-                                } else if (esitoCalcolato == Enumeratori.EsitoGiocata.PAREGGIO) {
-                                    // Pareggio: consuma una vita se disponibile, altrimenti eliminazione
-                                    Short viteAttuali = Optional.ofNullable(
+                                esito = giocataDTO.getEsito();
+                            }
+                            if (esito == null) {
+                                // Partita di questo giocatore non ancora terminata: il turno non è completo
+                                turnoCompletoPerAttivi = false;
+                            } else {
+                                esitoPerGiocatore.put(giocatoreDTO.getId(), esito);
+                            }
+                        }
+
+                        if (turnoCompletoPerAttivi && !esitoPerGiocatore.isEmpty()) {
+                            // Determina, senza ancora mutare nulla, chi verrebbe eliminato applicando le regole normali
+                            Map<Long, Boolean> saraEliminato = new HashMap<>();
+                            for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                                Enumeratori.EsitoGiocata esito = esitoPerGiocatore.get(giocatoreDTO.getId());
+                                if (esito == null) {
+                                    continue;
+                                }
+                                boolean eliminato;
+                                if (esito == Enumeratori.EsitoGiocata.KO) {
+                                    eliminato = true;
+                                } else if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
+                                    short viteAttuali = Optional.ofNullable(
                                             giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
-                                    short nuoveVite = (short) (viteAttuali - 1);
-                                    if (nuoveVite <= 0) {
+                                    eliminato = (viteAttuali - 1) <= 0;
+                                } else {
+                                    eliminato = false;
+                                }
+                                saraEliminato.put(giocatoreDTO.getId(), eliminato);
+                            }
+                            boolean tuttiEliminati = saraEliminato.values().stream().allMatch(Boolean::booleanValue);
+
+                            if (tuttiEliminati) {
+                                log.info("calcola lega={}: il turno {} eliminerebbe tutti i {} giocatori ancora attivi, nessuna eliminazione applicata (ex aequo)",
+                                        idLega, nuovaGiornataCalcolata, saraEliminato.size());
+                                legaDTO.setTuttiEliminatiStessoTurno(true);
+                            } else {
+                                for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
+                                    Enumeratori.EsitoGiocata esito = esitoPerGiocatore.get(giocatoreDTO.getId());
+                                    if (esito == null) {
+                                        continue;
+                                    }
+                                    if (esito == Enumeratori.EsitoGiocata.KO) {
                                         giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
-                                    } else {
-                                        giocatoreDTO.getVitePerLega().put(idLega, nuoveVite);
-                                        Giocatore giocatoreEntity = giocatoreRepository.findById(giocatoreDTO.getId())
-                                                .orElse(null);
-                                        Lega legaEntity = legaRepository.findById(idLega).orElse(null);
-                                        if (giocatoreEntity != null && legaEntity != null) {
-                                            vitaPersaRepository.save(new VitaPersa(giocatoreEntity, legaEntity, nuovaGiornataCalcolata));
+                                    } else if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
+                                        Short viteAttuali = Optional.ofNullable(
+                                                giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
+                                        short nuoveVite = (short) (viteAttuali - 1);
+                                        if (nuoveVite <= 0) {
+                                            giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                                        } else {
+                                            giocatoreDTO.getVitePerLega().put(idLega, nuoveVite);
+                                            Giocatore giocatoreEntity = giocatoreRepository.findById(giocatoreDTO.getId())
+                                                    .orElse(null);
+                                            Lega legaEntity = legaRepository.findById(idLega).orElse(null);
+                                            if (giocatoreEntity != null && legaEntity != null) {
+                                                vitaPersaRepository.save(new VitaPersa(giocatoreEntity, legaEntity, nuovaGiornataCalcolata));
+                                            }
                                         }
                                     }
+                                    // esito == OK: nessuna azione
                                 }
-                                // esitoCalcolato == OK: nessuna azione
                             }
                         }
                     }
@@ -713,6 +769,10 @@ public class LegaService {
         if (legaDTO.getCampionato().getNumGiornate() < giornataCorrente) {
             giornataCorrente = legaDTO.getCampionato().getNumGiornate();
         }
+        // Rispetta il numero massimo di turni scelto dal creatore della lega (anche in Survivor)
+        if (legaDTO.getGiornataFinale() != null && legaDTO.getGiornataFinale() < giornataCorrente) {
+            giornataCorrente = legaDTO.getGiornataFinale();
+        }
         //legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setGiornataDaGiocare(giornataCorrente);
         if (giornataCorrente > 0 && legaDTO.getCampionato().getIniziGiornate() != null
@@ -765,16 +825,21 @@ public class LegaService {
         } else if (!isCampionato
                 && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
                 && legaDTO.getStatoGiornataCorrente() == Enumeratori.StatoPartita.TERMINATA
-                && legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
+                && (legaDTO.getCampionato().getNumGiornate() == legaDTO.getGiornataCorrente()
+                    || (legaDTO.getGiornataFinale() != null && legaDTO.getGiornataCorrente() >= legaDTO.getGiornataFinale()))
         ) {
+            // Limite turni raggiunto: chi resta attivo è considerato ex aequo (assegnaPosizioniFinali)
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         } else if (!isCampionato
                 && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
-                && legaDTO.getGiocatori().stream()
-                .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
-                .count() <= 1
+                && (legaDTO.getGiocatori().stream()
+                        .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
+                        .count() <= 1
+                    || legaDTO.isTuttiEliminatiStessoTurno())
         ) {
+            // Resta un solo giocatore attivo, oppure il turno ha eliminato tutti i rimasti nello stesso turno
+            // (in tal caso nessuno è stato marcato ELIMINATO: restano ATTIVO e vengono premiati ex aequo)
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         }
@@ -806,7 +871,15 @@ public class LegaService {
         Lega lega = legaRepository.findById(legaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Lega non trovata: " + legaDTO.getId()));
 
+        // Classifica standard con pari merito (ex aequo): a parità di "chiave" si assegna la stessa
+        // posizione, e la posizione successiva salta in avanti del numero di pari merito (1,1,3,...).
+        // In Campionato la chiave è il punteggio; in Survivor tutti i giocatori ancora ATTIVO a fine
+        // lega sono ex aequo (un solo attivo nel caso normale, più di uno se l'intero gruppo residuo
+        // viene eliminato nello stesso turno), mentre i giocatori eliminati mantengono l'ordinamento
+        // sequenziale già in uso.
+        int assegnati = 0;
         int posizione = 1;
+        Object chiavePrecedente = null;
         for (GiocatoreDTO giocatoreDTO : classificaFinale) {
             // Trova il GiocatoreLega corrispondente
             GiocatoreLega giocatoreLega = lega.getGiocatoreLeghe().stream()
@@ -821,16 +894,26 @@ public class LegaService {
                 boolean haGiocate = giocatoreDTO.getGiocate() != null && !giocatoreDTO.getGiocate().isEmpty();
 
                 if (stato == Enumeratori.StatoGiocatore.ATTIVO || haGiocate) {
+                    Object chiave;
+                    if (legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO) {
+                        chiave = Optional.ofNullable(giocatoreDTO.getPuntiTotali()).orElse(0);
+                    } else {
+                        chiave = stato == Enumeratori.StatoGiocatore.ATTIVO ? "ATTIVO" : giocatoreDTO.getId();
+                    }
+                    assegnati++;
+                    if (chiavePrecedente == null || !chiave.equals(chiavePrecedente)) {
+                        posizione = assegnati;
+                    }
                     giocatoreLega.setPosizioneFinale(posizione);
                     log.debug("Giocatore {} - Posizione: {}, Stato: {}, Giocate: {}",
                             giocatoreDTO.getNickname(), posizione, stato,
                             haGiocate ? giocatoreDTO.getGiocate().size() : 0);
-                    posizione++;
+                    chiavePrecedente = chiave;
                 }
             }
         }
 
-        log.info("Assegnate {} posizioni finali per lega {}", posizione - 1, legaDTO.getId());
+        log.info("Assegnate {} posizioni finali per lega {}", assegnati, legaDTO.getId());
     }
 
     @LoggaDispositiva(tipologia = "termina")

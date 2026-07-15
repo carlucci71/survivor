@@ -30,6 +30,7 @@
     </div>
 
     <h1 class="vd-title">{{ 'VINCITORI_DIALOG.TITLE' | translate }}</h1>
+    <div class="vd-title-rule"></div>
 
     <p class="vd-subtitle">
       @if (data.vincitori.length === 1) {
@@ -39,9 +40,9 @@
       }
     </p>
 
-    <div class="vd-list">
+    <div class="vd-list" [class.vd-list-solo]="data.vincitori.length === 1">
       @for (v of data.vincitori; track v.id; let i = $index) {
-        <div class="vd-row" [style.animation-delay]="(0.25 + i * 0.12) + 's'">
+        <div class="vd-row" [class.vd-row-solo]="data.vincitori.length === 1" [style.animation-delay]="(0.25 + i * 0.12) + 's'">
           <span class="vd-crown">👑</span>
           <span class="vd-nickname">{{ v.nickname }}</span>
         </div>

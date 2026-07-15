@@ -15,6 +15,7 @@ export interface LanguageOption {
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { code: 'it', nativeName: 'Italiano' },
   { code: 'en', nativeName: 'English' },
+  { code: 'es', nativeName: 'Español' },
 ];
 
 const DEFAULT_LANG = 'it';
