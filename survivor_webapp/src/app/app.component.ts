@@ -58,17 +58,18 @@ export class AppComponent implements OnInit {
   private checkForceUpdate(): void {
     if (!Capacitor.isNativePlatform()) return;
 
+    const platform = Capacitor.getPlatform();
+
     App.getInfo().then(appInfo => {
       this.http.get<{ minVersionCode: number }>(`${environment.apiUrl}/versione/minima`).subscribe({
         next: (response) => {
           if (parseInt(appInfo.build, 10) < response.minVersionCode) {
-            const platform = Capacitor.getPlatform();
-            const storeUrl = platform === 'ios'
-              ? 'https://apps.apple.com/app/survivor/id0000000000'
-              : 'https://play.google.com/store/apps/details?id=com.survivor.app';
+            const isIos = platform === 'ios';
+            // L'app non è ancora pubblicata su App Store: niente link ufficiale su cui reindirizzare.
+            const storeUrl = isIos ? null : 'https://play.google.com/store/apps/details?id=com.survivor.app';
             this.dialog.open(ForceUpdateDialogComponent, {
-              data: { storeUrl },
-              disableClose: true,
+              data: { storeUrl, dismissible: true },
+              disableClose: false,
               panelClass: 'custom-dialog-container'
             });
           }
