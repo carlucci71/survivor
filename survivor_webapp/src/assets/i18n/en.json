@@ -1394,6 +1394,14 @@
       "Ok enough, even champs need sleep 🛌"
     ]
   },
+  "FORCE_UPDATE_DIALOG": {
+    "BADGE": "Update available",
+    "TITLE": "New version available",
+    "DESCRIPTION": "Update Survivor to the latest version to keep playing. There are new features and improvements you don't want to miss!",
+    "BUTTON": "Update now",
+    "HINT": "Available on your platform's store",
+    "HINT_COMING_SOON": "The update will be available on the App Store soon"
+  },
   "ONBOARDING": {
     "SKIP": "Skip",
     "NEXT": "Next",

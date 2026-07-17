@@ -1399,6 +1399,14 @@
       "Ok basta, anche i campioni vanno a letto 🛌"
     ]
   },
+  "FORCE_UPDATE_DIALOG": {
+    "BADGE": "Aggiornamento disponibile",
+    "TITLE": "Nuova versione disponibile",
+    "DESCRIPTION": "Per continuare a giocare aggiorna Survivor all'ultima versione. Ci sono novità e miglioramenti che non vuoi perderti!",
+    "BUTTON": "Aggiorna ora",
+    "HINT": "Disponibile sullo store della tua piattaforma",
+    "HINT_COMING_SOON": "L'aggiornamento sarà disponibile a breve su App Store"
+  },
   "ONBOARDING": {
     "SKIP": "Salta",
     "NEXT": "Avanti",
