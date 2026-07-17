@@ -99,5 +99,9 @@ push:
 
 # Flag to enable connection acquire/release logging (configured via environment or dev profile)
 app:
+  # Versione minima (versionCode Android) richiesta per usare l'app: sotto questo valore
+  # l'app mostra il popup di aggiornamento obbligatorio. Alzarla richiede solo di modificare
+  # questo valore, fare commit e lasciare che il normale deploy backend lo porti in produzione.
+  min-version-code: 101
   datasource:
     log-connections: ${APP_DATASOURCE_LOG_CONNECTIONS:false}

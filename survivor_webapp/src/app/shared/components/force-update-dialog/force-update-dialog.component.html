@@ -1,0 +1,46 @@
+<div class="fud-card">
+
+  @if (data.dismissible) {
+    <button class="fud-close-btn" (click)="close()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+
+  <!-- Header gradient -->
+  <div class="fud-header">
+    <div class="fud-glow" aria-hidden="true"></div>
+    <div class="fud-orb fud-orb-1" aria-hidden="true"></div>
+    <div class="fud-orb fud-orb-2" aria-hidden="true"></div>
+    <div class="fud-orb fud-orb-3" aria-hidden="true"></div>
+    <div class="fud-shine" aria-hidden="true"></div>
+
+    <div class="fud-logo-ring">
+      <div class="fud-logo-pulse" aria-hidden="true"></div>
+      <mat-icon class="fud-logo-icon">system_update</mat-icon>
+    </div>
+    <div class="fud-badge">
+      <mat-icon>bolt</mat-icon>
+      <span>{{ 'FORCE_UPDATE_DIALOG.BADGE' | translate }}</span>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="fud-body">
+    <h2 class="fud-title">{{ 'FORCE_UPDATE_DIALOG.TITLE' | translate }}</h2>
+    <div class="fud-title-rule"></div>
+    <p class="fud-desc">{{ 'FORCE_UPDATE_DIALOG.DESCRIPTION' | translate }}</p>
+
+    @if (data.storeUrl) {
+      <button class="fud-btn" (click)="openStore()">
+        <span class="fud-btn-shine" aria-hidden="true"></span>
+        <mat-icon>download</mat-icon>
+        <span>{{ 'FORCE_UPDATE_DIALOG.BUTTON' | translate }}</span>
+      </button>
+
+      <p class="fud-hint">{{ 'FORCE_UPDATE_DIALOG.HINT' | translate }}</p>
+    } @else {
+      <p class="fud-hint">{{ 'FORCE_UPDATE_DIALOG.HINT_COMING_SOON' | translate }}</p>
+    }
+  </div>
+
+</div>
