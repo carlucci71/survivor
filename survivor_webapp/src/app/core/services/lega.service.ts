@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Giocatore, Lega, LegaJoinRequest, Partita } from '../models/interfaces.model';
+import { Giocatore, Lega, LegaJoinRequest, Partita, PronosticoVincitore, VotoPronostico } from '../models/interfaces.model';
 import { map } from 'rxjs/operators';
 import { mapLegaFromBE } from '../utils/lega-mapper';
 import { environment } from '../../../environments/environment';
@@ -69,6 +69,18 @@ export class LegaService {
 
   storicoVite(idLega: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${idLega}/vite/storico`);
+  }
+
+  salvaPronosticoVincitore(idLega: number, giocatorePronosticatoId: number): Observable<PronosticoVincitore> {
+    return this.http.post<PronosticoVincitore>(`${this.apiUrl}/${idLega}/pronostico`, { giocatorePronosticatoId });
+  }
+
+  getMioPronostico(idLega: number): Observable<PronosticoVincitore | null> {
+    return this.http.get<PronosticoVincitore | null>(`${this.apiUrl}/${idLega}/pronostico`);
+  }
+
+  getClassificaPronostici(idLega: number): Observable<VotoPronostico[]> {
+    return this.http.get<VotoPronostico[]>(`${this.apiUrl}/${idLega}/pronostici/classifica`);
   }
 
   join(id: number, pwd: string | null, tokenOriginal: string): Observable<Lega> {

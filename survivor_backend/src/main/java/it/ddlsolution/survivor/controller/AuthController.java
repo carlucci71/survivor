@@ -50,7 +50,7 @@ public class AuthController {
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
         try {
-            magicLinkService.sendMagicLink(request.getEmail().trim().toLowerCase(), request.getMobile());
+            magicLinkService.sendMagicLink(request.getEmail().trim().toLowerCase(), request.getMobile(), request.getAddInfo());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
                     "Magic link inviato con successo. Controlla la tua email.", true));
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class AuthController {
                     "Email non trovata. Devi prima registrarti.", false));
         }
         try {
-            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim().toLowerCase(), request.getMobile());
+            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim().toLowerCase(), request.getMobile(), request.getAddInfo());
             return ResponseEntity.ok(new MagicLinkResponseDTO(
                     "Magic link inviato con successo. Controlla la tua email.", true));
         } catch (Exception e) {
