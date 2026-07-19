@@ -13,10 +13,12 @@ import {
   Giocatore,
   Lega,
   Partita,
+  PronosticoVincitore,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
   StatoPartita,
+  VotoPronostico,
 } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { GiocatoreService } from '../../core/services/giocatore.service';
@@ -57,6 +59,7 @@ import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
 import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component';
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
+import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
 import { MondialiHistoryWidgetComponent } from '../../shared/components/mondiali-history-widget/mondiali-history-widget.component';
 
@@ -302,6 +305,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (lega) {
           this.lega = lega;
           this.id=lega.id;
+          this.caricaMioPronostico();
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
           // Questo mock crea 10 giornate fittizie per testare:
@@ -1726,6 +1730,108 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.savedConsolationMessage = this.translate.instant(this.consolationMessageKeys[randomIndex]);
     }
     return this.savedConsolationMessage;
+  }
+
+  // ─── Condivisione "lapide" di eliminazione ──────────────────────────────
+  @ViewChild('elimShareCard') elimShareCardRef?: ElementRef<HTMLElement>;
+  sharingEliminazione = false;
+  readonly shareUrl = environment.baseUrl.replace(/^https?:\/\//, '');
+
+  async shareEliminazione(): Promise<void> {
+    if (this.sharingEliminazione || !this.elimShareCardRef) return;
+    this.sharingEliminazione = true;
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const el = this.elimShareCardRef.nativeElement;
+      const canvas = await html2canvas(el, { backgroundColor: '#1a0a0a', scale: 2, useCORS: true, logging: false });
+      const dataUrl = canvas.toDataURL('image/png');
+      const squadra = this.getSquadraEliminazione();
+      const text = [
+        `💀 ${this.translate.instant('LEAGUE.YOU_ELIMINATED')}`,
+        squadra ? `${this.translate.instant('LEAGUE.YOU_BETRAYED')} ${squadra.nome}` : '',
+        this.getRandomConsolationMessage(),
+        '',
+        this.translate.instant('LEAGUE.SHARE_CTA', { url: this.shareUrl })
+      ].filter(Boolean).join('\n');
+
+      // Native mobile share via Capacitor
+      try {
+        const { Share } = await import('@capacitor/share');
+        const { Filesystem, Directory } = await import('@capacitor/filesystem');
+        const base64 = dataUrl.split(',')[1];
+        const saved = await Filesystem.writeFile({
+          path: 'survivor-eliminazione.png',
+          data: base64,
+          directory: Directory.Cache
+        });
+        await Share.share({
+          title: this.translate.instant('LEAGUE.YOU_ELIMINATED'),
+          text,
+          files: [saved.uri],
+          dialogTitle: 'Condividi su Instagram o altrove'
+        });
+        return;
+      } catch { /* fallback web */ }
+
+      // Web: download diretto
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'survivor-eliminazione.png';
+      a.click();
+    } finally {
+      this.sharingEliminazione = false;
+    }
+  }
+
+  // ─── Pronostico vincitore (per gli eliminati) ───────────────────────────
+  mioPronostico: PronosticoVincitore | null = null;
+  classificaPronostici: VotoPronostico[] = [];
+
+  private caricaMioPronostico(): void {
+    if (!this.lega || this.lega.modalita !== 'SURVIVOR') {
+      this.mioPronostico = null;
+      this.classificaPronostici = [];
+      return;
+    }
+
+    if (this.isCurrentUserEliminato()) {
+      this.legaService.getMioPronostico(this.lega.id).subscribe({
+        next: (pronostico) => { this.mioPronostico = pronostico; },
+        error: () => { this.mioPronostico = null; }
+      });
+    } else {
+      this.mioPronostico = null;
+    }
+
+    this.legaService.getClassificaPronostici(this.lega.id).subscribe({
+      next: (classifica) => { this.classificaPronostici = classifica; },
+      error: () => { this.classificaPronostici = []; }
+    });
+  }
+
+  private getGiocatoriAttivi(): { id: number; nickname: string }[] {
+    if (!this.lega?.giocatori) return [];
+    return this.lega.giocatori
+      .filter(g => g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ATTIVO.value)
+      .map(g => ({ id: g.id, nickname: g.nickname }));
+  }
+
+  apriPronosticoDialog(): void {
+    if (!this.lega) return;
+    const ref = this.dialog.open(PronosticoVincitoreDialogComponent, {
+      width: '92vw',
+      maxWidth: '380px',
+      data: {
+        idLega: this.lega.id,
+        giocatoriAttivi: this.getGiocatoriAttivi(),
+        giocatorePronosticatoId: this.mioPronostico?.giocatorePronosticatoId ?? null
+      }
+    });
+    ref.afterClosed().subscribe((pronostico: PronosticoVincitore | undefined) => {
+      if (pronostico) {
+        this.mioPronostico = pronostico;
+      }
+    });
   }
 
   // Messaggi simpatici per l'eliminazione

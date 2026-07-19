@@ -41,7 +41,7 @@ public class MagicLinkService {
     private String relativeUrlSendMailMobile;
 
     @Transactional
-    public void sendMagicLink(String email, boolean mobile) {
+    public void sendMagicLink(String email, boolean mobile, String addInfo) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
@@ -50,11 +50,11 @@ public class MagicLinkService {
         }
         // findByEmail crea l'utente se non esiste (flusso registrazione)
         User user = userService.findByEmail(email);
-        sendMagicLinkForUser(user, email, mobile);
+        sendMagicLinkForUser(user, email, mobile, addInfo);
     }
 
     @Transactional
-    public void sendMagicLinkToExistingUser(String email, boolean mobile) {
+    public void sendMagicLinkToExistingUser(String email, boolean mobile, String addInfo) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
@@ -63,13 +63,13 @@ public class MagicLinkService {
         }
         // findByEmail without creating — caller must have already verified user exists
         User user = userService.findByEmailExisting(email);
-        sendMagicLinkForUser(user, email, mobile);
+        sendMagicLinkForUser(user, email, mobile, addInfo);
     }
 
-    private void sendMagicLinkForUser(User user, String email, boolean mobile) {
+    private void sendMagicLinkForUser(User user, String email, boolean mobile, String addInfo) {
         String tipo = Enumeratori.TipoMagicToken.LOG.getCodice();
         magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
-        String token = salvaMagicToken(user, expirationMinutes, null, tipo, "");
+        String token = salvaMagicToken(user, expirationMinutes, null, tipo, addInfo != null ? addInfo : "");
         String subject = "Il tuo Magic Link per accedere a Survivor";
         String magicLink = getUrlMagicLink(token, tipo, mobile);
         emailService.send(email, subject, buildEmailContent(magicLink));

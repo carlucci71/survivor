@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -50,10 +51,30 @@ export class LoginComponent implements AfterViewInit {
     this.message = '';
   }
 
+  /** Percorso da cui l'utente è stato rimandato al login (es. "/join/93"), se presente. */
+  private returnUrl: string | null = null;
+
   constructor(
     private authService: AuthService,
-    private translate: TranslateService
-  ) { }
+    private translate: TranslateService,
+    private route: ActivatedRoute
+  ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+  }
+
+  /**
+   * Converte il returnUrl in addInfo per il magic link: se è un link di ingresso lega
+   * riusa la stessa convenzione "JOIN:id" già usata per gli inviti via email (così scatta
+   * anche il salvataggio del token per l'accesso libero); altrimenti passa il percorso così com'è.
+   */
+  private buildAddInfo(): string | undefined {
+    if (!this.returnUrl) return undefined;
+    const joinMatch = this.returnUrl.match(/^\/?join\/(\d+)/);
+    if (joinMatch) {
+      return `JOIN:${joinMatch[1]}`;
+    }
+    return this.returnUrl.replace(/^\//, '');
+  }
 
   onSubmit(): void {
     if (!this.email) {
@@ -68,8 +89,10 @@ export class LoginComponent implements AfterViewInit {
       return;
     }
 
+    const addInfo = this.buildAddInfo();
+
     if (this.activeTab === 'register') {
-      this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
+      this.authService.requestMagicLink(this.email, environment.mobile, addInfo).subscribe({
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
@@ -81,7 +104,7 @@ export class LoginComponent implements AfterViewInit {
         }
       });
     } else {
-      this.authService.login(this.email, environment.mobile).subscribe({
+      this.authService.login(this.email, environment.mobile, addInfo).subscribe({
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
