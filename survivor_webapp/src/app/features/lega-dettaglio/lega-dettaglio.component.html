@@ -958,6 +958,15 @@
       <div class="eliminato-banner">
         <div class="eliminato-bg-glow"></div>
 
+        <button class="eliminato-share-btn" (click)="shareEliminazione()" [disabled]="sharingEliminazione"
+                [attr.aria-label]="'LEAGUE.SHARE_ELIMINATION' | translate">
+          @if (sharingEliminazione) {
+            <span class="eliminato-share-spinner"></span>
+          } @else {
+            <mat-icon>share</mat-icon>
+          }
+        </button>
+
         <div class="eliminato-top">
           <span class="eliminato-skull">💀</span>
           <div class="eliminato-title">{{ 'LEAGUE.YOU_ELIMINATED' | translate }}</div>
@@ -978,6 +987,70 @@
 
         <div class="eliminato-message">{{ getRandomConsolationMessage() }}</div>
       </div>
+
+      <!-- Card nascosta usata da html2canvas per generare l'immagine da condividere -->
+      <div #elimShareCard class="elim-share-card">
+        <span class="elim-sc-skull">💀</span>
+        <div class="elim-sc-title">{{ 'LEAGUE.YOU_ELIMINATED' | translate }}</div>
+        @if (getSquadraEliminazione()) {
+          <div class="elim-sc-team">{{ getSquadraEliminazione()?.nome }}</div>
+        }
+        <div class="elim-sc-message">{{ getRandomConsolationMessage() }}</div>
+        <div class="elim-sc-footer">{{ shareUrl }}</div>
+      </div>
+      }
+
+      <!-- PRONOSTICO VINCITORE - Mini-gioco per gli eliminati, li tiene coinvolti fino a fine lega -->
+      @if (isCurrentUserEliminato() && lega.modalita === 'SURVIVOR') {
+        <div class="pronostico-card">
+          @if (!isTerminata()) {
+            <div class="pronostico-header">
+              <span class="pronostico-icon">🔮</span>
+              <span class="pronostico-title">{{ 'LEAGUE.PRONOSTICO_TITLE' | translate }}</span>
+            </div>
+            @if (mioPronostico) {
+              <p class="pronostico-current">
+                {{ 'LEAGUE.PRONOSTICO_YOUR_PICK' | translate }} <strong>{{ mioPronostico.giocatorePronosticatoNickname }}</strong>
+              </p>
+              <button class="pronostico-btn pronostico-btn--change" (click)="apriPronosticoDialog()">
+                {{ 'LEAGUE.PRONOSTICO_CHANGE' | translate }}
+              </button>
+            } @else {
+              <button class="pronostico-btn" (click)="apriPronosticoDialog()">
+                {{ 'LEAGUE.PRONOSTICO_CTA' | translate }}
+              </button>
+            }
+          } @else if (mioPronostico) {
+            <div class="pronostico-header">
+              <span class="pronostico-icon">{{ mioPronostico.indovinato ? '🎉' : '🔮' }}</span>
+              <span class="pronostico-title">
+                {{ (mioPronostico.indovinato ? 'LEAGUE.PRONOSTICO_CORRECT' : 'LEAGUE.PRONOSTICO_WRONG') | translate }}
+              </span>
+            </div>
+            <p class="pronostico-current">
+              {{ 'LEAGUE.PRONOSTICO_YOUR_PICK' | translate }} <strong>{{ mioPronostico.giocatorePronosticatoNickname }}</strong>
+            </p>
+          }
+        </div>
+      }
+
+      <!-- CLASSIFICA PRONOSTICI - Visibile a tutti i partecipanti, aggiornata in tempo reale -->
+      @if (lega.modalita === 'SURVIVOR' && classificaPronostici.length > 0) {
+        <div class="classifica-pronostici-card">
+          <div class="cp-header">
+            <span class="cp-icon">🗳️</span>
+            <span class="cp-title">{{ 'LEAGUE.CLASSIFICA_PRONOSTICI_TITLE' | translate }}</span>
+          </div>
+          <div class="cp-list">
+            @for (voto of classificaPronostici; track voto.giocatoreId; let i = $index) {
+              <div class="cp-row" [class.cp-row--first]="i === 0">
+                <span class="cp-rank">{{ i + 1 }}</span>
+                <span class="cp-nickname">{{ voto.nickname }}</span>
+                <span class="cp-voti">{{ voto.voti }} {{ (voto.voti === 1 ? 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTO' : 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTI') | translate }}</span>
+              </div>
+            }
+          </div>
+        </div>
       }
 
       <!-- LEGENDA BADGE - Solo mobile, sotto le cards -->
