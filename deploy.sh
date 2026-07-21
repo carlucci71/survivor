@@ -1,5 +1,4 @@
 #!/bin/bash
-echo $(TZ='Europe/Rome' date '+%d/%m/%Y %H:%M') > survivor_webapp/src/assets/build_fe.html
 echo "🔄 Deploy Survivor App"
 
 # Carica variabili ambiente
@@ -11,7 +10,7 @@ pm2 stop survivor-backend 2>/dev/null || true
 echo "📦 Build frontend..."
 cd /home/survivor/github/survivor/survivor_webapp
 npm install
-ng build --configuration production
+npm run build
 
 echo "🔄 Restart backend..."
 #pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
