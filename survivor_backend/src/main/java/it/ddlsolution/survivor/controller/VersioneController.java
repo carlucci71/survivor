@@ -13,10 +13,13 @@ import java.time.format.DateTimeFormatter;
 @RestController
 public class VersioneController {
 
-    record MinVersionResponse(int minVersionCode) {}
+    record MinVersionResponse(int minVersionCodeAndroid, int minVersionCodeIos) {}
 
-    @Value("${app.min-version-code}")
-    private int minVersionCode;
+    @Value("${app.min-version-code-android}")
+    private int minVersionCodeAndroid;
+
+    @Value("${app.min-version-code-ios}")
+    private int minVersionCodeIos;
 
     private static final DateTimeFormatter BUILD_TIME_FORMAT = DateTimeFormatter
             .ofPattern("dd/MM/yyyy HH:mm")
@@ -38,6 +41,6 @@ public class VersioneController {
 
     @GetMapping(value = "/versione/minima", produces = MediaType.APPLICATION_JSON_VALUE)
     public MinVersionResponse getMinVersion() {
-        return new MinVersionResponse(minVersionCode);
+        return new MinVersionResponse(minVersionCodeAndroid, minVersionCodeIos);
     }
 }

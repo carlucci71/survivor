@@ -61,10 +61,12 @@ export class AppComponent implements OnInit {
     const platform = Capacitor.getPlatform();
 
     App.getInfo().then(appInfo => {
-      this.http.get<{ minVersionCode: number }>(`${environment.apiUrl}/versione/minima`).subscribe({
+      this.http.get<{ minVersionCodeAndroid: number; minVersionCodeIos: number }>(`${environment.apiUrl}/versione/minima`).subscribe({
         next: (response) => {
-          if (parseInt(appInfo.build, 10) < response.minVersionCode) {
-            const isIos = platform === 'ios';
+          const isIos = platform === 'ios';
+          // Android (versionCode) e iOS (build number) usano numerazioni indipendenti: ognuna va confrontata con la propria soglia.
+          const minVersionCode = isIos ? response.minVersionCodeIos : response.minVersionCodeAndroid;
+          if (parseInt(appInfo.build, 10) < minVersionCode) {
             // L'app non è ancora pubblicata su App Store: niente link ufficiale su cui reindirizzare.
             const storeUrl = isIos ? null : 'https://play.google.com/store/apps/details?id=com.survivor.app';
             this.dialog.open(ForceUpdateDialogComponent, {
