@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-verify',
@@ -31,7 +31,8 @@ export class VerifyComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +40,7 @@ export class VerifyComponent implements OnInit {
     const codiceTipoMagicLink = this.route.snapshot.queryParamMap.get('codiceTipoMagicLink') || '';
 
     if (!token) {
-      this.message = 'Token non trovato';
+      this.message = this.translate.instant('AUTH.TOKEN_NOT_FOUND');
       this.isSuccess = false;
       return;
     }
@@ -57,7 +58,7 @@ export class VerifyComponent implements OnInit {
         if (savedToken === token && false) {
           // Token già usato in precedenza, probabilmente per questa stessa lega
           // Proviamo a fare il parsing dall'URL o andiamo alla home
-          this.message = 'Sei già autenticato! Reindirizzamento...';
+          this.message = this.translate.instant('AUTH.ALREADY_AUTHENTICATED_REDIRECT');
           setTimeout(() => {
             this.router.navigate(['/home']);
           }, 1000);
@@ -66,7 +67,7 @@ export class VerifyComponent implements OnInit {
 
         // Altrimenti chiamiamo il backend per ottenere l'addInfo
         // ma senza usare il token (che potrebbe essere scaduto)
-        this.message = 'Sei già autenticato! Verifica del link...';
+        this.message = this.translate.instant('AUTH.ALREADY_AUTH_VERIFYING_LINK');
 
         // Chiamata al backend per ottenere addInfo
         this.authService.verifyMagicLink(token, codiceTipoMagicLink).subscribe({
@@ -75,7 +76,7 @@ export class VerifyComponent implements OnInit {
               const joinMatchDetail = response.addInfo.match(/^JOIN:(\d+)$/i);
               if (joinMatchDetail) {
                 localStorage.setItem('magicTokenSurvivor', token);
-                this.message = 'Reindirizzamento alla lega...';
+                this.message = this.translate.instant('AUTH.REDIRECT_TO_LEAGUE');
                 setTimeout(() => {
                   this.router.navigate([`/join/${joinMatchDetail[1]}`]);
                 }, 1000);
@@ -95,7 +96,7 @@ export class VerifyComponent implements OnInit {
       }
 
       // Se non è un link JOIN, vai semplicemente alla home
-      this.message = 'Sei già autenticato! Reindirizzamento...';
+      this.message = this.translate.instant('AUTH.ALREADY_AUTHENTICATED_REDIRECT');
       setTimeout(() => {
         this.router.navigate(['/home']);
       }, 1000);
@@ -114,13 +115,13 @@ export class VerifyComponent implements OnInit {
             // Extract the league ID and navigate to join page
             destinazione = `join/${joinMatch[1]}`;
             localStorage.setItem('magicTokenSurvivor', token);
-            this.message = 'Autenticazione riuscita! Reindirizzamento alla lega...';
+            this.message = this.translate.instant('AUTH.AUTH_SUCCESS_REDIRECT_LEAGUE');
           } else {
             destinazione = response.addInfo;
-            this.message = 'Autenticazione riuscita! Reindirizzamento...' + destinazione;
+            this.message = this.translate.instant('AUTH.AUTH_SUCCESS_REDIRECT') + destinazione;
           }
         } else {
-          this.message = 'Autenticazione riuscita! Reindirizzamento...';
+          this.message = this.translate.instant('AUTH.AUTH_SUCCESS_REDIRECT');
         }
         setTimeout(() => {
           this.router.navigate(['/' + destinazione]);
@@ -129,10 +130,10 @@ export class VerifyComponent implements OnInit {
       error: (error) => {
         if (this.authService.isAuthenticated()) {
           this.isAlreadyLogged = true;
-          this.message = 'già loggato';
+          this.message = this.translate.instant('AUTH.ALREADY_LOGGED_SHORT');
         } else {
           this.isSuccess = false;
-          this.message = 'Token non valido o scaduto';
+          this.message = this.translate.instant('AUTH.TOKEN_INVALID_OR_EXPIRED');
         }
       },
     });

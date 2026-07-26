@@ -148,6 +148,21 @@ export interface LegaJoinRequest {
   resolvedAt?: string;
 }
 
+/** Pronostico di un giocatore eliminato su chi vincerà la lega. */
+export interface PronosticoVincitore {
+  giocatorePronosticatoId: number;
+  giocatorePronosticatoNickname: string;
+  /** null finché la lega non è terminata */
+  indovinato: boolean | null;
+}
+
+/** Quanti pronostici ha ricevuto un giocatore come possibile vincitore. */
+export interface VotoPronostico {
+  giocatoreId: number;
+  nickname: string;
+  voti: number;
+}
+
 
 export interface Sport {
   campionati?: Campionato[];

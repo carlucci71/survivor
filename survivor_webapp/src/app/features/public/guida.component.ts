@@ -30,7 +30,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
             <li><a (click)="scrollTo('intro')"><span class="nav-num">0</span> {{ 'GUIDE.NAV_0' | translate }}</a></li>
           </ul>
 
-          <div class="nav-section">First Steps</div>
+          <div class="nav-section">{{ 'GUIDE.SECTION_FIRST_STEPS' | translate }}</div>
           <ul>
             <li><a (click)="scrollTo('login')"><span class="nav-num">1</span> {{ 'GUIDE.NAV_1' | translate }}</a></li>
             <li><a (click)="scrollTo('home-section')"><span class="nav-num">2</span> {{ 'GUIDE.NAV_2' | translate }}</a></li>
@@ -59,7 +59,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
         <main class="guida-main">
 
           <!-- FAB menu mobile -->
-          <button class="menu-fab" (click)="sidebarOpen = !sidebarOpen" aria-label="Menu">
+          <button class="menu-fab" (click)="sidebarOpen = !sidebarOpen" [attr.aria-label]="'GUIDE.MENU_ARIA_LABEL' | translate">
             <span class="material-icons">menu_book</span>
           </button>
 
@@ -84,7 +84,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 
             <div class="compare">
               <div class="mode-card">
-                <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">favorite</span> Survivor <span class="badge-mode">CLASSIC</span></h3>
+                <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">favorite</span> Survivor <span class="badge-mode">{{ 'GUIDE.MODE_SURVIVOR_BADGE' | translate }}</span></h3>
                 <ul>
                   <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI1' | translate }}</li>
                   <li>{{ 'GUIDE.S0_MODE_SURVIVOR_LI2' | translate }}</li>
@@ -94,7 +94,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
                 </ul>
               </div>
               <div class="mode-card alt">
-                <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">emoji_events</span> Campionato <span class="badge-mode">PUNTI</span></h3>
+                <h3><span class="material-icons" style="font-size:16px;vertical-align:middle">emoji_events</span> {{ 'GUIDE.MODE_CHAMPIONSHIP_NAME' | translate }} <span class="badge-mode">{{ 'GUIDE.MODE_CHAMPIONSHIP_BADGE' | translate }}</span></h3>
                 <ul>
                   <li>{{ 'GUIDE.S0_MODE_CHAMP_LI1' | translate }}</li>
                   <li>{{ 'GUIDE.S0_MODE_CHAMP_LI2' | translate }}</li>

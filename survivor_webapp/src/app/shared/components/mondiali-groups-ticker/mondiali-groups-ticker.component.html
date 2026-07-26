@@ -4,7 +4,7 @@
       <div class="group-item">
         <span class="bullet"></span>
         <div class="group-chip">
-          <span class="group-label">{{ girone.label }}</span>
+          <span class="group-label">{{ 'MONDIALI_HISTORY.GROUP' | translate }} {{ girone.label }}</span>
           <div class="team-logos">
             <img
               *ngFor="let team of girone.teams"
@@ -22,7 +22,7 @@
       <div class="group-item" aria-hidden="true">
         <span class="bullet"></span>
         <div class="group-chip">
-          <span class="group-label">{{ girone.label }}</span>
+          <span class="group-label">{{ 'MONDIALI_HISTORY.GROUP' | translate }} {{ girone.label }}</span>
           <div class="team-logos">
             <img
               *ngFor="let team of girone.teams"

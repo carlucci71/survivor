@@ -8,8 +8,16 @@ import { environment } from '../environments/environment';
 import { Observable, of } from 'rxjs';
 import itTranslations from '../assets/i18n/it.json';
 import enTranslations from '../assets/i18n/en.json';
+import esTranslations from '../assets/i18n/es.json';
 
 import { routes } from './app.routes';
+
+// Traduzioni bundlate a compile-time (una entry per lingua supportata, vedi SUPPORTED_LANGUAGES in language.service.ts)
+const BUNDLED_TRANSLATIONS: Record<string, any> = {
+  it: itTranslations,
+  en: enTranslations,
+  es: esTranslations,
+};
 
 // Custom loader per compatibilità con ngx-translate v18
 export class CustomTranslateLoader implements TranslateLoader {
@@ -17,13 +25,7 @@ export class CustomTranslateLoader implements TranslateLoader {
 
   getTranslation(lang: string): Observable<any> {
     // Restituisce le traduzioni importate per includerle nel bundle
-    if (lang === 'it') {
-      return of(itTranslations);
-    }
-    if (lang === 'en') {
-      return of(enTranslations);
-    }
-    return of({});
+    return of(BUNDLED_TRANSLATIONS[lang] ?? {});
   }
 }
 

@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Giocatore, Lega } from '../../../core/models/interfaces.model';
+import { environment } from '../../../../environments/environment';
 
 export interface VincitoriDialogData {
   lega: Lega;
@@ -22,6 +23,9 @@ export class VincitoriDialogComponent {
   confettiPieces = Array.from({ length: 16 }, (_, i) => i);
   sharing = false;
 
+  /** Mostrato nella card condivisa e nel testo di share, cosi' chi la vede sa dove trovare l'app. */
+  readonly shareUrl = environment.baseUrl.replace(/^https?:\/\//, '');
+
   @ViewChild('shareCard') shareCardRef!: ElementRef<HTMLElement>;
 
   readonly frase: string;
@@ -38,6 +42,18 @@ export class VincitoriDialogComponent {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  private buildShareText(): string {
+    const names = this.data.vincitori.map(v => v.nickname).join(', ');
+    const subtitleKey = this.data.vincitori.length === 1 ? 'VINCITORI_DIALOG.SUBTITLE_ONE' : 'VINCITORI_DIALOG.SUBTITLE_MANY';
+    return [
+      `🏆 ${this.data.lega.name}`,
+      `👑 ${names}`,
+      this.translate.instant(subtitleKey),
+      '',
+      this.translate.instant('VINCITORI_DIALOG.SHARE_CTA', { url: this.shareUrl })
+    ].join('\n');
   }
 
   async shareImage(): Promise<void> {
@@ -63,6 +79,7 @@ export class VincitoriDialogComponent {
         });
         await Share.share({
           title: `${this.data.lega.name} - Vincitori Survivor`,
+          text: this.buildShareText(),
           files: [saved.uri],
           dialogTitle: 'Condividi su Instagram o altrove'
         });

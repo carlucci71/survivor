@@ -1,661 +1,508 @@
-.player-history-dialog {
+/* =====================================================
+   PLAYER HISTORY DIALOG � Design moderno e responsive
+   ===================================================== */
+
+// --- Root container ---
+.phd-root {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: white;
-  border-radius: 12px;
+  background: #f5f7fb;
+  border-radius: 16px;
   overflow: hidden;
+  font-family: inherit;
 }
 
-.dialog-header {
+// --- Header ---
+.phd-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
-  background: linear-gradient(135deg, #1e88e5 0%, #1565c0 100%);
+  gap: 14px;
+  padding: 16px 18px 16px 18px;
+  background: linear-gradient(135deg, #0A3D91 0%, #1565c0 60%, #1e88e5 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  position: relative;
+}
 
-  .header-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
+.phd-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  letter-spacing: 0;
+  backdrop-filter: blur(4px);
 
-  .player-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-
-  .player-info {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .player-name {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .dialog-subtitle {
-    margin: 0;
-    font-size: 12px;
-    opacity: 0.9;
-  }
-
-  .close-btn {
-    display: none; // ✅ NASCOSTO - Non serve perché c'è il button "Chiudi" nel footer
+  @media (max-width: 480px) {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
   }
 }
 
-.dialog-content {
+.phd-title-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.phd-player-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
+}
+
+.phd-subtitle {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.8;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.phd-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// --- Stats strip ---
+.phd-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 16px;
+  background: white;
+  border-bottom: 1px solid #e8ecf3;
+  flex-shrink: 0;
+}
+
+.phd-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 14px;
+  flex: 1;
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+  }
+}
+
+.phd-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+
+  @media (max-width: 480px) {
+    font-size: 17px;
+  }
+}
+
+.phd-stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  opacity: 0.7;
+  color: #555;
+}
+
+.phd-stat--win .phd-stat-value { color: #2e7d32; }
+.phd-stat--loss .phd-stat-value { color: #c62828; }
+.phd-stat--pending .phd-stat-value { color: #e65100; }
+.phd-stat--rate .phd-stat-value { color: #0A3D91; }
+
+.phd-stat-sep {
+  width: 1px;
+  height: 28px;
+  background: #e0e6f0;
+  flex-shrink: 0;
+}
+
+// --- Content area ---
+.phd-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
-  background: white;
-  max-height: calc(85vh - 140px);
-
-  // Rimuovi padding bottom extra per mobile
-  @media (max-width: 768px) {
-    padding: 14px 16px 8px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 14px 16px 6px;
-  }
-}
-
-// Nuovo layout a righe per desktop/tablet
-.history-rows-layout {
+  padding: 18px 16px 10px;
   display: flex;
   flex-direction: column;
-  gap: 36px; // ✅ MOLTO PIÙ SPAZIO tra le righe (era 28px)
-  width: 100%;
-  padding: 8px 0; // ✅ Padding sopra/sotto per respirare
-}
+  gap: 18px;
 
-.history-row {
-  display: flex;
-  justify-content: center;
-  align-items: stretch; // ✅ Tutte le card della stessa altezza
-  gap: 20px; // ✅ MOLTO PIÙ SPAZIO tra le card (era 18px)
-  flex-wrap: nowrap;
-
-  @media (max-width: 1024px) {
-    gap: 14px;
-  }
-
-  @media (max-width: 900px) {
+  @media (max-width: 480px) {
+    padding: 12px 10px 8px;
     gap: 12px;
   }
 }
 
-.history-item {
-  flex: 0 0 auto; // ✅ Non si espandono, dimensione fissa
-  width: 130px; // ✅ Larghezza FISSA per allineamento perfetto
-  background: white;
-  border-radius: 12px; // ✅ Bordi più arrotondati per eleganza
-  padding: 16px 12px; // ✅ PIÙ PADDING per card più spaziose
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); // ✅ Ombra più definita
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // ✅ Transizione più fluida
-  border: 2px solid #e0e0e0; // ✅ Bordo sempre visibile per ordine
+// --- Empty state ---
+.phd-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px; // ✅ PIÙ SPAZIO tra header e body
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 20px;
+  color: #bbb;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    font-style: italic;
+  }
+}
+
+// --- Row of cards ---
+.phd-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 10px;
+  flex-wrap: nowrap;
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
+}
+
+// --- Single card ---
+.phd-card {
+  flex: 1;
+  min-width: 0;
+  max-width: 140px;
+  min-height: 100px;
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #e0e6f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px 8px;
+  gap: 8px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: default;
 
   &:hover {
-    transform: translateY(-4px) scale(1.02); // ✅ Hover più evidente
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    border-color: #bdbdbd; // ✅ Bordo più scuro all'hover
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
   }
 
-  &.item-ok {
+  &.phd-card--ok {
     border-color: #4caf50;
-    background: linear-gradient(to bottom, #ffffff 0%, #f1f8f4 100%); // ✅ Gradiente più visibile
-
-    &:hover {
-      border-color: #43a047; // ✅ Verde più scuro all'hover
-    }
+    background: linear-gradient(160deg, #ffffff 0%, #f0f9f1 100%);
   }
 
-  &.item-ko {
-    border-color: #f44336;
-    background: linear-gradient(to bottom, #ffffff 0%, #fef1f0 100%); // ✅ Gradiente più visibile
-
-    &:hover {
-      border-color: #e53935; // ✅ Rosso più scuro all'hover
-    }
+  &.phd-card--ko {
+    border-color: #ef5350;
+    background: linear-gradient(160deg, #ffffff 0%, #fdf3f3 100%);
   }
 
-  &.item-pending {
-    border-color: #e0e0e0;
-    background: linear-gradient(to bottom, #ffffff 0%, #f5f5f5 100%);
-
-    &:hover {
-      border-color: #bdbdbd;
-    }
+  &.phd-card--empty {
+    border-color: #e0e6f0;
+    background: #fafbfd;
+    opacity: 0.7;
   }
 
-  // Tablet
-  @media (max-width: 1024px) {
-    width: 100px;
-    padding: 14px 10px;
-    gap: 12px;
-  }
-
-  // Tablet piccoli
-  @media (max-width: 900px) {
-    width: 88px;
-    padding: 12px 8px;
-    gap: 10px;
+  @media (max-width: 767px) {
+    min-height: 84px;
     border-radius: 10px;
+    padding: 8px 4px 6px;
+    gap: 5px;
   }
 
-  // Tablet molto piccoli (768px)
-  @media (max-width: 768px) {
-    width: 76px;
-    padding: 10px 6px;
+  @media (max-width: 400px) {
+    min-height: 76px;
+    padding: 6px 3px 5px;
+  }
+}
+
+.phd-round-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0A3D91;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+
+  @media (max-width: 767px) {
+    font-size: 10px;
+  }
+}
+
+.phd-round-full {
+  display: inline;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.phd-round-short {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: inline;
+  }
+}
+
+.phd-logo-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.phd-logo {
+  max-width: 52px;
+  max-height: 52px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+
+  @media (max-width: 767px) {
+    max-width: 40px;
+    max-height: 40px;
+  }
+
+  @media (max-width: 400px) {
+    max-width: 34px;
+    max-height: 34px;
+  }
+}
+
+.phd-sigla {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0A3D91;
+  text-align: center;
+  letter-spacing: 0.5px;
+
+  @media (max-width: 767px) {
+    font-size: 11px;
+  }
+}
+
+.phd-forced {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(230, 81, 0, 0.4);
+  animation: phd-pulse-forced 2s ease-in-out infinite;
+
+  mat-icon {
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    color: #e65100;
+  }
+
+  @media (max-width: 767px) {
+    width: 14px;
+    height: 14px;
+    top: -4px;
+    right: -3px;
+
+    mat-icon {
+      font-size: 10px;
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
+@keyframes phd-pulse-forced {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.phd-no-pick {
+  font-size: 20px;
+  color: #c8d0de;
+  font-weight: 300;
+
+  @media (max-width: 767px) {
+    font-size: 16px;
+  }
+}
+
+.phd-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.phd-result--ok mat-icon { color: #4caf50; }
+  &.phd-result--ko mat-icon { color: #ef5350; }
+
+  @media (max-width: 767px) {
+    mat-icon {
+      font-size: 15px;
+      width: 15px;
+      height: 15px;
+    }
+  }
+}
+
+// --- Footer ---
+.phd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px 12px;
+  background: white;
+  border-top: 1px solid #e8ecf3;
+  flex-shrink: 0;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
     gap: 8px;
   }
 }
 
-.item-header {
+.phd-legend {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding-bottom: 8px; // ✅ Più padding per separare dall'immagine
-  border-bottom: 1px solid #e8e8e8; // ✅ Bordo più leggero
-
-  .round-number {
-    font-size: 12px; // ✅ Font leggermente più piccolo per "Giornata X"
-    font-weight: 600; // ✅ Un po' meno bold
-    color: #0A3D91;
-    text-align: center;
-    line-height: 1.2;
-    white-space: nowrap; // ✅ Previene a capo indesiderati
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .result-icon-small {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-
-    &.icon-ok {
-      color: #4caf50;
-    }
-
-    &.icon-ko {
-      color: #f44336;
-    }
-  }
-
-  // Tablet: font più piccolo
-  @media (max-width: 1024px) {
-    padding-bottom: 6px;
-
-    .round-number {
-      font-size: 11px;
-    }
-
-    .result-icon-small {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  // Tablet piccoli: font ancora più piccolo
-  @media (max-width: 900px) {
-    .round-number {
-      font-size: 10px;
-    }
-  }
-}
-
-.item-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-height: 60px;
-
-  .team-display {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .team-logo-inline {
-    max-width: 55px;
-    max-height: 55px;
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-
-    @media (max-width: 1024px) {
-      max-width: 45px;
-      max-height: 45px;
-    }
-
-    @media (max-width: 900px) {
-      max-width: 40px;
-      max-height: 40px;
-    }
-
-    @media (max-width: 768px) {
-      max-width: 35px;
-      max-height: 35px;
-    }
-  }
-
-  .forced-badge {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    color: #ff6f00; // ✅ Arancione PIÙ VIBRANTE (era #ff9800)
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    background: white;
-    border-radius: 50%;
-    padding: 2px;
-    box-shadow: 0 2px 6px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione per più enfasi
-
-    // ✅ Animazione pulsante per attirare l'attenzione
-    animation: pulseBadge 2s ease-in-out infinite;
-  }
-
-  // ✅ Animazione per badge forzatura
-  @keyframes pulseBadge {
-    0%, 100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-  }
-
-  .empty-slot {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #bbb;
-    font-size: 14px;
-
-    mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: #ccc;
-    }
-  }
-}
-
-// Nascondi il vecchio layout griglia su desktop
-.history-grid {
-  display: none;
-}
-
-// ========================================
-// 📱 OTTIMIZZAZIONI MOBILE
-// ========================================
-
-// Mobile: ottimizza dimensioni per schermi piccoli
-@media (max-width: 767px) {
-  .history-rows-layout {
-    gap: 14px;
-    padding: 0 4px;
-  }
-
-  .history-row {
-    gap: 6px;
-  }
-
-  .history-item {
-    min-width: 55px;
-    max-width: 70px;
-    padding: 8px 4px;
-    gap: 6px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-  }
-
-  .item-header {
-    padding-bottom: 4px;
-    gap: 4px;
-
-    .round-number {
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .result-icon-small {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  .item-body {
-    min-height: 50px;
-
-    .team-logo-inline {
-      max-width: 38px;
-      max-height: 38px;
-    }
-
-    .forced-badge {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-      top: -4px;
-      right: -4px;
-      padding: 1px;
-      color: #ff6f00; // ✅ Arancione vibrante anche su mobile
-      box-shadow: 0 1px 4px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione
-    }
-
-    .empty-slot mat-icon {
-      font-size: 26px;
-      width: 26px;
-      height: 26px;
-    }
-  }
-}
-
-// Mobile molto piccoli (< 400px)
-@media (max-width: 400px) {
-  .dialog-content {
-    padding: 12px 8px;
-  }
-
-  .history-rows-layout {
-    gap: 12px;
-    padding: 0 2px;
-  }
-
-  .history-row {
-    gap: 4px;
-  }
-
-  .history-item {
-    min-width: 50px;
-    max-width: 64px;
-    padding: 6px 3px;
-    gap: 5px;
-  }
-
-  .item-header {
-    .round-number {
-      font-size: 10px;
-    }
-
-    .result-icon-small {
-      font-size: 12px;
-      width: 12px;
-      height: 12px;
-    }
-  }
-
-  .item-body {
-    min-height: 45px;
-
-    .team-logo-inline {
-      max-width: 34px;
-      max-height: 34px;
-    }
-
-    .forced-badge {
-      font-size: 12px;
-      width: 12px;
-      height: 12px;
-      color: #ff6f00; // ✅ Arancione vibrante anche su mobile piccolo
-      box-shadow: 0 1px 3px rgba(255, 111, 0, 0.4); // ✅ Ombra arancione
-    }
-
-    .empty-slot mat-icon {
-      font-size: 22px;
-      width: 22px;
-      height: 22px;
-    }
-  }
-}
-
-.dialog-footer {
-  padding: 14px 18px;
-  background: white;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
-
-  button {
-    min-width: 140px;
-    height: 42px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 0 24px;
-  }
+  gap: 12px;
+  flex-wrap: wrap;
 
   @media (max-width: 480px) {
-    padding: 8px 12px;
-
-    button {
-      width: 100%;
-      max-width: 260px;
-      min-width: unset;
-      height: 40px;
-      font-size: 13px;
-    }
-  }
-}
-
-// Animazioni
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.history-card {
-  animation: fadeIn 0.3s ease-out;
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .player-history-dialog {
-    border-radius: 8px;
-  }
-
-  .dialog-header {
-    padding: 12px 14px;
-
-    .player-name {
-      font-size: 16px;
-    }
-
-    .player-icon {
-      font-size: 26px;
-      width: 26px;
-      height: 26px;
-    }
-
-    .dialog-subtitle {
-      font-size: 11px;
-    }
-    // ✅ Rimosso .close-btn perché non serve più
-  }
-
-  .dialog-content {
-    padding: 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .player-history-dialog {
-    border-radius: 6px;
-  }
-
-  .dialog-header {
-    padding: 8px 10px;
-
-    .player-name {
-      font-size: 15px;
-    }
-
-    .dialog-subtitle {
-      font-size: 10px;
-    }
-
-    .player-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-    }
-    // ✅ Rimosso .close-btn perché non serve più
-  }
-
-  .dialog-content {
-    padding: 6px;
-    max-height: calc(80vh - 120px);
-  }
-
-  .history-rows-layout {
+    justify-content: center;
     gap: 10px;
-    padding: 0 2px;
-  }
-
-  .dialog-footer {
-    padding: 10px 12px;
-
-    button {
-      width: 100%;
-      max-width: 240px;
-      min-width: unset;
-      height: 42px;
-      font-size: 13px;
-    }
   }
 }
 
-/* ============================================== */
-/* UTILITY CLASSES - Show/Hide per dispositivo */
-/* ============================================== */
+.phd-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
 
-.desktop-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none !important;
-  }
-
-  .mobile-only {
-    display: block !important;
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
   }
 }
 
-/* ============================================== */
-/* LAYOUT MOBILE - IDENTICO al dettaglio lega */
-/* ============================================== */
+.phd-legend-ok { color: #4caf50 !important; }
+.phd-legend-ko { color: #ef5350 !important; }
+.phd-legend-forced { color: #e65100 !important; }
 
-.giornate-list-mobile {
-  padding: 0 6px 8px 6px;
-  background: white;
-  animation: expandMobile 0.3s ease-out;
-}
+.phd-close-action {
+  flex-shrink: 0;
+  min-width: 90px;
 
-@keyframes expandMobile {
-  from {
-    opacity: 0;
-    transform: scaleY(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scaleY(1);
+  @media (max-width: 480px) {
+    width: 100%;
   }
 }
 
-
-/* ============================================== */
-/* STILI GLOBALI PER IL WRAPPER MATERIAL DIALOG */
-/* ============================================== */
-
-// IMPORTANTE: Questi stili sono globali e sovrascrivono Material Dialog
+/* =====================================================
+   GLOBAL MATERIAL DIALOG WRAPPER
+   ===================================================== */
 ::ng-deep .player-history-dialog-wrapper {
   .mat-mdc-dialog-container {
     padding: 0 !important;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 16px;
 
     .mat-mdc-dialog-surface {
       padding: 0 !important;
       overflow: hidden;
-      border-radius: 12px;
+      border-radius: 16px;
     }
   }
 
-  // Mobile optimization
   @media (max-width: 768px) {
     .mat-mdc-dialog-container {
-      border-radius: 8px;
-      max-height: 85vh !important;
+      border-radius: 12px;
 
       .mat-mdc-dialog-surface {
-        border-radius: 8px;
+        border-radius: 12px;
       }
     }
   }
 
   @media (max-width: 480px) {
     .mat-mdc-dialog-container {
-      border-radius: 6px;
-      max-height: 80vh !important;
+      border-radius: 10px;
       margin: 0 !important;
 
       .mat-mdc-dialog-surface {
-        border-radius: 6px;
+        border-radius: 10px;
       }
     }
   }
 }
-

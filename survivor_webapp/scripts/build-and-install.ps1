@@ -19,13 +19,8 @@ function Check-Command($cmd) {
 
 Set-Location -Path $PSScriptRoot
 
-# Create build info file
-$publicDir = Join-Path $PSScriptRoot "..\public"
-if (-not (Test-Path $publicDir)) {
-    New-Item -ItemType Directory -Path $publicDir -Force | Out-Null
-}
-$buildDate = Get-Date -Format "dd/MM/yyyy HH:mm"
-Set-Content -Path (Join-Path $publicDir "build_fe.html") -Value $buildDate -Force
+# Build info (build_fe.html) is generated automatically by the npm `prebuild` hook
+# when `npm run build` runs below, so it always reflects the actual build time.
 
 Write-Host "Configuration: $Configuration; Release: $($Release.IsPresent); Install after build: $($Install.IsPresent)"
 

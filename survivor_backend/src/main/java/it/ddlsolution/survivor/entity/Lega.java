@@ -60,6 +60,21 @@ public class Lega {
     @JsonManagedReference("lega-giocate")
     private List<Giocata> giocate = new ArrayList<>();
 
+    /** Storico vite perse: mappato solo per permettere la cancellazione a cascata della lega */
+    @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<VitaPersa> vitePerse = new ArrayList<>();
+
+    /** Giornate sospese: mappato solo per permettere la cancellazione a cascata della lega */
+    @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<SospensioneLega> sospensioni = new ArrayList<>();
+
+    /** Pronostici degli eliminati su chi vincerà: mappato solo per la cancellazione a cascata della lega */
+    @OneToMany(mappedBy = "lega", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private List<PronosticoVincitore> pronosticiVincitore = new ArrayList<>();
+
     @Column(name = "pwd", length = 50)
     private String pwd;
 

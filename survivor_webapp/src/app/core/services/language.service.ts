@@ -2,11 +2,29 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+export interface LanguageOption {
+  code: string;
+  /** Nome della lingua nella lingua stessa (es. "Italiano", "English"), mostrato nel selettore lingua */
+  nativeName: string;
+}
+
+/**
+ * Unico punto in cui registrare le lingue supportate dall'app.
+ * Per aggiungerne una: creare src/assets/i18n/<code>.json e aggiungere una riga qui.
+ */
+export const SUPPORTED_LANGUAGES: LanguageOption[] = [
+  { code: 'it', nativeName: 'Italiano' },
+  { code: 'en', nativeName: 'English' },
+  { code: 'es', nativeName: 'Español' },
+];
+
+const DEFAULT_LANG = 'it';
+
 @Injectable({
   providedIn: 'root'
 })
 export class LanguageService {
-  private currentLangSubject = new BehaviorSubject<string>('it');
+  private currentLangSubject = new BehaviorSubject<string>(DEFAULT_LANG);
   public currentLang$: Observable<string> = this.currentLangSubject.asObservable();
 
   constructor(private translate: TranslateService) {
@@ -14,16 +32,16 @@ export class LanguageService {
   }
 
   private initLanguage(): void {
-    // Lingue disponibili
-    this.translate.addLangs(['it', 'en']);
+    const supportedCodes = SUPPORTED_LANGUAGES.map(l => l.code);
 
-    // Lingua di default
-    this.translate.setDefaultLang('it');
+    this.translate.addLangs(supportedCodes);
+    this.translate.setDefaultLang(DEFAULT_LANG);
 
     // Recupera la lingua salvata o usa quella del browser
     const savedLang = localStorage.getItem('survivor_language');
     const browserLang = this.translate.getBrowserLang();
-    const langToUse = savedLang || (browserLang?.match(/it|en/) ? browserLang : 'it');
+    const browserLangSupported = !!browserLang && supportedCodes.includes(browserLang);
+    const langToUse = savedLang || (browserLangSupported ? browserLang! : DEFAULT_LANG);
 
     this.changeLanguage(langToUse);
   }
@@ -35,7 +53,18 @@ export class LanguageService {
   }
 
   getCurrentLanguage(): string {
-    return this.translate.currentLang || 'it';
+    return this.translate.currentLang || DEFAULT_LANG;
+  }
+
+  /** Nome nativo della lingua correntemente attiva (es. "Italiano"), per il selettore lingua */
+  getCurrentLanguageName(): string {
+    const current = this.getCurrentLanguage();
+    return SUPPORTED_LANGUAGES.find(l => l.code === current)?.nativeName || current;
+  }
+
+  /** Elenco delle lingue supportate (codice + nome nativo), per popolare il selettore lingua */
+  getSupportedLanguages(): LanguageOption[] {
+    return SUPPORTED_LANGUAGES;
   }
 
   getAvailableLanguages(): string[] {

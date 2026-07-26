@@ -1,6 +1,8 @@
 export interface MagicLinkRequest {
   email: string;
   mobile: boolean;
+  /** Percorso a cui tornare dopo la verifica del magic link (es. "join/93"), opzionale. */
+  addInfo?: string;
 }
 
 export interface LoginRequest {

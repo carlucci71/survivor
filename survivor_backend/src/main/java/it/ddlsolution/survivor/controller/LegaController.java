@@ -9,6 +9,7 @@ import it.ddlsolution.survivor.dto.request.AggiornViteDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.dto.request.LegaInvitaDTO;
 import it.ddlsolution.survivor.dto.request.LegaJoinDTO;
+import it.ddlsolution.survivor.dto.request.RinominaLegaDTO;
 import it.ddlsolution.survivor.service.LegaService;
 import it.ddlsolution.survivor.service.RecapGiornataService;
 import it.ddlsolution.survivor.util.Utility;
@@ -110,6 +111,12 @@ public class LegaController {
     @PutMapping("/secondaOccasione/{idLega}")
     public ResponseEntity<LegaDTO> secondaOccasione(@PathVariable Long idLega) {
         return ResponseEntity.ok(legaService.secondaOccasione(idLega));
+    }
+
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/rinomina/{idLega}")
+    public ResponseEntity<LegaDTO> rinomina(@PathVariable Long idLega, @RequestBody RinominaLegaDTO rinominaLegaDTO) {
+        return ResponseEntity.ok(legaService.rinominaLega(idLega, rinominaLegaDTO.getNome()));
     }
 
     @PutMapping("/nuovaEdizione/{idLega}")

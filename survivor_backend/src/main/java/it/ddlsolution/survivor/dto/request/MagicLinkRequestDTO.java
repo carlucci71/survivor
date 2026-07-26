@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 public class MagicLinkRequestDTO {
     private String email;
     private Boolean mobile;
+    /** Percorso frontend a cui tornare dopo la verifica del magic link (es. "join/93"), opzionale. */
+    private String addInfo;
 }
 

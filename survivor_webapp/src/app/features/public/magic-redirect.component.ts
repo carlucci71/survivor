@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 
 @Component({
   standalone: true,
   selector: 'app-magic-redirect',
-  imports: [CommonModule, RouterModule, MatButtonModule, MatCardModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatCardModule, TranslateModule],
   templateUrl: './magic-redirect.component.html'
 })
 export class MagicRedirectComponent implements OnInit {

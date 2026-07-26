@@ -162,10 +162,17 @@ public class UtilCalendarioService {
         if (isFirstLoading || partiteNotTerminate > 0) {
             //cacheableProvider.getIfAvailable().invalidaPartiteFromDb(campionatoDTO.getId(),anno,giornata);
             partiteDiCampionatoDellaGiornata = new ArrayList<>();
-            List<PartitaDTO> partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
-                    campionatoDTO
-                    , giornata
-                    , anno);
+            List<PartitaDTO> partiteFromWeb;
+            try {
+                partiteFromWeb = calendarioProvider.getIfAvailable().getPartite(
+                        campionatoDTO
+                        , giornata
+                        , anno);
+            } catch (Exception e) {
+                log.warn("Errore API recupero partite campionato={} giornata={} anno={}: {}",
+                        campionatoDTO.getId(), giornata, anno, e.getMessage());
+                partiteFromWeb = new ArrayList<>();
+            }
             if (partiteFromWeb.size() > 0) {
                 log.info("Aggiorno giornata {} di {}", giornata, campionatoDTO.getNome());
                 for (PartitaDTO partitaFromWeb : partiteFromWeb) {
@@ -177,6 +184,10 @@ public class UtilCalendarioService {
                         partiteDiCampionatoDellaGiornata.add(partitaFromWeb);
                     }
                 }
+                // Invalida il cache dopo aver salvato le partite, così le letture successive
+                // (es. partiteDellaGiornata, round-results-dialog) vedono i dati aggiornati.
+                cacheableProvider.getIfAvailable().clearCachePartite(campionatoDTO.getId(), anno);
+                log.info("Cache partite invalidata per {} anno={} dopo aggiornamento giornata {}", campionatoDTO.getId(), anno, giornata);
             }
         }
         return partiteDiCampionatoDellaGiornata;

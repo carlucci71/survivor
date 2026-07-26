@@ -6,9 +6,10 @@ import { CommonModule } from '@angular/common';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 import { Capacitor } from '@capacitor/core';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RecapService } from '../../core/services/recap.service';
 import { RecapGiornata, RecapPickEntry } from '../../core/models/interfaces.model';
+import { environment } from '../../../environments/environment';
 
 export type SlideId = 'cover' | 'scelte' | 'sopravvissuti' | 'eliminati' | 'classifica' | 'stats' | 'fine';
 
@@ -59,6 +60,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private recapService = inject(RecapService);
   private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
 
   recap: RecapGiornata | null = null;
   loading = true;
@@ -68,6 +70,9 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   slides: Slide[] = SLIDES_SURVIVOR;
   currentIdx = 0;
   sharingImage = false;
+
+  /** Mostrato nella card condivisa e nel testo di share, cosi' chi la vede sa dove trovare l'app. */
+  readonly shareUrl = environment.baseUrl.replace(/^https?:\/\//, '');
 
   @ViewChild('fineSlide') fineSlideRef?: ElementRef<HTMLElement>;
 
@@ -181,7 +186,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
 
     if (!legaId || !giornata || isNaN(legaId) || isNaN(giornata)) {
       console.error('[RecapGiornata] Parametri rotta non validi', { legaId, giornata });
-      this.errorDetail = `Parametri non validi: legaId=${legaId}, giornata=${giornata}`;
+      this.errorDetail = `${this.translate.instant('RECAP.INVALID_PARAMS')}: legaId=${legaId}, giornata=${giornata}`;
       this.error = true;
       this.loading = false;
       this.cdr.detectChanges();
@@ -317,6 +322,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
         });
         await Share.share({
           title: `${this.recap.legaNome} — Giornata ${this.recap.giornataRelativa}`,
+          text: this.buildShareText(),
           files: [saved.uri],
           dialogTitle: 'Condividi su Instagram o altrove'
         });
@@ -337,16 +343,20 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
     if (!this.recap) return '';
     const r = this.recap;
     return [
-      `🏆 ${r.legaNome} — Giornata ${r.giornataRelativa}`,
-      `✅ ${r.sopravvissuti} sopravvissuti su ${r.totaleMembri}`,
+      this.translate.instant('RECAP.SHARE_HEADER', { lega: r.legaNome, giornata: r.giornataRelativa }),
+      this.translate.instant('RECAP.SHARE_SURVIVORS', { count: r.sopravvissuti, total: r.totaleMembri }),
       r.eliminatiQuestaGiornata > 0
-        ? `💀 ${r.eliminatiQuestaGiornata} eliminat${r.eliminatiQuestaGiornata === 1 ? 'o' : 'i'} questa giornata`
+        ? this.translate.instant(
+            r.eliminatiQuestaGiornata === 1 ? 'RECAP.SHARE_ELIMINATED_ONE' : 'RECAP.SHARE_ELIMINATED_MANY',
+            { count: r.eliminatiQuestaGiornata }
+          )
         : '',
       r.stats.squadraPiuScelta
-        ? `🔥 Più scelta: ${r.stats.squadraPiuScelta} (${r.stats.quanti} giocatori)`
+        ? this.translate.instant('RECAP.SHARE_TOP_PICK', { team: r.stats.squadraPiuScelta, count: r.stats.quanti })
         : '',
       '',
-      '🎮 Survivo — il fantasy dell\'eliminazione'
+      this.translate.instant('RECAP.SHARE_TAGLINE'),
+      this.translate.instant('RECAP.SHARE_CTA', { url: this.shareUrl })
     ].filter(Boolean).join('\n');
   }
 

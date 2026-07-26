@@ -1,38 +1,51 @@
 @use 'sass:list';
 
 /* ────────────────────────────────────────────────────────────
-   Vincitori Dialog — coerente con lo stile app (navy/celeste)
+   Vincitori Dialog — stile premium (navy profondo/oro), coerente
+   con la palette dell'app (navy/celeste) impreziosita da accenti oro
    ──────────────────────────────────────────────────────────── */
 
-$blue-dark:   #071428;
-$blue-mid:    #0A2558;
+$navy-black:  #050B18;
+$navy-deep:   #0B1730;
+$navy-mid:    #0D1F45;
 $celeste:     #4FC3F7;
-$celeste-dim: rgba(79, 195, 247, 0.18);
-$gold:        #FFD700;
-$gold-dim:    rgba(255, 215, 0, 0.15);
+$gold-light:  #F6E27A;
+$gold:        #D4AF37;
+$gold-dark:   #C9971F;
+$gold-dim:    rgba(212, 175, 55, 0.16);
 
 .vd-sheet {
   position: relative;
-  background: linear-gradient(155deg, #091832 0%, #0c2050 55%, #071428 100%);
-  border-radius: 24px;
+  background: linear-gradient(165deg, $navy-deep 0%, $navy-mid 45%, $navy-black 100%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 26px;
   overflow: hidden;
-  padding: 32px 28px 28px;
+  padding: 34px 26px 26px;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 
 /* ─── Background glow ───────────────────────────────────────── */
 .vd-bg-glow {
   position: absolute;
-  top: -60px;
+  top: -90px;
   left: 50%;
   transform: translateX(-50%);
-  width: 260px;
-  height: 260px;
+  width: 280px;
+  height: 280px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 195, 247, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, $gold-dim 0%, transparent 70%);
   z-index: 0;
+  pointer-events: none;
+}
+
+.vd-sheet::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(79, 195, 247, 0.08), transparent 55%);
   pointer-events: none;
 }
 
@@ -46,18 +59,17 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 .vd-league-pill {
   display: inline-flex;
   align-items: center;
-  background: rgba(79, 195, 247, 0.1);
-  border: 1px solid rgba(79, 195, 247, 0.25);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 99px;
-  padding: 4px 16px;
-  margin-bottom: 20px;
+  padding: 5px 16px;
+  margin-bottom: 22px;
 }
 
 .vd-league-name {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: $celeste;
-  letter-spacing: 0.8px;
+  color: $gold-light;
+  letter-spacing: 1.4px;
   text-transform: uppercase;
   font-family: 'Poppins', sans-serif;
 }
@@ -65,15 +77,21 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 /* ─── Trofeo ────────────────────────────────────────────────── */
 .vd-trophy-wrap {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.02));
   margin-bottom: 16px;
 }
 
 .vd-trophy-ring {
   position: absolute;
-  inset: -10px;
+  inset: 0;
   border-radius: 50%;
-  border: 2px solid rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.35);
   animation: vd-ring-pulse 2.4s ease-in-out infinite;
 }
 
@@ -83,9 +101,9 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 }
 
 .vd-trophy {
-  font-size: 3.8rem;
+  font-size: 2.6rem;
   display: inline-block;
-  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.55));
+  filter: drop-shadow(0 2px 8px rgba(201, 151, 31, 0.55));
   animation: vd-trophy-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
 }
 
@@ -97,21 +115,27 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 
 /* ─── Titolo & Sottotitolo ──────────────────────────────────── */
 .vd-title {
-  color: $celeste;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin: 0 0 6px;
+  color: #F5F7FA;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 2px;
   font-family: 'Poppins', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  text-shadow: 0 0 28px rgba(79, 195, 247, 0.45);
+  letter-spacing: 0.6px;
+}
+
+.vd-title-rule {
+  width: 34px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, $gold, transparent);
+  margin: 10px auto 12px;
 }
 
 .vd-subtitle {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(230, 236, 245, 0.55);
   font-size: 0.84rem;
   margin: 0 0 24px;
   font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.2px;
 }
 
 /* ─── Lista vincitori ───────────────────────────────────────── */
@@ -126,8 +150,8 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, rgba(10, 61, 145, 0.25), rgba(79, 195, 247, 0.1));
-  border: 1px solid rgba(79, 195, 247, 0.25);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(212, 175, 55, 0.02));
+  border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 16px;
   padding: 13px 20px;
   opacity: 0;
@@ -135,8 +159,25 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
   transition: border-color 0.2s, background 0.2s;
 
   &:hover {
-    border-color: rgba(79, 195, 247, 0.5);
-    background: linear-gradient(135deg, rgba(10, 61, 145, 0.35), rgba(79, 195, 247, 0.18));
+    border-color: rgba(212, 175, 55, 0.6);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+  }
+}
+
+/* Card protagonista quando c'è un solo vincitore */
+.vd-row-solo {
+  flex-direction: column;
+  padding: 20px 18px 18px;
+  gap: 6px;
+
+  .vd-crown {
+    font-size: 1.7rem;
+    margin-bottom: 2px;
+  }
+
+  .vd-nickname {
+    font-size: 1.2rem;
+    text-align: center;
   }
 }
 
@@ -169,22 +210,22 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 /* ─── Bottone chiusura ──────────────────────────────────────── */
 .vd-close-btn {
   flex: 1;
-  background: linear-gradient(135deg, #0a3d91, #4fc3f7);
-  color: #ffffff;
+  background: linear-gradient(135deg, $gold-dark, $gold-light);
+  color: #1A1200;
   border: none;
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 14px 20px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(79, 195, 247, 0.3);
+  box-shadow: 0 6px 22px rgba(201, 151, 31, 0.35);
   letter-spacing: 0.3px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(79, 195, 247, 0.5);
+    box-shadow: 0 8px 28px rgba(201, 151, 31, 0.5);
   }
   &:active {
     transform: scale(0.97);
@@ -208,16 +249,17 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: rgba(79, 195, 247, 0.1);
-  border: 1.5px solid rgba(79, 195, 247, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
-  color: $celeste;
+  color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, transform 0.2s;
 
   &:hover:not(:disabled) {
-    background: rgba(79, 195, 247, 0.2);
-    border-color: rgba(79, 195, 247, 0.6);
+    background: rgba(212, 175, 55, 0.12);
+    border-color: rgba(212, 175, 55, 0.5);
+    color: $gold-light;
     transform: scale(1.06);
   }
   &:disabled {
@@ -230,8 +272,8 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(79, 195, 247, 0.3);
-  border-top-color: $celeste;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-top-color: $gold-light;
   border-radius: 50%;
   animation: vd-spin 0.7s linear infinite;
 }
@@ -241,7 +283,7 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 }
 
 /* ────────────────────────────────────────────────────────────
-   Confetti — palette limitata (celeste, blu, oro, bianco)
+   Confetti — palette limitata (oro, celeste, bianco)
    ──────────────────────────────────────────────────────────── */
 
 .vd-cf {
@@ -262,9 +304,9 @@ $gold-dim:    rgba(255, 215, 0, 0.15);
 }
 
 $vd-cf-colors:
-  #4fc3f7, #ffd700, #ffffff, #0a3d91, #81d4fa,
-  #ffd700, #4fc3f7, #ffffff, #4fc3f7, #ffd700,
-  #81d4fa, #ffffff, #0a3d91, #4fc3f7, #ffd700,
+  #D4AF37, #4fc3f7, #ffffff, #F6E27A, #81d4fa,
+  #D4AF37, #4fc3f7, #ffffff, #D4AF37, #F6E27A,
+  #81d4fa, #ffffff, #D4AF37, #4fc3f7, #F6E27A,
   #ffffff;
 
 @for $i from 0 through 15 {
@@ -279,7 +321,7 @@ $vd-cf-colors:
 }
 
 /* ────────────────────────────────────────────────────────────
-   Sparkle decorativi (stelline celesti/dorate — no pixel art)
+   Sparkle decorativi (oro/celeste/bianco)
    ──────────────────────────────────────────────────────────── */
 
 .vd-spark {
@@ -299,15 +341,15 @@ $vd-cf-colors:
 .vd-spark-1 {
   top: 14%; left: 8%;
   width: 8px; height: 8px;
-  background: $celeste;
-  box-shadow: 0 0 8px 3px rgba(79,195,247,0.4);
+  background: $gold;
+  box-shadow: 0 0 8px 3px rgba(212, 175, 55, 0.4);
   animation-delay: 0.2s; animation-duration: 2.0s;
 }
 .vd-spark-2 {
   top: 12%; right: 10%;
   width: 6px; height: 6px;
-  background: $gold;
-  box-shadow: 0 0 8px 3px rgba(255,215,0,0.45);
+  background: $celeste;
+  box-shadow: 0 0 8px 3px rgba(79, 195, 247, 0.4);
   animation-delay: 0.7s; animation-duration: 2.2s;
 }
 .vd-spark-3 {
@@ -320,22 +362,22 @@ $vd-cf-colors:
 .vd-spark-4 {
   top: 32%; right: 5%;
   width: 7px; height: 7px;
-  background: $celeste;
-  box-shadow: 0 0 8px 3px rgba(79,195,247,0.35);
+  background: $gold;
+  box-shadow: 0 0 8px 3px rgba(212, 175, 55, 0.35);
   animation-delay: 1.6s; animation-duration: 2.1s;
 }
 .vd-spark-5 {
   top: 6%; left: 44%;
   width: 6px; height: 6px;
-  background: $gold;
-  box-shadow: 0 0 8px 3px rgba(255,215,0,0.4);
+  background: $celeste;
+  box-shadow: 0 0 8px 3px rgba(79, 195, 247, 0.4);
   animation-delay: 0.45s; animation-duration: 1.9s;
 }
 .vd-spark-6 {
   top: 20%; left: 22%;
   width: 5px; height: 5px;
-  background: #81d4fa;
-  box-shadow: 0 0 6px 2px rgba(129,212,250,0.4);
+  background: $gold-light;
+  box-shadow: 0 0 6px 2px rgba(246, 226, 122, 0.4);
   animation-delay: 1.3s; animation-duration: 2.3s;
 }
 
@@ -343,17 +385,22 @@ $vd-cf-colors:
 /* ─── Responsive 480px ─────────────────────────────────────── */
 @media (max-width: 480px) {
   .vd-sheet {
-    padding: 24px 16px 20px;
-    border-radius: 20px;
+    padding: 26px 18px 20px;
+    border-radius: 22px;
+  }
+
+  .vd-trophy-wrap {
+    width: 74px;
+    height: 74px;
   }
 
   .vd-trophy {
-    font-size: 3rem;
+    font-size: 2.2rem;
   }
 
   .vd-title {
     font-size: 1.2rem;
-    letter-spacing: 1px;
+    letter-spacing: 0.4px;
   }
 
   .vd-subtitle {
@@ -363,6 +410,10 @@ $vd-cf-colors:
 
   .vd-row {
     padding: 11px 14px;
+  }
+
+  .vd-row-solo {
+    padding: 16px 14px 14px;
   }
 
   .vd-nickname {
@@ -389,11 +440,16 @@ $vd-cf-colors:
 /* ─── Responsive 360px ─────────────────────────────────────── */
 @media (max-width: 360px) {
   .vd-sheet {
-    padding: 20px 14px 18px;
+    padding: 22px 14px 18px;
+  }
+
+  .vd-trophy-wrap {
+    width: 64px;
+    height: 64px;
   }
 
   .vd-trophy {
-    font-size: 2.6rem;
+    font-size: 1.9rem;
   }
 
   .vd-title {
@@ -446,7 +502,7 @@ $vd-cf-colors:
   left: -9999px;
   top: 0;
   width: 400px;
-  background: linear-gradient(160deg, #060b1a 0%, #0e1435 45%, #13071f 100%);
+  background: linear-gradient(160deg, $navy-black 0%, $navy-mid 45%, #13071f 100%);
   border-radius: 20px;
   padding: 36px 32px 32px;
   font-family: 'Poppins', sans-serif;
@@ -462,14 +518,14 @@ $vd-cf-colors:
 
 .vd-sc-trophy {
   font-size: 2.8rem;
-  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.6));
 }
 
 .vd-sc-lega {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #ffd700;
-  text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+  color: $gold-light;
+  text-shadow: 0 0 16px rgba(212, 175, 55, 0.4);
 }
 
 .vd-sc-sub {
@@ -491,8 +547,8 @@ $vd-cf-colors:
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 215, 0, 0.09);
-  border: 1px solid rgba(255, 215, 0, 0.25);
+  background: rgba(212, 175, 55, 0.09);
+  border: 1px solid rgba(212, 175, 55, 0.25);
   border-radius: 12px;
   padding: 10px 16px;
 }

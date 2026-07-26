@@ -41,5 +41,10 @@ public class LegaDTO {
 
     /** Numero di vite iniziali assegnato a ogni giocatore (default 1) */
     private short viteIniziali;
+
+    /** Flag transiente (non persistito): valorizzato durante calcola() quando in un turno Survivor
+     * tutti i giocatori ancora attivi risulterebbero eliminati nello stesso turno, per segnalare a
+     * calcolaStatoLega() di terminare la lega dichiarandoli ex aequo invece di eliminarli. */
+    private boolean tuttiEliminatiStessoTurno;
 }
 

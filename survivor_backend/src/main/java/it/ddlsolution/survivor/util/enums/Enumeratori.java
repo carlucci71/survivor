@@ -136,6 +136,7 @@ public class Enumeratori {
         SERIE_A,
         SERIE_B,
         LIGA,
+        PREMIER_LEAGUE,
         TENNIS_W,
         TENNIS_AO,
         ROLAND_GARROS,

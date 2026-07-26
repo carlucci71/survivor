@@ -149,6 +149,18 @@
 						</exclude>
 					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<!-- Bound to generate-resources (instead of the default prepare-package)
+						     so build-info.properties is regenerated on every `mvn spring-boot:run`
+						     too, not only on `mvn package`. -->
+						<id>build-info</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>build-info</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

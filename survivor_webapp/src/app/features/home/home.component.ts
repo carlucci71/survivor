@@ -10,12 +10,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-import { Giocatore, Lega, StatoGiocatore, StatoLega } from '../../core/models/interfaces.model';
+import { Giocatore, Lega, RuoloGiocatore, StatoGiocatore, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { InvitaUtentiDialogComponent } from '../../shared/components/invita-utenti-dialog/invita-utenti-dialog.component';
+import { RinominaLegaDialogComponent } from '../../shared/components/rinomina-lega-dialog/rinomina-lega-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
@@ -49,6 +51,7 @@ import { ProfiloDialogComponent } from '../../shared/components/info-banner/info
     MatChipsModule,
     MatDialogModule,
     MatIconModule,
+    MatTooltipModule,
     TranslateModule,
     LegaCardSkeletonComponent,
     FormsModule,
@@ -418,6 +421,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  isLeaderGroup(group: { edizioni: Lega[] }): boolean {
+    return group.edizioni.some(e => e.ruoloGiocatoreLega?.value === RuoloGiocatore.LEADER.value);
+  }
+
+  openRinominaDialog(group: { name: string; edizioni: Lega[] }, event?: Event): void {
+    event?.stopPropagation();
+    const legaRif = group.edizioni[0];
+    if (!legaRif) return;
+
+    this.dialog.open(RinominaLegaDialogComponent, {
+      data: {
+        legaId: legaRif.id,
+        legaNome: group.name,
+      },
+      width: '90vw',
+      maxWidth: '420px',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false
+    }).afterClosed().subscribe((renamed: boolean) => {
+      if (renamed) {
+        this.loadLeghe(this.activeTab);
+      }
+    });
+  }
+
   get filteredPrivateLeghe() {
     return this.filteredGroupedLeghe.filter(g => !g.pubblica);
   }
@@ -444,6 +473,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
       'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',

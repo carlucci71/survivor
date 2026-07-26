@@ -31,6 +31,11 @@
                 "glob": "**/*",
                 "input": "public",
                 "output": "/assets"
+              },
+              {
+                "glob": "privacy.html",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface GironeItem {
   label: string;
@@ -9,7 +10,7 @@ interface GironeItem {
 @Component({
   selector: 'app-mondiali-groups-ticker',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './mondiali-groups-ticker.component.html',
   styleUrls: ['./mondiali-groups-ticker.component.scss']
 })
@@ -67,18 +68,18 @@ export class MondialiGroupsTickerComponent {
   };
 
   readonly gironi: GironeItem[] = [
-    { label: 'Gruppo A', teams: [{ sigla: 'MES', nome: 'Messico' }, { sigla: 'SAF', nome: 'Sudafrica' }, { sigla: 'COR', nome: 'Corea del Sud' }, { sigla: 'CEC', nome: 'Repubblica Ceca' }] },
-    { label: 'Gruppo B', teams: [{ sigla: 'CAN', nome: 'Canada' }, { sigla: 'BOS', nome: 'Bosnia-Erzegovina' }, { sigla: 'QAT', nome: 'Qatar' }, { sigla: 'SVI', nome: 'Svizzera' }] },
-    { label: 'Gruppo C', teams: [{ sigla: 'BRA', nome: 'Brasile' }, { sigla: 'MAR', nome: 'Marocco' }, { sigla: 'HAI', nome: 'Haiti' }, { sigla: 'SCO', nome: 'Scozia' }] },
-    { label: 'Gruppo D', teams: [{ sigla: 'USA', nome: 'USA' }, { sigla: 'PAR', nome: 'Paraguay' }, { sigla: 'AUS', nome: 'Australia' }, { sigla: 'TUR', nome: 'Turchia' }] },
-    { label: 'Gruppo E', teams: [{ sigla: 'GER', nome: 'Germania' }, { sigla: 'CUR', nome: 'Curaçao' }, { sigla: 'CIV', nome: "Costa d'Avorio" }, { sigla: 'ECU', nome: 'Ecuador' }] },
-    { label: 'Gruppo F', teams: [{ sigla: 'OLA', nome: 'Olanda' }, { sigla: 'JAP', nome: 'Giappone' }, { sigla: 'SVE', nome: 'Svezia' }, { sigla: 'TUN', nome: 'Tunisia' }] },
-    { label: 'Gruppo G', teams: [{ sigla: 'BEL', nome: 'Belgio' }, { sigla: 'EGI', nome: 'Egitto' }, { sigla: 'IRA', nome: 'Iran' }, { sigla: 'NZE', nome: 'Nuova Zelanda' }] },
-    { label: 'Gruppo H', teams: [{ sigla: 'SPA', nome: 'Spagna' }, { sigla: 'CPV', nome: 'Capo Verde' }, { sigla: 'SAU', nome: 'Arabia Saudita' }, { sigla: 'URU', nome: 'Uruguay' }] },
-    { label: 'Gruppo I', teams: [{ sigla: 'FRA', nome: 'Francia' }, { sigla: 'SEN', nome: 'Senegal' }, { sigla: 'IRQ', nome: 'Iraq' }, { sigla: 'NOR', nome: 'Norvegia' }] },
-    { label: 'Gruppo J', teams: [{ sigla: 'ARG', nome: 'Argentina' }, { sigla: 'ALG', nome: 'Algeria' }, { sigla: 'AUT', nome: 'Austria' }, { sigla: 'GIO', nome: 'Giordania' }] },
-    { label: 'Gruppo K', teams: [{ sigla: 'POR', nome: 'Portogallo' }, { sigla: 'COD', nome: 'Congo DR' }, { sigla: 'UZB', nome: 'Uzbekistan' }, { sigla: 'COL', nome: 'Colombia' }] },
-    { label: 'Gruppo L', teams: [{ sigla: 'ING', nome: 'Inghilterra' }, { sigla: 'CRO', nome: 'Croazia' }, { sigla: 'GHA', nome: 'Ghana' }, { sigla: 'PAN', nome: 'Panama' }] },
+    { label: 'A', teams: [{ sigla: 'MES', nome: 'Messico' }, { sigla: 'SAF', nome: 'Sudafrica' }, { sigla: 'COR', nome: 'Corea del Sud' }, { sigla: 'CEC', nome: 'Repubblica Ceca' }] },
+    { label: 'B', teams: [{ sigla: 'CAN', nome: 'Canada' }, { sigla: 'BOS', nome: 'Bosnia-Erzegovina' }, { sigla: 'QAT', nome: 'Qatar' }, { sigla: 'SVI', nome: 'Svizzera' }] },
+    { label: 'C', teams: [{ sigla: 'BRA', nome: 'Brasile' }, { sigla: 'MAR', nome: 'Marocco' }, { sigla: 'HAI', nome: 'Haiti' }, { sigla: 'SCO', nome: 'Scozia' }] },
+    { label: 'D', teams: [{ sigla: 'USA', nome: 'USA' }, { sigla: 'PAR', nome: 'Paraguay' }, { sigla: 'AUS', nome: 'Australia' }, { sigla: 'TUR', nome: 'Turchia' }] },
+    { label: 'E', teams: [{ sigla: 'GER', nome: 'Germania' }, { sigla: 'CUR', nome: 'Curaçao' }, { sigla: 'CIV', nome: "Costa d'Avorio" }, { sigla: 'ECU', nome: 'Ecuador' }] },
+    { label: 'F', teams: [{ sigla: 'OLA', nome: 'Olanda' }, { sigla: 'JAP', nome: 'Giappone' }, { sigla: 'SVE', nome: 'Svezia' }, { sigla: 'TUN', nome: 'Tunisia' }] },
+    { label: 'G', teams: [{ sigla: 'BEL', nome: 'Belgio' }, { sigla: 'EGI', nome: 'Egitto' }, { sigla: 'IRA', nome: 'Iran' }, { sigla: 'NZE', nome: 'Nuova Zelanda' }] },
+    { label: 'H', teams: [{ sigla: 'SPA', nome: 'Spagna' }, { sigla: 'CPV', nome: 'Capo Verde' }, { sigla: 'SAU', nome: 'Arabia Saudita' }, { sigla: 'URU', nome: 'Uruguay' }] },
+    { label: 'I', teams: [{ sigla: 'FRA', nome: 'Francia' }, { sigla: 'SEN', nome: 'Senegal' }, { sigla: 'IRQ', nome: 'Iraq' }, { sigla: 'NOR', nome: 'Norvegia' }] },
+    { label: 'J', teams: [{ sigla: 'ARG', nome: 'Argentina' }, { sigla: 'ALG', nome: 'Algeria' }, { sigla: 'AUT', nome: 'Austria' }, { sigla: 'GIO', nome: 'Giordania' }] },
+    { label: 'K', teams: [{ sigla: 'POR', nome: 'Portogallo' }, { sigla: 'COD', nome: 'Congo DR' }, { sigla: 'UZB', nome: 'Uzbekistan' }, { sigla: 'COL', nome: 'Colombia' }] },
+    { label: 'L', teams: [{ sigla: 'ING', nome: 'Inghilterra' }, { sigla: 'CRO', nome: 'Croazia' }, { sigla: 'GHA', nome: 'Ghana' }, { sigla: 'PAN', nome: 'Panama' }] },
   ];
 
   getLogo(sigla: string): string {

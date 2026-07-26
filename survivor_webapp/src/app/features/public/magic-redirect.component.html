@@ -10,21 +10,21 @@
       <span class="mr-icon">&#128272;</span>
     </div>
 
-    <h2 class="mr-title">Completa l'accesso</h2>
-    <p class="mr-subtitle">Scegli come vuoi accedere a Survivor</p>
+    <h2 class="mr-title">{{ 'MAGIC_REDIRECT.TITLE' | translate }}</h2>
+    <p class="mr-subtitle">{{ 'MAGIC_REDIRECT.SUBTITLE' | translate }}</p>
 
     <div class="mr-actions">
       <button class="mr-btn mr-btn--primary" (click)="openApp()">
         <span class="mr-btn-icon">&#128241;</span>
-        <span>Apri nell'app</span>
+        <span>{{ 'MAGIC_REDIRECT.OPEN_APP' | translate }}</span>
       </button>
       <button class="mr-btn mr-btn--secondary" (click)="continuaNelBrowser()">
         <span class="mr-btn-icon">&#127760;</span>
-        <span>Continua nel browser</span>
+        <span>{{ 'MAGIC_REDIRECT.CONTINUE_IN_BROWSER' | translate }}</span>
       </button>
     </div>
 
-    <p class="mr-hint">Se hai già l'app installata, ti consigliamo di aprirla per la migliore esperienza.</p>
+    <p class="mr-hint">{{ 'MAGIC_REDIRECT.HINT' | translate }}</p>
   </div>
 </div>
 

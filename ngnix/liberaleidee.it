@@ -164,6 +164,13 @@ location = /custom_503.html {
         return 302 /survivor/;
     }
 
+    # Static privacy policy page (required by Google Play Store)
+    location = /privacy {
+        alias /home/survivor/github/survivor/survivor_webapp/dist/survivor_webapp/browser/privacy.html;
+        default_type text/html;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    }
+
     # Deny access to sensitive files
     location ~ /\.(?!well-known).* {
         deny all;

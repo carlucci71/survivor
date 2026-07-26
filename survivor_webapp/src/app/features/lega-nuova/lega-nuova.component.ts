@@ -477,7 +477,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
         error: (err) => {
           if (err && err.status === 499) {
             let messaggio = '';
-            if (err?.error?.message) {
+            if (err?.error?.errorCode === 'CODE_LEGA_PRESENTE') {
+              messaggio = this.translate.instant('CREATE_LEAGUE.NAME_TAKEN');
+            } else if (err?.error?.message) {
               messaggio = String(err.error.message);
             } else {
               messaggio = err.message;

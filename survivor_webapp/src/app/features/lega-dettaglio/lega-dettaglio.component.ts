@@ -13,10 +13,12 @@ import {
   Giocatore,
   Lega,
   Partita,
+  PronosticoVincitore,
   RuoloGiocatore,
   StatoGiocatore,
   StatoLega,
   StatoPartita,
+  VotoPronostico,
 } from '../../core/models/interfaces.model';
 import { SquadraService } from '../../core/services/squadra.service';
 import { GiocatoreService } from '../../core/services/giocatore.service';
@@ -57,6 +59,7 @@ import { LeaderTutorialComponent } from '../../shared/components/leader-tutorial
 import { PlayerTutorialComponent } from '../../shared/components/player-tutorial/player-tutorial.component';
 import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component';
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
+import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
 import { MondialiHistoryWidgetComponent } from '../../shared/components/mondiali-history-widget/mondiali-history-widget.component';
 
@@ -126,7 +129,7 @@ export class LegaDettaglioComponent implements OnDestroy {
    *
    * ⚠️ IMPORTANTE: Rimettere a false prima di commit/push per produzione!
    */
-  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // ✅ PRODUZIONE - Mock DISABILITATO
+  private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
 
   readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
@@ -302,6 +305,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (lega) {
           this.lega = lega;
           this.id=lega.id;
+          this.caricaMioPronostico();
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
           // Questo mock crea 10 giornate fittizie per testare:
@@ -315,11 +319,14 @@ export class LegaDettaglioComponent implements OnDestroy {
             this.lega.giornataFinale = 10;
             this.lega.giornataCorrente = 8; // Simulo che siamo alla giornata 8
 
-            // Mock squadre Serie A per le giocate
-            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            // Rileva il campionato e usa le sigla appropriate
+            const isMondiali = this.lega.campionato?.id === 'MONDIALI_2026';
+            const mockSquadre = isMondiali
+              ? ['BRA', 'ARG', 'FRA', 'GER', 'SPA', 'POR', 'ING', 'OLA', 'URU', 'BEL']
+              : ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
             const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
 
-            // Aggiungi giocate mock a TUTTI i giocatori
+            // Aggiungi giocate mock a TUTTI i giocatori (con legaId per il filtro storico)
             this.lega.giocatori?.forEach((giocatore) => {
               giocatore.giocate = [];
 
@@ -329,7 +336,8 @@ export class LegaDettaglioComponent implements OnDestroy {
                   squadraSigla: mockSquadre[i],
                   esito: mockEsiti[i] as any,
                   forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
-                  pubblica: true
+                  pubblica: true,
+                  legaId: this.lega!.id // necessario per il filtro nel dialog storico
                 });
               }
             });
@@ -338,7 +346,7 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.caricaTabella();
           this.scrollTableToRight();
           this.startCountdown();
-          if (this.isCampionato()) this.caricaTickerPartite();
+          if (this.isCampionato() && !this.TEST_MODE_FORCE_HISTORY_ICON) this.caricaTickerPartite();
           if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
@@ -436,11 +444,14 @@ export class LegaDettaglioComponent implements OnDestroy {
             this.lega.giornataIniziale = 1;
             this.lega.giornataFinale = 10;
 
-            // Mock squadre Serie A
-            const mockSquadre = ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
+            // Rileva il campionato e usa le sigla appropriate
+            const isMondiali = this.lega.campionato?.id === 'MONDIALI_2026';
+            const mockSquadre = isMondiali
+              ? ['BRA', 'ARG', 'FRA', 'GER', 'SPA', 'POR', 'ING', 'OLA', 'URU', 'BEL']
+              : ['INT', 'MIL', 'JUV', 'NAP', 'ROM', 'ATA', 'LAZ', 'FIO', 'BOL', 'TOR'];
             const mockEsiti = ['OK', 'OK', 'KO', 'OK', 'OK', 'OK', 'KO', 'OK', null, null];
 
-            // Aggiungi giocate mock a TUTTI i giocatori
+            // Aggiungi giocate mock a TUTTI i giocatori (con legaId per il filtro storico)
             this.lega.giocatori?.forEach((giocatore) => {
               giocatore.giocate = [];
 
@@ -450,7 +461,8 @@ export class LegaDettaglioComponent implements OnDestroy {
                   squadraSigla: mockSquadre[i],
                   esito: mockEsiti[i] as any,
                   forzatura: i === 4 ? 'admin' : undefined, // Giornata 5 forzata
-                  pubblica: true
+                  pubblica: true,
+                  legaId: this.lega!.id
                 });
               }
             });
@@ -704,6 +716,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       'SERIE_A': 'assets/logos/calcio/tornei/serie_A.png',
       'SERIE_B': 'assets/logos/calcio/tornei/serie_b.png',
       'LIGA': 'assets/logos/calcio/tornei/liga.png',
+      'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
       'NBA_RS': 'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN': 'assets/logos/tennis/tornei/Australian Open.png',
@@ -1086,22 +1099,13 @@ export class LegaDettaglioComponent implements OnDestroy {
       return true; // Mostra sempre l'icona in modalità test
     }
 
-    if (!giocatore?.giocate || !this.giornataIndices || this.giornataIndices.length === 0) return false;
+    if (!giocatore?.giocate) return false;
 
-    const giornataIniziale = this.lega?.giornataIniziale || 1;
-    const windowStart = this.giornataIndices[0];
     const legaId = this.lega?.id;
 
-    // Mostra storico solo dopo la sesta scelta
+    // Mostra storico dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
     const giocateInLega = giocatore.giocate.filter(g => !legaId || g.legaId === legaId);
-    if (giocateInLega.length < 6) return false;
-
-    // Mostra storico se il giocatore ha giocate in questa lega precedenti alla finestra visibile
-    return giocatore.giocate.some(g => {
-      if (legaId && g.legaId !== legaId) return false;
-      const giornataAssoluta = giornataIniziale + (g.giornata || 0) - 1;
-      return giornataAssoluta < windowStart;
-    });
+    return giocateInLega.length >= 6;
   }
 
   /**
@@ -1296,6 +1300,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     'LIGA_ELC': 'ELC.png',
     'LIGA_GET': 'GET.png',
     'LIGA_VAL': 'VAL.png',
+    'LIGA_CEL': 'CELTA_VIGO.png',
+    'LIGA_DEP': 'DEPORTIVO_LA_CORUNA.webp',
+    'LIGA_MAL': 'MALAGA.png',
+    'LIGA_RAC': 'RACING_SANTANDER.png',
     // SERIE A (20 squadre)
     'SERIE_A_ATA': 'ATA.png',       // Atalanta
     'SERIE_A_BOL': 'BOLO.png',      // Bologna
@@ -1320,6 +1328,29 @@ export class LegaDettaglioComponent implements OnDestroy {
     'SERIE_A_UDI': 'UDI.png',       // Udinese ✨ AGGIUNTO
     'SERIE_A_VEN': 'VEN.png',       // Venezia
     'SERIE_A_VER': 'VER.png',       // Verona
+    'SERIE_A_FRO': 'FRO.png',       // Frosinone (promosso 2026/27)
+
+    // PREMIER LEAGUE
+    'PREMIER_LEAGUE_ARS': 'inghilterra/arsenal.png',
+    'PREMIER_LEAGUE_AST': 'inghilterra/aston_villa.png',
+    'PREMIER_LEAGUE_AFC': 'inghilterra/bournemouth.webp',
+    'PREMIER_LEAGUE_BRE': 'inghilterra/brentford.png',
+    'PREMIER_LEAGUE_BHA': 'inghilterra/brighton.png',
+    'PREMIER_LEAGUE_CHL': 'inghilterra/chelsea.webp',
+    'PREMIER_LEAGUE_COV': 'inghilterra/coventry.webp',
+    'PREMIER_LEAGUE_CPL': 'inghilterra/crystal_palace.png',
+    'PREMIER_LEAGUE_EVT': 'inghilterra/everton.png',
+    'PREMIER_LEAGUE_FUL': 'inghilterra/fulham.png',
+    'PREMIER_LEAGUE_HUL': 'inghilterra/hull.webp',
+    'PREMIER_LEAGUE_IPS': 'inghilterra/ipswich.png',
+    'PREMIER_LEAGUE_LDS': 'inghilterra/leeds.png',
+    'PREMIER_LEAGUE_LIV': 'inghilterra/liverpool.png',
+    'PREMIER_LEAGUE_MNC': 'inghilterra/manchester_city.png',
+    'PREMIER_LEAGUE_MNU': 'inghilterra/manchester_united.png',
+    'PREMIER_LEAGUE_NEW': 'inghilterra/newcastle.webp',
+    'PREMIER_LEAGUE_NOF': 'inghilterra/forest.png',
+    'PREMIER_LEAGUE_SUN': 'inghilterra/sunderland.png',
+    'PREMIER_LEAGUE_TOT': 'inghilterra/tottenham.png',
 
     // SERIE B (18 squadre)
     'SERIE_B_AVE': 'AVE.png',       // Avellino ✨ AGGIUNTO
@@ -1342,6 +1373,57 @@ export class LegaDettaglioComponent implements OnDestroy {
     'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
+
+    // MONDIALI 2026 (squadre nazionali)
+    'MONDIALI_2026_BRA': 'mondiali/brasile.png',
+    'MONDIALI_2026_ARG': 'mondiali/argentina.png',
+    'MONDIALI_2026_FRA': 'mondiali/francia.png',
+    'MONDIALI_2026_GER': 'mondiali/germania.png',
+    'MONDIALI_2026_SPA': 'mondiali/spagna.png',
+    'MONDIALI_2026_POR': 'mondiali/portogallo.png',
+    'MONDIALI_2026_ING': 'mondiali/inghilterra.png',
+    'MONDIALI_2026_OLA': 'mondiali/olanda.png',
+    'MONDIALI_2026_URU': 'mondiali/uruguay.png',
+    'MONDIALI_2026_BEL': 'mondiali/belgio.png',
+    'MONDIALI_2026_BIH': 'mondiali/bosnia-erzegovina.png',
+    'MONDIALI_2026_CAN': 'mondiali/canada.png',
+    'MONDIALI_2026_QAT': 'mondiali/qatar.png',
+    'MONDIALI_2026_SVI': 'mondiali/svizzera.png',
+    'MONDIALI_2026_MES': 'mondiali/messico.png',
+    'MONDIALI_2026_SAF': 'mondiali/sudafrica.png',
+    'MONDIALI_2026_COR': 'mondiali/corea.png',
+    'MONDIALI_2026_CEC': 'mondiali/repubblica-ceca.png',
+    'MONDIALI_2026_USA': 'mondiali/stati-uniti.png',
+    'MONDIALI_2026_PAR': 'mondiali/paraguay.png',
+    'MONDIALI_2026_AUS': 'mondiali/australia.png',
+    'MONDIALI_2026_TUR': 'mondiali/turchia.png',
+    'MONDIALI_2026_GER2': 'mondiali/germania.png',
+    'MONDIALI_2026_CUR': 'mondiali/curacao.png',
+    'MONDIALI_2026_CIV': 'mondiali/costa-avorio.png',
+    'MONDIALI_2026_ECU': 'mondiali/ecuador.png',
+    'MONDIALI_2026_JAP': 'mondiali/giappone.png',
+    'MONDIALI_2026_SVE': 'mondiali/svezia.png',
+    'MONDIALI_2026_TUN': 'mondiali/tunisia.png',
+    'MONDIALI_2026_EGI': 'mondiali/egitto.png',
+    'MONDIALI_2026_IRA': 'mondiali/iran.png',
+    'MONDIALI_2026_NZE': 'mondiali/nuova-zelanda.png',
+    'MONDIALI_2026_CPV': 'mondiali/capoverde.png',
+    'MONDIALI_2026_SAU': 'mondiali/arabia-saudita.png',
+    'MONDIALI_2026_SEN': 'mondiali/senegal.png',
+    'MONDIALI_2026_IRQ': 'mondiali/iraq.png',
+    'MONDIALI_2026_NOR': 'mondiali/norvegia.png',
+    'MONDIALI_2026_ALG': 'mondiali/algeria.png',
+    'MONDIALI_2026_AUT': 'mondiali/austria.png',
+    'MONDIALI_2026_GIO': 'mondiali/giordania.png',
+    'MONDIALI_2026_RDC': 'mondiali/congo.png',
+    'MONDIALI_2026_COL': 'mondiali/colombia.png',
+    'MONDIALI_2026_UZB': 'mondiali/uzbekistan.png',
+    'MONDIALI_2026_MAR': 'mondiali/marocco.png',
+    'MONDIALI_2026_SCO': 'mondiali/scozia.png',
+    'MONDIALI_2026_HAI': 'mondiali/haiti.png',
+    'MONDIALI_2026_CRO': 'mondiali/croazia.png',
+    'MONDIALI_2026_GHA': 'mondiali/ghana.png',
+    'MONDIALI_2026_PAN': 'mondiali/panama.png',
   };
 
   // Mapping foto tennisti
@@ -1650,6 +1732,108 @@ export class LegaDettaglioComponent implements OnDestroy {
     return this.savedConsolationMessage;
   }
 
+  // ─── Condivisione "lapide" di eliminazione ──────────────────────────────
+  @ViewChild('elimShareCard') elimShareCardRef?: ElementRef<HTMLElement>;
+  sharingEliminazione = false;
+  readonly shareUrl = environment.baseUrl.replace(/^https?:\/\//, '');
+
+  async shareEliminazione(): Promise<void> {
+    if (this.sharingEliminazione || !this.elimShareCardRef) return;
+    this.sharingEliminazione = true;
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const el = this.elimShareCardRef.nativeElement;
+      const canvas = await html2canvas(el, { backgroundColor: '#1a0a0a', scale: 2, useCORS: true, logging: false });
+      const dataUrl = canvas.toDataURL('image/png');
+      const squadra = this.getSquadraEliminazione();
+      const text = [
+        `💀 ${this.translate.instant('LEAGUE.YOU_ELIMINATED')}`,
+        squadra ? `${this.translate.instant('LEAGUE.YOU_BETRAYED')} ${squadra.nome}` : '',
+        this.getRandomConsolationMessage(),
+        '',
+        this.translate.instant('LEAGUE.SHARE_CTA', { url: this.shareUrl })
+      ].filter(Boolean).join('\n');
+
+      // Native mobile share via Capacitor
+      try {
+        const { Share } = await import('@capacitor/share');
+        const { Filesystem, Directory } = await import('@capacitor/filesystem');
+        const base64 = dataUrl.split(',')[1];
+        const saved = await Filesystem.writeFile({
+          path: 'survivor-eliminazione.png',
+          data: base64,
+          directory: Directory.Cache
+        });
+        await Share.share({
+          title: this.translate.instant('LEAGUE.YOU_ELIMINATED'),
+          text,
+          files: [saved.uri],
+          dialogTitle: 'Condividi su Instagram o altrove'
+        });
+        return;
+      } catch { /* fallback web */ }
+
+      // Web: download diretto
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = 'survivor-eliminazione.png';
+      a.click();
+    } finally {
+      this.sharingEliminazione = false;
+    }
+  }
+
+  // ─── Pronostico vincitore (per gli eliminati) ───────────────────────────
+  mioPronostico: PronosticoVincitore | null = null;
+  classificaPronostici: VotoPronostico[] = [];
+
+  private caricaMioPronostico(): void {
+    if (!this.lega || this.lega.modalita !== 'SURVIVOR') {
+      this.mioPronostico = null;
+      this.classificaPronostici = [];
+      return;
+    }
+
+    if (this.isCurrentUserEliminato()) {
+      this.legaService.getMioPronostico(this.lega.id).subscribe({
+        next: (pronostico) => { this.mioPronostico = pronostico; },
+        error: () => { this.mioPronostico = null; }
+      });
+    } else {
+      this.mioPronostico = null;
+    }
+
+    this.legaService.getClassificaPronostici(this.lega.id).subscribe({
+      next: (classifica) => { this.classificaPronostici = classifica; },
+      error: () => { this.classificaPronostici = []; }
+    });
+  }
+
+  private getGiocatoriAttivi(): { id: number; nickname: string }[] {
+    if (!this.lega?.giocatori) return [];
+    return this.lega.giocatori
+      .filter(g => g.statiPerLega?.[this.lega!.id]?.value === StatoGiocatore.ATTIVO.value)
+      .map(g => ({ id: g.id, nickname: g.nickname }));
+  }
+
+  apriPronosticoDialog(): void {
+    if (!this.lega) return;
+    const ref = this.dialog.open(PronosticoVincitoreDialogComponent, {
+      width: '92vw',
+      maxWidth: '380px',
+      data: {
+        idLega: this.lega.id,
+        giocatoriAttivi: this.getGiocatoriAttivi(),
+        giocatorePronosticatoId: this.mioPronostico?.giocatorePronosticatoId ?? null
+      }
+    });
+    ref.afterClosed().subscribe((pronostico: PronosticoVincitore | undefined) => {
+      if (pronostico) {
+        this.mioPronostico = pronostico;
+      }
+    });
+  }
+
   // Messaggi simpatici per l'eliminazione
   private eliminationMessages = [
     { emoji: '💀', message: 'Sei stato eliminato!' },
@@ -1780,7 +1964,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel termina della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_TERMINA');
       },
     });
   }
@@ -1791,7 +1975,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel riapri della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_RIAPRI');
       },
     });
   }
@@ -1803,7 +1987,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore in seconda occasione della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_SECONDA_OCCASIONE');
       },
     });
   }
@@ -2076,7 +2260,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore nel termina della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_TERMINA');
       },
     });
   }
@@ -2142,7 +2326,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.legaService.calcola(Number(this.id)).subscribe({
       next: (lega: Lega) => {
         if (!lega?.id || lega.stato?.value === StatoLega.ERRORE.value) {
-          this.error = 'Errore in calcola della lega';
+          this.error = this.translate.instant('LEAGUE.ERROR_CALCOLA');
           return;
         }
         this.lega = lega;
@@ -2154,7 +2338,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.startCountdown();
       },
       error: (err: any) => {
-        this.error = 'Errore in calcola della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_CALCOLA');
       },
     });
   }
@@ -2174,7 +2358,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         this.caricaTabella();
       },
       error: (err: any) => {
-        this.error = 'Errore in undocalcola della lega';
+        this.error = this.translate.instant('LEAGUE.ERROR_UNDO_CALCOLA');
       },
     });
   }
@@ -2302,7 +2486,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       error: (err) => {
         console.error('Errore durante l\'eliminazione della lega:', err);
         this.isDeleting = false;
-        this.error = 'Errore durante l\'eliminazione della lega: ' + (err.error?.message || err.message);
+        this.error = this.translate.instant('LEAGUE.ERROR_DELETE_LEAGUE') + ': ' + (err.error?.message || err.message);
       }
     });
   }
@@ -2410,12 +2594,10 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (!this.lega || !this.lega.campionato?.id) return;
 
     this.campionatoService
-      .calendario(
+      .partiteDellaGiornata(
         this.lega.campionato.id,
-        '',
         this.lega.anno,
-        this.lega.giornataCorrente,
-        true
+        this.lega.giornataCorrente
       )
       .subscribe({
         next: (partite) => {

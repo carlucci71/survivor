@@ -34,18 +34,18 @@ export class AuthService {
     return this.injector.get(Router);
   }
 
-  requestMagicLink(email: string, mobile: boolean): Observable<MagicLinkResponse> {
-    const request: MagicLinkRequest = { email, mobile };
+  requestMagicLink(email: string, mobile: boolean, addInfo?: string): Observable<MagicLinkResponse> {
+    const request: MagicLinkRequest = { email, mobile, addInfo };
     return this.http.post<MagicLinkResponse>(
       `${this.apiUrl}/request-magic-link`,
       request
     );
   }
 
-  login(email: string, mobile: boolean): Observable<MagicLinkResponse> {
+  login(email: string, mobile: boolean, addInfo?: string): Observable<MagicLinkResponse> {
     return this.http.post<MagicLinkResponse>(
       `${this.apiUrl}/login`,
-      { email, mobile }
+      { email, mobile, addInfo }
     );
   }
 

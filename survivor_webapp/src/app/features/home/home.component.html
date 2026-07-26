@@ -43,7 +43,7 @@
             matSuffix
             mat-icon-button
             (click)="searchText = ''; filterLeghe()"
-            aria-label="Clear search"
+            [attr.aria-label]="'COMMON.CLEAR_SEARCH' | translate"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -108,6 +108,15 @@
                        [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
+                    <button
+                      *ngIf="isLeaderGroup(group)"
+                      type="button"
+                      class="rename-lega-btn"
+                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
+                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
+                      (click)="openRinominaDialog(group, $event)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                     <span class="lega-visibility-badge lega-visibility-badge--private">
                       <mat-icon>lock</mat-icon> {{ 'HOME.BADGE_PRIVATE' | translate }}
                     </span>
@@ -166,7 +175,7 @@
             </ng-container>
           </ng-container>
           <ng-template #noPrivate>
-            <mat-card class="no-data"><mat-card-content><p>Nessuna lega privata.</p></mat-card-content></mat-card>
+            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PRIVATE_LEAGUES' | translate }}</p></mat-card-content></mat-card>
           </ng-template>
         </div>
 
@@ -183,6 +192,15 @@
                        [alt]="group.des.campionatoId">
                   <mat-card-title>
                     {{ group.name }}
+                    <button
+                      *ngIf="isLeaderGroup(group)"
+                      type="button"
+                      class="rename-lega-btn"
+                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
+                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
+                      (click)="openRinominaDialog(group, $event)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                     <span class="lega-visibility-badge lega-visibility-badge--public">
                       <mat-icon>public</mat-icon> {{ 'HOME.BADGE_PUBLIC' | translate }}
                     </span>
@@ -241,7 +259,7 @@
             </ng-container>
           </ng-container>
           <ng-template #noPublic>
-            <mat-card class="no-data"><mat-card-content><p>Nessuna lega pubblica.</p></mat-card-content></mat-card>
+            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PUBLIC_LEAGUES' | translate }}</p></mat-card-content></mat-card>
           </ng-template>
         </div>
 

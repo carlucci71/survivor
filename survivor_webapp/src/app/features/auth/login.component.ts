@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
@@ -50,37 +51,60 @@ export class LoginComponent implements AfterViewInit {
     this.message = '';
   }
 
+  /** Percorso da cui l'utente è stato rimandato al login (es. "/join/93"), se presente. */
+  private returnUrl: string | null = null;
+
   constructor(
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private translate: TranslateService,
+    private route: ActivatedRoute
+  ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+  }
+
+  /**
+   * Converte il returnUrl in addInfo per il magic link: se è un link di ingresso lega
+   * riusa la stessa convenzione "JOIN:id" già usata per gli inviti via email (così scatta
+   * anche il salvataggio del token per l'accesso libero); altrimenti passa il percorso così com'è.
+   */
+  private buildAddInfo(): string | undefined {
+    if (!this.returnUrl) return undefined;
+    const joinMatch = this.returnUrl.match(/^\/?join\/(\d+)/);
+    if (joinMatch) {
+      return `JOIN:${joinMatch[1]}`;
+    }
+    return this.returnUrl.replace(/^\//, '');
+  }
 
   onSubmit(): void {
     if (!this.email) {
-      this.message = 'Inserisci un indirizzo email valido';
+      this.message = this.translate.instant('AUTH.EMAIL_INVALID');
       this.isSuccess = false;
       return;
     }
 
     if (!this.termsAccepted) {
-      this.message = 'Devi accettare i Termini e Condizioni per continuare';
+      this.message = this.translate.instant('AUTH.TERMS_REQUIRED');
       this.isSuccess = false;
       return;
     }
 
+    const addInfo = this.buildAddInfo();
+
     if (this.activeTab === 'register') {
-      this.authService.requestMagicLink(this.email, environment.mobile).subscribe({
+      this.authService.requestMagicLink(this.email, environment.mobile, addInfo).subscribe({
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
           window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
         },
         error: (error) => {
-          this.message = 'Errore durante l\'invio del magic link';
+          this.message = this.translate.instant('AUTH.MAGIC_LINK_SEND_ERROR');
           this.isSuccess = false;
         }
       });
     } else {
-      this.authService.login(this.email, environment.mobile).subscribe({
+      this.authService.login(this.email, environment.mobile, addInfo).subscribe({
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
@@ -88,9 +112,9 @@ export class LoginComponent implements AfterViewInit {
         },
         error: (error) => {
           if (error.status === 404) {
-            this.message = 'Email non trovata. Devi prima registrarti.';
+            this.message = this.translate.instant('AUTH.EMAIL_NOT_FOUND');
           } else {
-            this.message = error.error?.message || 'Errore durante l\'accesso';
+            this.message = error.error?.message || this.translate.instant('AUTH.LOGIN_ERROR_GENERIC');
           }
           this.isSuccess = false;
         }

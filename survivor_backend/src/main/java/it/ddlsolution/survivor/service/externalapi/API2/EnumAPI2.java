@@ -8,13 +8,14 @@ import java.util.Map;
 class EnumAPI2 {
 
     public enum Campionato {
-        SERIE_A(Map.of(2024, 21,2025, 21), SquadreSerieA_API2.values()),
+        SERIE_A(Map.of(2024, 21, 2025, 21, 2026, 21), SquadreSerieA_API2.values()),
         SERIE_B(Map.of(2025, 105), SquadreSerieB_API2.values()),
-        LIGA(Map.of(2025, 23), SquadreLiga_API2.values()),
+        LIGA(Map.of(2025, 23, 2026, 23), SquadreLiga_API2.values()),
+        PREMIER_LEAGUE(Map.of(2025, 8, 2026, 8), SquadrePremierLeague_API2.values()),
         TENNIS_W(Map.of(2025, 11316), SquadreTennis_API2.values()),
         TENNIS_AO(Map.of(2025, 10376, 2026, 12389), SquadreTennis_API2.values()),
         ROLAND_GARROS(Map.of(2026, 12394), SquadreTennis_API2.values()),
-        NBA_RS(Map.of(2025, 3), SquadreNBA_API2.values()),
+        NBA_RS(Map.of(2025, 3, 2026, 3), SquadreNBA_API2.values()),
         MONDIALI_2026(Map.of(2026, 4), SquadreNazionali_API2.values());
 
         final Map<Integer, Integer> id;
@@ -114,16 +115,17 @@ class EnumAPI2 {
     }
 
     // Mapping giornata (1-based) → phase + subphase della Gazzetta API per i Mondiali 2026
-    // Le fasi knockout (giornate 4-8) sono da verificare quando sarà disponibile la fase eliminazione
+    // Valori confermati: G1-G3 (gironi), R32 (trentaduesimi), R16 (ottavi).
+    // QF/SF/F: subphase inferita dal pattern camelCase dell'API — verificare al primo utilizzo.
     enum RoundMondiali {
-        G1("groups", "1"),    // Giornata 1 gironi
-        G2("groups", "2"),    // Giornata 2 gironi
-        G3("groups", "3"),    // Giornata 3 gironi
-        R32("playoffs", "round-of-32"), // Ottavi di finale (da verificare con API reale)
-        R16("knockout", "2"), // Sedicesimi di finale (da verificare)
-        QF("knockout", "3"),  // Quarti di finale (da verificare)
-        SF("knockout", "4"),  // Semifinali (da verificare)
-        F("knockout", "5");   // Finale (da verificare)
+        G1("groups", "1"),              // Giornata 1 gironi
+        G2("groups", "2"),              // Giornata 2 gironi
+        G3("groups", "3"),              // Giornata 3 gironi
+        R32("playoffs", "round-of-32"), // Trentaduesimi di finale ✓ confermato
+        R16("playoffs", "roundOf16"),   // Ottavi di finale ✓ confermato
+        QF("playoffs", "quarterFinals"),// Quarti di finale (da verificare al primo utilizzo)
+        SF("playoffs", "semiFinals"),   // Semifinali (da verificare al primo utilizzo)
+        F("playoffs", "final");         // Finale (da verificare al primo utilizzo)
 
         final String phase;
         final String subphase;
@@ -142,6 +144,11 @@ class EnumAPI2 {
                 throw new IllegalArgumentException("Giornata Mondiali non valida: " + giornata);
             }
             return values[giornata - 1];
+        }
+
+        // True se il round usa il nuovo URL mc-public-api.gazzetta.it
+        boolean usaUrlKnockout() {
+            return this.ordinal() >= R16.ordinal();
         }
     }
 

@@ -324,6 +324,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       'SERIE_A':       'assets/logos/calcio/tornei/serie_A.png',
       'SERIE_B':       'assets/logos/calcio/tornei/serie_b.png',
       'LIGA':          'assets/logos/calcio/tornei/liga.png',
+      'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
       'NBA_RS':        'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN':      'assets/logos/tennis/tornei/Australian Open.png',
@@ -347,7 +348,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     if (lega?.miaGiocataCorrente && lega.statoGiornataCorrente?.value === 'IN_CORSO') {
       return { esitoClass: 'live', esitoLabel: 'LIVE' };
     }
-    return { esitoClass: 'wait', esitoLabel: 'IN ATTESA' };
+    return { esitoClass: 'wait', esitoLabel: 'PENDING' };
   }
 
   onLogoError(event: Event): void {

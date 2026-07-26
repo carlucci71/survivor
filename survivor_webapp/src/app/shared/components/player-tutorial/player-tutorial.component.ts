@@ -29,7 +29,7 @@ interface TutorialSlide {
   ],
   template: `
     <div class="ob-backdrop" (click)="onBackdropClick($event)">
-      <div class="ob-card" role="dialog" aria-modal="true" aria-label="Player Tutorial">
+      <div class="ob-card" role="dialog" aria-modal="true" [attr.aria-label]="'PLAYER_TUTORIAL.ARIA_LABEL' | translate">
 
         <!-- Badge ruolo -->
         <div class="ob-role-badge">
@@ -55,19 +55,19 @@ interface TutorialSlide {
                       <span class="demo-pick-logo">🏆</span>
                       <div class="demo-pick-info">
                         <span class="demo-pick-name">Juventus</span>
-                        <span class="demo-pick-round">Giornata 28</span>
+                        <span class="demo-pick-round">{{ 'PLAYER_TUTORIAL.DEMO_ROUND' | translate }}</span>
                       </div>
                       <mat-icon class="demo-pick-check">check_circle</mat-icon>
                     </div>
                     <div class="demo-modifica-btn" [class.demo-modifica-btn--visible]="demoStep === 1">
                       <mat-icon class="demo-icon">edit</mat-icon>
-                      <span>Modifica</span>
+                      <span>{{ 'COMMON.EDIT' | translate }}</span>
                     </div>
                     <div class="demo-pick-card demo-pick-card--new" [class.demo-pick-card--visible]="demoStep === 2">
                       <span class="demo-pick-logo">⚽</span>
                       <div class="demo-pick-info">
                         <span class="demo-pick-name">Inter</span>
-                        <span class="demo-pick-round">Nuova scelta</span>
+                        <span class="demo-pick-round">{{ 'PLAYER_TUTORIAL.DEMO_NEW_PICK' | translate }}</span>
                       </div>
                       <mat-icon class="demo-pick-check demo-pick-check--green">check_circle</mat-icon>
                     </div>
@@ -76,25 +76,25 @@ interface TutorialSlide {
               } @else if (slide.demoType === 'storico-colori') {
                 <div class="ob-demo-wrapper">
                   <div class="ob-demo-mockup demo-storico-mockup">
-                    <div class="demo-storico-header">Storico — Mario</div>
+                    <div class="demo-storico-header">{{ 'PLAYER_TUTORIAL.DEMO_HISTORY_TITLE' | translate }} — Mario</div>
                     <div class="demo-storico-row demo-storico-row--win" [class.demo-storico-row--active]="demoStep === 0">
                       <span class="demo-storico-g">G27</span>
                       <span class="demo-storico-team">Napoli</span>
-                      <span class="demo-storico-badge demo-storico-badge--win">✓ VINTO</span>
+                      <span class="demo-storico-badge demo-storico-badge--win">✓ {{ 'PLAYER_TUTORIAL.DEMO_WON' | translate }}</span>
                     </div>
                     <div class="demo-storico-row demo-storico-row--loss" [class.demo-storico-row--active]="demoStep === 1">
                       <span class="demo-storico-g">G28</span>
                       <span class="demo-storico-team">Juventus</span>
-                      <span class="demo-storico-badge demo-storico-badge--loss">✗ PERSO</span>
+                      <span class="demo-storico-badge demo-storico-badge--loss">✗ {{ 'PLAYER_TUTORIAL.DEMO_LOST' | translate }}</span>
                     </div>
                     <div class="demo-storico-row demo-storico-row--win" [class.demo-storico-row--active]="demoStep === 2">
                       <span class="demo-storico-g">G29</span>
                       <span class="demo-storico-team">Milan</span>
-                      <span class="demo-storico-badge demo-storico-badge--win">✓ VINTO</span>
+                      <span class="demo-storico-badge demo-storico-badge--win">✓ {{ 'PLAYER_TUTORIAL.DEMO_WON' | translate }}</span>
                     </div>
                     <div class="demo-storico-legend">
-                      <span class="demo-legend-item demo-legend-item--win">🟢 Sopravvissuto</span>
-                      <span class="demo-legend-item demo-legend-item--loss">🔴 Eliminato</span>
+                      <span class="demo-legend-item demo-legend-item--win">🟢 {{ 'PLAYER_TUTORIAL.DEMO_SURVIVED' | translate }}</span>
+                      <span class="demo-legend-item demo-legend-item--loss">🔴 {{ 'PLAYER_TUTORIAL.DEMO_ELIMINATED' | translate }}</span>
                     </div>
                   </div>
                 </div>

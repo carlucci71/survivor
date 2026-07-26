@@ -449,20 +449,20 @@ h2 {
 .lega-visibility-badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 3px;
+	gap: 2px;
 	border-radius: 20px;
-	padding: 2px 9px;
-	font-size: 0.6rem;
+	padding: 1px 6px;
+	font-size: 0.54rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.3px;
 	vertical-align: middle;
-	margin-left: 8px;
+	margin-left: 5px;
 
 	::ng-deep mat-icon {
-		font-size: 11px;
-		width: 11px;
-		height: 11px;
+		font-size: 9px;
+		width: 9px;
+		height: 9px;
 	}
 
 	// Privata: blu app
@@ -480,24 +480,64 @@ h2 {
 	}
 }
 
+// ── Pulsante rinomina lega (icona penna nel titolo, solo leader) ─────────
+.rename-lega-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin-left: 6px;
+	width: 26px;
+	height: 26px;
+	flex-shrink: 0;
+	border: none;
+	border-radius: 50%;
+	background: rgba(10, 61, 145, 0.09);
+	color: #0A3D91;
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.2s ease;
+
+	mat-icon {
+		font-size: 15px;
+		width: 15px;
+		height: 15px;
+	}
+
+	&:hover {
+		background: rgba(10, 61, 145, 0.18);
+		transform: scale(1.06);
+	}
+
+	&:active {
+		transform: scale(0.95);
+	}
+
+	@media (max-width: 400px) {
+		width: 24px;
+		height: 24px;
+		mat-icon { font-size: 14px; width: 14px; height: 14px; }
+	}
+}
+
 // ── Badge popolarità (4 tier) ────────────────────────────────────────────
 .popolarita-badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 3px;
+	gap: 2px;
 	border-radius: 20px;
-	padding: 2px 9px;
-	font-size: 0.6rem;
+	padding: 1px 6px;
+	font-size: 0.54rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.3px;
 	vertical-align: middle;
-	margin-left: 6px;
+	margin-left: 4px;
 
 	::ng-deep mat-icon {
-		font-size: 11px;
-		width: 11px;
-		height: 11px;
+		font-size: 9px;
+		width: 9px;
+		height: 9px;
 	}
 
 	// 🆕 Nuova — grigio neutro
@@ -568,20 +608,20 @@ h2 {
 .modalita-badge {
 	display: inline-flex;
 	align-items: center;
-	gap: 3px;
+	gap: 2px;
 	border-radius: 20px;
-	padding: 2px 9px;
-	font-size: 0.6rem;
+	padding: 1px 6px;
+	font-size: 0.54rem;
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.3px;
 	vertical-align: middle;
-	margin-left: 6px;
+	margin-left: 4px;
 
 	::ng-deep mat-icon {
-		font-size: 11px;
-		width: 11px;
-		height: 11px;
+		font-size: 9px;
+		width: 9px;
+		height: 9px;
 	}
 
 	&--campionato {

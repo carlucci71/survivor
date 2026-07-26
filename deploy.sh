@@ -1,5 +1,4 @@
 #!/bin/bash
-cp ../survivor_test/survivor_webapp/src/assets/build_fe.html survivor_webapp/src/assets/
 echo "🔄 Deploy Survivor App"
 
 # Carica variabili ambiente
@@ -11,15 +10,15 @@ pm2 stop survivor-backend 2>/dev/null || true
 echo "📦 Build frontend..."
 cd /home/survivor/github/survivor/survivor_webapp
 npm install
-ng build --configuration production
+npm run build
 
 echo "🔄 Restart backend..."
 #pm2 restart survivor-backend || pm2 start ~/start-backend.sh --name survivor-backend
 pm2 restart survivor-backend
 
-#echo "🔄 Reload nginx..."
-#sudo nginx -t && sudo systemctl reload nginx
-sudo /usr/sbin/nginx -s reload
+echo "🔄 Aggiorno config nginx..."
+sudo cp /home/survivor/github/survivor/ngnix/liberaleidee.it /etc/nginx/sites-available/liberaleidee.it
+sudo /usr/sbin/nginx -t && sudo /usr/sbin/nginx -s reload
 
 
 
