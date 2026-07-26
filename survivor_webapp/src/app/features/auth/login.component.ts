@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -57,9 +57,20 @@ export class LoginComponent implements AfterViewInit {
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+  }
+
+  /**
+   * Account riservato alla review Apple/Google: nessuna email reale da controllare, il backend
+   * restituisce il token direttamente e qui si completa il login come se il link fosse stato cliccato.
+   */
+  private handleAppStoreReviewLogin(reviewToken: string, reviewCodiceTipoMagicLink?: string): void {
+    this.router.navigate(['/auth/verify'], {
+      queryParams: { token: reviewToken, codiceTipoMagicLink: reviewCodiceTipoMagicLink || 'L' }
+    });
   }
 
   /**
@@ -96,6 +107,10 @@ export class LoginComponent implements AfterViewInit {
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
+          if (response.reviewToken) {
+            this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
+            return;
+          }
           window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
         },
         error: (error) => {
@@ -108,6 +123,10 @@ export class LoginComponent implements AfterViewInit {
         next: (response) => {
           this.message = response.message;
           this.isSuccess = response.success;
+          if (response.reviewToken) {
+            this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
+            return;
+          }
           window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
         },
         error: (error) => {
