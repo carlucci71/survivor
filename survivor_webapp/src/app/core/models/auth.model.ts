@@ -12,6 +12,9 @@ export interface LoginRequest {
 export interface MagicLinkResponse {
   message: string;
   success: boolean;
+  /** Valorizzato solo per l'account riservato alla review Apple/Google: permette il login senza email reale. */
+  reviewToken?: string;
+  reviewCodiceTipoMagicLink?: string;
 }
 
 export interface AuthResponse {
