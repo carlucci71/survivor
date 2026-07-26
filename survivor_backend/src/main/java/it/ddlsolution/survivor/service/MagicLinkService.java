@@ -40,8 +40,11 @@ public class MagicLinkService {
     @Value("${magic-link.relative-url-send-mail-mobile}")
     private String relativeUrlSendMailMobile;
 
+    @Value("${app.appstore-review-email}")
+    private String appStoreReviewEmail;
+
     @Transactional
-    public void sendMagicLink(String email, boolean mobile, String addInfo) {
+    public String sendMagicLink(String email, boolean mobile, String addInfo) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
@@ -50,11 +53,11 @@ public class MagicLinkService {
         }
         // findByEmail crea l'utente se non esiste (flusso registrazione)
         User user = userService.findByEmail(email);
-        sendMagicLinkForUser(user, email, mobile, addInfo);
+        return sendMagicLinkForUser(user, email, mobile, addInfo);
     }
 
     @Transactional
-    public void sendMagicLinkToExistingUser(String email, boolean mobile, String addInfo) {
+    public String sendMagicLinkToExistingUser(String email, boolean mobile, String addInfo) {
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("L'email è obbligatoria");
         }
@@ -63,17 +66,30 @@ public class MagicLinkService {
         }
         // findByEmail without creating — caller must have already verified user exists
         User user = userService.findByEmailExisting(email);
-        sendMagicLinkForUser(user, email, mobile, addInfo);
+        return sendMagicLinkForUser(user, email, mobile, addInfo);
     }
 
-    private void sendMagicLinkForUser(User user, String email, boolean mobile, String addInfo) {
+    /**
+     * Ritorna il token in chiaro solo per l'account riservato alla review Apple/Google
+     * (nessuna casella di posta reale disponibile per i reviewer): in quel solo caso il
+     * chiamante può completare il login senza passare dalla mail. Per ogni altro utente
+     * ritorna sempre null e il token viene inviato via email come di consueto.
+     */
+    private String sendMagicLinkForUser(User user, String email, boolean mobile, String addInfo) {
         String tipo = Enumeratori.TipoMagicToken.LOG.getCodice();
         magicLinkTokenRepository.deleteByUserAndTipo(user, tipo);
         String token = salvaMagicToken(user, expirationMinutes, null, tipo, addInfo != null ? addInfo : "");
+
+        if (email.equalsIgnoreCase(appStoreReviewEmail)) {
+            log.info("Login account review store: token restituito direttamente senza invio email");
+            return token;
+        }
+
         String subject = "Il tuo Magic Link per accedere a Survivor";
         String magicLink = getUrlMagicLink(token, tipo, mobile);
         emailService.send(email, subject, buildEmailContent(magicLink));
         log.info("Magic link inviato a: {}", email);
+        return null;
     }
 
     @Transactional

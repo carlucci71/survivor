@@ -18,6 +18,7 @@ import it.ddlsolution.survivor.util.enums.Enumeratori;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -46,13 +47,15 @@ public class AuthController {
     private final MagicLinkService magicLinkService;
     private final JwtService jwtService;
 
+    @Value("${app.appstore-review-email}")
+    private String appStoreReviewEmail;
+
     @PostMapping("/request-magic-link")
     public ResponseEntity<MagicLinkResponseDTO> requestMagicLink(
             @RequestBody MagicLinkRequestDTO request) {
         try {
-            magicLinkService.sendMagicLink(request.getEmail().trim().toLowerCase(), request.getMobile(), request.getAddInfo());
-            return ResponseEntity.ok(new MagicLinkResponseDTO(
-                    "Magic link inviato con successo. Controlla la tua email.", true));
+            String reviewToken = magicLinkService.sendMagicLink(request.getEmail().trim().toLowerCase(), request.getMobile(), request.getAddInfo());
+            return ResponseEntity.ok(buildMagicLinkSentResponse(reviewToken));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
                     "Errore nell'invio del magic link: " + e.getMessage(), false));
@@ -64,19 +67,34 @@ public class AuthController {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO("Inserisci un indirizzo email valido", false));
         }
-        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(request.getEmail().trim());
-        if (userOpt.isEmpty()) {
+        String email = request.getEmail().trim();
+        boolean isAppStoreReviewAccount = email.equalsIgnoreCase(appStoreReviewEmail);
+        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(email);
+        if (userOpt.isEmpty() && !isAppStoreReviewAccount) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MagicLinkResponseDTO(
                     "Email non trovata. Devi prima registrarti.", false));
         }
         try {
-            magicLinkService.sendMagicLinkToExistingUser(request.getEmail().trim().toLowerCase(), request.getMobile(), request.getAddInfo());
-            return ResponseEntity.ok(new MagicLinkResponseDTO(
-                    "Magic link inviato con successo. Controlla la tua email.", true));
+            // L'account riservato alla review Apple/Google non ha bisogno di essere già registrato:
+            // viene creato al volo da sendMagicLink, che per questa email restituisce anche il token.
+            String reviewToken = isAppStoreReviewAccount
+                    ? magicLinkService.sendMagicLink(email.toLowerCase(), request.getMobile(), request.getAddInfo())
+                    : magicLinkService.sendMagicLinkToExistingUser(email.toLowerCase(), request.getMobile(), request.getAddInfo());
+            return ResponseEntity.ok(buildMagicLinkSentResponse(reviewToken));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new MagicLinkResponseDTO(
                     "Errore nell'invio del magic link: " + e.getMessage(), false));
         }
+    }
+
+    private MagicLinkResponseDTO buildMagicLinkSentResponse(String reviewToken) {
+        MagicLinkResponseDTO response = new MagicLinkResponseDTO(
+                "Magic link inviato con successo. Controlla la tua email.", true);
+        if (reviewToken != null) {
+            response.setReviewToken(reviewToken);
+            response.setReviewCodiceTipoMagicLink(Enumeratori.TipoMagicToken.LOG.getCodice());
+        }
+        return response;
     }
 
     @GetMapping("/verify")
