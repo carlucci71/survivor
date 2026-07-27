@@ -62,15 +62,6 @@
     "MONDIALI_2026": "World Tournament 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "World Tournament Hall of Fame",
-    "CLOSE": "Close",
-    "FINAL_LABEL": "Final",
-    "CURRENT_TITLE": "World Tournament 2026 — Ongoing",
-    "CURRENT_SUB": "History is being written...",
-    "EDITION": "Edition {{year}}",
-    "NO_DATA_SUB": "Historical data coming soon",
-    "RESULT_AET": "a.e.t.",
-    "RESULT_PSO": "p.s.o.",
     "GROUP": "Group"
   },
   "PLAYER_ROLES": {

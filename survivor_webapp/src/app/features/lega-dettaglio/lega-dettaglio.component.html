@@ -63,8 +63,7 @@
             <span class="recap-dot">·</span>
             @if (getTorneoLogo(lega.campionato?.id)) {
               <span class="recap-torneo-logo-wrap"
-                    [class.recap-torneo-logo-wrap--mondiali]="lega.campionato?.id === 'MONDIALI_2026'"
-                    (click)="lega.campionato?.id === 'MONDIALI_2026' ? openMondialiAlboOro() : null">
+                    [class.recap-torneo-logo-wrap--mondiali]="lega.campionato?.id === 'MONDIALI_2026'">
                 <img class="recap-torneo-logo"
                      [src]="getTorneoLogo(lega.campionato?.id)"
                      [alt]="(lega.campionato?.id ?? '') | translateLeagueData: 'championship'">
