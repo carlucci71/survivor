@@ -177,21 +177,25 @@ app-root {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
-.multi-line-snackbar,
-.multi-line-snackbar .mat-simple-snackbar,
-.multi-line-snackbar .mat-simple-snackbar-message,
-.mat-snack-bar-container.multi-line-snackbar .mat-simple-snackbar-message {
-  white-space: pre-wrap !important; /* preserve newlines */
-  white-space: pre-line !important;
-  word-break: break-word !important;
-  text-align: left !important;
-  display: block !important;
-  max-width: 800px;
+/* Snackbar globale di errore (auth.interceptor.ts): coerente col tema dell'app
+   invece del default grigio scuro di Material. Nota: Angular Material 19 usa la
+   struttura MDC (.mat-mdc-snack-bar-container / .mdc-snackbar__surface), non le
+   vecchie classi .mat-snack-bar-container / .mat-simple-snackbar. */
+.app-error-snackbar.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: var(--bg-card, #fff);
+  --mdc-snackbar-supporting-text-color: var(--text-primary, #1A202C);
+
+  .mdc-snackbar__surface {
+    border-radius: 14px !important;
+    border-left: 4px solid var(--error-color, #E53935) !important;
+    box-shadow: var(--shadow-lg, 0 8px 32px rgba(10, 61, 145, 0.25)) !important;
+    padding: 6px 4px !important;
+  }
 }
 
-@media (min-width: 1200px) {
-  .mat-snack-bar-container.multi-line-snackbar {
-    max-width: 900px !important;
+@media (min-width: 600px) {
+  .app-error-snackbar.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+    max-width: 500px !important;
   }
 }
 
