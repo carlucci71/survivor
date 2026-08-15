@@ -2,6 +2,11 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
 
+## App store
+
+- iOS: https://apps.apple.com/us/app/survivor/id6759219443
+- Android: https://play.google.com/store/apps/details?id=com.survivor.app
+
 ## Development server
 
 To start a local development server, run:

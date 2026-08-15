@@ -762,7 +762,9 @@
     "GUIDE": "Guida",
     "ABOUT": "Chi siamo",
     "CONTACT": "Contatti",
-    "WEB_APP": "Web App"
+    "WEB_APP": "Web App",
+    "APP_STORE": "App Store",
+    "GOOGLE_PLAY": "Google Play"
   },
   "AUTH": {
     "LOGIN_TITLE": "Accedi",
@@ -1606,6 +1608,7 @@
   },
   "GUIDE": {
     "TAGLINE": "Guida utente completa",
+    "DOWNLOAD_CTA": "Scarica l'app Survivor",
     "SECTION_INTRO": "Introduzione",
     "SECTION_FIRST_STEPS": "Primi passi",
     "SECTION_PLAY": "Come si gioca",
