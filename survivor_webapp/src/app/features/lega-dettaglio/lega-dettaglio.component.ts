@@ -61,7 +61,6 @@ import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component'
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
-import { MondialiHistoryWidgetComponent } from '../../shared/components/mondiali-history-widget/mondiali-history-widget.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -725,17 +724,6 @@ export class LegaDettaglioComponent implements OnDestroy {
       'WIMBLEDON': 'assets/logos/tennis/tornei/wimbledon.png',
     };
     return map[campionatoId] || null;
-  }
-
-  openMondialiAlboOro(): void {
-    this.dialog.open(MondialiHistoryWidgetComponent, {
-      width: '95vw',
-      maxWidth: '460px',
-      maxHeight: '90dvh',
-      panelClass: 'mondiali-albo-oro-panel',
-      autoFocus: false,
-      disableClose: false,
-    });
   }
 
   // ── Progressione lega ─────────────────────────────────────────────────────

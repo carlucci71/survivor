@@ -62,15 +62,6 @@
     "MONDIALI_2026": "World Tournament 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "World Tournament Hall of Fame",
-    "CLOSE": "Close",
-    "FINAL_LABEL": "Final",
-    "CURRENT_TITLE": "World Tournament 2026 — Ongoing",
-    "CURRENT_SUB": "History is being written...",
-    "EDITION": "Edition {{year}}",
-    "NO_DATA_SUB": "Historical data coming soon",
-    "RESULT_AET": "a.e.t.",
-    "RESULT_PSO": "p.s.o.",
     "GROUP": "Group"
   },
   "PLAYER_ROLES": {
@@ -683,7 +674,9 @@
     "GUIDE": "Guide",
     "ABOUT": "About Us",
     "CONTACT": "Contact",
-    "WEB_APP": "Web App"
+    "WEB_APP": "Web App",
+    "APP_STORE": "App Store",
+    "GOOGLE_PLAY": "Google Play"
   },
   "AUTH": {
     "LOGIN_TITLE": "Login",
@@ -1610,6 +1603,7 @@
   },
   "GUIDE": {
     "TAGLINE": "Complete user guide",
+    "DOWNLOAD_CTA": "Download the Survivor app",
     "SECTION_INTRO": "Introduction",
     "SECTION_FIRST_STEPS": "First Steps",
     "SECTION_PLAY": "How to play",

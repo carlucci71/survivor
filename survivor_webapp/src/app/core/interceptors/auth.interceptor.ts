@@ -2,6 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
 import { SnackMessageComponent } from '../../shared/components/snack-message/snack-message.component';
 import { AuthService } from '../services/auth.service';
 import { LoadingService } from '../services/loading.service';
@@ -12,6 +13,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getToken();
   const snackBar = inject(MatSnackBar);
   const loading = inject(LoadingService);
+  const translate = inject(TranslateService);
 
   let authReq = req;
   if (token) {
@@ -95,30 +97,17 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           authService.logout();
         }
       } else {
-        let fullMessage = '';
-
         if (error.status != 499) {
-          if (!fullMessage) {
-            const msgParts = [] as string[];
-            if (error?.message) {
-              msgParts.push('Chiamata in errore: ' + error.url + ' [' + error.status + ']');
-            } else {
-              msgParts.push('An error occurred');
-            }
-            if (error?.error?.message) {
-              msgParts.push(String(error.error.message));
-            }
-            if (error?.error?.id) {
-              msgParts.push(String(error.error.id));
-            }
-            fullMessage = msgParts.join('\n');
-          }
+          // Messaggio pensato per l'utente: solo quello del backend se presente,
+          // niente URL/status code tecnici (quelli restano nella console per il debug).
+          const backendMessage = error?.error?.message ? String(error.error.message) : '';
+          const fullMessage = backendMessage || translate.instant('COMMON.ERROR_GENERIC');
 
           if (!skipServiceUnavailable) {
             snackBar.openFromComponent(SnackMessageComponent, {
               data: fullMessage,
               duration: 5000,
-              panelClass: 'multi-line-snackbar',
+              panelClass: 'app-error-snackbar',
             });
           }
         }

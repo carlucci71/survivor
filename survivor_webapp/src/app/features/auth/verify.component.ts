@@ -124,7 +124,10 @@ export class VerifyComponent implements OnInit {
           this.message = this.translate.instant('AUTH.AUTH_SUCCESS_REDIRECT');
         }
         setTimeout(() => {
-          this.router.navigate(['/' + destinazione]);
+          // navigateByUrl (non navigate) perché destinazione può contenere una query string
+          // (es. "joinLega?legaId=93"): navigate() tratterebbe tutto come un singolo segmento
+          // di path letterale e non troverebbe nessuna rotta corrispondente.
+          this.router.navigateByUrl('/' + destinazione);
         }, 2000);
       },
       error: (error) => {
