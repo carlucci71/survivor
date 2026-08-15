@@ -116,7 +116,11 @@ public class MagicLinkService {
     }
 
     public String getUrlMagicLink(String token, String codiceTipoMagicLink, boolean mobile) {
-        return baseUrl + (mobile ? relativeUrlSendMailMobile : relativeUrlSendMail) + URLEncoder.encode(token, StandardCharsets.UTF_8)
+        // Passa sempre da /magic-redirect (non solo quando mobile=true): chi clicca il link da un
+        // browser web non ha comunque modo di sapere se ha l'app installata, quindi lasciamo che sia
+        // l'utente a scegliere "apri l'app" / "continua nel browser" invece di decidere qui in anticipo
+        // in base a mobile, che riflette solo il contesto della RICHIESTA del link, non di chi lo apre.
+        return baseUrl + relativeUrlSendMailMobile + URLEncoder.encode(token, StandardCharsets.UTF_8)
                 + "&codiceTipoMagicLink=" + codiceTipoMagicLink
                 + "&sourceMobile=" + mobile;
     }
