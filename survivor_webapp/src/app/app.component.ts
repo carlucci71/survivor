@@ -67,8 +67,9 @@ export class AppComponent implements OnInit {
           // Android (versionCode) e iOS (build number) usano numerazioni indipendenti: ognuna va confrontata con la propria soglia.
           const minVersionCode = isIos ? response.minVersionCodeIos : response.minVersionCodeAndroid;
           if (parseInt(appInfo.build, 10) < minVersionCode) {
-            // L'app non è ancora pubblicata su App Store: niente link ufficiale su cui reindirizzare.
-            const storeUrl = isIos ? null : 'https://play.google.com/store/apps/details?id=com.survivor.app';
+            const storeUrl = isIos
+              ? 'https://apps.apple.com/us/app/survivor/id6759219443'
+              : 'https://play.google.com/store/apps/details?id=com.survivor.app';
             this.dialog.open(ForceUpdateDialogComponent, {
               data: { storeUrl, dismissible: true },
               disableClose: false,

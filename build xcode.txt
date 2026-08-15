@@ -2,7 +2,7 @@ cd /Users/bebocar/github/survivor/survivor_webapp/scripts
 pwsh -File build-and-install.ps1 -CopyFtp
 
 su xcode product/clean build folder
-/Users/bebocar/github/survivor/survivor_webapp/ios/App
+cd /Users/bebocar/github/survivor/survivor_webapp/ios/App
 pod deintegrate
 pod install
 

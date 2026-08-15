@@ -62,15 +62,6 @@
     "MONDIALI_2026": "World Tournament 2026"
   },
   "MONDIALI_HISTORY": {
-    "TITLE": "Palmarés World Tournament",
-    "CLOSE": "Cerrar",
-    "FINAL_LABEL": "Final",
-    "CURRENT_TITLE": "World Tournament 2026 — en curso",
-    "CURRENT_SUB": "La historia se está escribiendo...",
-    "EDITION": "Edición {{year}}",
-    "NO_DATA_SUB": "Datos históricos próximamente",
-    "RESULT_AET": "t.s.",
-    "RESULT_PSO": "pen.",
     "GROUP": "Grupo"
   },
   "PLAYER_ROLES": {
@@ -771,7 +762,9 @@
     "GUIDE": "Guía",
     "ABOUT": "Quiénes somos",
     "CONTACT": "Contacto",
-    "WEB_APP": "Web App"
+    "WEB_APP": "Web App",
+    "APP_STORE": "App Store",
+    "GOOGLE_PLAY": "Google Play"
   },
   "AUTH": {
     "LOGIN_TITLE": "Acceder",
@@ -1615,6 +1608,7 @@
   },
   "GUIDE": {
     "TAGLINE": "Guía de usuario completa",
+    "DOWNLOAD_CTA": "Descarga la app Survivor",
     "SECTION_INTRO": "Introducción",
     "SECTION_FIRST_STEPS": "Primeros pasos",
     "SECTION_PLAY": "Cómo se juega",

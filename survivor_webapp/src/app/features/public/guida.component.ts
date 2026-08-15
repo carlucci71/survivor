@@ -263,6 +263,20 @@ import { HeaderComponent } from '../../shared/components/header/header.component
             </div>
           </section>
 
+          <div class="guida-download-cta">
+            <p class="download-label">{{ 'GUIDE.DOWNLOAD_CTA' | translate }}</p>
+            <div class="download-links">
+              <a href="https://apps.apple.com/us/app/survivor/id6759219443" target="_blank" rel="noopener noreferrer" class="download-btn">
+                <span class="material-icons" style="font-size:16px">download</span>
+                {{ 'FOOTER.APP_STORE' | translate }}
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.survivor.app" target="_blank" rel="noopener noreferrer" class="download-btn">
+                <span class="material-icons" style="font-size:16px">download</span>
+                {{ 'FOOTER.GOOGLE_PLAY' | translate }}
+              </a>
+            </div>
+          </div>
+
           <footer class="guida-footer">
             <strong>SURVIVOR</strong> — Win or Go Home
           </footer>
@@ -619,6 +633,49 @@ import { HeaderComponent } from '../../shared/components/header/header.component
       color: #718096;
       text-align: center;
       strong { color: #0A3D91; }
+    }
+
+    .guida-download-cta {
+      margin-top: 40px;
+      padding: 24px 16px;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      text-align: center;
+    }
+    .download-label {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #0A3D91;
+    }
+    .download-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      background: #fff;
+      color: #0A3D91;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      border: 1.5px solid #0A3D91;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+      &:hover {
+        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+        color: #fff;
+        border-color: #4FC3F7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(10,61,145,0.25);
+      }
     }
 
     /* ── RESPONSIVE ─────────────────────────────────── */

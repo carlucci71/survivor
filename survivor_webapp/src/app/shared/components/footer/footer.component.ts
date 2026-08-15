@@ -1260,6 +1260,20 @@ export class ChiSiamoDialogComponent implements OnInit{
                 <span>{{ 'FOOTER.WEB_APP' | translate }}</span>
               </a>
             </ng-container>
+
+            <!-- LINK STORE (solo da browser, non ha senso mostrarli dentro l'app nativa) -->
+            <ng-container *ngIf="!isMobile">
+              <span class="separator">|</span>
+              <a [href]="appStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
+                <mat-icon>download</mat-icon>
+                <span>{{ 'FOOTER.APP_STORE' | translate }}</span>
+              </a>
+              <span class="separator">|</span>
+              <a [href]="playStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
+                <mat-icon>download</mat-icon>
+                <span>{{ 'FOOTER.GOOGLE_PLAY' | translate }}</span>
+              </a>
+            </ng-container>
           </div>
 
 
@@ -1421,22 +1435,36 @@ export class ChiSiamoDialogComponent implements OnInit{
       }
     }
 
-    /* RIGA INFERIORE: LINGUA + WEBAPP */
+    /* RIGA INFERIORE: LINGUA + WEBAPP + STORE */
     .footer-bottom-row {
       display: flex;
       align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
       gap: 12px;
+      row-gap: 8px;
 
       .webapp-link {
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        white-space: nowrap;
 
         mat-icon {
           font-size: 15px;
           width: 15px;
           height: 15px;
           vertical-align: middle;
+        }
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-bottom-row {
+        gap: 8px;
+
+        .separator {
+          display: none;
         }
       }
     }
@@ -1530,6 +1558,8 @@ export class FooterComponent  {
   currentYear: number = new Date().getFullYear();
   isMobile: boolean = Capacitor.getPlatform() !== 'web';
   readonly supportedLanguages = SUPPORTED_LANGUAGES;
+  readonly appStoreUrl = 'https://apps.apple.com/us/app/survivor/id6759219443';
+  readonly playStoreUrl = 'https://play.google.com/store/apps/details?id=com.survivor.app';
 
   constructor(
     private dialog: MatDialog,

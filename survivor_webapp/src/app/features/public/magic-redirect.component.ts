@@ -35,9 +35,9 @@ export class MagicRedirectComponent implements OnInit {
 
 
   openApp(): void {
-    setTimeout(() => {
-      window.location.href = this.survivorUrl;
-    }, 400);
+    // Nessun setTimeout: Safari su iOS a volte ignora la navigazione verso uno schema
+    // personalizzato se non avviene in modo sincrono nello stesso tap dell'utente.
+    window.location.href = this.survivorUrl;
   }
 
 continuaNelBrowser() {
