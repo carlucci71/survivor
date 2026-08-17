@@ -171,6 +171,42 @@ location = /custom_503.html {
         add_header Cache-Control "no-cache, no-store, must-revalidate" always;
     }
 
+    # Android App Links: verifica che questo dominio appartenga davvero all'app com.survivor.app,
+    # cosi' un link https://liberaleidee.it/survivor/... apre l'app direttamente se installata.
+    location = /.well-known/assetlinks.json {
+        default_type application/json;
+        add_header Cache-Control "public, max-age=3600" always;
+        return 200 '[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.survivor.app",
+    "sha256_cert_fingerprints": [
+      "16:50:14:A3:D2:A2:73:D4:E9:9A:28:C9:19:FE:D2:C4:4D:83:CA:D4:6F:A2:52:99:6F:2A:11:23:9C:5E:73:29"
+    ]
+  }
+}]';
+    }
+
+    # iOS Universal Links: verifica che questo dominio appartenga davvero all'app
+    # it.ddl.survivorwinorgohome (Team ID 37K844K6B9), stesso scopo di assetlinks.json per Android.
+    # Nessuna estensione nel path e nessun .json: Apple lo richiede esattamente cosi'.
+    location = /.well-known/apple-app-site-association {
+        default_type application/json;
+        add_header Cache-Control "public, max-age=3600" always;
+        return 200 '{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "37K844K6B9.it.ddl.survivorwinorgohome",
+        "paths": ["/survivor/*"]
+      }
+    ]
+  }
+}';
+    }
+
     # Deny access to sensitive files
     location ~ /\.(?!well-known).* {
         deny all;

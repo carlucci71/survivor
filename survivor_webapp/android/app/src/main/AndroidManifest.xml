@@ -28,6 +28,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="survivor" android:host="auth" android:pathPrefix="/verify" />
             </intent-filter>
+
+            <!-- App Links: un link https://liberaleidee.it/survivor/... apre l'app direttamente
+                 se installata (verificato tramite /.well-known/assetlinks.json sul dominio). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="liberaleidee.it" android:pathPrefix="/survivor" />
+            </intent-filter>
         </activity>
 
         <provider
