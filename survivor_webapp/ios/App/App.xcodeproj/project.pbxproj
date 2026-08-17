@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
+		36A70120D5E9C1B82A4F9C7F /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D199776F06ED31CB0A19FB18 /* Pods_App.framework */; };
 		50379B232058CBB4000EE86E /* capacitor.config.json in Resources */ = {isa = PBXBuildFile; fileRef = 50379B222058CBB4000EE86E /* capacitor.config.json */; };
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
@@ -15,7 +16,6 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		79C73DE344A7F7DE4F91D86F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = E68BE5A31CD7A78AC5FC502C /* GoogleService-Info.plist */; };
-		9AD5C87C10ABAC6B38A48861 /* Pods_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81533AE603C1FC388147B5E4 /* Pods_App.framework */; };
 		E6B41A5C2FBB8FB000D4D301 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = E6B41A5B2FBB8FB000D4D301 /* FirebaseCore */; };
 		E6B41A5E2FBB8FB000D4D301 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = E6B41A5D2FBB8FB000D4D301 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
@@ -30,9 +30,9 @@
 		504EC3111FED79650016851F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
-		81533AE603C1FC388147B5E4 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C15FA8BD6160FB8350A85750 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
-		C2FB12D72A4DA319BBB95EE6 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		68D9AA39B864B2E6765555A7 /* Pods-App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.release.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.release.xcconfig"; sourceTree = "<group>"; };
+		99B77A64CBB053708134C5B1 /* Pods-App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App.debug.xcconfig"; path = "Target Support Files/Pods-App/Pods-App.debug.xcconfig"; sourceTree = "<group>"; };
+		D199776F06ED31CB0A19FB18 /* Pods_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E66222012F40F18D0048D90C /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		E68BE5A31CD7A78AC5FC502C /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -44,28 +44,20 @@
 			files = (
 				E6B41A5E2FBB8FB000D4D301 /* FirebaseMessaging in Frameworks */,
 				E6B41A5C2FBB8FB000D4D301 /* FirebaseCore in Frameworks */,
-				9AD5C87C10ABAC6B38A48861 /* Pods_App.framework in Frameworks */,
+				36A70120D5E9C1B82A4F9C7F /* Pods_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4AA106E18692172ADC084E07 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				81533AE603C1FC388147B5E4 /* Pods_App.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		504EC2FB1FED79650016851F = {
 			isa = PBXGroup;
 			children = (
 				504EC3061FED79650016851F /* App */,
 				504EC3051FED79650016851F /* Products */,
 				C331EC49296CE20265B052D4 /* Pods */,
-				4AA106E18692172ADC084E07 /* Frameworks */,
+				90E2ED6D08CF0F9D59849BFF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,11 +86,19 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		90E2ED6D08CF0F9D59849BFF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D199776F06ED31CB0A19FB18 /* Pods_App.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C331EC49296CE20265B052D4 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C15FA8BD6160FB8350A85750 /* Pods-App.debug.xcconfig */,
-				C2FB12D72A4DA319BBB95EE6 /* Pods-App.release.xcconfig */,
+				99B77A64CBB053708134C5B1 /* Pods-App.debug.xcconfig */,
+				68D9AA39B864B2E6765555A7 /* Pods-App.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -110,11 +110,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 504EC3161FED79650016851F /* Build configuration list for PBXNativeTarget "App" */;
 			buildPhases = (
-				CD711C37B79A8AE81E6D0504 /* [CP] Check Pods Manifest.lock */,
+				A94CCD9C0F329DE8B6A173F3 /* [CP] Check Pods Manifest.lock */,
 				504EC3001FED79650016851F /* Sources */,
 				504EC3011FED79650016851F /* Frameworks */,
 				504EC3021FED79650016851F /* Resources */,
-				B2FC8601AB140F64F3ACFF3D /* [CP] Embed Pods Frameworks */,
+				1400D7797B518B3D3DD6AE3C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -180,7 +180,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B2FC8601AB140F64F3ACFF3D /* [CP] Embed Pods Frameworks */ = {
+		1400D7797B518B3D3DD6AE3C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -195,7 +195,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-App/Pods-App-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CD711C37B79A8AE81E6D0504 /* [CP] Check Pods Manifest.lock */ = {
+		A94CCD9C0F329DE8B6A173F3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -360,7 +360,7 @@
 		};
 		504EC3171FED79650016851F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C15FA8BD6160FB8350A85750 /* Pods-App.debug.xcconfig */;
+			baseConfigurationReference = 99B77A64CBB053708134C5B1 /* Pods-App.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
@@ -373,7 +373,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = it.ddl.survivorwinorgohome;
 				PRODUCT_NAME = survivorwinorgohomeTEST;
@@ -385,7 +385,7 @@
 		};
 		504EC3181FED79650016851F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C2FB12D72A4DA319BBB95EE6 /* Pods-App.release.xcconfig */;
+			baseConfigurationReference = 68D9AA39B864B2E6765555A7 /* Pods-App.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/App.entitlements;
@@ -398,7 +398,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = it.ddl.survivorwinorgohome;
 				PRODUCT_NAME = survivorwinorgohome;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
