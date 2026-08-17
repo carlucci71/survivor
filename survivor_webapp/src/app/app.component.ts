@@ -87,6 +87,16 @@ export class AppComponent implements OnInit {
       const parsed = new URL(url);
       const path = parsed.pathname.toLowerCase();
       const host = parsed.host.toLowerCase();
+
+      // App Links/Universal Links: https://liberaleidee.it/survivor/... apre l'app direttamente
+      // (es. link di una lega condiviso). Il prefisso /survivor è solo il percorso di hosting web,
+      // va tolto per ottenere il percorso interno dell'app (es. /joinLega?legaId=93).
+      if (parsed.protocol === 'https:' && host === 'liberaleidee.it' && path.startsWith('/survivor/')) {
+        const appPath = parsed.pathname.replace(/^\/survivor/, '') + parsed.search;
+        this.router.navigateByUrl(appPath);
+        return;
+      }
+
       // survivor://auth/verify → host='auth', path='/verify'
       const isVerify = (host === 'auth' && path.startsWith('/verify')) || path.startsWith('/auth/verify');
       if (isVerify) {
