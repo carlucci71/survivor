@@ -104,7 +104,7 @@ app:
   # iOS (build number) usano numerazioni indipendenti e non confrontabili tra loro. Alzarla
   # richiede solo di modificare il valore, fare commit e lasciare che il deploy backend lo porti in produzione.
   min-version-code-android: 110
-  min-version-code-ios: 3
+  min-version-code-ios: 2
   # Email riservata alla review Apple/Google: il magic link viene restituito direttamente
   # nella risposta API invece che via email, per permettere il login senza accesso a una casella di posta.
   appstore-review-email: ${APPSTORE_REVIEW_EMAIL:applereview@liberaleidee.it}
