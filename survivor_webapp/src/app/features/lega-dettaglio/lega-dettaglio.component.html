@@ -1070,8 +1070,11 @@
         </div>
       </div>
 
-      <!-- RICHIESTE INGRESSO: banner redirect alla pagina dedicata -->
-      @if (isLeaderLega() && lega.pubblica && !lega.accessoLibero && (lega.richiesteInAttesa ?? 0) > 0) {
+      <!-- RICHIESTE INGRESSO: banner redirect alla pagina dedicata.
+           Nota: non si controlla lega.pubblica, perché anche una lega privata con
+           accessoLibero=false riceve richieste (es. tramite link condiviso) e il leader
+           deve comunque poterle vedere. -->
+      @if (isLeaderLega() && !lega.accessoLibero && (lega.richiesteInAttesa ?? 0) > 0) {
       <div class="jr-redirect-banner" (click)="goToRichieste()">
         <div class="jr-redirect-left">
           <span class="jr-redirect-badge">{{ lega.richiesteInAttesa }}</span>
