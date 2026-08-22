@@ -6532,6 +6532,7 @@
 .giocata-col {
   flex: 1;
   min-width: 0;
+  max-width: 88px; // evita che una singola giornata (es. GIO. 1 da sola) si stiri a tutta larghezza
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6617,8 +6618,8 @@
   width: 100%;
 
   .team-pick-logo {
-    width: 36px;
-    height: 36px;
+    width: clamp(20px, 6vw, 26px);
+    height: clamp(20px, 6vw, 26px);
     object-fit: cover;
     border-radius: 50%;
     flex-shrink: 0;
