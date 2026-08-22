@@ -6,6 +6,7 @@
     "JOIN_LEAGUE": "Unirse",
     "INVITE_USERS": "Invitar usuarios",
     "NEW_EDITION": "Nueva Edición",
+    "NEW_EDITION_NOT_LEADER": "Solo el líder de la liga puede crear una nueva edición.",
     "VIEW_DETAILS": "Ver Detalles",
     "NEW_LEAGUES": "Nuevas ligas",
     "CREATE_NEW_LEAGUE": "Crear una nueva liga",

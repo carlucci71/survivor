@@ -164,7 +164,7 @@
                         <button *ngIf="visualizzaInvito(edizione)" mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">
                           {{ 'HOME.INVITE_USERS' | translate }}
                         </button>
-                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
+                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione) && isLeaderInLega(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
                           {{ 'HOME.NEW_EDITION' | translate }}
                         </button>
                       </mat-card-actions>
@@ -248,7 +248,7 @@
                         <button *ngIf="visualizzaInvito(edizione)" mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">
                           {{ 'HOME.INVITE_USERS' | translate }}
                         </button>
-                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
+                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione) && isLeaderInLega(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
                           {{ 'HOME.NEW_EDITION' | translate }}
                         </button>
                       </mat-card-actions>
