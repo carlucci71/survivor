@@ -1082,6 +1082,15 @@ public class LegaService {
     public LegaDTO nuovaEdizione(Long idLega) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
+
+        // Solo il leader dell'edizione precedente può crearne una nuova: altrimenti ogni
+        // partecipante che clicca il bottone genera una propria edizione 2 duplicata,
+        // diventandone leader (vedi giocatoreLega.setRuolo(...LEADER...) più sotto).
+        Optional<GiocatoreLega> giocatoreLegaLeader = giocatoreLegaService.findByLega_IdAndGiocatore_User_Id(idLega, userId);
+        if (giocatoreLegaLeader.isEmpty() || giocatoreLegaLeader.get().getRuolo() != Enumeratori.RuoloGiocatoreLega.LEADER) {
+            throw new ManagedException("Solo il leader della lega può creare una nuova edizione", ManagedException.InternalCode.NOT_LEADER);
+        }
+
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         LegaInsertDTO legaInsertDTO = new LegaInsertDTO();
         legaInsertDTO.setCampionato(legaDTO.getCampionato().getId());
