@@ -568,7 +568,7 @@
                           } @else {
                             <div class="team-pick-cell"
                               [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)">
-                              @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) && getGiocataByGiornataAssoluta(giocatore, giornata)?.pubblica !== false) {
+                              @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
                                 <img class="team-pick-logo"
                                      [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
                                      [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
@@ -888,7 +888,7 @@
                       <span class="private-vote-badge" [title]="'LEAGUE.PICK_VISIBLE_AFTER_TIMER' | translate">🔒</span>
                     } @else {
                       <div class="team-pick-cell team-pick-cell--mobile" [title]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) || ''">
-                        @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) && getGiocataByGiornataAssoluta(giocatore, giornata)?.pubblica !== false) {
+                        @if (getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)) {
                           <img class="team-pick-logo"
                                [src]="getTeamLogo(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
                                [alt]="getSquadraNome(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla)"
