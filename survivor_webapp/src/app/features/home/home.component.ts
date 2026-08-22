@@ -22,7 +22,8 @@ import { InfoBannerComponent } from '../../shared/components/info-banner/info-ba
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PushService } from '../../core/services/push.service';
 import { LegaCardSkeletonComponent } from '../../shared/components/lega-card-skeleton/lega-card-skeleton.component';
 import { FormsModule } from '@angular/forms';
@@ -53,6 +54,7 @@ import { ProfiloDialogComponent } from '../../shared/components/info-banner/info
     MatIconModule,
     MatTooltipModule,
     TranslateModule,
+    MatSnackBarModule,
     LegaCardSkeletonComponent,
     FormsModule,
     MatFormFieldModule,
@@ -93,6 +95,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer
     ,
     private pushService: PushService
+    ,
+    private translate: TranslateService
+    ,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -243,6 +249,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     return lega!.stato.value === StatoLega.TERMINATA.value;
   }
 
+  /** Solo il leader dell'edizione può crearne una nuova (altrimenti si generano duplicati). */
+  isLeaderInLega(lega: Lega): boolean {
+    return lega?.ruoloGiocatoreLega?.value === RuoloGiocatore.LEADER.value;
+  }
+
   getMioStatoInLega(edizione: Lega): string | null {
     if (edizione.stato.value === StatoLega.DA_AVVIARE.value) return null;
     const stato = this.me?.statiPerLega?.[edizione.id] as any;
@@ -278,6 +289,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Errore in nuova edizione:' + lega.id, error);
+        const code = error?.error?.errorCode as string | undefined;
+        const msg = code === 'NOT_LEADER'
+          ? this.translate.instant('HOME.NEW_EDITION_NOT_LEADER')
+          : this.translate.instant('COMMON.ERROR_GENERIC');
+        this.snackBar.open(msg, '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       },
     });
   }
