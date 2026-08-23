@@ -5951,27 +5951,43 @@
 .show-results-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  font-size: 1.1rem;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  text-transform: uppercase;
+  color: var(--error-color);
   line-height: 1;
   background: none;
-  border: 1px solid rgba(10, 61, 145, 0.13);
-  border-radius: 8px;
+  border: 1px solid var(--error-color);
+  border-radius: 6px;
   cursor: pointer;
-  padding: 0;
   margin-left: auto;
   transition: background 0.15s, border-color 0.15s;
+  animation: srl-attention 1.8s ease-in-out infinite;
 
   &:hover {
-    background: rgba(10, 61, 145, 0.05);
-    border-color: rgba(10, 61, 145, 0.25);
+    background: rgba(229, 57, 53, 0.08);
   }
 
   &:active {
-    background: rgba(10, 61, 145, 0.1);
+    background: rgba(229, 57, 53, 0.14);
   }
+}
+
+.srl-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--error-color);
+  flex-shrink: 0;
+}
+
+@keyframes srl-attention {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.25); }
+  50% { box-shadow: 0 0 0 5px rgba(229, 57, 53, 0); }
 }
 
 // ─── DIVISORE MOBILE dopo card utente corrente ────────────────────────────────

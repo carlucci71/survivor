@@ -18,6 +18,11 @@
   <!-- HERO SECTION -->
   <app-hero-three></app-hero-three>
 
+  <!-- BOTTONE RISULTATI LIVE (solo Serie A per ora) -->
+  <div class="live-score-btn-wrap">
+    <app-live-score-button></app-live-score-button>
+  </div>
+
   <!-- GIOCATA RECAP CARD -->
   <app-giocata-recap-card [leghe]="leghe" [initialLegaId]="selectedLegaId" (refreshRequired)="loadLeghe()"></app-giocata-recap-card>
 

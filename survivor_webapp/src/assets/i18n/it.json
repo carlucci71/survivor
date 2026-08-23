@@ -1,4 +1,15 @@
 {
+  "LIVE_SCORE": {
+    "BUTTON_LABEL": "Risultati Live",
+    "DIALOG_TITLE": "Risultati Serie A",
+    "LIVE_BADGE": "Live",
+    "HALF_TIME": "Intervallo",
+    "FULL_TIME": "Fine",
+    "UPCOMING": "Da giocare",
+    "NO_MATCHES": "Nessuna partita in programma",
+    "EVENTS_TITLE": "Cronaca",
+    "NO_EVENTS": "Nessun evento ancora"
+  },
   "HOME": {
     "TITLE": "LE TUE LEGHE",
     "NO_LEAGUES": "Non hai ancora leghe. Creane una o unisciti a una esistente!",
@@ -1323,6 +1334,7 @@
     "TITLE": "Risultati",
     "SHOW_RESULTS": "Mostra risultati",
     "MANAGE_ROUND": "Gestisci giornata",
+    "FORCE_LABEL": "Forza risultato",
     "NO_MATCHES": "Nessuna partita trovata",
     "FORCE": "Forza",
     "FORCED": "Forzata ✓",
