@@ -31,6 +31,11 @@ public class CacheConfig {
         Caffeine<Object, Object> tenMinutesCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(9).plusSeconds(30).toSeconds(), TimeUnit.SECONDS)
                 .maximumSize(1000);
+        // Banner "risultati live": TTL breve e condiviso fra tutti gli utenti (chiave = giornata+anno),
+        // così una sola chiamata all'API esterna ogni ~50s serve chiunque stia guardando la stessa giornata.
+        Caffeine<Object, Object> liveScoreCache = Caffeine.newBuilder()
+                .expireAfterWrite(50, TimeUnit.SECONDS)
+                .maximumSize(50);
 
         CaffeineCache sport = new CaffeineCache(SPORT, oneDayCache.build());
         CaffeineCache parametri = new CaffeineCache(PARAMETRI, oneDayCache.build());
@@ -39,9 +44,10 @@ public class CacheConfig {
         CaffeineCache cachePartite = new CaffeineCache(PARTITE, oneDayCache.build());
 
         CaffeineCache campionati = new CaffeineCache(CAMPIONATI, tenMinutesCache.build());
+        CaffeineCache liveSerieA = new CaffeineCache("LIVE_SERIE_A", liveScoreCache.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(cachePartite, sospensioni, campionati,sport, squadre,parametri));
+        manager.setCaches(List.of(cachePartite, sospensioni, campionati, sport, squadre, parametri, liveSerieA));
         return manager;
     }
 

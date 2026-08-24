@@ -38,6 +38,10 @@ public class User {
     @Column
     private LocalDateTime lastLoginAt;
 
+    /** Lingua preferita (it | en | es), usata per tradurre le notifiche push lato backend. */
+    @Column(nullable = false, length = 2)
+    private String lingua = "it";
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

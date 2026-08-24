@@ -1,0 +1,52 @@
+<div class="lsd-container">
+  <div class="lsd-header">
+    <span class="lsd-title">{{ 'LIVE_SCORE.DIALOG_TITLE' | translate }}</span>
+    <button type="button" class="lsd-close-btn" (click)="onClose()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="lsd-body">
+    <div class="lsd-list" *ngIf="partite.length > 0; else vuoto">
+      <button type="button" class="lsd-match-row" *ngFor="let partita of partite"
+              [class.lsd-match-row--live]="partita.stato === 'IN_CORSO'"
+              (click)="apriDettaglio(partita)">
+
+        <div class="lsd-team">
+          <img *ngIf="getLogo(partita.casaSigla) as logo" [src]="logo" [alt]="partita.casaNome" class="lsd-logo" (error)="$any($event.target).style.display='none'">
+          <span class="lsd-team-name">{{ partita.casaNome }}</span>
+        </div>
+
+        <div class="lsd-center">
+          <div class="lsd-score">
+            <ng-container *ngIf="partita.stato !== 'DA_GIOCARE'; else orarioCalcioInizio">{{ partita.scoreCasa }} - {{ partita.scoreFuori }}</ng-container>
+            <ng-template #orarioCalcioInizio>{{ partita.orario ? (partita.orario | date:'HH:mm') : '-' }}</ng-template>
+          </div>
+          <span class="lsd-status" [ngSwitch]="partita.stato">
+            <span *ngSwitchCase="'IN_CORSO'" class="lsd-status-badge lsd-status-badge--live">
+              <span class="lsd-live-dot"></span>
+              <ng-container *ngIf="partita.intervallo; else minutoLive">{{ 'LIVE_SCORE.HALF_TIME' | translate }}</ng-container>
+              <ng-template #minutoLive>{{ partita.minuto }}'</ng-template>
+            </span>
+            <span *ngSwitchCase="'TERMINATA'" class="lsd-status-badge lsd-status-badge--ft">{{ 'LIVE_SCORE.FULL_TIME' | translate }}</span>
+            <span *ngSwitchDefault class="lsd-status-badge lsd-status-badge--upcoming">{{ 'LIVE_SCORE.UPCOMING' | translate }}</span>
+          </span>
+        </div>
+
+        <div class="lsd-team lsd-team--away">
+          <span class="lsd-team-name">{{ partita.fuoriNome }}</span>
+          <img *ngIf="getLogo(partita.fuoriSigla) as logo" [src]="logo" [alt]="partita.fuoriNome" class="lsd-logo" (error)="$any($event.target).style.display='none'">
+        </div>
+
+        <mat-icon class="lsd-chevron">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <ng-template #vuoto>
+      <div class="lsd-empty">
+        <mat-icon>sports_soccer</mat-icon>
+        <span>{{ 'LIVE_SCORE.NO_MATCHES' | translate }}</span>
+      </div>
+    </ng-template>
+  </div>
+</div>

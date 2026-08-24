@@ -1,4 +1,16 @@
 {
+  "LIVE_SCORE": {
+    "BUTTON_LABEL": "Live Scores",
+    "DIALOG_TITLE": "Serie A Results",
+    "DETAIL_TITLE": "Match detail",
+    "LIVE_BADGE": "Live",
+    "HALF_TIME": "Half-time",
+    "FULL_TIME": "Full time",
+    "UPCOMING": "Upcoming",
+    "NO_MATCHES": "No matches scheduled",
+    "EVENTS_TITLE": "Match events",
+    "NO_EVENTS": "No events yet"
+  },
   "HOME": {
     "TITLE": "YOUR LEAGUES",
     "NO_LEAGUES": "You don't have any leagues yet. Create one or join an existing one!",
@@ -1318,6 +1330,7 @@
     "TITLE": "Results",
     "SHOW_RESULTS": "Show results",
     "MANAGE_ROUND": "Manage round",
+    "FORCE_LABEL": "Force result",
     "NO_MATCHES": "No matches found",
     "FORCE": "Force",
     "FORCED": "Forced ✓",

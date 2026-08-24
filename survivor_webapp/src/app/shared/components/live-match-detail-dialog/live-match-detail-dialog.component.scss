@@ -1,0 +1,231 @@
+:host {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+}
+
+.lmd-container {
+  background: var(--bg-card);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+}
+
+/* ── HEADER ── */
+.lmd-header {
+  position: relative;
+  padding: 14px 48px 14px 20px;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lmd-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.lmd-close-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+
+  &:hover { background: rgba(255, 255, 255, 0.35); }
+
+  mat-icon {
+    color: #fff;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* ── BODY ── */
+.lmd-body {
+  padding: 16px 18px 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+}
+
+.lmd-score-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 4px 18px;
+}
+
+.lmd-team {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.lmd-team-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.lmd-team-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.lmd-center {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.lmd-score {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.lmd-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  background: rgba(107, 114, 128, 0.12);
+  color: var(--text-secondary);
+}
+
+.lmd-status-badge--live {
+  background: rgba(229, 57, 53, 0.12);
+  color: var(--error-color);
+}
+
+.lmd-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--error-color);
+  animation: lmd-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes lmd-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.lmd-events {
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.lmd-events-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.lmd-no-events {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px 0;
+
+  mat-icon { font-size: 30px; width: 30px; height: 30px; opacity: 0.5; }
+  span { font-size: 0.82rem; }
+}
+
+.lmd-event-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 4px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  transition: background 0.15s ease;
+
+  &:hover { background: rgba(10, 61, 145, 0.04); }
+  &--fuori { flex-direction: row-reverse; text-align: right; }
+}
+
+.lmd-event-minuto {
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 30px;
+  flex-shrink: 0;
+}
+
+.lmd-event-icon {
+  flex-shrink: 0;
+}
+
+.lmd-event-testo {
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.lmd-event-row--gol {
+  .lmd-event-minuto { color: var(--text-primary); }
+  .lmd-event-testo { font-weight: 800; }
+}
+
+.lmd-sub-arrow {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.lmd-sub-out { color: var(--text-secondary); }
+.lmd-sub-in { color: var(--success-color); font-weight: 600; }
+
+@media (max-width: 380px) {
+  .lmd-team-logo { width: 32px; height: 32px; }
+  .lmd-score { font-size: 1.25rem; }
+}

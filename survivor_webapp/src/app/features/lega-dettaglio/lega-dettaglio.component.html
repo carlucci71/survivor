@@ -429,7 +429,9 @@
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">📊</button>
+            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">
+              <span class="srl-dot"></span>{{ 'ROUND_RESULTS.FORCE_LABEL' | translate }}
+            </button>
           }
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {
@@ -775,7 +777,9 @@
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
-            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">📊</button>
+            <button class="show-results-link" (click)="apriRisultatiGiornata()" [title]="'ROUND_RESULTS.MANAGE_ROUND' | translate">
+              <span class="srl-dot"></span>{{ 'ROUND_RESULTS.FORCE_LABEL' | translate }}
+            </button>
           }
         </div>
         @if (showVotePanel && vcNonVotanti.length > 0) {

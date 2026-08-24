@@ -35,6 +35,7 @@ public class RecapGiornataService {
     private final GiocataRepository giocataRepository;
     private final ReactionGiocataRepository reactionGiocataRepository;
     private final PushNotificationService pushNotificationService;
+    private final NotificationI18nService notificationI18nService;
 
     /**
      * Costruisce il recap per una giornata specifica di una lega.
@@ -211,31 +212,41 @@ public class RecapGiornataService {
         try {
             List<GiocatoreDTO> giocatori = lega.getGiocatori() != null ? lega.getGiocatori() : List.of();
 
-            List<Long> userIds = giocatori.stream()
+            // Raggruppa i destinatari per lingua: una notifica (titolo/corpo tradotti) per gruppo,
+            // invece di un'unica notifica in italiano per tutti (vedi NotificationI18nService).
+            Map<String, List<Long>> userIdsPerLingua = giocatori.stream()
                     .filter(g -> g.getUser() != null && g.getUser().getId() != null)
-                    .map(g -> g.getUser().getId())
-                    .toList();
+                    .collect(Collectors.groupingBy(
+                            g -> {
+                                String l = g.getUser().getLingua();
+                                return l == null ? "it" : l;
+                            },
+                            Collectors.mapping(g -> g.getUser().getId(), Collectors.toList())
+                    ));
 
-            if (userIds.isEmpty()) return;
-
-            int giornataAssoluta = giornataRelativa + lega.getGiornataIniziale() - 1;
+            if (userIdsPerLingua.isEmpty()) return;
 
             long sopravvissuti = giocatori.stream()
                     .filter(g -> g.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
                     .count();
 
-            PushNotificationDTO dto = PushNotificationDTO.builder()
-                    .title("🏆 Giornata " + giornataRelativa + " — " + lega.getName())
-                    .body("Risultati pronti! " + sopravvissuti + " sopravvissuti ancora in gara.")
-                    .tipoNotifica(Enumeratori.TipoNotifica.RECAP_GIORNATA)
-                    .expiringAt(LocalDateTime.now().plusDays(3))
-                    .legaId(lega.getId())
-                    .giornata(giornataRelativa)
-                    .build();
-
-            pushNotificationService.sendNotificationToUsers(userIds, dto);
-            log.info("Notifica RECAP_GIORNATA inviata a {} utenti per lega {} giornata {}",
-                    userIds.size(), lega.getId(), giornataRelativa);
+            int totaleUtenti = 0;
+            for (Map.Entry<String, List<Long>> entry : userIdsPerLingua.entrySet()) {
+                String lingua = entry.getKey();
+                List<Long> userIds = entry.getValue();
+                PushNotificationDTO dto = PushNotificationDTO.builder()
+                        .title(notificationI18nService.testo("notif.recap.title", lingua, giornataRelativa, lega.getName()))
+                        .body(notificationI18nService.testo("notif.recap.body", lingua, sopravvissuti))
+                        .tipoNotifica(Enumeratori.TipoNotifica.RECAP_GIORNATA)
+                        .expiringAt(LocalDateTime.now().plusDays(3))
+                        .legaId(lega.getId())
+                        .giornata(giornataRelativa)
+                        .build();
+                pushNotificationService.sendNotificationToUsers(userIds, dto);
+                totaleUtenti += userIds.size();
+            }
+            log.info("Notifica RECAP_GIORNATA inviata a {} utenti ({} lingue) per lega {} giornata {}",
+                    totaleUtenti, userIdsPerLingua.size(), lega.getId(), giornataRelativa);
         } catch (Exception e) {
             log.warn("Errore invio notifica recap lega {} giornata {}: {}", lega.getId(), giornataRelativa, e.getMessage());
         }

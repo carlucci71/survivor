@@ -29,6 +29,20 @@ public class GiocatoreService {
         return giocatoreMapper.toDTO(findMe());
     }
 
+    /** Salva la lingua preferita dell'utente (it|en|es), usata per tradurre le notifiche push. */
+    @Transactional
+    public void aggiornaLingua(String lingua) {
+        if (lingua == null || !java.util.Set.of("it", "en", "es").contains(lingua)) {
+            throw new IllegalArgumentException("Lingua non supportata: " + lingua);
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User non trovato: " + userId));
+        user.setLingua(lingua);
+        userRepository.save(user);
+    }
+
 
     @Transactional
     public Giocatore findMe() {

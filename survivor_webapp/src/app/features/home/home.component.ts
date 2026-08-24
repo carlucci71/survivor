@@ -35,6 +35,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
 import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 import { ProfiloDialogComponent } from '../../shared/components/info-banner/info-banner.component';
+import { LiveScoreButtonComponent } from '../../shared/components/live-score-button/live-score-button.component';
 
 
 @Component({
@@ -61,7 +62,8 @@ import { ProfiloDialogComponent } from '../../shared/components/info-banner/info
     MatInputModule,
     TranslateLeagueDataPipe,
     OnboardingComponent,
-    GiocataRecapCardComponent
+    GiocataRecapCardComponent,
+    LiveScoreButtonComponent
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
