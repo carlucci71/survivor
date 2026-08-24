@@ -34,6 +34,7 @@ public class ScheduledPushNotifications {
     private final LegaService legaService;
     private final NotificheInviateService notificheInviateService;
     private final GiocataRepository giocataRepository;
+    private final it.ddlsolution.survivor.service.NotificationI18nService notificationI18nService;
 
     @Value("${push.notification.scheduler-enabled}")
     private boolean notificationsEnabled;
@@ -146,8 +147,9 @@ public class ScheduledPushNotifications {
                                     giocatore.getNickname(), lega.getName(), giornataRelativa);
                             continue;
                         }
+                        String lingua = giocatore.getUser().getLingua();
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
-                                .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
+                                .add(notificationI18nService.testo("notif.legaOrario", lingua, lega.getName(), orario));
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
                     }
                 }
@@ -159,14 +161,15 @@ public class ScheduledPushNotifications {
             GiocatoreDTO giocatore = entry.getKey();
             List<String> voci = entry.getValue();
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
+            String lingua = giocatore.getUser().getLingua();
 
             String body = voci.size() == 1
-                    ? "La tua lega " + voci.get(0) + " sta per iniziare. Dai il tuo pronostico!"
-                    : "Hai " + voci.size() + " leghe in gioco: " + String.join(", ", voci) + ". Dai i tuoi pronostici!";
+                    ? notificationI18nService.testo("notif.pronostico.body.single", lingua, voci.get(0))
+                    : notificationI18nService.testo("notif.pronostico.body.multi", lingua, voci.size(), String.join(", ", voci));
 
             log.info("Notifica per {}: {}", giocatore.getNickname(), body);
             PushNotificationDTO notification = PushNotificationDTO.builder()
-                    .title(sportEmoji(sport) + " \u00c8 ora del pronostico!")
+                    .title(notificationI18nService.testo("notif.pronostico.title", lingua, sportEmoji(sport)))
                     .body(body)
                     .sound("default")
                     .tipoNotifica(Enumeratori.TipoNotifica.INIZIO_PARTITA)
@@ -251,8 +254,9 @@ public class ScheduledPushNotifications {
                                     giocatore.getNickname(), lega.getName(), giornataRelativa);
                             continue;
                         }
+                        String lingua = giocatore.getUser().getLingua();
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
-                                .add("\u00ab" + lega.getName() + "\u00bb alle " + orario);
+                                .add(notificationI18nService.testo("notif.legaOrario", lingua, lega.getName(), orario));
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
                     }
                 }
@@ -263,14 +267,15 @@ public class ScheduledPushNotifications {
             GiocatoreDTO giocatore = entry.getKey();
             List<String> voci = entry.getValue();
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
+            String lingua = giocatore.getUser().getLingua();
 
             String body = voci.size() == 1
-                    ? "Non hai ancora fatto la tua scelta per la lega " + voci.get(0) + ". Fallo prima che sia tardi!"
-                    : "Non hai ancora votato in " + voci.size() + " leghe: " + String.join(", ", voci) + ". Dai i tuoi pronostici in anticipo!";
+                    ? notificationI18nService.testo("notif.reminder.body.single", lingua, voci.get(0))
+                    : notificationI18nService.testo("notif.reminder.body.multi", lingua, voci.size(), String.join(", ", voci));
 
             log.info("Reminder serale per {}: {}", giocatore.getNickname(), body);
             PushNotificationDTO notification = PushNotificationDTO.builder()
-                    .title(sportEmoji(sport) + " Domani si gioca — non hai ancora votato!")
+                    .title(notificationI18nService.testo("notif.reminder.title", lingua, sportEmoji(sport)))
                     .body(body)
                     .sound("default")
                     .tipoNotifica(Enumeratori.TipoNotifica.REMINDER_GIORNATA)
