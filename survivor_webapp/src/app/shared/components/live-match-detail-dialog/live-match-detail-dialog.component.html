@@ -1,0 +1,60 @@
+<div class="lmd-container">
+  <div class="lmd-header">
+    <span class="lmd-title">{{ 'LIVE_SCORE.DETAIL_TITLE' | translate }}</span>
+    <button type="button" class="lmd-close-btn" (click)="onClose()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="lmd-body">
+    <div class="lmd-score-card">
+      <div class="lmd-team">
+        <img *ngIf="getLogo(partita.casaSigla) as logo" [src]="logo" [alt]="partita.casaNome" class="lmd-team-logo" (error)="$any($event.target).style.display='none'">
+        <span class="lmd-team-name">{{ partita.casaNome }}</span>
+      </div>
+
+      <div class="lmd-center">
+        <div class="lmd-score">{{ partita.scoreCasa }} - {{ partita.scoreFuori }}</div>
+        <span class="lmd-status-badge" [class.lmd-status-badge--live]="partita.stato === 'IN_CORSO'" [ngSwitch]="partita.stato">
+          <ng-container *ngSwitchCase="'IN_CORSO'">
+            <span class="lmd-live-dot"></span>
+            <ng-container *ngIf="partita.intervallo; else minutoLive">{{ 'LIVE_SCORE.HALF_TIME' | translate }}</ng-container>
+            <ng-template #minutoLive>{{ partita.minuto }}'</ng-template>
+          </ng-container>
+          <ng-container *ngSwitchCase="'TERMINATA'">{{ 'LIVE_SCORE.FULL_TIME' | translate }}</ng-container>
+          <ng-container *ngSwitchDefault>{{ partita.orario ? (partita.orario | date:'HH:mm') : ('LIVE_SCORE.UPCOMING' | translate) }}</ng-container>
+        </span>
+      </div>
+
+      <div class="lmd-team">
+        <img *ngIf="getLogo(partita.fuoriSigla) as logo" [src]="logo" [alt]="partita.fuoriNome" class="lmd-team-logo" (error)="$any($event.target).style.display='none'">
+        <span class="lmd-team-name">{{ partita.fuoriNome }}</span>
+      </div>
+    </div>
+
+    <div class="lmd-events">
+      <div class="lmd-events-title">{{ 'LIVE_SCORE.EVENTS_TITLE' | translate }}</div>
+
+      <div *ngIf="eventiOrdinati.length === 0" class="lmd-no-events">
+        <mat-icon>sports_soccer</mat-icon>
+        <span>{{ 'LIVE_SCORE.NO_EVENTS' | translate }}</span>
+      </div>
+
+      <div *ngFor="let evento of eventiOrdinati" class="lmd-event-row"
+           [class.lmd-event-row--casa]="evento.squadraSigla === partita.casaSigla"
+           [class.lmd-event-row--fuori]="evento.squadraSigla === partita.fuoriSigla"
+           [class.lmd-event-row--gol]="evento.tipo === 'GOL'">
+        <span class="lmd-event-minuto">{{ evento.minuto }}'</span>
+        <span class="lmd-event-icon">{{ iconaEvento(evento.tipo) }}</span>
+        <span class="lmd-event-testo">
+          <ng-container *ngIf="evento.tipo !== 'SOSTITUZIONE'">{{ evento.giocatore }}</ng-container>
+          <ng-container *ngIf="evento.tipo === 'SOSTITUZIONE'">
+            <span class="lmd-sub-out">{{ evento.giocatore }}</span>
+            <mat-icon class="lmd-sub-arrow">arrow_forward</mat-icon>
+            <span class="lmd-sub-in">{{ evento.giocatoreSubentrato }}</span>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

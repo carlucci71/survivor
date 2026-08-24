@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RequestMapping("/giocatore")
 
 @RestController
@@ -38,6 +40,16 @@ public class GiocatoreController {
         }
         giocatoreDTO  = giocatoreService.aggiorna(giocatoreDTO);
         return ResponseEntity.ok(giocatoreDTO);
+    }
+
+    /**
+     * Salva la lingua preferita dell'utente (it|en|es): usata dal backend per tradurre le
+     * notifiche push. Il frontend la chiama ogni volta che l'utente cambia lingua nell'app.
+     */
+    @PutMapping("/lingua")
+    public ResponseEntity<Void> aggiornaLingua(@RequestBody Map<String, String> body) {
+        giocatoreService.aggiornaLingua(body.get("lingua"));
+        return ResponseEntity.ok().build();
     }
 
 }

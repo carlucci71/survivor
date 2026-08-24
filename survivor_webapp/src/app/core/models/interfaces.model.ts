@@ -188,6 +188,33 @@ export interface Partita {
     forzata?: boolean;
 }
 
+/** Evento di una partita live: gol, cartellino o sostituzione (vedi LiveScoreService lato BE). */
+export interface EventoPartita {
+    tipo: 'GOL' | 'GIALLO' | 'ROSSO' | 'SOSTITUZIONE';
+    minuto: string;
+    squadraSigla: string;
+    giocatore: string;
+    giocatoreSubentrato?: string;
+}
+
+/** Partita della giornata Serie A corrente per il bottone "risultati live" (solo Serie A per ora). */
+export interface PartitaLive {
+    casaNome: string;
+    casaSigla: string;
+    fuoriNome: string;
+    fuoriSigla: string;
+    scoreCasa: number;
+    scoreFuori: number;
+    /** Valorizzato solo se stato === 'IN_CORSO' */
+    minuto: string | null;
+    stato: 'DA_GIOCARE' | 'IN_CORSO' | 'TERMINATA';
+    /** true se stato === 'IN_CORSO' ma è l'intervallo (il minuto resta fermo) */
+    intervallo: boolean;
+    /** Calcio d'inizio (ora italiana), usato per le partite ancora DA_GIOCARE */
+    orario: string | null;
+    eventi: EventoPartita[];
+}
+
 export interface ClassificaRow {
     sigla: string;
     nome: string;

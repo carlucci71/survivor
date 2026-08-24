@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class UserDTO {
     private Long id;
     private String email;
+    private String lingua;
 //    private String name;
 //    private boolean enabled = true;
 //    private Enumeratori.Role role;

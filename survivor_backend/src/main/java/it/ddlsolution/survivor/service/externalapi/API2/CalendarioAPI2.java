@@ -40,6 +40,10 @@ import static it.ddlsolution.survivor.util.Constant.CALENDARIO_API2;
 @RequiredArgsConstructor
 public class CalendarioAPI2 implements ICalendario {
 
+    /** TEMPORANEO PER TEST: forza Inter-Monza (Serie A) a IN_CORSO 2-1 nello Studio, utile per
+     *  testare senza aspettare una partita davvero live. Rimettere a false prima del rilascio. */
+    private static final boolean MOCK_PARTITA_LIVE_PER_TEST = false;
+
     private final Utility utility;
     private final CampionatoService campionatoService;
 
@@ -612,6 +616,17 @@ public class CalendarioAPI2 implements ICalendario {
                         .aliasGiornataFuori(aliasFuori)
                         .anno(anno)
                         .build();
+                // TEMPORANEO PER TEST: nessuna partita Serie A è davvero in corso in questo momento,
+                // quindi forziamo la partita dell'Inter (qualunque giornata si stia guardando, sia
+                // in casa che in trasferta) come se lo fosse, per poter testare lo Studio prima del
+                // rilascio. Rimettere MOCK_PARTITA_LIVE_PER_TEST a false finito il test.
+                if (MOCK_PARTITA_LIVE_PER_TEST && campionato.equals(EnumAPI2.Campionato.SERIE_A.name())
+                        && ("INT".equals(calendarioDTO.getCasaSigla()) || "INT".equals(calendarioDTO.getFuoriSigla()))) {
+                    calendarioDTO.setStato(Enumeratori.StatoPartita.IN_CORSO);
+                    calendarioDTO.setScoreCasa(2);
+                    calendarioDTO.setScoreFuori(1);
+                    log.warn("[TEST] Partita dell'Inter (g.{}) forzata a IN_CORSO 2-1 (MOCK_PARTITA_LIVE_PER_TEST=true)", giornata);
+                }
                 log.info("calendarioDTO = " + calendarioDTO);
                 ret.add(calendarioDTO);
             }
@@ -630,14 +645,14 @@ public class CalendarioAPI2 implements ICalendario {
         } else {
             teamName = team.get("italianName").toString();
         }
-        Integer teamScore;
-        if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
-            teamScore = (Integer) team.get("score");
-            if (teamScore == null) {
-                teamScore = Integer.parseInt(((Map) team.get("scores")).get("total").toString());
-            }
-        } else {
-            teamScore = 0;
+        // Il punteggio si legge sempre (anche a partita IN_CORSO, non solo TERMINATA): l'API lo
+        // fornisce comunque, aggiornato in tempo reale. Chi calcola l'esito della giocata continua
+        // comunque a guardare solo lo stato TERMINATA prima di usarlo (vedi LegaService), quindi
+        // non c'è rischio di calcolare un esito su un punteggio ancora provvisorio.
+        Integer teamScore = (Integer) team.get("score");
+        if (teamScore == null) {
+            Object scores = team.get("scores");
+            teamScore = scores instanceof Map ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
         }
         Result result = new Result(teamName, teamCode, teamScore);
         return result;
@@ -650,14 +665,11 @@ public class CalendarioAPI2 implements ICalendario {
         }
         String teamCode = ((List<Map<String, Object>>) team.get("players")).get(0).get("playerId").toString();
         String teamName = ((List<Map<String, Object>>) team.get("players")).get(0).get("displayName").toString();
-        Integer teamScore;
-        if (statoPartita == Enumeratori.StatoPartita.TERMINATA) {
-            teamScore = (Integer) team.get("score");
-            if (teamScore == null) {
-                teamScore = Integer.parseInt(((Map) team.get("scores")).get("total").toString());
-            }
-        } else {
-            teamScore = 0;
+        // Vedi commento in getResult(): punteggio letto sempre, non solo a TERMINATA.
+        Integer teamScore = (Integer) team.get("score");
+        if (teamScore == null) {
+            Object scores = team.get("scores");
+            teamScore = scores instanceof Map ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
         }
         Result result = new Result(teamName, teamCode, teamScore);
         return result;

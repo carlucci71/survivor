@@ -31,6 +31,7 @@ public class LegaJoinRequestService {
     private final GiocatoreRepository giocatoreRepository;
     private final GiocatoreLegaService giocatoreLegaService;
     private final PushNotificationService pushNotificationService;
+    private final NotificationI18nService notificationI18nService;
 
     // ─── UTENTE: richiede di entrare ────────────────────────────────────────
 
@@ -220,16 +221,17 @@ public class LegaJoinRequestService {
         try {
             lega.getGiocatoreLeghe().stream()
                     .filter(gl -> gl.getRuolo() == Enumeratori.RuoloGiocatoreLega.LEADER)
-                    .map(gl -> gl.getGiocatore().getUser().getId())
+                    .map(gl -> gl.getGiocatore().getUser())
                     .toList()
-                    .forEach(leaderId -> {
+                    .forEach(leaderUser -> {
                         var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
-                        dto.setTitle("Nuova richiesta di ingresso");
-                        dto.setBody(richiedente.getNickname() + " vuole entrare nella lega \"" + lega.getName() + "\"");
+                        String lingua = leaderUser.getLingua();
+                        dto.setTitle(notificationI18nService.testo("notif.joinRequest.new.title", lingua));
+                        dto.setBody(notificationI18nService.testo("notif.joinRequest.new.body", lingua, richiedente.getNickname(), lega.getName()));
                         dto.setTipoNotifica(Enumeratori.TipoNotifica.JOIN_REQUEST_RICEVUTA);
                         dto.setExpiringAt(LocalDateTime.now().plusDays(2));
                         dto.setLegaId(lega.getId());
-                        pushNotificationService.sendNotificationToUsers(List.of(leaderId), dto);
+                        pushNotificationService.sendNotificationToUsers(List.of(leaderUser.getId()), dto);
                     });
         } catch (Exception e) {
             log.warn("Errore notifica leader lega {}: {}", lega.getId(), e.getMessage());
@@ -239,13 +241,14 @@ public class LegaJoinRequestService {
     private void notificaEsito(Giocatore giocatore, Lega lega, boolean approvata) {
         try {
             var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
+            String lingua = giocatore.getUser().getLingua();
             if (approvata) {
-                dto.setTitle("Richiesta approvata! 🎉");
-                dto.setBody("Sei stato accettato nella lega \"" + lega.getName() + "\"");
+                dto.setTitle(notificationI18nService.testo("notif.joinRequest.approved.title", lingua));
+                dto.setBody(notificationI18nService.testo("notif.joinRequest.approved.body", lingua, lega.getName()));
                 dto.setTipoNotifica(Enumeratori.TipoNotifica.JOIN_REQUEST_APPROVATA);
             } else {
-                dto.setTitle("Richiesta non accettata");
-                dto.setBody("La tua richiesta per \"" + lega.getName() + "\" non è stata accettata");
+                dto.setTitle(notificationI18nService.testo("notif.joinRequest.rejected.title", lingua));
+                dto.setBody(notificationI18nService.testo("notif.joinRequest.rejected.body", lingua, lega.getName()));
                 dto.setTipoNotifica(Enumeratori.TipoNotifica.JOIN_REQUEST_RIFIUTATA);
             }
             dto.setExpiringAt(LocalDateTime.now().plusDays(7));
