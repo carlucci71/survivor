@@ -47,10 +47,13 @@ export class LiveScoreButtonComponent implements OnInit, OnDestroy {
   }
 
   apriDialog(): void {
+    const isDesktop = window.innerWidth >= 768;
     this.dialog.open(LiveScoreDialogComponent, {
       data: { partite: this.partite },
       panelClass: 'custom-dialog-container',
-      maxWidth: '95vw',
+      width: isDesktop ? '560px' : '95vw',
+      maxWidth: isDesktop ? '560px' : '95vw',
+      maxHeight: '85vh',
     });
   }
 }

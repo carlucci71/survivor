@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +110,15 @@ public class LiveScoreGazzettaClient {
             eventi.addAll(estraiEventiSquadra(homeTeam, casaSigla));
             eventi.addAll(estraiEventiSquadra(awayTeam, fuoriSigla));
 
+            LocalDateTime orario = null;
+            try {
+                Object dateObj = match.get("date");
+                if (dateObj != null) {
+                    orario = OffsetDateTime.parse(dateObj.toString()).atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+                }
+            } catch (Exception ignored) {
+            }
+
             return PartitaLiveDTO.builder()
                     .casaNome(homeTeam.get("teamName") != null ? homeTeam.get("teamName").toString() : homeTeam.get("italianName").toString())
                     .casaSigla(casaSigla)
@@ -117,6 +129,7 @@ public class LiveScoreGazzettaClient {
                     .minuto(minuto)
                     .stato(statoPartita.name())
                     .intervallo(intervallo)
+                    .orario(orario)
                     .eventi(eventi)
                     .build();
         } catch (Exception e) {

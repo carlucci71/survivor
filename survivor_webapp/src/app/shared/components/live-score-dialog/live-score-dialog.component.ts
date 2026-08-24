@@ -7,6 +7,12 @@ import { PartitaLive } from '../../../core/models/interfaces.model';
 import { TeamLogoService } from '../../../core/services/team-logo.service';
 import { LiveMatchDetailDialogComponent } from '../live-match-detail-dialog/live-match-detail-dialog.component';
 
+const PRIORITA_STATO: Record<PartitaLive['stato'], number> = {
+  IN_CORSO: 0,
+  DA_GIOCARE: 1,
+  TERMINATA: 2,
+};
+
 /** Elenco delle partite della giornata: click su una riga apre il dettaglio (gol/cartellini/sostituzioni). */
 @Component({
   selector: 'app-live-score-dialog',
@@ -16,6 +22,7 @@ import { LiveMatchDetailDialogComponent } from '../live-match-detail-dialog/live
   styleUrls: ['./live-score-dialog.component.scss'],
 })
 export class LiveScoreDialogComponent {
+  /** In corso prima, poi da giocare, poi finite (ordine stabile all'interno di ogni gruppo). */
   partite: PartitaLive[];
 
   constructor(
@@ -24,7 +31,9 @@ export class LiveScoreDialogComponent {
     private teamLogoService: TeamLogoService,
     private dialog: MatDialog
   ) {
-    this.partite = data.partite || [];
+    this.partite = [...(data.partite || [])].sort(
+      (a, b) => PRIORITA_STATO[a.stato] - PRIORITA_STATO[b.stato]
+    );
   }
 
   getLogo(sigla: string): string | null {
@@ -32,10 +41,13 @@ export class LiveScoreDialogComponent {
   }
 
   apriDettaglio(partita: PartitaLive): void {
+    const isDesktop = window.innerWidth >= 768;
     this.dialog.open(LiveMatchDetailDialogComponent, {
       data: { partita },
       panelClass: 'custom-dialog-container',
-      maxWidth: '95vw',
+      width: isDesktop ? '480px' : '95vw',
+      maxWidth: isDesktop ? '480px' : '95vw',
+      maxHeight: '85vh',
     });
   }
 

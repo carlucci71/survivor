@@ -210,6 +210,8 @@ export interface PartitaLive {
     stato: 'DA_GIOCARE' | 'IN_CORSO' | 'TERMINATA';
     /** true se stato === 'IN_CORSO' ma è l'intervallo (il minuto resta fermo) */
     intervallo: boolean;
+    /** Calcio d'inizio (ora italiana), usato per le partite ancora DA_GIOCARE */
+    orario: string | null;
     eventi: EventoPartita[];
 }
 

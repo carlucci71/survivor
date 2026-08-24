@@ -3,6 +3,7 @@ package it.ddlsolution.survivor.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,5 +25,7 @@ public class PartitaLiveDTO {
     private String stato;
     /** true se la partita è IN_CORSO ma in questo momento è l'intervallo (il minuto resta fermo) */
     private boolean intervallo;
+    /** Calcio d'inizio (ora italiana): usato in UI per le partite ancora DA_GIOCARE */
+    private LocalDateTime orario;
     private List<EventoPartitaDTO> eventi;
 }

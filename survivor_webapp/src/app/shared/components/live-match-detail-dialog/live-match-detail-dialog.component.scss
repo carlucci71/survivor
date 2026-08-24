@@ -1,68 +1,82 @@
+:host {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+}
+
 .lmd-container {
   background: var(--bg-card);
-  color: var(--text-primary);
   border-radius: 16px;
-  padding: 20px;
-  max-width: 420px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  box-sizing: border-box;
+  max-width: 480px;
+  max-height: 85vh;
 }
 
+/* ── HEADER ── */
 .lmd-header {
+  position: relative;
+  padding: 14px 48px 14px 20px;
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-.lmd-status {
-  font-size: 0.78rem;
+.lmd-title {
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.4px;
+  color: #fff;
   text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.lmd-status-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--error-color);
-}
-
-.lmd-live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--error-color);
-  animation: lmd-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes lmd-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
+  letter-spacing: 0.5px;
 }
 
 .lmd-close-btn {
-  background: none;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
   border: none;
   cursor: pointer;
-  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  padding: 4px;
-  border-radius: 50%;
-  transition: background 0.2s ease;
+  justify-content: center;
+  transition: background 0.2s;
 
-  &:hover { background: var(--border-color); }
+  &:hover { background: rgba(255, 255, 255, 0.35); }
+
+  mat-icon {
+    color: #fff;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
 }
 
-.lmd-score-row {
+/* ── BODY ── */
+.lmd-body {
+  padding: 16px 18px 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+}
+
+.lmd-score-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 4px 20px;
+  gap: 10px;
+  padding: 6px 4px 18px;
 }
 
 .lmd-team {
@@ -77,23 +91,62 @@
 .lmd-team-logo {
   width: 40px;
   height: 40px;
-  object-fit: cover;
-  border-radius: 50%;
+  object-fit: contain;
 }
 
 .lmd-team-name {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-align: center;
   color: var(--text-primary);
   word-break: break-word;
 }
 
+.lmd-center {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
 .lmd-score {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--text-primary);
-  flex-shrink: 0;
+}
+
+.lmd-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  background: rgba(107, 114, 128, 0.12);
+  color: var(--text-secondary);
+}
+
+.lmd-status-badge--live {
+  background: rgba(229, 57, 53, 0.12);
+  color: var(--error-color);
+}
+
+.lmd-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--error-color);
+  animation: lmd-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes lmd-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 
 .lmd-events {
@@ -102,7 +155,7 @@
 }
 
 .lmd-events-title {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -111,27 +164,35 @@
 }
 
 .lmd-no-events {
-  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   color: var(--text-secondary);
   text-align: center;
-  padding: 12px 0;
+  padding: 20px 0;
+
+  mat-icon { font-size: 30px; width: 30px; height: 30px; opacity: 0.5; }
+  span { font-size: 0.82rem; }
 }
 
 .lmd-event-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 0;
-  font-size: 0.85rem;
+  padding: 7px 4px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  transition: background 0.15s ease;
 
-  &--casa { padding-left: 0; }
+  &:hover { background: rgba(10, 61, 145, 0.04); }
   &--fuori { flex-direction: row-reverse; text-align: right; }
 }
 
 .lmd-event-minuto {
   font-weight: 700;
   color: var(--text-secondary);
-  min-width: 32px;
+  min-width: 30px;
   flex-shrink: 0;
 }
 
@@ -148,6 +209,11 @@
   word-break: break-word;
 }
 
+.lmd-event-row--gol {
+  .lmd-event-minuto { color: var(--text-primary); }
+  .lmd-event-testo { font-weight: 800; }
+}
+
 .lmd-sub-arrow {
   font-size: 14px;
   width: 14px;
@@ -160,7 +226,6 @@
 .lmd-sub-in { color: var(--success-color); font-weight: 600; }
 
 @media (max-width: 380px) {
-  .lmd-container { padding: 16px; }
   .lmd-team-logo { width: 32px; height: 32px; }
-  .lmd-score { font-size: 1.3rem; }
+  .lmd-score { font-size: 1.25rem; }
 }
