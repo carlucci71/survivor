@@ -1,6 +1,7 @@
 {
   "LIVE_SCORE": {
     "BUTTON_LABEL": "Risultati Live",
+    "BUTTON_LABEL_GENERIC": "Risultati",
     "DIALOG_TITLE": "Risultati Serie A",
     "DETAIL_TITLE": "Dettaglio partita",
     "LIVE_BADGE": "Live",

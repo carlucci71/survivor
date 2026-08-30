@@ -5973,6 +5973,14 @@
   &:active {
     background: rgba(229, 57, 53, 0.14);
   }
+
+  @media (max-width: 480px) {
+    height: 18px;
+    padding: 0 6px;
+    font-size: 0.46rem;
+    gap: 3px;
+    border-width: 1px;
+  }
 }
 
 .srl-dot {
