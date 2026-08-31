@@ -220,6 +220,83 @@
   filter: blur(12px);
 }
 
+/* ── Watermark del torneo/campionato: "medaglione" inciso sullo sfondo, sempre
+   leggermente visibile (niente dissolvenza a 0, che leggeva come uno sfarfallio) con
+   sopra un riflesso di luce che attraversa solo la sagoma del logo ogni tanto — come
+   una placca metallica che cattura la luce. Resa in silhouette bianca (brightness(0)
+   invert(1)) cosi' resta coerente indipendentemente dai colori originali del logo. I
+   due drop-shadow aggiungono un lieve bagliore diffuso: senza, i loghi "a tratto
+   sottile" (es. Serie A) risultano quasi illeggibili, mentre i badge pieni (es.
+   Champions League) restano leggibili comunque — il glow uniforma la resa fra i due. */
+.torneo-watermark-wrap {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  z-index: 0;
+  width: 92px;
+  height: 92px;
+  pointer-events: none;
+  transform: translateY(-50%) translateX(10px) scale(0.94) rotate(-4deg);
+  animation: watermark-breathe 11s ease-in-out infinite;
+}
+
+.torneo-watermark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.16;
+  filter:
+    brightness(0) invert(1)
+    drop-shadow(0 0 3px rgba(255, 255, 255, 0.5))
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* Riflesso mascherato sulla sagoma del logo (stesso PNG usato come maschera via --wm-mask) */
+.torneo-watermark-shine {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--wm-mask);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: var(--wm-mask);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background: linear-gradient(115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.95) 50%,
+    transparent 65%
+  );
+  background-size: 260% 260%;
+  background-position: -80% 0%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: watermark-shine-sweep 8s ease-in-out infinite 1.8s;
+}
+
+@keyframes watermark-breathe {
+  0%, 100% { transform: translateY(-50%) translateX(10px) scale(0.94) rotate(-4deg); }
+  50%      { transform: translateY(-53%) translateX(2px)  scale(1.03) rotate(-1deg); }
+}
+
+@keyframes watermark-shine-sweep {
+  0%   { background-position: -80% 0%;  opacity: 0;    }
+  12%  { opacity: 0.8; }
+  40%  { background-position: 140% 0%;  opacity: 0.8;  }
+  50%  { opacity: 0; }
+  100% { background-position: 140% 0%;  opacity: 0;    }
+}
+
+@media (max-width: 380px) {
+  .torneo-watermark-wrap {
+    width: 68px;
+    height: 68px;
+    right: 4px;
+  }
+}
+
 /* ── Shimmer sweep */
 .shine {
   position: absolute;
@@ -296,7 +373,7 @@
 }
 
 /* ─── Logo ────────────────────────────────────────────────── */
-.card-left { flex-shrink: 0; position: relative; }
+.card-left { flex-shrink: 0; position: relative; z-index: 2; }
 
 .logo-wrapper {
   width: 62px;
@@ -331,6 +408,8 @@
 
 /* ─── Center text ─────────────────────────────────────────── */
 .card-center {
+  position: relative;
+  z-index: 2;
   flex: 1;
   min-width: 0;
   display: flex;
@@ -399,6 +478,8 @@
 
 /* ─── Right: esito + arrow ────────────────────────────────── */
 .card-right {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -454,6 +535,8 @@
 
 /* ─── No-pick redesign ────────────────────────────────────── */
 .no-pick-body {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 14px;
