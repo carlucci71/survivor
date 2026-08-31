@@ -84,6 +84,10 @@ public class CalendarioAPI2 implements ICalendario {
         if (campionato.equals(EnumAPI2.Campionato.ROLAND_GARROS.name())) {
             return getPartiteRolandGarros(campionatoDTO, giornata, anno);
         }
+        // Branch dedicato per la Champions League: stesso host/struttura dei Mondiali (phase/subphase)
+        if (campionato.equals(EnumAPI2.Campionato.CHAMPIONS_LEAGUE.name())) {
+            return getPartiteChampionsLeague(campionatoDTO, giornata, anno);
+        }
         List<SquadraDTO> squadre=campionatoDTO.getSquadre();
         String sport = campionatoDTO.getSport().getId();
         List<PartitaDTO> ret = new ArrayList<>();
@@ -522,6 +526,99 @@ public class CalendarioAPI2 implements ICalendario {
         log.warn("Roland Garros: playerId {} ('{}') non trovato in SquadreTennis_API2 → sigla fallback '{}'." +
                 " Aggiungere ASAP all'enum.", playerId, displayName, siglaFallback);
         return siglaFallback;
+    }
+
+    // -------------------------------------------------------------------------
+    // CHAMPIONS LEAGUE - tutte le 17 giornate (fase a campionato + eliminazione diretta)
+    // Stessa struttura risposta dei Mondiali (mc-public-api.gazzetta.it, phase/subphase), quindi
+    // si riusano getResult()/getSquadraDTO()/toMatchList() già scritti per quel branch.
+    // Giornate 9-17 (eliminazione diretta): phase/subphase non ancora verificati, vedi commento
+    // su EnumAPI2.RoundChampionsLeague. Finché Gazzetta non pubblica quei dati, l'API risponde con
+    // games=[] (gestito: ritorna semplicemente lista vuota, nessun errore).
+    // -------------------------------------------------------------------------
+
+    @SuppressWarnings("unchecked")
+    private List<PartitaDTO> getPartiteChampionsLeague(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        List<PartitaDTO> ret = new ArrayList<>();
+        EnumAPI2.RoundChampionsLeague round = EnumAPI2.RoundChampionsLeague.fromGiornata(giornata);
+        int competitionId = EnumAPI2.Campionato.CHAMPIONS_LEAGUE.id.get(Integer.valueOf(anno));
+        // Stesso host/URL dei Mondiali fase a eliminazione: la struttura sportId/competitionId/
+        // phase/subphase è generica, non specifica dei Mondiali nonostante il nome della property.
+        String urlResolved = String.format(urlCalendarMondialiKnockout,
+                EnumAPI2.Sport.CALCIO.id,
+                competitionId,
+                round.phase,
+                round.subphase);
+        log.info("Champions League getPartite giornata={} url={}", giornata, urlResolved);
+        Map response = utility.callUrl(urlResolved, Map.class);
+        Object dataObj = response.get("data");
+        if (!(dataObj instanceof Map)) {
+            log.warn("Champions League giornata={}: risposta API inattesa — 'data' non è una Map.", giornata);
+            return ret;
+        }
+        Map data = (Map) dataObj;
+        Object gamesObj = data.get("games");
+        if (!(gamesObj instanceof List)) return ret;
+
+        List<SquadraDTO> squadre = campionatoDTO.getSquadre();
+        for (Object gameObj : (List<?>) gamesObj) {
+            if (!(gameObj instanceof Map)) continue;
+            Object matchesObj = ((Map<String, Object>) gameObj).get("matches");
+            if (!(matchesObj instanceof List)) continue;
+            for (Object matchesEntryObj : (List<?>) matchesObj) {
+                if (!(matchesEntryObj instanceof Map)) continue;
+                for (Object valueObj : ((Map<String, Object>) matchesEntryObj).values()) {
+                    for (Map<String, Object> match : toMatchList(valueObj)) {
+                        PartitaDTO dto = buildPartitaChampionsLeague(campionatoDTO.getId(), giornata, match, squadre, anno);
+                        if (dto != null) ret.add(dto);
+                    }
+                }
+            }
+        }
+        if (ret.isEmpty()) {
+            log.warn("Champions League giornata={}: nessuna partita estratta.", giornata);
+        }
+        return ret;
+    }
+
+    private PartitaDTO buildPartitaChampionsLeague(String campionato, int giornata, Map<String, Object> match,
+                                                    List<SquadraDTO> squadreCampionato, short anno) {
+        try {
+            String status;
+            try {
+                status = ((Map<?, ?>) match.get("timing")).get("tag").toString();
+            } catch (Exception e) {
+                status = match.get("status").toString();
+            }
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+
+            Result resultHome = getResult(match, "home", statoPartita);
+            Result resultAway = getResult(match, "away", statoPartita);
+
+            String casaSigla = getSquadraDTO(resultHome.teamCode(), campionato, squadreCampionato).getSigla();
+            String fuoriSigla = getSquadraDTO(resultAway.teamCode(), campionato, squadreCampionato).getSigla();
+
+            OffsetDateTime odt = OffsetDateTime.parse(match.get("utcDate").toString());
+            LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
+
+            return PartitaDTO.builder()
+                    .sportId(EnumAPI2.Sport.CALCIO.name())
+                    .campionatoId(campionato)
+                    .giornata(giornata)
+                    .orario(romaTime)
+                    .stato(statoPartita)
+                    .casaSigla(casaSigla)
+                    .casaNome(resultHome.team())
+                    .fuoriSigla(fuoriSigla)
+                    .fuoriNome(resultAway.team())
+                    .scoreCasa(resultHome.teamScore())
+                    .scoreFuori(resultAway.teamScore())
+                    .anno(anno)
+                    .build();
+        } catch (Exception e) {
+            log.warn("Errore elaborazione partita Champions League: {}", e.getMessage());
+            return null;
+        }
     }
 
     private void elaboraTennis(String sport, String campionato, int giornata, Map m, List<PartitaDTO> ret, List<SquadraDTO> squadreCampionato, short anno) {
