@@ -46,6 +46,10 @@ export class LiveScoreButtonComponent implements OnInit, OnDestroy {
     this.pollSub?.unsubscribe();
   }
 
+  get haPartiteInCorso(): boolean {
+    return this.partite.some((p) => p.stato === 'IN_CORSO');
+  }
+
   apriDialog(): void {
     const isDesktop = window.innerWidth >= 768;
     this.dialog.open(LiveScoreDialogComponent, {

@@ -120,6 +120,17 @@
         <span class="p p7"></span>
         <span class="p p8"></span>
       </div>
+      @if (selected.torneoWatermarkUrl) {
+        <div class="torneo-watermark-wrap" aria-hidden="true">
+          <img
+            class="torneo-watermark"
+            [src]="selected.torneoWatermarkUrl"
+            alt=""
+            (error)="onLogoError($event)"
+          />
+          <div class="torneo-watermark-shine" [style.--wm-mask]="selected.torneoWatermarkMask"></div>
+        </div>
+      }
 
       @if (selected.displayGiocata && (!selected.isLastResult || selected.esitoClass === 'loss')) {
         <!-- STATO A: pick attiva per la giornata corrente — layout 3 colonne con colori squadra -->
