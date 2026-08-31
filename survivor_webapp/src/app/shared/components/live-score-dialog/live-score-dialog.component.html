@@ -18,6 +18,7 @@
         </div>
 
         <div class="lsd-center">
+          <span class="lsd-date" *ngIf="partita.orario">{{ partita.orario | date:'dd/MM' }}</span>
           <div class="lsd-score">
             <ng-container *ngIf="partita.stato !== 'DA_GIOCARE'; else orarioCalcioInizio">{{ partita.scoreCasa }} - {{ partita.scoreFuori }}</ng-container>
             <ng-template #orarioCalcioInizio>{{ partita.orario ? (partita.orario | date:'HH:mm') : '-' }}</ng-template>
