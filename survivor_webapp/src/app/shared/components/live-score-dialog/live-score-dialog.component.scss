@@ -17,7 +17,7 @@
 /* ── HEADER ── */
 .lsd-header {
   position: relative;
-  padding: 14px 48px 14px 20px;
+  padding: 10px 48px 10px 20px;
   background: var(--gradient-primary);
   display: flex;
   align-items: center;
@@ -61,7 +61,7 @@
 
 /* ── BODY ── */
 .lsd-body {
-  padding: 10px 12px;
+  padding: 8px 10px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
@@ -74,7 +74,7 @@
 .lsd-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .lsd-match-row {
@@ -82,7 +82,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 10px;
+  padding: 6px 10px;
   background: rgba(10, 61, 145, 0.03);
   border: none;
   border-left: 3px solid var(--border-color);
@@ -113,8 +113,8 @@
 }
 
 .lsd-logo {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -133,23 +133,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 1px;
   min-width: 58px;
 }
 
 .lsd-score {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-primary);
   white-space: nowrap;
+  line-height: 1.2;
+}
+
+.lsd-date {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .lsd-status-badge {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.58rem;
-  padding: 1px 6px;
+  font-size: 0.54rem;
+  padding: 0 5px;
   border-radius: 8px;
   font-weight: 700;
   text-transform: uppercase;
