@@ -1,4 +1,4 @@
-<button type="button" class="lsb-btn" *ngIf="partite.length > 0" (click)="apriDialog()">
+<button type="button" class="lsb-btn" [class.lsb-btn--live]="haPartiteInCorso" *ngIf="partite.length > 0" (click)="apriDialog()">
   <span class="lsb-dot"></span>
-  <span class="lsb-label">{{ 'LIVE_SCORE.BUTTON_LABEL' | translate }}</span>
+  <span class="lsb-label">{{ (haPartiteInCorso ? 'LIVE_SCORE.BUTTON_LABEL' : 'LIVE_SCORE.BUTTON_LABEL_GENERIC') | translate }}</span>
 </button>

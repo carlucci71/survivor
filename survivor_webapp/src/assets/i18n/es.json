@@ -1,6 +1,7 @@
 {
   "LIVE_SCORE": {
     "BUTTON_LABEL": "Resultados en vivo",
+    "BUTTON_LABEL_GENERIC": "Resultados",
     "DIALOG_TITLE": "Resultados Serie A",
     "DETAIL_TITLE": "Detalle del partido",
     "LIVE_BADGE": "En vivo",
@@ -72,7 +73,8 @@
     "TENNIS_AO": "Abierto de Australia",
     "ROLAND_GARROS": "Roland Garros",
     "NBA_RS": "Temporada Regular NBA",
-    "MONDIALI_2026": "World Tournament 2026"
+    "MONDIALI_2026": "World Tournament 2026",
+    "CHAMPIONS_LEAGUE": "Champions League"
   },
   "MONDIALI_HISTORY": {
     "GROUP": "Grupo"

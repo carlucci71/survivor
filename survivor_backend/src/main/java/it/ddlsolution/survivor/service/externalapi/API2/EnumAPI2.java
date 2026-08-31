@@ -16,7 +16,9 @@ class EnumAPI2 {
         TENNIS_AO(Map.of(2025, 10376, 2026, 12389), SquadreTennis_API2.values()),
         ROLAND_GARROS(Map.of(2026, 12394), SquadreTennis_API2.values()),
         NBA_RS(Map.of(2025, 3, 2026, 3), SquadreNBA_API2.values()),
-        MONDIALI_2026(Map.of(2026, 4), SquadreNazionali_API2.values());
+        MONDIALI_2026(Map.of(2026, 4), SquadreNazionali_API2.values()),
+        // Solo fase a campionato (8 giornate) per ora: vedi RoundChampionsLeague.
+        CHAMPIONS_LEAGUE(Map.of(2026, 5), SquadreChampionsLeague_API2.values());
 
         final Map<Integer, Integer> id;
         final IEnumSquadre[] squadre;
@@ -149,6 +151,58 @@ class EnumAPI2 {
         // True se il round usa il nuovo URL mc-public-api.gazzetta.it
         boolean usaUrlKnockout() {
             return this.ordinal() >= R16.ordinal();
+        }
+    }
+
+    /**
+     * Tutte le 17 giornate della Champions League 2026/27: 8 di fase a campionato (verificate,
+     * dati reali già visti) + 9 di fase a eliminazione diretta (playoff andata/ritorno, ottavi,
+     * quarti, semifinali, finale). Per la fase a campionato NON serve gestire l'aggregato su 2
+     * partite: ogni giornata (andata/ritorno comprese) resta un turno singolo e indipendente,
+     * col giocatore che sceglie liberamente ad ogni turno (decisione presa esplicitamente).
+     *
+     * ATTENZIONE G9-G17: Gazzetta non ha ancora configurato queste fasi nel suo sistema (la
+     * fase a eliminazione parte solo dopo la fase a campionato, quindi mesi da adesso) — i valori
+     * phase/subphase qui sotto sono un'ipotesi plausibile per analogia con quanto già visto per i
+     * Mondiali (fase "playoffs" con subphase nominali), MAI VERIFICATA. Vanno controllati/corretti
+     * al primo utilizzo reale, quando Gazzetta pubblica il tabellone (stesso approccio già usato
+     * per RoundMondiali QF/SF/F).
+     */
+    enum RoundChampionsLeague {
+        G1("championship", "1"),
+        G2("championship", "2"),
+        G3("championship", "3"),
+        G4("championship", "4"),
+        G5("championship", "5"),
+        G6("championship", "6"),
+        G7("championship", "7"),
+        G8("championship", "8"),
+        // Da qui in poi: ipotesi non verificata, vedi commento della enum
+        G9_PLAYOFF_ANDATA("playoffs", "playoff-round-leg-1"),
+        G10_PLAYOFF_RITORNO("playoffs", "playoff-round-leg-2"),
+        G11_OTTAVI_ANDATA("playoffs", "round-of-16-leg-1"),
+        G12_OTTAVI_RITORNO("playoffs", "round-of-16-leg-2"),
+        G13_QUARTI_ANDATA("playoffs", "quarter-finals-leg-1"),
+        G14_QUARTI_RITORNO("playoffs", "quarter-finals-leg-2"),
+        G15_SEMIFINALE_ANDATA("playoffs", "semi-finals-leg-1"),
+        G16_SEMIFINALE_RITORNO("playoffs", "semi-finals-leg-2"),
+        G17_FINALE("playoffs", "final");
+
+        final String phase;
+        final String subphase;
+
+        RoundChampionsLeague(String phase, String subphase) {
+            this.phase = phase;
+            this.subphase = subphase;
+        }
+
+        static RoundChampionsLeague fromGiornata(int giornata) {
+            RoundChampionsLeague[] values = values();
+            if (giornata < 1 || giornata > values.length) {
+                throw new IllegalArgumentException(
+                        "Giornata Champions League non gestita (solo fase a campionato, 1-" + values.length + "): " + giornata);
+            }
+            return values[giornata - 1];
         }
     }
 

@@ -19,6 +19,8 @@ interface LegaConGiocata {
   lega: Lega;
   logoUrl: string | null;
   torneoLogoUrl: string | null;
+  torneoWatermarkUrl: string | null;
+  torneoWatermarkMask: string | null; // per la maschera CSS dello shine sweep sul watermark
   sportEmoji: string;
   esitoClass: string;
   esitoLabel: string;
@@ -229,6 +231,8 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
           }
         }
 
+        const torneoWatermarkUrl = this.getTorneoWatermarkUrl(l.campionato?.id);
+
         return {
           lega: l,
           displayGiocata,
@@ -238,6 +242,8 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
             ? this.logoService.getLogoUrl(l.campionato?.sport?.id, l.campionato?.id, displayGiocata.squadraSigla)
             : null,
           torneoLogoUrl: this.getTorneoLogoUrl(l.campionato?.id),
+          torneoWatermarkUrl,
+          torneoWatermarkMask: torneoWatermarkUrl ? `url("${torneoWatermarkUrl}")` : null,
           sportEmoji: this.getSportEmoji(l.campionato?.sport?.id),
           // Per LIVE usiamo mia (non la cache), cosi non mostriamo LIVE sul vecchio risultato
           ...this.getEsitoInfo(displayEsito, isLastResult ? undefined : l),
@@ -326,11 +332,36 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       'LIGA':          'assets/logos/calcio/tornei/liga.png',
       'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier.png',
       'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
+      'CHAMPIONS_LEAGUE': 'assets/logos/calcio/champions/logo_champions.webp',
       'NBA_RS':        'assets/logos/basket/tornei/NBA.png',
       'AUS_OPEN':      'assets/logos/tennis/tornei/Australian Open.png',
       'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros.png',
       'US_OPEN':       'assets/logos/tennis/tornei/US Open.png',
       'WIMBLEDON':     'assets/logos/tennis/tornei/wimbledon.png',
+    };
+    return map[campionatoId] || null;
+  }
+
+  // Versione "silhouette" pulita del logo, usata solo per il watermark in dissolvenza
+  // sullo sfondo della card (vedi .torneo-watermark nel template/scss). E' un asset
+  // separato dal badge colorato qui sopra: quest'ultimo va reso in bianco pieno via CSS
+  // (brightness(0) invert(1)) per restare coerente su qualunque colore di torneo, e i
+  // loghi originali non sono tutti adatti a quella trasformazione cosi' come sono
+  // (ombre/gradienti interni o dettagli bianchi su sfondo pieno colorato sparivano).
+  private getTorneoWatermarkUrl(campionatoId: string | undefined): string | null {
+    if (!campionatoId) return null;
+    const map: Record<string, string> = {
+      'SERIE_A':       'assets/logos/calcio/tornei/serie_A_watermark.png',
+      'SERIE_B':       'assets/logos/calcio/tornei/serie_b_watermark.png',
+      'LIGA':          'assets/logos/calcio/tornei/liga_watermark.png',
+      'PREMIER_LEAGUE': 'assets/logos/calcio/tornei/premier_watermark.png',
+      'MONDIALI_2026': 'assets/logos/calcio/tornei/trofeo.svg',
+      'CHAMPIONS_LEAGUE': 'assets/logos/calcio/champions/logo_champions_watermark.png',
+      'NBA_RS':        'assets/logos/basket/tornei/NBA_watermark.png',
+      'AUS_OPEN':      'assets/logos/tennis/tornei/Australian Open_watermark.png',
+      'ROLAND_GARROS': 'assets/logos/tennis/tornei/Roland Garros_watermark.png',
+      'US_OPEN':       'assets/logos/tennis/tornei/US Open_watermark.png',
+      'WIMBLEDON':     'assets/logos/tennis/tornei/wimbledon_watermark.png',
     };
     return map[campionatoId] || null;
   }
