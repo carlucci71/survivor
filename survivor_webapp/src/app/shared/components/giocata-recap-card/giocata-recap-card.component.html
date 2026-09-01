@@ -168,7 +168,6 @@
           <div class="esito-badge" [ngClass]="selected.esitoClass" [class.badge-reveal]="selected.animationState !== 'none'">
             {{ selected.esitoLabel }}
           </div>
-          <mat-icon class="arrow-icon">chevron_right</mat-icon>
         </div>
 
       } @else {
@@ -197,12 +196,6 @@
               <span class="np-cta-label np-waiting">{{ 'LEAGUE.WAITING_NEXT_ROUND' | translate }}</span>
             }
           </div>
-
-          @if (selected.lega.giornataDaGiocare > 0) {
-            <div class="np-arrow">
-              <mat-icon>chevron_right</mat-icon>
-            </div>
-          }
 
         </div>
       }

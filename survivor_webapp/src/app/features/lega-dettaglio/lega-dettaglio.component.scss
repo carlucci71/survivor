@@ -749,116 +749,68 @@
 	}
 }
 
-@keyframes crw-scroll {
-	from { transform: translateX(0); }
-	to   { transform: translateX(-50%); }
-}
-
-// Ticker scoreboard a scorrimento
-.crw-scoreboard {
-	margin-top: 6px;
-	overflow: hidden;
-	border-radius: 8px;
-	background: rgba(0, 0, 0, 0.22);
-	border-top: 1px solid rgba(255,255,255,0.08);
-	position: relative;
-
-	// Sfumature laterali per effetto "entra/esce"
-	&::before, &::after {
-		content: '';
-		position: absolute;
-		top: 0; bottom: 0;
-		width: 24px;
-		z-index: 2;
-		pointer-events: none;
-	}
-	&::before {
-		left: 0;
-		background: linear-gradient(to right, rgba(10,42,100,0.9), transparent);
-	}
-	&::after {
-		right: 0;
-		background: linear-gradient(to left, rgba(10,42,100,0.9), transparent);
-	}
-}
-
-.crw-scoreboard-track {
-	display: flex;
-	align-items: center;
-	gap: 0;
-	padding: 5px 0;
-	white-space: nowrap;
-	animation: crw-scroll 16s linear infinite;
-	will-change: transform;
-}
-
-.crw-match-item {
-	display: inline-flex;
-	align-items: center;
-	gap: 5px;
-	padding: 0 10px;
-}
-
-.crw-match-time {
-	font-size: 0.68rem;
-	color: rgba(255,255,255,0.45);
-	font-weight: 400;
+// Distacco del leader sul primo inseguitore (mostrato solo per chi è in testa)
+.crw-lead-gap {
+	font-size: 0.7rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.55);
 	letter-spacing: 0.2px;
 }
 
-.crw-match-teams {
-	font-size: 0.75rem;
-	color: rgba(255,255,255,0.85);
-	font-weight: 600;
-	letter-spacing: 0.3px;
+// Podio statico (primi 3), sostituisce il vecchio ticker a scorrimento
+.crw-podium {
+	margin-top: 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.22);
+	border-top: 1px solid rgba(255,255,255,0.08);
+	padding: 6px 10px;
 }
 
-.crw-vs {
-	font-size: 0.65rem;
-	color: rgba(255,255,255,0.4);
-	font-weight: 400;
-	margin: 0 2px;
-}
-
-.crw-match-sep {
-	color: rgba(255,255,255,0.2);
-	font-size: 0.9rem;
-	padding: 0 2px;
-}
-
-// Ticker classifica giocatori lega
-.crw-player-item {
-	display: inline-flex;
+.crw-podium-item {
+	display: flex;
 	align-items: center;
-	gap: 4px;
-	padding: 0 8px;
+	gap: 6px;
 }
 
-.crw-player-pos {
-	font-size: 0.72rem;
+.crw-podium-item--me {
+	.crw-podium-name { color: #fff; }
+}
+
+.crw-podium-medal {
+	font-size: 0.75rem;
 	line-height: 1;
+	flex-shrink: 0;
 }
 
-.crw-player-name {
+.crw-podium-name {
 	font-size: 0.75rem;
 	font-weight: 600;
 	color: rgba(255,255,255,0.88);
 	letter-spacing: 0.2px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+	min-width: 0;
 }
 
-.crw-player-pts {
+.crw-podium-pts {
 	font-size: 0.68rem;
 	font-weight: 700;
 	color: rgba(255,255,255,0.5);
 	letter-spacing: 0.2px;
+	flex-shrink: 0;
 }
 
 .crw-player-out {
-	.crw-player-name {
+	.crw-podium-name {
 		color: rgba(255,255,255,0.35);
 		text-decoration: line-through;
 	}
-	.crw-player-pts {
+	.crw-podium-pts {
 		color: rgba(255,255,255,0.4);
 	}
 }

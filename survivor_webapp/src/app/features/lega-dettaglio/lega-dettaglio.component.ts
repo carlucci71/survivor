@@ -934,6 +934,23 @@ export class LegaDettaglioComponent implements OnDestroy {
     return { pos, punti, emoji, totale, distanza, leaderNick, isLeader };
   }
 
+  /** Podio statico (primi 3) mostrato nella card posizione campionato, al posto del vecchio ticker a scorrimento. */
+  getPodioCampionato(): Giocatore[] {
+    return this.getClassificaCampionato().slice(0, 3);
+  }
+
+  /** Distacco del leader sul primo inseguitore (2° in classifica) — mostrato solo quando l'utente è in testa. */
+  getDistanzaInseguitore(): { distanza: number; nickname: string } | null {
+    const classifica = this.getClassificaCampionato();
+    if (classifica.length < 2) return null;
+    const leader = classifica[0];
+    const secondo = classifica[1];
+    return {
+      distanza: (leader.puntiTotali ?? 0) - (secondo.puntiTotali ?? 0),
+      nickname: secondo.nickname || '',
+    };
+  }
+
   isCurrentUser(giocatore: Giocatore): boolean {
     return giocatore.user?.id === this.authService.getCurrentUser()?.id;
   }
