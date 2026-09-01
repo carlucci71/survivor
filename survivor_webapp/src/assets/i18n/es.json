@@ -542,6 +542,7 @@
       "POINTS": "pt",
       "LEADER": "¡Estás en cabeza!",
       "CHASE": "-{{gap}} pt de {{leader}}",
+      "LEAD_GAP": "+{{gap}} pt sobre {{chaser}}",
       "NEXT_ROUND": "Próxima jornada"
     },
     "STUDIO": {
