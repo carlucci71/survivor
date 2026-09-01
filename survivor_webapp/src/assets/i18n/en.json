@@ -454,6 +454,7 @@
       "POINTS": "pts",
       "LEADER": "You're leading!",
       "CHASE": "-{{gap}} pts from {{leader}}",
+      "LEAD_GAP": "+{{gap}} pts over {{chaser}}",
       "NEXT_ROUND": "Next round"
     },
     "STUDIO": {
