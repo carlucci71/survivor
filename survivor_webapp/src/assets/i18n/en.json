@@ -53,6 +53,13 @@
     "CONTINUE_IN_BROWSER": "Continue in browser",
     "HINT": "If you already have the app installed, we recommend opening it for the best experience."
   },
+  "LEGA_REDIRECT": {
+    "TITLE": "You've been invited to a league!",
+    "SUBTITLE": "Open Survivor to join the league",
+    "OPEN_APP": "Open in app",
+    "CONTINUE_IN_BROWSER": "Continue in browser",
+    "HINT": "Don't have the app yet? Continue in browser to join anyway."
+  },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Not Started",
     "AVVIATA": "In Progress",

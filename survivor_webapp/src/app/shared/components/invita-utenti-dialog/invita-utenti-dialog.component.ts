@@ -487,7 +487,10 @@ export class InvitaUtentiDialogComponent {
   }
 
   shareLink(): void {
-    const url = environment.baseUrl + '/joinLega?legaId=' + this.data.legaId;
+    // /apriLega (non /joinLega diretto): tenta prima l'apertura via schema custom survivor://,
+    // che a differenza degli Universal Link https:// non dipende dal file apple-app-site-association
+    // (verifica Apple lato server, spesso lenta/inaffidabile) — vedi LegaRedirectComponent.
+    const url = environment.baseUrl + '/apriLega?legaId=' + this.data.legaId;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.data.legaNome}" e dimostra chi è il vero campione! 💪`,

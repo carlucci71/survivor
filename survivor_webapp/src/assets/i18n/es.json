@@ -53,6 +53,13 @@
     "CONTINUE_IN_BROWSER": "Continuar en el navegador",
     "HINT": "Si ya tienes la app instalada, te recomendamos abrirla para la mejor experiencia."
   },
+  "LEGA_REDIRECT": {
+    "TITLE": "¡Te han invitado a una liga!",
+    "SUBTITLE": "Abre Survivor para unirte a la liga",
+    "OPEN_APP": "Abrir en la app",
+    "CONTINUE_IN_BROWSER": "Continuar en el navegador",
+    "HINT": "¿Aún no tienes la app? Continúa en el navegador para unirte igualmente."
+  },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Por Iniciar",
     "AVVIATA": "Iniciada",

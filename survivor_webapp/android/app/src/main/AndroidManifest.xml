@@ -29,6 +29,15 @@
                 <data android:scheme="survivor" android:host="auth" android:pathPrefix="/verify" />
             </intent-filter>
 
+            <!-- Deep link per invito lega: survivor://joinLega?legaId=... (vedi LegaRedirectComponent).
+                 Non dipende dalla verifica assetlinks.json del dominio, a differenza dell'App Link sotto. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="survivor" android:host="joinlega" />
+            </intent-filter>
+
             <!-- App Links: un link https://liberaleidee.it/survivor/... apre l'app direttamente
                  se installata (verificato tramite /.well-known/assetlinks.json sul dominio). -->
             <intent-filter android:autoVerify="true">
