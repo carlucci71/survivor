@@ -41,6 +41,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/public/magic-redirect.component').then(m => m.MagicRedirectComponent)
   },
   {
+    path: 'apriLega',
+    loadComponent: () => import('./features/public/lega-redirect.component').then(m => m.LegaRedirectComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard]

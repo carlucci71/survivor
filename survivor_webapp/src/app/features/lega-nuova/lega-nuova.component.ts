@@ -208,12 +208,15 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   getShareUrl(): string {
+    // /apriLega (non /joinLega diretto): tenta prima l'apertura via schema custom survivor://,
+    // che a differenza degli Universal Link https:// non dipende dal file apple-app-site-association
+    // (verifica Apple lato server, spesso lenta/inaffidabile) — vedi LegaRedirectComponent.
     // Pubblica ad accesso libero → lista pubblica
     // Privata o con approvazione → link diretto alla sezione join con la lega preselezionata
     if (this.pubblica && this.accessoLibero) {
-      return this.baseUrl() + '/joinLega';
+      return this.baseUrl() + '/apriLega';
     }
-    return this.baseUrl() + '/joinLega?legaId=' + this.legaCreataId;
+    return this.baseUrl() + '/apriLega?legaId=' + this.legaCreataId;
   }
 
   selezionaSport() {

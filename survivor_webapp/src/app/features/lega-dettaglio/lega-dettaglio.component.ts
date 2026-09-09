@@ -605,10 +605,16 @@ export class LegaDettaglioComponent implements OnDestroy {
     }
   }
 
-  /** Restituisce i dati della partita per una giocata (giornata assoluta + sigla squadra) */
-  getPartitaForGiocata(giornata: number | undefined, squadraSigla: string | undefined): Partita | null {
-    if (!giornata || !squadraSigla) return null;
-    return this.partiteDataMap.get(`${giornata}_${squadraSigla}`) ?? null;
+  /**
+   * Restituisce i dati della partita per una giocata (giornata RELATIVA della lega, es. giocata.giornata,
+   * + sigla squadra). partiteDataMap è popolata con chiavi in giornata ASSOLUTA (vedi caricaPartiteForzate,
+   * che itera su giornate assolute), quindi va convertita qui — le giocate salvano sempre la giornata
+   * relativa (1,2,3...), MAI passare una giornata già assoluta a questo metodo.
+   */
+  getPartitaForGiocata(giornataRelativa: number | undefined, squadraSigla: string | undefined): Partita | null {
+    if (!giornataRelativa || !squadraSigla) return null;
+    const giornataAssoluta = giornataRelativa + (this.lega?.giornataIniziale ?? 1) - 1;
+    return this.partiteDataMap.get(`${giornataAssoluta}_${squadraSigla}`) ?? null;
   }
 
   /** Restituisce la sigla e il nome dell'avversario per la propria giocata */
@@ -631,16 +637,19 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Se i dati della partita non sono in cache, prova a caricarli
     if (!this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla)) {
       if (this.lega?.campionato?.id && this.lega.anno && giocata.giornata) {
+        // giocata.giornata è relativa alla lega: partiteDellaGiornata vuole la giornata
+        // ASSOLUTA del campionato reale (stessa conversione di getPartitaForGiocata).
+        const giornataAssoluta = giocata.giornata + (this.lega.giornataIniziale ?? 1) - 1;
         this.campionatoService.partiteDellaGiornata(
           this.lega.campionato.id!,
           this.lega.anno,
-          giocata.giornata
+          giornataAssoluta
         ).subscribe({
           next: (partite: any[]) => {
             partite?.forEach((p: any) => {
               const partitaObj = p as Partita;
-              this.partiteDataMap.set(`${giocata.giornata}_${p.casaSigla}`, partitaObj);
-              this.partiteDataMap.set(`${giocata.giornata}_${p.fuoriSigla}`, partitaObj);
+              this.partiteDataMap.set(`${giornataAssoluta}_${p.casaSigla}`, partitaObj);
+              this.partiteDataMap.set(`${giornataAssoluta}_${p.fuoriSigla}`, partitaObj);
             });
             this._showMatchupPopup(giocata, event);
           },
@@ -2268,7 +2277,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   async shareLink(): Promise<void> {
-    const url = environment.baseUrl + '/joinLega?legaId=' + this.lega!.id;
+    // /apriLega (non /joinLega diretto): tenta prima l'apertura via schema custom survivor://,
+    // che a differenza degli Universal Link https:// non dipende dal file apple-app-site-association
+    // (verifica Apple lato server, spesso lenta/inaffidabile) — vedi LegaRedirectComponent.
+    const url = environment.baseUrl + '/apriLega?legaId=' + this.lega!.id;
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
     const messaggi = [
       `🏆 ${nomeUtente} ti sfida su Survivor! Unisciti alla mia lega "${this.lega!.name}" e dimostra chi è il vero campione! 💪`,
