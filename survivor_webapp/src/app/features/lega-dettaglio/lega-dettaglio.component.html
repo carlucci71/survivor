@@ -257,26 +257,19 @@
           <span class="rlb__b rlb__b5"></span>
           <!-- barra accent LIVE -->
           <div class="rlb__accent"></div>
-          <!-- sinistra -->
-          <div class="rlb__left">
-            <div class="rlb__live-badge">
-              <span class="rlb__dot"></span>
-              <span class="rlb__live-text">LIVE</span>
-            </div>
-            <span class="rlb__round">G{{ lega.giornataCorrente }}</span>
-          </div>
-          <div class="rlb__divider"></div>
-          <!-- destra -->
-          <div class="rlb__right">
+          <!-- corpo: solo la pick in evidenza, il badge giornata/live è a destra -->
+          <div class="rlb__body">
             @if (getCurrentGiocatore(); as me) {
               @if (getGiocataByGiornataAssoluta(me, lega.giornataCorrente); as giocata) {
                 @if (!shouldHideGiocata(giocata, lega.giornataCorrente, me)) {
-                  <span class="rlb__pick-label">{{ 'LEAGUE.YOUR_PICK' | translate }}</span>
-                  <div class="rlb__team-row">
+                  <div class="rlb__pick-hero">
                     @if (getTeamLogo(giocata.squadraSigla); as logo) {
                       <img class="rlb__logo" [src]="logo" [alt]="giocata.squadraSigla" (error)="onLogoError($event)">
                     }
-                    <span class="rlb__team-name">{{ getSquadraNomeSenzaCitta(giocata.squadraSigla) || giocata.squadraSigla }}</span>
+                    <div class="rlb__pick-text">
+                      <span class="rlb__pick-label">{{ 'LEAGUE.YOUR_PICK' | translate }}</span>
+                      <span class="rlb__team-name">{{ getSquadraNomeSenzaCitta(giocata.squadraSigla) || giocata.squadraSigla }}</span>
+                    </div>
                     @if (giocata.esito === 'OK') {
                       <span class="rlb__badge rlb__badge--ok">✓</span>
                     } @else if (giocata.esito === 'KO') {
@@ -284,13 +277,18 @@
                     } @else if (giocata.esito === 'PAREGGIO') {
                       <span class="rlb__badge rlb__badge--draw">＝</span>
                     } @else {
-                      <span class="rlb__badge rlb__badge--wait">⏳</span>
+                      <div class="rlb__round-badge">
+                        <span class="rlb__round-orbit">
+                          <span class="rlb__round-orbit-dot"></span>
+                        </span>
+                        <span class="rlb__round-text">G{{ lega.giornataCorrente }}</span>
+                        <span class="rlb__round-live">LIVE</span>
+                      </div>
                     }
                   </div>
                 }
               }
             }
-            <span class="rlb__hint">{{ 'LEAGUE.RESULTS_AT_ROUND_END' | translate }}</span>
           </div>
         </div>
       }
@@ -638,6 +636,13 @@
                             close
                           </mat-icon>
                         }
+                        @if(isLeaderLega() && !isCurrentUserGiocatore(giocatore)){
+                          <mat-icon class="action-icon leader-icon"
+                                    (click)="apriConfermaTrasferisciLeader(giocatore)"
+                                    [matTooltip]="'LEAGUE.MAKE_LEADER_TOOLTIP' | translate">
+                            auto_fix_high
+                          </mat-icon>
+                        }
                       </div>
                     </td>
                   }
@@ -850,6 +855,13 @@
                           (click)="$event.stopPropagation(); openGestisciViteDialog(giocatore)"
                           [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
                   favorite
+                </mat-icon>
+              }
+              @if(isLeaderLega() && !isCurrentUserGiocatore(giocatore)){
+                <mat-icon class="edit-user-icon-mobile leader-icon-mobile"
+                          (click)="$event.stopPropagation(); apriConfermaTrasferisciLeader(giocatore)"
+                          [matTooltip]="'LEAGUE.MAKE_LEADER_TOOLTIP' | translate">
+                  auto_fix_high
                 </mat-icon>
               }
 
@@ -1087,6 +1099,35 @@
           <mat-icon>delete_outline</mat-icon>
           {{ 'LEAGUE.DELETE_LEAGUE' | translate }}
         </span>
+      </div>
+      }
+
+      <!-- DIALOG CONFERMA TRASFERIMENTO LEADER -->
+      @if (giocatoreDaPromuovereALeader) {
+      <div class="delete-confirm-overlay" (click)="transferLeaderSuccess ? null : chiudiConfermaTrasferisciLeader()">
+        <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+          @if (transferLeaderSuccess) {
+            <div class="leader-transfer-success">
+              <mat-icon class="leader-success-icon">auto_fix_high</mat-icon>
+              <mat-icon class="leader-success-check">check_circle</mat-icon>
+              <h3>{{ 'LEAGUE.TRANSFER_LEADER_SUCCESS' | translate: { nickname: giocatoreDaPromuovereALeader.nickname } }}</h3>
+            </div>
+          } @else {
+            <div class="delete-confirm-header">
+              <mat-icon class="warning-icon">auto_fix_high</mat-icon>
+              <h3>{{ 'LEAGUE.CONFIRM_TRANSFER_LEADER_TITLE' | translate }}</h3>
+            </div>
+            <p class="delete-confirm-message">
+              {{ 'LEAGUE.CONFIRM_TRANSFER_LEADER_MESSAGE' | translate: { nickname: giocatoreDaPromuovereALeader.nickname } }}
+            </p>
+            <div class="delete-confirm-actions">
+              <button class="btn-cancel" (click)="chiudiConfermaTrasferisciLeader()">{{ 'LEAGUE.CONFIRM_DELETE_CANCEL' | translate }}</button>
+              <button class="btn-delete" (click)="confermaTrasferisciLeader()" [disabled]="isTransferringLeader">
+                {{ isTransferringLeader ? ('LEAGUE.CONFIRM_TRANSFER_LEADER_LOADING' | translate) : ('LEAGUE.CONFIRM_TRANSFER_LEADER_CONFIRM' | translate) }}
+              </button>
+            </div>
+          }
+        </div>
       </div>
       }
 

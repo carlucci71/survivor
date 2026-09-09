@@ -3868,6 +3868,72 @@
 	}
 }
 
+.leader-transfer-success {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 0 4px;
+	text-align: center;
+
+	.leader-success-icon,
+	.leader-success-check {
+		grid-area: 1 / 1;
+	}
+
+	// I due mat-icon si sovrappongono nello stesso punto: la bacchetta sparisce mentre
+	// la spunta verde "prende il suo posto" con un piccolo bounce.
+	display: grid;
+	grid-template-columns: 1fr;
+	justify-items: center;
+
+	.leader-success-icon {
+		font-size: 56px;
+		width: 56px;
+		height: 56px;
+		color: #F9A825;
+		animation: leaderWandWiggle 0.5s ease-out forwards;
+	}
+
+	.leader-success-check {
+		font-size: 56px;
+		width: 56px;
+		height: 56px;
+		color: #22C55E;
+		opacity: 0;
+		transform: scale(0.3);
+		animation: leaderCheckPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s forwards;
+	}
+
+	h3 {
+		grid-row: 2;
+		margin: 8px 0 0;
+		color: #0A3D91;
+		font-size: 1.15rem;
+		font-weight: 700;
+		font-family: 'Poppins', sans-serif;
+		opacity: 0;
+		animation: leaderTextFadeIn 0.4s ease-out 0.35s forwards;
+	}
+}
+
+@keyframes leaderWandWiggle {
+	0%   { transform: scale(0.6) rotate(-15deg); opacity: 0; }
+	40%  { transform: scale(1.15) rotate(10deg); opacity: 1; }
+	70%  { transform: scale(1) rotate(-4deg); opacity: 1; }
+	100% { transform: scale(0.9) rotate(0deg); opacity: 0; }
+}
+
+@keyframes leaderCheckPop {
+	0%   { opacity: 0; transform: scale(0.3); }
+	100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes leaderTextFadeIn {
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
 .delete-confirm-header {
 	display: flex;
 	align-items: center;
@@ -5757,6 +5823,22 @@
 						transform: scale(0.95);
 					}
 				}
+
+				&.leader-icon {
+					background: linear-gradient(135deg, #FFD54F, #F9A825);
+					color: #FFFFFF;
+					box-shadow: 0 2px 8px rgba(249, 168, 37, 0.4);
+
+					&:hover {
+						background: linear-gradient(135deg, #F9A825, #FFD54F);
+						transform: scale(1.15);
+						box-shadow: 0 4px 16px rgba(249, 168, 37, 0.6);
+					}
+
+					&:active {
+						transform: scale(0.95);
+					}
+				}
 			}
 		}
 
@@ -6453,6 +6535,15 @@
   &:hover {
     background: rgba(10, 61, 145, 0.1);
     color: #4FC3F7;
+  }
+}
+
+.edit-user-icon-mobile.leader-icon-mobile {
+  color: #F9A825;
+
+  &:hover {
+    background: rgba(249, 168, 37, 0.12);
+    color: #F9A825;
   }
 }
 
@@ -7246,6 +7337,9 @@
 }
 
 // ─── Round Live Banner ─────────────────────────────────────────────
+// Card chiara e minimale con le bolle fluttuanti di sfondo. Il badge giornata ha un anello
+// rosso che respira (nessun pallino fisso addosso: il pallino "live" ora gira sull'anellino
+// a destra, al posto della clessidra — vedi .rlb__orbit).
 .rlb {
 	position: relative;
 	display: flex;
@@ -7301,79 +7395,82 @@
 	50%       { transform: translateY(8px); opacity: 0.9; }
 }
 
-// Colonna sinistra
-.rlb__left {
+// Corpo della card: niente più colonna dedicata alla giornata — è una riga piccola e
+// centrata in alto, così la pick (logo + nome squadra) sotto ha tutta la larghezza e
+// più risalto.
+.rlb__body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	gap: 6px;
-	padding: 18px 20px 18px 26px;
-	flex-shrink: 0;
+	gap: 8px;
+	padding: 16px 18px;
+	width: 100%;
 	position: relative;
 	z-index: 1;
 }
 
-.rlb__live-badge {
+// Badge giornata: piccolo cerchio con "G1" dentro, e un pallino che gira intorno alla
+// circonferenza per dare l'idea di diretta — un solo elemento, non testo + pallino separati.
+.rlb__round-badge {
+	position: relative;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	border: 1.5px solid rgba(10, 61, 145, 0.18);
+	background: rgba(10, 61, 145, 0.04);
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 4px;
-	background: rgba(255, 82, 82, 0.07);
-	border: 1px solid rgba(255, 82, 82, 0.18);
-	border-radius: 20px;
-	padding: 2px 9px;
+	justify-content: center;
+	line-height: 1.1;
+	flex-shrink: 0;
 }
 
-.rlb__dot {
+.rlb__round-orbit {
+	position: absolute;
+	inset: -1.5px;
+	animation: rlb-orbit-spin 2.2s linear infinite;
+}
+
+.rlb__round-orbit-dot {
+	position: absolute;
+	top: -2px;
+	left: 50%;
 	width: 6px;
 	height: 6px;
+	margin-left: -3px;
 	border-radius: 50%;
 	background: #ff5252;
-	box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.55);
-	animation: rlb-dot-pulse 1.5s ease-in-out infinite;
-	flex-shrink: 0;
+	box-shadow: 0 0 5px rgba(255, 82, 82, 0.7);
 }
 
-@keyframes rlb-dot-pulse {
-	0%   { box-shadow: 0 0 0 0   rgba(255, 82, 82, 0.55); }
-	70%  { box-shadow: 0 0 0 7px rgba(255, 82, 82, 0); }
-	100% { box-shadow: 0 0 0 0   rgba(255, 82, 82, 0); }
-}
-
-.rlb__live-text {
-	font-size: 0.62rem;
-	font-weight: 800;
-	color: #ff5252;
-	text-transform: uppercase;
-	letter-spacing: 1.1px;
-}
-
-.rlb__round {
-	font-size: 1.65rem;
+.rlb__round-text {
+	font-size: 0.72rem;
 	font-weight: 800;
 	color: #0A3D91;
-	line-height: 1;
-	letter-spacing: -0.5px;
+	letter-spacing: -0.2px;
 }
 
-// Divisore
-.rlb__divider {
-	width: 1px;
-	height: 52px;
-	background: linear-gradient(to bottom, transparent, rgba(10,61,145,0.12), transparent);
-	flex-shrink: 0;
+.rlb__round-live {
+	font-size: 0.4rem;
+	font-weight: 700;
+	letter-spacing: 0.4px;
+	color: #ff5252;
 }
 
-// Colonna destra
-.rlb__right {
+// Pick in evidenza: logo grande + nome squadra, protagonisti della card
+.rlb__pick-hero {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+}
+
+.rlb__pick-text {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	gap: 4px;
-	padding: 14px 16px 12px;
+	gap: 2px;
 	flex: 1;
-	position: relative;
-	z-index: 1;
 	min-width: 0;
 }
 
@@ -7385,24 +7482,18 @@
 	font-weight: 600;
 }
 
-.rlb__team-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
 .rlb__logo {
-	width: 40px;
-	height: 40px;
+	width: 52px;
+	height: 52px;
 	object-fit: cover;
 	border-radius: 50%;
 	flex-shrink: 0;
-	box-shadow: 0 2px 6px rgba(10, 61, 145, 0.2);
+	box-shadow: 0 2px 8px rgba(10, 61, 145, 0.22);
 }
 
 .rlb__team-name {
-	font-size: 1.05rem;
-	font-weight: 700;
+	font-size: 1.3rem;
+	font-weight: 800;
 	color: #0A3D91;
 	white-space: nowrap;
 	overflow: hidden;
@@ -7419,13 +7510,11 @@
 	&--ok   { background: rgba(76,175,80,0.1);  color: #2e7d32; border: 1px solid rgba(76,175,80,0.25); }
 	&--ko   { background: rgba(244,67,54,0.1);  color: #c62828; border: 1px solid rgba(244,67,54,0.22); }
 	&--draw { background: rgba(255,193,7,0.1);  color: #e65100; border: 1px solid rgba(255,193,7,0.28); }
-	&--wait { background: rgba(0,0,0,0.04);     color: #9e9e9e; border: 1px solid rgba(0,0,0,0.08); }
 }
 
-.rlb__hint {
-	font-size: 0.68rem;
-	color: #bdbdbd;
-	margin-top: 2px;
+@keyframes rlb-orbit-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
 }
 
 // ─── Bottom sheet voti ────────────────────────────────────────────────────────

@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -70,6 +71,8 @@ public class LegaService {
     private final GiocataRepository giocataRepository;
     private final GiocataMapper giocataMapper;
     private final VitaPersaRepository vitaPersaRepository;
+    private final PushNotificationService pushNotificationService;
+    private final NotificationI18nService notificationI18nService;
 
     /**
      * Self-reference per invocare getLegaDTO via proxy (rispettando @Transactional NOT_SUPPORTED).
@@ -775,9 +778,16 @@ public class LegaService {
         }
         //legaDTO.setGiornataDaGiocare(campionatoService.getCampionato(legaDTO.getCampionato().getId()).getGiornataDaGiocare());
         legaDTO.setGiornataDaGiocare(giornataCorrente);
+        // La lista è ora indicizzata per giornata (indice = giornata-1, null se i dati non sono
+        // ancora disponibili per quella giornata) — vedi CacheableService.processCampionatoTransactional.
+        // Se è null, il frontend ricade su loadFirstMatchTimeAndStartCountdown (fetch live delle
+        // partite) invece di mostrare erroneamente "tempo scaduto".
         if (giornataCorrente > 0 && legaDTO.getCampionato().getIniziGiornate() != null
                 && legaDTO.getCampionato().getIniziGiornate().size() >= giornataCorrente) {
-            legaDTO.setInizioProssimaGiornata(legaDTO.getCampionato().getIniziGiornate().get(giornataCorrente - 1));
+            LocalDateTime inizio = legaDTO.getCampionato().getIniziGiornate().get(giornataCorrente - 1);
+            if (inizio != null) {
+                legaDTO.setInizioProssimaGiornata(inizio);
+            }
         }
 
         legaDTO.setGiornataCorrente(giornataCorrente);
@@ -1075,6 +1085,59 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         legaRepository.deleteGiocatoreLegaByLegaIdAndGiocatoreId(idLega, idGiocatore);
         return getLegaDTO(idLega, true, userId);
+    }
+
+    /**
+     * Trasferisce il ruolo di leader dal leader attuale a un altro giocatore della lega (swap
+     * uno-a-uno: il leader attuale diventa GIOCATORE, il destinatario diventa LEADER). In ogni
+     * momento esiste esattamente un leader per lega, mai zero né più di uno — tutto il resto del
+     * codice (calcola, termina, rinomina, ecc.) assume questa invariante.
+     */
+    @Transactional
+    public LegaDTO trasferisciLeader(Long idLega, Long idGiocatoreDestinazione) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        Lega lega = legaRepository.findById(idLega)
+                .orElseThrow(() -> new RuntimeException("Lega non trovata: " + idLega));
+
+        GiocatoreLega leaderAttuale = lega.getGiocatoreLeghe().stream()
+                .filter(g -> g.getRuolo() == Enumeratori.RuoloGiocatoreLega.LEADER)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Nessun leader trovato per la lega " + idLega));
+
+        if (leaderAttuale.getGiocatore().getId().equals(idGiocatoreDestinazione)) {
+            throw new ManagedException("Sei già il leader di questa lega", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+
+        GiocatoreLega nuovoLeader = lega.getGiocatoreLeghe().stream()
+                .filter(g -> g.getGiocatore().getId().equals(idGiocatoreDestinazione))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Giocatore non trovato nella lega"));
+
+        leaderAttuale.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
+        nuovoLeader.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
+        legaRepository.save(lega);
+
+        notificaNuovoLeader(leaderAttuale.getGiocatore(), nuovoLeader.getGiocatore(), lega);
+
+        return getLegaDTO(idLega, true, userId);
+    }
+
+    /** Avvisa il nuovo leader via push — un fallimento qui non deve mai bloccare il trasferimento già salvato. */
+    private void notificaNuovoLeader(Giocatore vecchioLeader, Giocatore nuovoLeader, Lega lega) {
+        try {
+            if (nuovoLeader.getUser() == null) return;
+            String lingua = nuovoLeader.getUser().getLingua();
+            var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
+            dto.setTitle(notificationI18nService.testo("notif.leaderTransfer.title", lingua));
+            dto.setBody(notificationI18nService.testo("notif.leaderTransfer.body", lingua, vecchioLeader.getNickname(), lega.getName()));
+            dto.setTipoNotifica(Enumeratori.TipoNotifica.LEADER_TRANSFER);
+            dto.setExpiringAt(LocalDateTime.now().plusDays(7));
+            dto.setLegaId(lega.getId());
+            pushNotificationService.sendNotificationToUsers(List.of(nuovoLeader.getUser().getId()), dto);
+        } catch (Exception e) {
+            log.warn("Errore notifica nuovo leader lega {}: {}", lega.getId(), e.getMessage());
+        }
     }
 
     @LoggaDispositiva(tipologia = "nuovaEdizione")

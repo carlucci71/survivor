@@ -2321,6 +2321,43 @@ export class LegaDettaglioComponent implements OnDestroy {
     });
   }
 
+  // ─── Trasferimento leadership (swap uno-a-uno: il leader attuale diventa GIOCATORE) ────
+  giocatoreDaPromuovereALeader: Giocatore | null = null;
+  isTransferringLeader = false;
+  transferLeaderSuccess = false;
+
+  apriConfermaTrasferisciLeader(giocatore: Giocatore): void {
+    this.giocatoreDaPromuovereALeader = giocatore;
+  }
+
+  chiudiConfermaTrasferisciLeader(): void {
+    this.giocatoreDaPromuovereALeader = null;
+  }
+
+  confermaTrasferisciLeader(): void {
+    if (!this.giocatoreDaPromuovereALeader || !this.lega) return;
+    this.isTransferringLeader = true;
+    this.legaService.trasferisciLeader(Number(this.id), this.giocatoreDaPromuovereALeader.id).subscribe({
+      next: (lega: Lega) => {
+        this.lega = lega;
+        this.isTransferringLeader = false;
+        this.caricaTabella();
+        // Piccola pausa "di successo" (bacchetta + spunta) prima di chiudere il dialog,
+        // così l'azione si sente completata invece di scomparire di scatto.
+        this.transferLeaderSuccess = true;
+        setTimeout(() => {
+          this.transferLeaderSuccess = false;
+          this.giocatoreDaPromuovereALeader = null;
+        }, 900);
+      },
+      error: (err: any) => {
+        this.isTransferringLeader = false;
+        this.giocatoreDaPromuovereALeader = null;
+        this.error = err?.error?.message || this.translate.instant('LEAGUE.ERROR_TRANSFER_LEADER');
+      },
+    });
+  }
+
   openGestisciViteDialog(giocatore: Giocatore): void {
     if (!this.lega?.id) return;
     const dialogRef = this.dialog.open(GestisciViteDialogComponent, {
