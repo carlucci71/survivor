@@ -3868,6 +3868,72 @@
 	}
 }
 
+.leader-transfer-success {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 0 4px;
+	text-align: center;
+
+	.leader-success-icon,
+	.leader-success-check {
+		grid-area: 1 / 1;
+	}
+
+	// I due mat-icon si sovrappongono nello stesso punto: la bacchetta sparisce mentre
+	// la spunta verde "prende il suo posto" con un piccolo bounce.
+	display: grid;
+	grid-template-columns: 1fr;
+	justify-items: center;
+
+	.leader-success-icon {
+		font-size: 56px;
+		width: 56px;
+		height: 56px;
+		color: #F9A825;
+		animation: leaderWandWiggle 0.5s ease-out forwards;
+	}
+
+	.leader-success-check {
+		font-size: 56px;
+		width: 56px;
+		height: 56px;
+		color: #22C55E;
+		opacity: 0;
+		transform: scale(0.3);
+		animation: leaderCheckPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s forwards;
+	}
+
+	h3 {
+		grid-row: 2;
+		margin: 8px 0 0;
+		color: #0A3D91;
+		font-size: 1.15rem;
+		font-weight: 700;
+		font-family: 'Poppins', sans-serif;
+		opacity: 0;
+		animation: leaderTextFadeIn 0.4s ease-out 0.35s forwards;
+	}
+}
+
+@keyframes leaderWandWiggle {
+	0%   { transform: scale(0.6) rotate(-15deg); opacity: 0; }
+	40%  { transform: scale(1.15) rotate(10deg); opacity: 1; }
+	70%  { transform: scale(1) rotate(-4deg); opacity: 1; }
+	100% { transform: scale(0.9) rotate(0deg); opacity: 0; }
+}
+
+@keyframes leaderCheckPop {
+	0%   { opacity: 0; transform: scale(0.3); }
+	100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes leaderTextFadeIn {
+	from { opacity: 0; transform: translateY(4px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
 .delete-confirm-header {
 	display: flex;
 	align-items: center;
@@ -5757,6 +5823,22 @@
 						transform: scale(0.95);
 					}
 				}
+
+				&.leader-icon {
+					background: linear-gradient(135deg, #FFD54F, #F9A825);
+					color: #FFFFFF;
+					box-shadow: 0 2px 8px rgba(249, 168, 37, 0.4);
+
+					&:hover {
+						background: linear-gradient(135deg, #F9A825, #FFD54F);
+						transform: scale(1.15);
+						box-shadow: 0 4px 16px rgba(249, 168, 37, 0.6);
+					}
+
+					&:active {
+						transform: scale(0.95);
+					}
+				}
 			}
 		}
 
@@ -6453,6 +6535,15 @@
   &:hover {
     background: rgba(10, 61, 145, 0.1);
     color: #4FC3F7;
+  }
+}
+
+.edit-user-icon-mobile.leader-icon-mobile {
+  color: #F9A825;
+
+  &:hover {
+    background: rgba(249, 168, 37, 0.12);
+    color: #F9A825;
   }
 }
 

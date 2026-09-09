@@ -638,6 +638,13 @@
                             close
                           </mat-icon>
                         }
+                        @if(isLeaderLega() && !isCurrentUserGiocatore(giocatore)){
+                          <mat-icon class="action-icon leader-icon"
+                                    (click)="apriConfermaTrasferisciLeader(giocatore)"
+                                    [matTooltip]="'LEAGUE.MAKE_LEADER_TOOLTIP' | translate">
+                            auto_fix_high
+                          </mat-icon>
+                        }
                       </div>
                     </td>
                   }
@@ -850,6 +857,13 @@
                           (click)="$event.stopPropagation(); openGestisciViteDialog(giocatore)"
                           [matTooltip]="'LEAGUE.MANAGE_LIVES' | translate">
                   favorite
+                </mat-icon>
+              }
+              @if(isLeaderLega() && !isCurrentUserGiocatore(giocatore)){
+                <mat-icon class="edit-user-icon-mobile leader-icon-mobile"
+                          (click)="$event.stopPropagation(); apriConfermaTrasferisciLeader(giocatore)"
+                          [matTooltip]="'LEAGUE.MAKE_LEADER_TOOLTIP' | translate">
+                  auto_fix_high
                 </mat-icon>
               }
 
@@ -1087,6 +1101,35 @@
           <mat-icon>delete_outline</mat-icon>
           {{ 'LEAGUE.DELETE_LEAGUE' | translate }}
         </span>
+      </div>
+      }
+
+      <!-- DIALOG CONFERMA TRASFERIMENTO LEADER -->
+      @if (giocatoreDaPromuovereALeader) {
+      <div class="delete-confirm-overlay" (click)="transferLeaderSuccess ? null : chiudiConfermaTrasferisciLeader()">
+        <div class="delete-confirm-card" (click)="$event.stopPropagation()">
+          @if (transferLeaderSuccess) {
+            <div class="leader-transfer-success">
+              <mat-icon class="leader-success-icon">auto_fix_high</mat-icon>
+              <mat-icon class="leader-success-check">check_circle</mat-icon>
+              <h3>{{ 'LEAGUE.TRANSFER_LEADER_SUCCESS' | translate: { nickname: giocatoreDaPromuovereALeader.nickname } }}</h3>
+            </div>
+          } @else {
+            <div class="delete-confirm-header">
+              <mat-icon class="warning-icon">auto_fix_high</mat-icon>
+              <h3>{{ 'LEAGUE.CONFIRM_TRANSFER_LEADER_TITLE' | translate }}</h3>
+            </div>
+            <p class="delete-confirm-message">
+              {{ 'LEAGUE.CONFIRM_TRANSFER_LEADER_MESSAGE' | translate: { nickname: giocatoreDaPromuovereALeader.nickname } }}
+            </p>
+            <div class="delete-confirm-actions">
+              <button class="btn-cancel" (click)="chiudiConfermaTrasferisciLeader()">{{ 'LEAGUE.CONFIRM_DELETE_CANCEL' | translate }}</button>
+              <button class="btn-delete" (click)="confermaTrasferisciLeader()" [disabled]="isTransferringLeader">
+                {{ isTransferringLeader ? ('LEAGUE.CONFIRM_TRANSFER_LEADER_LOADING' | translate) : ('LEAGUE.CONFIRM_TRANSFER_LEADER_CONFIRM' | translate) }}
+              </button>
+            </div>
+          }
+        </div>
       </div>
       }
 

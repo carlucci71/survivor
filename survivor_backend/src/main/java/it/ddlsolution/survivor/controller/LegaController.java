@@ -129,6 +129,16 @@ public class LegaController {
         return ResponseEntity.ok(legaService.cancellaGiocatoreDaLega(idLega, idGiocatore));
     }
 
+    /**
+     * Trasferisce il ruolo di leader a un altro giocatore della lega (solo il leader attuale
+     * può farlo). Il leader attuale diventa un giocatore normale.
+     */
+    @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
+    @PutMapping("/trasferisciLeader/{idLega}/{idGiocatore}")
+    public ResponseEntity<LegaDTO> trasferisciLeader(@PathVariable Long idLega, @PathVariable Long idGiocatore) {
+        return ResponseEntity.ok(legaService.trasferisciLeader(idLega, idGiocatore));
+    }
+
     @DeleteMapping("/{idLega}")
     public ResponseEntity<Map<String, Object>> eliminaLega(@PathVariable Long idLega) {
         legaService.eliminaLega(idLega);
