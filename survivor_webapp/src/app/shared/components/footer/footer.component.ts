@@ -1264,14 +1264,11 @@ export class ChiSiamoDialogComponent implements OnInit{
             <!-- LINK STORE (solo da browser, non ha senso mostrarli dentro l'app nativa) -->
             <ng-container *ngIf="!isMobile">
               <span class="separator">|</span>
-              <a [href]="appStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
-                <mat-icon>download</mat-icon>
-                <span>{{ 'FOOTER.APP_STORE' | translate }}</span>
+              <a [href]="appStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link store-badge-link">
+                <img src="assets/badge-app-store.png" [alt]="'FOOTER.APP_STORE' | translate" class="store-badge" />
               </a>
-              <span class="separator">|</span>
-              <a [href]="playStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link webapp-link">
-                <mat-icon>download</mat-icon>
-                <span>{{ 'FOOTER.GOOGLE_PLAY' | translate }}</span>
+              <a [href]="playStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link store-badge-link">
+                <img src="assets/badge-google-play.png" [alt]="'FOOTER.GOOGLE_PLAY' | translate" class="store-badge" />
               </a>
             </ng-container>
           </div>
@@ -1455,6 +1452,18 @@ export class ChiSiamoDialogComponent implements OnInit{
           width: 15px;
           height: 15px;
           vertical-align: middle;
+        }
+      }
+
+      .store-badge-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 6px;
+
+        .store-badge {
+          height: 30px;
+          width: auto;
+          display: block;
         }
       }
     }

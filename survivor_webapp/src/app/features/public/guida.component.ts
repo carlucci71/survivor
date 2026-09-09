@@ -267,12 +267,10 @@ import { HeaderComponent } from '../../shared/components/header/header.component
             <p class="download-label">{{ 'GUIDE.DOWNLOAD_CTA' | translate }}</p>
             <div class="download-links">
               <a href="https://apps.apple.com/us/app/survivor/id6759219443" target="_blank" rel="noopener noreferrer" class="download-btn">
-                <span class="material-icons" style="font-size:16px">download</span>
-                {{ 'FOOTER.APP_STORE' | translate }}
+                <img src="assets/badge-app-store.png" [alt]="'FOOTER.APP_STORE' | translate" class="store-badge" />
               </a>
               <a href="https://play.google.com/store/apps/details?id=com.survivor.app" target="_blank" rel="noopener noreferrer" class="download-btn">
-                <span class="material-icons" style="font-size:16px">download</span>
-                {{ 'FOOTER.GOOGLE_PLAY' | translate }}
+                <img src="assets/badge-google-play.png" [alt]="'FOOTER.GOOGLE_PLAY' | translate" class="store-badge" />
               </a>
             </div>
           </div>
@@ -658,24 +656,15 @@ import { HeaderComponent } from '../../shared/components/header/header.component
     .download-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 9px 18px;
-      background: #fff;
-      color: #0A3D91;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 13px;
-      border: 1.5px solid #0A3D91;
-      white-space: nowrap;
-      transition: all 0.25s ease;
+      transition: transform 0.25s ease;
       &:hover {
-        background: linear-gradient(135deg, #0A3D91, #4FC3F7);
-        color: #fff;
-        border-color: #4FC3F7;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(10,61,145,0.25);
       }
+    }
+    .store-badge {
+      height: 40px;
+      width: auto;
+      display: block;
     }
 
     /* ── RESPONSIVE ─────────────────────────────────── */

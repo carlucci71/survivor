@@ -103,6 +103,15 @@ export class AppComponent implements OnInit {
         const token = parsed.searchParams.get('token');
         const codiceTipoMagicLink = parsed.searchParams.get('codiceTipoMagicLink') || '';
         this.router.navigate(['/auth/verify'], { queryParams: { token, codiceTipoMagicLink } });
+        return;
+      }
+
+      // survivor://joinLega?legaId=93 → host='joinlega' (vedi LegaRedirectComponent): link di
+      // invito lega aperto via schema custom invece che via Universal Link https.
+      const isJoinLega = host === 'joinlega' || path.startsWith('/joinlega');
+      if (isJoinLega) {
+        const legaId = parsed.searchParams.get('legaId');
+        this.router.navigate(['/joinLega'], { queryParams: legaId ? { legaId } : {} });
       }
     } catch (e) {
       console.error('Failed to handle deep link', e);
