@@ -54,6 +54,8 @@
     "HINT": "If you already have the app installed, we recommend opening it for the best experience."
   },
   "LEGA_REDIRECT": {
+    "OPENING_TITLE": "Opening Survivor…",
+    "OPENING_SUBTITLE": "One moment, we're opening the app",
     "TITLE": "You've been invited to a league!",
     "SUBTITLE": "Open Survivor to join the league",
     "OPEN_APP": "Open in app",

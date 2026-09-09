@@ -54,6 +54,8 @@
     "HINT": "Se hai già l'app installata, ti consigliamo di aprirla per la migliore esperienza."
   },
   "LEGA_REDIRECT": {
+    "OPENING_TITLE": "Apertura di Survivor…",
+    "OPENING_SUBTITLE": "Un attimo, stiamo aprendo l'app",
     "TITLE": "Ti hanno invitato in una lega!",
     "SUBTITLE": "Apri Survivor per unirti alla lega",
     "OPEN_APP": "Apri nell'app",

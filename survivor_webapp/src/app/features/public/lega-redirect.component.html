@@ -6,25 +6,33 @@
       <span class="mr-logo-text">Survivor</span>
     </div>
 
-    <div class="mr-icon-wrap">
-      <span class="mr-icon">&#127942;</span>
-    </div>
+    @if (inAttesaApertura) {
+      <div class="mr-icon-wrap">
+        <span class="mr-spinner"></span>
+      </div>
+      <h2 class="mr-title">{{ 'LEGA_REDIRECT.OPENING_TITLE' | translate }}</h2>
+      <p class="mr-subtitle">{{ 'LEGA_REDIRECT.OPENING_SUBTITLE' | translate }}</p>
+    } @else {
+      <div class="mr-icon-wrap">
+        <span class="mr-icon">&#127942;</span>
+      </div>
 
-    <h2 class="mr-title">{{ 'LEGA_REDIRECT.TITLE' | translate }}</h2>
-    <p class="mr-subtitle">{{ 'LEGA_REDIRECT.SUBTITLE' | translate }}</p>
+      <h2 class="mr-title">{{ 'LEGA_REDIRECT.TITLE' | translate }}</h2>
+      <p class="mr-subtitle">{{ 'LEGA_REDIRECT.SUBTITLE' | translate }}</p>
 
-    <div class="mr-actions">
-      <button class="mr-btn mr-btn--primary" (click)="openApp()">
-        <span class="mr-btn-icon">&#128241;</span>
-        <span>{{ 'LEGA_REDIRECT.OPEN_APP' | translate }}</span>
-      </button>
-      <button class="mr-btn mr-btn--secondary" (click)="continuaNelBrowser()">
-        <span class="mr-btn-icon">&#127760;</span>
-        <span>{{ 'LEGA_REDIRECT.CONTINUE_IN_BROWSER' | translate }}</span>
-      </button>
-    </div>
+      <div class="mr-actions">
+        <button class="mr-btn mr-btn--primary" (click)="openApp()">
+          <span class="mr-btn-icon">&#128241;</span>
+          <span>{{ 'LEGA_REDIRECT.OPEN_APP' | translate }}</span>
+        </button>
+        <button class="mr-btn mr-btn--secondary" (click)="continuaNelBrowser()">
+          <span class="mr-btn-icon">&#127760;</span>
+          <span>{{ 'LEGA_REDIRECT.CONTINUE_IN_BROWSER' | translate }}</span>
+        </button>
+      </div>
 
-    <p class="mr-hint">{{ 'LEGA_REDIRECT.HINT' | translate }}</p>
+      <p class="mr-hint">{{ 'LEGA_REDIRECT.HINT' | translate }}</p>
+    }
   </div>
 </div>
 
@@ -90,6 +98,19 @@
   }
 
   .mr-icon { font-size: 2.4rem; line-height: 1; }
+
+  .mr-spinner {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 3px solid #DBEAFE;
+    border-top-color: #0A3D91;
+    animation: mrSpin 0.8s linear infinite;
+  }
+
+  @keyframes mrSpin {
+    to { transform: rotate(360deg); }
+  }
 
   .mr-title {
     font-size: 1.3rem;

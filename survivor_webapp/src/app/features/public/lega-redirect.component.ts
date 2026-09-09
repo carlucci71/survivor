@@ -22,6 +22,11 @@ import { Capacitor } from '@capacitor/core';
 export class LegaRedirectComponent implements OnInit {
   survivorUrl = '';
   legaId = '';
+  // Finché è true mostriamo solo lo stato "sto aprendo l'app", non i bottoni: su Android (e su iOS
+  // quando il redirect automatico funziona) l'app si apre prima che questo diventi false, e i
+  // bottoni non si vedono mai — evita l'effetto "popup con due scelte" quando in realtà il
+  // tentativo automatico ha già funzionato o è ancora in corso.
+  inAttesaApertura = true;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
@@ -41,6 +46,11 @@ export class LegaRedirectComponent implements OnInit {
     // l'apertura automatica dell'app via schema custom, con fallback visibile a schermo per chi
     // non ha l'app installata (il tentativo fallisce in silenzio, senza errori per l'utente).
     this.openApp();
+
+    // Se il tentativo automatico funziona, il browser passa in background/si chiude e questo
+    // timer non ha più importanza. Se invece iOS lo ha ignorato (succede, senza un tap diretto
+    // dell'utente) o l'app non è installata, dopo una breve attesa mostriamo il fallback manuale.
+    setTimeout(() => { this.inAttesaApertura = false; }, 1200);
   }
 
   openApp(): void {
