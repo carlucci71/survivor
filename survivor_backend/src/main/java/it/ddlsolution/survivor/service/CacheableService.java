@@ -39,6 +39,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -319,7 +320,13 @@ public class CacheableService {
      * Non funzionava ed ho rimosso @Transactional
      */
     // @Transactional
-    public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {        List<LocalDateTime> iniziGiornate = new ArrayList<>();
+    public CampionatoDTO processCampionatoTransactional(final CampionatoDTO campionatoDTO, short anno) {
+        // Indicizzata per giornata (indice = giornata - 1, con null dove i dati non sono ancora
+        // disponibili) e MAI con .add(): se una giornata qualunque non ha ancora dati (rinvio,
+        // fetch temporaneamente fallito), un semplice .add() sfaserebbe tutte le giornate
+        // successive di una posizione, facendo leggere altrove la data di inizio sbagliata
+        // (es. quella di una giornata già giocata invece di quella futura) — bug reale riscontrato.
+        List<LocalDateTime> iniziGiornate = new ArrayList<>(Collections.nCopies(campionatoDTO.getNumGiornate(), null));
         Integer giornataDaGiocare = null;
         Integer lastRoundWithData = null;
         Enumeratori.StatoPartita lastStatus = null;
@@ -333,7 +340,7 @@ public class CacheableService {
                         .sorted()
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Inizio non trovato per campionato: " + campionatoDTO.getId() + " giornata: " + currentGiornata));
-                iniziGiornate.add(first);
+                iniziGiornate.set(giornata - 1, first);
 
                 Enumeratori.StatoPartita statoGiornata = utilCalendarioService.statoGiornata(partiteDTO, giornata);
                 log.info("La giornata {} di {} è {}", giornata, campionatoDTO.getNome(), statoGiornata);

@@ -122,6 +122,11 @@ export class LegaService {
       .pipe(map(mapLegaFromBE));
   }
 
+  trasferisciLeader(idLega: number, idGiocatore: number): Observable<Lega> {
+    return this.http.put<Lega>(`${this.apiUrl}/trasferisciLeader/${idLega}/${idGiocatore}`, {})
+      .pipe(map(mapLegaFromBE));
+  }
+
   eliminaLega(idLega: number): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${idLega}`);
   }
