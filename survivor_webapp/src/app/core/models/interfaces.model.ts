@@ -161,6 +161,8 @@ export interface VotoPronostico {
   giocatoreId: number;
   nickname: string;
   voti: number;
+  /** Nickname di chi ha scelto questo giocatore. */
+  votanti: string[];
 }
 
 
