@@ -19,6 +19,7 @@ import { CampionatoService } from '../../core/services/campionato.service';
 import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { NbaRegolaDialogComponent } from '../../shared/components/nba-regola-dialog/nba-regola-dialog.component';
 import { environment } from '../../../environments/environment';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -327,6 +328,18 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     this.campionatoSel = c;
     this.campionatoTouched = true;
     this.onCampionatoChange();
+    // NBA: la prima volta spiega come si decide la settimana
+    if (c.id === 'NBA_RS' && !NbaRegolaDialogComponent.giaVista()) {
+      this.apriRegolaNba();
+    }
+  }
+
+  apriRegolaNba(): void {
+    this.dialog.open(NbaRegolaDialogComponent, {
+      width: window.innerWidth < 600 ? '94vw' : '460px',
+      maxWidth: '94vw',
+      autoFocus: false,
+    });
   }
 
   incGiornataIniziale(): void {

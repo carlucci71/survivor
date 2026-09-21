@@ -1,4 +1,28 @@
 {
+  "NBA_RULE": {
+    "NOTICE_TITLE": "NBA: come si decide la settimana",
+    "NOTICE_TEXT": "Contano tutte le partite della squadra, non solo la prima. Scopri come.",
+    "TITLE": "Come si decide la settimana NBA",
+    "INTRO": "Ogni squadra NBA gioca da 2 a 4 partite a settimana. L'esito si decide quando sono finite tutte.",
+    "EXAMPLE": "Esempio: Boston, 4 partite",
+    "WIN_SHORT": "V",
+    "LOSS_SHORT": "S",
+    "WINS": "Vittorie",
+    "LOSSES": "Sconfitte",
+    "TIE": "Parità!",
+    "DIFF": "Differenza punti",
+    "VERDICT": "Settimana superata",
+    "STEP1_TITLE": "1. Vittorie contro sconfitte",
+    "STEP1_TEXT": "Se la squadra vince più partite di quante ne perde, sei salvo. Se ne perde di più, sei eliminato.",
+    "STEP2_TITLE": "2. Parità? Decidono i punti",
+    "STEP2_TEXT": "Con lo stesso numero di vittorie e sconfitte conta la differenza punti di tutte le partite: se è positiva sei salvo, se è negativa sei eliminato.",
+    "STEP3_TITLE": "3. Pareggio solo se è tutto pari",
+    "STEP3_TEXT": "Solo se anche la differenza punti è zero è un pareggio: perdi una vita.",
+    "WAIT_NOTE": "L'esito arriva quando finisce l'ultima partita della squadra nella settimana.",
+    "CAMPIONATO_NOTE": "In modalità Campionato i punti sono la somma di tutte le partite: 3 per vittoria, 1 per pareggio.",
+    "REPLAY": "Rivedi",
+    "GOT_IT": "Ho capito"
+  },
   "LIVE_SCORE": {
     "BUTTON_LABEL": "Risultati Live",
     "BUTTON_LABEL_GENERIC": "Risultati",

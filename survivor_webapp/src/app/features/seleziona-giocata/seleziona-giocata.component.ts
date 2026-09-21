@@ -32,6 +32,7 @@ import {
 } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ConfermaAssegnazioneDialogComponent } from '../../shared/components/conferma-assegnazione-dialog.component';
+import { NbaRegolaDialogComponent } from '../../shared/components/nba-regola-dialog/nba-regola-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -672,6 +673,22 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     }
     // Prima carica la prossima giornata, poi le partite per tutte le squadre
     this.caricaProssimaGiornata();
+    // NBA: la prima volta spiega come si decide la settimana
+    if (this.isNba() && !NbaRegolaDialogComponent.giaVista()) {
+      setTimeout(() => this.apriRegolaNba(), 400);
+    }
+  }
+
+  isNba(): boolean {
+    return this.lega?.campionato?.id === 'NBA_RS';
+  }
+
+  apriRegolaNba(): void {
+    this.dialog.open(NbaRegolaDialogComponent, {
+      width: this.isMobile ? '94vw' : '460px',
+      maxWidth: '94vw',
+      autoFocus: false,
+    });
   }
 
   setActiveTab(tab: 'ultimi' | 'prossime' | 'opponent') {

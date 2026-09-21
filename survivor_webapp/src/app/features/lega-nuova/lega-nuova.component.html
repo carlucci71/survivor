@@ -101,6 +101,17 @@
           <span>{{ 'CREATE_LEAGUE.CHAMPIONSHIP_ENDED' | translate }}</span>
         </div>
         }
+
+        @if (campionatoSel?.id === 'NBA_RS') {
+        <button type="button" class="cn-nba-notice" (click)="apriRegolaNba()">
+          <mat-icon class="cn-nba-notice-icon">sports_basketball</mat-icon>
+          <span class="cn-nba-notice-text">
+            <strong>{{ 'NBA_RULE.NOTICE_TITLE' | translate }}</strong>
+            <span>{{ 'NBA_RULE.NOTICE_TEXT' | translate }}</span>
+          </span>
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        }
       </div>
 
       <!-- â”€â”€ SEZIONE 3: DURATA â”€â”€ -->
