@@ -49,6 +49,9 @@ export class TeamLogoService {
     'SERIE_B_REG': 'REGGIANA.png', 'SERIE_B_SAM': 'SAMP.png', 'SERIE_B_SPE': 'SPEZIA.webp',
     'SERIE_B_STR': 'SUDTIROL.png', 'SERIE_B_FRO': 'FRO.png', 'SERIE_B_EMP': 'EMP.png',
     'SERIE_B_MON': 'MON.png', 'SERIE_B_VEN': 'VEN.png', 'SERIE_B_BEN': 'benevento.png',
+    // Serie B 2026/27
+    'SERIE_B_ARE': 'arezzo.png', 'SERIE_B_ASC': 'ascoli.png', 'SERIE_B_CRE': 'CREMON.png',
+    'SERIE_B_PIS': 'PISA.png', 'SERIE_B_VER': 'VER.png', 'SERIE_B_VIC': 'vicenza.png',
     // CHAMPIONS LEAGUE — solo i club già censiti altrove (stesso file logo). Gli altri 22 club
     // della fase a campionato non hanno ancora uno stemma: aggiungerli qui quando disponibili.
     'CHAMPIONS_LEAGUE_ARS': 'inghilterra/arsenal.png',
