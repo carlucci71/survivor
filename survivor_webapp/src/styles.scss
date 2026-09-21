@@ -637,6 +637,31 @@ mat-dialog-actions {
   }
 }
 
+/* Dialog Pronostico vincitore: angoli arrotondati e superficie trasparente, cosi' non restano
+   spigoli bianchi dietro al contenuto (che ha gia' il suo raggio e il suo sfondo) */
+.pv-dialog-panel {
+  border-radius: 24px !important;
+
+  .mdc-dialog__container,
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    outline: none !important;
+  }
+
+  .mat-mdc-dialog-surface,
+  .mdc-dialog__surface {
+    padding: 0 !important;
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    box-shadow: 0 24px 64px rgba(10, 61, 145, 0.35), 0 0 0 1px rgba(79, 195, 247, 0.12) !important;
+    outline: none !important;
+  }
+}
+
 .dettagli-dialog-backdrop {
   background: rgba(10, 61, 145, 0.4) !important;
   backdrop-filter: blur(4px) !important;
