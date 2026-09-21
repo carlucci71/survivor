@@ -1896,6 +1896,8 @@ export class LegaDettaglioComponent implements OnDestroy {
     const ref = this.dialog.open(PronosticoVincitoreDialogComponent, {
       width: '92vw',
       maxWidth: '380px',
+      panelClass: 'pv-dialog-panel',
+      backdropClass: 'dettagli-dialog-backdrop',
       data: {
         idLega: this.lega.id,
         giocatoriAttivi: this.getGiocatoriAttivi(),

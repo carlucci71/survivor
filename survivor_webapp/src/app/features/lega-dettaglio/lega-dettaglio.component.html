@@ -1066,16 +1066,12 @@
               <div class="cp-item" [class.cp-item--open]="votoAperto === voto.giocatoreId">
                 <button type="button" class="cp-row" [class.cp-row--first]="rankPronostico(i) === 1"
                         [attr.aria-expanded]="votoAperto === voto.giocatoreId"
+                        [attr.aria-label]="voto.nickname + ', ' + voto.voti + ' ' + ((voto.voti === 1 ? 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTO' : 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTI') | translate)"
                         (click)="toggleVotanti(voto.giocatoreId)">
-                  <span class="cp-rank">
-                    @if (rankPronostico(i) === 1) { 🥇 } @else if (rankPronostico(i) === 2) { 🥈 } @else if (rankPronostico(i) === 3) { 🥉 } @else { {{ rankPronostico(i) }} }
-                  </span>
-                  <span class="cp-avatar">{{ iniziale(voto.nickname) }}</span>
+                  <span class="cp-avatar">{{ voto.voti }}</span>
                   <span class="cp-main">
                     <span class="cp-nickname">{{ voto.nickname }}</span>
-                    <span class="cp-bar"><span class="cp-bar-fill" [style.width.%]="(voto.voti / classificaPronostici[0].voti) * 100"></span></span>
                   </span>
-                  <span class="cp-voti">{{ voto.voti }} {{ (voto.voti === 1 ? 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTO' : 'LEAGUE.CLASSIFICA_PRONOSTICI_VOTI') | translate }}</span>
                   <mat-icon class="cp-chevron">expand_more</mat-icon>
                 </button>
                 @if (votoAperto === voto.giocatoreId) {
