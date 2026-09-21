@@ -765,6 +765,7 @@
     "INVITE_EMAIL": "Invite friends via email",
     "EMAIL_PLACEHOLDER": "email@example.com",
     "CHAMPIONSHIP_ENDED": "Unfortunately the championship has ended",
+    "CHAMPIONSHIP_NOT_STARTED": "Schedule not available yet",
     "NAME_TAKEN": "League name already taken",
     "WITH_PASSWORD_JOIN": "and join with password",
     "SECTION_IDENTITY": "League Name",

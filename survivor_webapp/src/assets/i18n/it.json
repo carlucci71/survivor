@@ -853,6 +853,7 @@
     "INVITE_EMAIL": "Invita amici via email",
     "EMAIL_PLACEHOLDER": "email@esempio.com",
     "CHAMPIONSHIP_ENDED": "Purtroppo il campionato è terminato",
+    "CHAMPIONSHIP_NOT_STARTED": "Calendario non ancora disponibile",
     "NAME_TAKEN": "Nome lega già presente",
     "WITH_PASSWORD_JOIN": "ed unirsi con la password",
     "SECTION_IDENTITY": "Nome della lega",

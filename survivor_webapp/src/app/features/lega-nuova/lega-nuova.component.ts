@@ -312,8 +312,18 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  /**
+   * Calendario non ancora pubblicato: la giornata da giocare e' quella successiva all'ultima con dati
+   * (es. NBA a fine stagione), quindi non ha una data di inizio e non si puo' creare una lega.
+   */
+  isCampionatoNonDisponibile(c: Campionato): boolean {
+    if (!c.giornataDaGiocare || !c.numGiornate || c.giornataDaGiocare > c.numGiornate) return false;
+    if (!Array.isArray(c.iniziGiornate)) return false;
+    return c.iniziGiornate[c.giornataDaGiocare - 1] == null;
+  }
+
   selectCampionato(c: Campionato): void {
-    if (this.isCampionatoTerminato(c)) return;
+    if (this.isCampionatoTerminato(c) || this.isCampionatoNonDisponibile(c)) return;
     this.campionatoSel = c;
     this.campionatoTouched = true;
     this.onCampionatoChange();

@@ -783,22 +783,25 @@ public class CalendarioAPI2 implements ICalendario {
         return ldStartDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
-    private final ConcurrentHashMap<EnumAPI2.Campionato, CompletableFuture<LocalDate>> startDateFutures = new ConcurrentHashMap<>();
+    // Chiave campionato + anno: la data di inizio cambia a ogni stagione, altrimenti le leghe di
+    // annate diverse userebbero quella della prima stagione richiesta
+    private final ConcurrentHashMap<String, CompletableFuture<LocalDate>> startDateFutures = new ConcurrentHashMap<>();
 
 
     private LocalDate startDateFase(EnumAPI2.Campionato campionato, short anno) {
+        String chiave = campionato.name() + "_" + anno;
         try {
             return startDateFutures
-                    .computeIfAbsent(campionato, c ->
+                    .computeIfAbsent(chiave, k ->
                             CompletableFuture.supplyAsync(() -> {
-                                String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(Enumeratori.SportDisponibili.BASKET.name()).id, c.id.get(Integer.valueOf(anno)));
+                                String urlResolved = String.format(urlInfo, EnumAPI2.Sport.valueOf(Enumeratori.SportDisponibili.BASKET.name()).id, campionato.id.get(Integer.valueOf(anno)));
                                 Map responseInfo = utility.callUrl(urlResolved, Map.class);
-                                String startDateFase = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(faseFromCampionato(c))).get("startDate").toString();
+                                String startDateFase = ((Map) ((Map) ((Map) responseInfo.get("data")).get("phases")).get(faseFromCampionato(campionato))).get("startDate").toString();
                                 return OffsetDateTime.parse(startDateFase).toLocalDate();
                             })
                     ).get();
         } catch (Exception e) {
-            startDateFutures.remove(campionato); // pulizia su errore
+            startDateFutures.remove(chiave); // pulizia su errore
             throw new RuntimeException(e);
         }
     }

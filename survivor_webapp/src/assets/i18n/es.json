@@ -853,6 +853,7 @@
     "INVITE_EMAIL": "Invitar amigos por email",
     "EMAIL_PLACEHOLDER": "email@ejemplo.com",
     "CHAMPIONSHIP_ENDED": "Lamentablemente el campeonato ha terminado",
+    "CHAMPIONSHIP_NOT_STARTED": "Calendario aún no disponible",
     "NAME_TAKEN": "Ya existe una liga con ese nombre",
     "WITH_PASSWORD_JOIN": "y unirse con la contraseña",
     "SECTION_IDENTITY": "Nombre de la liga",
