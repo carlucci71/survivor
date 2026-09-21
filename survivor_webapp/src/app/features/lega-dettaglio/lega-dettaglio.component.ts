@@ -2472,6 +2472,11 @@ export class LegaDettaglioComponent implements OnDestroy {
       next: (lega: Lega) => {
         this.lega = lega;
         this.caricaTabella();
+        // Dopo l'annullamento la giornata corrente torna indietro: riavvio il countdown sulla
+        // sua data di inizio (gia' passata), altrimenti resta quello della giornata successiva
+        // e il tasto Calcola rimane disabilitato.
+        this.countdownExpired = false;
+        this.startCountdown();
       },
       error: (err: any) => {
         this.error = this.translate.instant('LEAGUE.ERROR_UNDO_CALCOLA');

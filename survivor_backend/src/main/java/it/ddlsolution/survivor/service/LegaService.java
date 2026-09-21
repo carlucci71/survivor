@@ -484,10 +484,9 @@ public class LegaService {
                                     }
                                 }
                             }
-                            if (puntiRound != null) {
-                                int prevTotale = Optional.ofNullable(giocatoreDTO.getPuntiTotali()).orElse(0);
-                                giocatoreDTO.setPuntiTotali(prevTotale + puntiRound);
-                            }
+                            // Totale ricalcolato dalle giocate, non incrementale: si auto-corregge
+                            // anche se in passato il totale e' andato fuori sincrono
+                            giocatoreDTO.setPuntiTotali(sommaPuntiGiocate(giocatoreDTO));
                         }
                     } else {
                         // ── SURVIVOR: eliminazione con supporto vite ──
@@ -985,6 +984,7 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         int giornataCorrente = legaDTO.getGiornataCorrente();
+        boolean isCampionato = legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO;
         if (!ObjectUtils.isEmpty(legaDTO.getGiornataCalcolata())) {
             Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
             if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
@@ -997,20 +997,23 @@ public class LegaService {
                 //ANNULLO GIORNATA CORRENTE
                 int currGG = giornataCorrente - legaDTO.getGiornataIniziale() + 1;
                 if (giocataDTO.getGiornata().equals(currGG) && legaDTO.getStatiGiornate().get(currGG + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                    giocataDTO.setEsito(null);
+                    annullaEsitoGiocata(giocataDTO, isCampionato);
                 }//ANNULLO LA PRECEDENTE SE E' L'ULTIMA
                 if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev) && legaDTO.getStatiGiornate().get(prev + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                        giocataDTO.setEsito(null);
+                        annullaEsitoGiocata(giocataDTO, isCampionato);
                     }
                 }//ANNULLO LA PRIMA
                 if (legaDTO.getGiornataCalcolata() == null && legaDTO.getGiornataIniziale() == giornataCorrente - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev) && legaDTO.getStatiGiornate().get(prev + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                        giocataDTO.setEsito(null);
+                        annullaEsitoGiocata(giocataDTO, isCampionato);
                     }
                 }
+            }
+            if (isCampionato) {
+                giocatoreDTO.setPuntiTotali(sommaPuntiGiocate(giocatoreDTO));
             }
 
             Enumeratori.StatoGiocatore statoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);
@@ -1021,6 +1024,28 @@ public class LegaService {
         salva(legaDTO, null);
         return getLegaDTO(legaDTO.getId(), true, userId);
 
+    }
+
+    /**
+     * Annulla l'esito di una giocata. In Campionato azzera anche i punti della giocata: il totale del
+     * giocatore va poi ricalcolato con sommaPuntiGiocate.
+     */
+    private void annullaEsitoGiocata(GiocataDTO giocataDTO, boolean isCampionato) {
+        if (isCampionato) {
+            giocataDTO.setPunti(null);
+        }
+        giocataDTO.setEsito(null);
+    }
+
+    /**
+     * Punti totali Campionato: somma dei punti delle giocate con esito. Le giocate del DTO sono
+     * gia' filtrate sulla lega corrente (LegaMapper).
+     */
+    private int sommaPuntiGiocate(GiocatoreDTO giocatoreDTO) {
+        return giocatoreDTO.getGiocate().stream()
+                .filter(g -> g.getEsito() != null)
+                .mapToInt(g -> Optional.ofNullable(g.getPunti()).orElse(0))
+                .sum();
     }
 
     @Transactional
