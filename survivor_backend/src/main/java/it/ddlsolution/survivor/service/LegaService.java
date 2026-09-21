@@ -441,6 +441,7 @@ public class LegaService {
             }
             List<PartitaDTO> partite = utilCalendarioService.getPartiteDellaGiornata(campionatoDTO, nuovaGiornataCalcolata, legaDTO.getAnno());
             final int giornataIniziale = legaDTO.getGiornataIniziale();
+            final boolean settimanaMultiPartita = isSettimanaMultiPartita(campionatoDTO);
             Enumeratori.StatoPartita statoGiornata = statoGiornata(partite, nuovaGiornataCalcolata, legaDTO);
             log.info("calcola lega={}: nuovaGiornataCalcolata={} partiteCaricate={} statoGiornata={}",
                     idLega, nuovaGiornataCalcolata, partite.size(), statoGiornata);
@@ -471,23 +472,31 @@ public class LegaService {
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
                                 if (giocataDTO.getEsito() == null) {
-                                    puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
-                                    if (puntiRound != null) {
-                                        giocataDTO.setPunti(puntiRound);
-                                        if (puntiRound == 3) {
-                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
-                                        } else if (puntiRound == 1) {
-                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.PAREGGIO);
-                                        } else {
-                                            giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                    if (settimanaMultiPartita) {
+                                        // NBA: punti sommati su tutte le partite, esito dal bilancio della settimana
+                                        puntiRound = calcolaPuntiCampionatoSettimana(giocataDTO.getSquadraSigla(), partite);
+                                        if (puntiRound != null) {
+                                            giocataDTO.setPunti(puntiRound);
+                                            giocataDTO.setEsito(calcolaEsitoSurvivorSettimana(giocataDTO.getSquadraSigla(), partite));
+                                        }
+                                    } else {
+                                        puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
+                                        if (puntiRound != null) {
+                                            giocataDTO.setPunti(puntiRound);
+                                            if (puntiRound == 3) {
+                                                giocataDTO.setEsito(Enumeratori.EsitoGiocata.OK);
+                                            } else if (puntiRound == 1) {
+                                                giocataDTO.setEsito(Enumeratori.EsitoGiocata.PAREGGIO);
+                                            } else {
+                                                giocataDTO.setEsito(Enumeratori.EsitoGiocata.KO);
+                                            }
                                         }
                                     }
                                 }
                             }
-                            if (puntiRound != null) {
-                                int prevTotale = Optional.ofNullable(giocatoreDTO.getPuntiTotali()).orElse(0);
-                                giocatoreDTO.setPuntiTotali(prevTotale + puntiRound);
-                            }
+                            // Totale ricalcolato dalle giocate, non incrementale: si auto-corregge
+                            // anche se in passato il totale e' andato fuori sincrono
+                            giocatoreDTO.setPuntiTotali(sommaPuntiGiocate(giocatoreDTO));
                         }
                     } else {
                         // ── SURVIVOR: eliminazione con supporto vite ──
@@ -530,7 +539,9 @@ public class LegaService {
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
                                 if (giocataDTO.getEsito() == null) {
-                                    Enumeratori.EsitoGiocata esitoCalcolato = calcolaEsitoSurvivor(giocataDTO.getSquadraSigla(), partite);
+                                    Enumeratori.EsitoGiocata esitoCalcolato = settimanaMultiPartita
+                                            ? calcolaEsitoSurvivorSettimana(giocataDTO.getSquadraSigla(), partite)
+                                            : calcolaEsitoSurvivor(giocataDTO.getSquadraSigla(), partite);
                                     log.info("calcola lega={} giocatore={} sigla='{}' esitoCalcolato={}",
                                             idLega, giocatoreDTO.getId(), giocataDTO.getSquadraSigla(), esitoCalcolato);
                                     if (esitoCalcolato != null) {
@@ -694,6 +705,88 @@ public class LegaService {
                 ? scoreCasa > scoreFuori
                 : scoreFuori > scoreCasa;
         return isVincente ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
+    }
+
+    /**
+     * NBA: ogni squadra gioca piu' partite nella settimana, quindi l'esito non dipende dalla prima
+     * partita ma da tutte.
+     */
+    private boolean isSettimanaMultiPartita(CampionatoDTO campionatoDTO) {
+        return campionatoDTO != null
+                && Enumeratori.CampionatiDisponibili.NBA_RS.name().equals(campionatoDTO.getId());
+    }
+
+    private List<PartitaDTO> partiteDellaSquadra(String squadraSigla, List<PartitaDTO> partite) {
+        return partite.stream()
+                .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
+                .toList();
+    }
+
+    /**
+     * Differenza punti della squadra in una partita terminata (positiva se ha vinto). Senza punteggio
+     * la partita conta come sconfitta, come nel calcolo a partita singola.
+     */
+    private int differenzaPunti(PartitaDTO p, String squadraSigla) {
+        Integer sc = p.getScoreCasa();
+        Integer sf = p.getScoreFuori();
+        if (sc == null || sf == null) return -1;
+        return p.getCasaSigla().equalsIgnoreCase(squadraSigla) ? sc - sf : sf - sc;
+    }
+
+    /**
+     * Esito settimanale NBA: vince chi ha piu' vittorie che sconfitte nelle partite della squadra. A parita'
+     * decide la differenza punti complessiva, PAREGGIO solo se e' esattamente zero. Restituisce null finche'
+     * non sono terminate tutte le partite della squadra nella settimana.
+     */
+    private Enumeratori.EsitoGiocata calcolaEsitoSurvivorSettimana(String squadraSigla, List<PartitaDTO> partite) {
+        if (squadraSigla == null) return Enumeratori.EsitoGiocata.KO;
+        List<PartitaDTO> matching = partiteDellaSquadra(squadraSigla, partite);
+        if (matching.isEmpty()) return Enumeratori.EsitoGiocata.KO;
+        if (matching.stream().anyMatch(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)) return null;
+        int vittorie = 0;
+        int sconfitte = 0;
+        int differenza = 0;
+        for (PartitaDTO p : matching) {
+            if (Boolean.TRUE.equals(p.getForzata())) {
+                vittorie++;
+                continue;
+            }
+            int diff = differenzaPunti(p, squadraSigla);
+            differenza += diff;
+            if (diff > 0) {
+                vittorie++;
+            } else {
+                sconfitte++;
+            }
+        }
+        if (vittorie != sconfitte) {
+            return vittorie > sconfitte ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
+        }
+        if (differenza != 0) {
+            return differenza > 0 ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
+        }
+        return Enumeratori.EsitoGiocata.PAREGGIO;
+    }
+
+    /**
+     * Punti Campionato NBA: somma su tutte le partite della squadra nella settimana (3 vittoria, 1 pareggio,
+     * 0 sconfitta). Restituisce null finche' non sono terminate tutte.
+     */
+    private Integer calcolaPuntiCampionatoSettimana(String squadraSigla, List<PartitaDTO> partite) {
+        if (squadraSigla == null) return 0;
+        List<PartitaDTO> matching = partiteDellaSquadra(squadraSigla, partite);
+        if (matching.isEmpty()) return 0;
+        if (matching.stream().anyMatch(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)) return null;
+        int punti = 0;
+        for (PartitaDTO p : matching) {
+            if (Boolean.TRUE.equals(p.getForzata())) {
+                punti += 3;
+                continue;
+            }
+            int diff = differenzaPunti(p, squadraSigla);
+            punti += diff > 0 ? 3 : diff == 0 ? 1 : 0;
+        }
+        return punti;
     }
 
     private Boolean vincente(String squadraSigla, List<PartitaDTO> partite) {
@@ -985,6 +1078,7 @@ public class LegaService {
         Long userId = (Long) authentication.getPrincipal();
         LegaDTO legaDTO = getLegaDTO(idLega, true, userId);
         int giornataCorrente = legaDTO.getGiornataCorrente();
+        boolean isCampionato = legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO;
         if (!ObjectUtils.isEmpty(legaDTO.getGiornataCalcolata())) {
             Integer nuovaGiornataCalcolata = legaDTO.getGiornataCalcolata() - 1;
             if (nuovaGiornataCalcolata.compareTo(legaDTO.getGiornataIniziale()) < 0) {
@@ -997,20 +1091,23 @@ public class LegaService {
                 //ANNULLO GIORNATA CORRENTE
                 int currGG = giornataCorrente - legaDTO.getGiornataIniziale() + 1;
                 if (giocataDTO.getGiornata().equals(currGG) && legaDTO.getStatiGiornate().get(currGG + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                    giocataDTO.setEsito(null);
+                    annullaEsitoGiocata(giocataDTO, isCampionato);
                 }//ANNULLO LA PRECEDENTE SE E' L'ULTIMA
                 if (legaDTO.getGiornataCalcolata() != null && legaDTO.getGiornataCalcolata() != currGG - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev) && legaDTO.getStatiGiornate().get(prev + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                        giocataDTO.setEsito(null);
+                        annullaEsitoGiocata(giocataDTO, isCampionato);
                     }
                 }//ANNULLO LA PRIMA
                 if (legaDTO.getGiornataCalcolata() == null && legaDTO.getGiornataIniziale() == giornataCorrente - 1) {
                     int prev = currGG - 1;
                     if (giocataDTO.getGiornata().equals(prev) && legaDTO.getStatiGiornate().get(prev + legaDTO.getGiornataIniziale() - 1) != Enumeratori.StatoPartita.SOSPESA) {
-                        giocataDTO.setEsito(null);
+                        annullaEsitoGiocata(giocataDTO, isCampionato);
                     }
                 }
+            }
+            if (isCampionato) {
+                giocatoreDTO.setPuntiTotali(sommaPuntiGiocate(giocatoreDTO));
             }
 
             Enumeratori.StatoGiocatore statoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);
@@ -1021,6 +1118,28 @@ public class LegaService {
         salva(legaDTO, null);
         return getLegaDTO(legaDTO.getId(), true, userId);
 
+    }
+
+    /**
+     * Annulla l'esito di una giocata. In Campionato azzera anche i punti della giocata: il totale del
+     * giocatore va poi ricalcolato con sommaPuntiGiocate.
+     */
+    private void annullaEsitoGiocata(GiocataDTO giocataDTO, boolean isCampionato) {
+        if (isCampionato) {
+            giocataDTO.setPunti(null);
+        }
+        giocataDTO.setEsito(null);
+    }
+
+    /**
+     * Punti totali Campionato: somma dei punti delle giocate con esito. Le giocate del DTO sono
+     * gia' filtrate sulla lega corrente (LegaMapper).
+     */
+    private int sommaPuntiGiocate(GiocatoreDTO giocatoreDTO) {
+        return giocatoreDTO.getGiocate().stream()
+                .filter(g -> g.getEsito() != null)
+                .mapToInt(g -> Optional.ofNullable(g.getPunti()).orElse(0))
+                .sum();
     }
 
     @Transactional

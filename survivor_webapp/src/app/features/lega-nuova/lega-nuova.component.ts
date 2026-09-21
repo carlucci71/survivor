@@ -19,6 +19,7 @@ import { CampionatoService } from '../../core/services/campionato.service';
 import { LegaService } from '../../core/services/lega.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
+import { NbaRegolaDialogComponent } from '../../shared/components/nba-regola-dialog/nba-regola-dialog.component';
 import { environment } from '../../../environments/environment';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -312,11 +313,33 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
     return false;
   }
 
+  /**
+   * Calendario non ancora pubblicato: la giornata da giocare e' quella successiva all'ultima con dati
+   * (es. NBA a fine stagione), quindi non ha una data di inizio e non si puo' creare una lega.
+   */
+  isCampionatoNonDisponibile(c: Campionato): boolean {
+    if (!c.giornataDaGiocare || !c.numGiornate || c.giornataDaGiocare > c.numGiornate) return false;
+    if (!Array.isArray(c.iniziGiornate)) return false;
+    return c.iniziGiornate[c.giornataDaGiocare - 1] == null;
+  }
+
   selectCampionato(c: Campionato): void {
-    if (this.isCampionatoTerminato(c)) return;
+    if (this.isCampionatoTerminato(c) || this.isCampionatoNonDisponibile(c)) return;
     this.campionatoSel = c;
     this.campionatoTouched = true;
     this.onCampionatoChange();
+    // NBA: la prima volta spiega come si decide la settimana
+    if (c.id === 'NBA_RS' && !NbaRegolaDialogComponent.giaVista()) {
+      this.apriRegolaNba();
+    }
+  }
+
+  apriRegolaNba(): void {
+    this.dialog.open(NbaRegolaDialogComponent, {
+      width: window.innerWidth < 600 ? '94vw' : '460px',
+      maxWidth: '94vw',
+      autoFocus: false,
+    });
   }
 
   incGiornataIniziale(): void {

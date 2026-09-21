@@ -77,12 +77,14 @@
             type="button"
             class="cn-camp-btn"
             [class.cn-camp-btn--active]="campionatoSel?.id === campionato.id"
-            [class.cn-camp-btn--terminated]="isCampionatoTerminato(campionato)"
-            [disabled]="isCampionatoTerminato(campionato)"
+            [class.cn-camp-btn--terminated]="isCampionatoTerminato(campionato) || isCampionatoNonDisponibile(campionato)"
+            [disabled]="isCampionatoTerminato(campionato) || isCampionatoNonDisponibile(campionato)"
             (click)="selectCampionato(campionato)"
           >
             <span class="cn-camp-name">{{ campionato.nome }}</span>
-            @if (campionato.giornataDaGiocare && campionato.numGiornate) {
+            @if (isCampionatoNonDisponibile(campionato)) {
+            <span class="cn-camp-info">{{ 'CREATE_LEAGUE.CHAMPIONSHIP_NOT_STARTED' | translate }}</span>
+            } @else if (campionato.giornataDaGiocare && campionato.numGiornate) {
             <span class="cn-camp-info">{{ 'LEAGUE.ROUND_SHORT' | translate }} {{ campionato.giornataDaGiocare }}/{{ campionato.numGiornate }}</span>
             }
           </button>
@@ -98,6 +100,17 @@
           <mat-icon>info_outline</mat-icon>
           <span>{{ 'CREATE_LEAGUE.CHAMPIONSHIP_ENDED' | translate }}</span>
         </div>
+        }
+
+        @if (campionatoSel?.id === 'NBA_RS') {
+        <button type="button" class="cn-nba-notice" (click)="apriRegolaNba()">
+          <mat-icon class="cn-nba-notice-icon">sports_basketball</mat-icon>
+          <span class="cn-nba-notice-text">
+            <strong>{{ 'NBA_RULE.NOTICE_TITLE' | translate }}</strong>
+            <span>{{ 'NBA_RULE.NOTICE_TEXT' | translate }}</span>
+          </span>
+          <mat-icon>chevron_right</mat-icon>
+        </button>
         }
       </div>
 

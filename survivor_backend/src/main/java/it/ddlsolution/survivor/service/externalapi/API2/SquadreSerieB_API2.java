@@ -24,7 +24,14 @@ enum SquadreSerieB_API2 implements IEnumSquadre {
         STR("STR"),
         ENT("ENT"),
         EMP("EMP"),
-        MAN("MAN");
+        MAN("MAN"),
+        ARE("ARE"),
+        ASC("ASC"),
+        BEN("BEN"),
+        CRE("CRE"),
+        PIS("PIS"),
+        VER("VER"),
+        VIC("VIC");
         final String siglaEsterna;
 
         SquadreSerieB_API2(String siglaEsterna) {
