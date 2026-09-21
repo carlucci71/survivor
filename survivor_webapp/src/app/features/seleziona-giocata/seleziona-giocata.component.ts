@@ -333,6 +333,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_MON': 'MON.png',
     'SERIE_B_VEN': 'VEN.png',
     'SERIE_B_BEN': 'benevento.png',
+    // Serie B 2026/27
+    'SERIE_B_ARE': 'arezzo.png',
+    'SERIE_B_ASC': 'ascoli.png',
+    'SERIE_B_CRE': 'CREMON.png',
+    'SERIE_B_PIS': 'PISA.png',
+    'SERIE_B_VER': 'VER.png',
+    'SERIE_B_VIC': 'vicenza.png',
 
     // MONDIALI 2026 (48 squadre nazionali)
     'MONDIALI_2026_ALG': 'mondiali/algeria.png',
