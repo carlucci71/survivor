@@ -20,10 +20,13 @@ public interface ICalendario {
         Map<String, String> mapForAdapt = Arrays.stream(getSquadre(idCampionato,squadreDTO))
                 .collect(Collectors.toMap(IEnumSquadre::getSiglaEsterna, IEnumSquadre::name)
                 );
+        // Se il codice esterno non e' mappato lo provo come sigla DB: l'API a volte cambia codice a
+        // stagione in corso (es. Barcellona FCB -> BAR) e la sigla DB coincide col nuovo codice
+        String siglaDb = mapForAdapt.getOrDefault(squadraSiglaExternal, squadraSiglaExternal);
         SquadraDTO squadraDTO;
         try {
             squadraDTO = squadreDTO.stream()
-                    .filter(s ->  s.getSigla().equals(mapForAdapt.get(squadraSiglaExternal)))
+                    .filter(s ->  s.getSigla().equals(siglaDb))
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Squadra da configurare: " + squadraSiglaExternal + " per il campionato: " + idCampionato)
                     );

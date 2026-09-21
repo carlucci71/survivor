@@ -18,46 +18,57 @@ export interface PronosticoVincitoreDialogData {
   template: `
     <div class="pv-dialog">
 
-      <button class="pv-close" (click)="close()" aria-label="Chiudi">
+      <!-- Bolle decorative di sfondo -->
+      <span class="pv-bubble pv-b1"></span>
+      <span class="pv-bubble pv-b2"></span>
+      <span class="pv-bubble pv-b3"></span>
+      <span class="pv-bubble pv-b4"></span>
+      <span class="pv-bubble pv-b5"></span>
+      <span class="pv-bubble pv-b6"></span>
+
+      <button class="pv-close" (click)="close()" [attr.aria-label]="'DIALOGS.CLOSE' | translate">
         <mat-icon>close</mat-icon>
       </button>
 
-      <div class="pv-icon-wrap">
-        <span class="pv-crystal">🔮</span>
+      <div class="pv-hero">
+        <div class="pv-icon-wrap">
+          <span class="pv-crystal">🔮</span>
+        </div>
+        <h2 class="pv-title">{{ 'LEAGUE.PRONOSTICO_TITLE' | translate }}</h2>
+        <p class="pv-subtitle">{{ 'LEAGUE.PRONOSTICO_SUBTITLE' | translate }}</p>
       </div>
 
-      <h2 class="pv-title">{{ 'LEAGUE.PRONOSTICO_TITLE' | translate }}</h2>
-      <p class="pv-subtitle">{{ 'LEAGUE.PRONOSTICO_SUBTITLE' | translate }}</p>
+      <div class="pv-body">
+        <div class="pv-search-wrap">
+          <mat-icon class="pv-search-icon">search</mat-icon>
+          <input
+            class="pv-search-input"
+            type="text"
+            [(ngModel)]="searchQuery"
+            [placeholder]="'LEAGUE.PRONOSTICO_SEARCH_PLACEHOLDER' | translate"
+          />
+        </div>
 
-      <div class="pv-search-wrap">
-        <mat-icon class="pv-search-icon">search</mat-icon>
-        <input
-          class="pv-search-input"
-          type="text"
-          [(ngModel)]="searchQuery"
-          [placeholder]="'LEAGUE.PRONOSTICO_SEARCH_PLACEHOLDER' | translate"
-        />
-      </div>
+        <div class="pv-list">
+          @for (g of giocatoriFiltrati(); track g.id) {
+            <button class="pv-row" [class.pv-row--selected]="selezionatoId === g.id" (click)="seleziona(g.id)">
+              <span class="pv-avatar">{{ iniziale(g.nickname) }}</span>
+              <span class="pv-row-nickname">{{ g.nickname }}</span>
+              <span class="pv-radio">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+              </span>
+            </button>
+          } @empty {
+            <p class="pv-empty">{{ 'LEAGUE.PRONOSTICO_EMPTY' | translate }}</p>
+          }
+        </div>
 
-      <div class="pv-list">
-        @for (g of giocatoriFiltrati(); track g.id) {
-          <button class="pv-row" [class.pv-row--selected]="selezionatoId === g.id" (click)="seleziona(g.id)">
-            <span class="pv-row-nickname">{{ g.nickname }}</span>
-            @if (selezionatoId === g.id) {
-              <mat-icon class="pv-row-check">check_circle</mat-icon>
-            }
+        <div class="pv-actions">
+          <button class="pv-btn pv-btn--cancel" (click)="close()">{{ 'LEAGUE.PRONOSTICO_CANCEL' | translate }}</button>
+          <button class="pv-btn pv-btn--save" (click)="conferma()" [disabled]="!selezionatoId || loading">
+            {{ loading ? ('LEAGUE.PRONOSTICO_SAVING' | translate) : ('LEAGUE.PRONOSTICO_CONFIRM' | translate) }}
           </button>
-        } @empty {
-          <p class="pv-empty">{{ 'LEAGUE.PRONOSTICO_EMPTY' | translate }}</p>
-        }
-      </div>
-
-      <div class="pv-actions">
-        <button class="pv-btn pv-btn--cancel" (click)="close()">{{ 'LEAGUE.PRONOSTICO_CANCEL' | translate }}</button>
-        <button class="pv-btn pv-btn--save" (click)="conferma()" [disabled]="!selezionatoId || loading">
-          <mat-icon class="pv-btn-ico">{{ loading ? 'hourglass_empty' : 'check' }}</mat-icon>
-          {{ loading ? ('LEAGUE.PRONOSTICO_SAVING' | translate) : ('LEAGUE.PRONOSTICO_CONFIRM' | translate) }}
-        </button>
+        </div>
       </div>
 
     </div>
@@ -69,24 +80,57 @@ export interface PronosticoVincitoreDialogData {
       position: relative;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 40px 24px 24px;
-      background: #fff;
+      background: var(--bg-card, #fff);
       border-radius: 24px;
-      text-align: center;
+      overflow: hidden;
       box-sizing: border-box;
       width: 100%;
       font-family: 'Poppins', sans-serif;
+      text-align: center;
     }
 
+    /* ─── Bolle fluttuanti ─── */
+    .pv-bubble {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .pv-b1, .pv-b2, .pv-b3 {
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.55), rgba(255,255,255,0.12));
+      border: 1px solid rgba(255,255,255,0.35);
+    }
+    .pv-b1 { width: 54px; height: 54px; top: -10px; left: 8%;  animation: pv-float1 6.5s ease-in-out infinite; }
+    .pv-b2 { width: 26px; height: 26px; top: 62px; left: 24%;   animation: pv-float2 5s ease-in-out infinite; }
+    .pv-b3 { width: 38px; height: 38px; top: 18px; right: 16%;  animation: pv-float1 7.5s ease-in-out infinite reverse; }
+    .pv-b4, .pv-b5, .pv-b6 {
+      background: radial-gradient(circle at 30% 30%, rgba(79,195,247,0.22), rgba(79,195,247,0.05));
+      border: 1px solid rgba(79,195,247,0.22);
+    }
+    .pv-b4 { width: 34px; height: 34px; top: 200px; left: -10px;  animation: pv-float2 6s ease-in-out infinite; }
+    .pv-b5 { width: 22px; height: 22px; top: 290px; right: 10px;  animation: pv-float1 5.5s ease-in-out infinite; }
+    .pv-b6 { width: 46px; height: 46px; bottom: 40px; right: -14px; animation: pv-float2 8s ease-in-out infinite; }
+
+    @keyframes pv-float1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50%      { transform: translate(6px, -12px) scale(1.08); }
+    }
+    @keyframes pv-float2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50%      { transform: translate(-7px, 10px) scale(0.94); }
+    }
+
+    /* ─── Header ─── */
     .pv-close {
       position: absolute;
-      top: 14px;
-      right: 14px;
+      top: 12px;
+      right: 12px;
+      z-index: 3;
       width: 32px;
       height: 32px;
       border: none;
-      background: #F3F4F6;
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(4px);
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -95,34 +139,79 @@ export interface PronosticoVincitoreDialogData {
       transition: background 0.15s;
       padding: 0;
     }
-    .pv-close mat-icon { font-size: 17px; width: 17px; height: 17px; color: #374151; }
-    .pv-close:hover { background: #E5E7EB; }
+    .pv-close mat-icon { font-size: 17px; width: 17px; height: 17px; color: #fff; }
+    .pv-close:hover { background: rgba(255,255,255,0.36); }
+
+    .pv-hero {
+      position: relative;
+      z-index: 1;
+      padding: 30px 24px 26px;
+      background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
+      color: #fff;
+      overflow: hidden;
+    }
+    .pv-hero::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 16px;
+      background: var(--bg-card, #fff);
+      border-radius: 18px 18px 0 0;
+    }
 
     .pv-icon-wrap {
-      width: 72px;
-      height: 72px;
+      position: relative;
+      z-index: 1;
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 12px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #EEF2FF, #E0E7FF);
-      border: 2px solid rgba(99,102,241,0.18);
+      background: rgba(255,255,255,0.2);
+      border: 1.5px solid rgba(255,255,255,0.45);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 0 18px rgba(255,255,255,0.25);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
-      flex-shrink: 0;
+      animation: pv-glow 3s ease-in-out infinite;
     }
-    .pv-crystal { font-size: 2.2rem; line-height: 1; }
+    .pv-crystal {
+      font-size: 2.1rem;
+      line-height: 1;
+      animation: pv-bob 3s ease-in-out infinite;
+    }
+    @keyframes pv-glow {
+      0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 0 0 rgba(255,255,255,0.35), inset 0 0 18px rgba(255,255,255,0.25); }
+      50%      { box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 0 10px rgba(255,255,255,0), inset 0 0 18px rgba(255,255,255,0.25); }
+    }
+    @keyframes pv-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
 
     .pv-title {
-      font-size: 1.15rem;
+      position: relative;
+      z-index: 1;
+      font-size: 1.3rem;
       font-weight: 800;
-      color: #0A3D91;
-      margin: 0 0 4px;
+      color: #fff;
+      margin: 0 0 2px;
+      letter-spacing: 0.2px;
+    }
+    .pv-subtitle {
+      position: relative;
+      z-index: 1;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.88);
+      margin: 0;
     }
 
-    .pv-subtitle {
-      font-size: 0.82rem;
-      color: #6B7280;
-      margin: 0 0 18px;
+    /* ─── Corpo ─── */
+    .pv-body {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 20px 22px;
     }
 
     .pv-search-wrap {
@@ -132,65 +221,142 @@ export interface PronosticoVincitoreDialogData {
     }
     .pv-search-icon {
       position: absolute;
-      left: 12px;
+      left: 13px;
       top: 50%;
       transform: translateY(-50%);
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #9CA3AF;
+      color: var(--text-tertiary, #9CA3AF);
     }
     .pv-search-input {
       width: 100%;
       box-sizing: border-box;
-      padding: 10px 12px 10px 38px;
-      border-radius: 12px;
-      border: 1.5px solid #E5E7EB;
+      padding: 11px 14px 11px 40px;
+      border-radius: 30px;
+      border: 1.5px solid var(--border-color, #E5E7EB);
+      background: var(--bg-tertiary, #F8F9FA);
+      color: var(--text-primary, #1A202C);
       font-family: inherit;
       font-size: 0.88rem;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
-    .pv-search-input:focus { border-color: #4FC3F7; }
+    .pv-search-input:focus {
+      border-color: var(--primary-color, #4FC3F7);
+      background: var(--bg-card, #fff);
+      box-shadow: 0 0 0 3px rgba(79,195,247,0.18);
+    }
 
     .pv-list {
       width: 100%;
-      max-height: 240px;
+      max-height: 232px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 20px;
+      gap: 7px;
+      margin-bottom: 18px;
+      padding: 2px 2px 2px 0;
+      scrollbar-width: thin;
     }
 
     .pv-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
       width: 100%;
-      padding: 11px 14px;
-      border-radius: 12px;
-      border: 1.5px solid #F0F0F0;
-      background: #FAFAFA;
+      padding: 9px 14px 9px 10px;
+      border-radius: 16px;
+      border: 1.5px solid var(--border-color, #E2E8F0);
+      background: var(--bg-card, #fff);
       cursor: pointer;
       font-family: inherit;
-      transition: background 0.15s, border-color 0.15s;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s, transform 0.12s, box-shadow 0.15s;
       box-sizing: border-box;
     }
-    .pv-row:hover { background: #F3F4F6; }
-    .pv-row--selected {
-      background: rgba(79,195,247,0.1);
-      border-color: rgba(79,195,247,0.5);
+    .pv-row:hover {
+      background: var(--hover-overlay, rgba(79,195,247,0.08));
+      border-color: var(--border-hover, #CBD5E0);
     }
-    .pv-row-nickname { font-size: 0.9rem; font-weight: 600; color: #1A202C; }
-    .pv-row-check { color: #0A3D91; font-size: 20px; width: 20px; height: 20px; }
+    .pv-row:active { transform: scale(0.985); }
+    .pv-row--selected,
+    .pv-row--selected:hover {
+      background: linear-gradient(135deg, rgba(79,195,247,0.16), rgba(79,195,247,0.06));
+      border-color: var(--primary-color, #4FC3F7);
+      box-shadow: 0 3px 12px rgba(10,61,145,0.12);
+    }
+
+    .pv-avatar {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary-dark, #0A3D91);
+      background: var(--hover-overlay, rgba(79,195,247,0.12));
+      border: 1.5px solid rgba(79,195,247,0.35);
+      text-transform: uppercase;
+      transition: all 0.15s;
+    }
+    .pv-row--selected .pv-avatar {
+      color: #fff;
+      background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
+      border-color: transparent;
+    }
+
+    .pv-row-nickname {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary, #1A202C);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pv-radio {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border-hover, #CBD5E0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.18s ease;
+    }
+    .pv-radio svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.18s ease;
+    }
+    .pv-row--selected .pv-radio {
+      background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
+      border-color: transparent;
+    }
+    .pv-row--selected .pv-radio svg { opacity: 1; transform: scale(1); }
 
     .pv-empty {
       font-size: 0.85rem;
-      color: #9CA3AF;
+      color: var(--text-tertiary, #9CA3AF);
       padding: 20px 0;
+      margin: 0;
     }
 
+    /* ─── Azioni ─── */
     .pv-actions {
       display: flex;
       gap: 10px;
@@ -201,9 +367,8 @@ export interface PronosticoVincitoreDialogData {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 12px 16px;
-      border-radius: 12px;
+      padding: 13px 16px;
+      border-radius: 30px;
       font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
@@ -211,24 +376,37 @@ export interface PronosticoVincitoreDialogData {
       transition: all 0.18s ease;
       border: none;
     }
-    .pv-btn-ico { font-size: 16px; width: 16px; height: 16px; }
-    .pv-btn--cancel { background: #F3F4F6; color: #374151; }
-    .pv-btn--cancel:hover { background: #E5E7EB; }
+    .pv-btn--cancel {
+      flex: 0 0 auto;
+      background: var(--bg-tertiary, #F3F4F6);
+      color: var(--text-secondary, #4A5568);
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+    .pv-btn--cancel:hover { background: var(--border-color, #E5E7EB); }
     .pv-btn--save {
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+      background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
       color: #fff;
-      box-shadow: 0 3px 10px rgba(10,61,145,0.25);
+      box-shadow: 0 4px 14px rgba(10,61,145,0.28);
     }
     .pv-btn--save:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 5px 16px rgba(10,61,145,0.35);
+      box-shadow: 0 6px 18px rgba(10,61,145,0.38);
     }
     .pv-btn--save:active:not(:disabled) { transform: translateY(0) scale(0.98); }
-    .pv-btn--save:disabled { opacity: 0.6; cursor: not-allowed; }
+    .pv-btn--save:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
 
     @media (max-width: 400px) {
-      .pv-dialog { padding: 36px 18px 20px; }
-      .pv-icon-wrap { width: 62px; height: 62px; }
+      .pv-hero { padding: 26px 18px 24px; }
+      .pv-icon-wrap { width: 60px; height: 60px; }
+      .pv-crystal { font-size: 1.9rem; }
+      .pv-body { padding: 4px 14px 18px; }
+      .pv-btn { padding: 12px 12px; font-size: 0.84rem; }
+      .pv-btn--cancel { padding-left: 16px; padding-right: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pv-bubble, .pv-icon-wrap, .pv-crystal { animation: none; }
     }
   `],
 })
@@ -250,6 +428,10 @@ export class PronosticoVincitoreDialogComponent {
     const q = this.searchQuery.trim().toLowerCase();
     if (!q) return this.data.giocatoriAttivi;
     return this.data.giocatoriAttivi.filter(g => g.nickname.toLowerCase().includes(q));
+  }
+
+  iniziale(nickname: string): string {
+    return Array.from((nickname ?? '').trim())[0] ?? '';
   }
 
   seleziona(id: number): void {

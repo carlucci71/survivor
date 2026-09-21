@@ -48,6 +48,17 @@
       </span>
     </div>
 
+    @if (isNba()) {
+    <button type="button" class="nba-notice" (click)="apriRegolaNba()">
+      <mat-icon class="nba-notice-icon">sports_basketball</mat-icon>
+      <span class="nba-notice-text">
+        <strong>{{ 'NBA_RULE.NOTICE_TITLE' | translate }}</strong>
+        <span>{{ 'NBA_RULE.NOTICE_TEXT' | translate }}</span>
+      </span>
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    }
+
     @if(squadreDisponibili.length > 0) {
 
   <!-- 💡 MODALE CONSIGLI (overlay inline) -->

@@ -1839,6 +1839,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   // ─── Pronostico vincitore (per gli eliminati) ───────────────────────────
   mioPronostico: PronosticoVincitore | null = null;
   classificaPronostici: VotoPronostico[] = [];
+  /** Giocatore pronosticato di cui sono espansi i votanti (uno alla volta). */
+  votoAperto: number | null = null;
 
   private caricaMioPronostico(): void {
     if (!this.lega || this.lega.modalita !== 'SURVIVOR') {
@@ -1856,10 +1858,30 @@ export class LegaDettaglioComponent implements OnDestroy {
       this.mioPronostico = null;
     }
 
+    this.caricaClassificaPronostici();
+  }
+
+  private caricaClassificaPronostici(): void {
+    if (!this.lega) return;
     this.legaService.getClassificaPronostici(this.lega.id).subscribe({
       next: (classifica) => { this.classificaPronostici = classifica; },
       error: () => { this.classificaPronostici = []; }
     });
+  }
+
+  toggleVotanti(giocatoreId: number): void {
+    this.votoAperto = this.votoAperto === giocatoreId ? null : giocatoreId;
+  }
+
+  /** Posizione a pari merito: chi ha gli stessi voti condivide il posto (la lista è già ordinata per voti). */
+  rankPronostico(index: number): number {
+    const voti = this.classificaPronostici[index].voti;
+    return this.classificaPronostici.findIndex(v => v.voti === voti) + 1;
+  }
+
+  /** Prima lettera del nickname, sicura anche se inizia con un'emoji. */
+  iniziale(nickname: string): string {
+    return Array.from((nickname ?? '').trim())[0] ?? '';
   }
 
   private getGiocatoriAttivi(): { id: number; nickname: string }[] {
@@ -1883,6 +1905,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     ref.afterClosed().subscribe((pronostico: PronosticoVincitore | undefined) => {
       if (pronostico) {
         this.mioPronostico = pronostico;
+        this.caricaClassificaPronostici();
       }
     });
   }
@@ -2449,6 +2472,11 @@ export class LegaDettaglioComponent implements OnDestroy {
       next: (lega: Lega) => {
         this.lega = lega;
         this.caricaTabella();
+        // Dopo l'annullamento la giornata corrente torna indietro: riavvio il countdown sulla
+        // sua data di inizio (gia' passata), altrimenti resta quello della giornata successiva
+        // e il tasto Calcola rimane disabilitato.
+        this.countdownExpired = false;
+        this.startCountdown();
       },
       error: (err: any) => {
         this.error = this.translate.instant('LEAGUE.ERROR_UNDO_CALCOLA');

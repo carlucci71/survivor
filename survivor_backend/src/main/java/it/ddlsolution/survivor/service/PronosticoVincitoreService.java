@@ -97,19 +97,20 @@ public class PronosticoVincitoreService {
     public List<VotoPronosticoDTO> getClassificaPronostici(Long idLega) {
         List<PronosticoVincitore> pronostici = pronosticoVincitoreRepository.findByLega_Id(idLega);
 
-        Map<Long, Long> conteggioPerGiocatoreId = pronostici.stream()
-                .collect(Collectors.groupingBy(p -> p.getGiocatorePronosticato().getId(), Collectors.counting()));
+        Map<Long, List<PronosticoVincitore>> perPronosticato = pronostici.stream()
+                .collect(Collectors.groupingBy(p -> p.getGiocatorePronosticato().getId()));
 
-        Map<Long, String> nicknamePerGiocatoreId = pronostici.stream()
-                .collect(Collectors.toMap(
-                        p -> p.getGiocatorePronosticato().getId(),
-                        p -> p.getGiocatorePronosticato().getNickname(),
-                        (esistente, nuovo) -> esistente
-                ));
-
-        return conteggioPerGiocatoreId.entrySet().stream()
-                .map(e -> new VotoPronosticoDTO(e.getKey(), nicknamePerGiocatoreId.get(e.getKey()), e.getValue()))
-                .sorted(Comparator.comparingLong(VotoPronosticoDTO::getVoti).reversed())
+        return perPronosticato.entrySet().stream()
+                .map(e -> {
+                    List<PronosticoVincitore> voti = e.getValue();
+                    List<String> votanti = voti.stream()
+                            .map(p -> p.getGiocatore().getNickname())
+                            .sorted(String.CASE_INSENSITIVE_ORDER)
+                            .collect(Collectors.toList());
+                    return new VotoPronosticoDTO(e.getKey(), voti.get(0).getGiocatorePronosticato().getNickname(), voti.size(), votanti);
+                })
+                .sorted(Comparator.comparingLong(VotoPronosticoDTO::getVoti).reversed()
+                        .thenComparing(VotoPronosticoDTO::getNickname, String.CASE_INSENSITIVE_ORDER))
                 .collect(Collectors.toList());
     }
 
