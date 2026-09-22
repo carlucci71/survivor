@@ -337,7 +337,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_ARE': 'arezzo.png',
     'SERIE_B_ASC': 'ascoli.png',
     'SERIE_B_CRE': 'CREMON.png',
-    'SERIE_B_PIS': 'PISA.png',
+    'SERIE_B_PISB': 'PISA.png',
     'SERIE_B_VER': 'VER.png',
     'SERIE_B_VIC': 'vicenza.png',
 
