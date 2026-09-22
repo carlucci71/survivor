@@ -81,6 +81,7 @@ const STORAGE_KEY = 'nba_regola_vista';
         </ol>
 
         <p class="nba-note"><mat-icon>schedule</mat-icon>{{ 'NBA_RULE.WAIT_NOTE' | translate }}</p>
+        <p class="nba-note"><mat-icon>favorite</mat-icon>{{ 'NBA_RULE.SURVIVOR_LIFE_NOTE' | translate }}</p>
         <p class="nba-note"><mat-icon>leaderboard</mat-icon>{{ 'NBA_RULE.CAMPIONATO_NOTE' | translate }}</p>
       </div>
 
