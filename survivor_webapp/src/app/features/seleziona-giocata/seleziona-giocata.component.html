@@ -2,7 +2,7 @@
   <!-- Header Colorato Uniforme -->
   <div class="dialog-header">
     <h2 class="dialog-title">{{ getDesGiornataTitle(lega.giornataCorrente) }}</h2>
-    <button mat-icon-button class="close-btn" (click)="chiudi()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+    <button type="button" class="close-btn" (click)="chiudi()" [attr.aria-label]="'COMMON.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -37,15 +37,18 @@
   <div class="dialog-body">
     <!-- INFO COMPATTA ELEGANTE -->
     <div class="info-compact">
-      <span class="info-item">
-        <span class="label">👤</span>
-        <span class="value">{{ giocatore.nickname }}</span>
-      </span>
-      <span class="info-separator">|</span>
-      <span class="info-item">
-        <mat-icon class="stato-icon">{{ getGiocaIcon() }}</mat-icon>
-        <span class="value">{{ 'LEAGUE.' + data.statoGiornataCorrente.value | translate }}</span>
-      </span>
+      <div class="info-player">
+        <span class="info-avatar">{{ giocatore.nickname.charAt(0) }}</span>
+        <span class="info-nickname">{{ giocatore.nickname }}</span>
+      </div>
+      <div class="info-countdown" [class.info-countdown--closed]="!countdownChiusuraAttivo">
+        <mat-icon class="info-countdown-icon">{{ countdownChiusuraAttivo ? 'schedule' : getGiocaIcon() }}</mat-icon>
+        @if (countdownChiusuraAttivo) {
+          <span class="info-countdown-text">{{ 'PLAY.CLOSES_IN' | translate }} <strong>{{ countdownChiusura }}</strong></span>
+        } @else {
+          <span class="info-countdown-text">{{ 'LEAGUE.' + data.statoGiornataCorrente.value | translate }}</span>
+        }
+      </div>
     </div>
 
     @if (isNba()) {
@@ -249,6 +252,11 @@
         @if(searchQuery && squadreFiltrate.length > 0) {
           <span class="team-count">({{ squadreFiltrate.length }})</span>
         }
+        @if (squadreUsateInfo; as info) {
+          <span class="squadre-usate-chip" [title]="'PLAY.SQUADRE_USATE_HINT' | translate">
+            {{ info.usate }}/{{ info.totale }}
+          </span>
+        }
       </h3>
       @if (consigli.length > 0 || loadingConsigli) {
         <button class="consigli-link" type="button" (click)="consigliAperto = true">
@@ -331,6 +339,17 @@
                 @if (squadra.prossimaPartita && !squadra.alreadyUsed) {
                   <span class="jersey-vs" [ngClass]="getVsClass(formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)))">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
                 }
+                @if ((formaPerSquadra[squadra.sigla] || []).length) {
+                  <div class="jersey-forma" [title]="'PLAY.FORM_LABEL' | translate">
+                    @for (esito of formaPerSquadra[squadra.sigla]; track $index) {
+                      <span class="forma-dot"
+                            [class.forma-dot--ok]="esito === 'OK'"
+                            [class.forma-dot--ko]="esito === 'KO'"
+                            [class.forma-dot--pareggio]="esito === 'PAREGGIO'"
+                            [style.animation-delay.ms]="$index * 70"></span>
+                    }
+                  </div>
+                }
               </div>
               @if (squadraSelezionata === squadra.sigla) {
                 <div class="jersey-check"><mat-icon>check_circle</mat-icon></div>
@@ -401,6 +420,17 @@
                   <span class="jersey-name" [ngClass]="getNameClass(formatNomeSquadra(squadra.nome))">{{ formatNomeSquadra(squadra.nome) }}</span>
                   @if (squadra.prossimaPartita) {
                     <span class="jersey-vs" [ngClass]="getVsClass(formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)))">vs {{ formatNomeSquadra(getAvversarioNome(squadra.prossimaPartita, squadra.sigla)) }}</span>
+                  }
+                  @if ((formaPerSquadra[squadra.sigla] || []).length) {
+                    <div class="jersey-forma" [title]="'PLAY.FORM_LABEL' | translate">
+                      @for (esito of formaPerSquadra[squadra.sigla]; track $index) {
+                        <span class="forma-dot"
+                              [class.forma-dot--ok]="esito === 'OK'"
+                              [class.forma-dot--ko]="esito === 'KO'"
+                              [class.forma-dot--pareggio]="esito === 'PAREGGIO'"
+                              [style.animation-delay.ms]="$index * 70"></span>
+                      }
+                    </div>
                   }
                 </div>
                 @if (squadraSelezionata === squadra.sigla) {

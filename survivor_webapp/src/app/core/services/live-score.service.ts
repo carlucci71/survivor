@@ -20,4 +20,12 @@ export class LiveScoreService {
   partiteGiornataSerieA(): Observable<PartitaLive[]> {
     return this.http.get<PartitaLive[]>(`${this.apiUrl}/serieA`);
   }
+
+  /**
+   * Stesso principio di partiteGiornataSerieA, per Serie B / Liga / Premier League: vuoto se
+   * l'utente non ha una lega attiva in quel campionato (nessuna chiamata sprecata all'API esterna).
+   */
+  partiteGiornata(campionatoId: string): Observable<PartitaLive[]> {
+    return this.http.get<PartitaLive[]>(`${this.apiUrl}/campionato/${campionatoId}`);
+  }
 }

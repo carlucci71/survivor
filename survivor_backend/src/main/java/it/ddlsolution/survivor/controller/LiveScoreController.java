@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +30,16 @@ public class LiveScoreController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return ResponseEntity.ok(liveScoreService.partiteGiornataSerieAPerUtente(userId));
+    }
+
+    /**
+     * Stesso principio della Serie A, per Serie B/Liga/Premier League (vedi
+     * LiveScoreService.ALTRI_CAMPIONATI_LIVE): campionato non tra questi -> lista vuota, non errore.
+     */
+    @GetMapping("/campionato/{campionatoId}")
+    public ResponseEntity<List<PartitaLiveDTO>> partiteGiornataCampionato(@PathVariable String campionatoId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return ResponseEntity.ok(liveScoreService.partiteGiornataPerUtente(userId, campionatoId));
     }
 }

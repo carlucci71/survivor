@@ -111,7 +111,7 @@ export class RemainingTeamsDialogComponent {
         // Serie B 2026/27
         'SERIE_B_ARE': 'arezzo.png',
         'SERIE_B_ASC': 'ascoli.png',
-        'SERIE_B_PIS': 'PISA.png',
+        'SERIE_B_PISB': 'PISA.png',
         'SERIE_B_VER': 'VER.png',
         'SERIE_B_VIC': 'vicenza.png',
 

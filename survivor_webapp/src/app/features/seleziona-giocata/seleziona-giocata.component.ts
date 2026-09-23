@@ -1,4 +1,6 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, ViewChild, ElementRef, ViewEncapsulation, AfterViewInit } from '@angular/core';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface FormulaRow {
   labelKey: string;
@@ -69,7 +71,7 @@ import { GiocataService } from '../../core/services/giocata.service';
     TranslateModule,
   ],
 })
-export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
+export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('scrollWrapper') scrollWrapper!: ElementRef<HTMLDivElement>;
 
   isMobile = false;
@@ -104,6 +106,13 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
   squadreConPartite: any[] = [];
   squadreFiltrate: any[] = [];
   searchQuery: string = '';
+  /** Ultimi 5 risultati per sigla (più recente prima), per il badge "forma" sulla maglietta. */
+  formaPerSquadra: Record<string, string[]> = {};
+
+  /** Countdown alla chiusura del turno (barra info in alto), calcolato da lega.inizioProssimaGiornata. */
+  countdownChiusura: string = '';
+  countdownChiusuraAttivo: boolean = false;
+  private countdownChiusuraInterval?: ReturnType<typeof setInterval>;
   @ViewChild('risultatiRow') risultatiRow?: ElementRef<HTMLDivElement>;
   @ViewChild('teamSelect') teamSelect?: MatSelect;
   @ViewChild('selectField') selectField?: ElementRef<HTMLElement>;
@@ -337,7 +346,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     'SERIE_B_ARE': 'arezzo.png',
     'SERIE_B_ASC': 'ascoli.png',
     'SERIE_B_CRE': 'CREMON.png',
-    'SERIE_B_PIS': 'PISA.png',
+    'SERIE_B_PISB': 'PISA.png',
     'SERIE_B_VER': 'VER.png',
     'SERIE_B_VIC': 'vicenza.png',
 
@@ -684,6 +693,51 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     if (this.isNba() && !NbaRegolaDialogComponent.giaVista()) {
       setTimeout(() => this.apriRegolaNba(), 400);
     }
+    this.avviaCountdownChiusura();
+  }
+
+  ngOnDestroy(): void {
+    if (this.countdownChiusuraInterval) {
+      clearInterval(this.countdownChiusuraInterval);
+    }
+  }
+
+  /**
+   * Countdown al momento in cui il turno chiude (inizio della prima partita della giornata),
+   * mostrato nella barra info in alto al posto del generico stato del turno.
+   */
+  private avviaCountdownChiusura(): void {
+    const inizio = this.lega?.inizioProssimaGiornata ? new Date(this.lega.inizioProssimaGiornata) : null;
+    if (!inizio || isNaN(inizio.getTime())) {
+      this.countdownChiusuraAttivo = false;
+      return;
+    }
+
+    const aggiorna = () => {
+      const diffMs = inizio.getTime() - Date.now();
+      if (diffMs <= 0) {
+        this.countdownChiusuraAttivo = false;
+        if (this.countdownChiusuraInterval) {
+          clearInterval(this.countdownChiusuraInterval);
+        }
+        return;
+      }
+      const totalMinutes = Math.floor(diffMs / 60000);
+      const days = Math.floor(totalMinutes / 1440);
+      const hours = Math.floor((totalMinutes % 1440) / 60);
+      const minutes = totalMinutes % 60;
+      this.countdownChiusuraAttivo = true;
+      if (days > 0) {
+        this.countdownChiusura = `${days}g ${hours}h`;
+      } else if (hours > 0) {
+        this.countdownChiusura = `${hours}h ${minutes}m`;
+      } else {
+        this.countdownChiusura = `${minutes}m`;
+      }
+    };
+
+    aggiorna();
+    this.countdownChiusuraInterval = setInterval(aggiorna, 30000);
   }
 
   isNba(): boolean {
@@ -1347,8 +1401,36 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
     // Inizializza la lista filtrata con tutte le squadre
     this.squadreFiltrate = [...this.squadreConPartite];
 
+    this.caricaFormaSquadre();
+
     // Aggiorna i bottoni frecce dopo il caricamento
     setTimeout(() => this.updateScrollButtons(), 200);
+  }
+
+  /**
+   * Ultimi 5 risultati per ogni squadra della lista (badge "forma" sulla maglietta): una chiamata
+   * per squadra, in parallelo — leggono dalla tabella partite già cachata lato server, non
+   * dall'API esterna, quindi anche con 20-30 squadre il costo resta trascurabile.
+   */
+  private caricaFormaSquadre(): void {
+    const campionatoId = this.lega?.campionato?.id;
+    const anno = this.lega?.anno;
+    if (!campionatoId || !anno) return;
+
+    const sigle = [...new Set(this.squadreConPartite.map(s => s.sigla).filter(Boolean))];
+    if (sigle.length === 0) return;
+
+    forkJoin(
+      sigle.map(sigla =>
+        this.squadraService.getForma(campionatoId, anno, sigla).pipe(
+          catchError(() => of([] as string[]))
+        )
+      )
+    ).subscribe(risultati => {
+      const mappa: Record<string, string[]> = {};
+      sigle.forEach((sigla, i) => (mappa[sigla] = risultati[i] || []));
+      this.formaPerSquadra = mappa;
+    });
   }
 
   applicaFiltroGiocatoriAttivi(): void {
@@ -1401,6 +1483,18 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit {
 
   isCampionato(): boolean {
     return this.lega?.modalita === 'CAMPIONATO';
+  }
+
+  /**
+   * In Campionato, quante squadre hai già usato nel ciclo corrente su quante disponibili in
+   * totale (il ciclo si azzera da solo quando le usi tutte — vedi alreadyUsed). Info strategica:
+   * quante scelte hai ancora prima di essere costretto a ripetere una squadra.
+   */
+  get squadreUsateInfo(): { usate: number; totale: number } | null {
+    if (!this.isCampionato() || this.squadreConPartite.length === 0) return null;
+    const totale = this.squadreConPartite.length;
+    const usate = this.squadreConPartite.filter((s: any) => s.alreadyUsed).length;
+    return { usate, totale };
   }
 
   get squadreFiltrateDisponibili(): any[] {

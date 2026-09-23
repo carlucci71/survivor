@@ -43,9 +43,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -468,16 +470,21 @@ public class LegaService {
                                 giocataRequestDTO.setLegaId(idLega);
                                 giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
                                 giocataRequestDTO.setPunti(0);
-                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
+                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocataDiSistema(giocataRequestDTO);
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
                                 if (giocataDTO.getEsito() == null) {
                                     if (settimanaMultiPartita) {
-                                        // NBA: punti sommati su tutte le partite, esito dal bilancio della settimana
+                                        // NBA: punti sommati su tutte le partite. L'esito qui è solo estetico (colora la
+                                        // giocata nel calendario/recap) e va quindi ricavato dai punti stessi — non dal
+                                        // bilancio vittorie/sconfitte usato in Survivor per decidere l'eliminazione, che
+                                        // può disaccordarsi dai punti (es. 1 vittoria larga e 3 sconfitte di poco fanno
+                                        // KO per bilancio ma già 3 punti: mostrerebbe un rosso "sconfitta" accanto a un
+                                        // punteggio positivo).
                                         puntiRound = calcolaPuntiCampionatoSettimana(giocataDTO.getSquadraSigla(), partite);
                                         if (puntiRound != null) {
                                             giocataDTO.setPunti(puntiRound);
-                                            giocataDTO.setEsito(calcolaEsitoSurvivorSettimana(giocataDTO.getSquadraSigla(), partite));
+                                            giocataDTO.setEsito(calcolaEsitoCampionatoSettimana(puntiRound, giocataDTO.getSquadraSigla(), partite));
                                         }
                                     } else {
                                         puntiRound = calcolaPuntiCampionato(giocataDTO.getSquadraSigla(), partite);
@@ -505,6 +512,8 @@ public class LegaService {
                         //   PAREGGIO        → consuma 1 vita se disponibile; se 0 vite → eliminato
                         //   KO (sconfitta)  → eliminato immediatamente, indipendentemente dalle vite
                         //   Nessuna pick    → trattata come KO → eliminato immediatamente
+                        //   Eccezione NBA: il KO di una scelta effettivamente giocata (non di chi non
+                        //   ha fatto pick) consuma una vita come il pareggio — vedi consumaVita().
                         //
                         // Le eliminazioni vengono APPLICATE solo quando l'esito di TUTTI i giocatori
                         // ancora attivi per questo turno è noto (partite di tutti terminate): altrimenti
@@ -514,6 +523,9 @@ public class LegaService {
                         // eliminati nello stesso turno, nessuno viene eliminato: il turno azzera il gruppo
                         // e la lega termina dichiarandoli ex aequo (gestito in calcolaStatoLega).
                         Map<Long, Enumeratori.EsitoGiocata> esitoPerGiocatore = new HashMap<>();
+                        // Chi non ha fatto alcuna pick questo turno: per loro il KO resta eliminazione
+                        // diretta anche in NBA, la vita è un cuscinetto solo per chi ha scelto e sbagliato.
+                        Set<Long> pickMancante = new HashSet<>();
                         boolean turnoCompletoPerAttivi = true;
                         for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                             Enumeratori.StatoGiocatore statoGiocatore = giocatoreDTO.getStatiPerLega().get(idLega);
@@ -530,12 +542,13 @@ public class LegaService {
                             if (giocate.size() == 0) {
                                 // Nessuna pick: KO diretto, non dipende da altre partite del turno
                                 esito = Enumeratori.EsitoGiocata.KO;
+                                pickMancante.add(giocatoreDTO.getId());
                                 GiocataRequestDTO giocataRequestDTO = new GiocataRequestDTO();
                                 giocataRequestDTO.setGiocatoreId(giocatoreDTO.getId());
                                 giocataRequestDTO.setGiornata(nuovaGiornataCalcolata - legaDTO.getGiornataIniziale() + 1);
                                 giocataRequestDTO.setLegaId(idLega);
                                 giocataRequestDTO.setEsitoGiocata(Enumeratori.EsitoGiocata.KO);
-                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocata(giocataRequestDTO);
+                                inserisciGiocataServiceProvider.getIfAvailable().inserisciGiocataDiSistema(giocataRequestDTO);
                             } else if (giocate.size() == 1) {
                                 GiocataDTO giocataDTO = giocate.get(0);
                                 if (giocataDTO.getEsito() == null) {
@@ -566,15 +579,16 @@ public class LegaService {
                                 if (esito == null) {
                                     continue;
                                 }
+                                boolean pickReale = !pickMancante.contains(giocatoreDTO.getId());
                                 boolean eliminato;
-                                if (esito == Enumeratori.EsitoGiocata.KO) {
-                                    eliminato = true;
-                                } else if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
+                                if (esito == Enumeratori.EsitoGiocata.OK) {
+                                    eliminato = false;
+                                } else if (consumaVita(esito, settimanaMultiPartita, pickReale)) {
                                     short viteAttuali = Optional.ofNullable(
                                             giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
                                     eliminato = (viteAttuali - 1) <= 0;
                                 } else {
-                                    eliminato = false;
+                                    eliminato = true;
                                 }
                                 saraEliminato.put(giocatoreDTO.getId(), eliminato);
                             }
@@ -590,9 +604,10 @@ public class LegaService {
                                     if (esito == null) {
                                         continue;
                                     }
-                                    if (esito == Enumeratori.EsitoGiocata.KO) {
-                                        giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
-                                    } else if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
+                                    boolean pickReale = !pickMancante.contains(giocatoreDTO.getId());
+                                    if (esito == Enumeratori.EsitoGiocata.OK) {
+                                        // nessuna azione
+                                    } else if (consumaVita(esito, settimanaMultiPartita, pickReale)) {
                                         Short viteAttuali = Optional.ofNullable(
                                                 giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
                                         short nuoveVite = (short) (viteAttuali - 1);
@@ -607,8 +622,10 @@ public class LegaService {
                                                 vitaPersaRepository.save(new VitaPersa(giocatoreEntity, legaEntity, nuovaGiornataCalcolata));
                                             }
                                         }
+                                    } else {
+                                        // KO senza cuscinetto vite (non NBA, o nessuna pick effettuata)
+                                        giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                                     }
-                                    // esito == OK: nessuna azione
                                 }
                             }
                         }
@@ -656,7 +673,12 @@ public class LegaService {
         if (Boolean.TRUE.equals(p.getForzata())) return 3;
         Integer sc = p.getScoreCasa();
         Integer sf = p.getScoreFuori();
-        if (sc == null || sf == null) return 0;
+        if (sc == null || sf == null) {
+            // Partita terminata ma senza risultato (dato non ancora arrivato o partita annullata):
+            // non assegno 0 punti in via definitiva, attendo il risultato. Il leader può forzare la partita.
+            log.warn("calcolaPuntiCampionato: partita di '{}' TERMINATA senza punteggio, punti non assegnati (in attesa)", squadraSigla);
+            return null;
+        }
         if (p.getCasaSigla().equalsIgnoreCase(squadraSigla)) {
             return sc > sf ? 3 : sc.equals(sf) ? 1 : 0;
         } else {
@@ -716,6 +738,21 @@ public class LegaService {
                 && Enumeratori.CampionatiDisponibili.NBA_RS.name().equals(campionatoDTO.getId());
     }
 
+    /**
+     * Vero se questo esito, in Survivor, va gestito col sistema vite (consuma una vita se disponibile,
+     * elimina solo a vite esaurite) invece che con eliminazione diretta o sopravvivenza gratuita.
+     * Regola generale: solo il pareggio. Eccezione NBA: dato che il pareggio esatto sommando più
+     * partite nella settimana è quasi impossibile, anche perdere la settimana con una scelta
+     * effettivamente giocata (non per assenza di pick) consuma una vita invece di eliminare subito —
+     * altrimenti per l'NBA le vite non si userebbero quasi mai.
+     */
+    private boolean consumaVita(Enumeratori.EsitoGiocata esito, boolean settimanaMultiPartita, boolean pickReale) {
+        if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
+            return true;
+        }
+        return esito == Enumeratori.EsitoGiocata.KO && settimanaMultiPartita && pickReale;
+    }
+
     private List<PartitaDTO> partiteDellaSquadra(String squadraSigla, List<PartitaDTO> partite) {
         return partite.stream()
                 .filter(p -> p.getCasaSigla().equalsIgnoreCase(squadraSigla) || p.getFuoriSigla().equalsIgnoreCase(squadraSigla))
@@ -723,8 +760,9 @@ public class LegaService {
     }
 
     /**
-     * Differenza punti della squadra in una partita terminata (positiva se ha vinto). Senza punteggio
-     * la partita conta come sconfitta, come nel calcolo a partita singola.
+     * Differenza punti della squadra in una partita terminata (positiva se ha vinto). Va chiamata solo dopo
+     * aver verificato che la partita abbia un punteggio (vedi partitaSenzaRisultato): qui il caso senza
+     * punteggio resta gestito in modo defensive-only, per non propagare mai un NPE.
      */
     private int differenzaPunti(PartitaDTO p, String squadraSigla) {
         Integer sc = p.getScoreCasa();
@@ -734,15 +772,28 @@ public class LegaService {
     }
 
     /**
+     * Vero se la partita è TERMINATA ma priva di punteggio (dato non ancora arrivato o partita annullata)
+     * e non è stata forzata: in questo caso l'esito/punti non vanno assegnati, si deve attendere.
+     */
+    private boolean partitaSenzaRisultato(PartitaDTO p) {
+        return !Boolean.TRUE.equals(p.getForzata()) && (p.getScoreCasa() == null || p.getScoreFuori() == null);
+    }
+
+    /**
      * Esito settimanale NBA: vince chi ha piu' vittorie che sconfitte nelle partite della squadra. A parita'
      * decide la differenza punti complessiva, PAREGGIO solo se e' esattamente zero. Restituisce null finche'
-     * non sono terminate tutte le partite della squadra nella settimana.
+     * non sono terminate tutte le partite della squadra nella settimana, o se una di queste è terminata
+     * senza punteggio (altrimenti verrebbe contata come sconfitta anche se il dato non è ancora arrivato).
      */
     private Enumeratori.EsitoGiocata calcolaEsitoSurvivorSettimana(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return Enumeratori.EsitoGiocata.KO;
         List<PartitaDTO> matching = partiteDellaSquadra(squadraSigla, partite);
         if (matching.isEmpty()) return Enumeratori.EsitoGiocata.KO;
         if (matching.stream().anyMatch(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)) return null;
+        if (matching.stream().anyMatch(this::partitaSenzaRisultato)) {
+            log.warn("calcolaEsitoSurvivorSettimana: una partita di '{}' è TERMINATA senza punteggio, esito settimanale non ancora assegnato (in attesa)", squadraSigla);
+            return null;
+        }
         int vittorie = 0;
         int sconfitte = 0;
         int differenza = 0;
@@ -770,13 +821,18 @@ public class LegaService {
 
     /**
      * Punti Campionato NBA: somma su tutte le partite della squadra nella settimana (3 vittoria, 1 pareggio,
-     * 0 sconfitta). Restituisce null finche' non sono terminate tutte.
+     * 0 sconfitta). Restituisce null finche' non sono terminate tutte, o se una di queste è terminata senza
+     * punteggio (in attesa, come per il calcolo a partita singola).
      */
     private Integer calcolaPuntiCampionatoSettimana(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return 0;
         List<PartitaDTO> matching = partiteDellaSquadra(squadraSigla, partite);
         if (matching.isEmpty()) return 0;
         if (matching.stream().anyMatch(p -> p.getStato() != Enumeratori.StatoPartita.TERMINATA)) return null;
+        if (matching.stream().anyMatch(this::partitaSenzaRisultato)) {
+            log.warn("calcolaPuntiCampionatoSettimana: una partita di '{}' è TERMINATA senza punteggio, punti settimanali non assegnati (in attesa)", squadraSigla);
+            return null;
+        }
         int punti = 0;
         for (PartitaDTO p : matching) {
             if (Boolean.TRUE.equals(p.getForzata())) {
@@ -787,6 +843,23 @@ public class LegaService {
             punti += diff > 0 ? 3 : diff == 0 ? 1 : 0;
         }
         return punti;
+    }
+
+    /**
+     * Esito NBA per la sola modalità Campionato: coerente con i punti mostrati nel recap/calendario,
+     * a differenza del criterio usato in Survivor (bilancio vittorie/sconfitte) che può disaccordarsi
+     * dai punti su settimane miste. Confronta i punti ottenuti con il massimo possibile (3 per ogni
+     * partita giocata quella settimana): sopra metà = OK, sotto metà = KO, esattamente metà = PAREGGIO.
+     */
+    private Enumeratori.EsitoGiocata calcolaEsitoCampionatoSettimana(int puntiRound, String squadraSigla, List<PartitaDTO> partite) {
+        int numPartite = partiteDellaSquadra(squadraSigla, partite).size();
+        if (numPartite == 0) {
+            return Enumeratori.EsitoGiocata.KO;
+        }
+        int massimoPossibile = 3 * numPartite;
+        if (puntiRound * 2 > massimoPossibile) return Enumeratori.EsitoGiocata.OK;
+        if (puntiRound * 2 < massimoPossibile) return Enumeratori.EsitoGiocata.KO;
+        return Enumeratori.EsitoGiocata.PAREGGIO;
     }
 
     private Boolean vincente(String squadraSigla, List<PartitaDTO> partite) {
@@ -1108,10 +1181,12 @@ public class LegaService {
             }
             if (isCampionato) {
                 giocatoreDTO.setPuntiTotali(sommaPuntiGiocate(giocatoreDTO));
+            } else {
+                // In Campionato nessuno viene mai eliminato (KO = 0 punti): ricalcolare lo stato userebbe
+                // la logica Survivor e marcherebbe ELIMINATO chi ha semplicemente perso una partita.
+                Enumeratori.StatoGiocatore statoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);
+                giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), statoGiocatore);
             }
-
-            Enumeratori.StatoGiocatore statoGiocatore = ricalcolaStatoGiocatore(giocatoreDTO, legaDTO);
-            giocatoreDTO.getStatiPerLega().put(legaDTO.getId(), statoGiocatore);
 
         }
 

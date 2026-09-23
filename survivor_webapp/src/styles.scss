@@ -669,15 +669,18 @@ mat-dialog-actions {
 
 
 /* CLASSE CUSTOM PER DIALOG SELEZIONE GIOCATA - FORZA SCROLL */
-/* Nota: ViewEncapsulation.None fa sì che il CSS del componente (.seleziona-giocata-dialog
-   con background:#FFF) si applichi anche al .cdk-overlay-pane. Usiamo .cdk-overlay-pane
-   per avere specificità maggiore e annullare quel background sul pane. */
-.cdk-overlay-pane.seleziona-giocata-dialog {
+/* Nome del panelClass diverso da quello del div interno del componente (.seleziona-giocata-dialog):
+   quel componente usa ViewEncapsulation.None, quindi il suo CSS si applica a QUALSIASI elemento
+   con lo stesso nome di classe in tutta la pagina — se il panelClass avesse coincidesse col nome
+   interno, sia il pane esterno di Material sia il div interno riceverebbero le stesse regole
+   (border-radius/overflow) due volte, a livelli di nesting diversi, con rischio di artefatti visivi
+   ai bordi arrotondati (es. la X di chiusura tagliata male). Nome distinto = una sola applicazione. */
+.cdk-overlay-pane.seleziona-giocata-dialog-panel {
   background: transparent !important;
   overflow: hidden !important;
 }
 
-.seleziona-giocata-dialog {
+.seleziona-giocata-dialog-panel {
   max-height: 95vh !important;
   // Override CSS variable usata da Angular Material per il bg della surface
   --mdc-dialog-container-color: transparent;
@@ -692,6 +695,7 @@ mat-dialog-actions {
     background: transparent !important;
     background-color: transparent !important;
     border-radius: 16px !important;
+    box-shadow: none !important;
   }
 
   .mat-mdc-dialog-surface,
@@ -704,6 +708,7 @@ mat-dialog-actions {
     background: transparent !important;
     background-color: transparent !important;
     border-radius: 16px !important;
+    box-shadow: none !important;
   }
 
   .mdc-dialog__container {

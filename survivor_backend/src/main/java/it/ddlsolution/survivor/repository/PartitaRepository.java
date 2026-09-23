@@ -21,6 +21,26 @@ public interface PartitaRepository extends JpaRepository<Partita, Integer> {
 
     List<Partita> findByCampionato_IdAndImplementationExternalApiAndAnno(String campionatoId, String implementationExternalApi, short anno);
 
+    /**
+     * Ultime partite TERMINATA di una squadra (in casa o fuori) in un campionato/anno, più recenti
+     * per prime — usata per la "forma" (ultimi 5 risultati) mostrata in seleziona-giocata.
+     */
+    @Query("""
+            select p from Partita p
+            where p.campionato.id = :campionatoId
+            and p.anno = :anno
+            and p.implementationExternalApi = :implementationExternalApi
+            and p.stato = :stato
+            and (p.casaSigla = :sigla or p.fuoriSigla = :sigla)
+            order by p.orario desc
+            """)
+    List<Partita> findUltimeTerminateBySquadra(
+            @org.springframework.data.repository.query.Param("campionatoId") String campionatoId,
+            @org.springframework.data.repository.query.Param("anno") short anno,
+            @org.springframework.data.repository.query.Param("implementationExternalApi") String implementationExternalApi,
+            @org.springframework.data.repository.query.Param("stato") Enumeratori.StatoPartita stato,
+            @org.springframework.data.repository.query.Param("sigla") String sigla);
+
 
     @Transactional
     @Modifying

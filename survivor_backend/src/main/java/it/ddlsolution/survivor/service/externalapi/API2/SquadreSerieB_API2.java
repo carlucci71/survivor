@@ -29,7 +29,11 @@ enum SquadreSerieB_API2 implements IEnumSquadre {
         ASC("ASC"),
         BEN("BEN"),
         CRE("CRE"),
-        PIS("PIS"),
+        // Sigla interna diversa da Serie A: "PIS" è già occupata dalla Pisa storica di Serie A
+        // (squadra.id 15 in produzione, con giocate storiche reali che non si possono toccare).
+        // L'API esterna continua a restituire "PIS": mappiamo il suo codice esterno sul nome
+        // interno PISB, così le due Pisa (Serie A e Serie B) hanno righe squadra distinte.
+        PISB("PIS"),
         VER("VER"),
         VIC("VIC");
         final String siglaEsterna;

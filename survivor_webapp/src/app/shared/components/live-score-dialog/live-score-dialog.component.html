@@ -6,9 +6,18 @@
     </button>
   </div>
 
+  <!-- TAB CAMPIONATI - solo se l'utente ne segue più di uno -->
+  <div class="lsd-tabs" *ngIf="mostraTab">
+    <button type="button" class="lsd-tab" *ngFor="let gruppo of gruppi"
+            [class.lsd-tab--active]="gruppo.id === tabAttivo"
+            (click)="selezionaTab(gruppo.id)">
+      {{ gruppo.labelKey | translate }}
+    </button>
+  </div>
+
   <div class="lsd-body">
-    <div class="lsd-list" *ngIf="partite.length > 0; else vuoto">
-      <button type="button" class="lsd-match-row" *ngFor="let partita of partite"
+    <div class="lsd-list" *ngIf="partiteAttive.length > 0; else vuoto">
+      <button type="button" class="lsd-match-row" *ngFor="let partita of partiteAttive"
               [class.lsd-match-row--live]="partita.stato === 'IN_CORSO'"
               (click)="apriDettaglio(partita)">
 
