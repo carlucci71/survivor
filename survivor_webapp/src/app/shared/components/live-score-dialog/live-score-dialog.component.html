@@ -19,6 +19,7 @@
     <div class="lsd-list" *ngIf="partiteAttive.length > 0; else vuoto">
       <button type="button" class="lsd-match-row" *ngFor="let partita of partiteAttive"
               [class.lsd-match-row--live]="partita.stato === 'IN_CORSO'"
+              [class.lsd-match-row--no-detail]="!dettaglioDisponibile"
               (click)="apriDettaglio(partita)">
 
         <div class="lsd-team">
@@ -48,7 +49,7 @@
           <img *ngIf="getLogo(partita.fuoriSigla) as logo" [src]="logo" [alt]="partita.fuoriNome" class="lsd-logo" (error)="$any($event.target).style.display='none'">
         </div>
 
-        <mat-icon class="lsd-chevron">chevron_right</mat-icon>
+        <mat-icon *ngIf="dettaglioDisponibile" class="lsd-chevron">chevron_right</mat-icon>
       </button>
     </div>
 

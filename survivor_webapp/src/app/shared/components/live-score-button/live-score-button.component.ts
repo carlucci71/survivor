@@ -14,6 +14,7 @@ const ALTRI_CAMPIONATI: { id: string; labelKey: string }[] = [
   { id: 'SERIE_B', labelKey: 'LIVE_SCORE.TAB_SERIE_B' },
   { id: 'LIGA', labelKey: 'LIVE_SCORE.TAB_LIGA' },
   { id: 'PREMIER_LEAGUE', labelKey: 'LIVE_SCORE.TAB_PREMIER_LEAGUE' },
+  { id: 'CHAMPIONS_LEAGUE', labelKey: 'LIVE_SCORE.TAB_CHAMPIONS_LEAGUE' },
 ];
 
 /**

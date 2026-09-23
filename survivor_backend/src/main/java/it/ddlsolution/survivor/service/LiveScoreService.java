@@ -34,7 +34,7 @@ public class LiveScoreService {
     public static final String SERIE_A_ID = "SERIE_A";
     /** Campionati aggiunti dopo la Serie A per il bottone "risultati live": stesso meccanismo,
      *  ma su una cache/endpoint generici invece di uno dedicato come per la Serie A. */
-    public static final Set<String> ALTRI_CAMPIONATI_LIVE = Set.of("SERIE_B", "LIGA", "PREMIER_LEAGUE");
+    public static final Set<String> ALTRI_CAMPIONATI_LIVE = Set.of("SERIE_B", "LIGA", "PREMIER_LEAGUE", "CHAMPIONS_LEAGUE");
     /** TEMPORANEO PER TEST: true = mostra il bottone a tutti, anche senza lega Serie A attiva.
      *  Rimettere a false finito il test in ambiente di test. */
     private static final boolean BYPASS_CONTROLLO_LEGA_ATTIVA_PER_TEST = false;

@@ -2,6 +2,7 @@ package it.ddlsolution.survivor.service.externalapi.API2;
 
 import it.ddlsolution.survivor.dto.CampionatoDTO;
 import it.ddlsolution.survivor.dto.EventoPartitaDTO;
+import it.ddlsolution.survivor.dto.PartitaDTO;
 import it.ddlsolution.survivor.dto.PartitaLiveDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.util.Utility;
@@ -47,6 +48,13 @@ public class LiveScoreGazzettaClient {
      * terminate o non ancora iniziate), con punteggio, minuto (solo se in corso) ed eventi.
      */
     public List<PartitaLiveDTO> getPartiteGiornata(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        // Champions League risponde con un formato diverso (phase/subphase, come i Mondiali):
+        // niente minuto live né eventi qui (richiederebbe verificare quella struttura contro
+        // l'API reale), ma il punteggio è comunque quello vero via CalendarioAPI2, già in uso e
+        // funzionante per il calcolo dei pronostici — vedi getPartiteGiornataChampionsLeague.
+        if (EnumAPI2.Campionato.CHAMPIONS_LEAGUE.name().equals(campionatoDTO.getId())) {
+            return getPartiteGiornataChampionsLeague(campionatoDTO, giornata, anno);
+        }
         List<PartitaLiveDTO> ret = new ArrayList<>();
         try {
             String urlResolved = String.format(urlCalendar,
@@ -76,6 +84,39 @@ public class LiveScoreGazzettaClient {
                     campionatoDTO.getId(), giornata, anno, e.getMessage());
         }
         return ret;
+    }
+
+    /**
+     * Champions League: riusa CalendarioAPI2#getPartite (stesso codice già collaudato per il
+     * calcolo dei pronostici, che gestisce il formato phase/subphase di questo campionato) per
+     * punteggio/stato/orario — reali anche a partita in corso, vedi CalendarioAPI2.getResult().
+     * Non ci sono qui minuto live né eventi (gol/cartellini): quella struttura andrebbe verificata
+     * contro l'API reale prima di provare a estrarla.
+     */
+    private List<PartitaLiveDTO> getPartiteGiornataChampionsLeague(CampionatoDTO campionatoDTO, int giornata, short anno) {
+        try {
+            List<PartitaDTO> partite = calendarioAPI2.getPartite(campionatoDTO, giornata, anno);
+            List<PartitaLiveDTO> ret = new ArrayList<>();
+            for (PartitaDTO p : partite) {
+                ret.add(PartitaLiveDTO.builder()
+                        .casaNome(p.getCasaNome())
+                        .casaSigla(p.getCasaSigla())
+                        .fuoriNome(p.getFuoriNome())
+                        .fuoriSigla(p.getFuoriSigla())
+                        .scoreCasa(p.getScoreCasa())
+                        .scoreFuori(p.getScoreFuori())
+                        .minuto(null)
+                        .stato(p.getStato() != null ? p.getStato().name() : null)
+                        .intervallo(false)
+                        .orario(p.getOrario())
+                        .eventi(new ArrayList<>())
+                        .build());
+            }
+            return ret;
+        } catch (Exception e) {
+            log.warn("Errore recupero risultati live Champions League giornata={} anno={}: {}", giornata, anno, e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     private PartitaLiveDTO buildPartitaLive(Map<String, Object> match, String campionatoId, List<SquadraDTO> squadre) {
