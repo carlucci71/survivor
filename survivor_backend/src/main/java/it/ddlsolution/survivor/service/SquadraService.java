@@ -6,10 +6,14 @@ import it.ddlsolution.survivor.dto.RankingTennisDTO;
 import it.ddlsolution.survivor.dto.SportDTO;
 import it.ddlsolution.survivor.dto.SquadraDTO;
 import it.ddlsolution.survivor.entity.Campionato;
+import it.ddlsolution.survivor.entity.Partita;
 import it.ddlsolution.survivor.entity.Squadra;
 import it.ddlsolution.survivor.mapper.SquadraMapper;
+import it.ddlsolution.survivor.repository.PartitaRepository;
 import it.ddlsolution.survivor.repository.SquadraRepository;
 import it.ddlsolution.survivor.service.externalapi.ICalendario;
+import it.ddlsolution.survivor.util.Utility;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
@@ -35,6 +39,42 @@ public class SquadraService {
     private final ObjectProvider<CacheableService> cacheableProvider;
     private final ObjectProvider<ICalendario> calendarioProvider;
     private final RankingTennisService rankingTennisService;
+    private final PartitaRepository partitaRepository;
+    private final Utility utility;
+
+    /**
+     * Esito delle ultime partite TERMINATA di una squadra (più recente prima), fino a 5 — "forma"
+     * mostrata in seleziona-giocata. Riusa Enumeratori.EsitoGiocata (OK/KO/PAREGGIO) così il
+     * frontend può colorarla con gli stessi stili già usati per le giocate.
+     */
+    @Transactional(readOnly = true)
+    public List<Enumeratori.EsitoGiocata> formaSquadra(String campionatoId, short anno, String sigla) {
+        if (sigla == null || sigla.isBlank()) {
+            return List.of();
+        }
+        return partitaRepository.findUltimeTerminateBySquadra(
+                        campionatoId, anno, utility.getImplementationExternalApi(), Enumeratori.StatoPartita.TERMINATA, sigla)
+                .stream()
+                .limit(5)
+                .map(p -> esitoSquadraInPartita(p, sigla))
+                .toList();
+    }
+
+    private Enumeratori.EsitoGiocata esitoSquadraInPartita(Partita p, String sigla) {
+        if (p.getForzata()) {
+            return Enumeratori.EsitoGiocata.OK;
+        }
+        Integer sc = p.getScoreCasa();
+        Integer sf = p.getScoreFuori();
+        if (sc == null || sf == null) {
+            return Enumeratori.EsitoGiocata.KO;
+        }
+        if (sc.equals(sf)) {
+            return Enumeratori.EsitoGiocata.PAREGGIO;
+        }
+        boolean vince = sigla.equalsIgnoreCase(p.getCasaSigla()) ? sc > sf : sf > sc;
+        return vince ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
+    }
 
     @Transactional(readOnly = true)
     public List<SquadraDTO> getSquadreByCampionatoId(String campionatoId, short anno) {

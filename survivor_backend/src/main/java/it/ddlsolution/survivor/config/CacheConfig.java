@@ -45,9 +45,12 @@ public class CacheConfig {
 
         CaffeineCache campionati = new CaffeineCache(CAMPIONATI, tenMinutesCache.build());
         CaffeineCache liveSerieA = new CaffeineCache("LIVE_SERIE_A", liveScoreCache.build());
+        // Serie B / Liga / Premier League: stessa cache condivisa a breve TTL della Serie A,
+        // una entry per campionato (chiave = id campionato).
+        CaffeineCache liveScoreMulti = new CaffeineCache("LIVE_SCORE_MULTI", liveScoreCache.build());
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(List.of(cachePartite, sospensioni, campionati, sport, squadre, parametri, liveSerieA));
+        manager.setCaches(List.of(cachePartite, sospensioni, campionati, sport, squadre, parametri, liveSerieA, liveScoreMulti));
         return manager;
     }
 

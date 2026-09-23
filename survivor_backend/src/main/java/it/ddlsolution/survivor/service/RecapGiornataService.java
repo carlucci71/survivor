@@ -75,6 +75,15 @@ public class RecapGiornataService {
         java.util.Set<Long> giocatoriConGiocateFuture =
                 giocataRepository.findGiocatoreIdsWithGiocateAfterRound(legaId, giornata);
 
+        // Campionato: punti cumulati FINO a questa giornata, non il totale attuale del giocatore
+        // (che includerebbe anche le giornate successive già calcolate dopo questo recap).
+        boolean isCampionatoRecap = lega.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO;
+        Map<Long, Integer> puntiCumulatiPerGiocatoreId = isCampionatoRecap
+                ? giocataRepository.findByLega_IdAndGiornataLessThanEqual(legaId, giornata).stream()
+                        .collect(Collectors.groupingBy(g -> g.getGiocatore().getId(),
+                                Collectors.summingInt(g -> g.getPunti() != null ? g.getPunti() : 0)))
+                : Map.of();
+
         List<RecapGiornataDTO.PickEntry> picks = new ArrayList<>();
 
         for (GiocatoreLega gl : partecipanti) {
@@ -106,7 +115,9 @@ public class RecapGiornataService {
                     .squadraSigla(squadraSigla)
                     .esito(giocata != null ? giocata.getEsito() : null)
                     .punti(giocata != null ? giocata.getPunti() : null)
-                    .puntiTotali(gl.getPuntiTotali())
+                    .puntiTotali(isCampionatoRecap
+                            ? puntiCumulatiPerGiocatoreId.getOrDefault(giocatoreId, 0)
+                            : gl.getPuntiTotali())
                     .viteCorrente((int) gl.getViteCorrente())
                     .statoDopoGiornata(statoAttuale)
                     .eliminatoQuestaGiornata(eliminatoQuestaGiornata)

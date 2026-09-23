@@ -51,13 +51,24 @@ public class GiocataService {
 
     @Transactional
     public GiocatoreDTO inserisciGiocata(GiocataRequestDTO request) {
+        return inserisciGiocata(request, true);
+    }
+
+    /**
+     * @param controllaAutorizzazione false solo per l'inserimento di sistema (KO automatico durante il
+     *                                calcolo del turno per chi non ha giocato): l'utente autenticato in
+     *                                quel contesto è un utente tecnico senza ruoli sulla lega, quindi il
+     *                                controllo "sto giocando per un altro utente" non ha senso applicarlo.
+     */
+    @Transactional
+    public GiocatoreDTO inserisciGiocata(GiocataRequestDTO request, boolean controllaAutorizzazione) {
         Giocatore giocatore = giocatoreService.findByIdEntity(request.getGiocatoreId());
         Lega lega = legaService.findByIdEntity(request.getLegaId());
 
         // Defense-in-depth: verifica che l'utente autenticato abbia il diritto
         // di inserire la giocata per questo giocatore, indipendentemente dal guard AOP.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (controllaAutorizzazione && authentication != null && authentication.isAuthenticated()) {
             Long currentUserId = (Long) authentication.getPrincipal();
             Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;
             boolean isAdmin = authentication.getAuthorities().stream()
@@ -117,7 +128,9 @@ public class GiocataService {
 
         // Se non c'è forzatura dal guard, ma l'utente corrente è diverso dal giocatore,
         // aggiungiamo comunque un indicatore di forzatura
-        if (ObjectUtils.isEmpty(forzaturaText)) {
+        if (ObjectUtils.isEmpty(forzaturaText) && !controllaAutorizzazione) {
+            forzaturaText = "Giocata automatica: turno non giocato";
+        } else if (ObjectUtils.isEmpty(forzaturaText)) {
             if (authentication != null && authentication.isAuthenticated()) {
                 Long currentUserId = (Long) authentication.getPrincipal();
                 Long giocatoreUserId = giocatore.getUser() != null ? giocatore.getUser().getId() : null;

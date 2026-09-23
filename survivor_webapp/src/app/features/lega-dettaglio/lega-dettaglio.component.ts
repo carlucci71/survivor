@@ -885,7 +885,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       width: isDesktop ? '90vw' : '95vw',
       maxWidth: isDesktop ? '1100px' : '500px',
       maxHeight: '90vh',
-      panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
+      panelClass: ['seleziona-giocata-dialog-panel', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
@@ -1431,7 +1431,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     'SERIE_B_ARE': 'arezzo.png',
     'SERIE_B_ASC': 'ascoli.png',
     'SERIE_B_CRE': 'CREMON.png',
-    'SERIE_B_PIS': 'PISA.png',
+    'SERIE_B_PISB': 'PISA.png',
     'SERIE_B_VER': 'VER.png',
     'SERIE_B_VIC': 'vicenza.png',
 

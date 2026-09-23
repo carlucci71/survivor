@@ -31,6 +31,13 @@ public interface GiocataRepository extends JpaRepository<Giocata, Long> {
     List<Giocata> findByGiornataAndLega_Id(Integer giornata, Long legaId);
 
     /**
+     * Tutte le giocate di una lega fino a una giornata (relativa) inclusa: usata in Campionato per
+     * ricostruire i punti cumulati a quella giornata nel recap, invece del totale attuale del giocatore
+     * (che includerebbe anche le giornate successive).
+     */
+    List<Giocata> findByLega_IdAndGiornataLessThanEqual(Long legaId, Integer giornata);
+
+    /**
      * Controlla se un giocatore aveva una KO in una giornata precedente (era già eliminato)
      */
     boolean existsByGiocatore_IdAndLega_IdAndGiornataLessThanAndEsito(

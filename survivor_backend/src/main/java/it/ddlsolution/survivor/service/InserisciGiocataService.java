@@ -13,7 +13,19 @@ public class InserisciGiocataService {
     private final GiocataService giocataService;
 
     public GiocatoreDTO inserisciGiocata(GiocataRequestDTO request) {
-        GiocatoreDTO giocatoreDTO = giocataService.inserisciGiocata(request);
+        return inserisci(request, true);
+    }
+
+    /**
+     * Inserimento eseguito dal sistema durante il calcolo (KO automatico per chi non ha giocato): non
+     * deve dipendere dall'utente autenticato, che nello scheduler orario è un utente tecnico senza ruoli.
+     */
+    public GiocatoreDTO inserisciGiocataDiSistema(GiocataRequestDTO request) {
+        return inserisci(request, false);
+    }
+
+    private GiocatoreDTO inserisci(GiocataRequestDTO request, boolean controllaAutorizzazione) {
+        GiocatoreDTO giocatoreDTO = giocataService.inserisciGiocata(request, controllaAutorizzazione);
         GiocataDTO giocataDTO = giocatoreDTO.getGiocate()
                 .stream()
                 .filter(g -> g.getGiornata().equals(request.getGiornata()))
