@@ -8,6 +8,7 @@ import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.service.RankingTennisService;
 import it.ddlsolution.survivor.service.SquadraService;
 import it.ddlsolution.survivor.service.UtilCalendarioService;
+import it.ddlsolution.survivor.util.enums.Enumeratori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,12 @@ public class SquadraController {
         partite.stream().map(PartitaDTO::getCasaSigla).filter(s -> s != null && !s.isBlank()).forEach(siglaList::add);
         partite.stream().map(PartitaDTO::getFuoriSigla).filter(s -> s != null && !s.isBlank()).forEach(siglaList::add);
         return ResponseEntity.ok(siglaList);
+    }
+
+    /** Ultimi 5 risultati (più recente prima) di una squadra, per il badge "forma" in seleziona-giocata. */
+    @GetMapping("/forma/{campionatoId}/{anno}/{sigla}")
+    public ResponseEntity<List<Enumeratori.EsitoGiocata>> forma(@PathVariable String campionatoId, @PathVariable short anno, @PathVariable String sigla) {
+        return ResponseEntity.ok(squadraService.formaSquadra(campionatoId, anno, sigla));
     }
 
     @GetMapping("/search/{nome}")

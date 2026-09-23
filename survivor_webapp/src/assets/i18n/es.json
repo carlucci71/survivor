@@ -27,7 +27,11 @@
   "LIVE_SCORE": {
     "BUTTON_LABEL": "Resultados en vivo",
     "BUTTON_LABEL_GENERIC": "Resultados",
-    "DIALOG_TITLE": "Resultados Serie A",
+    "DIALOG_TITLE": "Resultados",
+    "TAB_SERIE_A": "Serie A",
+    "TAB_SERIE_B": "Serie B",
+    "TAB_LIGA": "Liga",
+    "TAB_PREMIER_LEAGUE": "Premier League",
     "DETAIL_TITLE": "Detalle del partido",
     "LIVE_BADGE": "En vivo",
     "HALF_TIME": "Descanso",
@@ -1050,6 +1054,9 @@
     "NO_SUSPENSIONS": "No hay ninguna suspensión definida"
   },
   "PLAY": {
+    "FORM_LABEL": "Últimos 5 resultados (el más reciente a la izquierda)",
+    "CLOSES_IN": "Cierra en",
+    "SQUADRE_USATE_HINT": "Equipos usados en este ciclo: cuando los hayas usado todos, podrás volver a empezar",
     "CONFIRM_REMOVE": {
       "TITLE": "¿Anular tu elección?",
       "BODY": "Tu selección se eliminará y podrás elegir otro equipo.",

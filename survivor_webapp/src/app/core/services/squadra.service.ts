@@ -98,4 +98,9 @@ export class SquadraService {
     return this.http.get<Squadra[]>(`${this.apiUrl}/sport/${sportId}`);
   }
 
+  /** Ultimi 5 risultati della squadra (più recente prima): 'OK' | 'KO' | 'PAREGGIO'. */
+  getForma(campionatoId: string, anno: number, sigla: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/forma/${campionatoId}/${anno}/${sigla}`);
+  }
+
 }

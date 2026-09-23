@@ -27,7 +27,11 @@
   "LIVE_SCORE": {
     "BUTTON_LABEL": "Live Scores",
     "BUTTON_LABEL_GENERIC": "Results",
-    "DIALOG_TITLE": "Serie A Results",
+    "DIALOG_TITLE": "Results",
+    "TAB_SERIE_A": "Serie A",
+    "TAB_SERIE_B": "Serie B",
+    "TAB_LIGA": "La Liga",
+    "TAB_PREMIER_LEAGUE": "Premier League",
     "DETAIL_TITLE": "Match detail",
     "LIVE_BADGE": "Live",
     "HALF_TIME": "Half-time",
@@ -962,6 +966,9 @@
     "NO_SUSPENSIONS": "No suspensions defined"
   },
   "PLAY": {
+    "FORM_LABEL": "Last 5 results (most recent on the left)",
+    "CLOSES_IN": "Closes in",
+    "SQUADRE_USATE_HINT": "Teams used in this cycle: once you've used them all, you can start over",
     "CONFIRM_REMOVE": {
       "TITLE": "Remove your pick?",
       "BODY": "Your selection will be removed and you can choose another team.",

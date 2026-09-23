@@ -885,7 +885,7 @@ export class LegaDettaglioComponent implements OnDestroy {
       width: isDesktop ? '90vw' : '95vw',
       maxWidth: isDesktop ? '1100px' : '500px',
       maxHeight: '90vh',
-      panelClass: ['seleziona-giocata-dialog', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
+      panelClass: ['seleziona-giocata-dialog-panel', isDesktop ? 'desktop-dialog' : 'mobile-dialog'],
       hasBackdrop: true,
       disableClose: false,
       autoFocus: false,
