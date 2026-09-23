@@ -28,6 +28,7 @@ const CAMPIONATO_LOGO: Record<string, string> = {
   SERIE_B: 'SERIE_B',
   LIGA: 'LIGA',
   PREMIER_LEAGUE: 'PREMIER_LEAGUE',
+  CHAMPIONS_LEAGUE: 'CHAMPIONS_LEAGUE',
 };
 
 /** Elenco delle partite della giornata, con tab in alto se l'utente segue più di un campionato:
@@ -69,12 +70,19 @@ export class LiveScoreDialogComponent {
     this.tabAttivo = id;
   }
 
+  /** La Champions League non ha marcatori/eventi (vedi LiveScoreGazzettaClient): niente dettaglio
+   *  cliccabile per quella tab, a differenza degli altri campionati. */
+  get dettaglioDisponibile(): boolean {
+    return this.tabAttivo !== 'CHAMPIONS_LEAGUE';
+  }
+
   getLogo(sigla: string): string | null {
     const idCampionato = CAMPIONATO_LOGO[this.tabAttivo] ?? 'SERIE_A';
     return this.teamLogoService.getLogoUrl('CALCIO', idCampionato, sigla);
   }
 
   apriDettaglio(partita: PartitaLive): void {
+    if (!this.dettaglioDisponibile) return;
     const isDesktop = window.innerWidth >= 768;
     this.dialog.open(LiveMatchDetailDialogComponent, {
       data: { partita },

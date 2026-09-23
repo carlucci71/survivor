@@ -149,6 +149,7 @@ export interface PronosticoVincitoreDialogData {
       background: var(--gradient-primary, linear-gradient(135deg, #0A3D91, #4FC3F7));
       color: #fff;
       overflow: hidden;
+      border-radius: 24px 24px 0 0;
     }
     .pv-hero::after {
       content: '';
@@ -212,6 +213,11 @@ export interface PronosticoVincitoreDialogData {
       display: flex;
       flex-direction: column;
       padding: 6px 20px 22px;
+      /* Angoli e sfondo espliciti anche qui, non solo su .pv-dialog: su alcuni motori di
+         rendering mobile l'overflow:hidden del contenitore non ritaglia in modo affidabile
+         un figlio con animazioni (bolle/glow) attive, lasciando l'angolo in basso squadrato. */
+      background: var(--bg-card, #fff);
+      border-radius: 0 0 24px 24px;
     }
 
     .pv-search-wrap {

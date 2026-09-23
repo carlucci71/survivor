@@ -23,6 +23,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .lsd-title {
@@ -101,6 +102,11 @@
   overflow-y: auto;
   flex: 1;
   min-height: 0;
+  /* Sfondo e angolo espliciti anche qui: su alcuni motori di rendering mobile l'overflow:hidden
+     del contenitore non ritaglia in modo affidabile un figlio scrollabile, lasciando l'angolo
+     in basso squadrato. */
+  background: var(--bg-card);
+  border-radius: 0 0 16px 16px;
 
   &::-webkit-scrollbar { width: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
@@ -141,6 +147,15 @@
     background: rgba(229, 57, 53, 0.05);
 
     &:hover { background: rgba(229, 57, 53, 0.09); }
+  }
+
+  // Campionati senza dettaglio (es. Champions League: nessun marcatore/evento disponibile):
+  // riga non cliccabile, niente hover né cursore a mano.
+  &--no-detail {
+    cursor: default;
+
+    &:hover { background: rgba(10, 61, 145, 0.03); }
+    &.lsd-match-row--live:hover { background: rgba(229, 57, 53, 0.05); }
   }
 }
 
