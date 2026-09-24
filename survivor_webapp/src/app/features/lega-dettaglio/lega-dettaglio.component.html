@@ -415,12 +415,15 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">
+                <mat-icon class="vc-emoji-icon">hourglass_top</mat-icon>
+                <span class="vc-emoji-count">{{ voto.nonVotanti.length }}</span>
+              </button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()" [attr.aria-label]="'ROUND_RESULTS.FORCE_LABEL' | translate" [matTooltip]="'ROUND_RESULTS.FORCE_LABEL' | translate">
-              <mat-icon>build</mat-icon>
+              <mat-icon>edit_calendar</mat-icon>
             </button>
           }
         </div>
@@ -458,7 +461,7 @@
                 @if (!isCampionato()) {
                   <th class="excel-header-cell status-col status-col--survivor">{{ 'LEAGUE.IN_GAME' | translate }}</th>
                 }
-                @for (giornata of giornataIndices; track giornata) {
+                @for (giornata of getVisibleGiornateDesktop(); track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
                       <div>{{ getDesGiornataTitle(giornata) }}</div>
@@ -503,7 +506,7 @@
                           <button class="history-toggle-btn history-badge-desktop"
                                   (click)="toggleFullHistory(giocatore, $event)"
                                   [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                            <mat-icon class="history-icon">leaderboard</mat-icon>
+                            <mat-icon class="history-icon">query_stats</mat-icon>
                           </button>
                         }
                         @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
@@ -533,8 +536,8 @@
                   </td>
                   }
 
-                  <!-- GIORNATE (Limitate o Complete) -->
-                  @for (giornata of getVisibleGiornateForPlayer(giocatore); track giornata) {
+                  <!-- GIORNATE (ultime N, niente scroll orizzontale su desktop/tablet) -->
+                  @for (giornata of getVisibleGiornateDesktop(); track giornata) {
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
@@ -770,12 +773,15 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">
+                <mat-icon class="vc-emoji-icon">hourglass_top</mat-icon>
+                <span class="vc-emoji-count">{{ voto.nonVotanti.length }}</span>
+              </button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()" [attr.aria-label]="'ROUND_RESULTS.FORCE_LABEL' | translate" [matTooltip]="'ROUND_RESULTS.FORCE_LABEL' | translate">
-              <mat-icon>build</mat-icon>
+              <mat-icon>edit_calendar</mat-icon>
             </button>
           }
         </div>
@@ -839,7 +845,7 @@
                 <button class="history-toggle-btn-mobile"
                         (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
                         [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                  <mat-icon class="history-icon-mobile">leaderboard</mat-icon>
+                  <mat-icon class="history-icon-mobile">query_stats</mat-icon>
                 </button>
               }
               <!-- Icona modifica per leader/admin -->
@@ -872,8 +878,9 @@
             </div>
           </div>
 
-          <!-- Storia giocate limitata (MAX 5) - ESPANDIBILE -->
+          <!-- Storia giocate completa - ESPANDIBILE, scorrevole orizzontalmente -->
           <div class="giornate-list-mobile" *ngIf="expandedPlayers[giocatore.id]" [@expandCollapse]>
+            <div class="giornate-scroll-mobile" appScrollToEnd>
             <!-- Header settimane -->
             <div class="settimane-header">
               <div *ngFor="let giornata of getVisibleGiornateForPlayer(giocatore)" class="settimana-col">
@@ -942,6 +949,7 @@
                   <div class="empty-cell-mobile">-</div>
                 }
               </div>
+            </div>
             </div>
           </div>
         </div>

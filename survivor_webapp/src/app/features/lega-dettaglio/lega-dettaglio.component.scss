@@ -6759,18 +6759,39 @@
   padding: 0 10px 10px;
 }
 
+// Contenitore scorrevole: header settimane e riga giocate scorrono insieme
+// orizzontalmente (tutte le giornate, non solo le ultime 5).
+.giornate-scroll-mobile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(10, 61, 145, 0.25);
+    border-radius: 4px;
+  }
+}
+
 .settimane-header {
   display: flex;
   gap: 4px;
   margin-bottom: 4px;
+  min-width: 100%;
+  justify-content: center;
+  justify-content: safe center;
 }
 
 // Stesse regole di larghezza di .giocata-col: se le due righe hanno colonne di misura
 // diversa, le etichette non restano centrate sopra la loro giocata (scivolano a destra).
 .settimana-col {
-  flex: 1;
-  min-width: 0;
-  max-width: 88px;
+  flex: 0 0 76px;
+  width: 76px;
   text-align: center;
 }
 
@@ -6785,13 +6806,15 @@
 .giocate-row {
   display: flex;
   gap: 4px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 100%;
+  justify-content: center;
+  justify-content: safe center;
 }
 
 .giocata-col {
-  flex: 1;
-  min-width: 0;
-  max-width: 88px; // evita che una singola giornata (es. GIO. 1 da sola) si stiri a tutta larghezza
+  flex: 0 0 76px;
+  width: 76px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8337,20 +8360,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  font-size: 1.35rem;
-  line-height: 1;
-  background: none;
-  border: 1px solid rgba(10, 61, 145, 0.13);
-  border-radius: 8px;
+  gap: 4px;
+  height: 28px;
+  padding: 0 9px;
+  background: rgba(251, 140, 0, 0.08);
+  border: 1.5px solid rgba(251, 140, 0, 0.3);
+  border-radius: 20px;
   cursor: pointer;
-  padding: 0;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+  .vc-emoji-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--warning-color);
+    flex-shrink: 0;
+  }
+
+  .vc-emoji-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--warning-color);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+  }
 
   &:hover, &--open {
-    background: rgba(10, 61, 145, 0.05);
-    border-color: rgba(10, 61, 145, 0.25);
+    background: rgba(251, 140, 0, 0.16);
+    border-color: rgba(251, 140, 0, 0.5);
+    transform: scale(1.04);
+  }
+
+  &:active {
+    transform: scale(0.96);
   }
 }
 

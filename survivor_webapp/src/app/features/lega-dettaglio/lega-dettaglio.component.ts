@@ -61,6 +61,7 @@ import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component'
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
+import { ScrollToEndDirective } from '../../shared/directives/scroll-to-end.directive';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -89,6 +90,7 @@ import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-
     LeaderTutorialComponent,
     PlayerTutorialComponent,
     MondialiGroupsTickerComponent,
+    ScrollToEndDirective,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -210,9 +212,6 @@ export class LegaDettaglioComponent implements OnDestroy {
   searchText: string = '';
   playerFilter: 'all' | 'active' | 'eliminated' = 'active';
   expandedPlayers: { [key: number]: boolean } = {};
-
-  // Giornate visibili
-  MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
 
   // ─── Voti per squadra (chips mobile) ─────────────────────────────────────
   votiSheet: { nome: string; sigla: string; nicknames: string[] } | null = null;
@@ -1034,18 +1033,17 @@ export class LegaDettaglioComponent implements OnDestroy {
     let endGiornata: number;
 
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 5;
-    // Mostra le ultime 5 giornate fino alla corrente (finestra scorrevole)
-    // Oltre 5 giocate appare il pulsante storico
+    // Mostra TUTTE le giornate dalla prima alla corrente: la tabella/card scorre
+    // orizzontalmente (colonna nome fissa) invece di troncare a un numero fisso
+    // di colonne con un'icona separata per il resto dello storico.
     endGiornata = Math.min(maxGiornata, giornataCorrente);
-    startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
+    startGiornata = giornataIniziale;
 
     // Popola le colonne visibili
     for (let i = startGiornata; i <= endGiornata; i++) {
       this.displayedColumns.push('giocata' + (i - giornataIniziale));
     }
 
-    // Popola giornataIndices solo con le giornate visibili (TEMPORANEO: MAX 10 PER TEST)
     this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
@@ -1063,18 +1061,28 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Restituisce le giornate visibili per un giocatore (max 5).
-   * Tutti i giocatori — attivi ed eliminati — ricevono lo stesso array di colonne
-   * in modo che il numero di <td> corrisponda sempre al numero di <th> dell'header.
+   * Restituisce le giornate da mostrare per un giocatore nella card mobile: tutte quelle
+   * della lega, la striscia scorre orizzontalmente (vedi .giornate-scroll-mobile). Tutti i
+   * giocatori — attivi ed eliminati — ricevono lo stesso array.
    */
   getVisibleGiornateForPlayer(_giocatore: Giocatore): number[] {
-    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+    return this.giornataIndices || [];
+  }
 
-    const totalRounds = this.giornataIndices.length;
-    if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
+  // Numero massimo di colonne giornata visibili nella tabella desktop/tablet (niente scroll lì)
+  MAX_VISIBLE_ROUNDS_DESKTOP = 5;
+
+  /**
+   * Restituisce le sole ultime N giornate per la tabella desktop/tablet, che non scorre
+   * orizzontalmente: stesso comportamento di prima dell'introduzione dello storico scorrevole
+   * in mobile. Lo storico completo su desktop resta disponibile dall'icona statistiche.
+   */
+  getVisibleGiornateDesktop(): number[] {
+    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+    if (this.giornataIndices.length <= this.MAX_VISIBLE_ROUNDS_DESKTOP) {
       return this.giornataIndices;
     }
-    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS_DESKTOP);
   }
 
   /**
@@ -1104,21 +1112,25 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Verifica se il giocatore ha più giocate del limite visibile nella tabella
-   * Mostra l'emoji dello storico se ci sono giocate oltre alle 5 visualizzate nella tabella
-   * ANCHE per i giocatori eliminati (devono poter vedere il loro storico completo)
+   * Verifica se ha senso mostrare l'icona statistiche (scorciatoia secondaria al dialog
+   * con vittorie/sconfitte/win rate): lo storico giornate è sempre visibile scorrendo la
+   * tabella/card, questa icona serve solo per il riepilogo aggregato quando c'è abbastanza
+   * storico da riepilogare. ANCHE per i giocatori eliminati (devono poter vedere le loro statistiche).
+   * Solo in Campionato: in Survivor la storia è già tutta visibile scorrendo (una serie di
+   * OK finché non arriva il KO che elimina), un win rate aggregato non aggiunge informazione.
    */
   hasMoreRounds(giocatore: Giocatore): boolean {
-    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona storico
+    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona statistiche
     if (this.TEST_MODE_FORCE_HISTORY_ICON) {
       return true; // Mostra sempre l'icona in modalità test
     }
 
+    if (!this.isCampionato()) return false;
     if (!giocatore?.giocate) return false;
 
     const legaId = this.lega?.id;
 
-    // Mostra storico dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
+    // Mostra le statistiche dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
     const giocateInLega = giocatore.giocate.filter(g => !legaId || g.legaId === legaId);
     return giocateInLega.length >= 6;
   }
