@@ -6784,6 +6784,10 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 4px;
+  // Fa partire lo scroll dalla giornata più recente (a destra): l'inizio dello scroll
+  // orizzontale segue la direction del contenitore, qui invertita apposta; le righe
+  // interne tornano ltr per mantenere l'ordine cronologico R.3 → R.N da sinistra a destra.
+  direction: rtl;
 
   &::-webkit-scrollbar {
     height: 4px;
@@ -6799,6 +6803,7 @@
 
 .settimane-header {
   display: flex;
+  direction: ltr;
   gap: 4px;
   margin-bottom: 4px;
   width: max-content;
@@ -6822,6 +6827,7 @@
 
 .giocate-row {
   display: flex;
+  direction: ltr;
   gap: 4px;
   flex-wrap: nowrap;
   width: max-content;
@@ -8375,20 +8381,39 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  font-size: 1.35rem;
-  line-height: 1;
-  background: none;
-  border: 1px solid rgba(10, 61, 145, 0.13);
-  border-radius: 8px;
+  gap: 4px;
+  height: 28px;
+  padding: 0 9px;
+  background: rgba(251, 140, 0, 0.08);
+  border: 1.5px solid rgba(251, 140, 0, 0.3);
+  border-radius: 20px;
   cursor: pointer;
-  padding: 0;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+  .vc-emoji-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--warning-color);
+    flex-shrink: 0;
+  }
+
+  .vc-emoji-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--warning-color);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+  }
 
   &:hover, &--open {
-    background: rgba(10, 61, 145, 0.05);
-    border-color: rgba(10, 61, 145, 0.25);
+    background: rgba(251, 140, 0, 0.16);
+    border-color: rgba(251, 140, 0, 0.5);
+    transform: scale(1.04);
+  }
+
+  &:active {
+    transform: scale(0.96);
   }
 }
 

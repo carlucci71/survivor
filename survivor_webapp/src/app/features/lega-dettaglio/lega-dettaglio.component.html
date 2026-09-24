@@ -415,12 +415,15 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">
+                <mat-icon class="vc-emoji-icon">hourglass_top</mat-icon>
+                <span class="vc-emoji-count">{{ voto.nonVotanti.length }}</span>
+              </button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()" [attr.aria-label]="'ROUND_RESULTS.FORCE_LABEL' | translate" [matTooltip]="'ROUND_RESULTS.FORCE_LABEL' | translate">
-              <mat-icon>build</mat-icon>
+              <mat-icon>edit_calendar</mat-icon>
             </button>
           }
         </div>
@@ -770,12 +773,15 @@
             @let voto = getGiocatoriAttiviPerGiornata();
             @if (voto.nonVotanti.length > 0) {
               <button class="vc-emoji-btn" (click)="toggleVotePanel($event)" [class.vc-emoji-btn--open]="showVotePanel"
-                      [title]="'LEAGUE.NO_SELECTION' | translate">👻</button>
+                      [title]="'LEAGUE.NO_SELECTION' | translate">
+                <mat-icon class="vc-emoji-icon">hourglass_top</mat-icon>
+                <span class="vc-emoji-count">{{ voto.nonVotanti.length }}</span>
+              </button>
             }
           }
           @if (!isDaAvviare() && lega.campionato?.id && (isAdmin() || isLeaderLega())) {
             <button class="show-results-link" (click)="apriRisultatiGiornata()" [attr.aria-label]="'ROUND_RESULTS.FORCE_LABEL' | translate" [matTooltip]="'ROUND_RESULTS.FORCE_LABEL' | translate">
-              <mat-icon>build</mat-icon>
+              <mat-icon>edit_calendar</mat-icon>
             </button>
           }
         </div>
