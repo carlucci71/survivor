@@ -5059,13 +5059,17 @@
 
 .excel-table-scroll {
 	width: 100%;
-	overflow-x: hidden; // NESSUNO SCROLL ORIZZONTALE SU DESKTOP/TABLET
+	// Scroll orizzontale per tutte le giornate (colonna nome fissa via position:sticky
+	// su .user-col/.user-cell) invece di troncare la tabella alle ultime 5 giornate.
+	overflow-x: auto;
 	overflow-y: auto;
 	max-height: 700px;
+	-webkit-overflow-scrolling: touch;
 
-	// Custom scrollbar elegante (solo verticale)
+	// Custom scrollbar elegante (verticale e orizzontale)
 	&::-webkit-scrollbar {
 		width: 10px;
+		height: 10px;
 	}
 
 	&::-webkit-scrollbar-track {
@@ -5153,9 +5157,16 @@
 
 		&.user-col {
 			text-align: left;
-			min-width: 150px;
-			max-width: 200px;
+			width: 170px; // larghezza fissa: serve a .user-cell per restare sticky allineata
+			min-width: 170px;
+			max-width: 170px;
 			padding-left: 16px;
+			// Colonna nome fissa mentre si scorre orizzontalmente tra le giornate
+			position: sticky;
+			left: 0;
+			z-index: 12; // sopra le altre celle header (thead è già sticky in verticale, z-index:10)
+			background: inherit; // stessa gradient dell'header, dipinta sulla cella stessa (serve da sticky)
+			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
 		}
 
 		&.status-col {
@@ -5377,7 +5388,15 @@
 			padding-left: 16px;
 			font-weight: 600;
 			color: #0A3D91;
-			position: relative;
+			width: 170px;
+			min-width: 170px;
+			max-width: 170px;
+			// Colonna nome fissa mentre si scorre orizzontalmente tra le giornate (vedi .excel-table-scroll)
+			position: sticky; // resta anche il riferimento di posizionamento per .delete-user-icon (absolute)
+			left: 0;
+			z-index: 6; // sopra le celle giornata durante lo scroll orizzontale
+			background: inherit; // eredita il background della riga (zebra/hover/eliminato/utente corrente)
+			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 
 			.user-name-wrapper {
 				display: flex;
@@ -6759,18 +6778,37 @@
   padding: 0 10px 10px;
 }
 
+// Contenitore scorrevole: header settimane e riga giocate scorrono insieme
+// orizzontalmente (tutte le giornate, non solo le ultime 5).
+.giornate-scroll-mobile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(10, 61, 145, 0.25);
+    border-radius: 4px;
+  }
+}
+
 .settimane-header {
   display: flex;
   gap: 4px;
   margin-bottom: 4px;
+  width: max-content;
 }
 
 // Stesse regole di larghezza di .giocata-col: se le due righe hanno colonne di misura
 // diversa, le etichette non restano centrate sopra la loro giocata (scivolano a destra).
 .settimana-col {
-  flex: 1;
-  min-width: 0;
-  max-width: 88px;
+  flex: 0 0 76px;
+  width: 76px;
   text-align: center;
 }
 
@@ -6785,13 +6823,13 @@
 .giocate-row {
   display: flex;
   gap: 4px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: max-content;
 }
 
 .giocata-col {
-  flex: 1;
-  min-width: 0;
-  max-width: 88px; // evita che una singola giornata (es. GIO. 1 da sola) si stiri a tutta larghezza
+  flex: 0 0 76px;
+  width: 76px;
   display: flex;
   flex-direction: column;
   align-items: center;

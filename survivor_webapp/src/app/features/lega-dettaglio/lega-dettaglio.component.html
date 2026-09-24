@@ -503,7 +503,7 @@
                           <button class="history-toggle-btn history-badge-desktop"
                                   (click)="toggleFullHistory(giocatore, $event)"
                                   [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                            <mat-icon class="history-icon">leaderboard</mat-icon>
+                            <mat-icon class="history-icon">query_stats</mat-icon>
                           </button>
                         }
                         @if(isCurrentUserGiocatore(giocatore) && getSamePickForCurrentUser()?.nicknames?.length) {
@@ -839,7 +839,7 @@
                 <button class="history-toggle-btn-mobile"
                         (click)="$event.stopPropagation(); toggleFullHistory(giocatore, $event)"
                         [matTooltip]="'LEAGUE.SHOW_FULL_HISTORY' | translate">
-                  <mat-icon class="history-icon-mobile">leaderboard</mat-icon>
+                  <mat-icon class="history-icon-mobile">query_stats</mat-icon>
                 </button>
               }
               <!-- Icona modifica per leader/admin -->
@@ -872,8 +872,9 @@
             </div>
           </div>
 
-          <!-- Storia giocate limitata (MAX 5) - ESPANDIBILE -->
+          <!-- Storia giocate completa - ESPANDIBILE, scorrevole orizzontalmente -->
           <div class="giornate-list-mobile" *ngIf="expandedPlayers[giocatore.id]" [@expandCollapse]>
+            <div class="giornate-scroll-mobile">
             <!-- Header settimane -->
             <div class="settimane-header">
               <div *ngFor="let giornata of getVisibleGiornateForPlayer(giocatore)" class="settimana-col">
@@ -942,6 +943,7 @@
                   <div class="empty-cell-mobile">-</div>
                 }
               </div>
+            </div>
             </div>
           </div>
         </div>

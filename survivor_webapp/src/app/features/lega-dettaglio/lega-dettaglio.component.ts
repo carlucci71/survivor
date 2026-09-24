@@ -211,9 +211,6 @@ export class LegaDettaglioComponent implements OnDestroy {
   playerFilter: 'all' | 'active' | 'eliminated' = 'active';
   expandedPlayers: { [key: number]: boolean } = {};
 
-  // Giornate visibili
-  MAX_VISIBLE_ROUNDS = 5; // Numero massimo di giornate visibili per default
-
   // ─── Voti per squadra (chips mobile) ─────────────────────────────────────
   votiSheet: { nome: string; sigla: string; nicknames: string[] } | null = null;
 
@@ -1034,18 +1031,17 @@ export class LegaDettaglioComponent implements OnDestroy {
     let endGiornata: number;
 
     const giornataCorrente = this.lega?.giornataCorrente || giornataIniziale;
-    const maxGiornateVisibili = 5;
-    // Mostra le ultime 5 giornate fino alla corrente (finestra scorrevole)
-    // Oltre 5 giocate appare il pulsante storico
+    // Mostra TUTTE le giornate dalla prima alla corrente: la tabella/card scorre
+    // orizzontalmente (colonna nome fissa) invece di troncare a un numero fisso
+    // di colonne con un'icona separata per il resto dello storico.
     endGiornata = Math.min(maxGiornata, giornataCorrente);
-    startGiornata = Math.max(giornataIniziale, endGiornata - maxGiornateVisibili + 1);
+    startGiornata = giornataIniziale;
 
     // Popola le colonne visibili
     for (let i = startGiornata; i <= endGiornata; i++) {
       this.displayedColumns.push('giocata' + (i - giornataIniziale));
     }
 
-    // Popola giornataIndices solo con le giornate visibili (TEMPORANEO: MAX 10 PER TEST)
     this.giornataIndices = Array.from({ length: endGiornata - startGiornata + 1 }, (_, i) => startGiornata + i);
 
     if (this.lega?.campionato) {
@@ -1063,18 +1059,13 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Restituisce le giornate visibili per un giocatore (max 5).
-   * Tutti i giocatori — attivi ed eliminati — ricevono lo stesso array di colonne
-   * in modo che il numero di <td> corrisponda sempre al numero di <th> dell'header.
+   * Restituisce le giornate da mostrare per un giocatore: tutte quelle della lega
+   * (tabella/card scorrono orizzontalmente). Tutti i giocatori — attivi ed eliminati —
+   * ricevono lo stesso array di colonne in modo che il numero di <td> corrisponda
+   * sempre al numero di <th> dell'header.
    */
   getVisibleGiornateForPlayer(_giocatore: Giocatore): number[] {
-    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
-
-    const totalRounds = this.giornataIndices.length;
-    if (totalRounds <= this.MAX_VISIBLE_ROUNDS) {
-      return this.giornataIndices;
-    }
-    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS);
+    return this.giornataIndices || [];
   }
 
   /**
@@ -1104,21 +1095,25 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Verifica se il giocatore ha più giocate del limite visibile nella tabella
-   * Mostra l'emoji dello storico se ci sono giocate oltre alle 5 visualizzate nella tabella
-   * ANCHE per i giocatori eliminati (devono poter vedere il loro storico completo)
+   * Verifica se ha senso mostrare l'icona statistiche (scorciatoia secondaria al dialog
+   * con vittorie/sconfitte/win rate): lo storico giornate è sempre visibile scorrendo la
+   * tabella/card, questa icona serve solo per il riepilogo aggregato quando c'è abbastanza
+   * storico da riepilogare. ANCHE per i giocatori eliminati (devono poter vedere le loro statistiche).
+   * Solo in Campionato: in Survivor la storia è già tutta visibile scorrendo (una serie di
+   * OK finché non arriva il KO che elimina), un win rate aggregato non aggiunge informazione.
    */
   hasMoreRounds(giocatore: Giocatore): boolean {
-    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona storico
+    // 🧪 MODALITÀ TEST: forza sempre la visualizzazione dell'icona statistiche
     if (this.TEST_MODE_FORCE_HISTORY_ICON) {
       return true; // Mostra sempre l'icona in modalità test
     }
 
+    if (!this.isCampionato()) return false;
     if (!giocatore?.giocate) return false;
 
     const legaId = this.lega?.id;
 
-    // Mostra storico dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
+    // Mostra le statistiche dalla sesta scelta in poi (per qualsiasi competizione: Serie A, Mondiali, Tennis...)
     const giocateInLega = giocatore.giocate.filter(g => !legaId || g.legaId === legaId);
     return giocateInLega.length >= 6;
   }
