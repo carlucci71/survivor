@@ -461,7 +461,7 @@
                 @if (!isCampionato()) {
                   <th class="excel-header-cell status-col status-col--survivor">{{ 'LEAGUE.IN_GAME' | translate }}</th>
                 }
-                @for (giornata of giornataIndices; track giornata) {
+                @for (giornata of getVisibleGiornateDesktop(); track giornata) {
                   <th class="excel-header-cell round-col"
                       [class.current-round]="giornata === lega.giornataCorrente">
                       <div>{{ getDesGiornataTitle(giornata) }}</div>
@@ -536,8 +536,8 @@
                   </td>
                   }
 
-                  <!-- GIORNATE (Limitate o Complete) -->
-                  @for (giornata of getVisibleGiornateForPlayer(giocatore); track giornata) {
+                  <!-- GIORNATE (ultime N, niente scroll orizzontale su desktop/tablet) -->
+                  @for (giornata of getVisibleGiornateDesktop(); track giornata) {
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
@@ -880,7 +880,7 @@
 
           <!-- Storia giocate completa - ESPANDIBILE, scorrevole orizzontalmente -->
           <div class="giornate-list-mobile" *ngIf="expandedPlayers[giocatore.id]" [@expandCollapse]>
-            <div class="giornate-scroll-mobile">
+            <div class="giornate-scroll-mobile" appScrollToEnd>
             <!-- Header settimane -->
             <div class="settimane-header">
               <div *ngFor="let giornata of getVisibleGiornateForPlayer(giocatore)" class="settimana-col">

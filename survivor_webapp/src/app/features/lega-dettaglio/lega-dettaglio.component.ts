@@ -61,6 +61,7 @@ import { StudioGiocataDialogComponent } from './studio-giocata-dialog.component'
 import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
+import { ScrollToEndDirective } from '../../shared/directives/scroll-to-end.directive';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -89,6 +90,7 @@ import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-
     LeaderTutorialComponent,
     PlayerTutorialComponent,
     MondialiGroupsTickerComponent,
+    ScrollToEndDirective,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -1059,13 +1061,28 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
-   * Restituisce le giornate da mostrare per un giocatore: tutte quelle della lega
-   * (tabella/card scorrono orizzontalmente). Tutti i giocatori — attivi ed eliminati —
-   * ricevono lo stesso array di colonne in modo che il numero di <td> corrisponda
-   * sempre al numero di <th> dell'header.
+   * Restituisce le giornate da mostrare per un giocatore nella card mobile: tutte quelle
+   * della lega, la striscia scorre orizzontalmente (vedi .giornate-scroll-mobile). Tutti i
+   * giocatori — attivi ed eliminati — ricevono lo stesso array.
    */
   getVisibleGiornateForPlayer(_giocatore: Giocatore): number[] {
     return this.giornataIndices || [];
+  }
+
+  // Numero massimo di colonne giornata visibili nella tabella desktop/tablet (niente scroll lì)
+  MAX_VISIBLE_ROUNDS_DESKTOP = 5;
+
+  /**
+   * Restituisce le sole ultime N giornate per la tabella desktop/tablet, che non scorre
+   * orizzontalmente: stesso comportamento di prima dell'introduzione dello storico scorrevole
+   * in mobile. Lo storico completo su desktop resta disponibile dall'icona statistiche.
+   */
+  getVisibleGiornateDesktop(): number[] {
+    if (!this.giornataIndices || this.giornataIndices.length === 0) return [];
+    if (this.giornataIndices.length <= this.MAX_VISIBLE_ROUNDS_DESKTOP) {
+      return this.giornataIndices;
+    }
+    return this.giornataIndices.slice(-this.MAX_VISIBLE_ROUNDS_DESKTOP);
   }
 
   /**

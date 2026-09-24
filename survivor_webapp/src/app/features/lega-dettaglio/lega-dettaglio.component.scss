@@ -5059,17 +5059,13 @@
 
 .excel-table-scroll {
 	width: 100%;
-	// Scroll orizzontale per tutte le giornate (colonna nome fissa via position:sticky
-	// su .user-col/.user-cell) invece di troncare la tabella alle ultime 5 giornate.
-	overflow-x: auto;
+	overflow-x: hidden; // NESSUNO SCROLL ORIZZONTALE SU DESKTOP/TABLET
 	overflow-y: auto;
 	max-height: 700px;
-	-webkit-overflow-scrolling: touch;
 
-	// Custom scrollbar elegante (verticale e orizzontale)
+	// Custom scrollbar elegante (solo verticale)
 	&::-webkit-scrollbar {
 		width: 10px;
-		height: 10px;
 	}
 
 	&::-webkit-scrollbar-track {
@@ -5157,16 +5153,9 @@
 
 		&.user-col {
 			text-align: left;
-			width: 170px; // larghezza fissa: serve a .user-cell per restare sticky allineata
-			min-width: 170px;
-			max-width: 170px;
+			min-width: 150px;
+			max-width: 200px;
 			padding-left: 16px;
-			// Colonna nome fissa mentre si scorre orizzontalmente tra le giornate
-			position: sticky;
-			left: 0;
-			z-index: 12; // sopra le altre celle header (thead è già sticky in verticale, z-index:10)
-			background: inherit; // stessa gradient dell'header, dipinta sulla cella stessa (serve da sticky)
-			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
 		}
 
 		&.status-col {
@@ -5388,15 +5377,7 @@
 			padding-left: 16px;
 			font-weight: 600;
 			color: #0A3D91;
-			width: 170px;
-			min-width: 170px;
-			max-width: 170px;
-			// Colonna nome fissa mentre si scorre orizzontalmente tra le giornate (vedi .excel-table-scroll)
-			position: sticky; // resta anche il riferimento di posizionamento per .delete-user-icon (absolute)
-			left: 0;
-			z-index: 6; // sopra le celle giornata durante lo scroll orizzontale
-			background: inherit; // eredita il background della riga (zebra/hover/eliminato/utente corrente)
-			box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+			position: relative;
 
 			.user-name-wrapper {
 				display: flex;
@@ -6784,10 +6765,6 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 4px;
-  // Fa partire lo scroll dalla giornata più recente (a destra): l'inizio dello scroll
-  // orizzontale segue la direction del contenitore, qui invertita apposta; le righe
-  // interne tornano ltr per mantenere l'ordine cronologico R.3 → R.N da sinistra a destra.
-  direction: rtl;
 
   &::-webkit-scrollbar {
     height: 4px;
@@ -6803,10 +6780,11 @@
 
 .settimane-header {
   display: flex;
-  direction: ltr;
   gap: 4px;
   margin-bottom: 4px;
-  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+  justify-content: safe center;
 }
 
 // Stesse regole di larghezza di .giocata-col: se le due righe hanno colonne di misura
@@ -6827,10 +6805,11 @@
 
 .giocate-row {
   display: flex;
-  direction: ltr;
   gap: 4px;
   flex-wrap: nowrap;
-  width: max-content;
+  min-width: 100%;
+  justify-content: center;
+  justify-content: safe center;
 }
 
 .giocata-col {
