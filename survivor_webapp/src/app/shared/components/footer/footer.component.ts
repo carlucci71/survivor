@@ -1264,10 +1264,10 @@ export class ChiSiamoDialogComponent implements OnInit{
             <!-- LINK STORE (solo da browser, non ha senso mostrarli dentro l'app nativa) -->
             <ng-container *ngIf="!isMobile">
               <span class="separator">|</span>
-              <a [href]="appStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link store-badge-link">
+              <a [href]="appStoreUrl" target="_system" rel="noopener noreferrer" class="footer-link store-badge-link">
                 <img src="assets/badge-app-store.png" [alt]="'FOOTER.APP_STORE' | translate" class="store-badge" />
               </a>
-              <a [href]="playStoreUrl" target="_blank" rel="noopener noreferrer" class="footer-link store-badge-link">
+              <a [href]="playStoreUrl" target="_system" rel="noopener noreferrer" class="footer-link store-badge-link">
                 <img src="assets/badge-google-play.png" [alt]="'FOOTER.GOOGLE_PLAY' | translate" class="store-badge" />
               </a>
             </ng-container>

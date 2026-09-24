@@ -266,10 +266,10 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <div class="guida-download-cta">
             <p class="download-label">{{ 'GUIDE.DOWNLOAD_CTA' | translate }}</p>
             <div class="download-links">
-              <a href="https://apps.apple.com/us/app/survivor/id6759219443" target="_blank" rel="noopener noreferrer" class="download-btn">
+              <a href="https://apps.apple.com/us/app/survivor/id6759219443" target="_system" rel="noopener noreferrer" class="download-btn">
                 <img src="assets/badge-app-store.png" [alt]="'FOOTER.APP_STORE' | translate" class="store-badge" />
               </a>
-              <a href="https://play.google.com/store/apps/details?id=com.survivor.app" target="_blank" rel="noopener noreferrer" class="download-btn">
+              <a href="https://play.google.com/store/apps/details?id=com.survivor.app" target="_system" rel="noopener noreferrer" class="download-btn">
                 <img src="assets/badge-google-play.png" [alt]="'FOOTER.GOOGLE_PLAY' | translate" class="store-badge" />
               </a>
             </div>
