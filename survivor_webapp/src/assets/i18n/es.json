@@ -1050,6 +1050,9 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Únete a una Liga",
+    "HERO_TITLE": "Encuentra tu reto",
+    "HERO_SUBTITLE": "Únete a una liga pública y juega con otros jugadores",
+    "HERO_COUNT": "{{count}} disponibles",
     "NO_LEAGUES": "No hay ninguna liga pública disponible por ahora.",
     "NO_RESULTS_FILTER": "Ninguna liga coincide con los filtros seleccionados.",
     "EMPTY_FILTER_TITLE": "Sin resultados",

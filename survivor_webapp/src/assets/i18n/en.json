@@ -962,6 +962,9 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Join a League",
+    "HERO_TITLE": "Find your challenge",
+    "HERO_SUBTITLE": "Join a public league and play with other players",
+    "HERO_COUNT": "{{count}} available",
     "NO_LEAGUES": "No free leagues available.",
     "NO_RESULTS_FILTER": "No leagues match the selected filters.",
     "EMPTY_FILTER_TITLE": "No results",
