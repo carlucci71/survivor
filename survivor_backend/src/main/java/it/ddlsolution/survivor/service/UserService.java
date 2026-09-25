@@ -41,6 +41,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public java.util.Optional<User> findByEmailIgnoreCaseOptional(String email) {
+        return userRepository.findByEmailIgnoreCase(email.toLowerCase());
+    }
+
+    @Transactional(readOnly = true)
     public User findByEmailExisting(String email) {
         return userRepository.findByEmailIgnoreCase(email.toLowerCase())
                 .orElseThrow(() -> new IllegalArgumentException("Utente non trovato"));

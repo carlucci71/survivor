@@ -12,6 +12,8 @@ export interface StudioGiocataDialogData {
   classifica: ClassificaRow[];
   giornataLabel: string;
   campionatoId?: string;
+  /** Sfida 1v1: tema bronzo invece del navy. */
+  duel?: boolean;
 }
 
 const MONDIALI_GIRONI: { label: string; teams: string[] }[] = [
@@ -49,7 +51,7 @@ const MONDIALI_TEAM_NAMES: Record<string, string> = {
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, TranslateModule],
   template: `
-    <div class="sg-dialog">
+    <div class="sg-dialog" [class.duel-theme]="data.duel">
       <!-- Header -->
       <div class="sg-header">
         <div class="sg-header-title">
@@ -703,6 +705,27 @@ const MONDIALI_TEAM_NAMES: Record<string, string> = {
     /* 1 colonna su schermi molto stretti */
     @media (max-width: 340px) {
       .sg-groups-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Sfida 1v1: palette bronzo al posto di navy/cyan */
+    .sg-dialog.duel-theme {
+      .sg-header { background: linear-gradient(135deg, #8B5A2B 0%, #A9702F 60%, #CD7F32 100%); }
+      .sg-tab.active { color: #8B5A2B; border-bottom-color: #CD7F32; }
+      .sg-match {
+        box-shadow: 0 2px 8px rgba(139,90,43,0.05);
+        &:hover { box-shadow: 0 4px 16px rgba(139,90,43,0.11); }
+        &.in-corso { border-left-color: #CD7F32; background: linear-gradient(135deg, #fff 80%, rgba(205,127,50,0.06) 100%); }
+      }
+      .sg-badge.live { background: linear-gradient(90deg, #8B5A2B, #CD7F32); }
+      .sg-team-badge.home-badge { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
+      .sg-score { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
+      .sg-standings-head { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
+      .sth-pts { color: #CD7F32; }
+      .sg-standing-row .sth-pts { color: #8B5A2B; }
+      .sg-cal-group, .sg-group-card { box-shadow: 0 2px 8px rgba(139,90,43,0.05); }
+      .sg-group-header { background: linear-gradient(135deg, #8B5A2B 0%, #A9702F 60%, #CD7F32 100%); }
+      .sgr-pts { color: #8B5A2B; }
+      .sg-group-row.qualify { background: linear-gradient(90deg, rgba(139,90,43,0.05) 0%, #fff 100%); }
     }
   `]
 })

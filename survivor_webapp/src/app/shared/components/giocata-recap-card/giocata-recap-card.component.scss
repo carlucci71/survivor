@@ -139,6 +139,22 @@
     }
   }
 
+  // Sfida 1v1 lampo: sfondo bronzo per distinguerla dalle leghe normali nella stessa fila
+  &.duello-1v1 {
+    background: rgba(205, 127, 50, 0.12);
+    color: #8B5A2B;
+
+    &.active {
+      background: rgba(205, 127, 50, 0.22);
+      color: #8B5A2B;
+      .pill-dot { background: #CD7F32; }
+    }
+    &:hover:not(.active) {
+      background: rgba(205, 127, 50, 0.18);
+      color: #8B5A2B;
+    }
+  }
+
   &:hover:not(.active) {
     color: rgba(10, 61, 145, 0.6);
     background: rgba(10, 61, 145, 0.04);

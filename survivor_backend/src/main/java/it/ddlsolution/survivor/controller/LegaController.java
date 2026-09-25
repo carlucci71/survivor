@@ -83,6 +83,12 @@ public class LegaController {
         return ResponseEntity.ok(Map.of("ESITO","OK"));
     }
 
+    @PostMapping("/invita-sfida-lampo/{idLega}")
+    public ResponseEntity<Map<String, String>> invitaSfidaLampo(@RequestBody LegaInvitaDTO legaInvitaDTO, @PathVariable("idLega") Long idLega) {
+        legaService.invitaSfidaLampo(idLega, legaInvitaDTO.getDestinatario());
+        return ResponseEntity.ok(Map.of("ESITO","OK"));
+    }
+
     @PutMapping("/calcola/{idLega}")
     @GuardiaDispositiva(idLegaParam = "idLega", rule = LeaderRule.class)
     public ResponseEntity<LegaDTO> calcola(@PathVariable Long idLega) {

@@ -299,28 +299,11 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   isCampionatoTerminato(c: Campionato): boolean {
-    if (!c.giornataDaGiocare || !c.numGiornate) return false;
-    if (c.giornataDaGiocare > c.numGiornate) return true;
-    // giornataDaGiocare === numGiornate: può essere l'ultima da giocare (futuro) o terminato (passato)
-    // usiamo iniziGiornate per capire se l'ultima giornata è già iniziata
-    if (c.giornataDaGiocare === c.numGiornate && c.iniziGiornate?.length) {
-      const lastIdx = c.numGiornate - 1;
-      // Se l'indice esatto non esiste (alcuni campionati hanno meno entry di numGiornate),
-      // usiamo l'ultima entry disponibile come proxy
-      const idx = Math.min(lastIdx, c.iniziGiornate.length - 1);
-      return new Date(c.iniziGiornate[idx]) < new Date();
-    }
-    return false;
+    return this.campionatoService.isCampionatoTerminato(c);
   }
 
-  /**
-   * Calendario non ancora pubblicato: la giornata da giocare e' quella successiva all'ultima con dati
-   * (es. NBA a fine stagione), quindi non ha una data di inizio e non si puo' creare una lega.
-   */
   isCampionatoNonDisponibile(c: Campionato): boolean {
-    if (!c.giornataDaGiocare || !c.numGiornate || c.giornataDaGiocare > c.numGiornate) return false;
-    if (!Array.isArray(c.iniziGiornate)) return false;
-    return c.iniziGiornate[c.giornataDaGiocare - 1] == null;
+    return this.campionatoService.isCampionatoNonDisponibile(c);
   }
 
   selectCampionato(c: Campionato): void {

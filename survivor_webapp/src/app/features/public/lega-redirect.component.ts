@@ -28,6 +28,14 @@ export class LegaRedirectComponent implements OnInit {
   // tentativo automatico ha già funzionato o è ancora in corso.
   inAttesaApertura = true;
 
+  // Chi riceve l'invito spesso non ha l'app: dopo il tentativo di apertura proponiamo lo store
+  // giusto per la sua piattaforma (iOS → App Store, altrimenti Play Store).
+  readonly appStoreUrl = 'https://apps.apple.com/us/app/survivor/id6759219443';
+  readonly playStoreUrl = 'https://play.google.com/store/apps/details?id=com.survivor.app';
+  get storeUrl(): string {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent) ? this.appStoreUrl : this.playStoreUrl;
+  }
+
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
