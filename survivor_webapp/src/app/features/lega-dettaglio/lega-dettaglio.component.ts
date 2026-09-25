@@ -2343,17 +2343,16 @@ export class LegaDettaglioComponent implements OnDestroy {
       `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.lega!.name}" su Survivor. Chi sopravvive di più? 😈`,
       `⚽ ${nomeUtente} ti aspetta nella lega "${this.lega!.name}" su Survivor. Ti unisci alla sfida? 🔥`,
     ];
-    // Il link va incluso anche dentro il testo: alcune app di destinazione (es. WhatsApp
-    // su Android via plugin Capacitor Share) ignorano il campo `url` separato e mostrano
-    // solo `text`, quindi senza questa riga il link non compare nel messaggio condiviso.
+    // Il link sta SOLO nel testo, senza campo `url`: alcune app (WhatsApp) ignorano `url`, altre
+    // lo accodano al testo e lo stampano due volte.
     const text = messaggi[Math.floor(Math.random() * messaggi.length)] + '\n' + url;
     try {
       const { Share } = await import('@capacitor/share');
-      await Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' });
+      await Share.share({ title: 'Unisciti alla mia lega!', text, dialogTitle: 'Condividi la lega' });
     } catch {
       // Su web puro, fallback navigator.share
       if (navigator.share) {
-        navigator.share({ title: 'Unisciti alla mia lega!', text, url }).catch(() => {});
+        navigator.share({ title: 'Unisciti alla mia lega!', text }).catch(() => {});
       }
     }
   }

@@ -463,11 +463,10 @@ export class SfidaLampoDialogComponent implements OnInit {
   shareLink(): void {
     const url = this.getShareUrl();
     const nomeUtente = this.authService.getCurrentUser()?.name ?? 'Un amico';
-    // Il link va incluso anche dentro il testo: alcune app di destinazione (es. WhatsApp
-    // su Android via plugin Capacitor Share) ignorano il campo `url` separato e mostrano
-    // solo `text`, quindi senza questa riga il link non compare nel messaggio condiviso.
+    // Il link sta SOLO nel testo, senza campo `url`: alcune app (WhatsApp) ignorano `url`, altre
+    // lo accodano al testo e lo stampano due volte.
     const text = this.translate.instant('DUEL.SHARE_MESSAGE', { nome: nomeUtente, name: this.name }) + '\n' + url;
-    const shareData = { title: this.translate.instant('DUEL.SHARE_TITLE'), text, url };
+    const shareData = { title: this.translate.instant('DUEL.SHARE_TITLE'), text };
     import('@capacitor/share').then(({ Share }) => {
       Share.share({ ...shareData, dialogTitle: this.translate.instant('DUEL.SHARE_TITLE') }).catch(() => {});
     }).catch(() => {
