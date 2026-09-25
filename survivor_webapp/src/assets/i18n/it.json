@@ -182,6 +182,7 @@
     "INVITE_AMBIGUOUS": "Più utenti con questo nickname: usa l'email.",
     "INVITE_ERROR": "Invio non riuscito, riprova.",
     "INVITE_DIVIDER": "oppure invita per email/nickname",
+    "OUT": "Eliminato",
     "QUICK_LABEL": "Sfida lampo"
   },
   "PROFILE": {

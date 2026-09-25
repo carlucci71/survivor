@@ -63,6 +63,7 @@ import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialo
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
 import { ScrollToEndDirective } from '../../shared/directives/scroll-to-end.directive';
 import { PlayerBadgesComponent } from '../../shared/components/player-badges/player-badges.component';
+import { DuelVersusComponent } from '../../shared/components/duel-versus/duel-versus.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -93,6 +94,7 @@ import { PlayerBadgesComponent } from '../../shared/components/player-badges/pla
     MondialiGroupsTickerComponent,
     ScrollToEndDirective,
     PlayerBadgesComponent,
+    DuelVersusComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -367,6 +369,9 @@ export class LegaDettaglioComponent implements OnDestroy {
       g => g.statiPerLega?.[this.lega!.id]?.value !== StatoGiocatore.ELIMINATO.value
     ) ?? [];
 
+    // Celebrazione solo per chi ha vinto: chi ha perso non deve vedere una medaglia che non è sua
+    if (!vincitori.some(g => this.isCurrentUserGiocatore(g))) return;
+
     this.dialog.open(VincitoriDialogComponent, {
       width: '92vw',
       maxWidth: '440px',
@@ -515,7 +520,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Se i dati sono già pronti apre subito, altrimenti aspetta il caricamento
     if (this.studioCaricato) {
       this.dialog.open(StudioGiocataDialogComponent, {
-        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
+        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id, duel: this.lega?.maxPartecipanti === 2 },
         panelClass: 'studio-dialog-panel',
         maxWidth: '520px',
         width: '96vw',
@@ -532,7 +537,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (this.studioCaricato) {
           clearInterval(waitOpen);
           this.dialog.open(StudioGiocataDialogComponent, {
-            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
+            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id, duel: this.lega?.maxPartecipanti === 2 },
             panelClass: 'studio-dialog-panel',
             maxWidth: '520px',
             width: '96vw',
@@ -1217,6 +1222,10 @@ export class LegaDettaglioComponent implements OnDestroy {
   /**
    * Verifica se un giocatore è quello dell'utente corrente loggato
    */
+  get myUserId(): number | undefined {
+    return this.authService.getCurrentUser()?.id;
+  }
+
   isCurrentUserGiocatore(giocatore: Giocatore): boolean {
     const currentUser = this.authService.getCurrentUser();
     return !!currentUser && giocatore.user?.id === currentUser.id;

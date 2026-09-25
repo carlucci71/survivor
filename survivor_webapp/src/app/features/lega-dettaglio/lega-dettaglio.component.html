@@ -364,6 +364,15 @@
 
       <!-- RICERCA E FILTRI PER DESKTOP/TABLET -->
       <div class="desktop-filters-section desktop-tablet-only">
+        @if (lega.maxPartecipanti === 2) {
+        <app-duel-versus
+          [giocatori]="lega.giocatori ?? []"
+          [legaId]="lega.id"
+          [myUserId]="myUserId"
+          [terminata]="isTerminata()"
+          [viteIniziali]="lega.viteIniziali">
+        </app-duel-versus>
+        } @else {
         <!-- Ricerca utente -->
         <div class="search-bar-desktop">
           <mat-icon class="search-icon-desktop">search</mat-icon>
@@ -409,16 +418,6 @@
         </div>
         }
 
-        @if (lega.maxPartecipanti === 2 && (lega.numPartecipanti ?? lega.giocatori?.length ?? 0) < 2) {
-          <div class="recap-waiting-row recap-waiting-row--list">
-            <span class="rw-hand" aria-hidden="true">
-              <span class="rw-finger rw-finger--1"></span>
-              <span class="rw-finger rw-finger--2"></span>
-              <span class="rw-finger rw-finger--3"></span>
-              <span class="rw-finger rw-finger--4"></span>
-            </span>
-            <span class="rw-text">{{ 'DUEL.WAITING_OPPONENT' | translate }}</span>
-          </div>
         }
       </div>
 
@@ -718,6 +717,15 @@
 
         <!-- FILTRI E RICERCA MODERNI -->
         <div class="mobile-filters-section">
+          @if (lega.maxPartecipanti === 2) {
+        <app-duel-versus
+          [giocatori]="lega.giocatori ?? []"
+          [legaId]="lega.id"
+          [myUserId]="myUserId"
+          [terminata]="isTerminata()"
+          [viteIniziali]="lega.viteIniziali">
+        </app-duel-versus>
+        } @else {
           <!-- Ricerca veloce -->
           <div class="search-bar-container">
             <mat-icon class="search-icon">search</mat-icon>
@@ -762,19 +770,8 @@
             </button>
           </div>
           }
-        </div>
-
-        @if (lega.maxPartecipanti === 2 && (lega.numPartecipanti ?? lega.giocatori?.length ?? 0) < 2) {
-          <div class="recap-waiting-row recap-waiting-row--list">
-            <span class="rw-hand" aria-hidden="true">
-              <span class="rw-finger rw-finger--1"></span>
-              <span class="rw-finger rw-finger--2"></span>
-              <span class="rw-finger rw-finger--3"></span>
-              <span class="rw-finger rw-finger--4"></span>
-            </span>
-            <span class="rw-text">{{ 'DUEL.WAITING_OPPONENT' | translate }}</span>
-          </div>
         }
+        </div>
 
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {

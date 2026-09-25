@@ -182,6 +182,7 @@
     "INVITE_AMBIGUOUS": "Several users share this nickname: use the email.",
     "INVITE_ERROR": "Could not send, try again.",
     "INVITE_DIVIDER": "or invite by email/nickname",
+    "OUT": "Eliminated",
     "QUICK_LABEL": "Quick duel"
   },
   "PROFILE": {

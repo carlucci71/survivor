@@ -182,6 +182,7 @@
     "INVITE_AMBIGUOUS": "Varios usuarios con este apodo: usa el email.",
     "INVITE_ERROR": "No se pudo enviar, inténtalo de nuevo.",
     "INVITE_DIVIDER": "o invita por email/apodo",
+    "OUT": "Eliminado",
     "QUICK_LABEL": "Duelo rápido"
   },
   "PROFILE": {

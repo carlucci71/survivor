@@ -30,11 +30,19 @@ export class VincitoriDialogComponent {
 
   readonly frase: string;
 
+  /** Tipologia del badge: duello se la lega è finita in due partecipanti, altrimenti per modalità. */
+  readonly tier: 'duel' | 'survivor' | 'camp';
+  readonly medalEmoji: string;
+
   constructor(
     public dialogRef: MatDialogRef<VincitoriDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: VincitoriDialogData,
     private translate: TranslateService
   ) {
+    this.tier = (this.data.lega.giocatori?.length ?? 0) === 2
+      ? 'duel'
+      : this.data.lega.modalita === 'CAMPIONATO' ? 'camp' : 'survivor';
+    this.medalEmoji = this.tier === 'duel' ? '⚔️' : this.tier === 'camp' ? '🏆' : '🛡️';
     const frasi: string[] = this.translate.instant('VINCITORI_DIALOG.FRASI');
     const list = Array.isArray(frasi) ? frasi : [];
     this.frase = list.length ? list[Math.floor(Math.random() * list.length)] : '🥂';
