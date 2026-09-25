@@ -90,7 +90,8 @@
     "SUBTITLE": "Open Survivor to join the league",
     "OPEN_APP": "Open in app",
     "CONTINUE_IN_BROWSER": "Continue in browser",
-    "HINT": "Don't have the app yet? Continue in browser to join anyway."
+    "DOWNLOAD_APP": "Download the app",
+    "HINT": "Don't have the app yet? Download it for free, then reopen the invite link. Or continue in browser to join right away."
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Not Started",
@@ -138,6 +139,44 @@
     "TITLE": "Legend",
     "ADMIN_PLAYED": "Play made by administrator",
     "FORCED_MATCH": "Match considered winning (forced)"
+  },
+  "BADGE": {
+    "DUELLO_1V1": "1v1 duel",
+    "SURVIVOR": "Survivor",
+    "CAMPIONATO": "Championship",
+    "RULES_TITLE": "Player history badges",
+    "RULES_TEXT": "Win a league or a 1v1 duel and you unlock that category's medal: bronze for 1v1 duels, silver for Survivor, gold for Championship — the rarer the achievement, the more precious the medal. Every 3 wins in the same category adds a star, without the medal ever disappearing."
+  },
+  "SHARE_APP": {
+    "TITLE": "Share the app with your friends",
+    "SUBTITLE": "Send the link to download Survivor",
+    "MESSAGE": "🏆 Download Survivor and challenge me: who survives longer? 💪",
+    "SHARE_TITLE": "Download Survivor"
+  },
+  "DUEL": {
+    "TITLE": "1v1 duel",
+    "CARD_TITLE": "Challenge a friend",
+    "CARD_SUBTITLE": "Quick duel, one on one",
+    "NAME_LABEL": "Duel name",
+    "NAME_PLACEHOLDER": "E.g. Me vs Mark",
+    "NAME_DEFAULT": "{{nome}}'s duel",
+    "SPORT_LABEL": "Sport",
+    "CAMPIONATO_LABEL": "Championship",
+    "CAMPIONATO_NOT_AVAILABLE": "Calendar not available yet",
+    "CREATE_BUTTON": "Create duel",
+    "CREATE_AND_INVITE": "Create & invite",
+    "CREATE_ERROR": "Couldn't create the duel, try again.",
+    "CREATED_TEXT": "Your duel \"{{name}}\" is ready! Invite your opponent with the link.",
+    "SHARE_BUTTON": "Invite a friend",
+    "SHARE_TITLE": "1v1 duel on Survivor",
+    "SHARE_MESSAGE": "⚔️ {{nome}} challenges you 1v1 on Survivor: \"{{name}}\"! Who lasts longer? Accept the challenge 💪",
+    "COPY_LINK": "Copy link",
+    "LINK_COPIED": "Link copied!",
+    "GO_TO_LEAGUE": "Go to league",
+    "BADGE_1V1": "⚔️ 1v1 duel",
+    "WAITING_OPPONENT": "Waiting for an opponent…",
+    "OUT": "Eliminated",
+    "QUICK_LABEL": "Quick duel"
   },
   "PROFILE": {
     "TITLE": "Your Profile",
@@ -222,6 +261,7 @@
     "ROUNDS_SURVIVED": "Rounds Survived",
     "FINAL_TEAM": "Final Team",
     "YOUR_STATS": "YOUR STATISTICS",
+    "YOUR_BADGES": "YOUR BADGES",
     "TOURNAMENTS_PLAYED": "Tournaments Played",
     "VICTORIES": "Victories",
     "PODIUMS": "Podiums",

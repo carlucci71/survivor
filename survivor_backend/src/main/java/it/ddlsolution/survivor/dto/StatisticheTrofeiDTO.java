@@ -10,4 +10,9 @@ public class StatisticheTrofeiDTO {
     private Integer vittorie;
     private Integer podi; // primi 3 posti
     private Double winRate; // percentuale vittorie
+
+    // Badge storico per categoria (vedi TrofeiRepository)
+    private Long vittorie1v1;
+    private Long vittorieSurvivor;
+    private Long vittorieCampionato;
 }

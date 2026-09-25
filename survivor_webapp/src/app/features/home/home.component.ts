@@ -35,6 +35,7 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
 import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 import { ProfiloDialogComponent } from '../../shared/components/info-banner/info-banner.component';
+import { SfidaLampoDialogComponent } from '../../shared/components/sfida-lampo-dialog/sfida-lampo-dialog.component';
 import { LiveScoreButtonComponent } from '../../shared/components/live-score-button/live-score-button.component';
 
 
@@ -84,6 +85,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   readonly currentYear = new Date().getFullYear();
   isLoadingLeghe = true;
   activeTab: 'private' | 'public' = 'private';
+  // Le liste sono chiuse di default (la home era troppo lunga): si aprono al tap sul tab
+  // e si richiudono col secondo tap sullo stesso tab.
+  legheAperte = false;
+
+  toggleTab(tab: 'private' | 'public'): void {
+    if (this.legheAperte && this.activeTab === tab) {
+      this.legheAperte = false;
+    } else {
+      this.activeTab = tab;
+      this.legheAperte = true;
+    }
+  }
+
+  isTabOpen(tab: 'private' | 'public'): boolean {
+    return (this.legheAperte || !!this.searchText?.trim()) && this.activeTab === tab;
+  }
   private giocatoreSubscription: any;
   selectedLegaId: number | null = null;
 
@@ -308,6 +325,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.groupLegheByName(leghe);
         if (preferredTab) {
           this.activeTab = preferredTab;
+          this.legheAperte = true;
         }
         this.isLoadingLeghe = false;
       },
@@ -421,6 +439,49 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   goToUniscitiLega(): void {
     this.router.navigate(['/joinLega']);
+  }
+
+  sfidaAnimating = false;
+
+  onDuelSealClick(): void {
+    // Piccola animazione di "scatto" prima di aprire il popup, non un click a freddo
+    this.sfidaAnimating = true;
+    setTimeout(() => {
+      this.sfidaAnimating = false;
+      this.apriSfidaLampo();
+    }, 380);
+  }
+
+  readonly appStoreUrl = 'https://apps.apple.com/us/app/survivor/id6759219443';
+  readonly playStoreUrl = 'https://play.google.com/store/apps/details?id=com.survivor.app';
+
+  async shareApp(store: 'ios' | 'android'): Promise<void> {
+    // I link vanno nel testo (non nel campo url): alcune app di destinazione ignorano `url`.
+    const link = store === 'ios' ? this.appStoreUrl : this.playStoreUrl;
+    const text = `${this.translate.instant('SHARE_APP.MESSAGE')}
+${link}`;
+    const title = this.translate.instant('SHARE_APP.SHARE_TITLE');
+    try {
+      const { Share } = await import('@capacitor/share');
+      await Share.share({ title, text, dialogTitle: title });
+    } catch {
+      if (navigator.share) {
+        navigator.share({ title, text }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          this.snackBar.open(this.translate.instant('DUEL.LINK_COPIED'), '', { duration: 2500 });
+        }).catch(() => {});
+      }
+    }
+  }
+
+  apriSfidaLampo(): void {
+    this.dialog.open(SfidaLampoDialogComponent, {
+      width: '92vw',
+      maxWidth: '400px',
+      panelClass: 'pv-dialog-panel',
+      autoFocus: false,
+    });
   }
 
   openInvitaDialog(lega: Lega): void {

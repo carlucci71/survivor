@@ -24,6 +24,7 @@
             class="league-pill"
             [class.active]="i === selectedIndex"
             [class.da-avviare]="item.lega.stato.value === 'DA_AVVIARE'"
+            [class.duello-1v1]="item.lega.maxPartecipanti === 2"
             [attr.aria-selected]="i === selectedIndex"
             role="tab"
             (click)="selectLega(i)"

@@ -21,7 +21,11 @@
       <p class="mr-subtitle">{{ 'LEGA_REDIRECT.SUBTITLE' | translate }}</p>
 
       <div class="mr-actions">
-        <button class="mr-btn mr-btn--primary" (click)="openApp()">
+        <a class="mr-btn mr-btn--primary" [href]="storeUrl" target="_blank" rel="noopener noreferrer">
+          <span class="mr-btn-icon">&#11015;&#65039;</span>
+          <span>{{ 'LEGA_REDIRECT.DOWNLOAD_APP' | translate }}</span>
+        </a>
+        <button class="mr-btn mr-btn--secondary" (click)="openApp()">
           <span class="mr-btn-icon">&#128241;</span>
           <span>{{ 'LEGA_REDIRECT.OPEN_APP' | translate }}</span>
         </button>
@@ -152,6 +156,8 @@
 
   .mr-btn:hover  { transform: translateY(-2px); }
   .mr-btn:active { transform: translateY(0); }
+
+  a.mr-btn { text-decoration: none; box-sizing: border-box; }
 
   .mr-btn--primary {
     background: linear-gradient(135deg, #0A3D91, #1565C0);

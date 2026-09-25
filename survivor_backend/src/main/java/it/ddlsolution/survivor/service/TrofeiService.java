@@ -61,7 +61,16 @@ public class TrofeiService {
         log.debug("Statistiche calcolate - Vittorie: {}, Podi: {}, Tornei: {}, WinRate: {}%",
                 vittorie, podi, torneiGiocati, stats.getWinRate());
 
+        // Badge storico per categoria (riusa le query batched con un solo id)
+        stats.setVittorie1v1(primaRiga(trofeiRepository.countVittorie1v1ByGiocatoreIds(List.of(giocatoreId))));
+        stats.setVittorieSurvivor(primaRiga(trofeiRepository.countVittorieSurvivorByGiocatoreIds(List.of(giocatoreId))));
+        stats.setVittorieCampionato(primaRiga(trofeiRepository.countVittorieCampionatoByGiocatoreIds(List.of(giocatoreId))));
+
         return stats;
+    }
+
+    private Long primaRiga(List<Object[]> righe) {
+        return righe.isEmpty() ? 0L : (Long) righe.get(0)[1];
     }
 
     /**
