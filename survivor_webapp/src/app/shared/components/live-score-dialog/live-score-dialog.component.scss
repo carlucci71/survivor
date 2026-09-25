@@ -1,3 +1,4 @@
+/* Popup risultati live: colori del tema (var(--gradient-primary), ecc.) */
 :host {
   display: block;
   font-family: 'Poppins', sans-serif;
@@ -5,42 +6,102 @@
 
 .lsd-container {
   background: var(--bg-card);
-  border-radius: 16px;
+  border-radius: 24px;
+  /* clip-path: ritaglio affidabile degli angoli anche con figli animati/scrollabili */
+  clip-path: inset(0 round 24px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 560px;
   max-height: 85vh;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
 }
 
 /* ── HEADER ── */
 .lsd-header {
   position: relative;
-  padding: 10px 48px 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 52px 16px 18px;
   background: var(--gradient-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.lsd-bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+.lsd-b1 { width: 90px; height: 90px; right: -20px; top: -40px; }
+.lsd-b2 { width: 50px; height: 50px; right: 60px; bottom: -26px; }
+
+.lsd-header-icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  border-radius: 16px 16px 0 0;
+
+  mat-icon { color: #fff; font-size: 22px; width: 22px; height: 22px; }
+}
+
+.lsd-header-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .lsd-title {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 1.02rem;
+  font-weight: 800;
   color: #fff;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  line-height: 1.15;
+}
+
+.lsd-subtitle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.lsd-live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px;
+  border-radius: 20px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #fff;
+  background: rgba(229, 57, 53, 0.9);
 }
 
 .lsd-close-btn {
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 12px;
   transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   border: none;
@@ -48,23 +109,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.25s;
 
-  &:hover { background: rgba(255, 255, 255, 0.35); }
+  &:hover { background: rgba(255, 255, 255, 0.35); transform: translateY(-50%) rotate(90deg); }
 
-  mat-icon {
-    color: #fff;
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-  }
+  mat-icon { color: #fff; font-size: 18px; width: 18px; height: 18px; }
 }
 
 /* ── TAB CAMPIONATI ── */
 .lsd-tabs {
   display: flex;
-  gap: 6px;
-  padding: 10px 10px 0;
+  gap: 8px;
+  padding: 12px 14px 4px;
   overflow-x: auto;
   flex-shrink: 0;
   scrollbar-width: none;
@@ -74,39 +130,35 @@
 
 .lsd-tab {
   flex: 0 0 auto;
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: 30px;
   border: 1.5px solid var(--border-color);
   background: var(--bg-card);
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.2s ease;
 
-  &:hover { border-color: var(--primary-color); }
+  &:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
   &--active {
     background: var(--gradient-primary);
     border-color: transparent;
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(10, 61, 145, 0.25);
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(10, 61, 145, 0.25);
   }
 }
 
 /* ── BODY ── */
 .lsd-body {
-  padding: 8px 10px;
+  padding: 12px 14px 16px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-  /* Sfondo e angolo espliciti anche qui: su alcuni motori di rendering mobile l'overflow:hidden
-     del contenitore non ritaglia in modo affidabile un figlio scrollabile, lasciando l'angolo
-     in basso squadrato. */
   background: var(--bg-card);
-  border-radius: 0 0 16px 16px;
 
   &::-webkit-scrollbar { width: 4px; }
   &::-webkit-scrollbar-track { background: transparent; }
@@ -116,73 +168,103 @@
 .lsd-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 @keyframes lsd-tab-fade {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── CARD PARTITA ── */
 .lsd-match-row {
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
-  background: rgba(10, 61, 145, 0.03);
-  border: none;
-  border-left: 3px solid var(--border-color);
-  border-radius: 10px;
+  padding: 12px 12px 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
-  transition: background 0.15s ease, border-color 0.15s ease;
-  animation: lsd-tab-fade 0.22s ease-out;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.2s ease;
+  animation: lsd-tab-fade 0.35s ease-out both;
 
-  &:hover { background: rgba(10, 61, 145, 0.07); }
-
-  &--live {
-    border-left-color: var(--error-color);
-    background: rgba(229, 57, 53, 0.05);
-
-    &:hover { background: rgba(229, 57, 53, 0.09); }
+  /* barretta di stato a sinistra: grigio = da giocare */
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--border-color);
   }
 
-  // Campionati senza dettaglio (es. Champions League: nessun marcatore/evento disponibile):
-  // riga non cliccabile, niente hover né cursore a mano.
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12); }
+
+  &--ft::before { background: var(--success-color); }
+
+  &--live {
+    border-color: rgba(229, 57, 53, 0.35);
+    background: linear-gradient(135deg, var(--bg-card) 60%, rgba(229, 57, 53, 0.06));
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.14);
+
+    &::before { background: var(--error-color); }
+  }
+
+  // Campionati senza dettaglio (es. Champions League): riga non cliccabile
   &--no-detail {
     cursor: default;
-
-    &:hover { background: rgba(10, 61, 145, 0.03); }
-    &.lsd-match-row--live:hover { background: rgba(229, 57, 53, 0.05); }
+    &:hover { transform: none; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06); }
+    &.lsd-match-row--live:hover { box-shadow: 0 4px 16px rgba(229, 57, 53, 0.14); }
   }
 }
 
 .lsd-team {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 6px;
   min-width: 0;
+  text-align: center;
 
-  &--away { justify-content: flex-end; text-align: right; }
+  /* "away" resta simmetrico: stessa colonna centrata */
+  &--away { text-align: center; }
+}
+
+.lsd-logo-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lsd-logo {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  flex-shrink: 0;
 }
 
 .lsd-team-name {
-  font-size: 0.78rem;
-  font-weight: 600;
+  max-width: 100%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
   color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .lsd-center {
@@ -190,22 +272,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
-  min-width: 58px;
+  gap: 4px;
+  min-width: 78px;
 }
 
 .lsd-score {
-  font-size: 0.88rem;
+  min-width: 64px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.25rem;
   font-weight: 800;
+  letter-spacing: 1px;
   color: var(--text-primary);
+  background: rgba(10, 61, 145, 0.06);
   white-space: nowrap;
-  line-height: 1.2;
+  line-height: 1.25;
 }
+.lsd-match-row--live .lsd-score { color: var(--error-color); background: rgba(229, 57, 53, 0.1); }
 
 .lsd-date {
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   color: var(--text-secondary);
   white-space: nowrap;
   line-height: 1.2;
@@ -214,13 +303,13 @@
 .lsd-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 0.54rem;
-  padding: 0 5px;
-  border-radius: 8px;
-  font-weight: 700;
+  gap: 4px;
+  font-size: 0.6rem;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   white-space: nowrap;
 
   &--upcoming { background: rgba(107, 114, 128, 0.12); color: var(--text-secondary); }
@@ -229,11 +318,13 @@
 }
 
 .lsd-live-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--error-color);
   animation: lsd-pulse 1.6s ease-in-out infinite;
+
+  &--on-dark { background: #fff; }
 }
 
 @keyframes lsd-pulse {
@@ -244,9 +335,11 @@
 .lsd-chevron {
   flex-shrink: 0;
   color: var(--text-secondary);
+  opacity: 0.6;
   font-size: 20px;
   width: 20px;
   height: 20px;
+  margin-left: -2px;
 }
 
 .lsd-empty {
@@ -254,13 +347,22 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 32px 16px;
+  padding: 36px 16px;
   color: var(--text-secondary);
 
-  mat-icon { font-size: 36px; width: 36px; height: 36px; opacity: 0.5; }
+  mat-icon { font-size: 40px; width: 40px; height: 40px; opacity: 0.5; }
   span { font-size: 0.85rem; }
 }
 
 @media (max-width: 380px) {
+  .lsd-match-row { padding: 10px 8px 10px 14px; gap: 4px; }
   .lsd-team-name { font-size: 0.72rem; }
+  .lsd-logo-wrap { width: 36px; height: 36px; }
+  .lsd-logo { width: 24px; height: 24px; }
+  .lsd-score { font-size: 1.1rem; min-width: 56px; padding: 3px 8px; }
+  .lsd-center { min-width: 66px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lsd-match-row { animation: none; }
+  .lsd-live-dot { animation: none; }
 }
