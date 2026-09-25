@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
 
@@ -7,7 +7,7 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
   standalone: true,
   imports: [CommonModule, AirHockeyComponent],
   template: `
-    <div class="hero" [attr.data-sport]="active">
+    <div class="hero" #hero>
 
       <!-- Aurora layers -->
       <div class="aurora">
@@ -20,54 +20,59 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       <!-- Field SVG (cycles automatically) -->
       <div class="fields">
         <svg class="field" [class.on]="active===0"
-             viewBox="60 20 680 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" pathLength="1" x="60" y="20" width="680" height="220" rx="4"/>
-          <line class="fl" pathLength="1" x1="400" y1="20" x2="400" y2="240"/>
-          <circle class="fl" pathLength="1" cx="400" cy="130" r="52" fill="none"/>
-          <circle class="fl" pathLength="1" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
-          <rect class="fl" pathLength="1" x="60" y="68" width="110" height="124"/>
-          <rect class="fl" pathLength="1" x="60" y="95" width="52" height="70"/>
-          <path class="fl" pathLength="1" d="M170,105 A28,28 0 0,1 170,155" fill="none"/>
-          <rect class="fl" pathLength="1" x="630" y="68" width="110" height="124"/>
-          <rect class="fl" pathLength="1" x="688" y="95" width="52" height="70"/>
-          <path class="fl" pathLength="1" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
-          <path class="fl" pathLength="1" d="M74,20 A14,14 0 0,1 60,34"/>
-          <path class="fl" pathLength="1" d="M726,20 A14,14 0 0,0 740,34"/>
-          <path class="fl" pathLength="1" d="M60,226 A14,14 0 0,1 74,240"/>
-          <path class="fl" pathLength="1" d="M740,226 A14,14 0 0,0 726,240"/>
+             viewBox="212 8 376 244" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" pathLength="1" x="222.4" y="15" width="355.1" height="230" rx="2"/>
+          <line class="fl" pathLength="1" x1="400" y1="15" x2="400" y2="245"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="30.9" fill="none"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="1.6" fill="none"/>
+          <rect class="fl" pathLength="1" x="222.4" y="61.8" width="55.8" height="136.4"/>
+          <rect class="fl" pathLength="1" x="222.4" y="99" width="18.6" height="62"/>
+          <circle class="fl" pathLength="1" cx="259.6" cy="130" r="1.6" fill="none"/>
+          <path class="fl" pathLength="1" d="M278.2,105.3 A30.9,30.9 0 0,1 278.2,154.7" fill="none"/>
+          <rect class="fl" pathLength="1" x="521.8" y="61.8" width="55.8" height="136.4"/>
+          <rect class="fl" pathLength="1" x="559" y="99" width="18.6" height="62"/>
+          <circle class="fl" pathLength="1" cx="540.4" cy="130" r="1.6" fill="none"/>
+          <path class="fl" pathLength="1" d="M521.8,105.3 A30.9,30.9 0 0,0 521.8,154.7" fill="none"/>
+          <path class="fl" pathLength="1" d="M225.8,15 A3.4,3.4 0 0,1 222.4,18.4" fill="none"/>
+          <path class="fl" pathLength="1" d="M574.2,15 A3.4,3.4 0 0,0 577.6,18.4" fill="none"/>
+          <path class="fl" pathLength="1" d="M225.8,245 A3.4,3.4 0 0,0 222.4,241.6" fill="none"/>
+          <path class="fl" pathLength="1" d="M574.2,245 A3.4,3.4 0 0,1 577.6,241.6" fill="none"/>
         </svg>
 
         <svg class="field" [class.on]="active===1"
-             viewBox="40 15 720 230" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" pathLength="1" x="40" y="15" width="720" height="230" rx="4"/>
+             viewBox="172 8 456 244" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" pathLength="1" x="183.8" y="15" width="432.4" height="230" rx="3"/>
           <line class="fl" pathLength="1" x1="400" y1="15" x2="400" y2="245"/>
-          <circle class="fl" pathLength="1" cx="400" cy="130" r="55" fill="none"/>
-          <circle class="fl" pathLength="1" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
-          <rect class="fl" pathLength="1" x="40" y="55" width="180" height="150"/>
-          <path class="fl" pathLength="1" d="M220,55 A75,75 0 0,1 220,205" fill="none"/>
-          <circle class="fl" pathLength="1" cx="150" cy="130" r="20" fill="none"/>
-          <rect class="fl" pathLength="1" x="580" y="55" width="180" height="150"/>
-          <path class="fl" pathLength="1" d="M580,55 A75,75 0 0,0 580,205" fill="none"/>
-          <circle class="fl" pathLength="1" cx="650" cy="130" r="20" fill="none"/>
-          <path class="fl" pathLength="1" d="M40,48 A140,140 0 0,1 40,212" fill="none"/>
-          <path class="fl" pathLength="1" d="M760,48 A140,140 0 0,0 760,212" fill="none"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="27.6" fill="none"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="9.2" fill="none"/>
+          <rect class="fl" pathLength="1" x="183.8" y="93.2" width="87.4" height="73.6"/>
+          <circle class="fl" pathLength="1" cx="271.2" cy="130" r="27.6" fill="none"/>
+          <path class="fl" pathLength="1" d="M208,111.6 A18.4,18.4 0 0,1 208,148.4" fill="none"/>
+          <line class="fl" pathLength="1" x1="202.2" y1="116.2" x2="202.2" y2="143.8"/>
+          <path class="fl" pathLength="1" d="M183.8,28.8 H248.2 A109.2,109.2 0 0,1 248.2,231.2 H183.8" fill="none"/>
+          <rect class="fl" pathLength="1" x="528.8" y="93.2" width="87.4" height="73.6"/>
+          <circle class="fl" pathLength="1" cx="528.8" cy="130" r="27.6" fill="none"/>
+          <path class="fl" pathLength="1" d="M592,111.6 A18.4,18.4 0 0,0 592,148.4" fill="none"/>
+          <line class="fl" pathLength="1" x1="597.8" y1="116.2" x2="597.8" y2="143.8"/>
+          <path class="fl" pathLength="1" d="M616.2,28.8 H551.8 A109.2,109.2 0 0,0 551.8,231.2 H616.2" fill="none"/>
         </svg>
 
         <svg class="field" [class.on]="active===2"
-             viewBox="50 20 700 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" pathLength="1" x="50" y="20" width="700" height="220" rx="2"/>
-          <rect class="fl" pathLength="1" x="50" y="20" width="60" height="220" fill="none"/>
-          <rect class="fl" pathLength="1" x="690" y="20" width="60" height="220" fill="none"/>
-          <line class="fl" pathLength="1" x1="110" y1="20" x2="110" y2="240"/>
-          <line class="fl" pathLength="1" x1="690" y1="20" x2="690" y2="240"/>
-          <line class="fl" pathLength="1" x1="400" y1="20" x2="400" y2="240" stroke-dasharray="5 5"/>
-          <line class="fl" pathLength="1" x1="110" y1="130" x2="690" y2="130"/>
-          <line class="fl" pathLength="1" x1="255" y1="55" x2="255" y2="205"/>
-          <line class="fl" pathLength="1" x1="545" y1="55" x2="545" y2="205"/>
-          <rect class="fl" pathLength="1" x="110" y="55" width="290" height="150" fill="none"/>
-          <rect class="fl" pathLength="1" x="400" y="55" width="290" height="150" fill="none"/>
+             viewBox="140 8 520 244" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+          <rect class="fl" pathLength="1" x="150.8" y="15" width="498.3" height="230" rx="2"/>
+          <line class="fl" pathLength="1" x1="150.8" y1="43.8" x2="649.2" y2="43.8"/>
+          <line class="fl" pathLength="1" x1="150.8" y1="216.2" x2="649.2" y2="216.2"/>
+          <line class="fl" pathLength="1" x1="400" y1="9" x2="400" y2="251"/>
+          <line class="fl" pathLength="1" x1="265.8" y1="43.8" x2="265.8" y2="216.2"/>
+          <line class="fl" pathLength="1" x1="534.2" y1="43.8" x2="534.2" y2="216.2"/>
+          <line class="fl" pathLength="1" x1="265.8" y1="130" x2="534.2" y2="130"/>
+          <line class="fl" pathLength="1" x1="150.8" y1="130" x2="159.8" y2="130"/>
+          <line class="fl" pathLength="1" x1="649.2" y1="130" x2="640.2" y2="130"/>
         </svg>
       </div>
+
+      <!-- Penna di luce che disegna le linee -->
+      <div class="pen" #pen aria-hidden="true"></div>
 
       <!-- Floating particles -->
       <span class="pt pt1" aria-hidden="true"></span>
@@ -253,25 +258,12 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       inset: 0; z-index: 2;
     }
 
-    /* Le linee del campo vengono "disegnate" una dopo l'altra, sport per sport (ciclo 27s = 3 x 9s) */
+    /* Le linee del campo vengono "disegnate" da una penna di luce; l'animazione è pilotata da TS (frame()) */
     .field {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       opacity: 0;
-      --fo: 0.34;
       filter: drop-shadow(0 0 4px rgba(79, 195, 247, 0.85));
-      animation: fieldCycle 27s linear infinite;
-      animation-delay: var(--fd, 0s);
-    }
-    .field:nth-of-type(1) { --fd: 0s; }
-    .field:nth-of-type(2) { --fd: 9s; }
-    .field:nth-of-type(3) { --fd: 18s; }
-    @keyframes fieldCycle {
-      0%   { opacity: 0; }
-      2%   { opacity: var(--fo); }
-      29%  { opacity: var(--fo); }
-      33.3%  { opacity: 0; }
-      100% { opacity: 0; }
     }
 
     .fl {
@@ -279,50 +271,29 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       stroke: rgba(255,255,255,0.85);
       stroke-width: 1.4;
       stroke-linecap: round;
+      stroke-linejoin: round;
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: drawLine1 27s linear infinite;
-      animation-delay: var(--fd, 0s);
     }
-    .field .fl:nth-child(1) { animation-name: drawLine1; }
-    .field .fl:nth-child(2) { animation-name: drawLine2; }
-    .field .fl:nth-child(3) { animation-name: drawLine3; }
-    .field .fl:nth-child(4) { animation-name: drawLine4; }
-    .field .fl:nth-child(5) { animation-name: drawLine5; }
-    .field .fl:nth-child(6) { animation-name: drawLine6; }
-    .field .fl:nth-child(7) { animation-name: drawLine7; }
-    .field .fl:nth-child(8) { animation-name: drawLine8; }
-    .field .fl:nth-child(9) { animation-name: drawLine9; }
-    .field .fl:nth-child(10) { animation-name: drawLine10; }
-    .field .fl:nth-child(11) { animation-name: drawLine11; }
-    .field .fl:nth-child(12) { animation-name: drawLine12; }
-    .field .fl:nth-child(13) { animation-name: drawLine13; }
-    .field .fl:nth-child(14) { animation-name: drawLine14; }
-    .field .fl:nth-child(15) { animation-name: drawLine15; }
-    .field .fl:nth-child(16) { animation-name: drawLine16; }
-    @keyframes drawLine1 { 0%, 1.0% { stroke-dashoffset: 1; } 8.0%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine2 { 0%, 1.6% { stroke-dashoffset: 1; } 8.6%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine3 { 0%, 2.2% { stroke-dashoffset: 1; } 9.2%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine4 { 0%, 2.8% { stroke-dashoffset: 1; } 9.8%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine5 { 0%, 3.4% { stroke-dashoffset: 1; } 10.4%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine6 { 0%, 4.0% { stroke-dashoffset: 1; } 11.0%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine7 { 0%, 4.6% { stroke-dashoffset: 1; } 11.6%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine8 { 0%, 5.2% { stroke-dashoffset: 1; } 12.2%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine9 { 0%, 5.8% { stroke-dashoffset: 1; } 12.8%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine10 { 0%, 6.4% { stroke-dashoffset: 1; } 13.4%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine11 { 0%, 7.0% { stroke-dashoffset: 1; } 14.0%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine12 { 0%, 7.6% { stroke-dashoffset: 1; } 14.6%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine13 { 0%, 8.2% { stroke-dashoffset: 1; } 15.2%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine14 { 0%, 8.8% { stroke-dashoffset: 1; } 15.8%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine15 { 0%, 9.4% { stroke-dashoffset: 1; } 16.4%, 100% { stroke-dashoffset: 0; } }
-    @keyframes drawLine16 { 0%, 10.0% { stroke-dashoffset: 1; } 17.0%, 100% { stroke-dashoffset: 0; } }
+
+    .pen {
+      position: absolute;
+      left: 0; top: 0;
+      width: 10px; height: 10px;
+      margin: -5px 0 0 -5px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 6px 2px #fff, 0 0 16px 6px rgba(79, 195, 247, 0.95), 0 0 34px 12px rgba(79, 195, 247, 0.45);
+      opacity: 0;
+      z-index: 3;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
 
     @media (max-width: 520px) {
-      .field { --fo: 0.42; }
       .fl        { stroke-width: 1.8; }
     }
     @media (max-width: 380px) {
-      .field { --fo: 0.48; }
       .fl        { stroke-width: 2.1; }
     }
 
@@ -500,9 +471,9 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
     }
     @media (prefers-reduced-motion: reduce) {
-      .field, .fl { animation: none; }
-      .field:nth-of-type(1) { opacity: 0.2; }
+      .field:nth-of-type(1) { opacity: 0.22; }
       .fl { stroke-dashoffset: 0; }
+      .pen { display: none; }
       .tw, .hero-sweep { animation: none; }
       .hero-sweep { display: none; }
     }
@@ -591,21 +562,92 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
 
   `]
 })
-export class HeroThreeComponent implements OnInit, OnDestroy {
+export class HeroThreeComponent implements AfterViewInit, OnDestroy {
   active = 0;
   showGame = false;
-  private timer: any;
   private tapCount = 0;
   private tapTimer: any;
 
-  ngOnInit(): void {
-    this.timer = setInterval(() => {
-      this.active = (this.active + 1) % 3;
-    }, 9000);
+  @ViewChild('hero') private heroRef!: ElementRef<HTMLElement>;
+  @ViewChild('pen') private penRef!: ElementRef<HTMLElement>;
+
+  private raf = 0;
+  private t0 = 0;
+  private lastField = -1;
+  private fields: SVGSVGElement[] = [];
+  private lines: SVGGeometryElement[][] = [];
+
+  private static readonly SPORT_SECONDS = 9;
+  private static readonly START = 0.3;
+  private static readonly DRAW_WINDOW = 6.8;
+
+  constructor(private zone: NgZone) {}
+
+  ngAfterViewInit(): void {
+    const root = this.heroRef.nativeElement;
+    this.fields = Array.from(root.querySelectorAll('svg.field')) as SVGSVGElement[];
+    this.lines = this.fields.map(f => Array.from(f.querySelectorAll('.fl')) as SVGGeometryElement[]);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this.zone.runOutsideAngular(() => {
+      this.t0 = performance.now();
+      const loop = (now: number) => {
+        this.frame((now - this.t0) / 1000);
+        this.raf = requestAnimationFrame(loop);
+      };
+      this.raf = requestAnimationFrame(loop);
+    });
+  }
+
+  private frame(t: number): void {
+    const S = HeroThreeComponent.SPORT_SECONDS;
+    const k = Math.floor((t % (S * 3)) / S);
+    const local = (t % (S * 3)) - k * S;
+
+    if (k !== this.lastField) {
+      // nuovo sport: azzera le linee e aggiorna i puntini
+      this.lines.forEach(ls => ls.forEach(l => l.style.strokeDashoffset = '1'));
+      this.fields.forEach(f => f.style.opacity = '0');
+      this.lastField = k;
+      this.zone.run(() => { this.active = k; });
+    }
+
+    const field = this.fields[k];
+    const ls = this.lines[k];
+    if (!field || !ls?.length) return;
+
+    // dissolvenza del campo: entra in 0.5s, esce nell'ultimo secondo
+    const env = local < 0.5 ? local / 0.5 : local > S - 1 ? Math.max(0, S - local) : 1;
+    const base = window.innerWidth <= 520 ? 0.5 : 0.36;
+    field.style.opacity = String(env * base);
+
+    // ogni linea si disegna in sequenza
+    const n = ls.length;
+    const per = Math.min(0.5, HeroThreeComponent.DRAW_WINDOW / n);
+    let penEl: SVGGeometryElement | null = null;
+    let penProgress = 0;
+    for (let i = 0; i < n; i++) {
+      const p = Math.min(1, Math.max(0, (local - HeroThreeComponent.START - i * per) / per));
+      ls[i].style.strokeDashoffset = String(1 - p);
+      if (p > 0 && p < 1) { penEl = ls[i]; penProgress = p; }
+    }
+    this.movePen(penEl, penProgress, env);
+  }
+
+  private movePen(el: SVGGeometryElement | null, progress: number, env: number): void {
+    const pen = this.penRef.nativeElement;
+    if (!el) { pen.style.opacity = '0'; return; }
+    const len = el.getTotalLength();
+    const pt = el.getPointAtLength(progress * len);
+    const m = el.getScreenCTM();
+    if (!m) return;
+    const sp = new DOMPoint(pt.x, pt.y).matrixTransform(m);
+    const r = this.heroRef.nativeElement.getBoundingClientRect();
+    pen.style.transform = `translate(${sp.x - r.left}px, ${sp.y - r.top}px)`;
+    pen.style.opacity = String(env);
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.timer);
+    cancelAnimationFrame(this.raf);
     clearTimeout(this.tapTimer);
   }
 
