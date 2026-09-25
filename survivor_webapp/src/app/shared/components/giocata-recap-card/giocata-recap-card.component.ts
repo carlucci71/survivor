@@ -167,6 +167,30 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
     if (changes['leghe']) this.buildLegheAttive();
   }
 
+  private readonly SELECTED_LEGA_KEY = 'recapSelectedLegaId';
+
+  /** Default: l'ultima lega scelta (anche dopo il dettaglio), altrimenti la più recente (id maggiore). */
+  private defaultLegaIndex(): number {
+    try {
+      const saved = Number(sessionStorage.getItem(this.SELECTED_LEGA_KEY));
+      if (saved) {
+        const idx = this.legheAttive.findIndex(l => l.lega.id === saved);
+        if (idx >= 0) return idx;
+      }
+    } catch { /* storage non disponibile */ }
+    let best = 0;
+    this.legheAttive.forEach((l, i) => {
+      if ((l.lega.id ?? 0) > (this.legheAttive[best].lega.id ?? 0)) best = i;
+    });
+    return best;
+  }
+
+  private rememberSelectedLega(): void {
+    const id = this.legheAttive[this.selectedIndex]?.lega.id;
+    if (id == null) return;
+    try { sessionStorage.setItem(this.SELECTED_LEGA_KEY, String(id)); } catch { /* ignore */ }
+  }
+
   private buildLegheAttive(): void {
     if (!this.leghe?.length) {
       this.legheAttive = [];
@@ -265,9 +289,9 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       const preserved = this.legheAttive.findIndex(l => l.lega.id === selectedLegaId);
       if (preserved >= 0) this.selectedIndex = preserved;
     } else {
-      const noPickIdx = this.legheAttive.findIndex(l => !l.lega.miaGiocataCorrente);
-      this.selectedIndex = noPickIdx >= 0 ? noPickIdx : 0;
+      this.selectedIndex = this.defaultLegaIndex();
     }
+    this.rememberSelectedLega();
 
     if (toAnimate.length > 0) {
       // 80ms: Angular ha già renderizzato il DOM con animationState='none'.
@@ -302,6 +326,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   selectLega(index: number): void {
     this.selectedIndex = index;
+    this.rememberSelectedLega();
   }
 
   testFlash(type: 'win' | 'loss'): void {
