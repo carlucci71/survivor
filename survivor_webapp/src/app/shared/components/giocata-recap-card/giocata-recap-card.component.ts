@@ -325,8 +325,13 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   selectLega(index: number): void {
+    if (index === this.selectedIndex || index < 0 || index >= this.legheAttive.length) return;
     this.selectedIndex = index;
     this.rememberSelectedLega();
+    // Cambio lega: l'animazione di risultato non deve restare addosso alla nuova card
+    if (this.flashTimeout) clearTimeout(this.flashTimeout);
+    this.showFlash = false;
+    this.flashType = null;
   }
 
   testFlash(type: 'win' | 'loss'): void {
