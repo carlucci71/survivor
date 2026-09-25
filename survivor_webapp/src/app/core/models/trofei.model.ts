@@ -17,4 +17,7 @@ export interface StatisticheTrofei {
   vittorie: number;
   podi: number;
   winRate: number;
+  vittorie1v1?: number;
+  vittorieSurvivor?: number;
+  vittorieCampionato?: number;
 }

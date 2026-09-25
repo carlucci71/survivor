@@ -26,5 +26,10 @@ public class GiocatoreDTO {
     /** Vite rimaste nella lega corrente (per modalità SURVIVOR con vite > 1) */
     private Map<Long, Short> vitePerLega = new HashMap<>();
 
+    /** Badge storico: vittorie totali (leghe terminate) per categoria, indipendenti dalla lega corrente */
+    private Long vittorie1v1;
+    private Long vittorieSurvivor;
+    private Long vittorieCampionato;
+
 }
 

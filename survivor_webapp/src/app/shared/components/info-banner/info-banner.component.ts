@@ -16,6 +16,7 @@ import { GiocatoreService } from '../../../core/services/giocatore.service';
 import { SquadraService } from '../../../core/services/squadra.service';
 import { TrofeiService } from '../../../core/services/trofei.service';
 import { Squadra } from '../../../core/models/interfaces.model';
+import { PlayerBadgesComponent } from '../player-badges/player-badges.component';
 
 // MODAL REGOLAMENTO (stesso del footer)
 @Component({
@@ -137,6 +138,12 @@ import { Squadra } from '../../../core/models/interfaces.model';
           <h3>{{ 'RULES.SECTION_10_TITLE' | translate }}</h3>
           <p>{{ 'RULES.SECTION_10_P1' | translate }}</p>
           <p>{{ 'RULES.SECTION_10_P2' | translate }}</p>
+        </div>
+
+        <!-- 11. Badge storico giocatore -->
+        <div class="regola">
+          <h3>{{ 'BADGE.RULES_TITLE' | translate }}</h3>
+          <p>{{ 'BADGE.RULES_TEXT' | translate }}</p>
         </div>
 
         <p class="good-luck">{{ 'RULES.GOOD_LUCK' | translate }}</p>
@@ -649,7 +656,7 @@ export class RegolamentoBannerDialogComponent {
 @Component({
   selector: 'app-albo-oro-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, TranslateModule, PlayerBadgesComponent],
   template: `
     <div class="albo-oro-dialog">
       <div class="dialog-header">
@@ -715,10 +722,36 @@ export class RegolamentoBannerDialogComponent {
             </div>
           </div>
         </div>
+
+        <!-- Badge storico per categoria -->
+        <div class="badges-section" *ngIf="!isLoading && hasBadges">
+          <h3>{{ 'TROPHIES.YOUR_BADGES' | translate }}</h3>
+          <app-player-badges
+            size="large"
+            [vittorie1v1]="statistiche?.vittorie1v1"
+            [vittorieSurvivor]="statistiche?.vittorieSurvivor"
+            [vittorieCampionato]="statistiche?.vittorieCampionato">
+          </app-player-badges>
+        </div>
       </div>
     </div>
   `,
   styles: [`
+    .badges-section {
+      margin: 16px auto 0 auto;
+      padding: 16px;
+      background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+      border-radius: 12px;
+      border: 1px solid #E0E0E0;
+      text-align: center;
+
+      h3 {
+        color: #0A3D91;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin: 0 0 14px 0;
+      }
+    }
     .albo-oro-dialog {
       width: 90vw;
       max-width: 700px;
@@ -1176,6 +1209,14 @@ export class AlboOroDialogComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  get hasBadges(): boolean {
+    return !!this.statistiche && (
+      (this.statistiche.vittorie1v1 ?? 0) > 0 ||
+      (this.statistiche.vittorieSurvivor ?? 0) > 0 ||
+      (this.statistiche.vittorieCampionato ?? 0) > 0
+    );
   }
 
   getPosizioneEmoji(posizione: number): string {

@@ -59,4 +59,49 @@ public interface TrofeiRepository extends JpaRepository<GiocatoreLega, Giocatore
         AND l.stato = it.ddlsolution.survivor.util.enums.Enumeratori.StatoLega.TERMINATA
     """)
     Long countTorneiGiocatiByGiocatoreId(@Param("giocatoreId") Long giocatoreId);
+
+    /**
+     * Badge "sfida 1v1": vittorie (posizione finale 1) in leghe con esattamente 2 partecipanti,
+     * per un insieme di giocatori in un'unica query (evita N+1 sulla lista giocatori di una lega).
+     */
+    @Query("""
+        SELECT gl.giocatore.id, COUNT(gl)
+        FROM GiocatoreLega gl
+        JOIN gl.lega l
+        WHERE gl.giocatore.id IN :giocatoreIds
+        AND gl.posizioneFinale = 1
+        AND (SELECT COUNT(gl2) FROM GiocatoreLega gl2 WHERE gl2.lega = l) = 2
+        GROUP BY gl.giocatore.id
+    """)
+    List<Object[]> countVittorie1v1ByGiocatoreIds(@Param("giocatoreIds") List<Long> giocatoreIds);
+
+    /**
+     * Badge Survivor: vittorie in leghe modalità SURVIVOR con più di 2 partecipanti.
+     */
+    @Query("""
+        SELECT gl.giocatore.id, COUNT(gl)
+        FROM GiocatoreLega gl
+        JOIN gl.lega l
+        WHERE gl.giocatore.id IN :giocatoreIds
+        AND gl.posizioneFinale = 1
+        AND l.modalita = it.ddlsolution.survivor.util.enums.Enumeratori.ModalitaLega.SURVIVOR
+        AND (SELECT COUNT(gl2) FROM GiocatoreLega gl2 WHERE gl2.lega = l) > 2
+        GROUP BY gl.giocatore.id
+    """)
+    List<Object[]> countVittorieSurvivorByGiocatoreIds(@Param("giocatoreIds") List<Long> giocatoreIds);
+
+    /**
+     * Badge Campionato: vittorie in leghe modalità CAMPIONATO con più di 2 partecipanti.
+     */
+    @Query("""
+        SELECT gl.giocatore.id, COUNT(gl)
+        FROM GiocatoreLega gl
+        JOIN gl.lega l
+        WHERE gl.giocatore.id IN :giocatoreIds
+        AND gl.posizioneFinale = 1
+        AND l.modalita = it.ddlsolution.survivor.util.enums.Enumeratori.ModalitaLega.CAMPIONATO
+        AND (SELECT COUNT(gl2) FROM GiocatoreLega gl2 WHERE gl2.lega = l) > 2
+        GROUP BY gl.giocatore.id
+    """)
+    List<Object[]> countVittorieCampionatoByGiocatoreIds(@Param("giocatoreIds") List<Long> giocatoreIds);
 }

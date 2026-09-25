@@ -7,6 +7,7 @@ import it.ddlsolution.survivor.dto.LegaDTO;
 import it.ddlsolution.survivor.dto.request.LegaInsertDTO;
 import it.ddlsolution.survivor.entity.Lega;
 import it.ddlsolution.survivor.entity.projection.LegaProjection;
+import it.ddlsolution.survivor.repository.TrofeiRepository;
 import it.ddlsolution.survivor.service.CampionatoService;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
 import org.mapstruct.AfterMapping;
@@ -31,6 +32,8 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
     protected GiocatoreMapper giocatoreMapper;
     @Autowired
     private CampionatoService campionatoService;
+    @Autowired
+    private TrofeiRepository trofeiRepository;
 
     @Mapping(target = "giocatori", ignore = true)
     @Mapping(target = "withPwd", source = ".", qualifiedByName = "hasPwdLega")
@@ -79,7 +82,7 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
 
         if (lega.getGiocatoreLeghe() != null) {
-            legaDTO.setGiocatori(lega.getGiocatoreLeghe().stream()
+            List<GiocatoreDTO> giocatori = lega.getGiocatoreLeghe().stream()
                     .map(gl -> {
                         // Usa il GiocatoreMapper per mappare tutti i campi comprese le giocate
                         GiocatoreDTO dto = giocatoreMapper.toDTO(gl.getGiocatore());
@@ -105,9 +108,31 @@ public abstract class LegaMapper implements DtoMapper<LegaDTO, Lega> {
 
                         return dto;
                     })
-                    .toList());
+                    .toList();
+
+            // Badge storico: 3 query batched (non una per giocatore) su tutta la lista
+            List<Long> giocatoreIds = giocatori.stream().map(GiocatoreDTO::getId).toList();
+            if (!giocatoreIds.isEmpty()) {
+                Map<Long, Long> vittorie1v1 = mappaConteggiPerGiocatore(trofeiRepository.countVittorie1v1ByGiocatoreIds(giocatoreIds));
+                Map<Long, Long> vittorieSurvivor = mappaConteggiPerGiocatore(trofeiRepository.countVittorieSurvivorByGiocatoreIds(giocatoreIds));
+                Map<Long, Long> vittorieCampionato = mappaConteggiPerGiocatore(trofeiRepository.countVittorieCampionatoByGiocatoreIds(giocatoreIds));
+                giocatori.forEach(dto -> {
+                    dto.setVittorie1v1(vittorie1v1.getOrDefault(dto.getId(), 0L));
+                    dto.setVittorieSurvivor(vittorieSurvivor.getOrDefault(dto.getId(), 0L));
+                    dto.setVittorieCampionato(vittorieCampionato.getOrDefault(dto.getId(), 0L));
+                });
+            }
+
+            legaDTO.setGiocatori(giocatori);
         }
         legaDTO.setNumPartecipanti(lega.getGiocatoreLeghe() != null ? lega.getGiocatoreLeghe().size() : 0);
+    }
+
+    private Map<Long, Long> mappaConteggiPerGiocatore(List<Object[]> righe) {
+        return righe.stream().collect(Collectors.toMap(
+                riga -> (Long) riga[0],
+                riga -> (Long) riga[1]
+        ));
     }
 
     @Named("valorizzaStatoDaAvviare")

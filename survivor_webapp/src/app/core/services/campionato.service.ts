@@ -23,6 +23,40 @@ export class CampionatoService {
     return this.http.get<Campionato[]>(`${this.apiUrl}/${idSport}`);
   }
 
+  /**
+   * True se il campionato è terminato (stagione già conclusa): non ha senso creare
+   * una lega su una giornata passata.
+   */
+  isCampionatoTerminato(c: Campionato): boolean {
+    if (!c.giornataDaGiocare || !c.numGiornate) return false;
+    if (c.giornataDaGiocare > c.numGiornate) return true;
+    // giornataDaGiocare === numGiornate: può essere l'ultima da giocare (futuro) o terminato (passato)
+    // usiamo iniziGiornate per capire se l'ultima giornata è già iniziata
+    if (c.giornataDaGiocare === c.numGiornate && c.iniziGiornate?.length) {
+      const lastIdx = c.numGiornate - 1;
+      // Se l'indice esatto non esiste (alcuni campionati hanno meno entry di numGiornate),
+      // usiamo l'ultima entry disponibile come proxy
+      const idx = Math.min(lastIdx, c.iniziGiornate.length - 1);
+      return new Date(c.iniziGiornate[idx]) < new Date();
+    }
+    return false;
+  }
+
+  /**
+   * Calendario non ancora pubblicato: la giornata da giocare e' quella successiva all'ultima con dati
+   * (es. NBA a fine stagione), quindi non ha una data di inizio e non si puo' creare una lega.
+   */
+  isCampionatoNonDisponibile(c: Campionato): boolean {
+    if (!c.giornataDaGiocare || !c.numGiornate || c.giornataDaGiocare > c.numGiornate) return false;
+    if (!Array.isArray(c.iniziGiornate)) return false;
+    return c.iniziGiornate[c.giornataDaGiocare - 1] == null;
+  }
+
+  /** True se si può creare una lega su questo campionato adesso */
+  isCampionatoDisponibile(c: Campionato): boolean {
+    return !this.isCampionatoTerminato(c) && !this.isCampionatoNonDisponibile(c);
+  }
+
   private getDesGiornate() {
     this.http
       .get<Record<string, string[]>>(`${this.apiUrl}/desGiornate`)

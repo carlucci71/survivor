@@ -191,7 +191,8 @@ public class Enumeratori {
         JOIN_REQUEST_APPROVATA("Richiesta approvata"),
         JOIN_REQUEST_RIFIUTATA("Richiesta rifiutata"),
         RECAP_GIORNATA("Recap giornata"),
-        LEADER_TRANSFER("Nuovo leader");
+        LEADER_TRANSFER("Nuovo leader"),
+        SFIDA_LAMPO_INVITO("Invito sfida lampo");
 
         String descrizione;
         TipoNotifica(String descrizione){

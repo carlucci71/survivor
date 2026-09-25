@@ -62,6 +62,7 @@ import { GestisciViteDialogComponent } from './gestisci-vite-dialog.component';
 import { PronosticoVincitoreDialogComponent } from './pronostico-vincitore-dialog.component';
 import { MondialiGroupsTickerComponent } from '../../shared/components/mondiali-groups-ticker/mondiali-groups-ticker.component';
 import { ScrollToEndDirective } from '../../shared/directives/scroll-to-end.directive';
+import { PlayerBadgesComponent } from '../../shared/components/player-badges/player-badges.component';
 
 @Component({
   selector: 'app-lega-dettaglio',
@@ -91,6 +92,7 @@ import { ScrollToEndDirective } from '../../shared/directives/scroll-to-end.dire
     PlayerTutorialComponent,
     MondialiGroupsTickerComponent,
     ScrollToEndDirective,
+    PlayerBadgesComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -2332,7 +2334,10 @@ export class LegaDettaglioComponent implements OnDestroy {
       `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.lega!.name}" su Survivor. Chi sopravvive di più? 😈`,
       `⚽ ${nomeUtente} ti aspetta nella lega "${this.lega!.name}" su Survivor. Ti unisci alla sfida? 🔥`,
     ];
-    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
+    // Il link va incluso anche dentro il testo: alcune app di destinazione (es. WhatsApp
+    // su Android via plugin Capacitor Share) ignorano il campo `url` separato e mostrano
+    // solo `text`, quindi senza questa riga il link non compare nel messaggio condiviso.
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)] + '\n' + url;
     try {
       const { Share } = await import('@capacitor/share');
       await Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' });

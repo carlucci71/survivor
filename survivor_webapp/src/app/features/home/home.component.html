@@ -18,9 +18,33 @@
   <!-- HERO SECTION -->
   <app-hero-three></app-hero-three>
 
-  <!-- BOTTONE RISULTATI LIVE (solo Serie A per ora) -->
+  <!-- BOTTONE RISULTATI LIVE (solo Serie A per ora) + SFIDA 1V1 LAMPO sulla stessa riga -->
   <div class="live-score-btn-wrap">
     <app-live-score-button></app-live-score-button>
+
+    <!-- SFIDA 1V1 LAMPO: etichetta "Sfida lampo" + moneta che gira in orizzontale (scritta
+         "1v1" compresa, gira insieme al disco), tutto a destra della riga. -->
+    <button type="button" class="duel-seal" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()" [matTooltip]="'DUEL.CARD_TITLE' | translate">
+      <span class="duel-seal-dot" aria-hidden="true"></span>
+      <span class="duel-seal-label">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
+      <span class="duel-seal-coin">
+        <span class="duel-seal-disc" aria-hidden="true">
+          <span class="duel-seal-slice" style="--a:0deg"></span>
+          <span class="duel-seal-slice" style="--a:15deg"></span>
+          <span class="duel-seal-slice" style="--a:30deg"></span>
+          <span class="duel-seal-slice" style="--a:45deg"></span>
+          <span class="duel-seal-slice" style="--a:60deg"></span>
+          <span class="duel-seal-slice" style="--a:75deg"></span>
+          <span class="duel-seal-slice" style="--a:90deg"></span>
+          <span class="duel-seal-slice" style="--a:105deg"></span>
+          <span class="duel-seal-slice" style="--a:120deg"></span>
+          <span class="duel-seal-slice" style="--a:135deg"></span>
+          <span class="duel-seal-slice" style="--a:150deg"></span>
+          <span class="duel-seal-slice" style="--a:165deg"></span>
+        </span>
+        <span class="duel-seal-text">1v1</span>
+      </span>
+    </button>
   </div>
 
   <!-- GIOCATA RECAP CARD -->
@@ -82,26 +106,28 @@
         <div class="leghe-tabs">
           <button
             class="leghe-tab"
-            [class.leghe-tab--active]="activeTab === 'private'"
-            (click)="activeTab = 'private'"
+            [class.leghe-tab--active]="isTabOpen('private')"
+            (click)="toggleTab('private')"
           >
             <mat-icon class="leghe-tab-icon">lock</mat-icon>
             <span>{{ 'HOME.TAB_PRIVATE' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPrivateLeghe.length }}</span>
+            <mat-icon class="leghe-tab-chevron" [class.leghe-tab-chevron--open]="isTabOpen('private')">expand_more</mat-icon>
           </button>
           <button
             class="leghe-tab leghe-tab--public"
-            [class.leghe-tab--active]="activeTab === 'public'"
-            (click)="activeTab = 'public'"
+            [class.leghe-tab--active]="isTabOpen('public')"
+            (click)="toggleTab('public')"
           >
             <mat-icon class="leghe-tab-icon">public</mat-icon>
             <span>{{ 'HOME.TAB_PUBLIC' | translate }}</span>
             <span class="leghe-tab-count">{{ filteredPublicLeghe.length }}</span>
+            <mat-icon class="leghe-tab-chevron" [class.leghe-tab-chevron--open]="isTabOpen('public')">expand_more</mat-icon>
           </button>
         </div>
 
         <!-- PANNELLO LEGHE PRIVATE -->
-        <div class="leghe-groups" *ngIf="activeTab === 'private'">
+        <div class="leghe-groups" *ngIf="isTabOpen('private')">
           <ng-container *ngIf="filteredPrivateLeghe.length > 0; else noPrivate">
             <ng-container *ngFor="let group of filteredPrivateLeghe; trackBy: trackByGroupName">
               <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
@@ -185,7 +211,7 @@
         </div>
 
         <!-- PANNELLO LEGHE PUBBLICHE -->
-        <div class="leghe-groups" *ngIf="activeTab === 'public'">
+        <div class="leghe-groups" *ngIf="isTabOpen('public')">
           <ng-container *ngIf="filteredPublicLeghe.length > 0; else noPublic">
             <ng-container *ngFor="let group of filteredPublicLeghe; trackBy: trackByGroupName">
               <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
@@ -326,6 +352,22 @@
         </mat-card>
       </div>
     </section>
+
+    <!-- CONDIVIDI L'APP: link agli store, per portare nuovi utenti -->
+    <div class="share-app-card">
+      <span class="sa-text">
+        <span class="sa-title">{{ 'SHARE_APP.TITLE' | translate }}</span>
+        <span class="sa-subtitle">{{ 'SHARE_APP.SUBTITLE' | translate }}</span>
+      </span>
+      <span class="sa-badges">
+        <button type="button" class="sa-badge-btn" (click)="shareApp('ios')" aria-label="App Store">
+          <img src="assets/badge-app-store.png" alt="App Store" class="sa-badge" />
+        </button>
+        <button type="button" class="sa-badge-btn" (click)="shareApp('android')" aria-label="Google Play">
+          <img src="assets/badge-google-play.png" alt="Google Play" class="sa-badge" />
+        </button>
+      </span>
+    </div>
   </main>
 
 

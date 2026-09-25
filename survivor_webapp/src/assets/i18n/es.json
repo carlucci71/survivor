@@ -90,7 +90,8 @@
     "SUBTITLE": "Abre Survivor para unirte a la liga",
     "OPEN_APP": "Abrir en la app",
     "CONTINUE_IN_BROWSER": "Continuar en el navegador",
-    "HINT": "¿Aún no tienes la app? Continúa en el navegador para unirte igualmente."
+    "DOWNLOAD_APP": "Descargar la app",
+    "HINT": "¿Aún no tienes la app? Descárgala gratis y vuelve a abrir el enlace de invitación. O continúa en el navegador para unirte ya."
   },
   "LEAGUE_STATUS": {
     "DA_AVVIARE": "Por Iniciar",
@@ -138,6 +139,50 @@
     "TITLE": "Leyenda",
     "ADMIN_PLAYED": "Jugada realizada por el administrador",
     "FORCED_MATCH": "Partido considerado ganador (forzado)"
+  },
+  "BADGE": {
+    "DUELLO_1V1": "Duelo 1v1",
+    "SURVIVOR": "Survivor",
+    "CAMPIONATO": "Campeonato",
+    "RULES_TITLE": "Insignias de historial del jugador",
+    "RULES_TEXT": "Gana una liga o un duelo 1v1 y desbloqueas la medalla de esa categoría: bronce para los duelos 1v1, plata para Survivor, oro para Campeonato — cuanto más raro el logro, más valiosa la medalla. Cada 3 victorias en la misma categoría añade una estrella, sin que la medalla desaparezca nunca."
+  },
+  "SHARE_APP": {
+    "TITLE": "Comparte la app con tus amigos",
+    "SUBTITLE": "Envía el enlace para descargar Survivor",
+    "MESSAGE": "🏆 Descarga Survivor y rétame: ¿quién sobrevive más? 💪",
+    "SHARE_TITLE": "Descarga Survivor"
+  },
+  "DUEL": {
+    "TITLE": "Duelo 1v1",
+    "CARD_TITLE": "Desafía a un amigo",
+    "CARD_SUBTITLE": "Duelo rápido, uno contra uno",
+    "NAME_LABEL": "Nombre del duelo",
+    "NAME_PLACEHOLDER": "Ej. Yo vs Marcos",
+    "NAME_DEFAULT": "Duelo de {{nome}}",
+    "SPORT_LABEL": "Deporte",
+    "CAMPIONATO_LABEL": "Campeonato",
+    "CAMPIONATO_NOT_AVAILABLE": "Calendario aún no disponible",
+    "CREATE_BUTTON": "Crear duelo",
+    "CREATE_AND_INVITE": "Crear e invitar",
+    "CREATE_ERROR": "No se ha podido crear el duelo, inténtalo de nuevo.",
+    "CREATED_TEXT": "¡Tu duelo \"{{name}}\" está listo! Invita a tu rival con el enlace.",
+    "SHARE_BUTTON": "Invitar a un amigo",
+    "SHARE_TITLE": "Duelo 1v1 en Survivor",
+    "SHARE_MESSAGE": "⚔️ {{nome}} te desafía 1 contra 1 en Survivor: \"{{name}}\"! ¿Quién resiste más? Acepta el reto 💪",
+    "COPY_LINK": "Copiar enlace",
+    "LINK_COPIED": "¡Enlace copiado!",
+    "GO_TO_LEAGUE": "Ir a la liga",
+    "BADGE_1V1": "⚔️ Duelo 1v1",
+    "WAITING_OPPONENT": "Esperando a un rival…",
+    "INVITE_PLACEHOLDER": "Email o apodo de un amigo ya registrado",
+    "INVITE_SEND": "Enviar notificación",
+    "INVITE_SENT": "¡Notificación enviada!",
+    "INVITE_NOT_FOUND": "Usuario no encontrado: revisa email o apodo.",
+    "INVITE_AMBIGUOUS": "Varios usuarios con este apodo: usa el email.",
+    "INVITE_ERROR": "No se pudo enviar, inténtalo de nuevo.",
+    "INVITE_DIVIDER": "o invita por email/apodo",
+    "QUICK_LABEL": "Duelo rápido"
   },
   "PROFILE": {
     "TITLE": "Tu Perfil",
@@ -222,6 +267,7 @@
     "ROUNDS_SURVIVED": "Jornadas Sobrevividas",
     "FINAL_TEAM": "Equipo Final",
     "YOUR_STATS": "TUS ESTADÍSTICAS",
+    "YOUR_BADGES": "TUS INSIGNIAS",
     "TOURNAMENTS_PLAYED": "Torneos Jugados",
     "VICTORIES": "Victorias",
     "PODIUMS": "Podios",

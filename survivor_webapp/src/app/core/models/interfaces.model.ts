@@ -271,6 +271,10 @@ export interface Giocatore {
   user?: User;
   giocate?: Giocata[];
   puntiTotali?: number;
+  /** Badge storico: vittorie totali per categoria (indipendenti dalla lega corrente) */
+  vittorie1v1?: number;
+  vittorieSurvivor?: number;
+  vittorieCampionato?: number;
 }
 
 export interface Giocata {

@@ -78,6 +78,10 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       this.router.navigate(['/richieste']);
       return;
     }
+    if (notification.type === 'SFIDA_LAMPO_INVITO' && notification.legaId) {
+      this.router.navigate(['/joinLega'], { queryParams: { legaId: notification.legaId } });
+      return;
+    }
     if ((notification.type === 'JOIN_REQUEST_APPROVATA' || notification.type === 'JOIN_REQUEST_RIFIUTATA') && notification.legaId) {
       this.router.navigate(['/lega', notification.legaId]);
       return;
@@ -92,6 +96,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
         return 'check_circle';
       case 'JOIN_REQUEST_RIFIUTATA':
         return 'cancel';
+      case 'SFIDA_LAMPO_INVITO':
+        return 'sports_kabaddi';
       case 'INIZIO_PARTITA':
         return 'sports_soccer';
       case 'REMINDER_GIORNATA':

@@ -397,8 +397,12 @@ public class LegaService {
         }
         // Early exit: se in modalità survivor rimane ≤ 1 giocatore attivo, termina la lega subito
         // senza avanzare il round né inserire pick automatici (il vincitore è già noto).
+        // Richiede più di 1 partecipante totale: altrimenti una lega appena creata (es. sfida 1v1
+        // in attesa che l'avversario entri dal link) soddisferebbe banalmente "resta ≤1 attivo"
+        // pur non avendo mai giocato nulla, venendo terminata e "vinta" a torto.
         boolean isSurvivorDaTerminare = legaDTO.getModalita() != Enumeratori.ModalitaLega.CAMPIONATO
                 && legaDTO.getStato() != Enumeratori.StatoLega.TERMINATA
+                && legaDTO.getGiocatori().size() > 1
                 && legaDTO.getGiocatori().stream()
                         .filter(g -> g.getStatiPerLega().get(idLega) == Enumeratori.StatoGiocatore.ATTIVO)
                         .count() <= 1;
@@ -1009,13 +1013,16 @@ public class LegaService {
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         } else if (!isCampionato
                 && (legaDTO.getStato() == Enumeratori.StatoLega.AVVIATA || legaDTO.getStato() == Enumeratori.StatoLega.ERRORE)
+                && legaDTO.getGiocatori().size() > 1
                 && (legaDTO.getGiocatori().stream()
                         .filter(g -> g.getStatiPerLega().get(legaDTO.getId()) == Enumeratori.StatoGiocatore.ATTIVO)
                         .count() <= 1
                     || legaDTO.isTuttiEliminatiStessoTurno())
         ) {
             // Resta un solo giocatore attivo, oppure il turno ha eliminato tutti i rimasti nello stesso turno
-            // (in tal caso nessuno è stato marcato ELIMINATO: restano ATTIVO e vengono premiati ex aequo)
+            // (in tal caso nessuno è stato marcato ELIMINATO: restano ATTIVO e vengono premiati ex aequo).
+            // Serve più di 1 partecipante totale, altrimenti una lega con un solo iscritto (es. sfida
+            // 1v1 ancora in attesa dell'avversario) verrebbe terminata e "vinta" senza aver mai giocato.
             legaDTO.setStato(Enumeratori.StatoLega.TERMINATA);
             legaDTO.setGiornataFinale(legaDTO.getGiornataCorrente());
         }
@@ -1410,6 +1417,9 @@ public class LegaService {
         if (count > 0) {
             throw new ManagedException("User già unito alla lega", ManagedException.InternalCode.ALREADY_JOINED);
         }
+        if (lega.getMaxPartecipanti() != null && giocatoriLega.size() >= lega.getMaxPartecipanti()) {
+            throw new ManagedException("La lega è al completo", ManagedException.InternalCode.LEGA_FULL);
+        }
 
         GiocatoreLega giocatoreLega = new GiocatoreLega();
         Giocatore giocatore = giocatoreService.findMe();
@@ -1451,6 +1461,60 @@ public class LegaService {
             String magicLink = magicLinkService.getUrlMagicLinkInvita(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
             emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
             log.info("Magic link inviato a: {}", email);
+        }
+    }
+
+    /**
+     * Invita un utente GIÀ registrato (per email o nickname) a una sfida 1v1 lampo con una push
+     * dedicata: chi la tocca arriva direttamente alla pagina di adesione (vedi push.service.ts).
+     */
+    @Transactional
+    public void invitaSfidaLampo(long idLega, String destinatario) {
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Lega lega = legaRepository.findById(idLega)
+                .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
+        if (!Integer.valueOf(2).equals(lega.getMaxPartecipanti()) || lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
+            throw new ManagedException("Non è una sfida lampo ancora da avviare", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+        GiocatoreLega mio = lega.getGiocatoreLeghe().stream()
+                .filter(gl -> gl.getGiocatore().getUser() != null && userId.equals(gl.getGiocatore().getUser().getId()))
+                .findFirst()
+                .orElseThrow(() -> new ManagedException("Non fai parte di questa sfida", ManagedException.InternalCode.NOT_LEADER));
+        if (lega.getGiocatoreLeghe().size() >= 2) {
+            throw new ManagedException("La sfida è già al completo", ManagedException.InternalCode.LEGA_FULL);
+        }
+        String dest = destinatario == null ? "" : destinatario.trim();
+        if (dest.isEmpty()) {
+            throw new ManagedException("Indica email o nickname", ManagedException.InternalCode.USER_NOT_FOUND);
+        }
+        User invitato;
+        if (dest.contains("@")) {
+            invitato = userService.findByEmailIgnoreCaseOptional(dest)
+                    .orElseThrow(() -> new ManagedException("Utente non trovato", ManagedException.InternalCode.USER_NOT_FOUND));
+        } else {
+            List<Giocatore> trovati = giocatoreRepository.findByNicknameIgnoreCase(dest);
+            if (trovati.isEmpty()) {
+                throw new ManagedException("Utente non trovato", ManagedException.InternalCode.USER_NOT_FOUND);
+            }
+            if (trovati.size() > 1) {
+                throw new ManagedException("Più utenti con questo nickname, usa l'email", ManagedException.InternalCode.NICKNAME_AMBIGUO);
+            }
+            invitato = trovati.get(0).getUser();
+        }
+        if (invitato == null || userId.equals(invitato.getId())) {
+            throw new ManagedException("Utente non valido", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
+        }
+        try {
+            var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
+            String lingua = invitato.getLingua();
+            dto.setTitle(notificationI18nService.testo("notif.sfidaLampo.invite.title", lingua));
+            dto.setBody(notificationI18nService.testo("notif.sfidaLampo.invite.body", lingua, mio.getGiocatore().getNickname(), lega.getName()));
+            dto.setTipoNotifica(Enumeratori.TipoNotifica.SFIDA_LAMPO_INVITO);
+            dto.setExpiringAt(LocalDateTime.now().plusDays(3));
+            dto.setLegaId(lega.getId());
+            pushNotificationService.sendNotificationToUsers(List.of(invitato.getId()), dto);
+        } catch (Exception e) {
+            log.warn("Errore notifica invito sfida lampo lega {}: {}", idLega, e.getMessage());
         }
     }
 

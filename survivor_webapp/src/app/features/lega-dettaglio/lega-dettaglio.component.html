@@ -18,7 +18,7 @@
         <mat-card-content>{{ error }}</mat-card-content>
       </mat-card>
       } @if (lega) {
-      <mat-card class="lega-card">
+      <mat-card class="lega-card" [class.duel-theme]="lega.maxPartecipanti === 2">
         <div class="recap-header">
           <div class="rh-particles" aria-hidden="true">
             <span class="rh-p rh-p1"></span>
@@ -30,7 +30,8 @@
           </div>
           <div class="recap-title-row">
             <span class="recap-league-name">{{ lega.name }}</span>
-            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>            <div class="recap-actions">
+            <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega.edizione }}</span>
+            <div class="recap-actions">
               @if (lega.giornataCalcolata && recapGiornataRelativa !== null) {
                 <button class="recap-mini-link" (click)="goToRecap()">
                   <span class="recap-mini-link__icon">🎬</span>
@@ -38,7 +39,7 @@
                   <span class="recap-mini-link__arrow">›</span>
                 </button>
               }
-              @if (isDaAvviare()) {
+              @if (isDaAvviare() && !(lega.maxPartecipanti === 2 && (lega.numPartecipanti ?? lega.giocatori?.length ?? 0) >= 2)) {
                 <button mat-icon-button
                   class="recap-help-btn recap-share-btn"
                   (click)="shareLink()"
@@ -80,14 +81,19 @@
                 {{ 'PLAYER_ROLES.' + lega.ruoloGiocatoreLega.value | translate }}
               </span>
             }
-            <span class="recap-meta-chip" [class.recap-meta-chip--public]="lega.pubblica">
-              <mat-icon class="rmc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
-              {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
-            </span>
-            <span class="recap-meta-chip">
-              <mat-icon class="rmc-icon">group</mat-icon>
-              {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}{{ lega.maxPartecipanti ? ' / ' + lega.maxPartecipanti : '' }}
-            </span>
+            @if (lega.maxPartecipanti !== 2) {
+              <!-- Sfida 1v1: privata e "1/2" sono scontate, non serve ripeterle -->
+              <span class="recap-meta-chip" [class.recap-meta-chip--public]="lega.pubblica">
+                <mat-icon class="rmc-icon">{{ lega.pubblica ? 'public' : 'lock' }}</mat-icon>
+                {{ lega.pubblica ? ('LEAGUE.VISIBILITY_PUBLIC' | translate) : ('LEAGUE.VISIBILITY_PRIVATE' | translate) }}
+              </span>
+              <span class="recap-meta-chip">
+                <mat-icon class="rmc-icon">group</mat-icon>
+                {{ lega.numPartecipanti ?? lega.giocatori?.length ?? 0 }}{{ lega.maxPartecipanti ? ' / ' + lega.maxPartecipanti : '' }}
+              </span>
+            } @else {
+              <span class="recap-duel-badge">{{ 'DUEL.BADGE_1V1' | translate }}</span>
+            }
           </div>
         </div>
 
@@ -402,6 +408,18 @@
           </button>
         </div>
         }
+
+        @if (lega.maxPartecipanti === 2 && (lega.numPartecipanti ?? lega.giocatori?.length ?? 0) < 2) {
+          <div class="recap-waiting-row recap-waiting-row--list">
+            <span class="rw-hand" aria-hidden="true">
+              <span class="rw-finger rw-finger--1"></span>
+              <span class="rw-finger rw-finger--2"></span>
+              <span class="rw-finger rw-finger--3"></span>
+              <span class="rw-finger rw-finger--4"></span>
+            </span>
+            <span class="rw-text">{{ 'DUEL.WAITING_OPPONENT' | translate }}</span>
+          </div>
+        }
       </div>
 
       <!-- VISTA DESKTOP/TABLET - Tabella Compatta Tipo Excel -->
@@ -493,6 +511,11 @@
                         } @else {
                           <span class="user-name">{{ giocatore.nickname }}</span>
                         }
+                        <app-player-badges
+                          [vittorie1v1]="giocatore.vittorie1v1"
+                          [vittorieSurvivor]="giocatore.vittorieSurvivor"
+                          [vittorieCampionato]="giocatore.vittorieCampionato">
+                        </app-player-badges>
                         @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                           <span class="vincitore-crown">👑</span>
                         }
@@ -741,6 +764,18 @@
           }
         </div>
 
+        @if (lega.maxPartecipanti === 2 && (lega.numPartecipanti ?? lega.giocatori?.length ?? 0) < 2) {
+          <div class="recap-waiting-row recap-waiting-row--list">
+            <span class="rw-hand" aria-hidden="true">
+              <span class="rw-finger rw-finger--1"></span>
+              <span class="rw-finger rw-finger--2"></span>
+              <span class="rw-finger rw-finger--3"></span>
+              <span class="rw-finger rw-finger--4"></span>
+            </span>
+            <span class="rw-text">{{ 'DUEL.WAITING_OPPONENT' | translate }}</span>
+          </div>
+        }
+
         <!-- CHIPS VOTI PER SQUADRA — visibili durante DA_GIOCARE o IN_CORSO con almeno un voto -->
         @if (isRoundPickPhaseActive() && getVotiPerSquadra().length > 0) {
           <div class="voti-chips-row">
@@ -816,6 +851,11 @@
               } @else {
                 <span class="nome-giocatore-mobile">{{ giocatore.nickname }}</span>
               }
+              <app-player-badges
+                [vittorie1v1]="giocatore.vittorie1v1"
+                [vittorieSurvivor]="giocatore.vittorieSurvivor"
+                [vittorieCampionato]="giocatore.vittorieCampionato">
+              </app-player-badges>
               @if (isTerminata() && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                 <span class="vincitore-crown-mobile">👑</span>
               }
