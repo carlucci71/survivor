@@ -93,6 +93,10 @@ export class LiveScoreDialogComponent {
     });
   }
 
+  get inCorsoCount(): number {
+    return this.partiteAttive.filter(p => p.stato === 'IN_CORSO').length;
+  }
+
   onClose(): void {
     this.dialogRef.close();
   }

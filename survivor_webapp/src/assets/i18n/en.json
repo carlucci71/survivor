@@ -25,6 +25,8 @@
     "GOT_IT": "Got it"
   },
   "LIVE_SCORE": {
+    "MATCHES_COUNT": "{{count}} matches",
+    "LIVE_NOW": "Live",
     "BUTTON_LABEL": "Live Scores",
     "BUTTON_LABEL_GENERIC": "Results",
     "DIALOG_TITLE": "Results",

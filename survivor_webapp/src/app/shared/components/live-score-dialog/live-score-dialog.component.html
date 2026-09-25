@@ -1,6 +1,15 @@
 <div class="lsd-container">
   <div class="lsd-header">
-    <span class="lsd-title">{{ 'LIVE_SCORE.DIALOG_TITLE' | translate }}</span>
+    <span class="lsd-bubble lsd-b1"></span>
+    <span class="lsd-bubble lsd-b2"></span>
+    <span class="lsd-header-icon"><mat-icon>scoreboard</mat-icon></span>
+    <div class="lsd-header-text">
+      <span class="lsd-title">{{ 'LIVE_SCORE.DIALOG_TITLE' | translate }}</span>
+      <span class="lsd-subtitle">
+        {{ 'LIVE_SCORE.MATCHES_COUNT' | translate: { count: partiteAttive.length } }}
+        <span class="lsd-live-chip" *ngIf="inCorsoCount > 0"><span class="lsd-live-dot lsd-live-dot--on-dark"></span>{{ inCorsoCount }} {{ 'LIVE_SCORE.LIVE_NOW' | translate }}</span>
+      </span>
+    </div>
     <button type="button" class="lsd-close-btn" (click)="onClose()" [attr.aria-label]="'COMMON.CLOSE' | translate">
       <mat-icon>close</mat-icon>
     </button>
@@ -17,13 +26,15 @@
 
   <div class="lsd-body">
     <div class="lsd-list" *ngIf="partiteAttive.length > 0; else vuoto">
-      <button type="button" class="lsd-match-row" *ngFor="let partita of partiteAttive"
+      <button type="button" class="lsd-match-row" *ngFor="let partita of partiteAttive; let i = index"
               [class.lsd-match-row--live]="partita.stato === 'IN_CORSO'"
+              [class.lsd-match-row--ft]="partita.stato === 'TERMINATA'"
               [class.lsd-match-row--no-detail]="!dettaglioDisponibile"
+              [style.animation-delay.ms]="i * 30"
               (click)="apriDettaglio(partita)">
 
         <div class="lsd-team">
-          <img *ngIf="getLogo(partita.casaSigla) as logo" [src]="logo" [alt]="partita.casaNome" class="lsd-logo" (error)="$any($event.target).style.display='none'">
+          <span class="lsd-logo-wrap"><img *ngIf="getLogo(partita.casaSigla) as logo" [src]="logo" [alt]="partita.casaNome" class="lsd-logo" (error)="$any($event.target).style.display='none'"></span>
           <span class="lsd-team-name">{{ partita.casaNome }}</span>
         </div>
 
@@ -46,7 +57,7 @@
 
         <div class="lsd-team lsd-team--away">
           <span class="lsd-team-name">{{ partita.fuoriNome }}</span>
-          <img *ngIf="getLogo(partita.fuoriSigla) as logo" [src]="logo" [alt]="partita.fuoriNome" class="lsd-logo" (error)="$any($event.target).style.display='none'">
+          <span class="lsd-logo-wrap"><img *ngIf="getLogo(partita.fuoriSigla) as logo" [src]="logo" [alt]="partita.fuoriNome" class="lsd-logo" (error)="$any($event.target).style.display='none'"></span>
         </div>
 
         <mat-icon *ngIf="dettaglioDisponibile" class="lsd-chevron">chevron_right</mat-icon>

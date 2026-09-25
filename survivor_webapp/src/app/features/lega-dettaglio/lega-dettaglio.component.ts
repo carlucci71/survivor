@@ -520,7 +520,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Se i dati sono già pronti apre subito, altrimenti aspetta il caricamento
     if (this.studioCaricato) {
       this.dialog.open(StudioGiocataDialogComponent, {
-        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id, duel: this.lega?.maxPartecipanti === 2 },
+        data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
         panelClass: 'studio-dialog-panel',
         maxWidth: '520px',
         width: '96vw',
@@ -537,7 +537,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (this.studioCaricato) {
           clearInterval(waitOpen);
           this.dialog.open(StudioGiocataDialogComponent, {
-            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id, duel: this.lega?.maxPartecipanti === 2 },
+            data: { partite: this.studioPartite, classifica: this.studioClassifica, giornataLabel: label, campionatoId: this.lega?.campionato?.id },
             panelClass: 'studio-dialog-panel',
             maxWidth: '520px',
             width: '96vw',
@@ -3247,7 +3247,6 @@ export class LegaDettaglioComponent implements OnDestroy {
         giornata: giornataCorrente,
         giornataIniziale: giornataIniziale,
         isLeader: this.isLeaderLega() || this.isAdmin(),
-        duel: this.lega.maxPartecipanti === 2,
         getTeamLogo: (sigla: string) => this.getTeamLogo(sigla)
       },
       width: isDesktop ? '520px' : '95vw',

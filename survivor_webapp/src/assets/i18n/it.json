@@ -25,6 +25,8 @@
     "GOT_IT": "Ho capito"
   },
   "LIVE_SCORE": {
+    "MATCHES_COUNT": "{{count}} partite",
+    "LIVE_NOW": "In diretta",
     "BUTTON_LABEL": "Risultati Live",
     "BUTTON_LABEL_GENERIC": "Risultati",
     "DIALOG_TITLE": "Risultati",

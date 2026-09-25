@@ -12,8 +12,6 @@ export interface StudioGiocataDialogData {
   classifica: ClassificaRow[];
   giornataLabel: string;
   campionatoId?: string;
-  /** Sfida 1v1: tema bronzo invece del navy. */
-  duel?: boolean;
 }
 
 const MONDIALI_GIRONI: { label: string; teams: string[] }[] = [
@@ -51,7 +49,7 @@ const MONDIALI_TEAM_NAMES: Record<string, string> = {
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, TranslateModule],
   template: `
-    <div class="sg-dialog" [class.duel-theme]="data.duel">
+    <div class="sg-dialog">
       <!-- Header -->
       <div class="sg-header">
         <div class="sg-header-title">
@@ -707,26 +705,6 @@ const MONDIALI_TEAM_NAMES: Record<string, string> = {
       .sg-groups-grid { grid-template-columns: 1fr; }
     }
 
-    /* Sfida 1v1: palette bronzo al posto di navy/cyan */
-    .sg-dialog.duel-theme {
-      .sg-header { background: linear-gradient(135deg, #0B5F73 0%, #0E7490 60%, #14A3B8 100%); }
-      .sg-tab.active { color: #0B5F73; border-bottom-color: #14A3B8; }
-      .sg-match {
-        box-shadow: 0 2px 8px rgba(11, 95, 115,0.05);
-        &:hover { box-shadow: 0 4px 16px rgba(11, 95, 115,0.11); }
-        &.in-corso { border-left-color: #14A3B8; background: linear-gradient(135deg, #fff 80%, rgba(20, 163, 184,0.06) 100%); }
-      }
-      .sg-badge.live { background: linear-gradient(90deg, #0B5F73, #14A3B8); }
-      .sg-team-badge.home-badge { background: linear-gradient(135deg, #0B5F73, #0E7490); }
-      .sg-score { background: linear-gradient(135deg, #0B5F73, #0E7490); }
-      .sg-standings-head { background: linear-gradient(135deg, #0B5F73, #0E7490); }
-      .sth-pts { color: #14A3B8; }
-      .sg-standing-row .sth-pts { color: #0B5F73; }
-      .sg-cal-group, .sg-group-card { box-shadow: 0 2px 8px rgba(11, 95, 115,0.05); }
-      .sg-group-header { background: linear-gradient(135deg, #0B5F73 0%, #0E7490 60%, #14A3B8 100%); }
-      .sgr-pts { color: #0B5F73; }
-      .sg-group-row.qualify { background: linear-gradient(90deg, rgba(11, 95, 115,0.05) 0%, #fff 100%); }
-    }
   `]
 })
 export class StudioGiocataDialogComponent {
