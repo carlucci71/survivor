@@ -39,3 +39,9 @@ Progetto "Survivor": app di pronostici/eliminazione a squadre (modalità Survivo
    **Pagina "Unisciti a una lega"** (`lega-join`) e `lega-card`: card con logo torneo, chip (modalità, partecipanti, giornata, stato), accento navy/oro (Campionato)/teal (1v1). `UtilService.getTorneoLogo` è la mappa loghi dei tornei per i componenti condivisi.
 
    **Home**: card "Sfida lampo" con moneta 3D sopra "Crea una nuova lega"; la moneta è un `<button>` con dischi impilati (`translateZ`) e facce fronte/retro, animata con keyframes `duelSealFlip`.
+
+   **Selettore leghe in home** (`giocata-recap-card`): tab a "segmented control" con pillola che scivola (`.lt-indicator`, posizionata in TS da `moveIndicator` con `offsetLeft/offsetWidth` della tab attiva; ricalcolata anche su resize). Ogni tab = logo torneo + nome, badge sul logo (⚔️ teal = 1v1, puntino arancione = manca la scelta); le non attive sono card bianche con ombra su base azzurro-grigio. Niente testo di stato: poche info ma leggibili. Default = ultima lega (id maggiore) o quella da cui si esce dal dettaglio (`sessionStorage` chiave `recapSelectedLegaId`); cambiando lega si ferma subito l'animazione di risultato. Carosello a scorrimento e cerchi "storie" sono stati provati e scartati.
+
+   **Lega piena da invito** (`lega-join`): se la lega ha già `maxPartecipanti` (o il backend risponde `LEGA_FULL`) si mostra una card con una frase simpatica a caso da `JOIN_LEAGUE.FULL_PHRASES` (5 per lingua, modificabili nei json).
+
+   **Attenzione ai file con CRLF**: quando si patchano file con script, normalizzare i fine riga prima (sostituire CRLF con LF) e riconvertire una volta sola, altrimenti compaiono righe con doppio ritorno a capo (CR CR LF).

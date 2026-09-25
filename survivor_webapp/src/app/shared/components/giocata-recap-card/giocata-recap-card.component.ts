@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
@@ -292,6 +292,7 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
       this.selectedIndex = this.defaultLegaIndex();
     }
     this.rememberSelectedLega();
+    this.scrollRailToActive();
 
     if (toAnimate.length > 0) {
       // 80ms: Angular ha già renderizzato il DOM con animationState='none'.
@@ -322,6 +323,42 @@ export class GiocataRecapCardComponent implements OnChanges, OnInit, OnDestroy {
 
   get selected(): LegaConGiocata | null {
     return this.legheAttive[this.selectedIndex] ?? null;
+  }
+
+  @ViewChild('rail') rail?: ElementRef<HTMLElement>;
+  indLeft = 0;
+  indWidth = 0;
+
+  onRailClick(index: number, ev: Event): void {
+    this.selectLega(index);
+    const el = ev.currentTarget as HTMLElement | null;
+    if (el) {
+      this.moveIndicator(el);
+      el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
+
+  private moveIndicator(el: HTMLElement): void {
+    this.indLeft = el.offsetLeft;
+    this.indWidth = el.offsetWidth;
+  }
+
+  /** Posiziona l'indicatore sulla lega attiva e la porta in vista (caricamento / ritorno dal dettaglio / resize). */
+  private scrollRailToActive(): void {
+    setTimeout(() => {
+      const r = this.rail?.nativeElement;
+      const el = r?.querySelector('.lt-item.active') as HTMLElement | null;
+      if (r && el) {
+        this.moveIndicator(el);
+        r.scrollLeft = el.offsetLeft - r.clientWidth / 2 + el.offsetWidth / 2;
+        this.cdr.detectChanges();
+      }
+    }, 0);
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.scrollRailToActive();
   }
 
   selectLega(index: number): void {
