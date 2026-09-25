@@ -962,6 +962,15 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Join a League",
+    "FULL_TITLE": "Sold out!",
+    "FULL_DESC": "The challenge \"{{lega}}\" already has all its players.",
+    "FULL_PHRASES": [
+      "The early bird gets the worm… and this time you were the second bird! 🐦",
+      "Slow and steady wins the race, but this time speed won the seat! 🐢",
+      "Snooze and you lose: somebody else took your spot! 😴",
+      "The train has left with every seat taken. Run faster next time! 🚂",
+      "Too late, champ: the duel started without you ⚔️"
+    ],
     "HERO_TITLE": "Find your challenge",
     "HERO_SUBTITLE": "Join a public league and play with other players",
     "HERO_COUNT": "{{count}} available",

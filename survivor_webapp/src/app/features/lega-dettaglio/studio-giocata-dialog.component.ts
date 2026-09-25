@@ -709,23 +709,23 @@ const MONDIALI_TEAM_NAMES: Record<string, string> = {
 
     /* Sfida 1v1: palette bronzo al posto di navy/cyan */
     .sg-dialog.duel-theme {
-      .sg-header { background: linear-gradient(135deg, #8B5A2B 0%, #A9702F 60%, #CD7F32 100%); }
-      .sg-tab.active { color: #8B5A2B; border-bottom-color: #CD7F32; }
+      .sg-header { background: linear-gradient(135deg, #0B5F73 0%, #0E7490 60%, #14A3B8 100%); }
+      .sg-tab.active { color: #0B5F73; border-bottom-color: #14A3B8; }
       .sg-match {
-        box-shadow: 0 2px 8px rgba(139,90,43,0.05);
-        &:hover { box-shadow: 0 4px 16px rgba(139,90,43,0.11); }
-        &.in-corso { border-left-color: #CD7F32; background: linear-gradient(135deg, #fff 80%, rgba(205,127,50,0.06) 100%); }
+        box-shadow: 0 2px 8px rgba(11, 95, 115,0.05);
+        &:hover { box-shadow: 0 4px 16px rgba(11, 95, 115,0.11); }
+        &.in-corso { border-left-color: #14A3B8; background: linear-gradient(135deg, #fff 80%, rgba(20, 163, 184,0.06) 100%); }
       }
-      .sg-badge.live { background: linear-gradient(90deg, #8B5A2B, #CD7F32); }
-      .sg-team-badge.home-badge { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
-      .sg-score { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
-      .sg-standings-head { background: linear-gradient(135deg, #8B5A2B, #A9702F); }
-      .sth-pts { color: #CD7F32; }
-      .sg-standing-row .sth-pts { color: #8B5A2B; }
-      .sg-cal-group, .sg-group-card { box-shadow: 0 2px 8px rgba(139,90,43,0.05); }
-      .sg-group-header { background: linear-gradient(135deg, #8B5A2B 0%, #A9702F 60%, #CD7F32 100%); }
-      .sgr-pts { color: #8B5A2B; }
-      .sg-group-row.qualify { background: linear-gradient(90deg, rgba(139,90,43,0.05) 0%, #fff 100%); }
+      .sg-badge.live { background: linear-gradient(90deg, #0B5F73, #14A3B8); }
+      .sg-team-badge.home-badge { background: linear-gradient(135deg, #0B5F73, #0E7490); }
+      .sg-score { background: linear-gradient(135deg, #0B5F73, #0E7490); }
+      .sg-standings-head { background: linear-gradient(135deg, #0B5F73, #0E7490); }
+      .sth-pts { color: #14A3B8; }
+      .sg-standing-row .sth-pts { color: #0B5F73; }
+      .sg-cal-group, .sg-group-card { box-shadow: 0 2px 8px rgba(11, 95, 115,0.05); }
+      .sg-group-header { background: linear-gradient(135deg, #0B5F73 0%, #0E7490 60%, #14A3B8 100%); }
+      .sgr-pts { color: #0B5F73; }
+      .sg-group-row.qualify { background: linear-gradient(90deg, rgba(11, 95, 115,0.05) 0%, #fff 100%); }
     }
   `]
 })

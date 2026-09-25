@@ -184,10 +184,10 @@ export interface RoundResultsData {
       max-height: 90vh;
     }
     .rr.duel-theme {
-      --rr-1: #8B5A2B; --rr-2: #A9702F; --rr-3: #CD7F32;
-      --rr-tint: rgba(139, 90, 43, 0.07);
-      --rr-line: rgba(139, 90, 43, 0.2);
-      --rr-shadow: rgba(139, 90, 43, 0.3);
+      --rr-1: #0B5F73; --rr-2: #0E7490; --rr-3: #14A3B8;
+      --rr-tint: rgba(11, 95, 115, 0.07);
+      --rr-line: rgba(11, 95, 115, 0.2);
+      --rr-shadow: rgba(11, 95, 115, 0.3);
     }
 
     /* ── Header ── */
