@@ -175,13 +175,6 @@
     "GO_TO_LEAGUE": "Ir a la liga",
     "BADGE_1V1": "⚔️ Duelo 1v1",
     "WAITING_OPPONENT": "Esperando a un rival…",
-    "INVITE_PLACEHOLDER": "Email o apodo de un amigo ya registrado",
-    "INVITE_SEND": "Enviar notificación",
-    "INVITE_SENT": "¡Notificación enviada!",
-    "INVITE_NOT_FOUND": "Usuario no encontrado: revisa email o apodo.",
-    "INVITE_AMBIGUOUS": "Varios usuarios con este apodo: usa el email.",
-    "INVITE_ERROR": "No se pudo enviar, inténtalo de nuevo.",
-    "INVITE_DIVIDER": "o invita por email/apodo",
     "OUT": "Eliminado",
     "QUICK_LABEL": "Duelo rápido"
   },

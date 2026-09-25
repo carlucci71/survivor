@@ -26,10 +26,6 @@ export class LegaService {
       .pipe(map((leghe) => leghe.map(mapLegaFromBE)));
   }
 
-  invitaSfidaLampo(idLega: number, destinatario: string): Observable<{ ESITO: string }> {
-    return this.http.post<{ ESITO: string }>(`${this.apiUrl}/invita-sfida-lampo/${idLega}`, { destinatario });
-  }
-
   getLegaById(id: number): Observable<Lega> {
     return this.http.get<Lega>(`${this.apiUrl}/${id}`).pipe(map(mapLegaFromBE));
   }

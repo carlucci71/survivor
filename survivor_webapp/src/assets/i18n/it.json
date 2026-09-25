@@ -175,13 +175,6 @@
     "GO_TO_LEAGUE": "Vai alla lega",
     "BADGE_1V1": "⚔️ Sfida 1v1",
     "WAITING_OPPONENT": "In attesa di un avversario…",
-    "INVITE_PLACEHOLDER": "Email o nickname di un amico già iscritto",
-    "INVITE_SEND": "Invia notifica",
-    "INVITE_SENT": "Notifica inviata!",
-    "INVITE_NOT_FOUND": "Utente non trovato: controlla email o nickname.",
-    "INVITE_AMBIGUOUS": "Più utenti con questo nickname: usa l'email.",
-    "INVITE_ERROR": "Invio non riuscito, riprova.",
-    "INVITE_DIVIDER": "oppure invita per email/nickname",
     "OUT": "Eliminato",
     "QUICK_LABEL": "Sfida lampo"
   },

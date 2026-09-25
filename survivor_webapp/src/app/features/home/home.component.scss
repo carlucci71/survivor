@@ -1143,39 +1143,6 @@ button[mat-raised-button][color="primary"] {
 // Badge "Sfida lampo" (duello 1v1) in fondo alla hero, allineato al suo bordo destro.
 // Moneta bronzo 3D con spessore: fa un doppio giro con flash e onda luminosa, poi resta
 // ferma di fronte con "1v1" leggibile; sul retro c'è ⚔️ (visibile durante il giro).
-.duel-seal {
-	position: absolute;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	border: none;
-	background: none;
-	padding: 0;
-	cursor: pointer;
-	white-space: nowrap;
-}
-
-.duel-seal-dot {
-	width: 7px;
-	height: 7px;
-	border-radius: 50%;
-	background: #CD7F32;
-	flex-shrink: 0;
-	animation: duelSealDotPulse 1.6s ease-in-out infinite;
-}
-
-.duel-seal-label {
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.2px;
-	color: #8B5A2B;
-	text-transform: uppercase;
-	font-family: 'Poppins', sans-serif;
-}
-
 .duel-seal-coin {
 	position: relative;
 	flex-shrink: 0;
@@ -1277,11 +1244,6 @@ button[mat-raised-button][color="primary"] {
 	100%    { box-shadow: 0 0 0 10px rgba(205, 127, 50, 0); }
 }
 
-@keyframes duelSealDotPulse {
-	0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(205, 127, 50, 0.4); }
-	50%       { opacity: 0.6; transform: scale(1.3); box-shadow: 0 0 0 4px rgba(205, 127, 50, 0); }
-}
-
 @keyframes duelSealBurstY {
 	0%   { transform: rotateY(0deg)   scale(1); }
 	50%  { transform: rotateY(200deg) scale(1.25); }
@@ -1289,21 +1251,44 @@ button[mat-raised-button][color="primary"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.duel-seal-disc, .duel-seal--clicked .duel-seal-disc, .duel-seal-dot, .duel-seal-halo, .duel-seal-face::after { animation: none; }
+	.duel-seal-disc, .duel-seal--clicked .duel-seal-disc, .duel-seal-halo, .duel-seal-face::after { animation: none; }
 }
 
-// Sotto i 440px la sola moneta (senza etichetta) evita di accavallarsi con "RISULTATI"
+// Card "Sfida lampo": bronzo, sopra "Crea una nuova lega", tutta cliccabile
+.duel-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0 0 16px;
+	padding: 14px 20px;
+	border: 1.5px solid rgba(205, 127, 50, 0.45);
+	border-radius: 16px;
+	background: linear-gradient(135deg, rgba(139, 90, 43, 0.1), rgba(205, 127, 50, 0.2));
+	box-shadow: 0 6px 20px rgba(139, 90, 43, 0.15);
+	font-family: 'Poppins', sans-serif;
+	text-align: left;
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.duel-card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(139, 90, 43, 0.22); }
+.duel-card:active { transform: translateY(0); }
+.dc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dc-title {
+	font-size: 1.15rem;
+	font-weight: 800;
+	color: #8B5A2B;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+}
+.dc-sub { font-size: 0.8rem; font-weight: 500; color: #A9702F; }
+.duel-card .duel-seal-coin { width: 48px; height: 48px; }
 @media (max-width: 440px) {
-	.duel-seal-dot, .duel-seal-label {
-		display: none;
-	}
-	.duel-seal {
-		gap: 0;
-	}
-	.duel-seal-coin {
-		width: 36px;
-		height: 36px;
-	}
+	.duel-card { padding: 12px 16px; }
+	.dc-title { font-size: 1rem; }
+	.duel-card .duel-seal-coin { width: 44px; height: 44px; }
 }
 
 // Card "Condividi l'app": tutta cliccabile, mostra i loghi degli store
@@ -1505,7 +1490,6 @@ button[mat-raised-button][color="primary"] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 46px;
 	max-width: 1200px;
 	margin: 0 auto;
 	margin-left: auto;

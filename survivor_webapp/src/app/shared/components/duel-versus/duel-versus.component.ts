@@ -64,7 +64,7 @@ interface DuelSide {
     </div>
   `,
   styles: [`
-    :host { display: block; margin: 4px 0 8px; }
+    :host { display: block; width: 100%; max-width: 520px; margin: 4px auto 8px; }
 
     .dv {
       position: relative;

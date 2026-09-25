@@ -175,13 +175,6 @@
     "GO_TO_LEAGUE": "Go to league",
     "BADGE_1V1": "⚔️ 1v1 duel",
     "WAITING_OPPONENT": "Waiting for an opponent…",
-    "INVITE_PLACEHOLDER": "Email or nickname of a friend already on Survivor",
-    "INVITE_SEND": "Send notification",
-    "INVITE_SENT": "Notification sent!",
-    "INVITE_NOT_FOUND": "User not found: check email or nickname.",
-    "INVITE_AMBIGUOUS": "Several users share this nickname: use the email.",
-    "INVITE_ERROR": "Could not send, try again.",
-    "INVITE_DIVIDER": "or invite by email/nickname",
     "OUT": "Eliminated",
     "QUICK_LABEL": "Quick duel"
   },

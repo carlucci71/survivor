@@ -90,16 +90,6 @@ import { environment } from '../../../../environments/environment';
           <mat-icon>{{ copied ? 'check' : 'content_copy' }}</mat-icon>
           {{ (copied ? 'DUEL.LINK_COPIED' : 'DUEL.COPY_LINK') | translate }}
         </button>
-        <div class="sl-or">{{ 'DUEL.INVITE_DIVIDER' | translate }}</div>
-        <div class="sl-invite-row">
-          <input class="sl-invite-input" type="text" [(ngModel)]="inviteTarget" (keyup.enter)="inviaNotifica()"
-                 [placeholder]="'DUEL.INVITE_PLACEHOLDER' | translate" autocomplete="off" />
-          <button type="button" class="sl-invite-send" (click)="inviaNotifica()" [disabled]="!inviteTarget.trim() || inviting"
-                  [attr.aria-label]="'DUEL.INVITE_SEND' | translate">
-            <mat-icon>{{ inviting ? 'hourglass_top' : 'send' }}</mat-icon>
-          </button>
-        </div>
-        <p class="sl-invite-msg" [class.sl-invite-msg--ok]="inviteOk" *ngIf="inviteMessage">{{ inviteMessage }}</p>
         <button type="button" class="sl-goto-btn" (click)="goToLega()">
           <mat-icon>sports</mat-icon>
           {{ 'DUEL.GO_TO_LEAGUE' | translate }}
@@ -318,29 +308,6 @@ import { environment } from '../../../../environments/environment';
       margin-bottom: 10px;
       box-shadow: 0 4px 14px rgba(139,90,43,0.3);
     }
-    .sl-or { font-size: 0.72rem; color: var(--text-secondary, #6B7280); margin: 4px 0 8px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .sl-invite-row { display: flex; gap: 8px; width: 100%; }
-    .sl-invite-input {
-      flex: 1; min-width: 0;
-      padding: 11px 14px;
-      border-radius: 30px;
-      border: 1.5px solid rgba(139,90,43,0.35);
-      background: var(--bg-tertiary, #F8F9FA);
-      color: var(--text-primary, #1F2937);
-      font-family: inherit; font-size: 0.85rem; outline: none;
-    }
-    .sl-invite-input:focus { border-color: #CD7F32; }
-    .sl-invite-send {
-      flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
-      border: none; cursor: pointer; color: #fff;
-      background: linear-gradient(135deg, #CD7F32, #8B5A2B);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .sl-invite-send:disabled { opacity: 0.45; cursor: not-allowed; }
-    .sl-invite-send mat-icon { font-size: 20px; width: 20px; height: 20px; }
-    .sl-invite-msg { font-size: 0.78rem; color: #d32f2f; margin: 8px 0 0; text-align: center; }
-    .sl-invite-msg--ok { color: #43A047; }
-    .sl-invite-row + .sl-invite-msg + .sl-goto-btn, .sl-invite-row + .sl-goto-btn { margin-top: 14px; }
     .sl-copy-btn {
       width: 100%;
       padding: 12px;
@@ -451,35 +418,6 @@ export class SfidaLampoDialogComponent implements OnInit {
   selectCampionato(c: Campionato): void {
     if (!this.isDisponibile(c)) return;
     this.campionatoSel = c;
-  }
-
-  inviteTarget = '';
-  inviting = false;
-  inviteOk = false;
-  inviteMessage = '';
-
-  inviaNotifica(): void {
-    const dest = this.inviteTarget.trim();
-    if (!dest || this.inviting || !this.legaCreataId) return;
-    this.inviting = true;
-    this.inviteMessage = '';
-    this.legaService.invitaSfidaLampo(this.legaCreataId, dest).subscribe({
-      next: () => {
-        this.inviting = false;
-        this.inviteOk = true;
-        this.inviteMessage = this.translate.instant('DUEL.INVITE_SENT');
-        this.inviteTarget = '';
-      },
-      error: (err) => {
-        this.inviting = false;
-        this.inviteOk = false;
-        const code = err?.error?.errorCode;
-        this.inviteMessage = this.translate.instant(
-          code === 'USER_NOT_FOUND' ? 'DUEL.INVITE_NOT_FOUND'
-            : code === 'NICKNAME_AMBIGUO' ? 'DUEL.INVITE_AMBIGUOUS'
-            : 'DUEL.INVITE_ERROR');
-      },
-    });
   }
 
   canSubmit(): boolean {

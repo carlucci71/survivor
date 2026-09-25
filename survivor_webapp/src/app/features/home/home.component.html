@@ -21,27 +21,6 @@
   <!-- BOTTONE RISULTATI LIVE (solo Serie A per ora) + SFIDA 1V1 LAMPO sulla stessa riga -->
   <div class="live-score-btn-wrap">
     <app-live-score-button></app-live-score-button>
-
-    <!-- SFIDA 1V1 LAMPO: etichetta "Sfida lampo" + moneta che gira in orizzontale (scritta
-         "1v1" compresa, gira insieme al disco), tutto a destra della riga. -->
-    <button type="button" class="duel-seal" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()" [matTooltip]="'DUEL.CARD_TITLE' | translate">
-      <span class="duel-seal-dot" aria-hidden="true"></span>
-      <span class="duel-seal-label">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
-      <span class="duel-seal-coin">
-        <span class="duel-seal-halo"></span>
-        <span class="duel-seal-disc" aria-hidden="true">
-          <span class="duel-seal-layer" style="--z:-3px"></span>
-          <span class="duel-seal-layer" style="--z:-2px"></span>
-          <span class="duel-seal-layer" style="--z:-1px"></span>
-          <span class="duel-seal-layer" style="--z:0px"></span>
-          <span class="duel-seal-layer" style="--z:1px"></span>
-          <span class="duel-seal-layer" style="--z:2px"></span>
-          <span class="duel-seal-layer" style="--z:3px"></span>
-          <span class="duel-seal-face duel-seal-face--front"><span class="duel-seal-text">1v1</span></span>
-          <span class="duel-seal-face duel-seal-face--back">⚔️</span>
-        </span>
-      </span>
-    </button>
   </div>
 
   <!-- GIOCATA RECAP CARD -->
@@ -300,6 +279,27 @@
     <section class="leghe-section">
       <h2>{{ 'HOME.NEW_LEAGUES' | translate }}</h2>
       <div class="leghe-groups">
+        <!-- SFIDA LAMPO 1V1: card bronzo sopra "Crea una nuova lega", tutta cliccabile -->
+        <button type="button" class="duel-card" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()">
+          <span class="dc-text">
+            <span class="dc-title">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
+            <span class="dc-sub">{{ 'DUEL.CARD_TITLE' | translate }}</span>
+          </span>
+          <span class="duel-seal-coin">
+            <span class="duel-seal-halo"></span>
+            <span class="duel-seal-disc" aria-hidden="true">
+              <span class="duel-seal-layer" style="--z:-3px"></span>
+              <span class="duel-seal-layer" style="--z:-2px"></span>
+              <span class="duel-seal-layer" style="--z:-1px"></span>
+              <span class="duel-seal-layer" style="--z:0px"></span>
+              <span class="duel-seal-layer" style="--z:1px"></span>
+              <span class="duel-seal-layer" style="--z:2px"></span>
+              <span class="duel-seal-layer" style="--z:3px"></span>
+              <span class="duel-seal-face duel-seal-face--front"><span class="duel-seal-text">1v1</span></span>
+              <span class="duel-seal-face duel-seal-face--back">⚔️</span>
+            </span>
+          </span>
+        </button>
         <mat-card class="lega-group-card">
           <mat-card-header>
             <mat-card-title>{{ 'HOME.CREATE_NEW_LEAGUE' | translate }}</mat-card-title>
