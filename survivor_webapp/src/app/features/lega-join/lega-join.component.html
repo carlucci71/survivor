@@ -3,6 +3,16 @@
 
 	<main class="main-content">
 
+		<!-- Intro -->
+		<section class="jl-hero" *ngIf="!invitedLega">
+			<div class="jl-hero-icon"><mat-icon>travel_explore</mat-icon></div>
+			<div class="jl-hero-text">
+				<h1 class="jl-hero-title">{{ 'JOIN_LEAGUE.HERO_TITLE' | translate }}</h1>
+				<p class="jl-hero-sub">{{ 'JOIN_LEAGUE.HERO_SUBTITLE' | translate }}</p>
+			</div>
+			<span class="jl-hero-count" *ngIf="leghe.length">{{ 'JOIN_LEAGUE.HERO_COUNT' | translate: { count: legheFiltrate.length } }}</span>
+		</section>
+
 		<!-- ── Lega da invito (link condiviso) ── -->
 		<section class="invite-section" *ngIf="invitedLega">
 

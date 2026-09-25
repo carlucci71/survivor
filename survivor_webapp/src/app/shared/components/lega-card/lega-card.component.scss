@@ -1,204 +1,85 @@
-.lega-card.small {
-  background: var(--bg-card);
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 0;
-  box-shadow: var(--card-shadow);
+:host { display: block; }
+
+.jl-card {
+  --jl-1: #0A3D91; --jl-2: #1565C0; --jl-3: #4FC3F7;
+  --jl-tint: rgba(10, 61, 145, 0.07);
+  --jl-line: rgba(10, 61, 145, 0.14);
+  --jl-shadow: rgba(10, 61, 145, 0.3);
+  position: relative;
   max-width: 720px;
-  width: auto;
   margin: 0 auto;
-  transition: box-shadow var(--transition-normal);
-
-  &:hover {
-    box-shadow: var(--card-hover-shadow);
-  }
-
-  mat-card-actions {
-    padding: 10px 16px 12px;
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
-.recap-header {
-  background: linear-gradient(135deg, #040f2e 0%, #0A3D91 60%, #1565C0 100%);
-  padding: 10px 16px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.recap-title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.recap-league-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ffffff;
-  line-height: 1.2;
-}
-
-.recap-edition-badge {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #4FC3F7;
-  background: rgba(79, 195, 247, 0.15);
-  border: 1px solid rgba(79, 195, 247, 0.3);
-  border-radius: 10px;
-  padding: 2px 7px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-
-.recap-sport-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.recap-sport-chip {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 500;
-}
-
-.recap-sport-icon {
-  font-size: 14px;
-  width: 14px;
-  height: 14px;
-  color: #4FC3F7;
-}
-
-.recap-dot {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.75rem;
-}
-
-.recap-championship {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.recap-info-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  background: #e5e7eb;
-}
-
-.recap-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  background: #ffffff;
-  flex: 1 1 auto;
-  min-width: 150px;
-}
-
-.rc-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-  color: #1565C0;
-  opacity: 0.75;
-  flex-shrink: 0;
-}
-
-.rc-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.rc-label {
-  font-size: 0.62rem;
-  color: #9CA3AF;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-
-.rc-value {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-@media (max-width: 480px) {
-  .recap-header {
-    padding: 8px 12px 6px;
-  }
-  .recap-chip {
-    min-width: 130px;
-    padding: 6px 12px;
-  }
-}
-
-/* BOTTONE RICHIEDI INGRESSO */
-.join-request-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  background: linear-gradient(135deg, #0A3D91, #1565C0);
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  font-size: 0.88rem;
-  font-weight: 700;
+  padding: 16px 16px 14px 20px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--jl-line);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+  animation: jl-in 0.45s ease both;
   font-family: 'Poppins', sans-serif;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.15s;
-  box-shadow: 0 4px 14px rgba(10, 61, 145, 0.35);
+}
+.jl-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px var(--jl-shadow); }
+.jl-card--camp { --jl-1: #B8791A; --jl-2: #D9961F; --jl-3: #F9A825; --jl-tint: rgba(249, 168, 37, 0.1); --jl-line: rgba(217, 150, 31, 0.28); --jl-shadow: rgba(184, 121, 26, 0.3); }
+.jl-card--duel { --jl-1: #8B5A2B; --jl-2: #A9702F; --jl-3: #CD7F32; --jl-tint: rgba(139, 90, 43, 0.08); --jl-line: rgba(205, 127, 50, 0.3); --jl-shadow: rgba(139, 90, 43, 0.3); }
 
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
+@keyframes jl-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  &:hover {
-    box-shadow: 0 6px 20px rgba(10, 61, 145, 0.5);
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &--pending {
-    background: rgba(10, 61, 145, 0.15);
-    color: rgba(10, 61, 145, 0.6);
-    box-shadow: none;
-    cursor: not-allowed;
-    border: 1.5px dashed rgba(10, 61, 145, 0.3);
-
-    mat-icon {
-      animation: spin 1.8s linear infinite;
-    }
-
-    &:hover {
-      box-shadow: none;
-      transform: none;
-    }
-  }
+.jl-accent {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+  background: linear-gradient(180deg, var(--jl-1), var(--jl-3));
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.jl-top { display: flex; align-items: center; gap: 12px; }
+.jl-logo {
+  flex-shrink: 0; width: 52px; height: 52px; border-radius: 14px;
+  background: var(--jl-tint); border: 1px solid var(--jl-line);
+  display: flex; align-items: center; justify-content: center;
+}
+.jl-logo img { width: 36px; height: 36px; object-fit: contain; }
+.jl-logo mat-icon { color: var(--jl-1); font-size: 28px; width: 28px; height: 28px; }
+.jl-title { flex: 1; min-width: 0; }
+.jl-name {
+  margin: 0; font-size: 1.08rem; font-weight: 800; color: var(--text-primary, #1F2937);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.jl-sub { display: flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 0.76rem; font-weight: 500; color: var(--text-secondary, #6B7280); flex-wrap: wrap; }
+.jl-dot { opacity: 0.6; }
+.jl-duel-badge {
+  flex-shrink: 0; padding: 3px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.4px;
+  color: #fff; background: linear-gradient(135deg, var(--jl-1), var(--jl-3)); box-shadow: 0 3px 10px var(--jl-shadow);
 }
 
+.jl-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 14px; }
+.jl-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px 4px 7px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 600; color: #475569; background: #F1F5F9;
+}
+.jl-chip mat-icon { font-size: 15px; width: 15px; height: 15px; color: #64748B; }
+.jl-chip--mode { color: var(--jl-1); background: var(--jl-tint); }
+.jl-chip--mode mat-icon { color: var(--jl-1); }
+.jl-chip--live { color: #047857; background: rgba(16, 185, 129, 0.13); }
+.jl-chip--live mat-icon { color: #059669; }
+
+.jl-cta { display: flex; }
+.jl-btn {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 18px; border: none; border-radius: 14px; cursor: pointer; font-family: inherit;
+  font-size: 0.92rem; font-weight: 800; letter-spacing: 0.3px; color: #fff;
+  background: linear-gradient(135deg, var(--jl-1), var(--jl-2) 55%, var(--jl-3));
+  box-shadow: 0 6px 16px var(--jl-shadow);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.jl-btn mat-icon { font-size: 20px; width: 20px; height: 20px; }
+.jl-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 22px var(--jl-shadow); }
+.jl-btn:active:not(:disabled) { transform: translateY(0); }
+.jl-btn--go { background: linear-gradient(135deg, #1B5E20, #2E7D32 55%, #4CAF50); box-shadow: 0 6px 16px rgba(27, 94, 32, 0.32); }
+.jl-card--duel .jl-btn--go { background: linear-gradient(135deg, var(--jl-1), var(--jl-3)); box-shadow: 0 6px 16px var(--jl-shadow); }
+.jl-btn--pending { background: #E2E8F0; color: #64748B; box-shadow: none; cursor: default; }
+
+@media (max-width: 380px) {
+  .jl-card { padding: 14px 12px 12px 16px; }
+  .jl-logo { width: 44px; height: 44px; }
+  .jl-logo img { width: 30px; height: 30px; }
+  .jl-name { font-size: 0.98rem; }
+}
+@media (prefers-reduced-motion: reduce) { .jl-card { animation: none; } }

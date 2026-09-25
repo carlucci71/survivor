@@ -1050,6 +1050,9 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Únete a una Liga",
+    "HERO_TITLE": "Encuentra tu reto",
+    "HERO_SUBTITLE": "Únete a una liga pública y juega con otros jugadores",
+    "HERO_COUNT": "{{count}} disponibles",
     "NO_LEAGUES": "No hay ninguna liga pública disponible por ahora.",
     "NO_RESULTS_FILTER": "Ninguna liga coincide con los filtros seleccionados.",
     "EMPTY_FILTER_TITLE": "Sin resultados",
@@ -1436,7 +1439,14 @@
     "LEGEND_FORCED": "Partido forzado: todos los jugadores que lo eligieron avanzan",
     "FORCE_HINT_SELECT": "Selecciona un partido para aplicar o quitar la forzadura",
     "APPLY_FORCE": "Aplicar forzadura",
-    "REMOVE_FORCE": "Quitar forzadura"
+    "REMOVE_FORCE": "Quitar forzadura",
+    "FORCE_HINT_SHORT": "Toca un partido para forzarlo",
+    "FORCED_TAG": "Forzada",
+    "STATE_DA_GIOCARE": "Por jugar",
+    "STATE_IN_CORSO": "En juego",
+    "STATE_TERMINATA": "Finalizado",
+    "STATE_SOSPESA": "Suspendido",
+    "STATE_RINVIATA": "Aplazado"
   },
   "RECAP": {
     "LOADING": "Cargando resultados…",

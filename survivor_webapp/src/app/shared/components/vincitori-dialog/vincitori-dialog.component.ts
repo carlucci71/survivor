@@ -48,6 +48,10 @@ export class VincitoriDialogComponent {
     this.frase = list.length ? list[Math.floor(Math.random() * list.length)] : '🥂';
   }
 
+  get nomiVincitori(): string {
+    return this.data.vincitori.map(v => v.nickname).join(' · ');
+  }
+
   close(): void {
     this.dialogRef.close();
   }

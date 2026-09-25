@@ -203,10 +203,7 @@ export class PushService {
 
       const router = this.injector.get(Router);
 
-      if (tipoNotifica === 'SFIDA_LAMPO_INVITO') {
-        // Invito a una sfida lampo: atterra sulla pagina con il bottone "entra nella lega"
-        router.navigate(['/joinLega'], { queryParams: { legaId } });
-      } else if (tipoNotifica === 'RECAP_GIORNATA') {
+      if (tipoNotifica === 'RECAP_GIORNATA') {
         const giornata: string | undefined = data['giornata'];
         if (giornata) {
           router.navigate(['/recap', legaId, giornata]);

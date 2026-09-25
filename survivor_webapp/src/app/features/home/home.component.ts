@@ -325,7 +325,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.groupLegheByName(leghe);
         if (preferredTab) {
           this.activeTab = preferredTab;
-          this.legheAperte = true;
         }
         this.isLoadingLeghe = false;
       },

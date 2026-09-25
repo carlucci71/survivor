@@ -1,52 +1,72 @@
-<mat-card class="lega-card small">
-  <div class="recap-header">
-    <div class="recap-title-row">
-      <span class="recap-league-name">{{ lega?.name }}</span>
-      <span class="recap-edition-badge">{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</span>
+<article class="jl-card"
+         [class.jl-card--duel]="isDuel"
+         [class.jl-card--camp]="lega?.modalita === 'CAMPIONATO'">
+  <span class="jl-accent"></span>
+
+  <div class="jl-top">
+    <div class="jl-logo">
+      @if (torneoLogo; as logo) {
+        <img [src]="logo" [alt]="lega?.campionato?.id ?? ''" />
+      } @else {
+        <mat-icon>{{ getGiocaIcon(lega?.campionato?.sport?.id ?? '') }}</mat-icon>
+      }
     </div>
-    <div class="recap-sport-row">
-      <span class="recap-sport-chip">
-        <mat-icon class="recap-sport-icon">{{ lega?.campionato?.sport?.id === 'CALCIO' ? 'sports_soccer' : lega?.campionato?.sport?.id === 'BASKET' ? 'sports_basketball' : 'sports_tennis' }}</mat-icon>
+    <div class="jl-title">
+      <h3 class="jl-name">{{ lega?.name }}</h3>
+      <div class="jl-sub">
+        <span>{{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
+        <span class="jl-dot">·</span>
+        <span>{{ 'LEAGUE.EDITION' | translate }} {{ lega?.edizione }}</span>
+      </div>
+    </div>
+    @if (isDuel) {
+      <span class="jl-duel-badge">⚔️ 1v1</span>
+    }
+  </div>
+
+  <div class="jl-chips">
+    <span class="jl-chip jl-chip--mode">
+      <mat-icon>{{ lega?.modalita === 'CAMPIONATO' ? 'emoji_events' : 'shield' }}</mat-icon>
+      {{ (lega?.modalita === 'CAMPIONATO' ? 'CREATE_LEAGUE.MODE_CAMPIONATO_LABEL' : 'CREATE_LEAGUE.MODE_SURVIVOR_LABEL') | translate }}
+    </span>
+    <span class="jl-chip">
+      <mat-icon>group</mat-icon>
+      {{ lega?.numPartecipanti ?? 0 }}{{ lega?.maxPartecipanti ? ' / ' + lega?.maxPartecipanti : '' }}
+    </span>
+    <span class="jl-chip">
+      <mat-icon>flag</mat-icon>
+      {{ 'LEAGUE.INITIAL_ROUND' | translate }} {{ lega?.giornataIniziale }}
+    </span>
+    <span class="jl-chip" [class.jl-chip--live]="lega?.stato?.value === 'AVVIATA'">
+      <mat-icon>{{ lega?.stato?.value === 'AVVIATA' ? 'play_circle' : 'hourglass_top' }}</mat-icon>
+      {{ 'LEAGUE_STATUS.' + lega?.stato?.value | translate }}
+    </span>
+    @if (lega?.withPwd) {
+      <span class="jl-chip">
+        <mat-icon>lock</mat-icon>
+        {{ 'LEAGUE.WITH_PASSWORD' | translate }}
       </span>
-      <span class="recap-championship">{{ (lega?.campionato?.id ?? '') | translateLeagueData: 'championship' }}</span>
-    </div>
+    }
   </div>
 
-  <div class="recap-info-grid">
-    <div class="recap-chip" *ngIf="lega">
-      <mat-icon class="rc-icon">flag</mat-icon>
-      <div class="rc-content">
-        <span class="rc-label">{{ 'LEAGUE.INITIAL_ROUND' | translate }}</span>
-        <span class="rc-value">{{ lega.giornataIniziale }}</span>
-      </div>
-    </div>
-    <div class="recap-chip" *ngIf="lega?.withPwd">
-      <mat-icon class="rc-icon">lock</mat-icon>
-      <div class="rc-content">
-        <span class="rc-label">{{ 'LEAGUE.WITH_PASSWORD' | translate }}</span>
-        <span class="rc-value">✓</span>
-      </div>
-    </div>
-  </div>
-
-  <mat-card-actions>
+  <div class="jl-cta">
     @if (!lega?.accessoLibero) {
       @if (isPending) {
-        <button class="join-request-btn join-request-btn--pending" disabled>
+        <button class="jl-btn jl-btn--pending" disabled>
           <mat-icon>hourglass_top</mat-icon>
           <span>{{ 'JOIN_REQUEST.ALREADY_PENDING' | translate }}</span>
         </button>
       } @else {
-        <button class="join-request-btn" (click)="onAction()">
+        <button class="jl-btn" (click)="onAction()">
           <mat-icon>how_to_reg</mat-icon>
           <span>{{ 'JOIN_REQUEST.REQUEST_BUTTON' | translate }}</span>
         </button>
       }
     } @else {
-      <button mat-raised-button color="primary" (click)="onAction()">
+      <button class="jl-btn jl-btn--go" (click)="onAction()">
         <mat-icon>{{ getGiocaIcon((lega?.campionato?.sport)!.id) }}</mat-icon>
-        {{ 'LEAGUE.ENTER_LEAGUE' | translate }}
+        <span>{{ 'LEAGUE.ENTER_LEAGUE' | translate }}</span>
       </button>
     }
-  </mat-card-actions>
-</mat-card>
+  </div>
+</article>
