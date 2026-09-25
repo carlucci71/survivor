@@ -10,6 +10,7 @@ import { environment } from '../../../../environments/environment';
 export interface VincitoriDialogData {
   lega: Lega;
   vincitori: Giocatore[];
+  tierOverride?: 'duel' | 'survivor' | 'camp'; // TEMP anteprima
 }
 
 @Component({
@@ -39,13 +40,17 @@ export class VincitoriDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: VincitoriDialogData,
     private translate: TranslateService
   ) {
-    this.tier = (this.data.lega.giocatori?.length ?? 0) === 2
+    this.tier = this.data.tierOverride ?? ((this.data.lega.giocatori?.length ?? 0) === 2
       ? 'duel'
-      : this.data.lega.modalita === 'CAMPIONATO' ? 'camp' : 'survivor';
+      : this.data.lega.modalita === 'CAMPIONATO' ? 'camp' : 'survivor');
     this.medalEmoji = this.tier === 'duel' ? '⚔️' : this.tier === 'camp' ? '🏆' : '🛡️';
     const frasi: string[] = this.translate.instant('VINCITORI_DIALOG.FRASI');
     const list = Array.isArray(frasi) ? frasi : [];
     this.frase = list.length ? list[Math.floor(Math.random() * list.length)] : '🥂';
+  }
+
+  get nomiVincitori(): string {
+    return this.data.vincitori.map(v => v.nickname).join(' · ');
   }
 
   close(): void {

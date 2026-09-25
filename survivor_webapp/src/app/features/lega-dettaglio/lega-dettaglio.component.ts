@@ -349,7 +349,14 @@ export class LegaDettaglioComponent implements OnDestroy {
           this.scrollTableToRight();
           this.startCountdown();
           if (this.isCampionato() && !this.TEST_MODE_FORCE_HISTORY_ICON) this.caricaTickerPartite();
-          if (this.isTerminata()) {
+          // TEMP anteprima popup vittoria: ?anteprimaVittoria=duel|survivor|camp (da rimuovere)
+          const anteprima = new URLSearchParams(window.location.search).get('anteprimaVittoria');
+          if (anteprima === 'duel' || anteprima === 'survivor' || anteprima === 'camp') {
+            setTimeout(() => this.dialog.open(VincitoriDialogComponent, {
+              width: '92vw', maxWidth: '440px', maxHeight: '92dvh', panelClass: 'vincitori-dialog-panel', autoFocus: false,
+              data: { lega: this.lega, vincitori: this.lega!.giocatori?.slice(0, 1) ?? [], tierOverride: anteprima }
+            }), 800);
+          } else if (this.isTerminata()) {
             setTimeout(() => this.maybeOpenVincitoriDialog(), 600);
           }
           this.maybeTriggerTutorial();
