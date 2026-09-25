@@ -20,7 +20,7 @@
 }
 .jl-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px var(--jl-shadow); }
 .jl-card--camp { --jl-1: #B8791A; --jl-2: #D9961F; --jl-3: #F9A825; --jl-tint: rgba(249, 168, 37, 0.1); --jl-line: rgba(217, 150, 31, 0.28); --jl-shadow: rgba(184, 121, 26, 0.3); }
-.jl-card--duel { --jl-1: #8B5A2B; --jl-2: #A9702F; --jl-3: #CD7F32; --jl-tint: rgba(139, 90, 43, 0.08); --jl-line: rgba(205, 127, 50, 0.3); --jl-shadow: rgba(139, 90, 43, 0.3); }
+.jl-card--duel { --jl-1: #0B5F73; --jl-2: #0E7490; --jl-3: #14A3B8; --jl-tint: rgba(11, 95, 115, 0.08); --jl-line: rgba(20, 163, 184, 0.3); --jl-shadow: rgba(11, 95, 115, 0.3); }
 
 @keyframes jl-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 

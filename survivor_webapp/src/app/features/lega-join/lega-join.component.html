@@ -17,7 +17,7 @@
 		<section class="invite-section" *ngIf="invitedLega">
 
 			<!-- Stato: nessuna richiesta → mostra card con azione -->
-			<ng-container *ngIf="invitedJoinState === 'none'">
+			<ng-container *ngIf="invitedJoinState === 'none' && !invitedFull">
 				<div class="invite-header">
 					<mat-icon class="invite-icon">link</mat-icon>
 					<div>
@@ -26,6 +26,20 @@
 					</div>
 				</div>
 				<app-lega-card [lega]="invitedLega" [isPending]="pendingLegaIds.has(invitedLega!.id)" (action)="seleziona($event)"></app-lega-card>
+			</ng-container>
+
+			<!-- Lega già piena: messaggio simpatico -->
+			<ng-container *ngIf="invitedFull">
+				<div class="invite-state-card invite-state-card--full">
+					<div class="isc-icon isc-icon--full"><span class="isc-emoji">🏃</span></div>
+					<h2 class="isc-title isc-title--amber">{{ 'JOIN_LEAGUE.FULL_TITLE' | translate }}</h2>
+					<p class="isc-phrase">{{ fullPhrase }}</p>
+					<p class="isc-desc">{{ 'JOIN_LEAGUE.FULL_DESC' | translate: { lega: invitedLega.name } }}</p>
+					<div class="es-actions">
+						<button class="es-btn es-btn--secondary" (click)="goBack()">{{ 'JOIN_LEAGUE.EMPTY_BACK' | translate }}</button>
+						<button class="es-btn es-btn--primary" (click)="goCreLega()">{{ 'JOIN_LEAGUE.EMPTY_CREATE_CTA' | translate }}</button>
+					</div>
+				</div>
 			</ng-container>
 
 			<!-- Stato: in attesa di approvazione -->

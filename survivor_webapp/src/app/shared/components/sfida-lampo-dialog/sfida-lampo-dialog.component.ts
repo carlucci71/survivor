@@ -128,8 +128,8 @@ import { environment } from '../../../../environments/environment';
     .sl-b2 { width: 26px; height: 26px; top: 62px; left: 24%;  animation: sl-float2 5s ease-in-out infinite; }
     .sl-b3 { width: 38px; height: 38px; top: 18px; right: 16%; animation: sl-float1 7.5s ease-in-out infinite reverse; }
     .sl-b4, .sl-b5, .sl-b6 {
-      background: radial-gradient(circle at 30% 30%, rgba(205,127,50,0.25), rgba(205,127,50,0.06));
-      border: 1px solid rgba(205,127,50,0.25);
+      background: radial-gradient(circle at 30% 30%, rgba(20, 163, 184,0.25), rgba(20, 163, 184,0.06));
+      border: 1px solid rgba(20, 163, 184,0.25);
     }
     .sl-b4 { width: 34px; height: 34px; top: 200px; left: -10px;   animation: sl-float2 6s ease-in-out infinite; }
     .sl-b5 { width: 22px; height: 22px; top: 290px; right: 10px;   animation: sl-float1 5.5s ease-in-out infinite; }
@@ -159,7 +159,7 @@ import { environment } from '../../../../environments/environment';
       position: relative;
       z-index: 1;
       padding: 28px 24px 24px;
-      background: linear-gradient(135deg, #CD7F32, #8B5A2B);
+      background: linear-gradient(135deg, #14A3B8, #0B5F73);
       color: #fff;
       overflow: hidden;
       border-radius: 24px 24px 0 0;
@@ -222,9 +222,9 @@ import { environment } from '../../../../environments/environment';
       transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
     .sl-name-input:focus {
-      border-color: #CD7F32;
+      border-color: #14A3B8;
       background: var(--bg-card, #fff);
-      box-shadow: 0 0 0 3px rgba(205,127,50,0.18);
+      box-shadow: 0 0 0 3px rgba(20, 163, 184,0.18);
     }
 
     .sl-sport-row { display: flex; justify-content: center; gap: 8px; }
@@ -240,9 +240,9 @@ import { environment } from '../../../../environments/environment';
     }
     .sl-sport-chip mat-icon { font-size: 22px; width: 22px; height: 22px; }
     .sl-sport-chip--active {
-      border-color: #CD7F32;
-      background: linear-gradient(135deg, rgba(205,127,50,0.16), rgba(139,90,31,0.08));
-      color: #8B5A2B;
+      border-color: #14A3B8;
+      background: linear-gradient(135deg, rgba(20, 163, 184,0.16), rgba(11,95,115,0.08));
+      color: #0B5F73;
     }
 
     .sl-camp-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
@@ -259,9 +259,9 @@ import { environment } from '../../../../environments/environment';
       transition: all 0.15s ease;
     }
     .sl-camp-chip--active {
-      border-color: #CD7F32;
-      background: linear-gradient(135deg, rgba(205,127,50,0.16), rgba(139,90,31,0.08));
-      color: #8B5A2B;
+      border-color: #14A3B8;
+      background: linear-gradient(135deg, rgba(20, 163, 184,0.16), rgba(11,95,115,0.08));
+      color: #0B5F73;
     }
     .sl-camp-chip--disabled { opacity: 0.45; cursor: not-allowed; }
     .sl-camp-loading { color: var(--text-tertiary, #9CA3AF); font-size: 0.85rem; padding: 6px 0; }
@@ -277,16 +277,16 @@ import { environment } from '../../../../environments/environment';
       padding: 14px 16px;
       border-radius: 30px;
       border: none;
-      background: linear-gradient(135deg, #CD7F32, #8B5A2B);
+      background: linear-gradient(135deg, #14A3B8, #0B5F73);
       color: #fff;
       font-size: 0.92rem;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(139,90,31,0.35);
+      box-shadow: 0 4px 14px rgba(11,95,115,0.35);
       transition: all 0.18s ease;
     }
-    .sl-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(139,90,31,0.45); }
+    .sl-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(11,95,115,0.45); }
     .sl-submit:active:not(:disabled) { transform: translateY(0) scale(0.98); }
     .sl-submit:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
 
@@ -297,7 +297,7 @@ import { environment } from '../../../../environments/environment';
       width: 100%;
       padding: 13px;
       border-radius: 30px;
-      background: linear-gradient(135deg, #CD7F32, #8B5A2B);
+      background: linear-gradient(135deg, #14A3B8, #0B5F73);
       color: #fff;
       border: none;
       font-weight: 700;
@@ -306,15 +306,15 @@ import { environment } from '../../../../environments/environment';
       cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       margin-bottom: 10px;
-      box-shadow: 0 4px 14px rgba(139,90,43,0.3);
+      box-shadow: 0 4px 14px rgba(11, 95, 115,0.3);
     }
     .sl-copy-btn {
       width: 100%;
       padding: 12px;
       border-radius: 30px;
       background: var(--bg-tertiary, #F8F9FA);
-      color: #8B5A2B;
-      border: 1.5px solid #CD7F32;
+      color: #0B5F73;
+      border: 1.5px solid #14A3B8;
       font-weight: 700;
       font-size: 0.85rem;
       font-family: inherit;
@@ -342,7 +342,7 @@ import { environment } from '../../../../environments/environment';
     .sl-goto-btn mat-icon { font-size: 17px; width: 17px; height: 17px; }
     .sl-goto-btn:hover {
       background: var(--bg-tertiary, #F8F9FA);
-      color: #8B5A2B;
+      color: #0B5F73;
     }
 
     @media (max-width: 400px) {
