@@ -21,51 +21,51 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       <div class="fields">
         <svg class="field" [class.on]="active===0"
              viewBox="60 20 680 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" x="60" y="20" width="680" height="220" rx="4"/>
-          <line class="fl" x1="400" y1="20" x2="400" y2="240"/>
-          <circle class="fl" cx="400" cy="130" r="52" fill="none"/>
-          <circle class="fl" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
-          <rect class="fl" x="60" y="68" width="110" height="124"/>
-          <rect class="fl" x="60" y="95" width="52" height="70"/>
-          <path class="fl" d="M170,105 A28,28 0 0,1 170,155" fill="none"/>
-          <rect class="fl" x="630" y="68" width="110" height="124"/>
-          <rect class="fl" x="688" y="95" width="52" height="70"/>
-          <path class="fl" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
-          <path class="fl" d="M74,20 A14,14 0 0,1 60,34"/>
-          <path class="fl" d="M726,20 A14,14 0 0,0 740,34"/>
-          <path class="fl" d="M60,226 A14,14 0 0,1 74,240"/>
-          <path class="fl" d="M740,226 A14,14 0 0,0 726,240"/>
+          <rect class="fl" pathLength="1" x="60" y="20" width="680" height="220" rx="4"/>
+          <line class="fl" pathLength="1" x1="400" y1="20" x2="400" y2="240"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="52" fill="none"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
+          <rect class="fl" pathLength="1" x="60" y="68" width="110" height="124"/>
+          <rect class="fl" pathLength="1" x="60" y="95" width="52" height="70"/>
+          <path class="fl" pathLength="1" d="M170,105 A28,28 0 0,1 170,155" fill="none"/>
+          <rect class="fl" pathLength="1" x="630" y="68" width="110" height="124"/>
+          <rect class="fl" pathLength="1" x="688" y="95" width="52" height="70"/>
+          <path class="fl" pathLength="1" d="M630,105 A28,28 0 0,0 630,155" fill="none"/>
+          <path class="fl" pathLength="1" d="M74,20 A14,14 0 0,1 60,34"/>
+          <path class="fl" pathLength="1" d="M726,20 A14,14 0 0,0 740,34"/>
+          <path class="fl" pathLength="1" d="M60,226 A14,14 0 0,1 74,240"/>
+          <path class="fl" pathLength="1" d="M740,226 A14,14 0 0,0 726,240"/>
         </svg>
 
         <svg class="field" [class.on]="active===1"
              viewBox="40 15 720 230" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" x="40" y="15" width="720" height="230" rx="4"/>
-          <line class="fl" x1="400" y1="15" x2="400" y2="245"/>
-          <circle class="fl" cx="400" cy="130" r="55" fill="none"/>
-          <circle class="fl" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
-          <rect class="fl" x="40" y="55" width="180" height="150"/>
-          <path class="fl" d="M220,55 A75,75 0 0,1 220,205" fill="none"/>
-          <circle class="fl" cx="150" cy="130" r="20" fill="none"/>
-          <rect class="fl" x="580" y="55" width="180" height="150"/>
-          <path class="fl" d="M580,55 A75,75 0 0,0 580,205" fill="none"/>
-          <circle class="fl" cx="650" cy="130" r="20" fill="none"/>
-          <path class="fl" d="M40,48 A140,140 0 0,1 40,212" fill="none"/>
-          <path class="fl" d="M760,48 A140,140 0 0,0 760,212" fill="none"/>
+          <rect class="fl" pathLength="1" x="40" y="15" width="720" height="230" rx="4"/>
+          <line class="fl" pathLength="1" x1="400" y1="15" x2="400" y2="245"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="55" fill="none"/>
+          <circle class="fl" pathLength="1" cx="400" cy="130" r="4" fill="rgba(255,255,255,0.3)"/>
+          <rect class="fl" pathLength="1" x="40" y="55" width="180" height="150"/>
+          <path class="fl" pathLength="1" d="M220,55 A75,75 0 0,1 220,205" fill="none"/>
+          <circle class="fl" pathLength="1" cx="150" cy="130" r="20" fill="none"/>
+          <rect class="fl" pathLength="1" x="580" y="55" width="180" height="150"/>
+          <path class="fl" pathLength="1" d="M580,55 A75,75 0 0,0 580,205" fill="none"/>
+          <circle class="fl" pathLength="1" cx="650" cy="130" r="20" fill="none"/>
+          <path class="fl" pathLength="1" d="M40,48 A140,140 0 0,1 40,212" fill="none"/>
+          <path class="fl" pathLength="1" d="M760,48 A140,140 0 0,0 760,212" fill="none"/>
         </svg>
 
         <svg class="field" [class.on]="active===2"
              viewBox="50 20 700 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-          <rect class="fl" x="50" y="20" width="700" height="220" rx="2"/>
-          <rect class="fl" x="50" y="20" width="60" height="220" fill="none"/>
-          <rect class="fl" x="690" y="20" width="60" height="220" fill="none"/>
-          <line class="fl" x1="110" y1="20" x2="110" y2="240"/>
-          <line class="fl" x1="690" y1="20" x2="690" y2="240"/>
-          <line class="fl" x1="400" y1="20" x2="400" y2="240" stroke-dasharray="5 5"/>
-          <line class="fl" x1="110" y1="130" x2="690" y2="130"/>
-          <line class="fl" x1="255" y1="55" x2="255" y2="205"/>
-          <line class="fl" x1="545" y1="55" x2="545" y2="205"/>
-          <rect class="fl" x="110" y="55" width="290" height="150" fill="none"/>
-          <rect class="fl" x="400" y="55" width="290" height="150" fill="none"/>
+          <rect class="fl" pathLength="1" x="50" y="20" width="700" height="220" rx="2"/>
+          <rect class="fl" pathLength="1" x="50" y="20" width="60" height="220" fill="none"/>
+          <rect class="fl" pathLength="1" x="690" y="20" width="60" height="220" fill="none"/>
+          <line class="fl" pathLength="1" x1="110" y1="20" x2="110" y2="240"/>
+          <line class="fl" pathLength="1" x1="690" y1="20" x2="690" y2="240"/>
+          <line class="fl" pathLength="1" x1="400" y1="20" x2="400" y2="240" stroke-dasharray="5 5"/>
+          <line class="fl" pathLength="1" x1="110" y1="130" x2="690" y2="130"/>
+          <line class="fl" pathLength="1" x1="255" y1="55" x2="255" y2="205"/>
+          <line class="fl" pathLength="1" x1="545" y1="55" x2="545" y2="205"/>
+          <rect class="fl" pathLength="1" x="110" y="55" width="290" height="150" fill="none"/>
+          <rect class="fl" pathLength="1" x="400" y="55" width="290" height="150" fill="none"/>
         </svg>
       </div>
 
@@ -103,6 +103,10 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       <!-- Edge fades -->
       <div class="fade-l"></div>
       <div class="fade-r"></div>
+
+      <!-- Riflesso di luce che attraversa il banner + bordo luminoso a gradiente -->
+      <div class="hero-sweep" aria-hidden="true"></div>
+      <div class="hero-rim" aria-hidden="true"></div>
     </div>
   `,
   styles: [`
@@ -123,6 +127,7 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
         linear-gradient(155deg, #020b1e 0%, #041230 30%, #08266e 62%, #0a3d91 100%);
       box-shadow:
         0 10px 50px rgba(10, 61, 145, 0.55),
+        0 28px 60px -24px rgba(79, 195, 247, 0.35),
         0 2px 8px  rgba(0,   0,   0,   0.36),
         inset 0 1px 0 rgba(255,255,255,0.08);
     }
@@ -248,27 +253,76 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       inset: 0; z-index: 2;
     }
 
+    /* Le linee del campo vengono "disegnate" una dopo l'altra, sport per sport (ciclo 27s = 3 x 9s) */
     .field {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       opacity: 0;
-      transition: opacity 1.4s ease;
+      --fo: 0.34;
+      filter: drop-shadow(0 0 4px rgba(79, 195, 247, 0.85));
+      animation: fieldCycle 27s linear infinite;
+      animation-delay: var(--fd, 0s);
     }
-    .field.on { opacity: 0.13; }
+    .field:nth-of-type(1) { --fd: 0s; }
+    .field:nth-of-type(2) { --fd: 9s; }
+    .field:nth-of-type(3) { --fd: 18s; }
+    @keyframes fieldCycle {
+      0%   { opacity: 0; }
+      2%   { opacity: var(--fo); }
+      29%  { opacity: var(--fo); }
+      33.3%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
 
     .fl {
       fill: none;
       stroke: rgba(255,255,255,0.85);
       stroke-width: 1.4;
       stroke-linecap: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: drawLine1 27s linear infinite;
+      animation-delay: var(--fd, 0s);
     }
+    .field .fl:nth-child(1) { animation-name: drawLine1; }
+    .field .fl:nth-child(2) { animation-name: drawLine2; }
+    .field .fl:nth-child(3) { animation-name: drawLine3; }
+    .field .fl:nth-child(4) { animation-name: drawLine4; }
+    .field .fl:nth-child(5) { animation-name: drawLine5; }
+    .field .fl:nth-child(6) { animation-name: drawLine6; }
+    .field .fl:nth-child(7) { animation-name: drawLine7; }
+    .field .fl:nth-child(8) { animation-name: drawLine8; }
+    .field .fl:nth-child(9) { animation-name: drawLine9; }
+    .field .fl:nth-child(10) { animation-name: drawLine10; }
+    .field .fl:nth-child(11) { animation-name: drawLine11; }
+    .field .fl:nth-child(12) { animation-name: drawLine12; }
+    .field .fl:nth-child(13) { animation-name: drawLine13; }
+    .field .fl:nth-child(14) { animation-name: drawLine14; }
+    .field .fl:nth-child(15) { animation-name: drawLine15; }
+    .field .fl:nth-child(16) { animation-name: drawLine16; }
+    @keyframes drawLine1 { 0%, 1.0% { stroke-dashoffset: 1; } 8.0%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine2 { 0%, 1.6% { stroke-dashoffset: 1; } 8.6%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine3 { 0%, 2.2% { stroke-dashoffset: 1; } 9.2%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine4 { 0%, 2.8% { stroke-dashoffset: 1; } 9.8%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine5 { 0%, 3.4% { stroke-dashoffset: 1; } 10.4%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine6 { 0%, 4.0% { stroke-dashoffset: 1; } 11.0%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine7 { 0%, 4.6% { stroke-dashoffset: 1; } 11.6%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine8 { 0%, 5.2% { stroke-dashoffset: 1; } 12.2%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine9 { 0%, 5.8% { stroke-dashoffset: 1; } 12.8%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine10 { 0%, 6.4% { stroke-dashoffset: 1; } 13.4%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine11 { 0%, 7.0% { stroke-dashoffset: 1; } 14.0%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine12 { 0%, 7.6% { stroke-dashoffset: 1; } 14.6%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine13 { 0%, 8.2% { stroke-dashoffset: 1; } 15.2%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine14 { 0%, 8.8% { stroke-dashoffset: 1; } 15.8%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine15 { 0%, 9.4% { stroke-dashoffset: 1; } 16.4%, 100% { stroke-dashoffset: 0; } }
+    @keyframes drawLine16 { 0%, 10.0% { stroke-dashoffset: 1; } 17.0%, 100% { stroke-dashoffset: 0; } }
 
     @media (max-width: 520px) {
-      .field.on { opacity: 0.20; }
+      .field { --fo: 0.42; }
       .fl        { stroke-width: 1.8; }
     }
     @media (max-width: 380px) {
-      .field.on { opacity: 0.24; }
+      .field { --fo: 0.48; }
       .fl        { stroke-width: 2.1; }
     }
 
@@ -393,8 +447,65 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       margin: 0 0 16px;
       display: flex;
     }
-    .tw   { color: #fff; }
+    /* Titolo "metallico": sfumatura argento-azzurro con luce che scorre sulle lettere */
+    .title {
+      filter: drop-shadow(0 2px 0 rgba(4, 18, 48, 0.55)) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    }
+    .tw {
+      background:
+        linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.95) 50%, transparent 62%) 0 0 / 260% 100% no-repeat,
+        linear-gradient(180deg, #ffffff 0%, #eef6ff 32%, #9ccbf7 62%, #4f8fd6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: titleShine 6s ease-in-out infinite;
+    }
     .tl   { font-weight: 300; }
+    @keyframes titleShine {
+      0%, 30%  { background-position: 100% 0, 0 0; }
+      70%, 100% { background-position: 0% 0, 0 0; }
+    }
+
+
+    /* Riflesso diagonale ogni pochi secondi */
+    .hero-sweep {
+      position: absolute;
+      top: -20%;
+      bottom: -20%;
+      left: 0;
+      width: 40%;
+      z-index: 7;
+      pointer-events: none;
+      background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.08) 35%, rgba(190, 230, 255, 0.42) 50%, rgba(255, 255, 255, 0.08) 65%, transparent 100%);
+      transform: translateX(-140%) skewX(-18deg);
+      animation: heroSweep 7s ease-in-out infinite;
+    }
+    @keyframes heroSweep {
+      0%, 38%  { transform: translateX(-140%) skewX(-18deg); }
+      72%, 100% { transform: translateX(380%) skewX(-18deg); }
+    }
+
+    /* Bordo sottile a gradiente (luce che cade da in alto a sinistra) */
+    .hero-rim {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      z-index: 8;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(79, 195, 247, 0.45) 30%, rgba(255, 255, 255, 0.08) 60%, rgba(79, 195, 247, 0.75));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .field, .fl { animation: none; }
+      .field:nth-of-type(1) { opacity: 0.2; }
+      .fl { stroke-dashoffset: 0; }
+      .tw, .hero-sweep { animation: none; }
+      .hero-sweep { display: none; }
+    }
 
     .tc {
       color: #4fc3f7;
@@ -490,7 +601,7 @@ export class HeroThreeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.timer = setInterval(() => {
       this.active = (this.active + 1) % 3;
-    }, 4000);
+    }, 9000);
   }
 
   ngOnDestroy(): void {
