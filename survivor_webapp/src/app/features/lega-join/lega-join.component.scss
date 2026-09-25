@@ -502,3 +502,89 @@ h2 {
 	.pill { font-size: 0.78rem; padding: 4px 12px; }
 }
 
+
+
+/* ══════ Restyle pagina "Unisciti a una lega" ══════ */
+.jl-hero {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	padding: 18px 20px;
+	margin-bottom: 18px;
+	border-radius: 20px;
+	overflow: hidden;
+	color: #fff;
+	background: linear-gradient(135deg, #040f2e 0%, #0A3D91 60%, #1565C0 100%);
+	box-shadow: 0 10px 28px rgba(10, 61, 145, 0.28);
+	font-family: 'Poppins', sans-serif;
+	animation: jl-hero-in 0.5s ease both;
+
+	&::after {
+		content: '';
+		position: absolute;
+		right: -40px; top: -60px;
+		width: 180px; height: 180px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(79, 195, 247, 0.35), transparent 70%);
+		pointer-events: none;
+	}
+}
+@keyframes jl-hero-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.jl-hero-icon {
+	flex-shrink: 0;
+	width: 50px; height: 50px;
+	border-radius: 16px;
+	background: rgba(255, 255, 255, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	display: flex; align-items: center; justify-content: center;
+	mat-icon { font-size: 28px; width: 28px; height: 28px; color: #fff; animation: jl-float 3s ease-in-out infinite; }
+}
+@keyframes jl-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(-6deg); } }
+.jl-hero-text { flex: 1; min-width: 180px; position: relative; z-index: 1; }
+.jl-hero-title { margin: 0; font-size: 1.25rem; font-weight: 800; letter-spacing: 0.2px; }
+.jl-hero-sub { margin: 3px 0 0; font-size: 0.8rem; font-weight: 400; opacity: 0.85; line-height: 1.35; }
+.jl-hero-count {
+	position: relative; z-index: 1;
+	padding: 5px 12px; border-radius: 20px;
+	font-size: 0.75rem; font-weight: 700;
+	background: rgba(255, 255, 255, 0.18);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.filters-bar {
+	background: #fff;
+	border: 1px solid rgba(10, 61, 145, 0.1);
+	border-radius: 18px;
+	box-shadow: 0 4px 14px rgba(10, 61, 145, 0.06);
+	padding: 14px 16px;
+	gap: 12px;
+}
+.filter-group { flex-direction: column; align-items: flex-start; gap: 6px; }
+.filter-label { min-width: 0; font-size: 0.68rem; color: #94A3B8; }
+.filter-pills {
+	width: 100%;
+	flex-wrap: nowrap;
+	overflow-x: auto;
+	scrollbar-width: none;
+	padding: 2px 2px 4px;
+	&::-webkit-scrollbar { display: none; }
+}
+.pill { flex-shrink: 0; white-space: nowrap; }
+@media (min-width: 768px) {
+	.filter-pills { flex-wrap: wrap; overflow: visible; }
+}
+
+.edizioni-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 16px;
+}
+@media (max-width: 400px) {
+	.edizioni-list { grid-template-columns: 1fr; }
+	.jl-hero { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.jl-hero, .jl-hero-icon mat-icon { animation: none; }
+}

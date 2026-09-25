@@ -110,8 +110,8 @@ $gold-dim:    rgba(212, 175, 55, 0.16);
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
 }
 .vd-medal-icon {
-  width: 68px;
-  height: 68px;
+  width: 84px;
+  height: 84px;
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
 }
 
@@ -133,6 +133,28 @@ $gold-dim:    rgba(212, 175, 55, 0.16);
   50%      { opacity: 1; transform: scale(1.12); }
 }
 
+.vd-winner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  animation: vd-phrase-in 0.6s ease-out 0.7s both;
+}
+.vd-winner-crown { font-size: 1.4rem; line-height: 1; }
+.vd-winner-name {
+  min-width: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.3px;
+  word-break: break-word;
+  background: linear-gradient(135deg, $gold-light, $gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .vd-phrase {
   margin: 0 0 22px;
   font-size: 1.02rem;
@@ -147,7 +169,7 @@ $gold-dim:    rgba(212, 175, 55, 0.16);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vd-medal, .vd-medal::after, .vd-medal-halo, .vd-phrase { animation: none; }
+  .vd-medal, .vd-medal::after, .vd-medal-halo, .vd-phrase, .vd-winner { animation: none; }
 }
 
 .vd-actions {
@@ -338,8 +360,9 @@ $vd-cf-colors:
   .vd-medal-wrap { width: 128px; height: 128px; }
   .vd-medal { width: 112px; height: 112px; }
   .vd-medal-emoji { font-size: 3.3rem; }
-  .vd-medal-icon { width: 56px; height: 56px; }
+  .vd-medal-icon { width: 70px; height: 70px; }
   .vd-phrase { font-size: 0.95rem; }
+  .vd-winner-name { font-size: 1.25rem; }
 }
 
 /* ────────────────────────────────────────────────────────────

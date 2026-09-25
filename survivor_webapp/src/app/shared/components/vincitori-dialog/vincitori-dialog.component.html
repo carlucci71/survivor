@@ -26,18 +26,51 @@
           <span class="vd-medal-emoji">⚔️</span>
         }
         @if (tier === 'survivor') {
-          <svg class="vd-medal-icon" viewBox="0 0 60 60" fill="none">
-            <path d="M30 6 L50 14 V30 C50 44 40 52 30 56 C20 52 10 44 10 30 V14 Z" fill="rgba(255,255,255,0.18)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+          <svg class="vd-medal-icon" viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="vdShieldOuter" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FFFFFF"/>
+                <stop offset="1" stop-color="#C9D2DE"/>
+              </linearGradient>
+              <linearGradient id="vdShieldInner" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#7E90AD"/>
+                <stop offset="1" stop-color="#3A4A66"/>
+              </linearGradient>
+            </defs>
+            <path d="M32 4 L55 12.5 V31 C55 45.5 45 56 32 61 C19 56 9 45.5 9 31 V12.5 Z" fill="url(#vdShieldOuter)" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M32 10.5 L49 16.8 V31 C49 42 41.5 50 32 54.5 C22.5 50 15 42 15 31 V16.8 Z" fill="url(#vdShieldInner)"/>
+            <path d="M32 10.5 L49 16.8 V31 C49 33 48.8 34.6 48.4 36.2 C44 30 38 24 32 24 Z" fill="#FFFFFF" opacity="0.14"/>
+            <path d="M32 21 L35.4 28 L43 29 L37.5 34.3 L38.9 42 L32 38.2 L25.1 42 L26.5 34.3 L21 29 L28.6 28 Z" fill="#FFFFFF" stroke="#E4EAF2" stroke-width="1" stroke-linejoin="round"/>
           </svg>
         }
         @if (tier === 'camp') {
-          <svg class="vd-medal-icon" viewBox="0 0 60 60" fill="none">
-            <path d="M18 10 H42 V22 C42 32 36 38 30 38 C24 38 18 32 18 22 Z" fill="rgba(255,255,255,0.18)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
-            <line x1="30" y1="38" x2="30" y2="46" stroke="#fff" stroke-width="4"/>
-            <rect x="20" y="46" width="20" height="6" rx="2" fill="#fff"/>
+          <svg class="vd-medal-icon" viewBox="0 0 64 64" fill="none">
+            <defs>
+              <linearGradient id="vdCupBody" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFFFFF"/>
+                <stop offset="1" stop-color="#FFE7A3"/>
+              </linearGradient>
+              <linearGradient id="vdCupBase" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FFFFFF"/>
+                <stop offset="1" stop-color="#F3C969"/>
+              </linearGradient>
+            </defs>
+            <path d="M19 14 H10 C10 24 14 30 21 31.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M45 14 H54 C54 24 50 30 43 31.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 7 H46 V26 C46 37 39.5 43 32 43 C24.5 43 18 37 18 26 Z" fill="url(#vdCupBody)" stroke="#FFFFFF" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M22 11 H27 C25 22 25.5 31 30 38 C25 35.5 22 31 22 26 Z" fill="#FFFFFF" opacity="0.65"/>
+            <path d="M32 15 L34.3 20.2 L40 20.9 L35.8 24.7 L36.9 30.3 L32 27.5 L27.1 30.3 L28.2 24.7 L24 20.9 L29.7 20.2 Z" fill="#F9A825"/>
+            <rect x="28.5" y="43" width="7" height="8" rx="1.5" fill="url(#vdCupBase)"/>
+            <rect x="19" y="51" width="26" height="7" rx="2.5" fill="url(#vdCupBase)" stroke="#FFFFFF" stroke-width="1.2"/>
+            <rect x="22" y="53.4" width="20" height="1.6" rx="0.8" fill="#D9A93F" opacity="0.6"/>
           </svg>
         }
       </div>
+    </div>
+
+    <div class="vd-winner">
+      <span class="vd-winner-crown">👑</span>
+      <span class="vd-winner-name">{{ nomiVincitori }}</span>
     </div>
 
     <p class="vd-phrase">{{ frase }}</p>

@@ -1433,7 +1433,34 @@ public class LegaService {
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
         Lega legaSalvata = legaRepository.save(lega);
+        notificaSfidaLampoAccettata(legaSalvata, giocatore, userId);
         return legaMapper.toDTO(legaSalvata);
+    }
+
+    /** Sfida 1v1: avvisa chi l'ha creata (l'altro giocatore) che l'avversario è entrato. */
+    private void notificaSfidaLampoAccettata(Lega lega, Giocatore nuovo, Long nuovoUserId) {
+        if (!Integer.valueOf(2).equals(lega.getMaxPartecipanti())) {
+            return;
+        }
+        try {
+            List<User> destinatari = lega.getGiocatoreLeghe().stream()
+                    .map(gl -> gl.getGiocatore().getUser())
+                    .filter(u -> u != null && u.getId() != null && !u.getId().equals(nuovoUserId))
+                    .distinct()
+                    .toList();
+            for (User utente : destinatari) {
+                var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
+                String lingua = utente.getLingua();
+                dto.setTitle(notificationI18nService.testo("notif.sfidaLampo.accepted.title", lingua));
+                dto.setBody(notificationI18nService.testo("notif.sfidaLampo.accepted.body", lingua, nuovo.getNickname(), lega.getName()));
+                dto.setTipoNotifica(Enumeratori.TipoNotifica.SFIDA_LAMPO_ACCETTATA);
+                dto.setExpiringAt(LocalDateTime.now().plusDays(3));
+                dto.setLegaId(lega.getId());
+                pushNotificationService.sendNotificationToUsers(List.of(utente.getId()), dto);
+            }
+        } catch (Exception e) {
+            log.warn("Errore notifica sfida lampo accettata lega {}: {}", lega.getId(), e.getMessage());
+        }
     }
 
 
@@ -1461,60 +1488,6 @@ public class LegaService {
             String magicLink = magicLinkService.getUrlMagicLinkInvita(token, Enumeratori.TipoMagicToken.JOIN.getCodice());
             emailService.send(email, subject, buildEmailContent(magicLink, expirationDays, legaDTO));
             log.info("Magic link inviato a: {}", email);
-        }
-    }
-
-    /**
-     * Invita un utente GIÀ registrato (per email o nickname) a una sfida 1v1 lampo con una push
-     * dedicata: chi la tocca arriva direttamente alla pagina di adesione (vedi push.service.ts).
-     */
-    @Transactional
-    public void invitaSfidaLampo(long idLega, String destinatario) {
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Lega lega = legaRepository.findById(idLega)
-                .orElseThrow(() -> new ManagedException("Lega non trovata", ManagedException.InternalCode.LEGA_NOT_FOUND));
-        if (!Integer.valueOf(2).equals(lega.getMaxPartecipanti()) || lega.getStato() != Enumeratori.StatoLega.DA_AVVIARE) {
-            throw new ManagedException("Non è una sfida lampo ancora da avviare", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
-        }
-        GiocatoreLega mio = lega.getGiocatoreLeghe().stream()
-                .filter(gl -> gl.getGiocatore().getUser() != null && userId.equals(gl.getGiocatore().getUser().getId()))
-                .findFirst()
-                .orElseThrow(() -> new ManagedException("Non fai parte di questa sfida", ManagedException.InternalCode.NOT_LEADER));
-        if (lega.getGiocatoreLeghe().size() >= 2) {
-            throw new ManagedException("La sfida è già al completo", ManagedException.InternalCode.LEGA_FULL);
-        }
-        String dest = destinatario == null ? "" : destinatario.trim();
-        if (dest.isEmpty()) {
-            throw new ManagedException("Indica email o nickname", ManagedException.InternalCode.USER_NOT_FOUND);
-        }
-        User invitato;
-        if (dest.contains("@")) {
-            invitato = userService.findByEmailIgnoreCaseOptional(dest)
-                    .orElseThrow(() -> new ManagedException("Utente non trovato", ManagedException.InternalCode.USER_NOT_FOUND));
-        } else {
-            List<Giocatore> trovati = giocatoreRepository.findByNicknameIgnoreCase(dest);
-            if (trovati.isEmpty()) {
-                throw new ManagedException("Utente non trovato", ManagedException.InternalCode.USER_NOT_FOUND);
-            }
-            if (trovati.size() > 1) {
-                throw new ManagedException("Più utenti con questo nickname, usa l'email", ManagedException.InternalCode.NICKNAME_AMBIGUO);
-            }
-            invitato = trovati.get(0).getUser();
-        }
-        if (invitato == null || userId.equals(invitato.getId())) {
-            throw new ManagedException("Utente non valido", ManagedException.InternalCode.OPERAZIONE_NON_CONSENTITA);
-        }
-        try {
-            var dto = new it.ddlsolution.survivor.dto.PushNotificationDTO();
-            String lingua = invitato.getLingua();
-            dto.setTitle(notificationI18nService.testo("notif.sfidaLampo.invite.title", lingua));
-            dto.setBody(notificationI18nService.testo("notif.sfidaLampo.invite.body", lingua, mio.getGiocatore().getNickname(), lega.getName()));
-            dto.setTipoNotifica(Enumeratori.TipoNotifica.SFIDA_LAMPO_INVITO);
-            dto.setExpiringAt(LocalDateTime.now().plusDays(3));
-            dto.setLegaId(lega.getId());
-            pushNotificationService.sendNotificationToUsers(List.of(invitato.getId()), dto);
-        } catch (Exception e) {
-            log.warn("Errore notifica invito sfida lampo lega {}: {}", idLega, e.getMessage());
         }
     }
 

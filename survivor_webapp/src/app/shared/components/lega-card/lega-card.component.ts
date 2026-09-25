@@ -28,6 +28,14 @@ export class LegaCardComponent {
       this.action.emit(this.lega);
     }
   }
+  get isDuel(): boolean {
+    return this.lega?.maxPartecipanti === 2;
+  }
+
+  get torneoLogo(): string | null {
+    return this.utilService.getTorneoLogo(this.lega?.campionato?.id);
+  }
+
   getGiocaIcon(idSport: string): string {
     return this.utilService.getGiocaIcon(idSport);
   }
