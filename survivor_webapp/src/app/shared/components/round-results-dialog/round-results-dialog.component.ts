@@ -12,6 +12,10 @@ export interface RoundResultsData {
   giornata: number;
   giornataIniziale?: number;
   isLeader: boolean;
+  /** Sfida 1v1: tema bronzo. */
+  duel?: boolean;
+  /** Risolve il logo di una squadra (stessa logica di lega-dettaglio). */
+  getTeamLogo?: (sigla: string) => string | null;
 }
 
 @Component({
@@ -25,26 +29,24 @@ export interface RoundResultsData {
     TranslateModule
   ],
   template: `
-    <div class="round-results-dialog">
+    <div class="rr" [class.duel-theme]="data.duel">
       <!-- Header -->
-      <div class="dialog-header">
-        <h2 class="dialog-title">{{ 'ROUND_RESULTS.TITLE' | translate }} {{ getGiornataLabel() }}</h2>
-        <button class="close-btn" (click)="close()">
+      <div class="rr-header">
+        <span class="rr-header-icon"><mat-icon>{{ data.isLeader ? 'bolt' : 'scoreboard' }}</mat-icon></span>
+        <h2 class="rr-title">{{ 'ROUND_RESULTS.TITLE' | translate }} {{ getGiornataLabel() }}</h2>
+        <button class="rr-close-x" (click)="close()" [attr.aria-label]="'COMMON.CLOSE' | translate">
           <mat-icon>close</mat-icon>
         </button>
       </div>
 
-      <!-- Navigazione Giornate -->
+      <!-- Navigazione giornate -->
       @if (giornateDisponibili.length > 0) {
-        <div class="round-nav-bar">
-          <button class="nav-arrow-btn"
-                  [disabled]="currentRoundIndex <= 0"
-                  (click)="goToPrevRound()">
+        <div class="rr-nav">
+          <button class="rr-arrow" [disabled]="currentRoundIndex <= 0" (click)="goToPrevRound()">
             <mat-icon>chevron_left</mat-icon>
           </button>
-
-          <div class="rounds-chips-wrapper" #chipsWrapper>
-            <div class="rounds-chips">
+          <div class="rr-chips-wrap" #chipsWrapper>
+            <div class="rr-chips">
               @for (g of giornateDisponibili; track g; let i = $index) {
                 <button class="round-chip"
                         [class.active]="i === currentRoundIndex"
@@ -55,103 +57,83 @@ export interface RoundResultsData {
               }
             </div>
           </div>
-
-          <button class="nav-arrow-btn"
-                  [disabled]="currentRoundIndex >= giornateDisponibili.length - 1"
-                  (click)="goToNextRound()">
+          <button class="rr-arrow" [disabled]="currentRoundIndex >= giornateDisponibili.length - 1" (click)="goToNextRound()">
             <mat-icon>chevron_right</mat-icon>
           </button>
         </div>
       }
 
-      <!-- Barra azione leader: visibile solo se leader -->
       @if (data.isLeader && !loading && partite.length > 0) {
-        <div class="leader-bar">
-          <div class="leader-hint">
-            @if (selectedKey) {
-              <mat-icon class="hint-icon">touch_app</mat-icon>
-              <span>{{ getSelectedLabel() }}</span>
-            } @else {
-              <mat-icon class="hint-icon">touch_app</mat-icon>
-              <span>{{ 'ROUND_RESULTS.FORCE_HINT_SELECT' | translate }}</span>
-            }
-          </div>
-          <button class="apply-force-btn"
-                  [disabled]="!selectedKey || savingKey !== null"
-                  [class.remove-mode]="isSelectedForzata()"
-                  (click)="applyForzatura()">
-            @if (savingKey !== null) {
-              <mat-icon class="spin-icon">sync</mat-icon>
-            } @else if (isSelectedForzata()) {
-              <mat-icon>cancel</mat-icon>
-              <span>{{ 'ROUND_RESULTS.REMOVE_FORCE' | translate }}</span>
-            } @else {
-              <mat-icon>verified</mat-icon>
-              <span>{{ 'ROUND_RESULTS.APPLY_FORCE' | translate }}</span>
-            }
-          </button>
+        <div class="rr-hint">
+          <mat-icon>touch_app</mat-icon>
+          <span>{{ 'ROUND_RESULTS.FORCE_HINT_SHORT' | translate }}</span>
         </div>
       }
 
-      <div class="dialog-body">
+      <div class="rr-body">
         @if (loading) {
-          <div class="loading-container">
-            <div class="loading-spinner"></div>
-            <span class="loading-text">{{ 'COMMON.LOADING' | translate }}</span>
+          <div class="rr-loading">
+            <div class="rr-spinner"></div>
+            <span>{{ 'COMMON.LOADING' | translate }}</span>
           </div>
         } @else if (partite.length === 0) {
-          <div class="empty-state">
+          <div class="rr-empty">
             <mat-icon>sports_score</mat-icon>
             <span>{{ 'ROUND_RESULTS.NO_MATCHES' | translate }}</span>
           </div>
         } @else {
-          <div class="matches-list">
-            @for (partita of partite; track getMatchKey(partita)) {
-              <div class="match-row"
+          <div class="rr-list">
+            @for (partita of partite; track getMatchKey(partita); let i = $index) {
+              <div class="rr-card"
                    [class.forzata]="partita.forzata"
                    [class.selected]="selectedKey === getMatchKey(partita)"
                    [class.clickable]="data.isLeader"
+                   [style.animation-delay.ms]="i * 35"
                    (click)="data.isLeader && selectPartita(partita)">
 
-                <!-- Casa -->
-                <span class="team home" [title]="partita.casaNome">{{ partita.casaNome }}</span>
-
-                <!-- Centro: risultato + stato + data -->
-                <div class="match-center">
-                  <div class="score-box">
-                    @if (hasScore(partita)) {
-                      <span class="score">{{ partita.scoreCasa }}-{{ partita.scoreFuori }}</span>
-                    } @else {
-                      <span class="score-pending">vs</span>
+                <div class="rr-team">
+                  <div class="rr-logo" [class.no-img]="!logoFor(partita.casaSigla)">
+                    @if (logoFor(partita.casaSigla); as logo) {
+                      <img [src]="logo" [alt]="partita.casaNome" (error)="onLogoError($event)" />
                     }
+                    <span class="rr-logo-fb">{{ initials(partita.casaNome) }}</span>
                   </div>
-                  <div class="match-meta">
-                    <span class="stato-badge"
-                          [class.terminata]="isTerminata(partita)"
-                          [class.in-corso]="isInCorso(partita)">
-                      {{ getStatoLabel(partita) }}
-                    </span>
-                    @if (partita.orario) {
-                      <span class="data-label">{{ formatDate(partita.orario) }}</span>
-                    }
-                  </div>
+                  <span class="rr-name" [title]="partita.casaNome">{{ partita.casaNome }}</span>
                 </div>
 
-                <!-- Fuori -->
-                <span class="team away" [title]="partita.fuoriNome">{{ partita.fuoriNome }}</span>
+                <div class="rr-mid">
+                  <div class="rr-score" [class.pending]="!hasScore(partita)">
+                    @if (hasScore(partita)) {
+                      {{ partita.scoreCasa }}<span class="rr-dash">-</span>{{ partita.scoreFuori }}
+                    } @else {
+                      vs
+                    }
+                  </div>
+                  <span class="rr-status" [class.done]="isTerminata(partita)" [class.live]="isInCorso(partita)">
+                    @if (isInCorso(partita)) { <span class="rr-live-dot"></span> }
+                    {{ getStatoLabel(partita) }}
+                  </span>
+                  @if (partita.orario) {
+                    <span class="rr-time">{{ formatDate(partita.orario) }}</span>
+                  }
+                </div>
 
-                <!-- Badge forzatura (solo se forzata) -->
+                <div class="rr-team">
+                  <div class="rr-logo" [class.no-img]="!logoFor(partita.fuoriSigla)">
+                    @if (logoFor(partita.fuoriSigla); as logo) {
+                      <img [src]="logo" [alt]="partita.fuoriNome" (error)="onLogoError($event)" />
+                    }
+                    <span class="rr-logo-fb">{{ initials(partita.fuoriNome) }}</span>
+                  </div>
+                  <span class="rr-name" [title]="partita.fuoriNome">{{ partita.fuoriNome }}</span>
+                </div>
+
                 @if (partita.forzata) {
-                  <span class="forced-badge">
-                    <mat-icon>verified</mat-icon>
-                  </span>
+                  <span class="rr-forced-tag"><mat-icon>lock</mat-icon>{{ 'ROUND_RESULTS.FORCED_TAG' | translate }}</span>
                 }
-
-                <!-- Spinner per la partita in salvataggio -->
+                <span class="rr-check"><mat-icon>check</mat-icon></span>
                 @if (savingKey === getMatchKey(partita)) {
-                  <span class="saving-indicator">
-                    <mat-icon class="spin-icon">sync</mat-icon>
-                  </span>
+                  <span class="rr-saving"><mat-icon class="spin-icon">sync</mat-icon></span>
                 }
               </div>
             }
@@ -159,507 +141,237 @@ export interface RoundResultsData {
         }
       </div>
 
-      <!-- Footer: legenda + chiudi -->
-      <div class="dialog-footer">
-        @if (!loading && partite.length > 0) {
-          <div class="legend">
-            <mat-icon class="legend-icon">verified</mat-icon>
-            <span class="legend-text">{{ 'ROUND_RESULTS.LEGEND_FORCED' | translate }}</span>
-          </div>
+      <!-- Barra azioni fissa in basso -->
+      <div class="rr-footer">
+        @if (data.isLeader && !loading && partite.length > 0) {
+          @if (selectedKey) {
+            <div class="rr-selected-label">{{ getSelectedLabel() }}</div>
+          }
+          <button class="rr-apply"
+                  [disabled]="!selectedKey || savingKey !== null"
+                  [class.remove-mode]="isSelectedForzata()"
+                  (click)="applyForzatura()">
+            @if (savingKey !== null) {
+              <mat-icon class="spin-icon">sync</mat-icon>
+            } @else if (isSelectedForzata()) {
+              <mat-icon>lock_open</mat-icon>
+              <span>{{ 'ROUND_RESULTS.REMOVE_FORCE' | translate }}</span>
+            } @else {
+              <mat-icon>bolt</mat-icon>
+              <span>{{ 'ROUND_RESULTS.APPLY_FORCE' | translate }}</span>
+            }
+          </button>
         }
-        <button class="close-button" (click)="close()">
-          {{ 'COMMON.CLOSE' | translate }}
-        </button>
+        <button class="rr-close-btn" (click)="close()">{{ 'COMMON.CLOSE' | translate }}</button>
       </div>
     </div>
   `,
   styles: [`
-    :host {
-      display: block;
-      font-family: 'Poppins', sans-serif;
-    }
+    :host { display: block; font-family: 'Poppins', sans-serif; }
 
-    .round-results-dialog {
-      background: #FFFFFF;
-      border-radius: 16px;
+    /* Palette: navy di default, bronzo per le sfide 1v1 */
+    .rr {
+      --rr-1: #0A3D91; --rr-2: #1565C0; --rr-3: #4FC3F7;
+      --rr-tint: rgba(10, 61, 145, 0.06);
+      --rr-line: rgba(10, 61, 145, 0.14);
+      --rr-shadow: rgba(10, 61, 145, 0.28);
+      background: #fff;
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       width: 100%;
       max-height: 90vh;
     }
+    .rr.duel-theme {
+      --rr-1: #8B5A2B; --rr-2: #A9702F; --rr-3: #CD7F32;
+      --rr-tint: rgba(139, 90, 43, 0.07);
+      --rr-line: rgba(139, 90, 43, 0.2);
+      --rr-shadow: rgba(139, 90, 43, 0.3);
+    }
 
-    /* ── HEADER ── */
-    .dialog-header {
+    /* ── Header ── */
+    .rr-header {
       position: relative;
-      padding: 14px 48px 14px 20px;
-      background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 16px 52px 16px 20px;
+      background: linear-gradient(135deg, var(--rr-1) 0%, var(--rr-2) 60%, var(--rr-3) 100%);
       flex-shrink: 0;
     }
-
-    .dialog-title {
-      margin: 0;
-      font-size: 15px;
-      font-weight: 700;
-      color: white;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      width: 28px;
-      height: 28px;
+    .rr-header-icon {
+      width: 32px; height: 32px; border-radius: 50%;
       background: rgba(255,255,255,0.2);
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-
-      &:hover { background: rgba(255,255,255,0.35); }
-
-      mat-icon {
-        color: white;
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-      }
+      display: flex; align-items: center; justify-content: center;
     }
-
-    /* ── NAVIGAZIONE GIORNATE ── */
-    .round-nav-bar {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 10px;
-      background: #F8FAFC;
-      border-bottom: 1px solid #E5E7EB;
-      flex-shrink: 0;
+    .rr-header-icon mat-icon { color: #fff; font-size: 19px; width: 19px; height: 19px; }
+    .rr-title { margin: 0; font-size: 0.98rem; font-weight: 800; color: #fff; letter-spacing: 0.4px; text-transform: uppercase; }
+    .rr-close-x {
+      position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+      width: 32px; height: 32px; border: none; border-radius: 50%; cursor: pointer;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.25s;
     }
+    .rr-close-x mat-icon { color: #fff; font-size: 18px; width: 18px; height: 18px; }
+    .rr-close-x:hover { background: rgba(255,255,255,0.35); transform: translateY(-50%) rotate(90deg); }
 
-    .nav-arrow-btn {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      border-radius: 50%;
-      border: 1.5px solid #DBEAFE;
-      background: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      flex-shrink: 0;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: #0A3D91;
-      }
-
-      &:hover:not(:disabled) {
-        background: #EFF6FF;
-        border-color: #0A3D91;
-      }
-
-      &:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
+    /* ── Selettore giornate ── */
+    .rr-nav {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 10px; background: var(--rr-tint); flex-shrink: 0;
     }
-
-    .rounds-chips-wrapper {
-      flex: 1;
-      overflow-x: auto;
-      min-width: 0;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar { display: none; }
+    .rr-arrow {
+      flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--rr-line); background: #fff; color: var(--rr-1);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-
-    .rounds-chips {
-      display: flex;
-      gap: 5px;
-      padding: 2px 2px;
-      width: max-content;
-    }
-
+    .rr-arrow mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .rr-arrow:disabled { opacity: 0.35; cursor: default; }
+    .rr-chips-wrap { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; scroll-behavior: smooth; }
+    .rr-chips-wrap::-webkit-scrollbar { display: none; }
+    .rr-chips { display: flex; gap: 6px; width: max-content; padding: 2px; }
     .round-chip {
-      padding: 4px 10px;
-      border-radius: 20px;
-      border: 1.5px solid #DBEAFE;
-      background: white;
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: #374151;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      white-space: nowrap;
-      transition: all 0.2s;
-
-      &:hover:not(.active) {
-        background: #EFF6FF;
-        border-color: #93C5FD;
-        color: #0A3D91;
-      }
-
-      &.active {
-        background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
-        border-color: transparent;
-        color: white;
-        box-shadow: 0 2px 6px rgba(10, 61, 145, 0.25);
-      }
-
-      &.pre-lega:not(.active) {
-        border-color: #E5E7EB;
-        color: #9CA3AF;
-        font-weight: 500;
-
-        &:hover {
-          background: #F9FAFB;
-          border-color: #D1D5DB;
-          color: #6B7280;
-        }
-      }
+      border: 1px solid var(--rr-line); background: #fff; color: #64748B;
+      border-radius: 20px; padding: 6px 14px; font-family: inherit;
+      font-size: 0.78rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .round-chip.pre-lega { opacity: 0.7; }
+    .round-chip.active {
+      background: linear-gradient(135deg, var(--rr-1), var(--rr-3)); color: #fff; border-color: transparent;
+      box-shadow: 0 4px 12px var(--rr-shadow); opacity: 1; transform: scale(1.04);
     }
 
-    /* ── LEADER BAR ── */
-    .leader-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 8px 12px;
-      background: #F0F7FF;
-      border-bottom: 1px solid #DBEAFE;
-      flex-shrink: 0;
+    .rr-hint {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; font-size: 0.76rem; font-weight: 500; color: var(--rr-1);
+      background: var(--rr-tint); border-top: 1px solid var(--rr-line); flex-shrink: 0;
+    }
+    .rr-hint mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* ── Corpo: card partite ── */
+    .rr-body { flex: 1; overflow-y: auto; padding: 12px 12px 6px; -webkit-overflow-scrolling: touch; min-height: 160px; }
+    .rr-body::-webkit-scrollbar { width: 4px; }
+    .rr-body::-webkit-scrollbar-thumb { background: var(--rr-line); border-radius: 4px; }
+    .rr-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .rr-card {
+      position: relative;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+      padding: 12px 10px 10px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1.5px solid var(--rr-line);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      animation: rr-in 0.4s ease both;
+    }
+    .rr-card.clickable { cursor: pointer; }
+    .rr-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1); }
+    .rr-card.selected {
+      border-color: var(--rr-3);
+      background: linear-gradient(135deg, #fff 55%, var(--rr-tint));
+      box-shadow: 0 0 0 3px var(--rr-tint), 0 8px 22px var(--rr-shadow);
+      transform: scale(1.015);
+    }
+    .rr-card.forzata { border-color: rgba(217, 119, 6, 0.5); background: linear-gradient(135deg, #fff 60%, rgba(251, 191, 36, 0.12)); }
+    .rr-card.forzata.selected { border-color: #D97706; }
+    @keyframes rr-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .rr-team { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+    .rr-logo {
+      position: relative; width: 44px; height: 44px; border-radius: 50%;
+      background: var(--rr-tint); display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .rr-logo img { position: relative; z-index: 1; width: 34px; height: 34px; object-fit: contain; }
+    .rr-logo-fb { display: none; font-size: 0.72rem; font-weight: 800; color: var(--rr-1); letter-spacing: 0.3px; }
+    .rr-logo.no-img .rr-logo-fb { display: block; }
+    .rr-name {
+      max-width: 100%; text-align: center; font-size: 0.78rem; font-weight: 700; line-height: 1.2; color: #1F2937;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
     }
 
-    .leader-hint {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      min-width: 0;
+    .rr-mid { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .rr-score {
+      min-width: 64px; text-align: center; padding: 4px 12px; border-radius: 12px;
+      font-size: 1.35rem; font-weight: 800; color: var(--rr-1); background: var(--rr-tint); letter-spacing: 1px;
     }
-
-    .hint-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-      color: #0A3D91;
-      flex-shrink: 0;
+    .rr-score.pending { font-size: 0.95rem; color: #94A3B8; text-transform: lowercase; }
+    .rr-dash { margin: 0 3px; opacity: 0.55; }
+    .rr-status {
+      display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 20px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase;
+      background: #EEF1F5; color: #64748B;
     }
+    .rr-status.done { background: rgba(16, 185, 129, 0.14); color: #047857; }
+    .rr-status.live { background: rgba(239, 68, 68, 0.13); color: #B91C1C; }
+    .rr-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #EF4444; animation: rr-pulse 1.3s ease-in-out infinite; }
+    @keyframes rr-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } }
+    .rr-time { font-size: 0.66rem; color: #94A3B8; font-weight: 500; }
 
-    .leader-hint span {
-      font-size: 0.72rem;
-      color: #374151;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .rr-forced-tag {
+      position: absolute; top: -9px; left: 12px; display: inline-flex; align-items: center; gap: 3px;
+      padding: 1px 8px 1px 5px; border-radius: 20px; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.4px;
+      text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #D97706, #F59E0B);
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4);
     }
+    .rr-forced-tag mat-icon { font-size: 11px; width: 11px; height: 11px; }
 
-    .apply-force-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: none;
-      background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
-      color: white;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: 'Poppins', sans-serif;
-      transition: opacity 0.2s, transform 0.15s;
-      flex-shrink: 0;
-
-      mat-icon {
-        font-size: 15px;
-        width: 15px;
-        height: 15px;
-      }
-
-      &.remove-mode {
-        background: linear-gradient(135deg, #F87171 0%, #DC2626 100%);
-      }
-
-      &:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-        transform: none;
-      }
-
-      &:not(:disabled):hover {
-        opacity: 0.88;
-        transform: translateY(-1px);
-      }
+    .rr-check {
+      position: absolute; top: -9px; right: 12px; width: 22px; height: 22px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--rr-1), var(--rr-3)); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 8px var(--rr-shadow);
+      transform: scale(0); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    .rr-check mat-icon { font-size: 15px; width: 15px; height: 15px; }
+    .rr-card.selected .rr-check { transform: scale(1); }
+    .rr-saving { position: absolute; inset: 0; border-radius: 16px; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
 
-    /* ── BODY scrollabile ── */
-    .dialog-body {
-      padding: 10px 12px 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      background: #FFFFFF;
-      overflow-y: auto;
-      flex: 1;
-      min-height: 0;
+    .spin-icon { animation: rr-spin 0.9s linear infinite; }
+    @keyframes rr-spin { to { transform: rotate(360deg); } }
+
+    .rr-loading, .rr-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      padding: 40px 20px; color: #94A3B8; font-size: 0.85rem;
     }
+    .rr-empty mat-icon { font-size: 40px; width: 40px; height: 40px; opacity: 0.6; }
+    .rr-spinner { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--rr-tint); border-top-color: var(--rr-3); animation: rr-spin 0.8s linear infinite; }
 
-    .dialog-body::-webkit-scrollbar { width: 4px; }
-    .dialog-body::-webkit-scrollbar-track { background: transparent; }
-    .dialog-body::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
-
-    /* ── LOADING / EMPTY ── */
-    .loading-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 24px;
+    /* ── Footer con azioni ── */
+    .rr-footer {
+      display: flex; flex-direction: column; gap: 8px; padding: 12px 14px 14px; flex-shrink: 0;
+      background: #fff; border-top: 1px solid var(--rr-line); box-shadow: 0 -6px 16px rgba(15, 23, 42, 0.05);
     }
-
-    .loading-spinner {
-      width: 30px;
-      height: 30px;
-      border: 3px solid #E5E7EB;
-      border-top-color: #0A3D91;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .rr-selected-label { text-align: center; font-size: 0.74rem; font-weight: 600; color: var(--rr-1); }
+    .rr-apply {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 16px; border: none; border-radius: 14px; cursor: pointer; font-family: inherit;
+      font-size: 0.92rem; font-weight: 800; letter-spacing: 0.3px; color: #fff;
+      background: linear-gradient(135deg, var(--rr-1), var(--rr-3));
+      box-shadow: 0 6px 18px var(--rr-shadow);
+      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
     }
-
-    .loading-text { color: #6B7280; font-size: 0.85rem; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 24px;
-      color: #9CA3AF;
-      mat-icon { font-size: 36px; width: 36px; height: 36px; }
+    .rr-apply mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .rr-apply:hover:not(:disabled) { transform: translateY(-2px); }
+    .rr-apply:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; background: #94A3B8; }
+    .rr-apply.remove-mode:not(:disabled) { background: linear-gradient(135deg, #B91C1C, #EF4444); box-shadow: 0 6px 18px rgba(185, 28, 28, 0.3); }
+    .rr-close-btn {
+      width: 100%; padding: 9px; border: none; background: transparent; cursor: pointer; font-family: inherit;
+      font-size: 0.85rem; font-weight: 600; color: #64748B; border-radius: 12px; transition: background 0.2s;
     }
+    .rr-close-btn:hover { background: var(--rr-tint); }
 
-    /* ── LISTA PARTITE ── */
-    .matches-list {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    @media (max-width: 380px) {
+      .rr-card { padding: 10px 6px 8px; gap: 4px; }
+      .rr-logo { width: 38px; height: 38px; }
+      .rr-logo img { width: 29px; height: 29px; }
+      .rr-name { font-size: 0.7rem; }
+      .rr-score { font-size: 1.15rem; min-width: 54px; padding: 3px 8px; }
     }
-
-    .match-row {
-      background: #F8FAFC;
-      border-radius: 10px;
-      border-left: 3px solid #E5E7EB;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 10px;
-      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-
-      &.clickable { cursor: pointer; }
-
-      &.forzata {
-        border-left-color: #10B981;
-        background: #F0FDF4;
-      }
-
-      &.selected {
-        border-left-color: #0A3D91;
-        background: #EFF6FF;
-        box-shadow: 0 0 0 1.5px rgba(10, 61, 145, 0.25);
-      }
-
-      &.forzata.selected {
-        border-left-color: #10B981;
-        background: #ECFDF5;
-        box-shadow: 0 0 0 1.5px rgba(16, 185, 129, 0.3);
-      }
-
-      &.clickable:hover:not(.selected) {
-        background: #F1F5F9;
-        border-left-color: #94A3B8;
-      }
-    }
-
-    .team {
-      flex: 1;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #0A3D91;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-
-      &.home { text-align: right; }
-      &.away { text-align: left; }
-    }
-
-    .match-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      flex-shrink: 0;
-      min-width: 80px;
-    }
-
-    .score-box {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .score {
-      font-weight: 800;
-      font-size: 0.95rem;
-      color: #1F2937;
-      white-space: nowrap;
-    }
-
-    .score-pending {
-      font-weight: 600;
-      font-size: 0.8rem;
-      color: #9CA3AF;
-    }
-
-    .match-meta {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .stato-badge {
-      font-size: 0.58rem;
-      padding: 1px 5px;
-      border-radius: 8px;
-      background: #E5E7EB;
-      color: #6B7280;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-
-      &.terminata { background: #DCFCE7; color: #15803D; }
-      &.in-corso   { background: #FEF3C7; color: #D97706; }
-    }
-
-    .data-label {
-      font-size: 0.6rem;
-      color: #9CA3AF;
-      white-space: nowrap;
-    }
-
-    /* Badge forzatura */
-    .forced-badge {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: #10B981;
-      }
-    }
-
-    .saving-indicator {
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      mat-icon {
-        font-size: 16px;
-        width: 16px;
-        height: 16px;
-        color: #6B7280;
-      }
-    }
-
-    .spin-icon { animation: spin 0.8s linear infinite; }
-
-    /* ── FOOTER fisso ── */
-    .dialog-footer {
-      padding: 8px 12px 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      background: #FFFFFF;
-      border-top: 1px solid #F3F4F6;
-      flex-shrink: 0;
-    }
-
-    .legend {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 10px;
-      background: #F0FDF4;
-      border-radius: 8px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .legend-icon {
-      font-size: 14px;
-      width: 14px;
-      height: 14px;
-      color: #10B981;
-      flex-shrink: 0;
-    }
-
-    .legend-text {
-      font-size: 0.7rem;
-      color: #374151;
-      line-height: 1.3;
-    }
-
-    .close-button {
-      background: linear-gradient(135deg, #4FC3F7 0%, #0A3D91 100%);
-      color: white;
-      border: none;
-      border-radius: 20px;
-      padding: 7px 32px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 0.3px;
-      font-family: 'Poppins', sans-serif;
-      transition: opacity 0.2s;
-
-      &:hover { opacity: 0.88; }
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 480px) {
-      .dialog-body { padding: 8px 10px 6px; }
-      .team { font-size: 0.72rem; }
-      .score { font-size: 0.88rem; }
-      .match-center { min-width: 65px; }
-      .match-row { padding: 7px 8px; gap: 4px; }
-      .leader-bar { flex-direction: column; align-items: stretch; gap: 6px; }
-      .apply-force-btn { justify-content: center; }
-      .leader-hint span { white-space: normal; }
-      .round-nav-bar { padding: 6px 8px; gap: 3px; }
-      .round-chip { padding: 3px 8px; font-size: 0.63rem; }
-      .nav-arrow-btn { width: 26px; height: 26px; min-width: 26px; }
+    @media (prefers-reduced-motion: reduce) {
+      .rr-card, .rr-live-dot, .spin-icon, .rr-spinner { animation: none; }
+      .rr-card.selected { transform: none; }
     }
   `]
 })
@@ -859,14 +571,28 @@ export class RoundResultsDialogComponent implements OnInit, AfterViewChecked {
 
   getStatoLabel(partita: any): string {
     const stato = partita.stato?.value || partita.stato;
-    const stati: any = {
-      'DA_GIOCARE': 'Da giocare',
-      'IN_CORSO': 'In corso',
-      'TERMINATA': 'Terminata',
-      'SOSPESA': 'Sospesa',
-      'RINVIATA': 'Rinviata'
+    const keys: Record<string, string> = {
+      DA_GIOCARE: 'ROUND_RESULTS.STATE_DA_GIOCARE',
+      IN_CORSO: 'ROUND_RESULTS.STATE_IN_CORSO',
+      TERMINATA: 'ROUND_RESULTS.STATE_TERMINATA',
+      SOSPESA: 'ROUND_RESULTS.STATE_SOSPESA',
+      RINVIATA: 'ROUND_RESULTS.STATE_RINVIATA'
     };
-    return stati[stato] || stato || '-';
+    return keys[stato] ? this.translate.instant(keys[stato]) : (stato || '-');
+  }
+
+  logoFor(sigla: string): string | null {
+    return sigla && this.data.getTeamLogo ? this.data.getTeamLogo(sigla) : null;
+  }
+
+  onLogoError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    img.parentElement?.classList.add('no-img');
+  }
+
+  initials(nome: string): string {
+    return (nome || '?').replace(/[^A-Za-zÀ-ÿ0-9 ]/g, '').trim().slice(0, 3).toUpperCase();
   }
 
   formatDate(orario: any): string {

@@ -1436,7 +1436,14 @@
     "LEGEND_FORCED": "Partido forzado: todos los jugadores que lo eligieron avanzan",
     "FORCE_HINT_SELECT": "Selecciona un partido para aplicar o quitar la forzadura",
     "APPLY_FORCE": "Aplicar forzadura",
-    "REMOVE_FORCE": "Quitar forzadura"
+    "REMOVE_FORCE": "Quitar forzadura",
+    "FORCE_HINT_SHORT": "Toca un partido para forzarlo",
+    "FORCED_TAG": "Forzada",
+    "STATE_DA_GIOCARE": "Por jugar",
+    "STATE_IN_CORSO": "En juego",
+    "STATE_TERMINATA": "Finalizado",
+    "STATE_SOSPESA": "Suspendido",
+    "STATE_RINVIATA": "Aplazado"
   },
   "RECAP": {
     "LOADING": "Cargando resultados…",

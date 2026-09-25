@@ -1431,7 +1431,14 @@
     "LEGEND_FORCED": "Forced match: all players who chose it advance",
     "FORCE_HINT_SELECT": "Select a match to apply or remove the override",
     "APPLY_FORCE": "Apply override",
-    "REMOVE_FORCE": "Remove override"
+    "REMOVE_FORCE": "Remove override",
+    "FORCE_HINT_SHORT": "Tap a match to force it",
+    "FORCED_TAG": "Forced",
+    "STATE_DA_GIOCARE": "To play",
+    "STATE_IN_CORSO": "Live",
+    "STATE_TERMINATA": "Finished",
+    "STATE_SOSPESA": "Suspended",
+    "STATE_RINVIATA": "Postponed"
   },
   "RECAP": {
     "LOADING": "Loading results…",
