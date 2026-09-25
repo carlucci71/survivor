@@ -1050,6 +1050,15 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Unisciti a una Lega",
+    "FULL_TITLE": "Posti finiti!",
+    "FULL_DESC": "La sfida «{{lega}}» ha già tutti i giocatori.",
+    "FULL_PHRASES": [
+      "Chi prima arriva, meglio alloggia… e stavolta sei arrivato secondo! 🏨",
+      "La gatta frettolosa fece i gattini ciechi, ma il tuo amico è stato più svelto di te! 🐱",
+      "Chi dorme non piglia pesci: il posto se l'è preso un altro! 🐟",
+      "Il treno è partito con tutti i posti occupati. Alla prossima corri! 🚂",
+      "Troppo tardi, campione: il duello è iniziato senza di te ⚔️"
+    ],
     "HERO_TITLE": "Trova la tua sfida",
     "HERO_SUBTITLE": "Entra in una lega pubblica e gioca con altri giocatori",
     "HERO_COUNT": "{{count}} disponibili",

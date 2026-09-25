@@ -588,3 +588,22 @@ h2 {
 @media (prefers-reduced-motion: reduce) {
 	.jl-hero, .jl-hero-icon mat-icon { animation: none; }
 }
+
+/* Invito a lega piena */
+.invite-state-card--full { border-color: rgba(217, 119, 6, 0.35); }
+.isc-icon--full {
+	background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+	.isc-emoji { font-size: 2rem; display: inline-block; animation: isc-run 1.4s ease-in-out infinite; }
+}
+@keyframes isc-run { 0%, 100% { transform: translateX(-4px) rotate(-6deg); } 50% { transform: translateX(6px) rotate(6deg); } }
+.isc-title--amber { color: #B45309; }
+.isc-phrase {
+	margin: 4px 0 8px;
+	font-size: 1rem;
+	font-weight: 700;
+	line-height: 1.4;
+	color: #1F2937;
+	text-align: center;
+}
+.invite-state-card--full .es-actions { justify-content: center; margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .isc-icon--full .isc-emoji { animation: none; } }

@@ -34,6 +34,9 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   pendingLegaIds = new Set<number>();
   invitedJoinState: InvitedState = 'none';
   invitedJoinRequest: LegaJoinRequest | null = null;
+  /** Invito a una lega già piena (es. sfida 1v1 con l'avversario già dentro): messaggio simpatico. */
+  invitedFull = false;
+  fullPhrase = '';
 
   private invitedPollInterval: ReturnType<typeof setInterval> | null = null;
   private readonly INVITED_POLL_MS = 20000;
@@ -121,6 +124,10 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           this.invitedLega = lega;
           this.invitedLegaLoading = false;
+          if (lega.maxPartecipanti && (lega.numPartecipanti ?? 0) >= lega.maxPartecipanti) {
+            this.mostraLegaPiena();
+            return;
+          }
           const existing = richieste.find(r => r.legaId === lega.id);
           if (existing) {
             this.invitedJoinRequest = existing;
@@ -148,6 +155,17 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     // Scrolla la pagina in alto all'apertura del componente
     window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  private randomFullPhrase(): string {
+    const frasi = this.translate.instant('JOIN_LEAGUE.FULL_PHRASES');
+    const list: string[] = Array.isArray(frasi) ? frasi : [];
+    return list.length ? list[Math.floor(Math.random() * list.length)] : this.translate.instant('COMMON.ERROR_GENERIC');
+  }
+
+  private mostraLegaPiena(): void {
+    this.fullPhrase = this.randomFullPhrase();
+    this.invitedFull = true;
   }
 
   private mapStatoInvited(stato: string): InvitedState {
@@ -273,6 +291,19 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
           this.router.navigate(['/lega', updated.id]);
         },
         error: (err) => {
+
+          if (err?.error?.errorCode === 'LEGA_FULL') {
+            if (this.invitedLega?.id === lega.id) {
+              this.mostraLegaPiena();
+            } else {
+              this.dialog.open(ErrorDialogComponent, {
+                width: '380px',
+                maxWidth: '95vw',
+                data: { message: this.randomFullPhrase() }
+              });
+            }
+            return;
+          }
 
           if (err && err.status === 499) {
             let messaggio = '';

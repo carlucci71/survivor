@@ -1141,7 +1141,7 @@ button[mat-raised-button][color="primary"] {
 }
 
 // Badge "Sfida lampo" (duello 1v1) in fondo alla hero, allineato al suo bordo destro.
-// Moneta bronzo 3D con spessore: fa un doppio giro con flash e onda luminosa, poi resta
+// Moneta teal 3D con spessore: fa un doppio giro con flash e onda luminosa, poi resta
 // ferma di fronte con "1v1" leggibile; sul retro c'è ⚔️ (visibile durante il giro).
 .duel-seal-coin {
 	position: relative;
@@ -1178,7 +1178,7 @@ button[mat-raised-button][color="primary"] {
 	position: absolute;
 	inset: 0;
 	border-radius: 50%;
-	background: #7a4d22;
+	background: #0A4A5A;
 	transform: translateZ(var(--z));
 }
 
@@ -1191,7 +1191,7 @@ button[mat-raised-button][color="primary"] {
 	justify-content: center;
 	backface-visibility: hidden;
 	-webkit-backface-visibility: hidden;
-	background: radial-gradient(circle at 32% 28%, #F0C9A0, #CD7F32 48%, #8B5A2B 100%);
+	background: radial-gradient(circle at 32% 28%, #B8F0F5, #14A3B8 48%, #0B5F73 100%);
 	border: 2px solid rgba(255, 255, 255, 0.55);
 	box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.35);
 	box-sizing: border-box;
@@ -1220,7 +1220,7 @@ button[mat-raised-button][color="primary"] {
 	font-weight: 800;
 	letter-spacing: 0.1px;
 	font-family: 'Poppins', sans-serif;
-	text-shadow: 0 1px 2px rgba(60, 30, 5, 0.55);
+	text-shadow: 0 1px 2px rgba(4, 48, 59, 0.55);
 }
 
 /* Un giro completo, poi la moneta resta ferma di fronte (scritta leggibile) finché riparte */
@@ -1239,9 +1239,9 @@ button[mat-raised-button][color="primary"] {
 }
 
 @keyframes duelSealHalo {
-	0%, 45% { box-shadow: 0 0 0 0 rgba(205, 127, 50, 0.55); }
-	75%     { box-shadow: 0 0 0 10px rgba(205, 127, 50, 0); }
-	100%    { box-shadow: 0 0 0 10px rgba(205, 127, 50, 0); }
+	0%, 45% { box-shadow: 0 0 0 0 rgba(20, 163, 184, 0.55); }
+	75%     { box-shadow: 0 0 0 10px rgba(20, 163, 184, 0); }
+	100%    { box-shadow: 0 0 0 10px rgba(20, 163, 184, 0); }
 }
 
 @keyframes duelSealBurstY {
@@ -1254,7 +1254,7 @@ button[mat-raised-button][color="primary"] {
 	.duel-seal-disc, .duel-seal--clicked .duel-seal-disc, .duel-seal-halo, .duel-seal-face::after { animation: none; }
 }
 
-// Card "Sfida lampo": bronzo, sopra "Crea una nuova lega", tutta cliccabile
+// Card "Sfida lampo": teal, sopra "Crea una nuova lega", tutta cliccabile
 .duel-card {
 	display: flex;
 	align-items: center;
@@ -1264,26 +1264,26 @@ button[mat-raised-button][color="primary"] {
 	box-sizing: border-box;
 	margin: 0 0 16px;
 	padding: 14px 20px;
-	border: 1.5px solid rgba(205, 127, 50, 0.45);
+	border: 1.5px solid rgba(20, 163, 184, 0.45);
 	border-radius: 16px;
-	background: linear-gradient(135deg, rgba(139, 90, 43, 0.1), rgba(205, 127, 50, 0.2));
-	box-shadow: 0 6px 20px rgba(139, 90, 43, 0.15);
+	background: linear-gradient(135deg, rgba(11, 95, 115, 0.1), rgba(20, 163, 184, 0.2));
+	box-shadow: 0 6px 20px rgba(11, 95, 115, 0.15);
 	font-family: 'Poppins', sans-serif;
 	text-align: left;
 	cursor: pointer;
 	transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.duel-card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(139, 90, 43, 0.22); }
+.duel-card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(11, 95, 115, 0.22); }
 .duel-card:active { transform: translateY(0); }
 .dc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .dc-title {
 	font-size: 1.15rem;
 	font-weight: 800;
-	color: #8B5A2B;
+	color: #0B5F73;
 	text-transform: uppercase;
 	letter-spacing: 0.4px;
 }
-.dc-sub { font-size: 0.8rem; font-weight: 500; color: #A9702F; }
+.dc-sub { font-size: 0.8rem; font-weight: 500; color: #0E7490; }
 .duel-card .duel-seal-coin { width: 48px; height: 48px; }
 @media (max-width: 440px) {
 	.duel-card { padding: 12px 16px; }

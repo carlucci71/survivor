@@ -16,30 +16,42 @@
       <span class="sh-line"></span>
     </div>
 
-    <!-- League pills switcher (solo se >1 lega) -->
+    <!-- Selettore leghe: segmented control con pillola che scivola (solo se >1 lega) -->
     @if (legheAttive.length > 1) {
-      <div class="league-pills" role="tablist" [attr.aria-label]="'COMMON.SELECT_LEAGUE' | translate">
-        @for (item of legheAttive; track item.lega.id; let i = $index) {
-          <button
-            class="league-pill"
-            [class.active]="i === selectedIndex"
-            [class.da-avviare]="item.lega.stato.value === 'DA_AVVIARE'"
-            [class.duello-1v1]="item.lega.maxPartecipanti === 2"
-            [attr.aria-selected]="i === selectedIndex"
-            role="tab"
-            (click)="selectLega(i)"
-          >
-            @if (item.torneoLogoUrl) {
-              <img class="pill-torneo-logo" [src]="item.torneoLogoUrl" [alt]="item.sportEmoji" (error)="onLogoError($event)" />
-            } @else {
-              <span class="pill-sport">{{ item.sportEmoji }}</span>
-            }
-            <span class="pill-name">{{ item.lega.name }}</span>
-            @if (!item.lega.miaGiocataCorrente) {
-              <span class="pill-dot"></span>
-            }
-          </button>
-        }
+      <div class="lega-tabs" #rail role="tablist" [attr.aria-label]="'COMMON.SELECT_LEAGUE' | translate">
+        <div class="lt-track">
+          <span class="lt-indicator"
+                [class.duel]="selected.lega.maxPartecipanti === 2"
+                [style.width.px]="indWidth"
+                [style.transform]="'translateX(' + indLeft + 'px)'"></span>
+          @for (item of legheAttive; track item.lega.id; let i = $index) {
+            <button
+              type="button"
+              class="lt-item"
+              [class.active]="i === selectedIndex"
+              [class.duel]="item.lega.maxPartecipanti === 2"
+              [class.todo]="!item.lega.miaGiocataCorrente && item.lega.stato.value !== 'DA_AVVIARE'"
+              [attr.aria-selected]="i === selectedIndex"
+              role="tab"
+              (click)="onRailClick(i, $event)"
+            >
+              <span class="lt-avatar">
+                @if (item.torneoLogoUrl) {
+                  <img class="lt-logo" [src]="item.torneoLogoUrl" [alt]="item.sportEmoji" (error)="onLogoError($event)" />
+                } @else {
+                  <span class="lt-emoji">{{ item.sportEmoji }}</span>
+                }
+                @if (item.lega.maxPartecipanti === 2) {
+                  <span class="lt-badge lt-badge--duel">⚔️</span>
+                }
+                @if (!item.lega.miaGiocataCorrente && item.lega.stato.value !== 'DA_AVVIARE') {
+                  <span class="lt-badge lt-badge--todo"></span>
+                }
+              </span>
+              <span class="lt-name">{{ item.lega.name }}</span>
+            </button>
+          }
+        </div>
       </div>
     }
 

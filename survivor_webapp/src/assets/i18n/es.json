@@ -1050,6 +1050,15 @@
   },
   "JOIN_LEAGUE": {
     "TITLE": "Únete a una Liga",
+    "FULL_TITLE": "¡Plazas agotadas!",
+    "FULL_DESC": "El reto «{{lega}}» ya tiene a todos sus jugadores.",
+    "FULL_PHRASES": [
+      "A quien madruga, Dios le ayuda… ¡y esta vez llegaste segundo! 🐓",
+      "El que se duerme pierde el sitio: ¡otro se te adelantó! 😴",
+      "Quien no corre, vuela… ¡pero tu amigo voló más rápido que tú! 🕊️",
+      "El tren salió con todos los asientos ocupados. ¡La próxima corre! 🚂",
+      "Demasiado tarde, campeón: el duelo empezó sin ti ⚔️"
+    ],
     "HERO_TITLE": "Encuentra tu reto",
     "HERO_SUBTITLE": "Únete a una liga pública y juega con otros jugadores",
     "HERO_COUNT": "{{count}} disponibles",
