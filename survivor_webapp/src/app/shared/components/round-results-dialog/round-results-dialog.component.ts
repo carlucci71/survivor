@@ -12,8 +12,6 @@ export interface RoundResultsData {
   giornata: number;
   giornataIniziale?: number;
   isLeader: boolean;
-  /** Sfida 1v1: tema bronzo. */
-  duel?: boolean;
   /** Risolve il logo di una squadra (stessa logica di lega-dettaglio). */
   getTeamLogo?: (sigla: string) => string | null;
 }
@@ -29,7 +27,7 @@ export interface RoundResultsData {
     TranslateModule
   ],
   template: `
-    <div class="rr" [class.duel-theme]="data.duel">
+    <div class="rr">
       <!-- Header -->
       <div class="rr-header">
         <span class="rr-header-icon"><mat-icon>{{ data.isLeader ? 'bolt' : 'scoreboard' }}</mat-icon></span>
@@ -183,13 +181,6 @@ export interface RoundResultsData {
       width: 100%;
       max-height: 90vh;
     }
-    .rr.duel-theme {
-      --rr-1: #0B5F73; --rr-2: #0E7490; --rr-3: #14A3B8;
-      --rr-tint: rgba(11, 95, 115, 0.07);
-      --rr-line: rgba(11, 95, 115, 0.2);
-      --rr-shadow: rgba(11, 95, 115, 0.3);
-    }
-
     /* ── Header ── */
     .rr-header {
       position: relative;

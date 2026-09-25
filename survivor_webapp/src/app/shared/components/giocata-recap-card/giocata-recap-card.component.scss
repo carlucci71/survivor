@@ -141,17 +141,17 @@
 
   // Sfida 1v1 lampo: sfondo teal per distinguerla dalle leghe normali nella stessa fila
   &.duello-1v1 {
-    background: rgba(20, 163, 184, 0.12);
-    color: #0B5F73;
+    background: rgba(79, 195, 247, 0.12);
+    color: #0A3D91;
 
     &.active {
-      background: rgba(20, 163, 184, 0.22);
-      color: #0B5F73;
-      .pill-dot { background: #14A3B8; }
+      background: rgba(79, 195, 247, 0.22);
+      color: #0A3D91;
+      .pill-dot { background: #4FC3F7; }
     }
     &:hover:not(.active) {
-      background: rgba(20, 163, 184, 0.18);
-      color: #0B5F73;
+      background: rgba(79, 195, 247, 0.18);
+      color: #0A3D91;
     }
   }
 
@@ -1141,8 +1141,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   margin-bottom: 14px;
-  padding: 5px;
-  border-radius: 20px;
+  padding: 4px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #EEF3FB, #E7EDF7);
   border: 1px solid rgba(10, 61, 145, 0.1);
   box-shadow: 0 8px 22px rgba(10, 61, 145, 0.08), inset 0 1px 0 #fff;
@@ -1155,7 +1155,7 @@
   position: relative;
   display: flex;
   gap: 10px;
-  padding: 3px 2px 6px;
+  padding: 2px 2px 5px;
   width: max-content;
   min-width: 100%;
   justify-content: center;
@@ -1163,10 +1163,10 @@
 
 .lt-indicator {
   position: absolute;
-  top: 3px;
-  bottom: 6px;
+  top: 2px;
+  bottom: 5px;
   left: 0;
-  border-radius: 16px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #4FC3F7 140%);
   box-shadow: 0 6px 16px rgba(10, 61, 145, 0.35);
   transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.5, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, box-shadow 0.3s ease;
@@ -1174,8 +1174,8 @@
   z-index: 0;
 
   &.duel {
-    background: linear-gradient(135deg, #0B5F73 0%, #0E7490 60%, #14A3B8 140%);
-    box-shadow: 0 6px 16px rgba(11, 95, 115, 0.38);
+    background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #4FC3F7 140%);
+    box-shadow: 0 6px 16px rgba(10, 61, 145, 0.38);
   }
 }
 
@@ -1185,12 +1185,12 @@
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  max-width: 210px;
-  padding: 9px 16px 9px 9px;
+  gap: 7px;
+  max-width: 170px;
+  padding: 5px 12px 5px 5px;
   border: none;
   background: none;
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
   text-align: left;
   font-family: 'Poppins', sans-serif;
@@ -1206,15 +1206,15 @@
     box-shadow: 0 3px 10px rgba(10, 61, 145, 0.1);
   }
   &:hover:not(.active) { color: #0A3D91; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(10, 61, 145, 0.14); }
-  &.duel:not(.active) { color: #0E7490; }
+  &.duel:not(.active) { color: #1565C0; }
   &.active { color: #fff; }
 }
 
 .lt-avatar {
   position: relative;
   flex-shrink: 0;
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: #fff;
   border: 1px solid rgba(10, 61, 145, 0.1);
@@ -1223,15 +1223,15 @@
   align-items: center;
   justify-content: center;
 }
-.lt-logo { width: 25px; height: 25px; object-fit: contain; }
-.lt-emoji { font-size: 1.05rem; line-height: 1; }
+.lt-logo { width: 20px; height: 20px; object-fit: contain; }
+.lt-emoji { font-size: 0.9rem; line-height: 1; }
 
 .lt-name {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.95rem;
+  font-size: 0.82rem;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -1239,18 +1239,18 @@
 /* Badge sul logo: ⚔️ = sfida 1v1, puntino arancione = manca la scelta */
 .lt-badge { position: absolute; }
 .lt-badge--duel {
-  left: -5px; bottom: -3px;
-  width: 18px; height: 18px;
+  left: -4px; bottom: -3px;
+  width: 15px; height: 15px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.62rem;
-  background: linear-gradient(135deg, #0B5F73, #14A3B8);
+  font-size: 0.52rem;
+  background: linear-gradient(135deg, #0A3D91, #4FC3F7);
   border: 2px solid #fff;
-  box-shadow: 0 2px 5px rgba(11, 95, 115, 0.4);
+  box-shadow: 0 2px 5px rgba(10, 61, 145, 0.4);
 }
 .lt-badge--todo {
-  top: -3px; right: -3px;
-  width: 13px; height: 13px;
+  top: -2px; right: -2px;
+  width: 11px; height: 11px;
   border-radius: 50%;
   background: #F59E0B;
   border: 2px solid #fff;
@@ -1262,9 +1262,9 @@
 }
 
 @media (max-width: 380px) {
-  .lt-item { padding: 7px 11px 7px 7px; max-width: 170px; gap: 7px; }
-  .lt-avatar { width: 30px; height: 30px; }
-  .lt-name { font-size: 0.86rem; }
+  .lt-item { padding: 4px 10px 4px 4px; max-width: 150px; gap: 6px; }
+  .lt-avatar { width: 28px; height: 28px; }
+  .lt-name { font-size: 0.78rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lt-badge--todo { animation: none; }
