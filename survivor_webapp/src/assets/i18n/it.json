@@ -146,7 +146,7 @@
     "DUELLO_1V1": "Duello 1v1",
     "SURVIVOR": "Survivor",
     "CAMPIONATO": "Campionato",
-    "RULES_TITLE": "Badge storico giocatore",
+    "RULES_TITLE": "13. Badge storico giocatore",
     "RULES_TEXT": "Vinci una lega o una sfida 1v1 e sblocchi la medaglia di quella categoria: bronzo per le sfide 1v1, argento per Survivor, oro per Campionato — più raro è il traguardo, più preziosa la medaglia. Ogni 3 vittorie nella stessa categoria si aggiunge una stella, senza mai far scomparire la medaglia."
   },
   "SHARE_APP": {
@@ -202,6 +202,8 @@
     "SAVING": "Salvataggio...",
     "SUCCESS": "Profilo salvato con successo! 🎉",
     "ERROR": "❌ Errore nel salvataggio. Riprova.",
+    "YOUR_BADGES": "I tuoi badge",
+    "NO_BADGES_YET": "Vinci una sfida 1v1, una lega Survivor o un Campionato per sbloccare qui i tuoi primi badge.",
     "DELETE_ACCOUNT": "Elimina Account",
     "NICKNAME_REQUIRED": "Inserisci un nickname valido",
     "DELETE_DIALOG_TITLE": "Elimina Account",

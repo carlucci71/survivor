@@ -725,7 +725,11 @@ export class RegolamentoBannerDialogComponent {
 
         <!-- Badge storico per categoria -->
         <div class="badges-section" *ngIf="!isLoading && hasBadges">
-          <h3>{{ 'TROPHIES.YOUR_BADGES' | translate }}</h3>
+          <div class="badges-title-row">
+            <h3>{{ 'TROPHIES.YOUR_BADGES' | translate }}</h3>
+            <button type="button" class="badge-info-btn" (click)="showBadgeInfo = !showBadgeInfo" [attr.aria-label]="'BADGE.RULES_TITLE' | translate">ⓘ</button>
+          </div>
+          <div class="badge-info-bubble" *ngIf="showBadgeInfo">{{ 'BADGE.RULES_TEXT' | translate }}</div>
           <app-player-badges
             size="large"
             [vittorie1v1]="statistiche?.vittorie1v1"
@@ -749,9 +753,72 @@ export class RegolamentoBannerDialogComponent {
         color: #0A3D91;
         font-weight: 600;
         font-size: 0.95rem;
-        margin: 0 0 14px 0;
+        margin: 0;
       }
     }
+
+    .badges-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin: 0 0 14px 0;
+    }
+
+    .badge-info-btn {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      padding: 0;
+      border-radius: 50%;
+      border: 1.5px solid #CBD5E1;
+      background: none;
+      color: #94A3B8;
+      font-size: 0.66rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover, &:active { background: #0A3D91; border-color: #0A3D91; color: #fff; }
+    }
+
+    .badge-info-bubble {
+      position: relative;
+      margin: -4px 0 14px;
+      padding: 10px 12px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 10px;
+      color: #1E3A8A;
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      animation: badgeBubbleIn 0.2s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 10px;
+        height: 10px;
+        background: #EFF6FF;
+        border-left: 1px solid #BFDBFE;
+        border-top: 1px solid #BFDBFE;
+      }
+    }
+
+    @keyframes badgeBubbleIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     .albo-oro-dialog {
       width: 90vw;
       max-width: 700px;
@@ -1178,6 +1245,7 @@ export class AlboOroDialogComponent implements OnInit {
   hasTrofei = false;
   statistiche: any = null;
   isLoading = true;
+  showBadgeInfo = false;
 
   currentEmoji = '';
   currentMessage = '';
@@ -1406,12 +1474,15 @@ const EASTER_EGG_SHADER = `
 @Component({
   selector: 'app-profilo-dialog',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule, TranslateModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatSelectModule, FormsModule, MatSnackBarModule, TranslateModule, PlayerBadgesComponent],
   template: `
     <div class="modal-container">
 
       <!-- HEADER: Avatar (sinistra) + Nickname (destra) -->
       <div class="profile-header">
+        <span class="ph-bubble ph-b1" aria-hidden="true"></span>
+        <span class="ph-bubble ph-b2" aria-hidden="true"></span>
+        <span class="ph-bubble ph-b3" aria-hidden="true"></span>
         <div class="avatar" [style.background]="getAvatarGradient()"
           (pointerdown)="onAvatarPointerDown($event)"
           (pointerup)="onAvatarPointerUp()"
@@ -1452,21 +1523,21 @@ const EASTER_EGG_SHADER = `
         <div class="sport-chips">
           <button class="chip" [class.chip--active]="activeSport === 'calcio'" [class.chip--has]="userProfile.squadraCalcio" (click)="setActiveSport('calcio')">
             <span class="chip-check" *ngIf="userProfile.squadraCalcio">✓</span>
-            <span class="chip-emoji">⚽</span>
+            <span class="chip-emoji-wrap"><span class="chip-emoji">⚽</span></span>
             <span class="chip-label">{{ 'COMMON.SOCCER' | translate }}</span>
             <span class="chip-value chip-value--set" *ngIf="userProfile.squadraCalcio">{{ userProfile.squadraCalcio }}</span>
             <span class="chip-value chip-value--empty" *ngIf="!userProfile.squadraCalcio">—</span>
           </button>
           <button class="chip" [class.chip--active]="activeSport === 'basket'" [class.chip--has]="userProfile.squadraBasket" (click)="setActiveSport('basket')">
             <span class="chip-check" *ngIf="userProfile.squadraBasket">✓</span>
-            <span class="chip-emoji">🏀</span>
+            <span class="chip-emoji-wrap"><span class="chip-emoji">🏀</span></span>
             <span class="chip-label">{{ 'COMMON.BASKETBALL' | translate }}</span>
             <span class="chip-value chip-value--set" *ngIf="userProfile.squadraBasket">{{ userProfile.squadraBasket }}</span>
             <span class="chip-value chip-value--empty" *ngIf="!userProfile.squadraBasket">—</span>
           </button>
           <button class="chip" [class.chip--active]="activeSport === 'tennis'" [class.chip--has]="userProfile.tennista" (click)="setActiveSport('tennis')">
             <span class="chip-check" *ngIf="userProfile.tennista">✓</span>
-            <span class="chip-emoji">🎾</span>
+            <span class="chip-emoji-wrap"><span class="chip-emoji">🎾</span></span>
             <span class="chip-label">{{ 'COMMON.TENNIS' | translate }}</span>
             <span class="chip-value chip-value--set" *ngIf="userProfile.tennista">{{ userProfile.tennista }}</span>
             <span class="chip-value chip-value--empty" *ngIf="!userProfile.tennista">—</span>
@@ -1563,6 +1634,29 @@ const EASTER_EGG_SHADER = `
         </div>
       </div>
 
+      <!-- BADGE VINTI: sempre visibile, così l'utente sa che c'è un posto riservato
+           anche prima di aver vinto qualcosa -->
+      <div class="badges-section">
+        <div class="badges-title-row">
+          <h3 class="badges-title">{{ 'PROFILE.YOUR_BADGES' | translate }}</h3>
+          <button type="button" class="badge-info-btn" (click)="showBadgeInfo = !showBadgeInfo" [attr.aria-label]="'BADGE.RULES_TITLE' | translate">ⓘ</button>
+        </div>
+        <div class="badge-info-bubble" *ngIf="showBadgeInfo">{{ 'BADGE.RULES_TEXT' | translate }}</div>
+        <app-player-badges
+          *ngIf="hasBadges"
+          size="large"
+          [vittorie1v1]="statistiche?.vittorie1v1"
+          [vittorieSurvivor]="statistiche?.vittorieSurvivor"
+          [vittorieCampionato]="statistiche?.vittorieCampionato">
+        </app-player-badges>
+        <div class="badges-placeholder" *ngIf="!hasBadges">
+          <span class="badge-slot">⚔️</span>
+          <span class="badge-slot">🛡️</span>
+          <span class="badge-slot">🏆</span>
+          <p class="badges-placeholder-text">{{ 'PROFILE.NO_BADGES_YET' | translate }}</p>
+        </div>
+      </div>
+
       <!-- FEEDBACK -->
       <div *ngIf="feedbackMessage" class="feedback-message"
         [class.success]="feedbackType === 'success'"
@@ -1625,7 +1719,11 @@ const EASTER_EGG_SHADER = `
     /* ─── CONTAINER ─── */
     .modal-container {
       background: #F4F7FC;
-      border-radius: 20px;
+      border-radius: 22px;
+      /* clip-path oltre a overflow:hidden: gli elementi animati (bolle, sweep) a volte
+         vengono promossi su un layer GPU a parte e "sbordano" dall'angolo arrotondato
+         se si affida solo a overflow:hidden. */
+      clip-path: inset(0 round 22px);
       width: 100% !important;
       max-width: 100% !important;
       padding: 0 !important;
@@ -1633,33 +1731,51 @@ const EASTER_EGG_SHADER = `
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      box-shadow: 0 24px 60px rgba(10, 61, 145, 0.22);
     }
 
     /* ─── HEADER ─── */
     .profile-header {
+      position: relative;
       background: linear-gradient(135deg, #0A3D91 0%, #1565C0 60%, #4FC3F7 100%);
-      padding: 20px 20px 24px;
+      padding: 22px 20px 26px;
       display: flex;
       align-items: center;
       gap: 14px;
+      overflow: hidden;
     }
 
+    .ph-bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+    }
+    .ph-b1 { width: 90px; height: 90px; right: -24px; top: -44px; }
+    .ph-b2 { width: 46px; height: 46px; right: 64px; bottom: -26px; background: rgba(255, 255, 255, 0.08); }
+    .ph-b3 { width: 22px; height: 22px; right: 18px; bottom: 10px; background: rgba(255, 255, 255, 0.16); }
+
     .avatar {
-      width: 52px;
-      height: 52px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.25);
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.2), 0 4px 14px rgba(4, 15, 46, 0.35);
       flex-shrink: 0;
       position: relative;
+      z-index: 1;
       overflow: visible;
       cursor: pointer;
       touch-action: none;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
+      transition: transform 0.2s ease;
+
+      &:hover { transform: scale(1.05); }
     }
 
     .egg-ring {
@@ -1704,6 +1820,8 @@ const EASTER_EGG_SHADER = `
     }
 
     .nickname-wrap {
+      position: relative;
+      z-index: 1;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -1712,22 +1830,24 @@ const EASTER_EGG_SHADER = `
     }
 
     .close-btn {
+      position: relative;
+      z-index: 1;
       flex-shrink: 0;
       width: 32px;
       height: 32px;
-      background: rgba(0,0,0,0.18);
+      background: rgba(255, 255, 255, 0.14);
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
-      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
-      transition: background 0.15s;
+      transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
 
       mat-icon { color: #fff; font-size: 17px; width: 17px; height: 17px; pointer-events: none; }
-      &:hover, &:active { background: rgba(0,0,0,0.35); }
+      &:hover, &:active { background: rgba(255, 255, 255, 0.26); border-color: rgba(255, 255, 255, 0.55); transform: rotate(90deg); }
     }
 
     .field-label {
@@ -1754,8 +1874,9 @@ const EASTER_EGG_SHADER = `
       &::placeholder { color: rgba(255,255,255,0.4); font-weight: 400; }
       &:focus {
         outline: none;
-        background: rgba(255,255,255,0.22);
-        border-color: rgba(255,255,255,0.7);
+        background: rgba(255,255,255,0.24);
+        border-color: rgba(255,255,255,0.75);
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.14);
       }
     }
 
@@ -1777,44 +1898,67 @@ const EASTER_EGG_SHADER = `
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      padding: 10px 6px;
-      border-radius: 14px;
+      gap: 5px;
+      padding: 12px 6px 10px;
+      border-radius: 16px;
       border: none;
       background: #fff;
       cursor: pointer;
-      transition: all 0.18s ease;
-      min-height: 72px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      min-height: 78px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.07);
       -webkit-tap-highlight-color: transparent;
 
       &:active { transform: scale(0.97); }
 
       &.chip--active {
         background: #EBF2FF;
-        box-shadow: 0 0 0 2px #1565C0, 0 2px 8px rgba(10,61,145,0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 0 0 2px #1565C0, 0 6px 16px rgba(10,61,145,0.18);
       }
 
       &.chip--has:not(.chip--active) {
-        box-shadow: 0 0 0 2px #7CB9F4, 0 1px 4px rgba(0,0,0,0.07);
+        box-shadow: 0 0 0 2px #7CB9F4, 0 2px 8px rgba(15, 23, 42, 0.07);
       }
 
       &.chip--active.chip--has {
         background: #E8F0FE;
-        box-shadow: 0 0 0 2px #0A3D91, 0 2px 10px rgba(10,61,145,0.15);
+        box-shadow: 0 0 0 2px #0A3D91, 0 8px 18px rgba(10,61,145,0.2);
       }
     }
 
     .chip-check {
       position: absolute;
-      top: 5px;
-      right: 7px;
-      font-size: 0.6rem;
+      top: 6px;
+      right: 8px;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #16A34A;
+      font-size: 0.52rem;
       font-weight: 800;
-      color: #16A34A;
+      color: #fff;
+      box-shadow: 0 1px 3px rgba(22, 163, 74, 0.4);
     }
 
-    .chip-emoji { font-size: 1.4rem; line-height: 1; }
+    .chip-emoji-wrap {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.14));
+      transition: transform 0.2s ease, background 0.2s ease;
+
+      .chip--active & { background: linear-gradient(135deg, rgba(10, 61, 145, 0.14), rgba(79, 195, 247, 0.24)); }
+      .chip:hover & { transform: scale(1.08) rotate(-6deg); }
+    }
+
+    .chip-emoji { font-size: 1.2rem; line-height: 1; }
 
     .chip-label {
       font-size: 0.58rem;
@@ -1837,6 +1981,113 @@ const EASTER_EGG_SHADER = `
 
     .chip-value--set { color: #1565C0; }
     .chip-value--empty { color: #CBD5E1; }
+
+    /* ─── BADGE VINTI (sempre visibile, anche vuoto) ─── */
+    .badges-section {
+      margin: 14px 16px 0;
+      padding: 16px;
+      background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
+      border: 1px solid #E5EAF2;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .badges-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 0 0 12px;
+    }
+
+    .badges-title {
+      margin: 0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .badge-info-btn {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      padding: 0;
+      border-radius: 50%;
+      border: 1.5px solid #CBD5E1;
+      background: none;
+      color: #94A3B8;
+      font-size: 0.62rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover, &:active { background: #0A3D91; border-color: #0A3D91; color: #fff; }
+    }
+
+    .badge-info-bubble {
+      position: relative;
+      margin: -2px 0 14px;
+      padding: 10px 12px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 10px;
+      color: #1E3A8A;
+      font-size: 0.72rem;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      animation: fadeIn 0.2s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 10px;
+        height: 10px;
+        background: #EFF6FF;
+        border-left: 1px solid #BFDBFE;
+        border-top: 1px solid #BFDBFE;
+      }
+    }
+
+    .badges-placeholder {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .badge-slot {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 1.15rem;
+      background: #F1F5F9;
+      border: 2px dashed #CBD5E1;
+      filter: grayscale(1);
+      opacity: 0.55;
+    }
+
+    .badges-placeholder-text {
+      flex-basis: 100%;
+      margin: 6px 0 0;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
 
     /* ─── EDIT AREA ─── */
     .edit-area { margin-top: 10px; position: relative; }
@@ -1970,25 +2221,43 @@ const EASTER_EGG_SHADER = `
     }
 
     .btn-primary {
+      position: relative;
       display: block;
       width: 100%;
       font-family: 'Poppins', sans-serif;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 13px;
-      border-radius: 12px;
+      padding: 14px;
+      border-radius: 14px;
       cursor: pointer;
       font-size: 0.82rem;
       border: none;
-      background: linear-gradient(135deg, #0A3D91, #1565C0);
+      overflow: hidden;
+      background: linear-gradient(135deg, #0A3D91, #1565C0, #4FC3F7);
+      background-size: 200% 200%;
       color: #fff;
-      box-shadow: 0 4px 14px rgba(10,61,145,0.25);
-      transition: opacity 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 18px rgba(10,61,145,0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
       -webkit-tap-highlight-color: transparent;
 
-      &:hover:not(:disabled), &:active:not(:disabled) { opacity: 0.88; box-shadow: 0 2px 8px rgba(10,61,145,0.2); }
-      &:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -75%;
+        width: 45%; height: 100%;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+        animation: btnPrimarySheen 3.2s ease-in-out infinite;
+      }
+
+      &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(10,61,145,0.36); }
+      &:active:not(:disabled) { transform: translateY(0); box-shadow: 0 3px 10px rgba(10,61,145,0.25); }
+      &:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; &::before { display: none; } }
+    }
+
+    @keyframes btnPrimarySheen {
+      0%, 40%  { left: -75%; }
+      100%     { left: 130%; }
     }
 
     /* ─── ANNULLA ─── */
@@ -2042,7 +2311,8 @@ const EASTER_EGG_SHADER = `
       .avatar { width: 46px; height: 46px; }
       .avatar-initials { font-size: 1.15rem; }
       .favorites-section { padding: 14px 12px 0; }
-      .chip { min-height: 66px; }
+      .chip { min-height: 70px; }
+      .chip-emoji-wrap { width: 30px; height: 30px; }
       .actions-section { padding: 12px; }
       .danger-zone { padding: 0 12px 12px; }
     }
@@ -2051,8 +2321,9 @@ const EASTER_EGG_SHADER = `
       .profile-header { padding: 12px 12px 16px; gap: 10px; }
       .avatar { width: 42px; height: 42px; }
       .sport-chips { gap: 6px; }
-      .chip { min-height: 60px; padding: 8px 4px; }
-      .chip-emoji { font-size: 1.2rem; }
+      .chip { min-height: 62px; padding: 8px 4px; }
+      .chip-emoji-wrap { width: 26px; height: 26px; }
+      .chip-emoji { font-size: 1.05rem; }
       .chip-label { font-size: 0.54rem; }
     }
 
@@ -2349,12 +2620,16 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
     calcio: null, basket: null, tennis: null
   };
 
+  statistiche: any = null;
+  showBadgeInfo = false;
+
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
     private router: Router,
     private giocatoreService: GiocatoreService,
     private squadraService: SquadraService,
+    private trofeiService: TrofeiService,
     private snackBar: MatSnackBar,
     private translate: TranslateService
   ) {}
@@ -2362,6 +2637,22 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadProfile();
     this.loadAllSquadre();
+    this.loadStatisticheTrofei();
+  }
+
+  private loadStatisticheTrofei(): void {
+    this.trofeiService.getMieiTrofei().subscribe({
+      next: (stats) => { this.statistiche = stats; },
+      error: () => { /* il posto per i badge resta comunque visibile, con il placeholder */ }
+    });
+  }
+
+  get hasBadges(): boolean {
+    return !!this.statistiche && (
+      (this.statistiche.vittorie1v1 ?? 0) > 0 ||
+      (this.statistiche.vittorieSurvivor ?? 0) > 0 ||
+      (this.statistiche.vittorieCampionato ?? 0) > 0
+    );
   }
 
   // ── Avatar ─────────────────────────────────────────────────────────────────
@@ -3218,17 +3509,17 @@ export class DeleteAccountDialogComponent {
     <div class="info-banner">
       <div class="banner-container">
         <button class="banner-item" (click)="openRegolamento()">
-          <mat-icon class="banner-icon">article</mat-icon>
+          <span class="banner-icon-wrap"><mat-icon class="banner-icon">article</mat-icon></span>
           <span class="banner-text">{{ 'BANNER.RULES' | translate }}</span>
         </button>
 
-        <button class="banner-item" (click)="openAlboOro()">
-          <mat-icon class="banner-icon trophy">emoji_events</mat-icon>
+        <button class="banner-item banner-item--trophy" (click)="openAlboOro()">
+          <span class="banner-icon-wrap"><mat-icon class="banner-icon trophy">emoji_events</mat-icon></span>
           <span class="banner-text">{{ 'BANNER.TROPHIES' | translate }}</span>
         </button>
 
         <button class="banner-item" (click)="openProfilo()">
-          <mat-icon class="banner-icon">person</mat-icon>
+          <span class="banner-icon-wrap"><mat-icon class="banner-icon">person</mat-icon></span>
           <span class="banner-text">{{ 'BANNER.PROFILE' | translate }}</span>
         </button>
       </div>
@@ -3254,34 +3545,50 @@ export class DeleteAccountDialogComponent {
     }
 
     .banner-item {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: #FFFFFF;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(10, 61, 145, 0.08);
-      border: 1px solid #E0E0E0;
+      gap: 10px;
+      padding: 8px 18px 8px 10px;
+      background: linear-gradient(135deg, #FFFFFF, #FAFBFF);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(10, 61, 145, 0.08);
+      border: 1px solid #E5EAF2;
       cursor: pointer;
-      transition: all 0.3s ease;
-      height: 44px;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      height: 48px;
       flex: 1;
       justify-content: center;
       min-width: 0;
       font: inherit;
+      -webkit-tap-highlight-color: transparent;
+
+      /* Riflesso di luce che attraversa la pillola al passaggio del mouse */
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -60%;
+        width: 40%; height: 100%;
+        background: linear-gradient(115deg, transparent, rgba(79, 195, 247, 0.22), transparent);
+        transition: left 0.55s ease;
+        pointer-events: none;
+      }
 
       &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(10, 61, 145, 0.15);
-        border-color: #4FC3F7;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(10, 61, 145, 0.16);
+        border-color: rgba(79, 195, 247, 0.5);
 
-        .banner-icon {
-          transform: scale(1.1);
-          color: #0A3D91;
+        &::before { left: 130%; }
 
-          &.trophy {
-            color: #FFD700;
-          }
+        .banner-icon-wrap {
+          transform: scale(1.08) rotate(-4deg);
+          background: linear-gradient(135deg, rgba(10, 61, 145, 0.16), rgba(79, 195, 247, 0.28));
+        }
+
+        &.banner-item--trophy .banner-icon-wrap {
+          background: linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(255, 215, 0, 0.3));
         }
 
         .banner-text {
@@ -3289,12 +3596,26 @@ export class DeleteAccountDialogComponent {
         }
       }
 
+      &:active { transform: translateY(0) scale(0.98); }
+
+      .banner-icon-wrap {
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.16));
+        transition: all 0.25s ease;
+      }
+
       .banner-icon {
-        font-size: 1.3rem;
-        width: 1.3rem;
-        height: 1.3rem;
-        color: #4FC3F7;
-        transition: all 0.3s ease;
+        font-size: 1.15rem;
+        width: 1.15rem;
+        height: 1.15rem;
+        color: #0A3D91;
+        transition: all 0.25s ease;
         flex-shrink: 0;
 
         &.trophy {
@@ -3304,11 +3625,11 @@ export class DeleteAccountDialogComponent {
 
       .banner-text {
         color: #6B7280;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 0.4px;
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -3327,13 +3648,18 @@ export class DeleteAccountDialogComponent {
       }
 
       .banner-item {
-        padding: 8px 10px;
-        height: 38px;
+        padding: 6px 12px 6px 6px;
+        height: 42px;
+
+        .banner-icon-wrap {
+          width: 26px;
+          height: 26px;
+        }
 
         .banner-icon {
-          font-size: 1.1rem;
-          width: 1.1rem;
-          height: 1.1rem;
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
         }
 
         .banner-text {
@@ -3350,7 +3676,8 @@ export class DeleteAccountDialogComponent {
       }
 
       .banner-item {
-        padding: 6px 8px;
+        padding: 5px 8px 5px 5px;
+        gap: 7px;
         flex: 1;
         justify-content: center;
 
@@ -3359,10 +3686,15 @@ export class DeleteAccountDialogComponent {
           letter-spacing: 0.2px;
         }
 
+        .banner-icon-wrap {
+          width: 24px;
+          height: 24px;
+        }
+
         .banner-icon {
-          font-size: 1rem;
-          width: 1rem;
-          height: 1rem;
+          font-size: 0.92rem;
+          width: 0.92rem;
+          height: 0.92rem;
         }
       }
     }
@@ -3377,18 +3709,23 @@ export class DeleteAccountDialogComponent {
       }
 
       .banner-item {
-        padding: 5px 6px;
-        gap: 4px;
+        padding: 4px 6px 4px 4px;
+        gap: 5px;
 
         .banner-text {
           font-size: 0.55rem;
           letter-spacing: 0.1px;
         }
 
+        .banner-icon-wrap {
+          width: 22px;
+          height: 22px;
+        }
+
         .banner-icon {
-          font-size: 0.9rem;
-          width: 0.9rem;
-          height: 0.9rem;
+          font-size: 0.85rem;
+          width: 0.85rem;
+          height: 0.85rem;
         }
       }
     }

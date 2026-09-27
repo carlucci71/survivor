@@ -146,7 +146,7 @@
     "DUELLO_1V1": "Duelo 1v1",
     "SURVIVOR": "Survivor",
     "CAMPIONATO": "Campeonato",
-    "RULES_TITLE": "Insignias de historial del jugador",
+    "RULES_TITLE": "13. Insignias de historial del jugador",
     "RULES_TEXT": "Gana una liga o un duelo 1v1 y desbloqueas la medalla de esa categoría: bronce para los duelos 1v1, plata para Survivor, oro para Campeonato — cuanto más raro el logro, más valiosa la medalla. Cada 3 victorias en la misma categoría añade una estrella, sin que la medalla desaparezca nunca."
   },
   "SHARE_APP": {
@@ -202,6 +202,8 @@
     "SAVING": "Guardando...",
     "SUCCESS": "¡Perfil guardado con éxito! 🎉",
     "ERROR": "❌ Error al guardar. Inténtalo de nuevo.",
+    "YOUR_BADGES": "Tus insignias",
+    "NO_BADGES_YET": "Gana un duelo 1v1, una liga Survivor o un Campeonato para desbloquear aquí tus primeras insignias.",
     "DELETE_ACCOUNT": "Eliminar Cuenta",
     "NICKNAME_REQUIRED": "Introduce un apodo válido",
     "DELETE_DIALOG_TITLE": "Eliminar Cuenta",

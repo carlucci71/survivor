@@ -79,6 +79,22 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
         /* Safe area per notch (iOS standalone/fullscreen): applicata solo
            in modalità app nativa, con fallback 0 per non alterare il browser */
         padding-top: 0;
+        position: relative;
+        overflow: visible;
+        /* Nero neutro (non tinto del colore del tema): resta visibile sia su navy
+           che su verde/rosso di dev/test, invece di un'ombra colorata che sul
+           verde si mimetizza quasi del tutto. */
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32), 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      /* Filo di luce sul bordo inferiore, per staccare l'header dal bianco sotto */
+      .header::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75) 50%, transparent);
       }
 
       /* In modalità standalone (app installata iOS/Android con overlay statusbar) */
@@ -263,22 +279,34 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       .logout-icon {
         color: white;
         cursor: pointer;
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        padding: 9px;
+        font-size: 19px;
+        width: 38px;
+        height: 38px;
+        /* Margine di sicurezza indipendente dal gap del contenitore, così non tocca
+           mai la campanella anche se lo spazio tra i due si riduce (schermi stretti). */
+        margin-left: 6px;
         border-radius: 50%;
-        transition: all 0.2s ease;
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08));
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 3px 10px rgba(4, 15, 46, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        box-sizing: content-box;
+        box-sizing: border-box;
       }
 
       .logout-icon:hover {
         transform: scale(1.1);
-        opacity: 0.8;
-        background: rgba(255, 255, 255, 0.1);
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.14));
+        border-color: rgba(255, 255, 255, 0.65);
+        box-shadow: 0 5px 16px rgba(4, 15, 46, 0.32), 0 0 14px rgba(255, 255, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      }
+
+      .logout-icon:active {
+        transform: scale(0.94);
       }
 
 
@@ -313,10 +341,9 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           min-height: 30px !important;
         }
         .logout-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-          padding: 8px;
+          font-size: 17px;
+          width: 34px;
+          height: 34px;
         }
       }
 
@@ -326,7 +353,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           gap: 4px;
         }
         .actions {
-          gap: 0px;
+          gap: 8px;
         }
         .header-title {
           font-size: 0.8rem;
@@ -349,10 +376,9 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
           min-height: 28px !important;
         }
         .logout-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-          padding: 9px;
+          font-size: 16px;
+          width: 32px;
+          height: 32px;
         }
       }
     `,
