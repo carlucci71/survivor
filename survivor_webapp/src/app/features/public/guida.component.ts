@@ -47,8 +47,10 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <div class="nav-section">{{ 'GUIDE.SECTION_ADVANCED' | translate }}</div>
           <ul>
             <li><a (click)="scrollTo('crea')"><span class="nav-num">7</span> {{ 'GUIDE.NAV_7' | translate }}</a></li>
-            <li><a (click)="scrollTo('tips')"><span class="nav-num">8</span> {{ 'GUIDE.NAV_8' | translate }}</a></li>
-            <li><a (click)="scrollTo('faq')"><span class="nav-num">9</span> FAQ</a></li>
+            <li><a (click)="scrollTo('sfida-lampo')"><span class="nav-num">8</span> {{ 'GUIDE.NAV_SFIDA_LAMPO' | translate }}</a></li>
+            <li><a (click)="scrollTo('badges')"><span class="nav-num">9</span> {{ 'GUIDE.NAV_BADGES' | translate }}</a></li>
+            <li><a (click)="scrollTo('tips')"><span class="nav-num">10</span> {{ 'GUIDE.NAV_8' | translate }}</a></li>
+            <li><a (click)="scrollTo('faq')"><span class="nav-num">11</span> FAQ</a></li>
           </ul>
         </nav>
 
@@ -141,6 +143,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
               <div class="card"><div class="card-icon">🌐</div><strong>{{ 'GUIDE.S2_CARD2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD2_TEXT' | translate }}</span></div>
               <div class="card"><div class="card-icon">➕</div><strong>{{ 'GUIDE.S2_CARD3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD3_TEXT' | translate }}</span></div>
               <div class="card"><div class="card-icon">🔔</div><strong>{{ 'GUIDE.S2_CARD4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD4_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">📤</div><strong>{{ 'GUIDE.S2_CARD5_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD5_TEXT' | translate }}</span></div>
             </div>
             <p [innerHTML]="'GUIDE.S2_P2' | translate"></p>
             <div class="tip"><span class="callout-icon">💡</span>{{ 'GUIDE.S2_TIP' | translate }}</div>
@@ -233,10 +236,43 @@ import { HeaderComponent } from '../../shared/components/header/header.component
             <div class="info"><span class="callout-icon">ℹ️</span><span [innerHTML]="'GUIDE.S7_INFO' | translate"></span></div>
           </section>
 
-          <!-- 8 — Tips -->
-          <section class="chapter" id="tips">
+          <!-- 8 — Sfida 1v1 lampo -->
+          <section class="chapter" id="sfida-lampo">
             <div class="chapter-header">
               <div class="chapter-num">8</div>
+              <h2>{{ 'GUIDE.SL_TITLE' | translate }}</h2>
+            </div>
+            <p [innerHTML]="'GUIDE.SL_P1' | translate"></p>
+            <ul class="steps">
+              <li><div class="step-icon">⚔️</div><div class="step-body"><strong>{{ 'GUIDE.SL_LI1_TITLE' | translate }}</strong><span>{{ 'GUIDE.SL_LI1_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">📤</div><div class="step-body"><strong>{{ 'GUIDE.SL_LI2_TITLE' | translate }}</strong><span>{{ 'GUIDE.SL_LI2_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🔗</div><div class="step-body"><strong>{{ 'GUIDE.SL_LI3_TITLE' | translate }}</strong><span>{{ 'GUIDE.SL_LI3_TEXT' | translate }}</span></div></li>
+              <li><div class="step-icon">🥊</div><div class="step-body"><strong>{{ 'GUIDE.SL_LI4_TITLE' | translate }}</strong><span>{{ 'GUIDE.SL_LI4_TEXT' | translate }}</span></div></li>
+            </ul>
+            <div class="info"><span class="callout-icon">ℹ️</span>{{ 'GUIDE.SL_INFO' | translate }}</div>
+            <div class="warn"><span class="callout-icon">⚠️</span>{{ 'GUIDE.SL_WARN' | translate }}</div>
+          </section>
+
+          <!-- 9 — Badge e medaglie -->
+          <section class="chapter" id="badges">
+            <div class="chapter-header">
+              <div class="chapter-num">9</div>
+              <h2>{{ 'GUIDE.BADGES_TITLE' | translate }}</h2>
+            </div>
+            <p [innerHTML]="'GUIDE.BADGES_P1' | translate"></p>
+            <div class="card-grid card-grid--3">
+              <div class="card"><div class="card-icon">⚔️</div><strong>{{ 'GUIDE.BADGES_CARD1_TITLE' | translate }}</strong><span>{{ 'GUIDE.BADGES_CARD1_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">🛡️</div><strong>{{ 'GUIDE.BADGES_CARD2_TITLE' | translate }}</strong><span>{{ 'GUIDE.BADGES_CARD2_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">🏆</div><strong>{{ 'GUIDE.BADGES_CARD3_TITLE' | translate }}</strong><span>{{ 'GUIDE.BADGES_CARD3_TEXT' | translate }}</span></div>
+            </div>
+            <div class="tip"><span class="callout-icon">⭐</span>{{ 'GUIDE.BADGES_TIP' | translate }}</div>
+            <div class="info"><span class="callout-icon">ℹ️</span>{{ 'GUIDE.BADGES_INFO' | translate }}</div>
+          </section>
+
+          <!-- 10 — Tips -->
+          <section class="chapter" id="tips">
+            <div class="chapter-header">
+              <div class="chapter-num">10</div>
               <h2>{{ 'GUIDE.S8_TITLE' | translate }}</h2>
             </div>
             <ul class="steps">
@@ -252,7 +288,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
           <!-- 9 — FAQ -->
           <section class="chapter" id="faq">
             <div class="chapter-header">
-              <div class="chapter-num">9</div>
+              <div class="chapter-num">11</div>
               <h2>{{ 'GUIDE.S9_TITLE' | translate }}</h2>
             </div>
             <div class="faq">
@@ -506,6 +542,10 @@ import { HeaderComponent } from '../../shared/components/header/header.component
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin: 16px 0;
+    }
+    .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 640px) {
+      .card-grid--3 { grid-template-columns: 1fr; }
     }
     .card {
       background: #fff;
