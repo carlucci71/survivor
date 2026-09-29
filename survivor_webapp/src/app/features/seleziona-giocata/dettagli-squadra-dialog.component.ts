@@ -123,10 +123,10 @@ export interface DettagliSquadraData {
           } @else {
             @for(r of localUltimi.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === localSigla) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === localSigla">{{ formatNome(r.casaNome) }}</span>
+                <span class="giornata">{{ data.getDesGiornata(r, siglaEq(r.casaSigla, localSigla)) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.casaSigla, localSigla)">{{ formatNome(r.casaNome) }}</span>
                 <span class="score">{{ r.scoreCasa }}-{{ r.scoreFuori }}</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localSigla">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.fuoriSigla, localSigla)">{{ formatNome(r.fuoriNome) }}</span>
                 <span class="badge" [class.v]="getEsitoFor(r, localSigla) === 'V'" [class.n]="getEsitoFor(r, localSigla) === 'N'" [class.p]="getEsitoFor(r, localSigla) === 'P'">{{ getEsitoFor(r, localSigla) }}</span>
               </div>
             }
@@ -139,10 +139,10 @@ export interface DettagliSquadraData {
           } @else {
             @for(r of localProssime.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, r.casaSigla === localSigla) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === localSigla">{{ formatNome(r.casaNome) }}</span>
+                <span class="giornata">{{ data.getDesGiornata(r, siglaEq(r.casaSigla, localSigla)) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.casaSigla, localSigla)">{{ formatNome(r.casaNome) }}</span>
                 <span class="vs">vs</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localSigla">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.fuoriSigla, localSigla)">{{ formatNome(r.fuoriNome) }}</span>
                 <span class="badge date-badge">{{ r.orario | date: 'dd/MM' }}</span>
               </div>
             }
@@ -155,10 +155,10 @@ export interface DettagliSquadraData {
           } @else {
             @for(r of localUltimiOpponent.slice(0, 6); track r.giornata) {
               <div class="row" [style.borderLeftColor]="localColors.primary">
-                <span class="giornata">{{ data.getDesGiornata(r, formatNome(r.casaSigla) === localOpponentSigla) }}</span>
-                <span class="match" [class.bold]="formatNome(r.casaSigla) === localOpponentSigla">{{ formatNome(r.casaNome) }}</span>
+                <span class="giornata">{{ data.getDesGiornata(r, siglaEq(r.casaSigla, localOpponentSigla)) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.casaSigla, localOpponentSigla)">{{ formatNome(r.casaNome) }}</span>
                 <span class="score">{{ r.scoreCasa }}-{{ r.scoreFuori }}</span>
-                <span class="match" [class.bold]="formatNome(r.fuoriSigla) === localOpponentSigla">{{ formatNome(r.fuoriNome) }}</span>
+                <span class="match" [class.bold]="siglaEq(r.fuoriSigla, localOpponentSigla)">{{ formatNome(r.fuoriNome) }}</span>
                 <span class="badge" [class.v]="getEsitoFor(r, localOpponentSigla) === 'V'" [class.n]="getEsitoFor(r, localOpponentSigla) === 'N'" [class.p]="getEsitoFor(r, localOpponentSigla) === 'P'">{{ getEsitoFor(r, localOpponentSigla) }}</span>
               </div>
             }
@@ -1029,15 +1029,26 @@ export class DettagliSquadraDialogComponent implements OnDestroy {
     return nome.replace(/_/g, ' ');
   }
 
+  /**
+   * Confronto sigle robusto a maiuscole/minuscole e spazi: la sigla che arriva dal padre (già
+   * passata per formatNomeSquadra, che tra le altre cose fa lookup NBA) e quella del risultato
+   * (sempre grezza dal backend) potevano non combaciare per un semplice mismatch di case/trim,
+   * facendo cadere ogni riga nel ramo "non è né casa né trasferta" di getEsitoFor -> sempre 'N'
+   * anche con punteggi non in parità. Bug segnalato da Dario: statistiche sempre "pareggio".
+   */
+  siglaEq(a: string | null | undefined, b: string | null | undefined): boolean {
+    const na = this.formatNome(a).trim().toUpperCase();
+    const nb = this.formatNome(b).trim().toUpperCase();
+    return !!na && na === nb;
+  }
+
   getEsitoFor(r: any, sigla: string | null): string {
     if (!sigla) return 'N';
-    const casa = this.formatNome(r.casaSigla);
-    const fuori = this.formatNome(r.fuoriSigla);
-    if (sigla === casa) {
+    if (this.siglaEq(r.casaSigla, sigla)) {
       if (r.scoreCasa > r.scoreFuori) return 'V';
       if (r.scoreCasa === r.scoreFuori) return 'N';
       return 'P';
-    } else if (sigla === fuori) {
+    } else if (this.siglaEq(r.fuoriSigla, sigla)) {
       if (r.scoreFuori > r.scoreCasa) return 'V';
       if (r.scoreFuori === r.scoreCasa) return 'N';
       return 'P';

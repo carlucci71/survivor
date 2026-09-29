@@ -46,30 +46,36 @@ import { environment } from '../../../../environments/environment';
       </div>
 
       <div class="sl-body" *ngIf="step === 'form'">
+        <label class="sl-field-label">{{ 'DUEL.NAME_LABEL' | translate }}</label>
         <input type="text" class="sl-name-input" [(ngModel)]="name" [placeholder]="'DUEL.NAME_PLACEHOLDER' | translate" maxlength="60">
 
+        <label class="sl-field-label">{{ 'DUEL.SPORT_LABEL' | translate }}</label>
         <div class="sl-sport-row">
           <button type="button" class="sl-sport-chip" *ngFor="let sport of sportDisponibili"
                   [class.sl-sport-chip--active]="sportSel === sport.id"
                   (click)="selectSport(sport.id)">
             <mat-icon>{{ getSportIcon(sport.id) }}</mat-icon>
+            <span class="sl-sport-check" *ngIf="sportSel === sport.id"><mat-icon>check</mat-icon></span>
           </button>
         </div>
 
-        <div class="sl-camp-row" *ngIf="sportSel">
-          <ng-container *ngIf="campionatiDisponibili.length; else loadingCamp">
-            <button type="button" class="sl-camp-chip" *ngFor="let c of campionatiDisponibili"
-                    [class.sl-camp-chip--active]="campionatoSel?.id === c.id"
-                    [class.sl-camp-chip--disabled]="!isDisponibile(c)"
-                    [disabled]="!isDisponibile(c)"
-                    (click)="selectCampionato(c)">
-              {{ c.nome }}
-            </button>
-          </ng-container>
-          <ng-template #loadingCamp>
-            <span class="sl-camp-loading">…</span>
-          </ng-template>
-        </div>
+        <ng-container *ngIf="sportSel">
+          <label class="sl-field-label">{{ 'DUEL.CAMPIONATO_LABEL' | translate }}</label>
+          <div class="sl-camp-row">
+            <ng-container *ngIf="campionatiDisponibili.length; else loadingCamp">
+              <button type="button" class="sl-camp-chip" *ngFor="let c of campionatiDisponibili"
+                      [class.sl-camp-chip--active]="campionatoSel?.id === c.id"
+                      [class.sl-camp-chip--disabled]="!isDisponibile(c)"
+                      [disabled]="!isDisponibile(c)"
+                      (click)="selectCampionato(c)">
+                {{ c.nome }}
+              </button>
+            </ng-container>
+            <ng-template #loadingCamp>
+              <span class="sl-camp-loading">…</span>
+            </ng-template>
+          </div>
+        </ng-container>
 
         <div class="sl-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
@@ -80,7 +86,10 @@ import { environment } from '../../../../environments/environment';
       </div>
 
       <div class="sl-body sl-body--done" *ngIf="step === 'done'">
-        <div class="sl-done-check"><mat-icon>check_circle</mat-icon></div>
+        <div class="sl-done-check">
+          <span class="sl-done-ring"></span>
+          <mat-icon>check_circle</mat-icon>
+        </div>
         <p class="sl-done-text">{{ 'DUEL.CREATED_TEXT' | translate: { name: name } }}</p>
         <button type="button" class="sl-share-btn" (click)="shareLink()">
           <mat-icon>ios_share</mat-icon>
@@ -116,6 +125,7 @@ import { environment } from '../../../../environments/environment';
       width: 100%;
       font-family: 'Poppins', sans-serif;
       text-align: center;
+      box-shadow: 0 24px 60px rgba(10, 61, 145, 0.28);
     }
 
     /* ─── Bolle fluttuanti ─── */
@@ -164,6 +174,20 @@ import { environment } from '../../../../environments/environment';
       overflow: hidden;
       border-radius: 24px 24px 0 0;
     }
+    .sl-hero::before {
+      content: '';
+      position: absolute;
+      top: -40%; left: -20%;
+      width: 60%; height: 220%;
+      background: linear-gradient(100deg, transparent, rgba(255,255,255,0.16), transparent);
+      transform: rotate(12deg);
+      animation: sl-hero-sheen 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes sl-hero-sheen {
+      0%, 40%  { left: -30%; }
+      100%     { left: 130%; }
+    }
     .sl-hero::after {
       content: '';
       position: absolute;
@@ -206,6 +230,15 @@ import { environment } from '../../../../environments/environment';
       border-radius: 0 0 24px 24px;
     }
 
+    .sl-field-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-tertiary, #94A3B8);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin: 2px 0 -2px;
+    }
+
     .sl-name-input {
       width: 100%;
       box-sizing: border-box;
@@ -227,27 +260,44 @@ import { environment } from '../../../../environments/environment';
       box-shadow: 0 0 0 3px rgba(79, 195, 247,0.18);
     }
 
-    .sl-sport-row { display: flex; justify-content: center; gap: 8px; }
+    .sl-sport-row { display: flex; justify-content: center; gap: 10px; }
     .sl-sport-chip {
-      width: 46px; height: 46px;
+      position: relative;
+      width: 48px; height: 48px;
       border-radius: 50%;
       border: 1.5px solid var(--border-color, #E2E8F0);
       background: var(--bg-card, #fff);
       color: var(--text-secondary, #6B7280);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .sl-sport-chip mat-icon { font-size: 22px; width: 22px; height: 22px; }
+    .sl-sport-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1); }
+    .sl-sport-chip mat-icon { font-size: 23px; width: 23px; height: 23px; }
     .sl-sport-chip--active {
-      border-color: #4FC3F7;
-      background: linear-gradient(135deg, rgba(79, 195, 247,0.16), rgba(10, 61, 145,0.08));
+      border-color: #0A3D91;
+      background: linear-gradient(135deg, rgba(79, 195, 247,0.18), rgba(10, 61, 145,0.1));
       color: #0A3D91;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(10, 61, 145, 0.18);
+    }
+    .sl-sport-check {
+      position: absolute;
+      top: -3px; right: -3px;
+      width: 17px; height: 17px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 5px rgba(10, 61, 145, 0.4);
+      border: 1.5px solid var(--bg-card, #fff);
+
+      mat-icon { font-size: 11px; width: 11px; height: 11px; color: #fff; }
     }
 
-    .sl-camp-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+    .sl-camp-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
     .sl-camp-chip {
-      padding: 7px 14px;
+      padding: 8px 15px;
       border-radius: 20px;
       border: 1.5px solid var(--border-color, #E2E8F0);
       background: var(--bg-card, #fff);
@@ -256,12 +306,15 @@ import { environment } from '../../../../environments/environment';
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s ease;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+      transition: all 0.2s ease;
     }
+    .sl-camp-chip:hover:not(:disabled) { border-color: rgba(79, 195, 247, 0.6); transform: translateY(-1px); }
     .sl-camp-chip--active {
-      border-color: #4FC3F7;
-      background: linear-gradient(135deg, rgba(79, 195, 247,0.16), rgba(10, 61, 145,0.08));
+      border-color: #0A3D91;
+      background: linear-gradient(135deg, rgba(79, 195, 247,0.18), rgba(10, 61, 145,0.1));
       color: #0A3D91;
+      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.16);
     }
     .sl-camp-chip--disabled { opacity: 0.45; cursor: not-allowed; }
     .sl-camp-loading { color: var(--text-tertiary, #9CA3AF); font-size: 0.85rem; padding: 6px 0; }
@@ -269,6 +322,8 @@ import { environment } from '../../../../environments/environment';
     .sl-error { color: var(--error-color, #E53935); font-size: 0.8rem; }
 
     .sl-submit {
+      position: relative;
+      overflow: hidden;
       margin-top: 8px;
       display: inline-flex;
       align-items: center;
@@ -285,15 +340,57 @@ import { environment } from '../../../../environments/environment';
       cursor: pointer;
       box-shadow: 0 4px 14px rgba(10, 61, 145,0.35);
       transition: all 0.18s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -75%;
+        width: 45%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+        animation: sl-submit-sheen 3.2s ease-in-out infinite;
+      }
     }
-    .sl-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(10, 61, 145,0.45); }
+    @keyframes sl-submit-sheen {
+      0%, 40%  { left: -75%; }
+      100%     { left: 130%; }
+    }
+    .sl-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(10, 61, 145,0.45); }
     .sl-submit:active:not(:disabled) { transform: translateY(0) scale(0.98); }
-    .sl-submit:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
+    .sl-submit:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; &::before { display: none; } }
 
     .sl-body--done { align-items: center; padding: 26px 22px 24px; }
-    .sl-done-check mat-icon { font-size: 46px; width: 46px; height: 46px; color: #43A047; }
+
+    .sl-done-check {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px; height: 64px;
+      margin: 0 auto;
+      animation: sl-done-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .sl-done-check mat-icon { position: relative; z-index: 1; font-size: 46px; width: 46px; height: 46px; color: #43A047; }
+    .sl-done-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(67, 160, 71, 0.22), rgba(67, 160, 71, 0));
+      animation: sl-done-ring 1.6s ease-out 0.3s infinite;
+    }
+    @keyframes sl-done-pop {
+      0%   { transform: scale(0.4); opacity: 0; }
+      60%  { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes sl-done-ring {
+      0%   { transform: scale(0.7); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
     .sl-done-text { color: var(--text-secondary, #6B7280); font-size: 0.88rem; margin: 8px 0 16px; }
     .sl-share-btn {
+      position: relative;
+      overflow: hidden;
       width: 100%;
       padding: 13px;
       border-radius: 30px;
@@ -307,7 +404,20 @@ import { environment } from '../../../../environments/environment';
       display: flex; align-items: center; justify-content: center; gap: 8px;
       margin-bottom: 10px;
       box-shadow: 0 4px 14px rgba(10, 61, 145,0.3);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -75%;
+        width: 45%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent);
+        animation: sl-submit-sheen 3.2s ease-in-out infinite;
+      }
     }
+    .sl-share-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(10, 61, 145,0.4); }
+    .sl-share-btn:active { transform: translateY(0) scale(0.98); }
+
     .sl-copy-btn {
       width: 100%;
       padding: 12px;
@@ -321,14 +431,18 @@ import { environment } from '../../../../environments/environment';
       cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       margin-bottom: 12px;
+      transition: all 0.18s ease;
     }
+    .sl-copy-btn:hover { background: rgba(79, 195, 247, 0.1); transform: translateY(-1px); }
+    .sl-copy-btn:active { transform: translateY(0) scale(0.98); }
+
     .sl-goto-btn {
       width: 100%;
       padding: 11px;
       border-radius: 30px;
       background: transparent;
       color: var(--text-secondary, #6B7280);
-      border: none;
+      border: 1.5px solid var(--border-color, #E2E8F0);
       font-weight: 600;
       font-size: 0.85rem;
       font-family: inherit;
@@ -337,11 +451,12 @@ import { environment } from '../../../../environments/environment';
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: background 0.15s ease, color 0.15s ease;
+      transition: all 0.18s ease;
     }
     .sl-goto-btn mat-icon { font-size: 17px; width: 17px; height: 17px; }
     .sl-goto-btn:hover {
       background: var(--bg-tertiary, #F8F9FA);
+      border-color: #4FC3F7;
       color: #0A3D91;
     }
 
@@ -353,7 +468,8 @@ import { environment } from '../../../../environments/environment';
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .sl-bubble, .sl-icon-wrap, .sl-emoji { animation: none; }
+      .sl-bubble, .sl-icon-wrap, .sl-emoji, .sl-hero::before, .sl-submit::before,
+      .sl-done-check, .sl-done-ring, .sl-share-btn::before { animation: none; }
     }
   `]
 })
@@ -402,9 +518,11 @@ export class SfidaLampoDialogComponent implements OnInit {
     this.campionatiDisponibili = [];
     this.campionatoService.getCampionatoBySport(id).subscribe({
       next: (campionati) => {
-        this.campionatiDisponibili = campionati;
+        // I Mondiali sono un'edizione speciale legata a un evento occasionale, non ha senso
+        // proporli come opzione per un duello lampo "sempre disponibile".
+        this.campionatiDisponibili = campionati.filter((c) => c.id !== 'MONDIALI_2026');
         // Pre-seleziona il primo disponibile: zero tap richiesti per procedere
-        const primoDisponibile = campionati.find((c) => this.isDisponibile(c));
+        const primoDisponibile = this.campionatiDisponibili.find((c) => this.isDisponibile(c));
         if (primoDisponibile) this.campionatoSel = primoDisponibile;
       },
       error: () => {},

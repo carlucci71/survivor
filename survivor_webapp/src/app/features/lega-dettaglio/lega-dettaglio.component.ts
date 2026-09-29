@@ -1093,6 +1093,26 @@ export class LegaDettaglioComponent implements OnDestroy {
   }
 
   /**
+   * True se il giocatore ha giocate nelle giornate nascoste dalla finestra a 5 colonne della
+   * tabella desktop/tablet (che non scorre): serve a mostrare l'icona per aprire lo storico
+   * completo anche in Survivor, dove `hasMoreRounds` è volutamente disattivato (su mobile la
+   * striscia scorre e mostra già tutto).
+   */
+  hasHiddenRoundsDesktop(giocatore: Giocatore): boolean {
+    if (!this.giornataIndices || this.giornataIndices.length <= this.MAX_VISIBLE_ROUNDS_DESKTOP) return false;
+    if (!giocatore?.giocate) return false;
+    const nascoste = this.giornataIndices.slice(0, -this.MAX_VISIBLE_ROUNDS_DESKTOP);
+    const legaId = this.lega?.id;
+    return giocatore.giocate
+      .filter((g: any) => !legaId || g.legaId === legaId)
+      .some((g: any) => nascoste.includes(this.getGiornataAssolutaDaRelativa(Number(g?.giornata))));
+  }
+
+  private getGiornataAssolutaDaRelativa(giornataRelativa: number): number {
+    return (this.lega?.giornataIniziale || 1) + giornataRelativa - 1;
+  }
+
+  /**
    * True se la cella è "post-eliminazione" per un giocatore eliminato:
    * usato nel template per applicare uno stile visivo diverso.
    */
