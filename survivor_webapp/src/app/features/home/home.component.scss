@@ -1484,18 +1484,3 @@ button[mat-raised-button][color="primary"] {
 	max-width: 300px;
 	border-radius: 1px;
 }
-
-.live-score-btn-wrap {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	max-width: 1200px;
-	margin: 0 auto;
-	margin-left: auto;
-	margin-right: auto;
-	padding: 0;
-}
-@media (max-width: 768px) { .live-score-btn-wrap { margin: 0 16px; } }
-@media (max-width: 480px) { .live-score-btn-wrap { margin: 0 12px; } }
-@media (max-width: 360px) { .live-score-btn-wrap { margin: 0 8px; } }

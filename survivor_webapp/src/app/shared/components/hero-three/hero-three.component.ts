@@ -98,13 +98,6 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       <!-- Easter egg: Air Hockey (7 tap sul titolo) -->
       <app-air-hockey *ngIf="showGame" (close)="showGame = false"></app-air-hockey>
 
-      <!-- Sport indicator dots (bottom right) -->
-      <div class="sport-dots" aria-hidden="true">
-        <span class="sdot" [class.sdot--on]="active===0"></span>
-        <span class="sdot" [class.sdot--on]="active===1"></span>
-        <span class="sdot" [class.sdot--on]="active===2"></span>
-      </div>
-
       <!-- Edge fades -->
       <div class="fade-l"></div>
       <div class="fade-r"></div>
@@ -112,6 +105,12 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       <!-- Riflesso di luce che attraversa il banner + bordo luminoso a gradiente -->
       <div class="hero-sweep" aria-hidden="true"></div>
       <div class="hero-rim" aria-hidden="true"></div>
+
+      <!-- Slot per un overlay in basso a sinistra (usato dal chip "LIVE"): allineato al testo
+           del titolo, a specchio dei pallini sport in basso a destra. -->
+      <div class="hero-overlay">
+        <ng-content select="[heroOverlay]"></ng-content>
+      </div>
     </div>
   `,
   styles: [`
@@ -514,29 +513,17 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
 
 
     /* =====================================================
-       SPORT INDICATOR DOTS
+       OVERLAY SLOT (basso a sinistra)
     ===================================================== */
 
-    .sport-dots {
+    /* z-index 9: sopra sweep (7) e rim (8), che sono comunque pointer-events:none */
+    .hero-overlay {
       position: absolute;
-      right: 20px;
-      bottom: 16px;
-      z-index: 6;
+      left: 32px;
+      bottom: 14px;
+      z-index: 9;
       display: flex;
-      gap: 6px;
       align-items: center;
-    }
-
-    .sdot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.22);
-      transition: background 0.4s, box-shadow 0.4s, transform 0.4s;
-    }
-    .sdot--on {
-      background: #4fc3f7;
-      box-shadow: 0 0 8px rgba(79,195,247,0.85);
-      transform: scale(1.35);
     }
 
     /* =====================================================
@@ -552,12 +539,14 @@ import { AirHockeyComponent } from '../air-hockey/air-hockey.component';
       .content  { padding: 0 22px; }
       .tagline  { font-size: 0.65rem; letter-spacing: 0.14em; }
       .fade-l, .fade-r { width: 32px; }
+      .hero-overlay { left: 22px; bottom: 12px; }
     }
 
     @media (max-width: 380px) {
       .hero     { height: 198px; border-radius: 12px; }
       .content  { padding: 0 18px; }
       .tagline  { font-size: 0.60rem; letter-spacing: 0.11em; }
+      .hero-overlay { left: 18px; bottom: 10px; }
     }
 
   `]

@@ -18,10 +18,15 @@ const ALTRI_CAMPIONATI: { id: string; labelKey: string }[] = [
 ];
 
 /**
- * Bottone "Risultati Live": prima versione, solo Serie A. Il backend cachizza già la chiamata
- * per ~50s condivisa fra tutti gli utenti, quindi possiamo interrogarlo altrettanto spesso senza
- * aggiungere carico reale sul provider esterno. Estesa poi a Serie B/Liga/Premier League, mostrate
- * come tab nel dialog quando l'utente ha una lega attiva in quei campionati.
+ * Chip "LIVE" in sovrimpressione sull'hero (in basso a sinistra, vedi lo slot `heroOverlay` di
+ * hero-three): compare SOLO quando c'è almeno una partita davvero in corso, e sparisce del tutto
+ * altrimenti — prima era un'etichetta "Risultati" sempre presente che non diceva nulla. Il tap
+ * apre comunque il dialog con tutta la giornata (in corso, da giocare e terminate).
+ *
+ * Il backend cachizza la chiamata per ~50s condivisa fra tutti gli utenti, quindi possiamo
+ * interrogarlo altrettanto spesso senza aggiungere carico reale sul provider esterno. Serie B,
+ * Liga, Premier League e Champions arrivano come tab nel dialog quando l'utente ha una lega
+ * attiva in quei campionati.
  */
 @Component({
   selector: 'app-live-score-button',
@@ -74,12 +79,12 @@ export class LiveScoreButtonComponent implements OnInit, OnDestroy {
   }
 
   get haPartiteInCorso(): boolean {
-    return this.partite.some((p) => p.stato === 'IN_CORSO')
-      || this.gruppiAltri.some((g) => g.partite.some((p) => p.stato === 'IN_CORSO'));
+    return this.partiteInCorsoCount > 0;
   }
 
-  get haQualcosaDaMostrare(): boolean {
-    return this.partite.length > 0 || this.gruppiAltri.length > 0;
+  get partiteInCorsoCount(): number {
+    return [...this.partite, ...this.gruppiAltri.flatMap((g) => g.partite)]
+      .filter((p) => p.stato === 'IN_CORSO').length;
   }
 
   apriDialog(): void {
