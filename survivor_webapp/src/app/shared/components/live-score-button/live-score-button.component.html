@@ -1,4 +1,10 @@
-<button type="button" class="lsb-btn" [class.lsb-btn--live]="haPartiteInCorso" *ngIf="haQualcosaDaMostrare" (click)="apriDialog()">
+<button type="button"
+        class="lsb-live"
+        *ngIf="haPartiteInCorso"
+        (click)="apriDialog()"
+        [attr.aria-label]="'LIVE_SCORE.DIALOG_TITLE' | translate">
   <span class="lsb-dot"></span>
-  <span class="lsb-label">{{ (haPartiteInCorso ? 'LIVE_SCORE.BUTTON_LABEL' : 'LIVE_SCORE.BUTTON_LABEL_GENERIC') | translate }}</span>
+  <span class="lsb-label">{{ 'LIVE_SCORE.LIVE_BADGE' | translate }}</span>
+  <span class="lsb-sep" aria-hidden="true">·</span>
+  <span class="lsb-count">{{ 'LIVE_SCORE.MATCHES_COUNT' | translate: { count: partiteInCorsoCount } }}</span>
 </button>
