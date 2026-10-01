@@ -211,52 +211,93 @@
 }
 
 .pill {
+	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	padding: 5px 14px;
-	border-radius: 20px;
-	border: 1.5px solid #CBD5E0;
-	background: #fff;
-	color: #4A5568;
+	gap: 6px;
+	padding: 7px 16px;
+	border-radius: 999px;
+	border: 1.5px solid #DCE6F5;
+	background: linear-gradient(180deg, #fff, #F5F8FE);
+	color: #475569;
 	font-family: 'Poppins', sans-serif;
-	font-size: 0.82rem;
-	font-weight: 500;
+	font-size: 0.84rem;
+	font-weight: 600;
+	letter-spacing: 0.1px;
+	line-height: 1.3;
 	cursor: pointer;
-	transition: all 0.18s ease;
-	line-height: 1.4;
+	box-shadow: 0 1px 3px rgba(10, 61, 145, 0.08);
+	transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.22s ease, color 0.2s ease, border-color 0.2s ease;
 
 	&:hover:not(.active) {
+		transform: translateY(-1px);
 		border-color: #0A3D91;
 		color: #0A3D91;
-		background: #EFF6FF;
+		background: linear-gradient(180deg, #fff, #EAF2FF);
+		box-shadow: 0 4px 10px rgba(10, 61, 145, 0.14);
+	}
+
+	&:active {
+		transform: scale(0.96);
+	}
+
+	/* Colore proprio di stato: l'icona è già tinta da inattiva, così il significato si legge prima di toccare */
+	&.pill--green .pill-icon { color: #2E7D32; }
+	&.pill--amber .pill-icon { color: #D97706; }
+
+	&.pill--green:hover:not(.active) {
+		border-color: #2E7D32;
+		color: #1B5E20;
+		background: linear-gradient(180deg, #fff, #E8F5E9);
+		box-shadow: 0 4px 10px rgba(46, 125, 50, 0.18);
+	}
+
+	&.pill--amber:hover:not(.active) {
+		border-color: #D97706;
+		color: #B45309;
+		background: linear-gradient(180deg, #fff, #FFF3E0);
+		box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
 	}
 
 	&.active {
-		border-color: #0A3D91;
-		background: #0A3D91;
+		border-color: transparent;
 		color: #fff;
-		box-shadow: 0 2px 8px rgba(10, 61, 145, 0.25);
+		background: linear-gradient(135deg, #0A3D91, #1565C0);
+		box-shadow: 0 4px 12px rgba(10, 61, 145, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 	}
 
 	&.pill--green.active {
-		border-color: #1B5E20;
-		background: #1B5E20;
-		box-shadow: 0 2px 8px rgba(27, 94, 32, 0.25);
+		background: linear-gradient(135deg, #1B5E20, #43A047);
+		box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 	}
 
 	&.pill--amber.active {
-		border-color: #B45309;
-		background: #D97706;
-		box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+		background: linear-gradient(135deg, #B45309, #F59E0B);
+		box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+	}
+
+	&.active .pill-icon {
+		color: #fff;
+		transform: scale(1.12);
+	}
+
+	/* "In corso" attiva: l'icona pulsa piano, come un indicatore di diretta */
+	&.pill--green.active .pill-icon {
+		animation: pill-live 2s ease-in-out infinite;
 	}
 }
 
 .pill-icon {
-	font-size: 15px !important;
-	width: 15px !important;
-	height: 15px !important;
+	font-size: 16px !important;
+	width: 16px !important;
+	height: 16px !important;
 	line-height: 1 !important;
+	transition: transform 0.25s ease, color 0.2s ease;
+}
+
+@keyframes pill-live {
+	0%, 100% { transform: scale(1.12); opacity: 1; }
+	50% { transform: scale(1.3); opacity: 0.75; }
 }
 
 /* ── Leghe list ── */
@@ -499,7 +540,7 @@ h2 {
 
 	.filter-label { min-width: 64px; font-size: 0.7rem; }
 
-	.pill { font-size: 0.78rem; padding: 4px 12px; }
+	.pill { font-size: 0.8rem; padding: 6px 13px; }
 }
 
 
@@ -568,12 +609,43 @@ h2 {
 	flex-wrap: nowrap;
 	overflow-x: auto;
 	scrollbar-width: none;
-	padding: 2px 2px 4px;
+	padding: 4px 4px 10px;
+	margin: -4px -4px -6px;
+	width: calc(100% + 8px);
 	&::-webkit-scrollbar { display: none; }
 }
 .pill { flex-shrink: 0; white-space: nowrap; }
 @media (min-width: 768px) {
 	.filter-pills { flex-wrap: wrap; overflow: visible; }
+}
+
+/* Stato: 3 pill fisse, sempre su una riga e senza scorrere. Su mobile si dividono la larghezza e si
+   fanno compatte; da 480px in su tornano alla misura piena, allineate a sinistra. */
+.filter-pills--fit {
+	flex-wrap: nowrap;
+	overflow: visible;
+	gap: 6px;
+	width: 100%;
+	margin: 0;
+	padding: 4px 0 6px;
+
+	.pill {
+		flex: 1 1 auto;
+		justify-content: center;
+		min-width: 0;
+		gap: 4px;
+		padding: 6px 8px;
+		font-size: 0.78rem;
+		white-space: nowrap;
+	}
+}
+@media (max-width: 380px) {
+	.filter-pills--fit .pill { gap: 3px; padding: 5px 6px; font-size: 0.74rem; }
+	.filter-pills--fit .pill-icon { font-size: 14px !important; width: 14px !important; height: 14px !important; }
+}
+@media (min-width: 480px) {
+	.filter-pills--fit { gap: 8px; }
+	.filter-pills--fit .pill { flex: 0 0 auto; gap: 6px; padding: 7px 16px; font-size: 0.84rem; }
 }
 
 .edizioni-list {
@@ -587,6 +659,7 @@ h2 {
 }
 @media (prefers-reduced-motion: reduce) {
 	.jl-hero, .jl-hero-icon mat-icon { animation: none; }
+	.pill, .pill-icon { transition: none; animation: none !important; }
 }
 
 /* Invito a lega piena */
