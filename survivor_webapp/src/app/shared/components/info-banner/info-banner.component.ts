@@ -26,10 +26,16 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
   template: `
     <div class="regolamento-dialog">
       <div class="dialog-header">
-        <h2 class="dialog-title">{{ 'RULES.TITLE' | translate }}</h2>
-        <button mat-icon-button class="close-btn" (click)="closeDialog()">
-          <mat-icon>close</mat-icon>
+        <div class="header-content">
+          <div class="rules-orb"><mat-icon>menu_book</mat-icon></div>
+          <h2 class="dialog-title">{{ 'RULES.TITLE' | translate }}</h2>
+        </div>
+        <button type="button" class="close-btn" (click)="closeDialog()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+          <svg class="close-x" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+            <path d="M2 2 L12 12 M12 2 L2 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
         </button>
+        <span class="read-progress" [style.width.%]="scrollProgress" aria-hidden="true"></span>
       </div>
 
       <div class="dialog-content" #dialogContent (scroll)="onScroll($event)">
@@ -165,9 +171,9 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       width: 90vw;
       max-width: 100vw;
       max-height: 90vh;
-      background: #FFFFFF;
-      border-radius: 0;
-      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
+      background: #F6F9FF;
+      border-radius: 20px;
+      box-shadow: 0 18px 60px rgba(10, 61, 145, 0.3);
       font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
@@ -177,34 +183,84 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       box-sizing: border-box;
     }
 
+    /* ── Header: blu con riflesso, luce che passa ogni tanto e barra di lettura in basso ── */
     .dialog-header {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+      padding: 18px 16px;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.38), transparent 45%),
+        linear-gradient(135deg, #0A3D91 0%, #1565C0 55%, #4FC3F7 135%);
       color: #FFFFFF;
       flex-shrink: 0;
       position: relative;
+      overflow: hidden;
+      z-index: 2;
       box-sizing: border-box;
+      box-shadow: 0 4px 16px rgba(10, 61, 145, 0.3);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -60%;
+        width: 40%; height: 100%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+        transform: skewX(-18deg);
+        animation: rgHeaderSheen 7s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .rules-orb {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        box-shadow: 0 4px 10px rgba(4, 15, 46, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          color: #FFFFFF;
+        }
+      }
 
       .dialog-title {
         margin: 0;
         font-size: 1.2rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.4px;
         text-align: center;
-        flex: 1;
         line-height: 1.2;
+        text-shadow: 0 2px 6px rgba(4, 15, 46, 0.3);
       }
 
       .close-btn {
         position: absolute;
+        z-index: 2;
         right: 16px;
         top: 50%;
         transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.4);
         color: #FFFFFF;
         border-radius: 50%;
         width: 32px;
@@ -212,21 +268,43 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
         display: flex;
         align-items: center;
         justify-content: center;
-        border: none;
+        padding: 0;
+        margin: 0;
         cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
         transition: all 0.2s ease;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-50%) scale(1.05);
+          background: rgba(255, 255, 255, 0.34);
+          transform: translateY(-50%) rotate(90deg);
         }
 
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
+        /* X come SVG inline: centrata dal flex del button, non dipende da padding Material o dal font delle icone */
+        .close-x {
+          display: block;
+          flex-shrink: 0;
+          width: 14px;
+          height: 14px;
+          pointer-events: none;
         }
       }
+
+      /* Quanto del regolamento hai già scorso */
+      .read-progress {
+        position: absolute;
+        z-index: 2;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #4FC3F7, #FFFFFF);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        transition: width 0.12s linear;
+      }
+    }
+
+    @keyframes rgHeaderSheen {
+      0%, 55% { left: -60%; }
+      100% { left: 140%; }
     }
 
     .dialog-content {
@@ -242,7 +320,7 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       text-align: left;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      hyphens: auto;
+      background: linear-gradient(180deg, #EAF2FF 0%, #F6F9FF 220px);
 
       /* Scrollbar */
       &::-webkit-scrollbar {
@@ -250,12 +328,11 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       }
 
       &::-webkit-scrollbar-track {
-        background: #F8F9FA;
-        border-radius: 3px;
+        background: transparent;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #C1C9D2;
+        background: #B9C9E4;
         border-radius: 3px;
 
         &:hover {
@@ -264,7 +341,7 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       }
 
       scrollbar-width: thin;
-      scrollbar-color: #C1C9D2 #F8F9FA;
+      scrollbar-color: #B9C9E4 transparent;
 
       .intro {
         color: #0A3D91;
@@ -276,93 +353,136 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       }
 
       .good-luck {
-        color: #4FC3F7;
-        font-size: 1.1rem;
-        font-weight: 600;
+        position: relative;
+        overflow: hidden;
+        color: #FFFFFF;
+        font-size: 1.05rem;
+        font-weight: 700;
         text-align: center;
-        margin-top: 24px;
+        margin: 18px 0 4px;
         padding: 16px;
-        background: linear-gradient(135deg, rgba(10, 61, 145, 0.05), rgba(79, 195, 247, 0.08));
-        border-radius: 12px;
+        background: linear-gradient(135deg, #0A3D91, #1565C0 60%, #4FC3F7 140%);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(10, 61, 145, 0.28);
+        text-shadow: 0 1px 4px rgba(4, 15, 46, 0.3);
       }
 
+      /* ── Ogni sezione è una card con barra colorata a sinistra ── */
       .regola {
-        margin: 0 0 24px 0;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #E5E7EB;
+        position: relative;
+        margin: 0 0 14px 0;
+        padding: 16px 18px 10px 22px;
+        background: #FFFFFF;
+        border: 1px solid rgba(10, 61, 145, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 3px 12px rgba(10, 61, 145, 0.06);
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        overflow: hidden;
+        animation: rgCardIn 0.45s ease both;
 
-        &:last-child {
-          border-bottom: none;
-          margin-bottom: 0;
+        &::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 4px;
+          background: linear-gradient(180deg, #0A3D91, #4FC3F7);
         }
+
+        &:nth-child(2) { animation-delay: 0.05s; }
+        &:nth-child(3) { animation-delay: 0.1s; }
+        &:nth-child(4) { animation-delay: 0.15s; }
+        &:nth-child(5) { animation-delay: 0.2s; }
+        &:nth-child(6) { animation-delay: 0.25s; }
 
         h3 {
           color: #0A3D91;
-          font-weight: 600;
+          font-weight: 700;
           font-size: 1rem;
-          margin: 0 0 12px 0;
-          line-height: 1.4;
+          margin: 0 0 10px 0;
+          line-height: 1.35;
+          letter-spacing: 0.2px;
           text-align: left;
           word-break: break-word;
           overflow-wrap: anywhere;
-          hyphens: auto;
         }
 
+        /* Sottotitoli (modalità, 9.1, 9.2...): etichetta a pillola */
         h4 {
-          color: #4FC3F7;
-          font-weight: 600;
-          font-size: 0.9rem;
-          margin: 16px 0 10px 0;
+          display: inline-block;
+          max-width: 100%;
+          margin: 14px 0 8px 0;
+          padding: 3px 11px;
+          border-radius: 12px;
+          background: rgba(79, 195, 247, 0.16);
+          color: #0A6FB3;
+          font-weight: 700;
+          font-size: 0.74rem;
+          letter-spacing: 0.06em;
           line-height: 1.4;
+          text-transform: uppercase;
           text-align: left;
           word-break: break-word;
           overflow-wrap: anywhere;
-          hyphens: auto;
         }
 
         p {
-          color: #6B7280;
-          font-size: 0.85rem;
-          margin: 0 0 12px 0;
-          line-height: 1.6;
-          text-align: justify;
+          color: #556070;
+          font-size: 0.86rem;
+          margin: 0 0 10px 0;
+          line-height: 1.65;
+          text-align: left;
           word-break: break-word;
           overflow-wrap: anywhere;
-          hyphens: auto;
           max-width: 100%;
         }
 
         ul {
-          margin: 10px 0 12px 0;
-          padding-left: 20px;
-          padding-right: 0;
-          color: #6B7280;
+          list-style: none;
+          margin: 8px 0 10px 0;
+          padding: 0;
           width: 100%;
           max-width: 100%;
           box-sizing: border-box;
 
           li {
-            font-size: 0.85rem;
-            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 7px;
+            color: #556070;
+            font-size: 0.86rem;
             line-height: 1.6;
-            text-align: justify;
+            text-align: left;
             word-break: break-word;
             overflow-wrap: anywhere;
-            hyphens: auto;
             max-width: 100%;
+
+            &::before {
+              content: '';
+              position: absolute;
+              left: 3px;
+              top: 0.62em;
+              width: 7px;
+              height: 7px;
+              border-radius: 50%;
+              background: linear-gradient(135deg, #0A3D91, #4FC3F7);
+            }
           }
         }
 
         strong {
           color: #0A3D91;
-          font-weight: 600;
+          font-weight: 700;
           word-break: break-word;
           overflow-wrap: anywhere;
         }
       }
+    }
+
+    @keyframes rgCardIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* RESPONSIVE TABLET */
@@ -370,7 +490,6 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
       .regolamento-dialog {
         width: 90vw;
         max-width: 100vw;
-        border-radius: 0;
         margin: 0;
         box-sizing: border-box;
       }
@@ -389,52 +508,22 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
           width: 28px;
           height: 28px;
 
-          mat-icon {
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
-          }
+          .close-x { width: 12px; height: 12px; }
         }
       }
 
       .dialog-content {
-        padding: 16px 20px;
+        padding: 16px;
         box-sizing: border-box;
         overflow-x: hidden;
 
         .regola {
-          margin-bottom: 20px;
-          padding-bottom: 16px;
+          margin-bottom: 12px;
+          padding: 14px 14px 8px 18px;
 
-          h3 {
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          h4 {
-            font-size: 0.85rem;
-            margin: 12px 0 8px 0;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          p, li {
-            font-size: 0.8rem;
-            line-height: 1.5;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          ul {
-            padding-left: 18px;
-            margin: 8px 0 10px 0;
-
-            li {
-              margin-bottom: 6px;
-            }
-          }
+          h3 { font-size: 0.95rem; margin-bottom: 8px; }
+          h4 { font-size: 0.7rem; margin: 12px 0 8px 0; }
+          p, li { font-size: 0.82rem; line-height: 1.55; }
         }
       }
     }
@@ -446,13 +535,16 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
         max-width: 100vw;
         max-height: 100vh;
         margin: 0;
-        border-radius: 0;
+        border-radius: 18px;
         box-sizing: border-box;
       }
 
       .dialog-header {
-        padding: 12px 16px;
+        padding: 13px 16px;
         box-sizing: border-box;
+
+        .header-content { gap: 9px; }
+        .rules-orb { width: 32px; height: 32px; mat-icon { font-size: 17px; width: 17px; height: 17px; } }
 
         .dialog-title {
           font-size: 0.95rem;
@@ -466,53 +558,27 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
           width: 26px;
           height: 26px;
 
-          mat-icon {
-            font-size: 12px;
-            width: 12px;
-            height: 12px;
-          }
+          .close-x { width: 11px; height: 11px; }
         }
       }
 
       .dialog-content {
-        padding: 12px 16px;
+        padding: 12px;
         box-sizing: border-box;
         overflow-x: hidden;
 
         .regola {
-          margin-bottom: 16px;
-          padding-bottom: 12px;
+          margin-bottom: 10px;
+          padding: 12px 12px 6px 16px;
+          border-radius: 14px;
 
-          h3 {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          h4 {
-            font-size: 0.8rem;
-            margin: 10px 0 6px 0;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          p, li {
-            font-size: 0.75rem;
-            line-height: 1.5;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-          }
-
-          ul {
-            padding-left: 16px;
-            margin: 6px 0 8px 0;
-
-            li {
-              margin-bottom: 5px;
-            }
-          }
+          h3 { font-size: 0.9rem; margin-bottom: 6px; }
+          h4 { font-size: 0.66rem; margin: 10px 0 6px 0; }
+          p, li { font-size: 0.78rem; line-height: 1.5; }
+          ul li { padding-left: 17px; }
         }
+
+        .good-luck { font-size: 0.95rem; padding: 14px; }
       }
     }
 
@@ -567,7 +633,6 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
         width: 90vw;
         max-width: 800px;
         margin: 0 auto;
-        border-radius: 16px;
       }
 
       .dialog-content {
@@ -606,10 +671,18 @@ import { PlayerBadgesComponent } from '../player-badges/player-badges.component'
         }
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dialog-header::after { animation: none; }
+      .regola { animation: none; }
+      .read-progress, .close-btn { transition: none; }
+    }
   `]
 })
 export class RegolamentoBannerDialogComponent {
   showBackToTop = false;
+  /** 0-100: quanto del regolamento è stato scorso, mostrato come barra sul bordo del header. */
+  scrollProgress = 0;
   private lastScrollTop = 0;
   private scrollTimeout: any;
 
@@ -623,6 +696,8 @@ export class RegolamentoBannerDialogComponent {
   onScroll(event: any): void {
     const scrollTop = event.target.scrollTop;
     const isScrollingDown = scrollTop > this.lastScrollTop;
+    const max = event.target.scrollHeight - event.target.clientHeight;
+    this.scrollProgress = max > 0 ? Math.min(100, (scrollTop / max) * 100) : 0;
 
     // Mostra il bottone solo se scrolli verso il basso e sei oltre i 300px
     if (isScrollingDown && scrollTop > 300) {
@@ -661,11 +736,13 @@ export class RegolamentoBannerDialogComponent {
     <div class="albo-oro-dialog">
       <div class="dialog-header">
         <div class="header-content">
-          <mat-icon class="trophy-icon">emoji_events</mat-icon>
+          <div class="trophy-orb"><mat-icon class="trophy-icon">emoji_events</mat-icon></div>
           <h2 class="dialog-title">{{ 'TROPHIES.YOUR_TROPHIES' | translate }}</h2>
         </div>
-        <button mat-icon-button class="close-btn" (click)="closeDialog()">
-          <mat-icon>close</mat-icon>
+        <button type="button" class="close-btn" (click)="closeDialog()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+          <svg class="close-x" viewBox="0 0 14 14" aria-hidden="true" focusable="false">
+            <path d="M2 2 L12 12 M12 2 L2 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
         </button>
       </div>
 
@@ -683,42 +760,61 @@ export class RegolamentoBannerDialogComponent {
           <p class="empty-subtitle">{{ currentSubtitle }}</p>
         </div>
 
-        <!-- Lista trofei personali -->
-        <div *ngIf="!isLoading && hasTrofei && statistiche">
-          <div class="winner-card" *ngFor="let trofeo of statistiche.trofei">
-            <div class="season">
-              <h3>{{ getPosizioneEmoji(trofeo.posizioneFinale) }} {{ trofeo.nomeLega }} - Ed. {{ trofeo.edizione }}</h3>
-              <div class="winner-info">
-                <div class="winner-name">{{ getPosizioneLabel(trofeo.posizioneFinale) }}</div>
-                <div class="winner-details">
-                  <span class="detail">{{ trofeo.nomeSport }} - {{ trofeo.nomeCampionato }} {{ trofeo.anno }}</span>
-                  <span class="detail">{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: {{ trofeo.giornateGiocate }}</span>
-                  <span class="detail" *ngIf="trofeo.ultimaSquadraScelta">{{ 'TROPHIES.FINAL_TEAM' | translate }}: {{ trofeo.ultimaSquadraScelta }}</span>
-                </div>
-              </div>
+        <!-- Statistiche personali in alto: sono il riassunto, non vanno cercate in fondo a una lista lunga -->
+        <div class="stats-block" *ngIf="!isLoading && hasTrofei && statistiche">
+          <div class="section-label">{{ 'TROPHIES.YOUR_STATS' | translate }}</div>
+          <div class="stats-strip">
+            <div class="stat-tile">
+              <mat-icon>sports_score</mat-icon>
+              <span class="stat-number">{{ statistiche.torneiGiocati }}</span>
+              <span class="stat-label">{{ 'TROPHIES.TOURNAMENTS_PLAYED' | translate }}</span>
+            </div>
+            <div class="stat-tile">
+              <mat-icon>emoji_events</mat-icon>
+              <span class="stat-number">{{ statistiche.vittorie }}</span>
+              <span class="stat-label">{{ 'TROPHIES.VICTORIES' | translate }}</span>
+            </div>
+            <div class="stat-tile">
+              <mat-icon>workspace_premium</mat-icon>
+              <span class="stat-number">{{ statistiche.podi }}</span>
+              <span class="stat-label">{{ 'TROPHIES.PODIUMS' | translate }}</span>
+            </div>
+            <div class="stat-tile">
+              <mat-icon>trending_up</mat-icon>
+              <span class="stat-number">{{ statistiche.winRate.toFixed(1) }}%</span>
+              <span class="stat-label">{{ 'TROPHIES.WIN_RATE' | translate }}</span>
             </div>
           </div>
         </div>
 
-        <!-- Statistiche personali - solo se ci sono dati -->
-        <div class="stats-section" *ngIf="!isLoading && hasTrofei && statistiche">
-          <h3>📊 {{ 'TROPHIES.YOUR_STATS' | translate }}</h3>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-number">{{ statistiche.torneiGiocati }}</span>
-              <span class="stat-label">{{ 'TROPHIES.TOURNAMENTS_PLAYED' | translate }}</span>
+        <!-- Lista trofei personali -->
+        <div class="trophy-list" *ngIf="!isLoading && hasTrofei && statistiche">
+          <div class="trophy-card" *ngFor="let trofeo of statistiche.trofei; let i = index"
+               [ngClass]="'pos-' + (trofeo.posizioneFinale <= 3 ? trofeo.posizioneFinale : 'n')"
+               [style.animation-delay]="(i * 70) + 'ms'">
+            <div class="tc-medal">
+              <span class="tc-medal-emoji">{{ getPosizioneEmoji(trofeo.posizioneFinale) }}</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-number">{{ statistiche.vittorie }}</span>
-              <span class="stat-label">{{ 'TROPHIES.VICTORIES' | translate }}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">{{ statistiche.podi }}</span>
-              <span class="stat-label">{{ 'TROPHIES.PODIUMS' | translate }}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-number">{{ statistiche.winRate.toFixed(1) }}%</span>
-              <span class="stat-label">Win Rate</span>
+            <div class="tc-body">
+              <div class="tc-head">
+                <h3 class="tc-title">{{ trofeo.nomeLega }}</h3>
+                <span class="tc-ed">{{ 'LEAGUE.EDITION' | translate }} {{ trofeo.edizione }}</span>
+              </div>
+              <span class="tc-pos">{{ getPosizioneLabel(trofeo.posizioneFinale) }}</span>
+              <ul class="tc-meta">
+                <li>
+                  <mat-icon>sports</mat-icon>
+                  <span>{{ trofeo.nomeSport }} · {{ trofeo.nomeCampionato }} {{ trofeo.anno }}</span>
+                </li>
+                <li>
+                  <mat-icon>event_available</mat-icon>
+                  <span>{{ 'TROPHIES.ROUNDS_SURVIVED' | translate }}: {{ trofeo.giornateGiocate }}</span>
+                </li>
+                <li *ngIf="trofeo.ultimaSquadraScelta">
+                  <mat-icon>shield</mat-icon>
+                  <span>{{ 'TROPHIES.FINAL_TEAM' | translate }}: {{ trofeo.ultimaSquadraScelta }}</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -741,12 +837,430 @@ export class RegolamentoBannerDialogComponent {
     </div>
   `,
   styles: [`
+    .albo-oro-dialog {
+      width: 90vw;
+      max-width: 700px;
+      max-height: 85vh;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 18px 60px rgba(180, 83, 9, 0.28);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* ── Header dorato: riflesso in alto a sinistra + luce che passa ogni tanto ── */
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px 20px;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.5), transparent 45%),
+        linear-gradient(135deg, #FFD700 0%, #FFB300 55%, #FF8F00 100%);
+      color: #FFFFFF;
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(255, 160, 0, 0.35);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -60%;
+        width: 40%; height: 100%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+        transform: skewX(-18deg);
+        animation: hdSheen 6s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        justify-content: center;
+        flex: 1;
+
+        .trophy-orb {
+          width: 46px;
+          height: 46px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.24);
+          border: 1px solid rgba(255, 255, 255, 0.55);
+          box-shadow: 0 4px 12px rgba(180, 83, 9, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: orbPulse 3s ease-in-out infinite;
+        }
+
+        .trophy-icon {
+          font-size: 1.7rem;
+          width: 1.7rem;
+          height: 1.7rem;
+          color: #FFFFFF;
+          filter: drop-shadow(0 2px 3px rgba(180, 83, 9, 0.5));
+        }
+
+        .dialog-title {
+          margin: 0;
+          font-size: 1.4rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          text-align: center;
+          text-shadow: 0 2px 6px rgba(180, 83, 9, 0.4);
+        }
+      }
+
+      .close-btn {
+        position: absolute;
+        z-index: 2;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: #FFFFFF;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.36);
+          transform: translateY(-50%) rotate(90deg);
+        }
+
+        /* X come SVG inline: centrata dal flex del button, non dipende da padding Material o dal font delle icone */
+        .close-x {
+          display: block;
+          flex-shrink: 0;
+          width: 14px;
+          height: 14px;
+          pointer-events: none;
+        }
+      }
+    }
+
+    @keyframes hdSheen {
+      0%, 55% { left: -60%; }
+      100% { left: 140%; }
+    }
+    @keyframes orbPulse {
+      0%, 100% { box-shadow: 0 4px 12px rgba(180, 83, 9, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 0 rgba(255, 255, 255, 0.45); }
+      50% { box-shadow: 0 4px 12px rgba(180, 83, 9, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 8px rgba(255, 255, 255, 0); }
+    }
+
+    .dialog-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+      width: 100%;
+      background: linear-gradient(180deg, #FFFBEF 0%, #FFFFFF 160px);
+
+      /* Scrollbar personalizzata */
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #E5D9B6;
+        border-radius: 3px;
+
+        &:hover {
+          background: #FFB300;
+        }
+      }
+
+      scrollbar-width: thin;
+      scrollbar-color: #E5D9B6 transparent;
+
+      /* Stato vuoto - nessun trofeo con messaggi simpatici */
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+
+        .empty-emoji {
+          font-size: 4rem;
+          margin-bottom: 16px;
+          animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+
+        .empty-message {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: #0A3D91;
+          margin: 0 0 12px 0;
+          line-height: 1.4;
+        }
+
+        .empty-subtitle {
+          font-size: 0.95rem;
+          color: #6B7280;
+          margin: 0;
+          font-style: italic;
+        }
+      }
+    }
+
+    /* ── Statistiche: riga di 4 riquadri dorati in cima ── */
+    .stats-block { margin-bottom: 18px; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B45309;
+
+      &::before, &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(180, 83, 9, 0.35));
+      }
+      &::after { transform: scaleX(-1); }
+    }
+
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .stat-tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 11px 4px 9px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #FFFDF2, #FFF3C9);
+      border: 1px solid rgba(255, 179, 0, 0.4);
+      box-shadow: 0 3px 10px rgba(255, 160, 0, 0.14), inset 0 1px 0 #FFFFFF;
+      box-sizing: border-box;
+      min-width: 0;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #F59E0B;
+      }
+
+      .stat-number {
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #B45309, #F59E0B);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .stat-label {
+        font-size: 0.58rem;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        text-align: center;
+        color: #8A6D2B;
+        word-break: break-word;
+      }
+    }
+
+    /* ── Card trofeo: medaglia a sinistra, dettagli a destra ── */
+    .trophy-card {
+      --tc-a: #FFD700;
+      --tc-b: #E69A00;
+      --tc-glow: rgba(255, 193, 7, 0.45);
+      --tc-tint: rgba(255, 215, 0, 0.14);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 12px 0;
+      padding: 14px 16px 14px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      background: linear-gradient(135deg, var(--tc-tint), #FFFFFF 58%);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07), inset 0 1px 0 #FFFFFF;
+      box-sizing: border-box;
+      overflow: hidden;
+      animation: tcIn 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.15) both;
+      transition: transform 0.2s ease, box-shadow 0.25s ease;
+
+      /* Barra colorata a sinistra */
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0; top: 0; bottom: 0;
+        width: 5px;
+        background: linear-gradient(180deg, var(--tc-a), var(--tc-b));
+      }
+
+      /* Coppa sfumata sullo sfondo, a destra */
+      &::after {
+        content: '🏆';
+        position: absolute;
+        right: -6px; bottom: -16px;
+        font-size: 5.2rem;
+        line-height: 1;
+        opacity: 0.07;
+        transform: rotate(-12deg);
+        pointer-events: none;
+      }
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12), inset 0 1px 0 #FFFFFF;
+      }
+      &:hover .tc-medal { transform: scale(1.06) rotate(-4deg); }
+
+      &.pos-2 { --tc-a: #E0E6EA; --tc-b: #8FA1AE; --tc-glow: rgba(143, 161, 174, 0.5); --tc-tint: rgba(176, 190, 197, 0.16); }
+      &.pos-3 { --tc-a: #F0B56F; --tc-b: #B5651D; --tc-glow: rgba(181, 101, 29, 0.42); --tc-tint: rgba(224, 169, 109, 0.16); }
+      &.pos-n { --tc-a: #90CAF9; --tc-b: #1565C0; --tc-glow: rgba(21, 101, 192, 0.35); --tc-tint: rgba(79, 195, 247, 0.12); }
+    }
+
+    @keyframes tcIn {
+      from { opacity: 0; transform: translateY(14px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .tc-medal {
+      flex-shrink: 0;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid transparent;
+      background:
+        radial-gradient(circle at 30% 25%, #FFFFFF, #FFFDF7 70%) padding-box,
+        linear-gradient(135deg, var(--tc-a), var(--tc-b)) border-box;
+      box-shadow: 0 6px 16px var(--tc-glow), inset 0 -3px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      z-index: 1;
+    }
+    .tc-medal-emoji { font-size: 1.95rem; line-height: 1; }
+    .pos-n .tc-medal-emoji { font-size: 1.15rem; font-weight: 800; color: var(--tc-b); }
+
+    .tc-body { flex: 1; min-width: 0; position: relative; z-index: 1; }
+
+    .tc-head {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      margin-bottom: 6px;
+    }
+
+    .tc-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0A3D91;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .tc-ed {
+      padding: 1px 9px;
+      border-radius: 999px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #475569;
+      background: rgba(100, 116, 139, 0.12);
+      white-space: nowrap;
+    }
+
+    .tc-pos {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      background: linear-gradient(135deg, var(--tc-a), var(--tc-b));
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 3px 8px var(--tc-glow);
+    }
+
+    .tc-meta {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #64748B;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+
+      mat-icon {
+        flex-shrink: 0;
+        font-size: 15px;
+        width: 15px;
+        height: 15px;
+        color: var(--tc-b);
+      }
+    }
+
+    /* ── Badge storico ── */
     .badges-section {
-      margin: 16px auto 0 auto;
+      margin: 18px auto 0 auto;
       padding: 16px;
-      background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
-      border-radius: 12px;
-      border: 1px solid #E0E0E0;
+      background: linear-gradient(135deg, #FFFDF2, #FFFFFF);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 179, 0, 0.35);
+      box-shadow: 0 3px 10px rgba(255, 160, 0, 0.1);
       text-align: center;
 
       h3 {
@@ -819,251 +1333,6 @@ export class RegolamentoBannerDialogComponent {
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .albo-oro-dialog {
-      width: 90vw;
-      max-width: 700px;
-      max-height: 85vh;
-      background: #FFFFFF;
-      border-radius: 16px;
-      box-shadow: 0 16px 64px rgba(10, 61, 145, 0.25);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-
-    .dialog-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #FFD700, #FFA500);
-      color: #FFFFFF;
-      position: relative;
-      flex-shrink: 0;
-
-      .header-content {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        justify-content: center;
-        flex: 1;
-
-        .trophy-icon {
-          font-size: 2rem;
-          width: 2rem;
-          height: 2rem;
-          color: #FFFFFF;
-        }
-
-        .dialog-title {
-          margin: 0;
-          font-size: 1.4rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          text-align: center;
-        }
-      }
-
-      .close-btn {
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.15);
-        color: #FFFFFF;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background: rgba(255, 255, 255, 0.25);
-          transform: translateY(-50%) scale(1.05);
-        }
-
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-        }
-      }
-    }
-
-    .dialog-content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      box-sizing: border-box;
-      width: 100%;
-
-      /* Scrollbar personalizzata */
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: #F8F9FA;
-        border-radius: 3px;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background: #C1C9D2;
-        border-radius: 3px;
-
-        &:hover {
-          background: #FFD700;
-        }
-      }
-
-      scrollbar-width: thin;
-      scrollbar-color: #C1C9D2 #F8F9FA;
-
-      /* Stato vuoto - nessun trofeo con messaggi simpatici */
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        text-align: center;
-
-        .empty-emoji {
-          font-size: 4rem;
-          margin-bottom: 16px;
-          animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-
-        .empty-message {
-          font-size: 1.15rem;
-          font-weight: 700;
-          color: #0A3D91;
-          margin: 0 0 12px 0;
-          line-height: 1.4;
-        }
-
-        .empty-subtitle {
-          font-size: 0.95rem;
-          color: #6B7280;
-          margin: 0;
-          font-style: italic;
-        }
-      }
-
-      .winner-card {
-        background: #F8F9FA;
-        border-radius: 12px;
-        padding: 16px;
-        margin: 0 auto 16px auto;
-        border-left: 4px solid #FFD700;
-        max-width: 100%;
-        box-sizing: border-box;
-
-        .season {
-          width: 100%;
-
-          h3 {
-            color: #0A3D91;
-            font-weight: 600;
-            font-size: 1rem;
-            margin: 0 0 12px 0;
-            text-align: center;
-            word-break: break-word;
-          }
-
-          .winner-info {
-            text-align: center;
-
-            .winner-name {
-              font-size: 0.95rem;
-              font-weight: 700;
-              color: #0A3D91;
-              margin-bottom: 10px;
-              word-break: break-word;
-            }
-
-            .winner-details {
-              display: flex;
-              flex-direction: column;
-              gap: 4px;
-              align-items: center;
-
-              .detail {
-                color: #6B7280;
-                font-size: 0.8rem;
-                font-weight: 500;
-                word-break: break-word;
-              }
-            }
-          }
-        }
-      }
-
-      .stats-section {
-        margin: 20px auto 0 auto;
-        padding: 16px;
-        background: linear-gradient(135deg, #F8F9FA, #FFFFFF);
-        border-radius: 12px;
-        border: 1px solid #E0E0E0;
-        max-width: 100%;
-        box-sizing: border-box;
-
-        h3 {
-          color: #0A3D91;
-          font-weight: 600;
-          font-size: 0.95rem;
-          margin: 0 0 16px 0;
-          text-align: center;
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-          gap: 12px;
-          max-width: 100%;
-
-          .stat-item {
-            text-align: center;
-            padding: 12px 8px;
-            background: #FFFFFF;
-            border-radius: 8px;
-            border: 1px solid #E0E0E0;
-            box-sizing: border-box;
-
-            .stat-number {
-              display: block;
-              font-size: 1.3rem;
-              font-weight: 700;
-              color: #FFD700;
-              margin-bottom: 4px;
-              word-break: break-word;
-            }
-
-            .stat-label {
-              color: #6B7280;
-              font-size: 0.7rem;
-              font-weight: 500;
-              word-break: break-word;
-              line-height: 1.2;
-            }
-          }
-        }
-      }
-    }
-
     /* RESPONSIVE TABLET */
     @media (max-width: 768px) {
       .albo-oro-dialog {
@@ -1075,79 +1344,19 @@ export class RegolamentoBannerDialogComponent {
         padding: 18px;
 
         .header-content {
-          .trophy-icon {
-            font-size: 1.7rem;
-            width: 1.7rem;
-            height: 1.7rem;
-          }
-
-          .dialog-title {
-            font-size: 1.2rem;
-          }
+          .trophy-orb { width: 42px; height: 42px; }
+          .trophy-icon { font-size: 1.5rem; width: 1.5rem; height: 1.5rem; }
+          .dialog-title { font-size: 1.2rem; }
         }
 
         .close-btn {
           right: 16px;
           width: 30px;
           height: 30px;
-
-          mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-          }
         }
       }
 
-      .dialog-content {
-        padding: 16px;
-
-        .winner-card {
-          padding: 14px;
-          margin-bottom: 14px;
-
-          .season h3 {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-          }
-
-          .winner-info {
-            .winner-name {
-              font-size: 0.85rem;
-            }
-
-            .winner-details .detail {
-              font-size: 0.75rem;
-            }
-          }
-        }
-
-        .stats-section {
-          margin-top: 16px;
-          padding: 14px;
-
-          h3 {
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-          }
-
-          .stats-grid {
-            gap: 10px;
-
-            .stat-item {
-              padding: 10px 6px;
-
-              .stat-number {
-                font-size: 1.1rem;
-              }
-
-              .stat-label {
-                font-size: 0.65rem;
-              }
-            }
-          }
-        }
-      }
+      .dialog-content { padding: 16px; }
     }
 
     /* RESPONSIVE MOBILE */
@@ -1162,16 +1371,10 @@ export class RegolamentoBannerDialogComponent {
         padding: 16px;
 
         .header-content {
-          .trophy-icon {
-            font-size: 1.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-          }
-
-          .dialog-title {
-            font-size: 1.1rem;
-            letter-spacing: 0.3px;
-          }
+          gap: 10px;
+          .trophy-orb { width: 38px; height: 38px; }
+          .trophy-icon { font-size: 1.3rem; width: 1.3rem; height: 1.3rem; }
+          .dialog-title { font-size: 1.05rem; letter-spacing: 0.3px; }
         }
 
         .close-btn {
@@ -1179,65 +1382,27 @@ export class RegolamentoBannerDialogComponent {
           width: 28px;
           height: 28px;
 
-          mat-icon {
-            font-size: 14px;
-            width: 14px;
-            height: 14px;
-          }
+          .close-x { width: 12px; height: 12px; }
         }
       }
 
-      .dialog-content {
-        padding: 12px;
+      .dialog-content { padding: 12px; }
 
-        .winner-card {
-          padding: 12px;
-          margin-bottom: 12px;
+      .stats-strip { gap: 6px; }
+      .stat-tile { padding: 9px 2px 8px; border-radius: 12px; }
+      .stat-tile .stat-number { font-size: 1.1rem; }
+      .stat-tile .stat-label { font-size: 0.52rem; }
 
-          .season h3 {
-            font-size: 0.8rem;
-            margin-bottom: 8px;
-          }
+      .trophy-card { gap: 11px; padding: 12px 12px 12px 15px; border-radius: 16px; }
+      .tc-medal { width: 48px; height: 48px; }
+      .tc-medal-emoji { font-size: 1.6rem; }
+      .tc-title { font-size: 0.9rem; }
+      .tc-meta li { font-size: 0.72rem; }
+    }
 
-          .winner-info {
-            .winner-name {
-              font-size: 0.75rem;
-              margin-bottom: 8px;
-            }
-
-            .winner-details .detail {
-              font-size: 0.7rem;
-            }
-          }
-        }
-
-        .stats-section {
-          margin-top: 12px;
-          padding: 12px;
-
-          h3 {
-            font-size: 0.75rem;
-            margin-bottom: 10px;
-          }
-
-          .stats-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-
-            .stat-item {
-              padding: 8px 4px;
-
-              .stat-number {
-                font-size: 1rem;
-              }
-
-              .stat-label {
-                font-size: 0.6rem;
-              }
-            }
-          }
-        }
-      }
+    @media (prefers-reduced-motion: reduce) {
+      .dialog-header::after, .trophy-orb, .trophy-card, .empty-emoji { animation: none; }
+      .trophy-card, .tc-medal { transition: none; }
     }
   `]
 })
