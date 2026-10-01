@@ -7,8 +7,9 @@ import { TranslateModule } from '@ngx-translate/core';
 const STORAGE_KEY = 'nba_regola_vista';
 
 /**
- * Spiega come si decide una settimana NBA (bilancio vittorie-sconfitte, poi differenza punti).
- * L'animazione e' solo CSS: una riga di partite che compaiono, il conteggio, la parita' e il verdetto.
+ * Spiega come si decide una settimana NBA in Survivor: conta solo il bilancio vittorie-sconfitte, e
+ * un record in parita' vale come vittoria (niente differenza punti). L'animazione e' solo CSS: una
+ * riga di partite che compaiono, il conteggio, la parita' e il verdetto.
  */
 @Component({
   selector: 'app-nba-regola-dialog',
@@ -36,7 +37,6 @@ const STORAGE_KEY = 'nba_regola_vista';
             <div class="nba-game" [class.nba-game--win]="g.win" [class.nba-game--loss]="!g.win"
                  [style.animation-delay]="(0.3 + $index * 0.7) + 's'">
               <span class="nba-game-tag">{{ (g.win ? 'NBA_RULE.WIN_SHORT' : 'NBA_RULE.LOSS_SHORT') | translate }}</span>
-              <span class="nba-game-diff">{{ g.diff > 0 ? '+' : '' }}{{ g.diff }}</span>
             </div>
             }
           </div>
@@ -46,11 +46,6 @@ const STORAGE_KEY = 'nba_regola_vista';
             <span class="nba-count-sep">-</span>
             <span class="nba-count-item">{{ 'NBA_RULE.LOSSES' | translate }} <strong>2</strong></span>
             <span class="nba-tie">{{ 'NBA_RULE.TIE' | translate }}</span>
-          </div>
-
-          <div class="nba-diff">
-            <span class="nba-diff-label">{{ 'NBA_RULE.DIFF' | translate }}</span>
-            <span class="nba-diff-sum">+10 -3 +6 -8 = <strong>+5</strong></span>
           </div>
 
           <div class="nba-verdict">
@@ -73,10 +68,6 @@ const STORAGE_KEY = 'nba_regola_vista';
           <li>
             <strong>{{ 'NBA_RULE.STEP2_TITLE' | translate }}</strong>
             <span>{{ 'NBA_RULE.STEP2_TEXT' | translate }}</span>
-          </li>
-          <li>
-            <strong>{{ 'NBA_RULE.STEP3_TITLE' | translate }}</strong>
-            <span>{{ 'NBA_RULE.STEP3_TEXT' | translate }}</span>
           </li>
         </ol>
 
@@ -182,7 +173,6 @@ const STORAGE_KEY = 'nba_regola_vista';
       color: var(--error-color);
     }
     .nba-game-tag { font-size: 1.1rem; font-weight: 800; }
-    .nba-game-diff { font-size: 0.82rem; font-weight: 700; }
 
     .nba-count {
       display: flex;
@@ -209,26 +199,6 @@ const STORAGE_KEY = 'nba_regola_vista';
       animation-delay: 3.8s;
     }
 
-    .nba-diff {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      margin-top: 12px;
-      opacity: 0;
-      animation: nba-fade 0.4s ease forwards;
-      animation-delay: 4.7s;
-    }
-    .nba-diff-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-secondary);
-    }
-    .nba-diff-sum { font-size: 1rem; }
-    .nba-diff-sum strong { color: var(--success-color); font-size: 1.2rem; }
-
     .nba-verdict {
       display: flex;
       align-items: center;
@@ -243,7 +213,7 @@ const STORAGE_KEY = 'nba_regola_vista';
       opacity: 0;
       transform: scale(0.8);
       animation: nba-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) forwards;
-      animation-delay: 5.9s;
+      animation-delay: 4.7s;
     }
 
     .nba-replay {
@@ -319,7 +289,7 @@ const STORAGE_KEY = 'nba_regola_vista';
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .nba-game, .nba-count, .nba-tie, .nba-diff, .nba-verdict {
+      .nba-game, .nba-count, .nba-tie, .nba-verdict {
         animation: none;
         opacity: 1;
         transform: none;
@@ -328,12 +298,12 @@ const STORAGE_KEY = 'nba_regola_vista';
   `]
 })
 export class NbaRegolaDialogComponent {
-  /** Esempio mostrato nell'animazione: 2 vittorie, 2 sconfitte, differenza punti +5. */
+  /** Esempio mostrato nell'animazione: 2 vittorie e 2 sconfitte, quindi settimana superata. */
   readonly games = [
-    { win: true, diff: 10 },
-    { win: false, diff: -3 },
-    { win: true, diff: 6 },
-    { win: false, diff: -8 },
+    { win: true },
+    { win: false },
+    { win: true },
+    { win: false },
   ];
 
   playing = true;

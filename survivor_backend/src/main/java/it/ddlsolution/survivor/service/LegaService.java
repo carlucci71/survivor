@@ -745,10 +745,10 @@ public class LegaService {
     /**
      * Vero se questo esito, in Survivor, va gestito col sistema vite (consuma una vita se disponibile,
      * elimina solo a vite esaurite) invece che con eliminazione diretta o sopravvivenza gratuita.
-     * Regola generale: solo il pareggio. Eccezione NBA: dato che il pareggio esatto sommando più
-     * partite nella settimana è quasi impossibile, anche perdere la settimana con una scelta
-     * effettivamente giocata (non per assenza di pick) consuma una vita invece di eliminare subito —
-     * altrimenti per l'NBA le vite non si userebbero quasi mai.
+     * Regola generale: solo il pareggio. Eccezione NBA: nel Survivor settimanale non esce mai PAREGGIO
+     * (un record pari vale come vittoria, vedi calcolaEsitoSurvivorSettimana), quindi anche perdere la
+     * settimana con una scelta effettivamente giocata (non per assenza di pick) consuma una vita invece
+     * di eliminare subito — altrimenti per l'NBA le vite non si userebbero mai.
      */
     private boolean consumaVita(Enumeratori.EsitoGiocata esito, boolean settimanaMultiPartita, boolean pickReale) {
         if (esito == Enumeratori.EsitoGiocata.PAREGGIO) {
@@ -784,10 +784,14 @@ public class LegaService {
     }
 
     /**
-     * Esito settimanale NBA: vince chi ha piu' vittorie che sconfitte nelle partite della squadra. A parita'
-     * decide la differenza punti complessiva, PAREGGIO solo se e' esattamente zero. Restituisce null finche'
-     * non sono terminate tutte le partite della squadra nella settimana, o se una di queste è terminata
-     * senza punteggio (altrimenti verrebbe contata come sconfitta anche se il dato non è ancora arrivato).
+     * Esito settimanale NBA in Survivor: conta solo il bilancio vittorie/sconfitte nelle partite della
+     * squadra. Piu' vittorie che sconfitte = OK; piu' sconfitte = KO; record in parita' (es. 2-2) = OK,
+     * cioe' salvo gratis: NON si guarda la differenza punti (era il vecchio tie-break, scartato perche'
+     * opaco per l'utente: nessuno lo calcola a mente). Regola in una frase: "salvo se vinci almeno meta'
+     * delle partite". Di conseguenza qui non esce mai PAREGGIO (vedi consumaVita). Restituisce null
+     * finche' non sono terminate tutte le partite della squadra nella settimana, o se una di queste è
+     * terminata senza punteggio (altrimenti verrebbe contata come sconfitta anche se il dato non è
+     * ancora arrivato). La modalità Campionato non passa di qui: usa i punti 3/1/0.
      */
     private Enumeratori.EsitoGiocata calcolaEsitoSurvivorSettimana(String squadraSigla, List<PartitaDTO> partite) {
         if (squadraSigla == null) return Enumeratori.EsitoGiocata.KO;
@@ -800,27 +804,14 @@ public class LegaService {
         }
         int vittorie = 0;
         int sconfitte = 0;
-        int differenza = 0;
         for (PartitaDTO p : matching) {
-            if (Boolean.TRUE.equals(p.getForzata())) {
-                vittorie++;
-                continue;
-            }
-            int diff = differenzaPunti(p, squadraSigla);
-            differenza += diff;
-            if (diff > 0) {
+            if (Boolean.TRUE.equals(p.getForzata()) || differenzaPunti(p, squadraSigla) > 0) {
                 vittorie++;
             } else {
                 sconfitte++;
             }
         }
-        if (vittorie != sconfitte) {
-            return vittorie > sconfitte ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
-        }
-        if (differenza != 0) {
-            return differenza > 0 ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
-        }
-        return Enumeratori.EsitoGiocata.PAREGGIO;
+        return vittorie >= sconfitte ? Enumeratori.EsitoGiocata.OK : Enumeratori.EsitoGiocata.KO;
     }
 
     /**

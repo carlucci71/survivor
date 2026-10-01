@@ -111,7 +111,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
       this.invitedLegaLoading = true;
       forkJoin({
         lega: this.legaService.getLegaById(Number(legaIdStr)),
-        richieste: this.legaService.mieRichieste(),
+        richieste: this.legaService.richiesteInviate(),
         leghe: this.legaService.legheLibere(),
       }).subscribe({
         next: ({ lega, richieste, leghe }) => {
@@ -141,7 +141,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       forkJoin({
         leghe: this.legaService.legheLibere(),
-        richieste: this.legaService.mieRichieste(),
+        richieste: this.legaService.richiesteInviate(),
       }).subscribe({
         next: ({ leghe, richieste }) => {
           richieste.filter(r => r.stato === 'PENDING').forEach(r => this.pendingLegaIds.add(r.legaId));
@@ -178,7 +178,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
   private startInvitedPolling(legaId: number): void {
     this.stopInvitedPolling();
     this.invitedPollInterval = setInterval(() => {
-      this.legaService.mieRichieste().subscribe({
+      this.legaService.richiesteInviate().subscribe({
         next: (richieste) => {
           const req = richieste.find(r => r.legaId === legaId);
           if (req && req.stato !== 'PENDING') {
@@ -254,7 +254,7 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             },
             error: (err) => {
-              const code = err?.error?.message as string | undefined;
+              const code = err?.error?.errorCode as string | undefined;
               let msg = this.translate.instant('COMMON.ERROR_GENERIC');
               if (code === 'LEGA_FULL') msg = this.translate.instant('JOIN_REQUEST.LEGA_FULL');
               else if (code === 'REQUEST_ALREADY_EXISTS') {
