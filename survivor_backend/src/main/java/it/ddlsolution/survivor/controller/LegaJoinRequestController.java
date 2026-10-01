@@ -32,11 +32,17 @@ public class LegaJoinRequestController {
         return ResponseEntity.ok(dto);
     }
 
-    /** Leader: tutte le richieste di tutte le leghe dove sono leader */
+    /** Leader: tutte le richieste RICEVUTE nelle leghe dove sono leader (nome fuorviante: non sono quelle che ho inviato) */
     @GetMapping("/mie")
     public ResponseEntity<List<LegaJoinRequestDTO>> mieRichieste() {
         List<LegaJoinRequestDTO> list = legaJoinRequestService.mieRichieste();
         return ResponseEntity.ok(list);
+    }
+
+    /** Utente: le richieste di ingresso che ho INVIATO io, per ritrovare lo stato "in attesa" dopo un refresh */
+    @GetMapping("/inviate")
+    public ResponseEntity<List<LegaJoinRequestDTO>> richiesteInviate() {
+        return ResponseEntity.ok(legaJoinRequestService.richiesteInviate());
     }
 
     /** Leader: lista delle richieste in attesa */

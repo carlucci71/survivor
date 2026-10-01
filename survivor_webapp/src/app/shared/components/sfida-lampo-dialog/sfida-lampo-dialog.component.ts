@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -11,6 +11,11 @@ import { LegaService } from '../../../core/services/lega.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Campionato, Sport } from '../../../core/models/interfaces.model';
 import { environment } from '../../../../environments/environment';
+
+/** Posizione/dimensione della pillola che scivola dietro il chip attivo. `anim` resta false al primo
+ *  posizionamento (altrimenti partirebbe in volo da 0,0) e diventa true dagli spostamenti successivi. */
+interface Thumb { x: number; y: number; w: number; h: number; visible: boolean; anim: boolean; }
+const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false };
 
 /**
  * Creazione rapida di una lega Survivor 1v1 ("sfida lampo"): sport/campionato pre-selezionati
@@ -50,18 +55,26 @@ import { environment } from '../../../../environments/environment';
         <input type="text" class="sl-name-input" [(ngModel)]="name" [placeholder]="'DUEL.NAME_PLACEHOLDER' | translate" maxlength="60">
 
         <label class="sl-field-label">{{ 'DUEL.SPORT_LABEL' | translate }}</label>
-        <div class="sl-sport-row">
+        <div class="sl-sport-row" #sportRow>
+          <span class="sl-thumb sl-thumb--round" aria-hidden="true"
+                [class.sl-thumb--on]="sportThumb.visible" [class.sl-thumb--anim]="sportThumb.anim"
+                [style.width.px]="sportThumb.w" [style.height.px]="sportThumb.h"
+                [style.transform]="'translate(' + sportThumb.x + 'px,' + sportThumb.y + 'px)'"></span>
           <button type="button" class="sl-sport-chip" *ngFor="let sport of sportDisponibili"
                   [class.sl-sport-chip--active]="sportSel === sport.id"
+                  [attr.aria-label]="('SPORTS.' + sport.id) | translate"
                   (click)="selectSport(sport.id)">
-            <mat-icon>{{ getSportIcon(sport.id) }}</mat-icon>
-            <span class="sl-sport-check" *ngIf="sportSel === sport.id"><mat-icon>check</mat-icon></span>
+            <span class="sl-sport-emoji" aria-hidden="true">{{ getSportEmoji(sport.id) }}</span>
           </button>
         </div>
 
         <ng-container *ngIf="sportSel">
           <label class="sl-field-label">{{ 'DUEL.CAMPIONATO_LABEL' | translate }}</label>
-          <div class="sl-camp-row">
+          <div class="sl-camp-row" #campRow>
+            <span class="sl-thumb" aria-hidden="true" *ngIf="campionatiDisponibili.length"
+                  [class.sl-thumb--on]="campThumb.visible" [class.sl-thumb--anim]="campThumb.anim"
+                  [style.width.px]="campThumb.w" [style.height.px]="campThumb.h"
+                  [style.transform]="'translate(' + campThumb.x + 'px,' + campThumb.y + 'px)'"></span>
             <ng-container *ngIf="campionatiDisponibili.length; else loadingCamp">
               <button type="button" class="sl-camp-chip" *ngFor="let c of campionatiDisponibili"
                       [class.sl-camp-chip--active]="campionatoSel?.id === c.id"
@@ -260,62 +273,70 @@ import { environment } from '../../../../environments/environment';
       box-shadow: 0 0 0 3px rgba(79, 195, 247,0.18);
     }
 
-    .sl-sport-row { display: flex; justify-content: center; gap: 10px; }
+    /* Pillola che scivola da un'opzione all'altra (come il selettore leghe in home): un solo indicatore
+       assoluto dietro i chip, spostato da TS in base a offsetLeft/offsetTop/offsetWidth/offsetHeight del
+       chip attivo. I chip sono "vuoti" (solo bordo) cosi' l'indicatore resta visibile mentre passa sotto. */
+    .sl-thumb {
+      position: absolute; top: 0; left: 0;
+      box-sizing: border-box;
+      border: 1.5px solid #0A3D91;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(79, 195, 247,0.22), rgba(10, 61, 145,0.12));
+      box-shadow: 0 6px 16px rgba(10, 61, 145, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .sl-thumb--round { border-radius: 50%; }
+    .sl-thumb--on { opacity: 1; }
+    .sl-thumb--anim {
+      transition: transform 0.4s cubic-bezier(0.34, 1.2, 0.5, 1),
+                  width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.2s ease;
+    }
+
+    .sl-sport-row { position: relative; display: flex; justify-content: center; gap: 10px; width: fit-content; margin: 0 auto; }
     .sl-sport-chip {
-      position: relative;
-      width: 48px; height: 48px;
+      position: relative; z-index: 1;
+      width: 52px; height: 52px;
       border-radius: 50%;
       border: 1.5px solid var(--border-color, #E2E8F0);
-      background: var(--bg-card, #fff);
-      color: var(--text-secondary, #6B7280);
+      background: transparent;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: border-color 0.2s ease;
     }
-    .sl-sport-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(15, 23, 42, 0.1); }
-    .sl-sport-chip mat-icon { font-size: 23px; width: 23px; height: 23px; }
-    .sl-sport-chip--active {
-      border-color: #0A3D91;
-      background: linear-gradient(135deg, rgba(79, 195, 247,0.18), rgba(10, 61, 145,0.1));
-      color: #0A3D91;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(10, 61, 145, 0.18);
+    .sl-sport-chip:hover:not(.sl-sport-chip--active) { border-color: rgba(79, 195, 247, 0.7); }
+    .sl-sport-chip--active { border-color: transparent; }
+    /* Emoji: da inattiva un filo spenta, da attiva piena e "gonfia" con un rimbalzo */
+    .sl-sport-emoji {
+      display: inline-block;
+      font-size: 1.65rem;
+      line-height: 1;
+      filter: grayscale(0.45);
+      opacity: 0.78;
+      transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease, opacity 0.25s ease;
     }
-    .sl-sport-check {
-      position: absolute;
-      top: -3px; right: -3px;
-      width: 17px; height: 17px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4FC3F7, #0A3D91);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 5px rgba(10, 61, 145, 0.4);
-      border: 1.5px solid var(--bg-card, #fff);
+    .sl-sport-chip:hover .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.1); }
+    .sl-sport-chip--active .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.18); }
 
-      mat-icon { font-size: 11px; width: 11px; height: 11px; color: #fff; }
-    }
-
-    .sl-camp-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .sl-camp-row { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
     .sl-camp-chip {
+      position: relative; z-index: 1;
       padding: 8px 15px;
       border-radius: 20px;
       border: 1.5px solid var(--border-color, #E2E8F0);
-      background: var(--bg-card, #fff);
+      background: transparent;
       color: var(--text-primary, #1A202C);
       font-family: inherit;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
-      transition: all 0.2s ease;
+      transition: color 0.2s ease, border-color 0.2s ease;
     }
-    .sl-camp-chip:hover:not(:disabled) { border-color: rgba(79, 195, 247, 0.6); transform: translateY(-1px); }
-    .sl-camp-chip--active {
-      border-color: #0A3D91;
-      background: linear-gradient(135deg, rgba(79, 195, 247,0.18), rgba(10, 61, 145,0.1));
-      color: #0A3D91;
-      box-shadow: 0 4px 12px rgba(10, 61, 145, 0.16);
-    }
+    .sl-camp-chip:hover:not(:disabled):not(.sl-camp-chip--active) { border-color: rgba(79, 195, 247, 0.7); color: #0A3D91; }
+    .sl-camp-chip--active { border-color: transparent; color: #0A3D91; }
     .sl-camp-chip--disabled { opacity: 0.45; cursor: not-allowed; }
     .sl-camp-loading { color: var(--text-tertiary, #9CA3AF); font-size: 0.85rem; padding: 6px 0; }
 
@@ -470,10 +491,11 @@ import { environment } from '../../../../environments/environment';
     @media (prefers-reduced-motion: reduce) {
       .sl-bubble, .sl-icon-wrap, .sl-emoji, .sl-hero::before, .sl-submit::before,
       .sl-done-check, .sl-done-ring, .sl-share-btn::before { animation: none; }
+      .sl-thumb--anim, .sl-sport-emoji { transition: none; }
     }
   `]
 })
-export class SfidaLampoDialogComponent implements OnInit {
+export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   step: 'form' | 'done' = 'form';
   name = '';
   sportSel: string | null = null;
@@ -485,6 +507,12 @@ export class SfidaLampoDialogComponent implements OnInit {
   legaCreataId: number | null = null;
   copied = false;
 
+  sportThumb: Thumb = { ...THUMB_VUOTO };
+  campThumb: Thumb = { ...THUMB_VUOTO };
+  @ViewChild('sportRow') sportRow?: ElementRef<HTMLElement>;
+  @ViewChild('campRow') campRow?: ElementRef<HTMLElement>;
+  private destroyed = false;
+
   constructor(
     private dialogRef: MatDialogRef<SfidaLampoDialogComponent>,
     private sportService: SportService,
@@ -492,7 +520,8 @@ export class SfidaLampoDialogComponent implements OnInit {
     private legaService: LegaService,
     private authService: AuthService,
     private translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -507,15 +536,52 @@ export class SfidaLampoDialogComponent implements OnInit {
     });
   }
 
-  getSportIcon(id: string): string {
-    const icons: Record<string, string> = { CALCIO: 'sports_soccer', BASKET: 'sports_basketball', TENNIS: 'sports_tennis' };
-    return icons[id] ?? 'sports';
+  ngAfterViewInit(): void {
+    this.scheduleThumbs();
+    // La larghezza dei chip dipende dal font: a font caricato le misure cambiano
+    (document as Document & { fonts?: { ready: Promise<unknown> } }).fonts?.ready.then(() => this.scheduleThumbs());
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.scheduleThumbs();
+  }
+
+  /** Riposiziona le pillole DOPO il render (serve che il chip attivo abbia gia' la sua classe). */
+  private scheduleThumbs(): void {
+    setTimeout(() => {
+      if (this.destroyed) return;
+      // Prima si allinea il DOM (chip appena arrivati dal backend + classe "attivo"), poi si misura:
+      // se la misura capitasse prima del render la pillola non troverebbe il chip e resterebbe invisibile
+      this.cdr.detectChanges();
+      this.sportThumb = this.placeThumb(this.sportRow, '.sl-sport-chip--active', this.sportThumb);
+      this.campThumb = this.placeThumb(this.campRow, '.sl-camp-chip--active', this.campThumb);
+      this.cdr.detectChanges();
+    }, 0);
+  }
+
+  private placeThumb(row: ElementRef<HTMLElement> | undefined, activeSel: string, prev: Thumb): Thumb {
+    const el = row?.nativeElement.querySelector(activeSel) as HTMLElement | null;
+    if (!el) return { ...THUMB_VUOTO };
+    return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight, visible: true, anim: prev.visible };
+  }
+
+  getSportEmoji(id: string): string {
+    const emoji: Record<string, string> = { CALCIO: '⚽', BASKET: '🏀', TENNIS: '🎾' };
+    return emoji[id] ?? '🏅';
   }
 
   selectSport(id: string): void {
     this.sportSel = id;
     this.campionatoSel = null;
     this.campionatiDisponibili = [];
+    // Nuova lista di campionati: la pillola riparte dal primo posizionamento, senza volare dalla vecchia
+    this.campThumb = { ...THUMB_VUOTO };
+    this.scheduleThumbs();
     this.campionatoService.getCampionatoBySport(id).subscribe({
       next: (campionati) => {
         // I Mondiali sono un'edizione speciale legata a un evento occasionale, non ha senso
@@ -524,6 +590,7 @@ export class SfidaLampoDialogComponent implements OnInit {
         // Pre-seleziona il primo disponibile: zero tap richiesti per procedere
         const primoDisponibile = this.campionatiDisponibili.find((c) => this.isDisponibile(c));
         if (primoDisponibile) this.campionatoSel = primoDisponibile;
+        this.scheduleThumbs();
       },
       error: () => {},
     });
@@ -536,6 +603,7 @@ export class SfidaLampoDialogComponent implements OnInit {
   selectCampionato(c: Campionato): void {
     if (!this.isDisponibile(c)) return;
     this.campionatoSel = c;
+    this.scheduleThumbs();
   }
 
   canSubmit(): boolean {

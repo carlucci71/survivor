@@ -107,14 +107,44 @@ public class LegaJoinRequestService {
         List<Long> idLeghe = mieLegheDaLeader.stream().map(Lega::getId).toList();
         return joinRequestRepository.findByLega_IdIn(idLeghe)
                 .stream()
-                .sorted((a, b) -> {
-                    // PENDING prima, poi per data decrescente
-                    if (a.getStato() == Enumeratori.StatoRichiesta.PENDING && b.getStato() != Enumeratori.StatoRichiesta.PENDING) return -1;
-                    if (a.getStato() != Enumeratori.StatoRichiesta.PENDING && b.getStato() == Enumeratori.StatoRichiesta.PENDING) return 1;
-                    return b.getCreatedAt().compareTo(a.getCreatedAt());
-                })
+                .sorted(this::pendingPrimaPoiRecenti)
                 .map(this::toDTO)
                 .toList();
+    }
+
+    // ─── UTENTE: le richieste che ho inviato io ─────────────────────────────
+
+    /**
+     * Richieste di ingresso INVIATE dall'utente corrente (qualunque lega e stato). Da non confondere con
+     * {@link #mieRichieste()}, che sono quelle RICEVUTE dal leader delle sue leghe: le pagine "Unisciti a
+     * una lega" usavano per errore quella, quindi dopo un refresh non trovavano la richiesta in attesa e
+     * ripresentavano il pulsante "Richiedi ingresso" (che al secondo invio dava REQUEST_ALREADY_EXISTS).
+     * Ordinate PENDING prima, poi dalla più recente: chi cerca "la richiesta di questa lega" con un find
+     * trova quella ancora aperta anche se ne esiste una vecchia già rifiutata.
+     */
+    @Transactional(readOnly = true)
+    public List<LegaJoinRequestDTO> richiesteInviate() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = auth.getPrincipal();
+        Long userId = (principal instanceof Long l) ? l : Long.parseLong(principal.toString());
+
+        Giocatore giocatore = giocatoreRepository.findByUser_Id(userId).orElse(null);
+        if (giocatore == null) return List.of();
+
+        return joinRequestRepository.findByGiocatore_Id(giocatore.getId())
+                .stream()
+                .sorted(this::pendingPrimaPoiRecenti)
+                .map(this::toDTO)
+                .toList();
+    }
+
+    /** PENDING prima, poi per data decrescente. */
+    private int pendingPrimaPoiRecenti(LegaJoinRequest a, LegaJoinRequest b) {
+        boolean aPending = a.getStato() == Enumeratori.StatoRichiesta.PENDING;
+        boolean bPending = b.getStato() == Enumeratori.StatoRichiesta.PENDING;
+        if (aPending && !bPending) return -1;
+        if (!aPending && bPending) return 1;
+        return b.getCreatedAt().compareTo(a.getCreatedAt());
     }
 
     // ─── LEADER: lista richieste pendenti ───────────────────────────────────

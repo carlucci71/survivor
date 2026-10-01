@@ -142,8 +142,14 @@ export class LegaService {
     return this.http.post<LegaJoinRequest>(`${this.apiUrl}/richieste/${idLega}`, {});
   }
 
+  /** Richieste RICEVUTE nelle leghe di cui sono leader (schermate leader/admin). Non sono quelle che ho inviato. */
   mieRichieste(): Observable<LegaJoinRequest[]> {
     return this.http.get<LegaJoinRequest[]>(`${this.apiUrl}/richieste/mie`);
+  }
+
+  /** Richieste di ingresso che ho INVIATO io (pagine "Unisciti a una lega"): servono a ritrovare lo stato "in attesa" dopo un refresh. */
+  richiesteInviate(): Observable<LegaJoinRequest[]> {
+    return this.http.get<LegaJoinRequest[]>(`${this.apiUrl}/richieste/inviate`);
   }
 
   richiestePendenti(idLega: number): Observable<LegaJoinRequest[]> {

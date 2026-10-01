@@ -98,6 +98,7 @@
 				<span class="filter-label">{{ 'JOIN_LEAGUE.FILTER_SPORT' | translate }}</span>
 				<div class="filter-pills">
 					<button class="pill" [class.active]="filterSport === ''" (click)="setFilter('sport', '')">
+						<mat-icon class="pill-icon">apps</mat-icon>
 						{{ 'JOIN_LEAGUE.FILTER_ALL' | translate }}
 					</button>
 					<button *ngFor="let s of sportsDisponibili" class="pill" [class.active]="filterSport === s.id" (click)="setFilter('sport', s.id)">
@@ -123,8 +124,9 @@
 			<!-- Stato -->
 			<div class="filter-group">
 				<span class="filter-label">{{ 'JOIN_LEAGUE.FILTER_STATO' | translate }}</span>
-				<div class="filter-pills">
+				<div class="filter-pills filter-pills--fit">
 					<button class="pill" [class.active]="filterStato === ''" (click)="setFilter('stato', '')">
+						<mat-icon class="pill-icon">apps</mat-icon>
 						{{ 'JOIN_LEAGUE.FILTER_ALL' | translate }}
 					</button>
 					<button class="pill pill--green" [class.active]="filterStato === 'AVVIATA'" (click)="setFilter('stato', 'AVVIATA')">
