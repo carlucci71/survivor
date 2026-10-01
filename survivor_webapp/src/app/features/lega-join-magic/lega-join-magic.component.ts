@@ -66,7 +66,7 @@ export class LegaJoinMagicComponent implements OnInit, OnDestroy {
   private init(legaId: number): void {
     forkJoin({
       lega: this.legaService.getLegaById(legaId),
-      richieste: this.legaService.mieRichieste(),
+      richieste: this.legaService.richiesteInviate(),
     }).subscribe({
       next: ({ lega, richieste }) => {
         this.lega = lega;
@@ -115,10 +115,10 @@ export class LegaJoinMagicComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isSubmitting = false;
-        const code = err?.error?.message as string | undefined;
+        const code = err?.error?.errorCode as string | undefined;
         if (code === 'REQUEST_ALREADY_EXISTS') {
           // Richiesta già esistente: la carichiamo e mostriamo stato pending
-          this.legaService.mieRichieste().subscribe({
+          this.legaService.richiesteInviate().subscribe({
             next: (richieste) => {
               const existing = richieste.find(r => r.legaId === this.lega!.id);
               if (existing) {
@@ -159,7 +159,7 @@ export class LegaJoinMagicComponent implements OnInit, OnDestroy {
   private startPolling(legaId: number): void {
     this.stopPolling();
     this.pollInterval = setInterval(() => {
-      this.legaService.mieRichieste().subscribe({
+      this.legaService.richiesteInviate().subscribe({
         next: (richieste) => {
           const req = richieste.find(r => r.legaId === legaId);
           if (req && req.stato !== 'PENDING') {
