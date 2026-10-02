@@ -52,6 +52,7 @@ import { AuthService } from '../../core/services/auth.service';
                   <li>{{ 'PRIVACY.SECTION_2_L2' | translate }}</li>
                   <li>{{ 'PRIVACY.SECTION_2_L3' | translate }}</li>
                   <li>{{ 'PRIVACY.SECTION_2_L4' | translate }}</li>
+                  <li>{{ 'PRIVACY.SECTION_2_L5' | translate }}</li>
                 </ul>
               </div>
 

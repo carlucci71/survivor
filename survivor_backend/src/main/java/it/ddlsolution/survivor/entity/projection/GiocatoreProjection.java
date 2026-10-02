@@ -10,5 +10,6 @@ public interface GiocatoreProjection {
     Squadra getSquadraBasketCuore();
     Squadra getTennistaCuore();
     User getUser();
+    Long getFotoVersion();
 }
 

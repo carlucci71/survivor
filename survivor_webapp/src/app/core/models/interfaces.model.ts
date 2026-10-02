@@ -275,6 +275,8 @@ export interface Giocatore {
   vittorie1v1?: number;
   vittorieSurvivor?: number;
   vittorieCampionato?: number;
+  /** Versione della foto profilo (timestamp ms), null/assente se il giocatore non ha una foto visibile */
+  fotoVersion?: number | null;
 }
 
 export interface Giocata {

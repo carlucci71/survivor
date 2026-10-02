@@ -53,4 +53,12 @@ public class Giocatore {
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * Timestamp (ms) dell'ultimo caricamento della foto profilo, null se non ce n'e' una visibile. Il file
+     * sta in giocatore_foto; qui viaggia solo la versione, che i DTO espongono ai client (per sapere se
+     * mostrare la foto e per invalidarne la cache).
+     */
+    @Column(name = "foto_version")
+    private Long fotoVersion;
+
 }

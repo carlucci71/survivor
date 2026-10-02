@@ -12,6 +12,7 @@ import it.ddlsolution.survivor.repository.GiocatoreRepository;
 import it.ddlsolution.survivor.repository.LogDispositivaRepository;
 import it.ddlsolution.survivor.repository.MagicLinkTokenRepository;
 import it.ddlsolution.survivor.repository.UserRepository;
+import it.ddlsolution.survivor.service.FotoProfiloService;
 import it.ddlsolution.survivor.service.JwtService;
 import it.ddlsolution.survivor.service.MagicLinkService;
 import it.ddlsolution.survivor.util.enums.Enumeratori;
@@ -42,6 +43,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final MagicLinkTokenRepository magicLinkTokenRepository;
     private final GiocatoreRepository giocatoreRepository;
+    private final FotoProfiloService fotoProfiloService;
     private final LogDispositivaRepository logDispositivaRepository;
 
     private final MagicLinkService magicLinkService;
@@ -237,6 +239,9 @@ public class AuthController {
             // 2. Elimina prima i param_log_dispositiva (figli) e poi log_dispositiva (padri)
             logDispositivaRepository.deleteParamLogDispositivaByUserId(userId);
             logDispositivaRepository.deleteByUserId(userId);
+
+            // 3a. Foto profilo e segnalazioni del giocatore (dato personale: va via con l'account)
+            giocatoreRepository.findByUser_Id(userId).ifPresent(g -> fotoProfiloService.eliminaTutteLeFotoDi(g.getId()));
 
             // 3. Elimina il giocatore associato all'utente (questo eliminerà anche giocate e giocatoreLeghe per cascade)
             giocatoreRepository.deleteByUser_Id(userId);

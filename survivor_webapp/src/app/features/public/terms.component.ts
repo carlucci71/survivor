@@ -50,6 +50,7 @@ import { AuthService } from '../../core/services/auth.service';
               <div class="section">
                 <h4>{{ 'TERMS.SECTION_3_TITLE' | translate }}</h4>
                 <p>{{ 'TERMS.SECTION_3_TEXT' | translate }}</p>
+                <p>{{ 'TERMS.SECTION_3_P2' | translate }}</p>
               </div>
 
               <div class="section">

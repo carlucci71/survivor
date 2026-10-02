@@ -60,5 +60,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Survivor uses the camera only if you choose to take a new profile photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Survivor lets you pick a photo from your library to use as your profile photo.</string>
 </dict>
 </plist>

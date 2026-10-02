@@ -31,5 +31,8 @@ public class GiocatoreDTO {
     private Long vittorieSurvivor;
     private Long vittorieCampionato;
 
+    /** Versione della foto profilo (timestamp ms), null se il giocatore non ha una foto visibile. */
+    private Long fotoVersion;
+
 }
 

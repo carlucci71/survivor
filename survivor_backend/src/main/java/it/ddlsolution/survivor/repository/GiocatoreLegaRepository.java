@@ -17,5 +17,10 @@ public interface GiocatoreLegaRepository extends JpaRepository<GiocatoreLega, Gi
     @Query("SELECT COUNT(gl) FROM GiocatoreLega gl WHERE gl.lega.id = :legaId")
     int countPartecipantiByLegaId(@Param("legaId") Long legaId);
 
+    /** Quante leghe hanno in comune due giocatori (la foto profilo e' visibile solo a chi ne condivide almeno una). */
+    @Query("SELECT COUNT(gl1) FROM GiocatoreLega gl1, GiocatoreLega gl2 "
+            + "WHERE gl1.giocatore.id = :a AND gl2.giocatore.id = :b AND gl1.lega.id = gl2.lega.id")
+    long countLegheInComune(@Param("a") Long a, @Param("b") Long b);
+
 }
 

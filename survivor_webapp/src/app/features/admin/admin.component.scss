@@ -9,6 +9,52 @@
   padding: 20px 16px 64px;
 }
 
+/* ── Foto profilo segnalate ────────────────────────── */
+.admin-section--spaced { margin-top: 16px; }
+
+.foto-list { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 18px; }
+
+.foto-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  background: #FAFAFB;
+}
+
+.foto-thumb {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+.foto-info { flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 3px; }
+.foto-meta { font-size: 0.78rem; color: #6B7280; }
+.foto-flags { display: flex; gap: 6px; flex-wrap: wrap; }
+.foto-flag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+
+  &--hidden { background: #FEF3C7; color: #92400E; }
+  &--blocked { background: #FEE2E2; color: #B91C1C; }
+}
+
+.foto-actions { display: flex; gap: 6px; flex-wrap: wrap; width: 100%; }
+
 /* ── Section ───────────────────────────────────────── */
 .admin-section {
   background: #fff;

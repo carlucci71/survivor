@@ -1,9 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { Giocatore, StatoGiocatore } from '../../../core/models/interfaces.model';
+import { AvatarComponent } from '../avatar/avatar.component';
+import { FotoViewerDialogComponent } from '../foto-viewer-dialog/foto-viewer-dialog.component';
 
 interface DuelSide {
+  giocatoreId: number;
+  fotoVersion: number | null;
   nickname: string;
   initial: string;
   isMe: boolean;
@@ -19,11 +24,16 @@ interface DuelSide {
 @Component({
   selector: 'app-duel-versus',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, AvatarComponent],
   template: `
     <div class="dv">
       <div class="dv-side dv-side--left" *ngIf="left as p" [class.dv-out]="p.out" [class.dv-me]="p.isMe">
-        <div class="dv-avatar">{{ p.initial }}<span class="dv-crown" *ngIf="p.crown">👑</span></div>
+        <div class="dv-avatar" [class.dv-avatar--photo]="!!p.fotoVersion" (click)="apriFoto(p)">
+          <app-avatar *ngIf="p.fotoVersion; else dvIniziale" [giocatoreId]="p.giocatoreId" [fotoVersion]="p.fotoVersion"
+                      [nome]="p.nickname" [size]="avatarSize"></app-avatar>
+          <ng-template #dvIniziale>{{ p.initial }}</ng-template>
+          <span class="dv-crown" *ngIf="p.crown">👑</span>
+        </div>
         <div class="dv-name">{{ p.nickname }}</div>
         <div class="dv-status" [class.dv-status--out]="p.out">
           <span class="dv-dot"></span>
@@ -38,7 +48,12 @@ interface DuelSide {
       </div>
 
       <div class="dv-side dv-side--right" *ngIf="right as p; else waiting" [class.dv-out]="p.out" [class.dv-me]="p.isMe">
-        <div class="dv-avatar">{{ p.initial }}<span class="dv-crown" *ngIf="p.crown">👑</span></div>
+        <div class="dv-avatar" [class.dv-avatar--photo]="!!p.fotoVersion" (click)="apriFoto(p)">
+          <app-avatar *ngIf="p.fotoVersion; else dvInizialeDx" [giocatoreId]="p.giocatoreId" [fotoVersion]="p.fotoVersion"
+                      [nome]="p.nickname" [size]="avatarSize"></app-avatar>
+          <ng-template #dvInizialeDx>{{ p.initial }}</ng-template>
+          <span class="dv-crown" *ngIf="p.crown">👑</span>
+        </div>
         <div class="dv-name">{{ p.nickname }}</div>
         <div class="dv-status" [class.dv-status--out]="p.out">
           <span class="dv-dot"></span>
@@ -116,6 +131,8 @@ interface DuelSide {
       border: 2px solid rgba(255,255,255,0.7);
       box-shadow: 0 4px 12px rgba(10, 61, 145,0.35);
     }
+    .dv-avatar--photo { background: transparent; cursor: pointer; }
+    .dv-avatar--photo ::ng-deep .av { box-shadow: none; }
     .dv-me .dv-avatar { box-shadow: 0 0 0 3px rgba(79, 195, 247,0.35), 0 4px 12px rgba(10, 61, 145,0.35); }
     .dv-avatar--empty {
       background: transparent;
@@ -215,6 +232,13 @@ interface DuelSide {
   `]
 })
 export class DuelVersusComponent {
+  constructor(private dialog: MatDialog) {}
+
+  /** Lato della foto dentro il cerchio (54px - bordo; sotto i 380px il cerchio e' 46px). */
+  get avatarSize(): number {
+    return window.innerWidth <= 380 ? 42 : 50;
+  }
+
   @Input() giocatori: Giocatore[] = [];
   @Input() legaId = 0;
   @Input() myUserId: number | undefined | null;
@@ -228,6 +252,8 @@ export class DuelVersusComponent {
         ? (g.vitePerLega?.[this.legaId] ?? this.viteIniziali)
         : null;
       return {
+        giocatoreId: g.id,
+        fotoVersion: g.fotoVersion ?? null,
         nickname: g.nickname,
         initial: (g.nickname || '?').charAt(0),
         isMe: !!this.myUserId && g.user?.id === this.myUserId,
@@ -238,6 +264,19 @@ export class DuelVersusComponent {
     });
     // Io sempre a sinistra
     return list.sort((a, b) => Number(b.isMe) - Number(a.isMe));
+  }
+
+  /** Foto in grande, con "Segnala" se non e' la mia. Senza foto non fa nulla. */
+  apriFoto(p: DuelSide): void {
+    if (!p.fotoVersion) return;
+    this.dialog.open(FotoViewerDialogComponent, {
+      data: { giocatoreId: p.giocatoreId, nickname: p.nickname, fotoVersion: p.fotoVersion, puoSegnalare: !p.isMe },
+      width: '340px',
+      maxWidth: '94vw',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false,
+    });
   }
 
   get left(): DuelSide | null { return this.sides[0] ?? null; }

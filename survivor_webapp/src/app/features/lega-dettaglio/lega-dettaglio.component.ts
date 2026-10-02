@@ -51,6 +51,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 import { environment } from '../../../environments/environment';
 import { PlayerHistoryDialogComponent } from '../../shared/components/player-history-dialog/player-history-dialog.component';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
+import { FotoViewerDialogComponent } from '../../shared/components/foto-viewer-dialog/foto-viewer-dialog.component';
 import { RoundResultsDialogComponent } from '../../shared/components/round-results-dialog/round-results-dialog.component';
 import { SamePickDialogComponent } from '../../shared/components/same-pick-dialog/same-pick-dialog.component';
 import { RecapService } from '../../core/services/recap.service';
@@ -95,6 +97,7 @@ import { DuelVersusComponent } from '../../shared/components/duel-versus/duel-ve
     ScrollToEndDirective,
     PlayerBadgesComponent,
     DuelVersusComponent,
+    AvatarComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -1168,6 +1171,25 @@ export class LegaDettaglioComponent implements OnDestroy {
   getTotalRoundsCount(giocatore: Giocatore): number {
     if (!giocatore?.giocate) return 0;
     return giocatore.giocate.length;
+  }
+
+  /** Foto di un giocatore in grande (con "Segnala" se non e' la mia). Senza foto non fa nulla. */
+  apriFoto(giocatore: Giocatore, event?: Event): void {
+    event?.stopPropagation();
+    if (!giocatore.fotoVersion) return;
+    this.dialog.open(FotoViewerDialogComponent, {
+      data: {
+        giocatoreId: giocatore.id,
+        nickname: giocatore.nickname,
+        fotoVersion: giocatore.fotoVersion,
+        puoSegnalare: !this.isCurrentUserGiocatore(giocatore),
+      },
+      width: '340px',
+      maxWidth: '94vw',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false,
+    });
   }
 
   /**

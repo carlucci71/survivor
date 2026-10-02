@@ -11,9 +11,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UtilService } from '../../core/services/util.service';
 import { LegaService } from '../../core/services/lega.service';
+import { FotoProfiloService, FotoSegnalata } from '../../core/services/foto-profilo.service';
 import { LegaJoinRequest } from '../../core/models/interfaces.model';
 import { environment } from '../../../environments/environment';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+/** Foto segnalata + URL dell'anteprima (scaricata a parte: l'endpoint e' protetto dal JWT) */
+interface FotoSegnalataVM extends FotoSegnalata {
+  url: string | null;
+}
 
 interface RichiestaGroup {
   legaId: number;
@@ -38,10 +44,14 @@ export class AdminComponent implements OnInit {
   groups: RichiestaGroup[] = [];
   isLoadingRichieste = true;
 
+  fotoSegnalate: FotoSegnalataVM[] = [];
+  isLoadingFoto = true;
+
   constructor(
     private authService: AuthService,
     private utilService: UtilService,
     private legaService: LegaService,
+    private fotoService: FotoProfiloService,
     private snackBar: MatSnackBar,
     private translate: TranslateService,
     private router: Router,
@@ -51,6 +61,7 @@ export class AdminComponent implements OnInit {
     this.getProfilo();
     this.getCalendario();
     this.caricaRichieste();
+    this.caricaFotoSegnalate();
 
     // Scroll alla sezione richieste se arrivato da notifica
     setTimeout(() => {
@@ -131,6 +142,40 @@ export class AdminComponent implements OnInit {
         this.snackBar.open(err?.error?.message ?? this.translate.instant('COMMON.ERROR_GENERIC'), '', { duration: 4000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--error'] });
       }
     });
+  }
+
+  // ── Moderazione foto profilo ───────────────────────────────────────────────
+
+  caricaFotoSegnalate(): void {
+    this.isLoadingFoto = true;
+    this.fotoService.segnalate().subscribe({
+      next: (lista) => {
+        this.fotoSegnalate = lista.map((f) => ({ ...f, url: null }));
+        this.isLoadingFoto = false;
+        // L'anteprima vera si scarica a parte, solo per chi ha ancora un file da guardare
+        this.fotoSegnalate.filter((f) => f.haFoto).forEach((f) => {
+          this.fotoService.getUrlAdmin(f.giocatoreId).subscribe((u) => (f.url = u));
+        });
+      },
+      error: () => { this.isLoadingFoto = false; },
+    });
+  }
+
+  private esitoFoto(chiaveOk: string): void {
+    this.snackBar.open(this.translate.instant(chiaveOk), '', { duration: 3000, horizontalPosition: 'center', verticalPosition: 'top', panelClass: ['app-snackbar--success'] });
+    this.caricaFotoSegnalate();
+  }
+
+  fotoRimuovi(f: FotoSegnalataVM, blocca: boolean): void {
+    this.fotoService.adminRimuovi(f.giocatoreId, blocca).subscribe({ next: () => this.esitoFoto('PHOTO.ADMIN_DONE') });
+  }
+
+  fotoRipristina(f: FotoSegnalataVM): void {
+    this.fotoService.adminRipristina(f.giocatoreId).subscribe({ next: () => this.esitoFoto('PHOTO.ADMIN_DONE') });
+  }
+
+  fotoSblocca(f: FotoSegnalataVM): void {
+    this.fotoService.adminSblocca(f.giocatoreId).subscribe({ next: () => this.esitoFoto('PHOTO.ADMIN_DONE') });
   }
 
   goToLega(legaId: number): void {

@@ -107,5 +107,76 @@
       }
     </section>
 
+    <!-- ═══ SEZIONE FOTO PROFILO SEGNALATE ═══ -->
+    <section id="foto" class="admin-section admin-section--spaced">
+      <div class="admin-section-header">
+        <div class="admin-section-title">
+          <mat-icon class="section-icon">photo_camera</mat-icon>
+          <h2>{{ 'PHOTO.ADMIN_TITLE' | translate }}</h2>
+          @if (fotoSegnalate.length > 0) {
+            <span class="section-badge">{{ fotoSegnalate.length }}</span>
+          }
+        </div>
+        <button class="refresh-btn" (click)="caricaFotoSegnalate()" [title]="'COMMON.REFRESH' | translate">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+
+      @if (isLoadingFoto) {
+        <div class="section-loading">
+          <mat-progress-spinner mode="indeterminate" diameter="36"></mat-progress-spinner>
+        </div>
+      }
+
+      @if (!isLoadingFoto && fotoSegnalate.length === 0) {
+        <div class="section-empty">
+          <mat-icon>check_circle_outline</mat-icon>
+          <p>{{ 'PHOTO.ADMIN_EMPTY' | translate }}</p>
+        </div>
+      }
+
+      @if (!isLoadingFoto && fotoSegnalate.length > 0) {
+        <div class="foto-list">
+          @for (f of fotoSegnalate; track f.giocatoreId) {
+            <div class="foto-card">
+              <div class="foto-thumb">
+                @if (f.url) {
+                  <img [src]="f.url" alt="">
+                } @else {
+                  <mat-icon>no_photography</mat-icon>
+                }
+              </div>
+              <div class="foto-info">
+                <span class="req-nick">{{ f.nickname }}</span>
+                <span class="foto-meta">{{ 'PHOTO.ADMIN_REPORTS' | translate: { count: f.numSegnalazioni } }}</span>
+                <div class="foto-flags">
+                  @if (f.nascosta) { <span class="foto-flag foto-flag--hidden">{{ 'PHOTO.ADMIN_HIDDEN' | translate }}</span> }
+                  @if (f.bloccata) { <span class="foto-flag foto-flag--blocked">{{ 'PHOTO.ADMIN_BLOCKED' | translate }}</span> }
+                </div>
+              </div>
+              <div class="foto-actions">
+                @if (f.haFoto) {
+                  <button class="req-btn req-btn--reject" (click)="fotoRimuovi(f, false)">
+                    <mat-icon>delete</mat-icon><span>{{ 'PHOTO.ADMIN_REMOVE' | translate }}</span>
+                  </button>
+                  <button class="req-btn req-btn--reject" (click)="fotoRimuovi(f, true)">
+                    <mat-icon>block</mat-icon><span>{{ 'PHOTO.ADMIN_REMOVE_BLOCK' | translate }}</span>
+                  </button>
+                  <button class="req-btn req-btn--approve" (click)="fotoRipristina(f)">
+                    <mat-icon>check_circle</mat-icon><span>{{ 'PHOTO.ADMIN_RESTORE' | translate }}</span>
+                  </button>
+                }
+                @if (f.bloccata) {
+                  <button class="req-btn req-btn--approve" (click)="fotoSblocca(f)">
+                    <mat-icon>lock_open</mat-icon><span>{{ 'PHOTO.ADMIN_UNBLOCK' | translate }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
   </main>
 </div>

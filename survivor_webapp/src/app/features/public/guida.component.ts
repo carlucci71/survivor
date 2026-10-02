@@ -144,6 +144,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
               <div class="card"><div class="card-icon">➕</div><strong>{{ 'GUIDE.S2_CARD3_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD3_TEXT' | translate }}</span></div>
               <div class="card"><div class="card-icon">🔔</div><strong>{{ 'GUIDE.S2_CARD4_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD4_TEXT' | translate }}</span></div>
               <div class="card"><div class="card-icon">📤</div><strong>{{ 'GUIDE.S2_CARD5_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD5_TEXT' | translate }}</span></div>
+              <div class="card"><div class="card-icon">📷</div><strong>{{ 'GUIDE.S2_CARD6_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD6_TEXT' | translate }}</span></div>
             </div>
             <p [innerHTML]="'GUIDE.S2_P2' | translate"></p>
             <div class="tip"><span class="callout-icon">💡</span>{{ 'GUIDE.S2_TIP' | translate }}</div>

@@ -11,10 +11,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { GiocatoreService } from '../../../core/services/giocatore.service';
 import { SquadraService } from '../../../core/services/squadra.service';
 import { TrofeiService } from '../../../core/services/trofei.service';
+import { FotoProfiloService } from '../../../core/services/foto-profilo.service';
+import { FotoCropDialogComponent } from '../foto-crop-dialog/foto-crop-dialog.component';
 import { Squadra } from '../../../core/models/interfaces.model';
 import { PlayerBadgesComponent } from '../player-badges/player-badges.component';
 
@@ -1648,13 +1651,15 @@ const EASTER_EGG_SHADER = `
         <span class="ph-bubble ph-b1" aria-hidden="true"></span>
         <span class="ph-bubble ph-b2" aria-hidden="true"></span>
         <span class="ph-bubble ph-b3" aria-hidden="true"></span>
-        <div class="avatar" [style.background]="getAvatarGradient()"
+        <div class="avatar-wrap">
+        <div class="avatar" [style.background]="fotoUrl ? '#E2E8F0' : getAvatarGradient()"
           (pointerdown)="onAvatarPointerDown($event)"
           (pointerup)="onAvatarPointerUp()"
           (pointerleave)="onAvatarPointerLeave()"
           (pointercancel)="onAvatarPointerLeave()"
           (contextmenu)="$event.preventDefault()">
-          <span class="avatar-initials">{{ getInitials() }}</span>
+          <img *ngIf="fotoUrl" class="avatar-img" [src]="fotoUrl" alt="" draggable="false">
+          <span class="avatar-initials" *ngIf="!fotoUrl">{{ getInitials() }}</span>
           <svg *ngIf="easterEggProgress > 0 || easterEggComplete" class="egg-ring"
                [class.egg-ring--burst]="easterEggComplete"
                viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -1668,6 +1673,20 @@ const EASTER_EGG_SHADER = `
               transform="rotate(-90 50 50)"
               style="filter: drop-shadow(0 0 3px currentColor)"/>
           </svg>
+        </div>
+        <!-- Comandi foto: fratelli di .avatar (non figli) cosi' non innescano la pressione lunga dell'easter egg -->
+        <input #fotoInput type="file" accept="image/*" class="foto-input" tabindex="-1" aria-hidden="true"
+               (change)="onFotoScelta($event)">
+        <button type="button" class="foto-btn foto-btn--add" [disabled]="fotoBusy"
+                (click)="fotoInput.click()"
+                [attr.aria-label]="(fotoUrl ? 'PHOTO.CHANGE' : 'PHOTO.ADD') | translate">
+          <mat-icon>photo_camera</mat-icon>
+        </button>
+        <button type="button" *ngIf="fotoUrl" class="foto-btn foto-btn--remove" [class.foto-btn--confirm]="fotoRimuoviConferma"
+                [disabled]="fotoBusy" (click)="rimuoviFoto()"
+                [attr.aria-label]="(fotoRimuoviConferma ? 'PHOTO.REMOVE_CONFIRM' : 'PHOTO.REMOVE') | translate">
+          <mat-icon>{{ fotoRimuoviConferma ? 'delete' : 'close' }}</mat-icon>
+        </button>
         </div>
         <div class="nickname-wrap">
           <label class="field-label">{{ 'PROFILE.NICKNAME' | translate }}</label>
@@ -1942,6 +1961,49 @@ const EASTER_EGG_SHADER = `
 
       &:hover { transform: scale(1.05); }
     }
+
+    .avatar-wrap { position: relative; flex-shrink: 0; z-index: 1; }
+
+    .avatar-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Input nascosto ma "vero" (display:none puo' dare problemi al click programmatico su alcuni WebView) */
+    .foto-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+    .foto-btn {
+      position: absolute;
+      z-index: 3;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(4, 15, 46, 0.4);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      mat-icon { font-size: 13px; width: 13px; height: 13px; line-height: 13px; }
+      &:hover:not(:disabled) { transform: scale(1.12); }
+      &:active:not(:disabled) { transform: scale(0.94); }
+      &:disabled { opacity: 0.6; cursor: default; }
+    }
+    .foto-btn--add { right: -5px; bottom: -5px; background: linear-gradient(135deg, #0A3D91, #1565C0); }
+    .foto-btn--remove { right: -5px; top: -5px; background: rgba(15, 23, 42, 0.72); }
+    .foto-btn--confirm { background: linear-gradient(135deg, #E53935, #C62828); }
 
     .egg-ring {
       /* inset:0 → SVG esattamente della stessa dimensione dell'avatar.
@@ -2475,6 +2537,8 @@ const EASTER_EGG_SHADER = `
       .profile-header { padding: 16px 16px 20px; gap: 12px; }
       .avatar { width: 46px; height: 46px; }
       .avatar-initials { font-size: 1.15rem; }
+      .foto-btn { width: 20px; height: 20px; }
+      .foto-btn mat-icon { font-size: 12px; width: 12px; height: 12px; line-height: 12px; }
       .favorites-section { padding: 14px 12px 0; }
       .chip { min-height: 70px; }
       .chip-emoji-wrap { width: 30px; height: 30px; }
@@ -2788,6 +2852,15 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
   statistiche: any = null;
   showBadgeInfo = false;
 
+  // ── Foto profilo ─────────────────────────────────────────────────────────
+  giocatoreId: number | null = null;
+  fotoVersion: number | null = null;
+  fotoUrl: string | null = null;
+  fotoBusy = false;
+  fotoRimuoviConferma = false;
+  private fotoSub?: Subscription;
+  private fotoConfermaTimeout: ReturnType<typeof setTimeout> | null = null;
+
   constructor(
     private dialog: MatDialog,
     private authService: AuthService,
@@ -2796,7 +2869,8 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
     private squadraService: SquadraService,
     private trofeiService: TrofeiService,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private fotoService: FotoProfiloService
   ) {}
 
   ngOnInit() {
@@ -2844,6 +2918,84 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
     return palettes[Math.abs(hash) % palettes.length];
   }
 
+  // ── Foto profilo ───────────────────────────────────────────────────────────
+
+  private aggiornaFotoUrl(): void {
+    this.fotoSub?.unsubscribe();
+    this.fotoSub = this.fotoService.getUrl(this.giocatoreId, this.fotoVersion).subscribe((u) => (this.fotoUrl = u));
+  }
+
+  private notificaFoto(chiave: string, errore = false): void {
+    this.snackBar.open(this.translate.instant(chiave), '', {
+      duration: 3500, horizontalPosition: 'center', verticalPosition: 'top',
+      panelClass: [errore ? 'app-snackbar--error' : 'app-snackbar--info'],
+    });
+  }
+
+  /** File scelto dal selettore del telefono (libreria o fotocamera): si ritaglia e poi si carica. */
+  onFotoScelta(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = ''; // permette di riscegliere lo stesso file
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      this.notificaFoto('PHOTO.ERROR_INVALID', true);
+      return;
+    }
+    this.dialog
+      .open(FotoCropDialogComponent, {
+        data: { file },
+        width: '360px',
+        maxWidth: '94vw',
+        panelClass: 'custom-dialog-container',
+        autoFocus: false,
+        restoreFocus: false,
+      })
+      .afterClosed()
+      .subscribe((blob: Blob | null | undefined) => {
+        if (blob) this.caricaFoto(blob);
+      });
+  }
+
+  private caricaFoto(blob: Blob): void {
+    this.fotoBusy = true;
+    this.fotoService.carica(blob).subscribe({
+      next: (versione) => {
+        this.fotoBusy = false;
+        this.fotoVersion = versione;
+        this.aggiornaFotoUrl();
+        this.notificaFoto('PHOTO.SAVED');
+      },
+      error: (err) => {
+        this.fotoBusy = false;
+        const code = err?.error?.errorCode as string | undefined;
+        this.notificaFoto(code === 'FOTO_BLOCCATA' ? 'PHOTO.ERROR_BLOCKED' : code === 'FOTO_NON_VALIDA' ? 'PHOTO.ERROR_INVALID' : 'COMMON.ERROR_GENERIC', true);
+      },
+    });
+  }
+
+  /** Due tocchi: il primo chiede conferma (il pulsante diventa rosso), il secondo toglie la foto. */
+  rimuoviFoto(): void {
+    if (!this.fotoRimuoviConferma) {
+      this.fotoRimuoviConferma = true;
+      if (this.fotoConfermaTimeout) clearTimeout(this.fotoConfermaTimeout);
+      this.fotoConfermaTimeout = setTimeout(() => (this.fotoRimuoviConferma = false), 3000);
+      return;
+    }
+    if (this.fotoConfermaTimeout) clearTimeout(this.fotoConfermaTimeout);
+    this.fotoRimuoviConferma = false;
+    this.fotoBusy = true;
+    this.fotoService.rimuovi().subscribe({
+      next: () => {
+        this.fotoBusy = false;
+        this.fotoVersion = null;
+        this.aggiornaFotoUrl();
+        this.notificaFoto('PHOTO.REMOVED');
+      },
+      error: () => { this.fotoBusy = false; },
+    });
+  }
+
   // ── Load data ──────────────────────────────────────────────────────────────
 
   loadProfile() {
@@ -2856,6 +3008,9 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
         this.squadreSelezionate.calcio = giocatore.squadraCuore || null;
         this.squadreSelezionate.basket = giocatore.squadraBasketCuore || null;
         this.squadreSelezionate.tennis = giocatore.tennistaCuore || null;
+        this.giocatoreId = giocatore.id ?? null;
+        this.fotoVersion = giocatore.fotoVersion ?? null;
+        this.aggiornaFotoUrl();
       },
       error: () => this.showFeedback('Errore nel caricamento del profilo', 'error')
     });
@@ -3445,6 +3600,8 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.fotoSub?.unsubscribe();
+    if (this.fotoConfermaTimeout) clearTimeout(this.fotoConfermaTimeout);
     this._clearEasterEggProgress();
     if (this._eggVfx) { try { this._eggVfx.destroy(); } catch (_) {} this._eggVfx = null; }
     if (this._eggOverlay)  { this._eggOverlay.remove();  this._eggOverlay  = null; }

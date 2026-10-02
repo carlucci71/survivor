@@ -5,8 +5,9 @@
   <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
     <div class="config-user">
       <button class="user-avatar-btn" (click)="openProfilo()" [title]="me?.nickname || ''">
-        <div class="user-avatar" [style.background]="getAvatarGradient()">
-          <span class="user-avatar-initials">{{ getAvatarInitials() }}</span>
+        <div class="user-avatar" [style.background]="miaFotoUrl ? '#E2E8F0' : getAvatarGradient()">
+          <img *ngIf="miaFotoUrl" class="user-avatar-img" [src]="miaFotoUrl" alt="" draggable="false">
+          <span class="user-avatar-initials" *ngIf="!miaFotoUrl">{{ getAvatarInitials() }}</span>
         </div>
       </button>
     </div>

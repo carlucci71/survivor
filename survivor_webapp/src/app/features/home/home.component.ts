@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { Giocatore, Lega, RuoloGiocatore, StatoGiocatore, StatoLega } from '../../core/models/interfaces.model';
 import { GiocatoreService } from '../../core/services/giocatore.service';
+import { FotoProfiloService } from '../../core/services/foto-profilo.service';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -104,6 +106,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   private giocatoreSubscription: any;
   selectedLegaId: number | null = null;
 
+  /** URL (blob:) della mia foto profilo, se ne ho una: nell'avatar in alto sostituisce le iniziali. */
+  miaFotoUrl: string | null = null;
+  private miaFotoSub?: Subscription;
+  private fotoCambiataSub?: Subscription;
+
   constructor(
     private authService: AuthService,
     private legaService: LegaService,
@@ -118,6 +125,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private translate: TranslateService
     ,
     private snackBar: MatSnackBar
+    ,
+    private fotoService: FotoProfiloService
   ) {}
 
   ngOnInit(): void {
@@ -132,9 +141,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       giocatore => {
         if (giocatore) {
           this.me = giocatore;
+          this.aggiornaMiaFoto();
         }
       }
     );
+
+    // Cambio/rimozione foto dal profilo: l'avatar in alto si aggiorna subito, senza ricaricare
+    this.fotoCambiataSub = this.fotoService.miaFotoCambiata$.subscribe((versione) => {
+      if (this.me) {
+        this.me = { ...this.me, fotoVersion: versione };
+        this.aggiornaMiaFoto();
+      }
+    });
 
     // detect mobile breakpoint
     this.isMobile = window.innerWidth <= 768;
@@ -163,14 +181,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
     }
+    this.miaFotoSub?.unsubscribe();
+    this.fotoCambiataSub?.unsubscribe();
   }
 
   private loadMe(): void {
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.me = giocatore;
+        this.aggiornaMiaFoto();
       },
     });
+  }
+
+  private aggiornaMiaFoto(): void {
+    this.miaFotoSub?.unsubscribe();
+    this.miaFotoSub = this.fotoService.getUrl(this.me?.id, this.me?.fotoVersion).subscribe((u) => (this.miaFotoUrl = u));
   }
 
   getNome(): string {
