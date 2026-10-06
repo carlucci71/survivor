@@ -352,6 +352,10 @@ $unread-bg:  rgba(37, 99, 235, 0.055);
     width: 20px;
     height: 20px;
     color: $blue;
+    // L'item è un mat-menu-item: Material dà a ogni .mat-icon un margin-right (16px) pensato per icona+testo,
+    // che qui spostava l'icona di qualche pixel a sinistra del centro del riquadro.
+    margin: 0 !important;
+    flex: none;
   }
 
   &--unread {
