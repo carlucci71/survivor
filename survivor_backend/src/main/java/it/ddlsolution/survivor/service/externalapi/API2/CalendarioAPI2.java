@@ -749,7 +749,7 @@ public class CalendarioAPI2 implements ICalendario {
         Integer teamScore = (Integer) team.get("score");
         if (teamScore == null) {
             Object scores = team.get("scores");
-            teamScore = scores instanceof Map ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
+            teamScore = scores instanceof Map && ((Map) scores).get("total") != null ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
         }
         Result result = new Result(teamName, teamCode, teamScore);
         return result;
@@ -766,7 +766,7 @@ public class CalendarioAPI2 implements ICalendario {
         Integer teamScore = (Integer) team.get("score");
         if (teamScore == null) {
             Object scores = team.get("scores");
-            teamScore = scores instanceof Map ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
+            teamScore = scores instanceof Map && ((Map) scores).get("total") != null ? Integer.parseInt(((Map) scores).get("total").toString()) : 0;
         }
         Result result = new Result(teamName, teamCode, teamScore);
         return result;
