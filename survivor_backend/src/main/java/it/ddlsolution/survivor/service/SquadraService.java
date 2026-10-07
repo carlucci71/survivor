@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -286,10 +287,20 @@ public class SquadraService {
     public List<SquadraDTO> getBySport(String sportId) {
         // Filtra le squadre in base allo sport, deduplicando per nome
         // (es. lo stesso tennista può comparire in più campionati)
-        return cacheableProvider.getIfAvailable().allCampionati()
+        List<CampionatoDTO> campionatiDelloSport = cacheableProvider.getIfAvailable().allCampionati()
                 .stream()
                 .filter(c -> sportId.equals(c.getSport().getId()))
+                .toList();
+        // Le squadre di un campionato sono quelle con la sua stessa nazione (default 'IT'), quindi un
+        // campionato inserito senza nazione (es. Roland Garros) si porta dietro tutte le squadre italiane:
+        // restano solo quelle che appartengono davvero a un campionato di questo sport.
+        Set<String> idCampionatiDelloSport = campionatiDelloSport.stream()
+                .map(CampionatoDTO::getId)
+                .collect(Collectors.toSet());
+        return campionatiDelloSport
+                .stream()
                 .flatMap(c -> c.getSquadre().stream())
+                .filter(s -> s.getIdCampionato() != null && idCampionatiDelloSport.contains(s.getIdCampionato()))
                 .collect(Collectors.toMap(
                         SquadraDTO::getNome,
                         s -> s,
