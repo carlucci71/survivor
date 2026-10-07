@@ -3,10 +3,8 @@ import Capacitor
 import FirebaseCore
 import FirebaseMessaging
 
-@UIApplicationMain
+@main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Initialize Firebase for push notifications
@@ -20,6 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("📱 Persistent Device ID: \(deviceId)")
         
         return true
+    }
+    
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let config = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        config.delegateClass = SceneDelegate.self
+        return config
     }
     
     private func getOrCreatePersistentDeviceId() -> String {
@@ -88,15 +92,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        
-        // Save persistent device ID to localStorage when app becomes active
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            if let deviceId = UserDefaults.standard.string(forKey: "PersistentDeviceId"),
-               let vc = self.window?.rootViewController as? CAPBridgeViewController {
-                let js = "try { localStorage.setItem('PersistentDeviceId', '\(deviceId)'); console.log('📱 Persistent Device ID synced to localStorage:', '\(deviceId)'); } catch(e) { console.error('Error syncing device ID:', e); }"
-                vc.webView?.evaluateJavaScript(js, completionHandler: nil)
-            }
-        }
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -138,10 +133,13 @@ extension AppDelegate: MessagingDelegate {
         
         // Also save to localStorage via JavaScript (without delay - execute immediately when webview is ready)
         DispatchQueue.main.async {
-            if let vc = self.window?.rootViewController as? CAPBridgeViewController {
-                let js = "try { localStorage.setItem('FCMToken', '\(token)'); console.log('FCM token saved to localStorage'); } catch(e) { console.error('Error saving FCM token:', e); }"
-                vc.webView?.evaluateJavaScript(js, completionHandler: nil)
-            }
+            guard
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let window = windowScene.windows.first,
+                let vc = window.rootViewController as? CAPBridgeViewController
+            else { return }
+            let js = "try { localStorage.setItem('FCMToken', '\(token)'); console.log('FCM token saved to localStorage'); } catch(e) { console.error('Error saving FCM token:', e); }"
+            vc.webView?.evaluateJavaScript(js, completionHandler: nil)
         }
     }
 }
