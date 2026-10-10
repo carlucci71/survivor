@@ -85,9 +85,9 @@ public class MagicLinkService {
             return token;
         }
 
-        String subject = "Il tuo Magic Link per accedere a Survivor";
+        String subject = "Il tuo link di accesso a Survivor";
         String magicLink = getUrlMagicLink(token, tipo, mobile);
-        emailService.send(email, subject, buildEmailContent(magicLink));
+        emailService.sendHtml(email, subject, buildEmailContent(magicLink), buildEmailHtml(magicLink));
         log.info("Magic link inviato a: {}", email);
         return null;
     }
@@ -123,6 +123,27 @@ public class MagicLinkService {
         return baseUrl + relativeUrlSendMailMobile + URLEncoder.encode(token, StandardCharsets.UTF_8)
                 + "&codiceTipoMagicLink=" + codiceTipoMagicLink
                 + "&sourceMobile=" + mobile;
+    }
+
+    private String buildEmailHtml(String magicLink) {
+        String link = magicLink.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
+        return """
+                <!DOCTYPE html>
+                <html lang="it">
+                <body style="margin:0;padding:24px;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;color:#1a2433;">
+                  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px;">
+                    <h2 style="margin:0 0 12px;color:#0A3D91;">Accedi a Survivor</h2>
+                    <p style="margin:0 0 20px;line-height:1.5;">Ciao, tocca il pulsante per accedere. Il link è valido per %d minuti.</p>
+                    <p style="margin:0 0 24px;">
+                      <a href="%s" style="display:inline-block;background:#0A3D91;color:#ffffff;text-decoration:none;font-weight:bold;padding:14px 28px;border-radius:8px;">Accedi a Survivor</a>
+                    </p>
+                    <p style="margin:0 0 8px;font-size:13px;color:#5b6676;">Se il pulsante non funziona, copia questo indirizzo nel browser:</p>
+                    <p style="margin:0 0 20px;font-size:12px;word-break:break-all;color:#5b6676;">%s</p>
+                    <p style="margin:0;font-size:13px;color:#5b6676;">Se non hai richiesto questo accesso, ignora questa email.</p>
+                  </div>
+                </body>
+                </html>
+                """.formatted(expirationMinutes, link, link);
     }
 
     private String buildEmailContent(String magicLink) {
