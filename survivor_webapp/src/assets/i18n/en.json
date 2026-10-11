@@ -1,4 +1,8 @@
 {
+  "REACTIONS": {
+    "SHEET_TITLE": "Who reacted",
+    "MORE": "More reactions"
+  },
   "NBA_RULE": {
     "NOTICE_TITLE": "NBA: how the week is decided",
     "NOTICE_TEXT": "All of the team's games count, not just the first one. Find out how.",

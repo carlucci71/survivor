@@ -595,6 +595,15 @@
                                      (error)="$any($event.target).style.display='none'">
                               }
                               <span class="team-pick-name">{{ getDisplaySquadraNome(giocatore, giornata) }}</span>
+                              @let reazioni = getReactionSummary(getGiocataByGiornataAssoluta(giocatore, giornata));
+                              @if (reazioni) {
+                                <button type="button" class="reaction-pill" [class.reaction-pill--mine]="reazioni.mine"
+                                  [attr.aria-label]="'REACTIONS.SHEET_TITLE' | translate"
+                                  (click)="openReactionSheet(getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
+                                  <span class="reaction-pill-emoji">{{ reazioni.emojis }}</span>
+                                  <span class="reaction-pill-count">{{ reazioni.total }}</span>
+                                </button>
+                              }
                             </div>
                           }
                           <!-- Indicatori -->
@@ -614,22 +623,6 @@
                               </mat-icon>
                             }
                           </div>
-                          <!-- Reaction badge (non occupa spazio nel layout) -->
-                          @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
-                            @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                              <span class="reaction-badges">
-                                @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
-                                  <span class="reaction-badge-wrap">
-                                    <span class="reaction-badge"
-                                      [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji"
-                                      (click)="toggleBadgeAutori(getGiocataByGiornataAssoluta(giocatore, giornata)!, r.emoji, $event)">
-                                      {{ r.emoji }}
-                                    </span>
-                                  </span>
-                                }
-                              </span>
-                            }
-                          }
                         </div>
                       } @else {
                         <!-- Cella vuota -->
@@ -950,6 +943,15 @@
                                (error)="$any($event.target).style.display='none'">
                         }
                         <span class="team-name-cell">{{ getSquadraNomeSenzaCitta(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) }}</span>
+                        @let reazioniM = getReactionSummary(getGiocataByGiornataAssoluta(giocatore, giornata));
+                        @if (reazioniM) {
+                          <button type="button" class="reaction-pill" [class.reaction-pill--mine]="reazioniM.mine"
+                            [attr.aria-label]="'REACTIONS.SHEET_TITLE' | translate"
+                            (click)="openReactionSheet(getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
+                            <span class="reaction-pill-emoji">{{ reazioniM.emojis }}</span>
+                            <span class="reaction-pill-count">{{ reazioniM.total }}</span>
+                          </button>
+                        }
                       </div>
                     }
                     <!-- Badge forzatura -->
@@ -967,22 +969,6 @@
                         </mat-icon>
                       }
                     </div>
-                    <!-- Reaction badge mobile -->
-                    @if(!shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
-                      @if(getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!).length > 0) {
-                        <span class="reaction-badges">
-                          @for(r of getReactionEntries(getGiocataByGiornataAssoluta(giocatore, giornata)!); track r.emoji) {
-                            <span class="reaction-badge-wrap">
-                              <span class="reaction-badge"
-                                [class.reaction-badge--mine]="getGiocataByGiornataAssoluta(giocatore, giornata)?.miaReaction === r.emoji"
-                                (click)="toggleBadgeAutori(getGiocataByGiornataAssoluta(giocatore, giornata)!, r.emoji, $event)">
-                                {{ r.emoji }}
-                              </span>
-                            </span>
-                          }
-                        </span>
-                      }
-                    }
                   </div>
                 } @else {
                   <!-- Cella vuota -->
@@ -1312,36 +1298,52 @@
   </div>
 }
 
-<!-- Global reaction picker overlay (position:fixed, fuori dalla tabella per evitare overflow:hidden) -->
+<!-- Barra reaction a pillola (position:fixed per bypassare overflow:hidden): 5 emoji rapide + "+" per le altre -->
 @if(activeReactionKey !== null && activeGiocata !== null) {
-  <div class="reaction-picker-global"
-    [class.reaction-picker-global--below]="reactionPickerBelow"
+  <div class="reaction-bar-global"
+    [class.reaction-bar-global--below]="reactionPickerBelow"
     [style.top]="reactionPopupStyle.top"
     [style.left]="reactionPopupStyle.left"
     (mouseenter)="cancelClosePopup()"
     (mouseleave)="closeReactionPopupDelayed()"
     (click)="$event.stopPropagation()">
-    <div class="reaction-emoji-grid">
-      @for(emoji of REACTION_EMOJIS; track emoji) {
-        <button type="button" class="reaction-btn-global"
-          [class.reaction-btn-global--mine]="activeGiocata!.miaReaction === emoji"
-          (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
-          {{ emoji }}
-        </button>
-      }
-    </div>
+    @for(emoji of (reactionBarExpanded ? ALL_REACTIONS : QUICK_REACTIONS); track emoji) {
+      <button type="button" class="reaction-bar-btn"
+        [class.reaction-bar-btn--mine]="activeGiocata!.miaReaction === emoji"
+        (click)="toggleReaction(activeGiocata!, emoji); closeReactionPopup()">
+        {{ emoji }}
+      </button>
+    }
+    @if(!reactionBarExpanded) {
+      <button type="button" class="reaction-bar-btn reaction-bar-btn--more"
+        [attr.aria-label]="'REACTIONS.MORE' | translate"
+        (click)="expandReactionBar($event)">
+        <mat-icon>add</mat-icon>
+      </button>
+    }
   </div>
 }
 
-<!-- Overlay autori reaction (position:fixed, compare al tap sul badge) -->
-@if(activeBadgeAutoriKey !== null) {
-  <div class="badge-autori-global"
-    [class.badge-autori-global--expandable]="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded"
-    [style.top]="badgeAutoriStyle.top"
-    [style.left]="badgeAutoriStyle.left"
-    (click)="activeBadgeAutoriHasMore && !activeBadgeAutoriExpanded ? expandBadgeAutori($event) : $event.stopPropagation()">
-    <span class="badge-autori-emoji">{{ activeBadgeAutoriEmoji }}</span>
-    <span class="badge-autori-nomi">{{ activeBadgeAutoriNomi }}</span>
+<!-- Foglio dal basso: chi ha reagito e con quale emoji (riusa lo stile del foglio dei voti) -->
+@if (reactionSheetGiocata) {
+  <div class="voti-sheet-overlay" (click)="closeReactionSheet()"></div>
+  <div class="voti-sheet" (click)="$event.stopPropagation()">
+    <div class="voti-sheet-handle"></div>
+    <div class="voti-sheet-header">
+      <span class="voti-sheet-title">{{ 'REACTIONS.SHEET_TITLE' | translate }}</span>
+      <button class="voti-sheet-close" (click)="closeReactionSheet()" [attr.aria-label]="'COMMON.CLOSE' | translate">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="voti-sheet-body">
+      @for (g of getReactionGroups(reactionSheetGiocata); track g.emoji) {
+        <div class="reaction-sheet-row">
+          <span class="reaction-sheet-emoji">{{ g.emoji }}</span>
+          <span class="reaction-sheet-nomi">{{ g.nomi.join(', ') }}</span>
+          <span class="reaction-sheet-count">{{ g.count }}</span>
+        </div>
+      }
+    </div>
   </div>
 }
 
