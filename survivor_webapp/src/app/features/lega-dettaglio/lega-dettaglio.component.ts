@@ -696,7 +696,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   getMatchupScore(giocata: Giocata): { mio: number; loro: number } | null {
     const partita = this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla);
     if (!partita || partita.scoreCasa == null || partita.scoreFuori == null) return null;
-    if (!giocata.esito) return null;
+    // Il punteggio si mostra appena la partita e' finita o in corso, anche se l'esito della giocata non e' ancora
+    // stato calcolato (la giornata si calcola a fine turno): prima serviva `esito` e in una giornata aperta il
+    // fumetto mostrava solo "vs" anche a partita conclusa.
+    const stato = (partita.stato as any)?.codice ?? partita.stato;
+    if (!giocata.esito && stato !== 'TERMINATA' && stato !== 'IN_CORSO') return null;
     const isCasa = partita.casaSigla === giocata.squadraSigla;
     return {
       mio: isCasa ? partita.scoreCasa : partita.scoreFuori,

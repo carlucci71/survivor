@@ -127,7 +127,7 @@ public class LiveScoreGazzettaClient {
             } catch (Exception e) {
                 status = match.get("status").toString();
             }
-            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.statoDa(status);
             // "HalfTime" è mappato su IN_CORSO come FirstHalf/SecondHalf, ma il minuto resta
             // fermo (l'intervallo non avanza): distinguiamo per non mostrare un minuto "congelato".
             boolean intervallo = "HalfTime".equalsIgnoreCase(status);

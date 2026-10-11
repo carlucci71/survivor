@@ -182,7 +182,10 @@
             </div>
             }
           </div>
-          @if (lega.campionato?.id && !countdownExpired && !isCurrentUserEliminato()) {
+          <!-- La lente serve a studiare la giocata: ha senso solo con la giornata aperta alle scelte, cioe' col
+               timer che scorre. Senza timer (partite non ancora caricate, "Prossimo inizio") la riga e' vuota e la
+               lente, assoluta, resterebbe sospesa sul bordo della card o sopra il testo. -->
+          @if (lega.campionato?.id && countdownActive && !countdownExpired && !isCurrentUserEliminato()) {
             <button class="studio-fab-btn" (click)="apriStudio()"
                     [title]="'LEAGUE.STUDIO.OPEN' | translate">🔍</button>
           }
@@ -1277,7 +1280,7 @@
       </div>
       <!-- Centro: score o VS -->
       <div class="matchup-vs">
-        @if (matchupPopupGiocata.esito && getMatchupScore(matchupPopupGiocata); as score) {
+        @if (getMatchupScore(matchupPopupGiocata); as score) {
           <div class="matchup-score-block"
             [class.matchup-score-block--ok]="matchupPopupGiocata.esito === 'OK'"
             [class.matchup-score-block--ko]="matchupPopupGiocata.esito === 'KO'"
