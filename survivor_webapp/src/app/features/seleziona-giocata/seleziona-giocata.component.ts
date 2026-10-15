@@ -24,6 +24,8 @@ export interface SquadraConsiglio {
   factorGoalBalance: number;
   /** Nome dell'avversario nella prossima partita */
   nomeAvversario?: string;
+  /** Sigla dell'avversario nella prossima partita (serve a non consigliare due squadre che si affrontano) */
+  siglaAvversario?: string;
 }
 
 import { MatSelect } from '@angular/material/select';
@@ -1659,9 +1661,11 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
 
           let avvPos = Math.ceil(total / 2); // default: metà classifica
           let avvNome = '';
+          let avvSiglaPartita = '';
           if (squadra.prossimaPartita) {
             const isCasa = squadra.prossimaPartita.casaSigla === squadra.sigla;
             const avvSigla = isCasa ? squadra.prossimaPartita.fuoriSigla : squadra.prossimaPartita.casaSigla;
+            avvSiglaPartita = avvSigla || '';
             avvNome = isCasa
               ? (squadra.prossimaPartita.fuoriNome || avvSigla || '')
               : (squadra.prossimaPartita.casaNome  || avvSigla || '');
@@ -1670,7 +1674,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
           }
           const avvDebole = (total - avvPos + 1) / total;
 
-          return { squadra, winRate, avgGB, isHome, avvDebole, avvNome };
+          return { squadra, winRate, avgGB, isHome, avvDebole, avvNome, avvSigla: avvSiglaPartita };
         });
 
         // Normalizza goal balance su range 0-1
@@ -1692,17 +1696,33 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
             factorAvvDebole:   Math.round(s.avvDebole * 100),
             factorGoalBalance: Math.round(gbNorm * 100),
             nomeAvversario:    s.avvNome || undefined,
+            siglaAvversario:   s.avvSigla || undefined,
           };
         });
 
-        this.consigli = scored
+        // Le prime 3 per punteggio, ma una sola squadra per partita: se due squadre che si affrontano sono
+        // entrambe tra le migliori (es. Juventus-Lazio a 73 pari), consigliarle tutte e due e' un controsenso
+        // perche' una delle due perde per forza. Vince quella con il punteggio piu' alto (a pari punteggio,
+        // la prima in elenco).
+        const ordinate = scored
           .filter(c => c.score > 0)
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 3);
+          .sort((a, b) => b.score - a.score);
+        const consigliate: SquadraConsiglio[] = [];
+        for (const c of ordinate) {
+          if (consigliate.some(s => s.sigla === c.siglaAvversario)) continue;
+          consigliate.push(c);
+          if (consigliate.length === 3) break;
+        }
+        this.consigli = consigliate;
+
+        // L'underdog non puo' essere una squadra gia' consigliata ne' l'avversaria di una consigliata
+        const candidatiUnderdog = scored.filter(c =>
+          !consigliate.some(s => s.sigla === c.sigla || s.sigla === c.siglaAvversario)
+        );
 
         // ── Underdog della giornata ─────────────────────────────────
         // Sfavorita (winRate 15–45%) che gimca in casa contro un avversario forte
-        const underdogPool = scored.filter(c =>
+        const underdogPool = candidatiUnderdog.filter(c =>
           c.factorWinRate >= 15 && c.factorWinRate <= 45
         );
         if (underdogPool.length > 0) {
@@ -1718,7 +1738,7 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
             .sort((a, b) => b.uScore - a.uScore);
           this.underdogDiGiornata = sorted[0];
         } else {
-          const fallback = scored.filter(c => c.score < 45);
+          const fallback = candidatiUnderdog.filter(c => c.score < 45);
           this.underdogDiGiornata = fallback.length > 0 ? fallback[fallback.length - 1] : null;
         }
 
