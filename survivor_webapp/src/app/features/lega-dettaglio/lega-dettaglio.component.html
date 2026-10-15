@@ -572,10 +572,10 @@
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                         <div class="giocata-cell-content"
-                          (mouseenter)="isCurrentUserGiocatore(giocatore) ? null : openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
+                          (mouseenter)="isCurrentUserGiocatore(giocatore) || shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? null : openReactionPopup(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event.currentTarget)"
                           (mouseleave)="closeReactionPopupDelayed()"
                           (click)="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : null"
-                          (touchstart)="isCurrentUserGiocatore(giocatore) ? null : startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
+                          (touchstart)="isCurrentUserGiocatore(giocatore) || shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? null : startLongPress(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)"
                           (touchend)="cancelLongPress()"
                           (touchmove)="cancelLongPress()"
                           (contextmenu)="$event.preventDefault()"
@@ -931,7 +931,7 @@
                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
                        [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)"
-                       (click)="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event)">
+                       (click)="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? null : (isCurrentUserGiocatore(giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event))">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
                       <span class="private-vote-badge" [title]="'LEAGUE.PICK_VISIBLE_AFTER_TIMER' | translate">🔒</span>
                     } @else {
