@@ -44,7 +44,7 @@ export interface DettagliSquadraData {
         <ng-container *ngIf="!searchMode">
           <div class="dettagli-title">
             <span>📊</span>
-            <span class="squadra-badge" [style.color]="localColors.primary">{{ localSigla }}</span>
+            <span class="squadra-badge" [style.color]="localColors.primary">{{ localNome || localSigla }}</span>
             <button mat-icon-button class="sq-search-toggle" (click)="toggleSearchMode()">
               <mat-icon>search</mat-icon>
             </button>
@@ -510,6 +510,10 @@ export interface DettagliSquadraData {
       border-radius: 16px;
       font-size: 0.9rem;
       font-weight: 800;
+      max-width: 60vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     @media (max-width: 480px) {

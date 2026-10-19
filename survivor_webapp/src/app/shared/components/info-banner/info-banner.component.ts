@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -1729,7 +1729,7 @@ const EASTER_EGG_SHADER = `
                   (blur)="onBlurSport('calcio')"
                   autocomplete="off">
                 <div class="suggestions-list" *ngIf="showSugg.calcio && suggestions.calcio.length > 0">
-                  <div class="suggestion-item" *ngFor="let item of suggestions.calcio" (mousedown)="onSelectItem(item, 'calcio')">
+                  <div class="suggestion-item" *ngFor="let item of suggestions.calcio" (pointerdown)="onSelectItem(item, 'calcio')">
                     <span>⚽</span><span>{{ item.nome }}</span>
                   </div>
                 </div>
@@ -1757,7 +1757,7 @@ const EASTER_EGG_SHADER = `
                   (blur)="onBlurSport('basket')"
                   autocomplete="off">
                 <div class="suggestions-list" *ngIf="showSugg.basket && suggestions.basket.length > 0">
-                  <div class="suggestion-item" *ngFor="let item of suggestions.basket" (mousedown)="onSelectItem(item, 'basket')">
+                  <div class="suggestion-item" *ngFor="let item of suggestions.basket" (pointerdown)="onSelectItem(item, 'basket')">
                     <span>🏀</span><span>{{ item.nome }}</span>
                   </div>
                 </div>
@@ -1785,7 +1785,7 @@ const EASTER_EGG_SHADER = `
                   (blur)="onBlurSport('tennis')"
                   autocomplete="off">
                 <div class="suggestions-list" *ngIf="showSugg.tennis && suggestions.tennis.length > 0">
-                  <div class="suggestion-item" *ngFor="let item of suggestions.tennis" (mousedown)="onSelectItem(item, 'tennis')">
+                  <div class="suggestion-item" *ngFor="let item of suggestions.tennis" (pointerdown)="onSelectItem(item, 'tennis')">
                     <span>🎾</span><span>{{ item.nome }}</span>
                   </div>
                 </div>
@@ -2796,7 +2796,8 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
     private squadraService: SquadraService,
     private trofeiService: TrofeiService,
     private snackBar: MatSnackBar,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -2944,6 +2945,10 @@ export class ProfiloDialogComponent implements OnInit, OnDestroy {
       this.inputs[sport] = '';
       this.suggestions[sport] = [];
       this.showSugg[sport] = false;
+      // Il campo di ricerca compare solo dopo il render: lo si forza qui, ancora dentro il tocco dell'utente,
+      // altrimenti iOS non apre la tastiera.
+      this.cdr.detectChanges();
+      document.querySelector<HTMLInputElement>('.edit-area .search-input')?.focus();
     }
   }
 

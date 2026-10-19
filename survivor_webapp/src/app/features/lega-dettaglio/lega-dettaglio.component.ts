@@ -137,21 +137,18 @@ export class LegaDettaglioComponent implements OnDestroy {
   private readonly TEST_MODE_FORCE_HISTORY_ICON = false; // 🧪 TEST - Ricordati di rimettere false prima del deploy!
 
 
-  readonly REACTION_EMOJIS = ['👏', '😱', '🔥', '🤬', '💀', '🤡', '😤', '🤦', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
+  // Barra reaction: 5 emoji rapide sempre visibili, le altre dietro il "+"
+  readonly QUICK_REACTIONS = ['👏', '🔥', '😱', '🤡', '💀'];
+  readonly MORE_REACTIONS = ['😤', '🤦', '🤬', '💩', '🤘', '🥶', '🤌', '😵', '😈', '💪', '❤️'];
+  readonly ALL_REACTIONS = [...this.QUICK_REACTIONS, ...this.MORE_REACTIONS];
+  reactionBarExpanded = false;
+  reactionSheetGiocata: Giocata | null = null;
 
   activeReactionKey: string | null = null;
   activeGiocata: Giocata | null = null;
   reactionPopupStyle: { top: string; left: string } = { top: '0px', left: '0px' };
   reactionPickerBelow = false;
   // chiave univoca del badge di cui mostrare gli autori: "giocataId_emoji"
-  activeBadgeAutoriKey: string | null = null;
-  activeBadgeAutoriNomi: string = '';
-  activeBadgeAutoriNomiAll: string = '';
-  activeBadgeAutoriHasMore: boolean = false;
-  activeBadgeAutoriExpanded: boolean = false;
-  activeBadgeAutoriEmoji: string = '';
-  badgeAutoriStyle: { top: string; left: string } = { top: '0px', left: '0px' };
-  private badgeAutoriTimer: any = null;
   private pickerAutoCloseTimer: any = null;
   private longPressTimer: any = null;
   private closePopupTimer: any = null;
@@ -696,7 +693,11 @@ export class LegaDettaglioComponent implements OnDestroy {
   getMatchupScore(giocata: Giocata): { mio: number; loro: number } | null {
     const partita = this.getPartitaForGiocata(giocata.giornata, giocata.squadraSigla);
     if (!partita || partita.scoreCasa == null || partita.scoreFuori == null) return null;
-    if (!giocata.esito) return null;
+    // Il punteggio si mostra appena la partita e' finita o in corso, anche se l'esito della giocata non e' ancora
+    // stato calcolato (la giornata si calcola a fine turno): prima serviva `esito` e in una giornata aperta il
+    // fumetto mostrava solo "vs" anche a partita conclusa.
+    const stato = (partita.stato as any)?.codice ?? partita.stato;
+    if (!giocata.esito && stato !== 'TERMINATA' && stato !== 'IN_CORSO') return null;
     const isCasa = partita.casaSigla === giocata.squadraSigla;
     return {
       mio: isCasa ? partita.scoreCasa : partita.scoreFuori,
@@ -2186,64 +2187,39 @@ export class LegaDettaglioComponent implements OnDestroy {
       .map(([emoji, count]) => ({ emoji, count }));
   }
 
-  getReactionAutori(giocata: Giocata, emoji: string): string {
-    const nomi = giocata.reactionAutori?.[emoji] ?? [];
-    if (nomi.length === 0) return '';
-    const MAX = 3;
-    if (nomi.length <= MAX) return nomi.join(', ');
-    return `${nomi.slice(0, MAX).join(', ')} +${nomi.length - MAX} altri`;
-  }
-
-  expandBadgeAutori(event: Event): void {
-    event.stopPropagation();
-    this.activeBadgeAutoriExpanded = true;
-    this.activeBadgeAutoriNomi = this.activeBadgeAutoriNomiAll;
-    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); }
-    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 4000);
-  }
-
-  toggleBadgeAutori(giocata: Giocata, emoji: string, event: Event): void {
-    event.stopPropagation();
-    const key = `${giocata.id}_${emoji}`;
-    if (this.activeBadgeAutoriKey === key) {
-      this.closeBadgeAutori();
-      return;
-    }
-    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
-    const el = event.currentTarget as HTMLElement;
-    const rect = el.getBoundingClientRect();
-    // Calcola left centrato sul badge, clamped ai bordi del viewport
-    const BADGE_MAX_W = Math.min(240, window.innerWidth - 16);
-    const MARGIN = 8;
-    const idealLeft = rect.left + rect.width / 2 - BADGE_MAX_W / 2;
-    const clampedLeft = Math.min(
-      Math.max(idealLeft, MARGIN),
-      window.innerWidth - BADGE_MAX_W - MARGIN
-    );
-    this.badgeAutoriStyle = {
-      top: `${rect.bottom + 6}px`,
-      left: `${clampedLeft}px`,
+  /** Riepilogo per il badge sul logo: l'emoji piu' usata, il totale e se ha reagito anche l'utente. */
+  getReactionSummary(giocata: Giocata | null | undefined): { emojis: string; total: number; mine: boolean } | null {
+    if (!giocata) return null;
+    const entries = this.getReactionEntries(giocata).sort((a, b) => b.count - a.count);
+    if (entries.length === 0) return null;
+    return {
+      emojis: entries[0].emoji,
+      total: entries.reduce((sum, e) => sum + e.count, 0),
+      mine: !!giocata.miaReaction
     };
-    const tutti = giocata.reactionAutori?.[emoji] ?? [];
-    const MAX = 3;
-    this.activeBadgeAutoriNomiAll = tutti.join(', ');
-    this.activeBadgeAutoriNomi = tutti.length <= MAX
-      ? tutti.join(', ')
-      : `${tutti.slice(0, MAX).join(', ')} +${tutti.length - MAX} altri`;
-    this.activeBadgeAutoriHasMore = tutti.length > MAX;
-    this.activeBadgeAutoriExpanded = false;
-    this.activeBadgeAutoriEmoji = emoji;
-    this.activeBadgeAutoriKey = key;
-    this.badgeAutoriTimer = setTimeout(() => this.closeBadgeAutori(), 2500);
   }
 
-  private closeBadgeAutori(): void {
-    this.activeBadgeAutoriKey = null;
-    if (this.badgeAutoriTimer) { clearTimeout(this.badgeAutoriTimer); this.badgeAutoriTimer = null; }
+  /** Per il foglio "chi ha reagito": una riga per emoji, dalla piu' usata, con i nomi di chi l'ha messa. */
+  getReactionGroups(giocata: Giocata): { emoji: string; count: number; nomi: string[] }[] {
+    return this.getReactionEntries(giocata)
+      .sort((a, b) => b.count - a.count)
+      .map(e => ({ emoji: e.emoji, count: e.count, nomi: giocata.reactionAutori?.[e.emoji] ?? [] }));
   }
 
-  isBadgeAutoriActive(giocataId: number | undefined, emoji: string): boolean {
-    return this.activeBadgeAutoriKey === `${giocataId}_${emoji}`;
+  openReactionSheet(giocata: Giocata | null | undefined, event: Event): void {
+    event.stopPropagation();
+    if (!giocata) return;
+    this.closeReactionPopup();
+    this.reactionSheetGiocata = giocata;
+  }
+
+  closeReactionSheet(): void {
+    this.reactionSheetGiocata = null;
+  }
+
+  expandReactionBar(event: Event): void {
+    event.stopPropagation();
+    this.reactionBarExpanded = true;
   }
 
   @HostListener('document:click')
@@ -2251,17 +2227,16 @@ export class LegaDettaglioComponent implements OnDestroy {
     if (this.popupJustOpened || this.matchupPopupJustOpened) return;
     this.activeReactionKey = null;
     this.activeGiocata = null;
-    this.closeBadgeAutori();
     if (this.matchupPopupGiocata) { this.closeMatchupPopup(); }
   }
 
-  openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null): void {
+  openReactionPopup(key: string, giocata: Giocata | null, el: EventTarget | null, autoClose = true): void {
     if (!giocata || !el) return;
     if (this.closePopupTimer) { clearTimeout(this.closePopupTimer); this.closePopupTimer = null; }
     if (this.pickerAutoCloseTimer) { clearTimeout(this.pickerAutoCloseTimer); this.pickerAutoCloseTimer = null; }
     const rect = (el as HTMLElement).getBoundingClientRect();
-    // Picker width: 4 colonne * 38px + 3 gap * 6px + 2 * 10px padding = ~192px → metà = 96
-    const HALF_W = 96;
+    // Barra: 6 pulsanti da 40px (5 emoji + "+") + padding = ~260px; aperta al massimo 296px → metà ≈ 148
+    const HALF_W = 148;
     const MARGIN = 8;
     const rawLeft = rect.left + rect.width / 2;
     const clampedLeft = Math.min(
@@ -2269,20 +2244,24 @@ export class LegaDettaglioComponent implements OnDestroy {
       window.innerWidth - HALF_W - MARGIN
     );
     // Se non c'è spazio sopra, mostra sotto (aggiunge classe via flag)
-    const PICKER_H = 200;
+    const PICKER_H = 110;
     const showBelow = rect.top < PICKER_H + 10;
     this.reactionPickerBelow = showBelow;
     this.reactionPopupStyle = {
       top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
       left: `${clampedLeft}px`
     };
+    this.reactionBarExpanded = false;
     this.activeReactionKey = key;
     this.activeGiocata = giocata;
-    this.pickerAutoCloseTimer = setTimeout(() => {
-      this.activeReactionKey = null;
-      this.activeGiocata = null;
-      this.pickerAutoCloseTimer = null;
-    }, 4000);
+    // Con il mouse la barra si chiude da sola; col tocco resta aperta finche' non si tocca altrove
+    if (autoClose) {
+      this.pickerAutoCloseTimer = setTimeout(() => {
+        this.activeReactionKey = null;
+        this.activeGiocata = null;
+        this.pickerAutoCloseTimer = null;
+      }, 4000);
+    }
   }
 
   /** Apre il popup con un tap (mobile). Blocca la propagazione per evitare
@@ -2290,7 +2269,7 @@ export class LegaDettaglioComponent implements OnDestroy {
   openReactionPopupClick(key: string, giocata: Giocata | null, event: MouseEvent | TouchEvent): void {
     if (!giocata) return;
     event.stopPropagation();
-    this.openReactionPopup(key, giocata, event.currentTarget as HTMLElement);
+    this.openReactionPopup(key, giocata, event.currentTarget as HTMLElement, false);
     this.popupJustOpened = true;
     setTimeout(() => { this.popupJustOpened = false; }, 400);
   }
@@ -2324,20 +2303,21 @@ export class LegaDettaglioComponent implements OnDestroy {
     this.longPressTimer = setTimeout(() => {
       this.longPressTimer = null;
       const rect = el.getBoundingClientRect();
-      const HALF_W = 96;
+      const HALF_W = 148;
       const MARGIN = 8;
       const rawLeft = rect.left + rect.width / 2;
       const clampedLeft = Math.min(
         Math.max(rawLeft, HALF_W + MARGIN),
         window.innerWidth - HALF_W - MARGIN
       );
-      const PICKER_H = 200;
+      const PICKER_H = 110;
       const showBelow = rect.top < PICKER_H + 10;
       this.reactionPickerBelow = showBelow;
       this.reactionPopupStyle = {
         top: showBelow ? `${rect.bottom + 6}px` : `${rect.top}px`,
         left: `${clampedLeft}px`
       };
+      this.reactionBarExpanded = false;
       this.activeReactionKey = key;
       this.activeGiocata = giocata;
       this.popupJustOpened = true;

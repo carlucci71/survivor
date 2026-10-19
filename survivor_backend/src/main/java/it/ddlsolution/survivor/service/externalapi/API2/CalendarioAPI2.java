@@ -247,7 +247,7 @@ public class CalendarioAPI2 implements ICalendario {
             } catch (Exception e) {
                 status = match.get("status").toString();
             }
-            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.statoDa(status);
 
             Result resultHome = getResult(match, "home", statoPartita);
             Result resultAway = getResult(match, "away", statoPartita);
@@ -590,7 +590,7 @@ public class CalendarioAPI2 implements ICalendario {
             } catch (Exception e) {
                 status = match.get("status").toString();
             }
-            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.statoDa(status);
 
             Result resultHome = getResult(match, "home", statoPartita);
             Result resultAway = getResult(match, "away", statoPartita);
@@ -635,7 +635,7 @@ public class CalendarioAPI2 implements ICalendario {
             LocalDateTime romaTime = odt.atZoneSameInstant(ZoneId.of("Europe/Rome")).toLocalDateTime();
             String status = match.get("status").toString();
 
-            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+            Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.statoDa(status);
 
             Result resultHome = getResultTennis(match, "first", statoPartita);
             Result resultAway = getResultTennis(match, "second", statoPartita);
@@ -676,7 +676,7 @@ public class CalendarioAPI2 implements ICalendario {
                 } catch (Exception e) {
                     status = match.get("status").toString();
                 }
-                Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.valueOf(status).statoPartita;
+                Enumeratori.StatoPartita statoPartita = EnumAPI2.StatoPartitaAP2.statoDa(status);
 
                 Result resultHome = getResult(match, "home", statoPartita);
                 Result resultAway = getResult(match, "away", statoPartita);

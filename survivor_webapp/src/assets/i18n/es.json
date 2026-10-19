@@ -1,4 +1,8 @@
 {
+  "REACTIONS": {
+    "SHEET_TITLE": "Quién ha reaccionado",
+    "MORE": "Más reacciones"
+  },
   "NBA_RULE": {
     "NOTICE_TITLE": "NBA: cómo se decide la semana",
     "NOTICE_TEXT": "Cuentan todos los partidos del equipo, no solo el primero. Descubre cómo.",
