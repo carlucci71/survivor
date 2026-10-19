@@ -87,6 +87,9 @@ class EnumAPI2 {
         PLAYING(Enumeratori.StatoPartita.DA_GIOCARE),
         NOTSTARTED(Enumeratori.StatoPartita.DA_GIOCARE),
         SUSPENDED(Enumeratori.StatoPartita.DA_GIOCARE),
+        // Partita interrotta e non conclusa (es. Liga 2026/27, Rayo-Athletic giornata 8): resta "da giocare"
+        // come rinviata/sospesa. Prima mancava e valueOf() scartava l'INTERA giornata.
+        Abandoned(Enumeratori.StatoPartita.DA_GIOCARE),
         PREMATCH(Enumeratori.StatoPartita.DA_GIOCARE);
 
 
@@ -94,6 +97,23 @@ class EnumAPI2 {
 
         StatoPartitaAP2(Enumeratori.StatoPartita statoPartita) {
             this.statoPartita = statoPartita;
+        }
+
+        /**
+         * Converte lo stato grezzo dell'API senza mai lanciare eccezioni: confronto senza distinguere maiuscole,
+         * e per uno stato sconosciuto ritorna DA_GIOCARE (la scelta prudente: non calcola esiti su una partita
+         * di cui non sappiamo lo stato) segnalandolo nel log. Una partita con uno stato nuovo non deve far
+         * scartare tutte le altre della giornata.
+         */
+        static Enumeratori.StatoPartita statoDa(String raw) {
+            for (StatoPartitaAP2 s : values()) {
+                if (s.name().equalsIgnoreCase(raw)) {
+                    return s.statoPartita;
+                }
+            }
+            org.slf4j.LoggerFactory.getLogger(EnumAPI2.class).warn(
+                    "Stato partita '{}' non mappato in StatoPartitaAP2: trattato come DA_GIOCARE. Aggiungerlo all'enum.", raw);
+            return Enumeratori.StatoPartita.DA_GIOCARE;
         }
     }
 
