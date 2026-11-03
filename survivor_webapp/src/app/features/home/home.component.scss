@@ -706,6 +706,13 @@ h2 {
 		.ssb-icon { color: #15803d; }
 	}
 
+	&--vincitore {
+		background: rgba(245, 158, 11, 0.16);
+		color: #b45309;
+		border: 1px solid rgba(245, 158, 11, 0.45);
+		.ssb-icon { color: #d97706; }
+	}
+
 	&--eliminato {
 		background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(127, 29, 29, 0.28));
 		color: #991b1b;

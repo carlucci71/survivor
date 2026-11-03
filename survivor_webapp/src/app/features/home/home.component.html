@@ -143,10 +143,10 @@
                 <mat-card-content>
                   <div class="edizioni-list">
                     <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
-                      <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                        <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
-                          <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                          {{ statoMe === 'ATTIVO' ? ('HOME.STATUS_ATTIVO' | translate) : ('HOME.STATUS_ELIMINATO' | translate) }}
+                      <ng-container *ngIf="getBadgeStato(edizione) as badge">
+                        <span class="survivor-status-badge survivor-status-badge--{{ badge }}">
+                          <mat-icon class="ssb-icon">{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
+                          {{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}
                         </span>
                       </ng-container>
                       <mat-card-header>
@@ -227,10 +227,10 @@
                 <mat-card-content>
                   <div class="edizioni-list">
                     <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
-                      <ng-container *ngIf="getMioStatoInLega(edizione) as statoMe">
-                        <span class="survivor-status-badge survivor-status-badge--{{ statoMe.toLowerCase() }}">
-                          <mat-icon class="ssb-icon">{{ statoMe === 'ATTIVO' ? 'shield' : 'highlight_off' }}</mat-icon>
-                          {{ statoMe === 'ATTIVO' ? ('HOME.STATUS_ATTIVO' | translate) : ('HOME.STATUS_ELIMINATO' | translate) }}
+                      <ng-container *ngIf="getBadgeStato(edizione) as badge">
+                        <span class="survivor-status-badge survivor-status-badge--{{ badge }}">
+                          <mat-icon class="ssb-icon">{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
+                          {{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}
                         </span>
                       </ng-container>
                       <mat-card-header>

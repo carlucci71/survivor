@@ -1,4 +1,4 @@
-<div class="vd-sheet">
+<div #shareCard class="vd-sheet">
 
   <!-- Confetti -->
   @for (i of confettiPieces; track i) {
@@ -91,23 +91,3 @@
   </div>
 </div>
 
-<!-- Card nascosta usata da html2canvas per generare l'immagine -->
-<div #shareCard class="vd-share-card">
-  <img src="assets/logo.png" class="vd-sc-logo" alt="Survivor" />
-  <div class="vd-sc-header">
-    <span class="vd-sc-trophy">{{ medalEmoji }}</span>
-    <div>
-      <div class="vd-sc-lega">{{ data.lega.name }}</div>
-      <div class="vd-sc-sub">{{ 'VINCITORI_DIALOG.SHARE_CARD_SUB' | translate }}</div>
-    </div>
-  </div>
-  <div class="vd-sc-list">
-    @for (v of data.vincitori; track v.id) {
-      <div class="vd-sc-row">
-        <span class="vd-sc-crown">👑</span>
-        <span class="vd-sc-name">{{ v.nickname }}</span>
-      </div>
-    }
-  </div>
-  <div class="vd-sc-footer">{{ shareUrl }}</div>
-</div>

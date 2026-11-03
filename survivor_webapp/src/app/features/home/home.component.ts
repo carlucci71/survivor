@@ -36,6 +36,8 @@ import { OnboardingComponent } from '../../shared/components/onboarding/onboardi
 import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 import { ProfiloDialogComponent } from '../../shared/components/info-banner/info-banner.component';
 import { SfidaLampoDialogComponent } from '../../shared/components/sfida-lampo-dialog/sfida-lampo-dialog.component';
+import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
+import { leggiVittorieViste, segnaVittorieViste } from '../../core/utils/vittorie-viste';
 import { LiveScoreButtonComponent } from '../../shared/components/live-score-button/live-score-button.component';
 
 
@@ -169,7 +171,70 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.me = giocatore;
+        this.controllaVittorie();
       },
+    });
+  }
+
+  private vittorieControllate = false;
+
+  /**
+   * Chi ha vinto una lega la vede subito appena entra nell'app: a lega finita non ci sono piu' scelte da fare, la lega
+   * sparisce dalla scheda delle giocate e il vincitore non vedrebbe niente senza aprire a mano l'elenco. Il popup si
+   * mostra una volta sola per lega. Se ci sono piu' vittorie non ancora viste si celebra la piu' recente e le altre
+   * si segnano come viste, per non mostrare una raffica di popup su leghe vecchie.
+   * Solo Survivor: in Campionato il vincitore si decide per punti e la lista in home non li ha.
+   */
+  private controllaVittorie(): void {
+    if (this.vittorieControllate || !this.me || !this.leghe?.length) return;
+    this.vittorieControllate = true;
+    // La celebrazione e' un di piu': qualunque imprevisto qui dentro non deve toccare il resto della home
+    try {
+      this.celebraVittoriaRecente();
+    } catch (e) {
+      console.warn('Controllo vittorie non riuscito', e);
+    }
+  }
+
+  private celebraVittoriaRecente(): void {
+    const userId = this.currentUser?.id;
+    const viste = leggiVittorieViste(userId);
+    const vinte = this.leghe
+      .filter(l => this.isTerminata(l)
+        && (l.modalita || 'SURVIVOR') !== 'CAMPIONATO'
+        && this.getMioStatoInLega(l) === 'ATTIVO'
+        && !viste.includes(l.id))
+      .sort((a, b) => b.id - a.id);
+    if (vinte.length === 0) return;
+    // le piu' vecchie si considerano gia' viste; la piu' recente si segna solo se il popup si apre davvero
+    segnaVittorieViste(userId, vinte.slice(1).map(l => l.id));
+    this.legaService.getLegaById(vinte[0].id).subscribe({
+      next: lega => this.apriVincitori(lega),
+      error: () => { /* nessun popup: al prossimo avvio si riprova */ }
+    });
+  }
+
+  private apriVincitori(lega: Lega): void {
+    const nonEliminato = (g: Giocatore): boolean => {
+      const s = g.statiPerLega?.[lega.id] as any;
+      const valore = typeof s === 'string' ? s : s?.value;
+      return valore !== StatoGiocatore.ELIMINATO.value;
+    };
+    const vincitori = lega.giocatori?.filter(nonEliminato) ?? [];
+    // Una lega con un solo iscritto non e' una vittoria; chi non e' tra i vincitori non vede la celebrazione
+    // Il giocatore corrente si riconosce come nella lega: dall'id utente, con l'id giocatore come ripiego
+    const sonoIo = (g: Giocatore): boolean =>
+      (!!this.currentUser && g.user?.id === this.currentUser.id) || (!!this.me && g.id === this.me.id);
+    if ((lega.giocatori?.length ?? 0) < 2 || !vincitori.some(sonoIo)) return;
+    segnaVittorieViste(this.currentUser?.id, [lega.id]);
+    this.dialog.open(VincitoriDialogComponent, {
+      width: '92vw',
+      maxWidth: '440px',
+      maxHeight: '92dvh',
+      panelClass: 'vincitori-dialog-panel',
+      autoFocus: false,
+      disableClose: false,
+      data: { lega, vincitori }
     });
   }
 
@@ -281,6 +346,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     return typeof stato === 'string' ? stato : (stato.value ?? null);
   }
 
+  /**
+   * Badge dello stato del giocatore nella scheda edizione. A lega in corso: "In gara" o "Eliminato". A lega
+   * terminata: "Vincitore" se a fine lega risulta ancora attivo (in Survivor e' il sopravvissuto, anche ex aequo),
+   * "Eliminato" altrimenti. In Campionato nessuno viene eliminato e il vincitore si decide per punti, che la
+   * lista non porta: a lega finita non si mostra niente invece di un "In gara" falso.
+   */
+  getBadgeStato(edizione: Lega): 'attivo' | 'vincitore' | 'eliminato' | null {
+    const stato = this.getMioStatoInLega(edizione);
+    if (!stato) return null;
+    if (this.isTerminata(edizione)) {
+      if (edizione.modalita === 'CAMPIONATO') return null;
+      return stato === 'ATTIVO' ? 'vincitore' : 'eliminato';
+    }
+    return stato === 'ATTIVO' ? 'attivo' : 'eliminato';
+  }
+
   notExistsNuovaEdizione(lega: Lega): boolean {
     if (!lega) {
       return true;
@@ -327,6 +408,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.activeTab = preferredTab;
         }
         this.isLoadingLeghe = false;
+        this.controllaVittorie();
       },
       error: (error) => {
         console.error('Errore nel caricamento delle leghe:', error);

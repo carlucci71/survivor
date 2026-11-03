@@ -56,9 +56,13 @@ export class VincitoriDialogComponent {
     this.dialogRef.close();
   }
 
+  get subtitleKey(): string {
+    return this.data.vincitori.length === 1 ? 'VINCITORI_DIALOG.SUBTITLE_ONE' : 'VINCITORI_DIALOG.SUBTITLE_MANY';
+  }
+
   private buildShareText(): string {
     const names = this.data.vincitori.map(v => v.nickname).join(', ');
-    const subtitleKey = this.data.vincitori.length === 1 ? 'VINCITORI_DIALOG.SUBTITLE_ONE' : 'VINCITORI_DIALOG.SUBTITLE_MANY';
+    const subtitleKey = this.subtitleKey;
     return [
       `🏆 ${this.data.lega.name}`,
       `👑 ${names}`,
@@ -73,8 +77,36 @@ export class VincitoriDialogComponent {
     this.sharing = true;
     try {
       const html2canvas = (await import('html2canvas')).default;
+      // Si cattura il popup cosi' com'e' (medaglia, nome, frase), senza pulsanti e senza coriandoli/scintille.
       const el = this.shareCardRef.nativeElement;
-      const canvas = await html2canvas(el, { backgroundColor: '#0e1435', scale: 2, useCORS: true, logging: false });
+      const canvas = await html2canvas(el, {
+        backgroundColor: '#0e1435',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        ignoreElements: (node: Element) =>
+          node.classList?.contains('vd-actions') ||
+          node.classList?.contains('vd-cf') ||
+          node.classList?.contains('vd-spark'),
+        // html2canvas non esegue le animazioni (nome e frase partono da opacita' 0, la medaglia da una rotazione) e non
+        // supporta il testo con sfondo a gradiente (background-clip: text): nella copia si mostra tutto nello stato
+        // finale e il nome prende lo stesso oro in tinta unita.
+        onclone: (doc: Document) => {
+          const stile = doc.createElement('style');
+          stile.textContent = `
+            .vd-sheet, .vd-sheet *, .vd-sheet *::before, .vd-sheet *::after { animation: none !important; }
+            .vd-sheet .vd-medal, .vd-sheet .vd-winner, .vd-sheet .vd-phrase { opacity: 1 !important; transform: none !important; }
+            .vd-sheet .vd-medal::after { display: none !important; }
+            .vd-sheet .vd-winner-name {
+              background: none !important;
+              -webkit-background-clip: border-box !important;
+              background-clip: border-box !important;
+              -webkit-text-fill-color: #F6E27A !important;
+              color: #F6E27A !important;
+            }`;
+          doc.head.appendChild(stile);
+        }
+      });
       const dataUrl = canvas.toDataURL('image/png');
       const blob = await (await fetch(dataUrl)).blob();
       const file = new File([blob], 'survivor-vincitori.png', { type: 'image/png' });
