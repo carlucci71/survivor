@@ -40,6 +40,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { GiocataService } from '../../core/services/giocata.service';
 import { ReactionService } from '../../core/services/reaction.service';
+import { isVittoriaVista, segnaVittorieViste } from '../../core/utils/vittorie-viste';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CampionatoService } from '../../core/services/campionato.service';
@@ -368,6 +369,11 @@ export class LegaDettaglioComponent implements OnDestroy {
 
     // Celebrazione solo per chi ha vinto: chi ha perso non deve vedere una medaglia che non è sua
     if (!vincitori.some(g => this.isCurrentUserGiocatore(g))) return;
+
+    // Una volta sola per lega (condivisa con la home, che la mostra appena si apre l'app)
+    const userId = this.authService.getCurrentUser()?.id;
+    if (isVittoriaVista(userId, this.lega!.id)) return;
+    segnaVittorieViste(userId, [this.lega!.id]);
 
     this.dialog.open(VincitoriDialogComponent, {
       width: '92vw',
