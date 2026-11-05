@@ -136,6 +136,14 @@ public class ScheduledPushNotifications {
                             lega.getId(), giornataDaGiocare, lega.getGiornataIniziale());
                     continue;
                 }
+                // L'avviso riguarda la giornata che sta per iniziare nel campionato: una lega la cui prossima
+                // giornata e' un'altra (es. parte dalla 12 mentre ora si apre l'11) non va avvisata con l'orario
+                // di una giornata che non e' la sua. Ricevera' il suo promemoria quando il campionato arriva alla sua.
+                if (giornataDaGiocare != campionatoDTO.getGiornataDaGiocare()) {
+                    log.debug("Lega {} ('{}'): prossima giornata {} diversa da quella in arrivo nel campionato {}, skip notifica",
+                            lega.getId(), lega.getName(), giornataDaGiocare, campionatoDTO.getGiornataDaGiocare());
+                    continue;
+                }
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
                     if (giocatore.getStatiPerLega().get(lega.getId()) == Enumeratori.StatoGiocatore.ATTIVO
                             && !ObjectUtils.isEmpty(giocatore.getUser())) {
@@ -241,6 +249,14 @@ public class ScheduledPushNotifications {
                 if (giornataRelativa <= 0) {
                     log.warn("giornataRelativa <= 0 per lega {} (giornataDaGiocare={}, giornataIniziale={}), skip",
                             lega.getId(), giornataDaGiocare, lega.getGiornataIniziale());
+                    continue;
+                }
+                // L'avviso riguarda la giornata che sta per iniziare nel campionato: una lega la cui prossima
+                // giornata e' un'altra (es. parte dalla 12 mentre ora si apre l'11) non va avvisata con l'orario
+                // di una giornata che non e' la sua. Ricevera' il suo promemoria quando il campionato arriva alla sua.
+                if (giornataDaGiocare != campionatoDTO.getGiornataDaGiocare()) {
+                    log.debug("Lega {} ('{}'): prossima giornata {} diversa da quella in arrivo nel campionato {}, skip notifica",
+                            lega.getId(), lega.getName(), giornataDaGiocare, campionatoDTO.getGiornataDaGiocare());
                     continue;
                 }
                 for (GiocatoreDTO giocatore : lega.getGiocatori()) {
