@@ -19,6 +19,13 @@
         <span class="phd-stat-value">{{ getWins() }}</span>
         <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_WINS' | translate }}</span>
       </div>
+      @if(getDraws() > 0) {
+        <div class="phd-stat-sep"></div>
+        <div class="phd-stat phd-stat--draw">
+          <span class="phd-stat-value">{{ getDraws() }}</span>
+          <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_DRAWS' | translate }}</span>
+        </div>
+      }
       <div class="phd-stat-sep"></div>
       <div class="phd-stat phd-stat--loss">
         <span class="phd-stat-value">{{ getLosses() }}</span>
@@ -54,7 +61,8 @@
           @let giocata = getGiocataForRound(giornata);
           <div class="phd-card"
                [class.phd-card--ok]="giocata?.esito === 'OK'"
-               [class.phd-card--ko]="giocata?.esito === 'KO' || giocata?.esito === 'PAREGGIO'"
+               [class.phd-card--ko]="isLossCard(giocata)"
+               [class.phd-card--draw]="isDrawCard(giocata)"
                [class.phd-card--empty]="!giocata?.squadraSigla">
 
             <!-- Numero giornata -->
@@ -88,8 +96,9 @@
             @if(giocata?.esito) {
               <div class="phd-result"
                    [class.phd-result--ok]="giocata.esito === 'OK'"
-                   [class.phd-result--ko]="giocata.esito === 'KO' || giocata.esito === 'PAREGGIO'">
-                <mat-icon>{{ giocata.esito === 'OK' ? 'check_circle' : 'cancel' }}</mat-icon>
+                   [class.phd-result--ko]="isLossCard(giocata)"
+                   [class.phd-result--draw]="isDrawCard(giocata)">
+                <mat-icon>{{ giocata.esito === 'OK' ? 'check_circle' : (isDrawCard(giocata) ? 'remove_circle' : 'cancel') }}</mat-icon>
               </div>
             }
           </div>
@@ -107,6 +116,11 @@
       <span class="phd-legend-item">
         <mat-icon class="phd-legend-ko">cancel</mat-icon>{{ 'LEAGUE.LEGEND_LOST' | translate }}
       </span>
+      @if(getDraws() > 0) {
+        <span class="phd-legend-item">
+          <mat-icon class="phd-legend-draw">remove_circle</mat-icon>{{ 'LEAGUE.LEGEND_DRAW' | translate }}
+        </span>
+      }
       <span class="phd-legend-item">
         <mat-icon class="phd-legend-forced">edit</mat-icon>{{ 'LEAGUE.LEGEND_FORCED' | translate }}
       </span>

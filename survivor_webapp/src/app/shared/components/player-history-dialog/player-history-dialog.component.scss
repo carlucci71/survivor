@@ -150,6 +150,7 @@
 
 .phd-stat--win .phd-stat-value { color: #2e7d32; }
 .phd-stat--loss .phd-stat-value { color: #c62828; }
+.phd-stat--draw .phd-stat-value { color: #b7791f; }
 .phd-stat--pending .phd-stat-value { color: #e65100; }
 .phd-stat--rate .phd-stat-value { color: #0A3D91; }
 
@@ -245,6 +246,11 @@
   &.phd-card--ko {
     border-color: #ef5350;
     background: linear-gradient(160deg, #ffffff 0%, #fdf3f3 100%);
+  }
+
+  &.phd-card--draw {
+    border-color: #f9a825;
+    background: linear-gradient(160deg, #ffffff 0%, #fffbea 100%);
   }
 
   &.phd-card--empty {
@@ -401,6 +407,7 @@
 
   &.phd-result--ok mat-icon { color: #4caf50; }
   &.phd-result--ko mat-icon { color: #ef5350; }
+  &.phd-result--draw mat-icon { color: #f9a825; }
 
   @media (max-width: 767px) {
     mat-icon {
@@ -458,6 +465,7 @@
 
 .phd-legend-ok { color: #4caf50 !important; }
 .phd-legend-ko { color: #ef5350 !important; }
+.phd-legend-draw { color: #f9a825 !important; }
 .phd-legend-forced { color: #e65100 !important; }
 
 .phd-close-action {
