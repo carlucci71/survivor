@@ -3026,6 +3026,20 @@ export class LegaDettaglioComponent implements OnDestroy {
    * - pubblica è false (esplicitamente privata)
    * - E la giornata non è ancora iniziata (giornata > giornataCorrente)
    */
+  /**
+   * Pareggio in Survivor: elimina solo se il giocatore non aveva piu' vite, cioe' se risulta ELIMINATO e quella e' la
+   * sua ultima giocata con esito. Se e' ancora in gara, o ha continuato a giocare dopo, il pareggio gli e' costato una
+   * vita ma non lo ha eliminato (giallo). In Campionato il pareggio non elimina mai.
+   */
+  isPareggioEliminante(giocatore: Giocatore, giocata: Giocata | null | undefined): boolean {
+    if (!giocata || giocata.esito !== 'PAREGGIO' || !this.lega || this.lega.modalita === 'CAMPIONATO') return false;
+    if (giocatore.statiPerLega?.[this.lega.id]?.value !== StatoGiocatore.ELIMINATO.value) return false;
+    const ultimaGiornata = (giocatore.giocate ?? [])
+      .filter(g => !!g.esito && (g.legaId == null || g.legaId === this.lega!.id))
+      .reduce((max, g) => Math.max(max, g.giornata ?? 0), 0);
+    return (giocata.giornata ?? 0) === ultimaGiornata;
+  }
+
   shouldHideGiocata(giocata: any, giornata: number, giocatore?: any): boolean {
     if (!giocata) return false;
 
@@ -3195,8 +3209,8 @@ export class LegaDettaglioComponent implements OnDestroy {
   /**
    * Restituisce la classe da applicare alla voti-chip per una squadra
    * - voti-chip--ok: esito 'OK'
-   * - voti-chip--ko: esito 'KO' oppure esito 'PAREGGIO' in modalità SURVIVOR
-   * - voti-chip--pareggio: esito 'PAREGGIO' in modalità CAMPIONATO
+   * - voti-chip--ko: esito 'KO' oppure 'PAREGGIO' che ha eliminato un votante (Survivor)
+   * - voti-chip--pareggio: esito 'PAREGGIO' in Campionato, o in Survivor se nessun votante e' stato eliminato
    * - voti-chip--current: ci sono voti ma ancora nessun esito
    */
   getVotiChipClass(sigla: string): string | null {
@@ -3205,18 +3219,24 @@ export class LegaDettaglioComponent implements OnDestroy {
     const isCampionato = this.lega.modalita === 'CAMPIONATO';
     let foundAny = false;
     let esito: string | null = null;
+    let pareggioEliminante = false;
 
     for (const giocatore of this.lega.giocatori ?? []) {
       const giocata = this.getGiocataByGiornataAssoluta(giocatore, giornata);
       if (!giocata || giocata.squadraSigla !== sigla) continue;
       if (this.shouldHideGiocata(giocata, giornata)) continue;
       foundAny = true;
-      if (giocata.esito) { esito = giocata.esito; break; }
+      if (giocata.esito) {
+        esito = giocata.esito;
+        // un pareggio e' rosso se ha eliminato almeno uno di chi l'ha scelto, giallo se tutti continuano
+        if (this.isPareggioEliminante(giocatore, giocata)) pareggioEliminante = true;
+        if (esito !== 'PAREGGIO') break;
+      }
     }
 
     if (esito === 'OK') return 'voti-chip--ok';
     if (esito === 'KO') return 'voti-chip--ko';
-    if (esito === 'PAREGGIO') return isCampionato ? 'voti-chip--pareggio' : 'voti-chip--ko';
+    if (esito === 'PAREGGIO') return (isCampionato || !pareggioEliminante) ? 'voti-chip--pareggio' : 'voti-chip--ko';
     if (foundAny) return 'voti-chip--current';
     return null;
   }

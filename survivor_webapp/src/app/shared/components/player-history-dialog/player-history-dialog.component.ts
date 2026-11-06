@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Giocatore, Lega } from '../../../core/models/interfaces.model';
+import { Giocatore, Lega, StatoGiocatore } from '../../../core/models/interfaces.model';
 
 export interface PlayerHistoryDialogData {
   giocatore: Giocatore;
@@ -192,11 +192,34 @@ export class PlayerHistoryDialogComponent {
     return (this.data.giornataIndices || []).filter(g => this.getGiocataForRound(g)?.esito === 'OK').length;
   }
 
+  /** Solo le scelte sbagliate: il pareggio non e' una sconfitta e ha un conteggio a parte. */
   getLosses(): number {
-    return (this.data.giornataIndices || []).filter(g => {
-      const esito = this.getGiocataForRound(g)?.esito;
-      return esito === 'KO' || esito === 'PAREGGIO';
-    }).length;
+    return (this.data.giornataIndices || []).filter(g => this.getGiocataForRound(g)?.esito === 'KO').length;
+  }
+
+  getDraws(): number {
+    return (this.data.giornataIndices || []).filter(g => this.getGiocataForRound(g)?.esito === 'PAREGGIO').length;
+  }
+
+  /**
+   * Come in tabella: in Survivor un pareggio e' rosso solo se ha eliminato il giocatore (era ELIMINATO e quella e' la
+   * sua ultima giocata con esito); se continua a giocare gli e' costato una vita ed e' giallo. In Campionato e' giallo.
+   */
+  private isPareggioEliminante(giocata: any): boolean {
+    if (!giocata || giocata.esito !== 'PAREGGIO' || this.data.lega?.modalita === 'CAMPIONATO') return false;
+    if (this.data.giocatore.statiPerLega?.[this.data.lega.id]?.value !== StatoGiocatore.ELIMINATO.value) return false;
+    const ultimaGiornata = (this.data.giocatore.giocate ?? [])
+      .filter(g => !!g.esito && (g.legaId == null || g.legaId === this.data.lega.id))
+      .reduce((max, g) => Math.max(max, g.giornata ?? 0), 0);
+    return (giocata.giornata ?? 0) === ultimaGiornata;
+  }
+
+  isDrawCard(giocata: any): boolean {
+    return giocata?.esito === 'PAREGGIO' && !this.isPareggioEliminante(giocata);
+  }
+
+  isLossCard(giocata: any): boolean {
+    return giocata?.esito === 'KO' || this.isPareggioEliminante(giocata);
   }
 
   getPending(): number {
@@ -207,7 +230,7 @@ export class PlayerHistoryDialogComponent {
   }
 
   getTotalWithResult(): number {
-    return this.getWins() + this.getLosses();
+    return this.getWins() + this.getLosses() + this.getDraws();
   }
 
   getWinRate(): number {
