@@ -553,7 +553,7 @@
                           [class.active]="giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value"
                           [class.eliminated]="giocatore.statiPerLega?.[lega.id]?.value === StatoGiocatore.ELIMINATO.value">
                     </span>
-                    @if (lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+                    @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali >= 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                       <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
                         ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
                       </span>
@@ -566,8 +566,8 @@
                     <td class="excel-cell round-cell"
                         [class.current-round]="giornata === lega.giornataCorrente"
                         [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
-                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
+                        [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || isPareggioEliminante(giocatore, getGiocataByGiornataAssoluta(giocatore, giornata))"
+                        [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && !isPareggioEliminante(giocatore, getGiocataByGiornataAssoluta(giocatore, giornata))"
                         [class.cell-post-elim]="isCellPostElim(giocatore, giornata)">
 
                       @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
@@ -855,7 +855,7 @@
               @if (isCampionato() && giocatore.puntiTotali !== undefined) {
                 <span class="punti-totali-badge">{{ giocatore.puntiTotali }} pt</span>
               }
-              @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali > 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
+              @if (lega.modalita !== 'CAMPIONATO' && lega.viteIniziali && lega.viteIniziali >= 1 && giocatore.statiPerLega?.[lega.id]?.value !== StatoGiocatore.ELIMINATO.value) {
                 <span class="vite-badge" [title]="('LEAGUE.LIVES_REMAINING' | translate) + ': ' + (giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali)">
                   ❤️ {{ giocatore.vitePerLega?.[lega.id] ?? lega.viteIniziali }}
                 </span>
@@ -928,8 +928,8 @@
                 @if(getGiocataByGiornataAssoluta(giocatore, giornata)?.squadraSigla) {
                   <div class="team-cell-mobile"
                        [class.cell-ok]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'OK'"
-                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || (getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita !== 'CAMPIONATO')"
-                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && lega.modalita === 'CAMPIONATO'"
+                       [class.cell-ko]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'KO' || isPareggioEliminante(giocatore, getGiocataByGiornataAssoluta(giocatore, giornata))"
+                       [class.cell-pareggio]="getGiocataByGiornataAssoluta(giocatore, giornata)?.esito === 'PAREGGIO' && !isPareggioEliminante(giocatore, getGiocataByGiornataAssoluta(giocatore, giornata))"
                        [class.own-giocata-clickable]="isCurrentUserGiocatore(giocatore) && !shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)"
                        (click)="shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore) ? null : (isCurrentUserGiocatore(giocatore) ? openMatchupPopup(getGiocataByGiornataAssoluta(giocatore, giornata)!, $event) : openReactionPopupClick(giocatore.id + '_' + giornata, getGiocataByGiornataAssoluta(giocatore, giornata), $event))">
                     @if(shouldHideGiocata(getGiocataByGiornataAssoluta(giocatore, giornata), giornata, giocatore)) {
