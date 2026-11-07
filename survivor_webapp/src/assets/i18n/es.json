@@ -982,76 +982,46 @@
         "EMOJI": "💀",
         "TEXT": "Tarde o temprano hay que morir. Nadie es inmortal — ni siquiera tú. Este es el máximo permitido."
       },
-      "6": {
+      "2": {
+        "0": {
+          "EMOJI": "😉",
+          "TEXT": "¿Dos vidas? Alguien lleva un paracaídas de repuesto."
+        },
+        "1": {
+          "EMOJI": "🙂",
+          "TEXT": "Segunda vida: la prudencia nunca sobra."
+        },
+        "2": {
+          "EMOJI": "😏",
+          "TEXT": "Dos vidas. Nunca digas nunca, ¿eh?"
+        }
+      },
+      "3": {
+        "0": {
+          "EMOJI": "😅",
+          "TEXT": "¿Tres vidas? Aquí alguien no se fía mucho de su instinto."
+        },
+        "1": {
+          "EMOJI": "🤨",
+          "TEXT": "Tres vidas: más que una liga, un seguro."
+        },
+        "2": {
+          "EMOJI": "😎",
+          "TEXT": "Tres vidas… así no suelen verse los duros."
+        }
+      },
+      "4": {
         "0": {
           "EMOJI": "😏",
-          "TEXT": "¿Seguro que vales 6 vidas? Pregúntate por qué..."
+          "TEXT": "¿Cuatro vidas? Jugar para ganar es otra cosa, ¿eh?"
         },
         "1": {
-          "EMOJI": "🤔",
-          "TEXT": "6 vidas. ¿Optimismo o cero autoconocimiento?"
+          "EMOJI": "🙃",
+          "TEXT": "Con cuatro vidas puedes fallar tres veces y seguir sonriendo."
         },
         "2": {
-          "EMOJI": "👀",
-          "TEXT": "Los demás jugadores ya te están odiando un poco."
-        },
-        "3": {
-          "EMOJI": "🎭",
-          "TEXT": "Seis errores gratis. Una elección... artística."
-        }
-      },
-      "7": {
-        "0": {
-          "EMOJI": "🐱",
-          "TEXT": "Los gatos tienen 9. Te estás acercando peligrosamente."
-        },
-        "1": {
-          "EMOJI": "🦸",
-          "TEXT": "Superhéroe confirmado. Solo falta la capa."
-        },
-        "2": {
-          "EMOJI": "🎮",
-          "TEXT": "Dificultad: «fácil». Al menos confiésaselo a tus amigos."
-        },
-        "3": {
-          "EMOJI": "💅",
-          "TEXT": "7 vidas. Venga, ya ni siquiera es un reto."
-        }
-      },
-      "8": {
-        "0": {
-          "EMOJI": "💀",
-          "TEXT": "¿8 vidas? La muerte te está evitando por piedad."
-        },
-        "1": {
-          "EMOJI": "😰",
-          "TEXT": "Ocho vidas. Prácticamente le tienes miedo al propio juego."
-        },
-        "2": {
-          "EMOJI": "🙈",
-          "TEXT": "Los rivales ya han dejado de tener esperanza. Gracias."
-        },
-        "3": {
-          "EMOJI": "🤦",
-          "TEXT": "Esto no es Survivor, es un paseo por el parque."
-        }
-      },
-      "9": {
-        "0": {
-          "EMOJI": "😱",
-          "TEXT": "NUEVE VIDAS. Como un gato, pero con menos dignidad."
-        },
-        "1": {
           "EMOJI": "🐈",
-          "TEXT": "Ya eres oficialmente un gato. Al menos maúlla."
-        },
-        "2": {
-          "EMOJI": "🚨",
-          "TEXT": "¿Estás jugando o quieres ganar por agotamiento de los rivales?"
-        },
-        "3": {
-          "EMOJI": "⚠️",
-          "TEXT": "El fair play te está mirando con profunda decepción."
+          "TEXT": "Cuatro vidas: ya eres un gato con licencia para equivocarte."
         }
       }
     }
