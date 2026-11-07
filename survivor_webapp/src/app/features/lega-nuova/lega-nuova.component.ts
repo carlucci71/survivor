@@ -83,16 +83,20 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   viteIniziali: number = 1;
   viteWarn: { emoji: string; text: string } | null = null;
 
-  private readonly viteWarnCounts: Record<number, number> = { 6: 4, 7: 4, 8: 4, 9: 4 };
+  /** Numero di varianti del messaggio per ogni livello (da 2 a 4); il 5 e' il massimo e ha un solo messaggio. */
+  private readonly viteWarnCounts: Record<number, number> = { 2: 3, 3: 3, 4: 3 };
+
+  /** Massimo di vite alla creazione (il leader puo' comunque cambiarle dopo da "gestisci vite"). */
+  private readonly viteMax = 5;
 
   get isViteMax(): boolean {
-    return this.viteIniziali >= 10;
+    return this.viteIniziali >= this.viteMax;
   }
 
   private updateViteWarn(): void {
     const level = this.viteIniziali;
-    if (level <= 5) { this.viteWarn = null; return; }
-    if (level >= 10) {
+    if (level <= 1) { this.viteWarn = null; return; }
+    if (level >= this.viteMax) {
       this.viteWarn = {
         emoji: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.EMOJI'),
         text: this.translate.instant('CREATE_LEAGUE.LIVES_WARN.MAX.TEXT'),
@@ -108,7 +112,7 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
   }
 
   incViteIniziali(): void {
-    if (this.viteIniziali >= 10) return;
+    if (this.viteIniziali >= this.viteMax) return;
     this.viteIniziali++;
     this.updateViteWarn();
   }

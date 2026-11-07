@@ -982,76 +982,46 @@
         "EMOJI": "💀",
         "TEXT": "Prima o poi bisogna morire. Nessuno è immortale — neanche tu. Questo è il massimo consentito."
       },
-      "6": {
+      "2": {
+        "0": {
+          "EMOJI": "😉",
+          "TEXT": "Due vite? Qualcuno si tiene un paracadute di riserva."
+        },
+        "1": {
+          "EMOJI": "🙂",
+          "TEXT": "Seconda vita: la prudenza non è mai troppa."
+        },
+        "2": {
+          "EMOJI": "😏",
+          "TEXT": "Due vite. Mai dire mai, eh?"
+        }
+      },
+      "3": {
+        "0": {
+          "EMOJI": "😅",
+          "TEXT": "Tre vite? Qui qualcuno non si fida molto del proprio intuito."
+        },
+        "1": {
+          "EMOJI": "🤨",
+          "TEXT": "Tre vite: più che una lega, un'assicurazione."
+        },
+        "2": {
+          "EMOJI": "😎",
+          "TEXT": "Tre vite… i duri non si vedono mica così."
+        }
+      },
+      "4": {
         "0": {
           "EMOJI": "😏",
-          "TEXT": "Sei sicuro di valere 6 vite? Chiediti perché..."
+          "TEXT": "Quattro vite? Giocare per vincere è un'altra cosa, eh."
         },
         "1": {
-          "EMOJI": "🤔",
-          "TEXT": "6 vite. Ottimismo o autoconsapevolezza zero?"
+          "EMOJI": "🙃",
+          "TEXT": "Con quattro vite si può sbagliare tre volte e restare lì a sorridere."
         },
         "2": {
-          "EMOJI": "👀",
-          "TEXT": "Gli altri giocatori ti stanno già un po' odiando."
-        },
-        "3": {
-          "EMOJI": "🎭",
-          "TEXT": "Sei errori gratuiti. Una scelta... artistica."
-        }
-      },
-      "7": {
-        "0": {
-          "EMOJI": "🐱",
-          "TEXT": "I gatti ne hanno 9. Stai pericolosamente avanzando."
-        },
-        "1": {
-          "EMOJI": "🦸",
-          "TEXT": "Supereroe confermato. Manca solo il mantello."
-        },
-        "2": {
-          "EMOJI": "🎮",
-          "TEXT": "Difficoltà: «bambino». Almeno confessalo agli amici."
-        },
-        "3": {
-          "EMOJI": "💅",
-          "TEXT": "7 vite. Dai, non è neanche più una sfida."
-        }
-      },
-      "8": {
-        "0": {
-          "EMOJI": "💀",
-          "TEXT": "8 vite? La morte ti sta evitando per pietà."
-        },
-        "1": {
-          "EMOJI": "😰",
-          "TEXT": "Otto vite. Praticamente hai paura del gioco stesso."
-        },
-        "2": {
-          "EMOJI": "🙈",
-          "TEXT": "Gli avversari hanno già smesso di sperare. Grazie."
-        },
-        "3": {
-          "EMOJI": "🤦",
-          "TEXT": "Questo non è Survivor, è una passeggiata nel parco."
-        }
-      },
-      "9": {
-        "0": {
-          "EMOJI": "😱",
-          "TEXT": "NOVE VITE. Come un gatto, ma meno dignitoso."
-        },
-        "1": {
           "EMOJI": "🐈",
-          "TEXT": "Sei ufficialmente un gatto. Miagola almeno."
-        },
-        "2": {
-          "EMOJI": "🚨",
-          "TEXT": "Stai giocando o vuoi vincere per sfinimento degli avversari?"
-        },
-        "3": {
-          "EMOJI": "⚠️",
-          "TEXT": "Il fair play ti sta guardando con profonda delusione."
+          "TEXT": "Quattro vite: ormai sei un gatto con la licenza di sbagliare."
         }
       }
     }
