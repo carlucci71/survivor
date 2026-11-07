@@ -52,11 +52,14 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
 
       <div class="sl-body" *ngIf="step === 'form'">
         <label class="sl-field-label">{{ 'DUEL.NAME_LABEL' | translate }}</label>
-        <input type="text" class="sl-name-input" [(ngModel)]="name" [placeholder]="'DUEL.NAME_PLACEHOLDER' | translate" maxlength="60">
+        <div class="sl-input-wrap">
+          <mat-icon class="sl-input-icon" aria-hidden="true">edit</mat-icon>
+          <input type="text" class="sl-name-input" [(ngModel)]="name" [placeholder]="'DUEL.NAME_PLACEHOLDER' | translate" maxlength="60">
+        </div>
 
         <label class="sl-field-label">{{ 'DUEL.SPORT_LABEL' | translate }}</label>
         <div class="sl-sport-row" #sportRow>
-          <span class="sl-thumb sl-thumb--round" aria-hidden="true"
+          <span class="sl-thumb sl-thumb--seg" aria-hidden="true"
                 [class.sl-thumb--on]="sportThumb.visible" [class.sl-thumb--anim]="sportThumb.anim"
                 [style.width.px]="sportThumb.w" [style.height.px]="sportThumb.h"
                 [style.transform]="'translate(' + sportThumb.x + 'px,' + sportThumb.y + 'px)'"></span>
@@ -65,12 +68,13 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
                   [attr.aria-label]="('SPORTS.' + sport.id) | translate"
                   (click)="selectSport(sport.id)">
             <span class="sl-sport-emoji" aria-hidden="true">{{ getSportEmoji(sport.id) }}</span>
+            <span class="sl-sport-name">{{ ('SPORTS.' + sport.id) | translate }}</span>
           </button>
         </div>
 
         <ng-container *ngIf="sportSel">
           <label class="sl-field-label">{{ 'DUEL.CAMPIONATO_LABEL' | translate }}</label>
-          <div class="sl-camp-row" #campRow>
+          <div class="sl-camp-row" #campRow [style.min-height.px]="campMinH || null">
             <span class="sl-thumb" aria-hidden="true" *ngIf="campionatiDisponibili.length"
                   [class.sl-thumb--on]="campThumb.visible" [class.sl-thumb--anim]="campThumb.anim"
                   [style.width.px]="campThumb.w" [style.height.px]="campThumb.h"
@@ -127,7 +131,10 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
       position: relative;
       display: flex;
       flex-direction: column;
-      background: var(--bg-card, #fff);
+      /* Niente sfondo sul contenitore: ogni sezione (testata, corpo) dipinge il proprio, gia' arrotondato.
+         Con uno sfondo pieno qui, se il clip arrotondato salta (compositing) i quattro angoli restano
+         quadrati e il bianco si vede dietro il corpo. */
+      background: transparent;
       border-radius: 24px;
       overflow: hidden;
       /* overflow:hidden a volte non arrotonda l'angolo in basso se un discendente animato
@@ -138,7 +145,7 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
       width: 100%;
       font-family: 'Poppins', sans-serif;
       text-align: center;
-      box-shadow: 0 24px 60px rgba(10, 61, 145, 0.28);
+      box-shadow: 0 30px 70px rgba(10, 61, 145, 0.34), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
     }
 
     /* ─── Bolle fluttuanti ─── */
@@ -182,7 +189,9 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
       position: relative;
       z-index: 1;
       padding: 28px 24px 24px;
-      background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+      background:
+        radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0) 55%),
+        linear-gradient(135deg, var(--primary-color, #4FC3F7), var(--primary-dark, #0A3D91));
       color: #fff;
       overflow: hidden;
       border-radius: 24px 24px 0 0;
@@ -213,64 +222,97 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     .sl-icon-wrap {
       position: relative;
       z-index: 1;
-      width: 64px; height: 64px;
-      margin: 0 auto 10px;
+      width: 68px; height: 68px;
+      margin: 0 auto 14px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      border: 1.5px solid rgba(255,255,255,0.45);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15), inset 0 0 18px rgba(255,255,255,0.25);
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.42), rgba(255,255,255,0.12));
+      border: 1.5px solid rgba(255,255,255,0.55);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.18), inset 0 0 18px rgba(255,255,255,0.25);
       display: flex; align-items: center; justify-content: center;
       animation: sl-glow 3s ease-in-out infinite;
     }
-    .sl-emoji { font-size: 1.9rem; line-height: 1; animation: sl-bob 3s ease-in-out infinite; }
+    /* Doppio anello sottile attorno al medaglione (effetto vetro, non tocca l'animazione del bagliore) */
+    .sl-icon-wrap::before, .sl-icon-wrap::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .sl-icon-wrap::before { inset: -7px; border: 1px solid rgba(255,255,255,0.32); }
+    .sl-icon-wrap::after  { inset: -14px; border: 1px solid rgba(255,255,255,0.14); }
+    .sl-emoji { font-size: 2rem; line-height: 1; animation: sl-bob 3s ease-in-out infinite; }
     @keyframes sl-glow {
       0%, 100% { box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 0 0 rgba(255,255,255,0.35), inset 0 0 18px rgba(255,255,255,0.25); }
       50%      { box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 0 10px rgba(255,255,255,0), inset 0 0 18px rgba(255,255,255,0.25); }
     }
     @keyframes sl-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-    .sl-title { position: relative; z-index: 1; font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0 0 2px; letter-spacing: 0.2px; }
-    .sl-subtitle { position: relative; z-index: 1; font-size: 0.82rem; color: rgba(255,255,255,0.88); margin: 0; }
+    .sl-title { position: relative; z-index: 1; font-size: 1.35rem; font-weight: 800; color: #fff; margin: 0 0 4px; letter-spacing: 0.6px; text-shadow: 0 2px 10px rgba(0,0,0,0.22); }
+    .sl-subtitle { position: relative; z-index: 1; font-size: 0.82rem; color: rgba(255,255,255,0.9); margin: 0; letter-spacing: 0.2px; }
 
     .sl-body {
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 20px 20px 22px;
+      gap: 12px;
+      padding: 22px 22px 24px;
       background: var(--bg-card, #fff);
       border-radius: 0 0 24px 24px;
     }
 
+    /* Etichetta di sezione con un filetto che sfuma ai due lati */
     .sl-field-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 0.62rem;
       font-weight: 700;
       color: var(--text-tertiary, #94A3B8);
       text-transform: uppercase;
-      letter-spacing: 0.7px;
-      margin: 2px 0 -2px;
+      letter-spacing: 1px;
+      margin: 4px 0 -2px;
     }
+    .sl-field-label::before, .sl-field-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(148, 163, 184, 0), var(--border-color, #E2E8F0));
+    }
+    .sl-field-label::after { transform: scaleX(-1); }
 
+    .sl-input-wrap { position: relative; }
+    .sl-input-icon {
+      position: absolute;
+      left: 16px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; width: 18px; height: 18px;
+      color: var(--primary-dark, #0A3D91);
+      opacity: 0.55;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+    .sl-input-wrap:focus-within .sl-input-icon { opacity: 1; }
     .sl-name-input {
       width: 100%;
       box-sizing: border-box;
-      padding: 12px 16px;
+      padding: 14px 18px 14px 44px;
       border-radius: 30px;
       border: 1.5px solid var(--border-color, #E5E7EB);
       background: var(--bg-tertiary, #F8F9FA);
+      box-shadow: inset 0 1px 3px rgba(10, 61, 145, 0.06);
       color: var(--text-primary, #1A202C);
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      text-align: center;
+      text-align: left;
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
     .sl-name-input:focus {
-      border-color: #4FC3F7;
+      border-color: var(--primary-color, #4FC3F7);
       background: var(--bg-card, #fff);
-      box-shadow: 0 0 0 3px rgba(79, 195, 247,0.18);
+      box-shadow: 0 0 0 3px rgba(79, 195, 247,0.2), 0 4px 14px rgba(10, 61, 145, 0.08);
     }
 
     /* Pillola che scivola da un'opzione all'altra (come il selettore leghe in home): un solo indicatore
@@ -279,10 +321,10 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     .sl-thumb {
       position: absolute; top: 0; left: 0;
       box-sizing: border-box;
-      border: 1.5px solid #0A3D91;
+      border: 1.5px solid var(--primary-dark, #0A3D91);
       border-radius: 20px;
-      background: linear-gradient(135deg, rgba(79, 195, 247,0.22), rgba(10, 61, 145,0.12));
-      box-shadow: 0 6px 16px rgba(10, 61, 145, 0.2);
+      background: linear-gradient(135deg, rgba(79, 195, 247,0.26), rgba(10, 61, 145,0.12));
+      box-shadow: 0 8px 20px rgba(10, 61, 145, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.5);
       opacity: 0;
       pointer-events: none;
       z-index: 0;
@@ -296,19 +338,45 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
                   opacity 0.2s ease;
     }
 
-    .sl-sport-row { position: relative; display: flex; justify-content: center; gap: 10px; width: fit-content; margin: 0 auto; }
+    /* Selettore a segmenti: pista in rilievo con tre tessere uguali; la pillola bianca scivola sotto la tessera attiva */
+    .sl-sport-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px;
+      background: var(--bg-tertiary, #F1F5F9);
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 20px;
+      box-shadow: inset 0 1px 3px rgba(10, 61, 145, 0.08);
+    }
     .sl-sport-chip {
       position: relative; z-index: 1;
-      width: 52px; height: 52px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border-color, #E2E8F0);
+      height: 64px;
+      border-radius: 16px;
+      border: none;
       background: transparent;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
       cursor: pointer;
-      transition: border-color 0.2s ease;
+      padding: 0;
     }
-    .sl-sport-chip:hover:not(.sl-sport-chip--active) { border-color: rgba(79, 195, 247, 0.7); }
-    .sl-sport-chip--active { border-color: transparent; }
+    .sl-sport-name {
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: var(--text-secondary, #6B7280);
+      letter-spacing: 0.2px;
+      transition: color 0.2s ease;
+    }
+    .sl-sport-chip:hover .sl-sport-name { color: var(--primary-dark, #0A3D91); }
+    .sl-sport-chip--active .sl-sport-name { color: var(--primary-dark, #0A3D91); font-weight: 700; }
+    .sl-thumb--seg {
+      border: none;
+      border-radius: 16px;
+      background: var(--bg-card, #fff);
+      box-shadow: 0 6px 16px rgba(10, 61, 145, 0.16), 0 0 0 1.5px rgba(79, 195, 247, 0.55);
+    }
     /* Emoji: da inattiva un filo spenta, da attiva piena e "gonfia" con un rimbalzo */
     .sl-sport-emoji {
       display: inline-block;
@@ -321,10 +389,10 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     .sl-sport-chip:hover .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.1); }
     .sl-sport-chip--active .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.18); }
 
-    .sl-camp-row { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .sl-camp-row { position: relative; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 7px; }
     .sl-camp-chip {
       position: relative; z-index: 1;
-      padding: 8px 15px;
+      padding: 9px 16px;
       border-radius: 20px;
       border: 1.5px solid var(--border-color, #E2E8F0);
       background: transparent;
@@ -336,7 +404,7 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
       transition: color 0.2s ease, border-color 0.2s ease;
     }
     .sl-camp-chip:hover:not(:disabled):not(.sl-camp-chip--active) { border-color: rgba(79, 195, 247, 0.7); color: #0A3D91; }
-    .sl-camp-chip--active { border-color: transparent; color: #0A3D91; }
+    .sl-camp-chip--active { border-color: transparent; color: var(--primary-dark, #0A3D91); }
     .sl-camp-chip--disabled { opacity: 0.45; cursor: not-allowed; }
     .sl-camp-loading { color: var(--text-tertiary, #9CA3AF); font-size: 0.85rem; padding: 6px 0; }
 
@@ -345,22 +413,30 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     .sl-submit {
       position: relative;
       overflow: hidden;
-      margin-top: 8px;
+      margin-top: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 14px 16px;
+      gap: 10px;
+      padding: 15px 18px;
       border-radius: 30px;
       border: none;
-      background: linear-gradient(135deg, #4FC3F7, #0A3D91);
+      background: linear-gradient(135deg, var(--primary-color, #4FC3F7), var(--primary-dark, #0A3D91));
       color: #fff;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
+      letter-spacing: 0.3px;
       font-family: inherit;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(10, 61, 145,0.35);
+      box-shadow: 0 10px 24px rgba(10, 61, 145, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       transition: all 0.18s ease;
+
+      mat-icon {
+        font-size: 18px; width: 22px; height: 22px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(255, 255, 255, 0.22);
+        border-radius: 50%;
+      }
 
       &::before {
         content: '';
@@ -485,7 +561,10 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
       .sl-hero { padding: 24px 18px 20px; }
       .sl-icon-wrap { width: 56px; height: 56px; }
       .sl-emoji { font-size: 1.7rem; }
-      .sl-body { padding: 16px 14px 18px; }
+      .sl-body { padding: 18px 16px 20px; }
+      .sl-sport-chip { height: 58px; }
+      .sl-camp-chip { padding: 8px 14px; }
+      .sl-title { font-size: 1.25rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -506,6 +585,11 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
   errorMessage: string | null = null;
   legaCreataId: number | null = null;
   copied = false;
+
+  /** Campionati gia' scaricati per sport: cambiando sport l'elenco compare subito, senza caricamento. */
+  private campionatiPerSport = new Map<string, Campionato[]>();
+  /** Altezza massima raggiunta dalla riga dei campionati: riservata per non far saltare il popup tra uno sport e l'altro. */
+  campMinH = 0;
 
   sportThumb: Thumb = { ...THUMB_VUOTO };
   campThumb: Thumb = { ...THUMB_VUOTO };
@@ -531,6 +615,8 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
       next: (sport) => {
         this.sportDisponibili = sport;
         if (sport.length) this.selectSport(sport[0].id);
+        // Gli altri sport si scaricano subito in sottofondo, cosi' il primo cambio e' gia' istantaneo
+        sport.slice(1).forEach((s) => this.caricaCampionati(s.id, false));
       },
       error: () => {},
     });
@@ -548,6 +634,8 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   @HostListener('window:resize')
   onResize(): void {
+    // Con una larghezza diversa i chip vanno a capo in modo diverso: l'altezza riservata si ricalcola
+    this.campMinH = 0;
     this.scheduleThumbs();
   }
 
@@ -558,6 +646,9 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
       // Prima si allinea il DOM (chip appena arrivati dal backend + classe "attivo"), poi si misura:
       // se la misura capitasse prima del render la pillola non troverebbe il chip e resterebbe invisibile
       this.cdr.detectChanges();
+      // Si ricorda l'altezza piu' alta mai occupata dai campionati: non si restringe cambiando sport
+      const hCamp = this.campRow?.nativeElement.offsetHeight ?? 0;
+      if (hCamp > this.campMinH) this.campMinH = hCamp;
       this.sportThumb = this.placeThumb(this.sportRow, '.sl-sport-chip--active', this.sportThumb);
       this.campThumb = this.placeThumb(this.campRow, '.sl-camp-chip--active', this.campThumb);
       this.cdr.detectChanges();
@@ -578,22 +669,38 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
   selectSport(id: string): void {
     this.sportSel = id;
     this.campionatoSel = null;
-    this.campionatiDisponibili = [];
     // Nuova lista di campionati: la pillola riparte dal primo posizionamento, senza volare dalla vecchia
     this.campThumb = { ...THUMB_VUOTO };
+    const inCache = this.campionatiPerSport.get(id);
+    if (inCache) {
+      // Gia' scaricati: nessun caricamento, l'elenco cambia di colpo e il popup non si muove
+      this.applicaCampionati(inCache);
+      return;
+    }
+    this.campionatiDisponibili = [];
     this.scheduleThumbs();
+    this.caricaCampionati(id, true);
+  }
+
+  private caricaCampionati(id: string, applica: boolean): void {
     this.campionatoService.getCampionatoBySport(id).subscribe({
       next: (campionati) => {
         // I Mondiali sono un'edizione speciale legata a un evento occasionale, non ha senso
         // proporli come opzione per un duello lampo "sempre disponibile".
-        this.campionatiDisponibili = campionati.filter((c) => c.id !== 'MONDIALI_2026');
-        // Pre-seleziona il primo disponibile: zero tap richiesti per procedere
-        const primoDisponibile = this.campionatiDisponibili.find((c) => this.isDisponibile(c));
-        if (primoDisponibile) this.campionatoSel = primoDisponibile;
-        this.scheduleThumbs();
+        const lista = campionati.filter((c) => c.id !== 'MONDIALI_2026');
+        this.campionatiPerSport.set(id, lista);
+        if (applica && this.sportSel === id) this.applicaCampionati(lista);
       },
       error: () => {},
     });
+  }
+
+  private applicaCampionati(lista: Campionato[]): void {
+    this.campionatiDisponibili = lista;
+    // Pre-seleziona il primo disponibile: zero tap richiesti per procedere
+    const primoDisponibile = lista.find((c) => this.isDisponibile(c));
+    this.campionatoSel = primoDisponibile ?? null;
+    this.scheduleThumbs();
   }
 
   isDisponibile(c: Campionato): boolean {
