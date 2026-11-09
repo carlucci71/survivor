@@ -161,7 +161,7 @@ export class RecapGiornataComponent implements OnInit, OnDestroy {
   /** True se c'è un sistema di vite attivo (viteCorrente presente e lega è survivor) */
   get hasVite(): boolean {
     if (this.isCampionato) return false;
-    return this.recap?.picks.some(p => p.viteCorrente != null && p.viteCorrente > 1) ?? false;
+    return this.recap?.picks.some(p => p.viteCorrente != null && p.viteCorrente >= 1) ?? false;
   }
 
   get nonVotanti(): RecapPickEntry[] {
