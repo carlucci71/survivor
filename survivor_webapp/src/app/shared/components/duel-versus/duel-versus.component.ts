@@ -28,7 +28,7 @@ interface DuelSide {
         <div class="dv-status" [class.dv-status--out]="p.out">
           <span class="dv-dot"></span>
           {{ (p.out ? 'DUEL.OUT' : 'LEAGUE.IN_GAME') | translate }}
-          <span class="dv-lives" *ngIf="p.vite !== null && !p.out">❤️ {{ p.vite }}</span>
+          <span class="dv-lives" *ngIf="p.vite !== null && p.vite > 0 && !p.out">❤️ {{ p.vite }}</span>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ interface DuelSide {
         <div class="dv-status" [class.dv-status--out]="p.out">
           <span class="dv-dot"></span>
           {{ (p.out ? 'DUEL.OUT' : 'LEAGUE.IN_GAME') | translate }}
-          <span class="dv-lives" *ngIf="p.vite !== null && !p.out">❤️ {{ p.vite }}</span>
+          <span class="dv-lives" *ngIf="p.vite !== null && p.vite > 0 && !p.out">❤️ {{ p.vite }}</span>
         </div>
       </div>
 
@@ -224,7 +224,7 @@ export class DuelVersusComponent {
   private get sides(): DuelSide[] {
     const list = (this.giocatori ?? []).map((g): DuelSide => {
       const out = g.statiPerLega?.[this.legaId]?.value === StatoGiocatore.ELIMINATO.value;
-      const vite = this.viteIniziali && this.viteIniziali > 1
+      const vite = this.viteIniziali && this.viteIniziali >= 1
         ? (g.vitePerLega?.[this.legaId] ?? this.viteIniziali)
         : null;
       return {
