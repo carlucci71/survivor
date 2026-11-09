@@ -513,7 +513,7 @@ public class LegaService {
                         // ── SURVIVOR: eliminazione con supporto vite ──
                         // Regole:
                         //   OK (vittoria)   → sopravvive, nessuna modifica alle vite
-                        //   PAREGGIO        → consuma 1 vita se disponibile; se 0 vite → eliminato
+                        //   PAREGGIO        → consuma 1 vita se ne ha (anche l'ultima: resta in gara a 0 vite); a 0 vite → eliminato
                         //   KO (sconfitta)  → eliminato immediatamente, indipendentemente dalle vite
                         //   Nessuna pick    → trattata come KO → eliminato immediatamente
                         //   Eccezione NBA: il KO di una scelta effettivamente giocata (non di chi non
@@ -590,7 +590,8 @@ public class LegaService {
                                 } else if (consumaVita(esito, settimanaMultiPartita, pickReale)) {
                                     short viteAttuali = Optional.ofNullable(
                                             giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
-                                    eliminato = (viteAttuali - 1) <= 0;
+                                    // la vita e' un cuscino: si e' eliminati solo se non ne resta nessuna da consumare
+                                    eliminato = viteAttuali <= 0;
                                 } else {
                                     eliminato = true;
                                 }
@@ -599,9 +600,34 @@ public class LegaService {
                             boolean tuttiEliminati = saraEliminato.values().stream().allMatch(Boolean::booleanValue);
 
                             if (tuttiEliminati) {
-                                log.info("calcola lega={}: il turno {} eliminerebbe tutti i {} giocatori ancora attivi, nessuna eliminazione applicata (ex aequo)",
-                                        idLega, nuovaGiornataCalcolata, saraEliminato.size());
-                                legaDTO.setTuttiEliminatiStessoTurno(true);
+                                // Se gli esiti sono diversi (es. uno perde, l'altro pareggia) non e' un vero ex aequo:
+                                // vince chi ha fatto meglio. Ordine: PAREGGIO > KO con vita consumabile (NBA) > KO secco/nessuna pick.
+                                Map<Long, Integer> rango = new HashMap<>();
+                                for (GiocatoreDTO g : legaDTO.getGiocatori()) {
+                                    Enumeratori.EsitoGiocata e = esitoPerGiocatore.get(g.getId());
+                                    if (e == null) continue;
+                                    boolean pr = !pickMancante.contains(g.getId());
+                                    rango.put(g.getId(), e == Enumeratori.EsitoGiocata.PAREGGIO ? 2
+                                            : (consumaVita(e, settimanaMultiPartita, pr) ? 1 : 0));
+                                }
+                                int migliore = rango.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+                                boolean esitiDiversi = rango.values().stream().anyMatch(r -> r < migliore);
+                                if (esitiDiversi) {
+                                    log.info("calcola lega={}: turno {} tutti da eliminare ma con esiti diversi, restano solo i migliori (rango {})",
+                                            idLega, nuovaGiornataCalcolata, migliore);
+                                    for (GiocatoreDTO g : legaDTO.getGiocatori()) {
+                                        Integer r = rango.get(g.getId());
+                                        if (r != null && r < migliore) {
+                                            g.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
+                                        }
+                                    }
+                                    // chi resta (uno o piu') chiude la lega: vincitore unico o ex aequo tra i migliori
+                                    legaDTO.setTuttiEliminatiStessoTurno(true);
+                                } else {
+                                    log.info("calcola lega={}: il turno {} eliminerebbe tutti i {} giocatori ancora attivi, nessuna eliminazione applicata (ex aequo)",
+                                            idLega, nuovaGiornataCalcolata, saraEliminato.size());
+                                    legaDTO.setTuttiEliminatiStessoTurno(true);
+                                }
                             } else {
                                 for (GiocatoreDTO giocatoreDTO : legaDTO.getGiocatori()) {
                                     Enumeratori.EsitoGiocata esito = esitoPerGiocatore.get(giocatoreDTO.getId());
@@ -614,10 +640,12 @@ public class LegaService {
                                     } else if (consumaVita(esito, settimanaMultiPartita, pickReale)) {
                                         Short viteAttuali = Optional.ofNullable(
                                                 giocatoreDTO.getVitePerLega().get(idLega)).orElse((short) 0);
-                                        short nuoveVite = (short) (viteAttuali - 1);
-                                        if (nuoveVite <= 0) {
+                                        if (viteAttuali <= 0) {
+                                            // nessuna vita da consumare: eliminato
                                             giocatoreDTO.getStatiPerLega().put(idLega, Enumeratori.StatoGiocatore.ELIMINATO);
                                         } else {
+                                            // consuma una vita e resta in gara (anche a 0 vite: il colpo successivo elimina)
+                                            short nuoveVite = (short) (viteAttuali - 1);
                                             giocatoreDTO.getVitePerLega().put(idLega, nuoveVite);
                                             Giocatore giocatoreEntity = giocatoreRepository.findById(giocatoreDTO.getId())
                                                     .orElse(null);
@@ -1261,7 +1289,7 @@ public class LegaService {
         giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.LEADER);
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
         if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
-            giocatoreLega.setViteCorrente(legaInsertDTO.getViteIniziali() > 0 ? legaInsertDTO.getViteIniziali() : 1);
+            giocatoreLega.setViteCorrente((short) Math.max(0, legaInsertDTO.getViteIniziali()));
         }
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);
@@ -1369,7 +1397,7 @@ public class LegaService {
             }
             giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
             if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
-                giocatoreLega.setViteCorrente(lega.getViteIniziali() > 0 ? lega.getViteIniziali() : 1);
+                giocatoreLega.setViteCorrente((short) Math.max(0, lega.getViteIniziali()));
             }
             giocatoriLega.add(giocatoreLega);
         }
@@ -1419,7 +1447,7 @@ public class LegaService {
         giocatoreLega.setRuolo(Enumeratori.RuoloGiocatoreLega.GIOCATORE);
         giocatoreLega.setStato(Enumeratori.StatoGiocatore.ATTIVO);
         if (lega.getModalita() == Enumeratori.ModalitaLega.SURVIVOR) {
-            giocatoreLega.setViteCorrente(lega.getViteIniziali() > 0 ? lega.getViteIniziali() : 1);
+            giocatoreLega.setViteCorrente((short) Math.max(0, lega.getViteIniziali()));
         }
         giocatoriLega.add(giocatoreLega);
         lega.setGiocatoreLeghe(giocatoriLega);

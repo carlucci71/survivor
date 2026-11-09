@@ -153,7 +153,7 @@
                   @if (isCampionato && pick.punti != null) {
                     <span class="pick-badge pick-badge--punti" [class.pick-badge--punti-zero]="pick.punti === 0">{{ pick.punti }} pt</span>
                   }
-                  @if (!isCampionato && hasVite && pick.statoDopoGiornata === 'ATTIVO' && pick.viteCorrente != null && pick.viteCorrente > 1) {
+                  @if (!isCampionato && hasVite && pick.statoDopoGiornata === 'ATTIVO' && pick.viteCorrente != null && pick.viteCorrente >= 1) {
                     <span class="pick-badge pick-badge--vite">❤️ {{ pick.viteCorrente }}</span>
                   }
                   @if (pick.forzata) {
@@ -189,7 +189,7 @@
                   @if (p.squadraNome) {
                     <span class="vivi-card__team">{{ p.squadraNome }}</span>
                   }
-                  @if (hasVite && p.viteCorrente != null) {
+                  @if (hasVite && p.viteCorrente != null && p.viteCorrente > 0) {
                     <span class="vivi-card__vite">{{ '❤️'.repeat(p.viteCorrente) }}</span>
                   }
                 </div>
