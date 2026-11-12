@@ -10,6 +10,8 @@ public class LegaJoinRequestDTO {
     private Long id;
     private Long legaId;
     private String legaName;
+    /** Stato della lega (TERMINATA ecc.): serve al leader per mettere in fondo le richieste delle leghe concluse. */
+    private Enumeratori.StatoLega legaStato;
     private Long giocatoreId;
     private String giocatoreNickname;
     private String giocatoreEmail;

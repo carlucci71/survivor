@@ -810,6 +810,7 @@
     "EMPTY": "No hay solicitudes para tus ligas",
     "PENDING": "Pendientes",
     "RESOLVED": "Historial",
+    "CONCLUDED_LEAGUES": "Ligas terminadas",
     "STATO_APPROVATA": "Aprobada",
     "STATO_RIFIUTATA": "Rechazada",
     "TOOLTIP": "Solicitudes de ingreso",
