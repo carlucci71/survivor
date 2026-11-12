@@ -293,6 +293,7 @@ public class LegaJoinRequestService {
         dto.setId(req.getId());
         dto.setLegaId(req.getLega().getId());
         dto.setLegaName(req.getLega().getName());
+        dto.setLegaStato(req.getLega().getStato());
         dto.setGiocatoreId(req.getGiocatore().getId());
         dto.setGiocatoreNickname(req.getGiocatore().getNickname());
         if (req.getGiocatore().getUser() != null) {

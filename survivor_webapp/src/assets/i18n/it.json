@@ -810,6 +810,7 @@
     "EMPTY": "Nessuna richiesta per le tue leghe",
     "PENDING": "In attesa",
     "RESOLVED": "Storico",
+    "CONCLUDED_LEAGUES": "Leghe concluse",
     "STATO_APPROVATA": "Approvata",
     "STATO_RIFIUTATA": "Rifiutata",
     "TOOLTIP": "Richieste di ingresso",
