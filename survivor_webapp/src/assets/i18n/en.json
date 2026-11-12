@@ -722,6 +722,7 @@
     "EMPTY": "No requests for your leagues",
     "PENDING": "Pending",
     "RESOLVED": "History",
+    "CONCLUDED_LEAGUES": "Finished leagues",
     "STATO_APPROVATA": "Approved",
     "STATO_RIFIUTATA": "Rejected",
     "TOOLTIP": "Join requests",

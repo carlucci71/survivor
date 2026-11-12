@@ -17,6 +17,12 @@ interface RichiestaGroup {
   legaName: string;
   pending: LegaJoinRequest[];
   resolved: LegaJoinRequest[];
+  /** Lega conclusa: le richieste restano visibili ma non si approvano piu' */
+  terminata: boolean;
+  /** Accordion della lega aperto/chiuso */
+  open: boolean;
+  /** Storico (approvate/rifiutate) aperto/chiuso */
+  storicoOpen: boolean;
 }
 
 @Component({
@@ -38,6 +44,8 @@ interface RichiestaGroup {
 export class RichiesteLeaderComponent implements OnInit {
   groups: RichiestaGroup[] = [];
   isLoading = true;
+  /** Sezione "Leghe concluse": chiusa di default */
+  concluseOpen = false;
 
   constructor(
     private legaService: LegaService,
@@ -56,29 +64,52 @@ export class RichiesteLeaderComponent implements OnInit {
     this.isLoading = true;
     this.legaService.mieRichieste().subscribe({
       next: (richieste) => {
-        this.groups = this.raggruppa(richieste);
+        this.groups = this.raggruppa(richieste, this.groups);
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }
     });
   }
 
-  private raggruppa(richieste: LegaJoinRequest[]): RichiestaGroup[] {
+  private raggruppa(richieste: LegaJoinRequest[], precedenti: RichiestaGroup[]): RichiestaGroup[] {
+    // Dopo approva/rifiuta la lista si ricarica: si conserva lo stato aperto/chiuso scelto dall'utente
+    const prima = new Map(precedenti.map(g => [g.legaId, g]));
     const map = new Map<number, RichiestaGroup>();
     for (const r of richieste) {
       if (!map.has(r.legaId)) {
-        map.set(r.legaId, { legaId: r.legaId, legaName: r.legaName, pending: [], resolved: [] });
+        const terminata = r.legaStato === 'TERMINATA';
+        const vecchio = prima.get(r.legaId);
+        map.set(r.legaId, {
+          legaId: r.legaId, legaName: r.legaName, pending: [], resolved: [], terminata,
+          open: vecchio ? vecchio.open : false,
+          // nelle leghe concluse, una volta aperta la lega si vede subito tutto
+          storicoOpen: vecchio ? vecchio.storicoOpen : terminata,
+        });
       }
       const g = map.get(r.legaId)!;
       if (r.stato === 'PENDING') g.pending.push(r);
       else g.resolved.push(r);
     }
+    const lista = [...map.values()];
+    // Alla prima apertura: restano aperte solo le leghe attive con richieste da gestire
+    for (const g of lista) {
+      if (!prima.has(g.legaId)) g.open = !g.terminata && g.pending.length > 0;
+    }
     // Ordina: leghe con pending prima
-    return [...map.values()].sort((a, b) => b.pending.length - a.pending.length);
+    return lista.sort((a, b) => b.pending.length - a.pending.length);
   }
 
+  get attive(): RichiestaGroup[] {
+    return this.groups.filter(g => !g.terminata);
+  }
+
+  get concluse(): RichiestaGroup[] {
+    return this.groups.filter(g => g.terminata);
+  }
+
+  /** Solo le richieste delle leghe attive: quelle delle leghe concluse non si possono piu' gestire */
   get totalPending(): number {
-    return this.groups.reduce((sum, g) => sum + g.pending.length, 0);
+    return this.attive.reduce((sum, g) => sum + g.pending.length, 0);
   }
 
   approva(req: LegaJoinRequest): void {

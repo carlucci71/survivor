@@ -140,6 +140,7 @@ export interface LegaJoinRequest {
   id: number;
   legaId: number;
   legaName: string;
+  legaStato?: string; // TERMINATA = lega conclusa
   giocatoreId: number;
   giocatoreNickname: string;
   giocatoreEmail: string;
