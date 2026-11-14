@@ -1,4 +1,6 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, NgZone, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { condividi } from '../../core/utils/condividi';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -45,6 +47,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrls: ['./lega-nuova.component.scss'],
 })
 export class LegaNuovaComponent implements OnInit, AfterViewInit {
+  private snackBar = inject(MatSnackBar);
   constructor(
     private router: Router,
     private authService: AuthService,
@@ -553,19 +556,9 @@ export class LegaNuovaComponent implements OnInit, AfterViewInit {
       `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.name}" su Survivor. Chi sopravvive di più? 😈`,
       `⚽ ${nomeUtente} ti aspetta nella lega "${this.name}" su Survivor. Ti unisci alla sfida? 🔥`,
     ];
-    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
-    const shareData = {
-      title: 'Unisciti alla mia lega!',
-      text,
-      url
-    };
-    import('@capacitor/share').then(({ Share }) => {
-      Share.share({ ...shareData, dialogTitle: 'Condividi la lega' }).catch(() => {});
-    }).catch(() => {
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      }
-    });
+    // Il link sta SOLO nel testo, senza campo `url`: WhatsApp ignora `url` e il messaggio partiva senza link.
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)] + '\n' + url;
+    void condividi({ title: 'Unisciti alla mia lega!', text, dialogTitle: 'Condividi la lega' }, { snackBar: this.snackBar, translate: this.translate });
   }
 
   copyLink(): void {

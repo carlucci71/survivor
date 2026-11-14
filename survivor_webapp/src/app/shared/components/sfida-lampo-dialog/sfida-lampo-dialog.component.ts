@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { condividi } from '../../../core/utils/condividi';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -575,6 +577,7 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
   `]
 })
 export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+  private snackBar = inject(MatSnackBar);
   step: 'form' | 'done' = 'form';
   name = '';
   sportSel: string | null = null;
@@ -759,14 +762,8 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
     // Il link sta SOLO nel testo, senza campo `url`: alcune app (WhatsApp) ignorano `url`, altre
     // lo accodano al testo e lo stampano due volte.
     const text = this.translate.instant('DUEL.SHARE_MESSAGE', { nome: nomeUtente, name: this.name }) + '\n' + url;
-    const shareData = { title: this.translate.instant('DUEL.SHARE_TITLE'), text };
-    import('@capacitor/share').then(({ Share }) => {
-      Share.share({ ...shareData, dialogTitle: this.translate.instant('DUEL.SHARE_TITLE') }).catch(() => {});
-    }).catch(() => {
-      if (navigator.share) {
-        navigator.share(shareData).catch(() => {});
-      }
-    });
+    const title = this.translate.instant('DUEL.SHARE_TITLE');
+    void condividi({ title, text, dialogTitle: title }, { snackBar: this.snackBar, translate: this.translate });
   }
 
   copyLink(): void {
