@@ -1,6 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
 import { Overlay, ScrollStrategyOptions } from '@angular/cdk/overlay';
 import { Component, ViewChild, ElementRef, OnDestroy, HostListener } from '@angular/core';
+import { condividi } from '../../core/utils/condividi';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, forkJoin, of } from 'rxjs';
@@ -2352,15 +2353,7 @@ export class LegaDettaglioComponent implements OnDestroy {
     // Il link sta SOLO nel testo, senza campo `url`: alcune app (WhatsApp) ignorano `url`, altre
     // lo accodano al testo e lo stampano due volte.
     const text = messaggi[Math.floor(Math.random() * messaggi.length)] + '\n' + url;
-    try {
-      const { Share } = await import('@capacitor/share');
-      await Share.share({ title: 'Unisciti alla mia lega!', text, dialogTitle: 'Condividi la lega' });
-    } catch {
-      // Su web puro, fallback navigator.share
-      if (navigator.share) {
-        navigator.share({ title: 'Unisciti alla mia lega!', text }).catch(() => {});
-      }
-    }
+    await condividi({ title: 'Unisciti alla mia lega!', text, dialogTitle: 'Condividi la lega' }, { snackBar: this.snackBar, translate: this.translate });
   }
 
   isTerminata(): boolean {
