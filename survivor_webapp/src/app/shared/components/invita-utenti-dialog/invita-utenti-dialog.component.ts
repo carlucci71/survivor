@@ -1,4 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TranslateService } from '@ngx-translate/core';
+import { condividi } from '../../../core/utils/condividi';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -468,6 +471,8 @@ import { TranslateModule } from '@ngx-translate/core';
   `]
 })
 export class InvitaUtentiDialogComponent {
+  private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
   emailInput: string = '';
   emailsList: string[] = [];
   inviteSuccess: boolean = false;
@@ -497,15 +502,9 @@ export class InvitaUtentiDialogComponent {
       `👋 Ciao! Sono ${nomeUtente} e ti invito nella lega "${this.data.legaNome}" su Survivor. Chi sopravvive di più? 😈`,
       `⚽ ${nomeUtente} ti aspetta nella lega "${this.data.legaNome}" su Survivor. Ti unisci alla sfida? 🔥`,
     ];
-    const text = messaggi[Math.floor(Math.random() * messaggi.length)];
-    import('@capacitor/share').then(({ Share }) => {
-      Share.share({ title: 'Unisciti alla mia lega!', text, url, dialogTitle: 'Condividi la lega' }).catch(() => {});
-    }).catch(() => {
-      // Fallback web puro (no Capacitor)
-      if (navigator.share) {
-        navigator.share({ title: 'Unisciti alla mia lega!', text, url }).catch(() => {});
-      }
-    });
+    // Il link sta SOLO nel testo, senza campo `url`: WhatsApp ignora `url` e il messaggio partiva senza link.
+    const text = messaggi[Math.floor(Math.random() * messaggi.length)] + '\n' + url;
+    void condividi({ title: 'Unisciti alla mia lega!', text, dialogTitle: 'Condividi la lega' }, { snackBar: this.snackBar, translate: this.translate });
   }
 
   shouldEnableScroll(): boolean {

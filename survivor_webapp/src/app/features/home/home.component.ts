@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { condividi } from '../../core/utils/condividi';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -542,18 +543,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const text = `${this.translate.instant('SHARE_APP.MESSAGE')}
 ${link}`;
     const title = this.translate.instant('SHARE_APP.SHARE_TITLE');
-    try {
-      const { Share } = await import('@capacitor/share');
-      await Share.share({ title, text, dialogTitle: title });
-    } catch {
-      if (navigator.share) {
-        navigator.share({ title, text }).catch(() => {});
-      } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => {
-          this.snackBar.open(this.translate.instant('DUEL.LINK_COPIED'), '', { duration: 2500 });
-        }).catch(() => {});
-      }
-    }
+    await condividi({ title, text, dialogTitle: title }, { snackBar: this.snackBar, translate: this.translate });
   }
 
   apriSfidaLampo(): void {
