@@ -44,6 +44,7 @@ interface RichiestaGroup {
 export class RichiesteLeaderComponent implements OnInit {
   groups: RichiestaGroup[] = [];
   isLoading = true;
+  private primoCaricamento = true;
   /** Sezione "Leghe concluse": chiusa di default */
   concluseOpen = false;
 
@@ -66,9 +67,21 @@ export class RichiesteLeaderComponent implements OnInit {
       next: (richieste) => {
         this.groups = this.raggruppa(richieste, this.groups);
         this.isLoading = false;
+        this.portaInCimaAlPrimoCaricamento();
       },
-      error: () => { this.isLoading = false; }
+      error: () => {
+        this.isLoading = false;
+        this.portaInCimaAlPrimoCaricamento();
+      }
     });
+  }
+
+  /** Solo alla prima apertura (non dopo approva/rifiuta): a lista disegnata si torna in cima, perche' lo scroll
+   *  fatto in ngOnInit avviene quando la pagina e' ancora vuota e puo' venire annullato dal contenuto che arriva dopo. */
+  private portaInCimaAlPrimoCaricamento(): void {
+    if (!this.primoCaricamento) return;
+    this.primoCaricamento = false;
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 0);
   }
 
   private raggruppa(richieste: LegaJoinRequest[], precedenti: RichiestaGroup[]): RichiestaGroup[] {
