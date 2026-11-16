@@ -6,6 +6,8 @@ Progetto "Survivor": app di pronostici/eliminazione a squadre (modalità Survivo
 
 ## Regole sempre valide
 
+0. **Nessuna modifica senza l'ok di Dario**: prima di toccare qualsiasi file (codice, i18n, docs, configurazioni, script) proporre la modifica a parole — cosa cambia, dove, e l'effetto per l'utente — e aspettare l'ok esplicito di Dario. Solo dopo l'ok si modifica. Vale anche per le correzioni "ovvie" di un bug appena trovato e per gli aggiornamenti dei `docs/`: si diagnostica, si propone, si discute, poi si fa. Leggere file, cercare nel codice e fornire query SQL da eseguire non richiedono ok.
+
 1. **Multilingua obbligatoria**: nessun testo hardcoded nei componenti. Tutte le stringhe rivolte all'utente passano da `survivor_webapp/src/assets/i18n/it.json`, `en.json`, `es.json` tramite il pipe `| translate` (ngx-translate). Ogni nuova chiave va aggiunta in tutti e tre i file.
 
 2. **Coerenza visiva col tema esistente**: usare le CSS variable definite in `survivor_webapp/src/themes.scss` (es. `var(--gradient-primary)`, `var(--bg-card)`, `var(--text-primary)`, `var(--shadow-xl)`, ecc.) invece di colori fissi, così i componenti restano coerenti con i temi ambiente (dev = verde, test = rosso, prod = blu/navy). Colori hardcoded solo per scelte di design deliberatamente "speciali" (es. una schermata di celebrazione).

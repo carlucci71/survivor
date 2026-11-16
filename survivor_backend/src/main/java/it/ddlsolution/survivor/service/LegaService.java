@@ -1066,7 +1066,16 @@ public class LegaService {
                     ).reversed())
                     .toList();
         } else {
-            classificaFinale = getGiocatoriOrdinati(legaDTO.getGiocatori(), legaDTO.getId());
+            // Survivor: vince chi arriva piu' avanti. Prima gli ATTIVO, poi gli eliminati dal turno piu'
+            // avanzato raggiunto al piu' basso; il nickname serve solo a dare un ordine stabile alla lista,
+            // non decide la posizione (a parita' di turno si e' ex aequo, vedi chiave sotto).
+            Long idLega = legaDTO.getId();
+            classificaFinale = legaDTO.getGiocatori().stream()
+                    .sorted(Comparator
+                            .comparing((GiocatoreDTO g) -> g.getStatiPerLega().get(idLega) == Enumeratori.StatoGiocatore.ATTIVO ? 0 : 1)
+                            .thenComparing((GiocatoreDTO g) -> giornataRaggiunta(g, idLega), Comparator.reverseOrder())
+                            .thenComparing(GiocatoreDTO::getNickname, Comparator.nullsLast(Comparator.naturalOrder())))
+                    .toList();
         }
 
         // Trova la lega entity
@@ -1077,8 +1086,9 @@ public class LegaService {
         // posizione, e la posizione successiva salta in avanti del numero di pari merito (1,1,3,...).
         // In Campionato la chiave è il punteggio; in Survivor tutti i giocatori ancora ATTIVO a fine
         // lega sono ex aequo (un solo attivo nel caso normale, più di uno se l'intero gruppo residuo
-        // viene eliminato nello stesso turno), mentre i giocatori eliminati mantengono l'ordinamento
-        // sequenziale già in uso.
+        // viene eliminato nello stesso turno), mentre gli eliminati sono ex aequo con chi e' uscito
+        // nello stesso turno. Se non resta nessun ATTIVO (es. lega terminata a mano) la posizione 1 va
+        // a chi e' arrivato piu' avanti: una lega ha sempre un vincitore, mai l'ordine alfabetico.
         int assegnati = 0;
         int posizione = 1;
         Object chiavePrecedente = null;
@@ -1100,7 +1110,9 @@ public class LegaService {
                     if (legaDTO.getModalita() == Enumeratori.ModalitaLega.CAMPIONATO) {
                         chiave = Optional.ofNullable(giocatoreDTO.getPuntiTotali()).orElse(0);
                     } else {
-                        chiave = stato == Enumeratori.StatoGiocatore.ATTIVO ? "ATTIVO" : giocatoreDTO.getId();
+                        chiave = stato == Enumeratori.StatoGiocatore.ATTIVO
+                                ? "ATTIVO"
+                                : "TURNO_" + giornataRaggiunta(giocatoreDTO, legaDTO.getId());
                     }
                     assegnati++;
                     if (chiavePrecedente == null || !chiave.equals(chiavePrecedente)) {
@@ -1116,6 +1128,18 @@ public class LegaService {
         }
 
         log.info("Assegnate {} posizioni finali per lega {}", assegnati, legaDTO.getId());
+    }
+
+    /** Ultimo turno giocato dal giocatore in questa lega (per un eliminato: il turno in cui e' uscito). */
+    private int giornataRaggiunta(GiocatoreDTO giocatore, Long idLega) {
+        if (giocatore.getGiocate() == null) {
+            return 0;
+        }
+        return giocatore.getGiocate().stream()
+                .filter(g -> idLega.equals(g.getLegaId()) && g.getGiornata() != null)
+                .mapToInt(GiocataDTO::getGiornata)
+                .max()
+                .orElse(0);
     }
 
     @LoggaDispositiva(tipologia = "termina")
