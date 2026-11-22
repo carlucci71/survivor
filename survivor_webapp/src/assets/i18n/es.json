@@ -879,6 +879,9 @@
     "GOOGLE_PLAY": "Google Play"
   },
   "AUTH": {
+    "ENTRY_TITLE": "Entra en Survivor",
+    "ENTRY_SUBTITLE": "Escribe tu email: te enviamos un código para entrar. Si es la primera vez, creamos tu cuenta.",
+    "CONTINUE": "Continuar",
     "CODE": {
       "TITLE": "Introduce el código",
       "SENT_TO": "Te hemos enviado un código de 6 cifras a",
@@ -923,7 +926,7 @@
     "VERIFY_ERROR_TITLE": "Enlace no válido",
     "BACK_TO_LOGIN": "Volver al login",
     "TERMS_REQUIRED": "Debes aceptar los Términos y Condiciones para continuar",
-    "MAGIC_LINK_SEND_ERROR": "Error al enviar el magic link",
+    "MAGIC_LINK_SEND_ERROR": "No hemos podido enviarte el código. Inténtalo de nuevo.",
     "EMAIL_NOT_FOUND": "Email no encontrado. Primero debes registrarte.",
     "LOGIN_ERROR_GENERIC": "Error al acceder",
     "TOKEN_NOT_FOUND": "Token no encontrado",
@@ -1772,8 +1775,8 @@
     "S0_TIP": "Puedes participar en varias ligas al mismo tiempo, incluso de deportes diferentes.",
     "S1_TITLE": "Registro e Inicio de Sesión",
     "S1_P1": "Survivor no usa contraseñas: te enviamos por email un <strong>código de 6 cifras</strong>, lo escribes en la app y ya estás dentro. En el primer acceso la cuenta se crea automáticamente.",
-    "S1_LI1_TITLE": "Introduce tu email",
-    "S1_LI1_TEXT": "Abre la app y escribe tu dirección de email en la pantalla de acceso.",
+    "S1_LI1_TITLE": "Accede o regístrate con tu email",
+    "S1_LI1_TEXT": "Abre la app y escribe tu dirección de email: es la misma pantalla para entrar y para registrarte.",
     "S1_LI2_TITLE": "Lee el código",
     "S1_LI2_TEXT": "Te llega un correo con un código de 6 cifras, que también aparece en el asunto. En iPhone con la app Mail el código aparece solo encima del teclado. Si no llega en un minuto, revisa el spam.",
     "S1_LI3_TITLE": "Escribe el código en la app",
