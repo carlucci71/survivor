@@ -50,6 +50,13 @@
     "NO_EVENTS": "Todavía no hay eventos"
   },
   "HOME": {
+    "ARCHIVE": "Terminadas y donde quedaste fuera",
+    "EMPTY_TITLE": "No estás en ninguna liga en curso",
+    "EMPTY_TEXT": "Si un amigo te ha invitado, abre el enlace que te ha enviado. Si no, crea una tú o busca entre las ligas abiertas.",
+    "OPEN_LEAGUES": "Ligas abiertas",
+    "EDITION": "Edición",
+    "TILE_CREATE_SUB": "Sé el líder",
+    "TILE_JOIN_SUB": "Busca una liga",
     "TITLE": "TUS LIGAS",
     "NO_LEAGUES": "Aún no tienes ligas. ¡Crea una o únete a una existente!",
     "CREATE_LEAGUE": "Crear Liga",
@@ -162,6 +169,7 @@
     "SHARE_TITLE": "Descarga Survivor"
   },
   "DUEL": {
+    "NOT_AVAILABLE": "No disponible",
     "TITLE": "Duelo 1v1",
     "CARD_TITLE": "Desafía a un amigo",
     "CARD_SUBTITLE": "Duelo rápido, uno contra uno",
@@ -1056,6 +1064,13 @@
     }
   },
   "JOIN_LEAGUE": {
+    "INVITE_HINT_TITLE": "¿Tienes un enlace de invitación?",
+    "INVITE_HINT_TEXT": "Ábrelo desde el mensaje que te enviaron: entras directamente en la liga.",
+    "FROM_ROUND": "desde la jornada {{n}}",
+    "MEMBERS": "{{n}} inscritos",
+    "ENTER_SHORT": "Entrar",
+    "ASK_SHORT": "Pedir",
+    "SENT_SHORT": "Enviada",
     "TITLE": "Únete a una Liga",
     "FULL_TITLE": "¡Plazas agotadas!",
     "FULL_DESC": "El reto «{{lega}}» ya tiene a todos sus jugadores.",

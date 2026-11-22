@@ -50,6 +50,13 @@
     "NO_EVENTS": "No events yet"
   },
   "HOME": {
+    "ARCHIVE": "Finished or eliminated",
+    "EMPTY_TITLE": "You're not in any ongoing league",
+    "EMPTY_TEXT": "If a friend invited you, open the link they sent you. Otherwise create one yourself or browse the open leagues.",
+    "OPEN_LEAGUES": "Open leagues",
+    "EDITION": "Edition",
+    "TILE_CREATE_SUB": "Become the leader",
+    "TILE_JOIN_SUB": "Find a league",
     "TITLE": "YOUR LEAGUES",
     "NO_LEAGUES": "You don't have any leagues yet. Create one or join an existing one!",
     "CREATE_LEAGUE": "Create League",
@@ -162,6 +169,7 @@
     "SHARE_TITLE": "Download Survivor"
   },
   "DUEL": {
+    "NOT_AVAILABLE": "Not available",
     "TITLE": "1v1 duel",
     "CARD_TITLE": "Challenge a friend",
     "CARD_SUBTITLE": "Quick duel, one on one",
@@ -968,6 +976,13 @@
     }
   },
   "JOIN_LEAGUE": {
+    "INVITE_HINT_TITLE": "Got an invite link?",
+    "INVITE_HINT_TEXT": "Open it from the message you received: it takes you straight into the league.",
+    "FROM_ROUND": "from round {{n}}",
+    "MEMBERS": "{{n}} members",
+    "ENTER_SHORT": "Join",
+    "ASK_SHORT": "Request",
+    "SENT_SHORT": "Sent",
     "TITLE": "Join a League",
     "FULL_TITLE": "Sold out!",
     "FULL_DESC": "The challenge \"{{lega}}\" already has all its players.",

@@ -50,6 +50,13 @@
     "NO_EVENTS": "Nessun evento ancora"
   },
   "HOME": {
+    "ARCHIVE": "Concluse e dove sei uscito",
+    "EMPTY_TITLE": "Non sei in nessuna lega in corso",
+    "EMPTY_TEXT": "Se un amico ti ha invitato, apri il link che ti ha mandato. Altrimenti creane una tu o cerca tra le leghe aperte.",
+    "OPEN_LEAGUES": "Leghe aperte",
+    "EDITION": "Edizione",
+    "TILE_CREATE_SUB": "Diventa leader",
+    "TILE_JOIN_SUB": "Trova una lega",
     "TITLE": "LE TUE LEGHE",
     "NO_LEAGUES": "Non hai ancora leghe. Creane una o unisciti a una esistente!",
     "CREATE_LEAGUE": "Crea Lega",
@@ -162,6 +169,7 @@
     "SHARE_TITLE": "Scarica Survivor"
   },
   "DUEL": {
+    "NOT_AVAILABLE": "Non disponibile",
     "TITLE": "Sfida 1v1",
     "CARD_TITLE": "Sfida un amico",
     "CARD_SUBTITLE": "Duello lampo, uno contro uno",
@@ -1056,6 +1064,13 @@
     }
   },
   "JOIN_LEAGUE": {
+    "INVITE_HINT_TITLE": "Hai un link d'invito?",
+    "INVITE_HINT_TEXT": "Aprilo dal messaggio che ti hanno mandato: entri direttamente nella lega.",
+    "FROM_ROUND": "dalla giornata {{n}}",
+    "MEMBERS": "{{n}} iscritti",
+    "ENTER_SHORT": "Entra",
+    "ASK_SHORT": "Chiedi",
+    "SENT_SHORT": "Inviata",
     "TITLE": "Unisciti a una Lega",
     "FULL_TITLE": "Posti finiti!",
     "FULL_DESC": "La sfida «{{lega}}» ha già tutti i giocatori.",

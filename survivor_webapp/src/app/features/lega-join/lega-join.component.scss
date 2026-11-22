@@ -680,3 +680,169 @@ h2 {
 }
 .invite-state-card--full .es-actions { justify-content: center; margin-top: 8px; }
 @media (prefers-reduced-motion: reduce) { .isc-icon--full .isc-emoji { animation: none; } }
+
+/* ── Leghe aperte: gruppi per torneo e righe compatte ───────────────────────────── */
+
+.lj-invite-hint {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 14px;
+	padding: 12px 14px;
+	border: 1px dashed var(--border-hover);
+	border-radius: 14px;
+	background: var(--bg-card);
+
+	> mat-icon { color: var(--primary-dark); flex-shrink: 0; }
+	div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+	strong { font-size: 0.9rem; color: var(--text-primary); }
+	span { font-size: 0.8rem; color: var(--text-tertiary); line-height: 1.4; }
+}
+
+.lj-groups {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.lj-group {
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: var(--card-shadow);
+}
+
+.lj-group-head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 12px 14px;
+	border: none;
+	background: transparent;
+	font-family: inherit;
+	text-align: left;
+	cursor: pointer;
+	color: var(--text-primary);
+
+	&:hover { background: var(--hover-overlay); }
+}
+
+.lj-group-logo {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: var(--bg-tertiary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	overflow: hidden;
+
+	img { width: 26px; height: 26px; object-fit: contain; }
+	mat-icon { color: var(--primary-dark); font-size: 20px; width: 20px; height: 20px; }
+}
+
+.lj-group-name { flex: 1; min-width: 0; font-weight: 600; font-size: 0.95rem; }
+
+.lj-group-count {
+	min-width: 24px;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background: var(--active-overlay);
+	color: var(--primary-dark);
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-align: center;
+}
+
+.lj-chevron { color: var(--text-tertiary); transition: transform var(--transition-normal); }
+.lj-group--open .lj-chevron { transform: rotate(180deg); }
+
+.lj-rows { border-top: 1px solid var(--divider-color); }
+
+.lj-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--divider-color);
+
+	&:last-child { border-bottom: none; }
+}
+
+.lj-row-info { flex: 1; min-width: 0; }
+
+.lj-row-name {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+.lj-row-title {
+	font-weight: 600;
+	font-size: 0.92rem;
+	color: var(--text-primary);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.lj-tag {
+	flex-shrink: 0;
+	padding: 1px 6px;
+	border-radius: 6px;
+	font-size: 0.65rem;
+	font-weight: 700;
+
+	&--duel { background: rgba(205, 127, 50, 0.16); color: #8A4B14; }
+}
+
+.lj-lock { flex-shrink: 0; font-size: 15px; width: 15px; height: 15px; color: var(--text-tertiary); }
+
+.lj-row-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 2px;
+	font-size: 0.75rem;
+	color: var(--text-tertiary);
+}
+
+.lj-dot { opacity: 0.7; }
+
+.lj-bar {
+	height: 4px;
+	margin-top: 7px;
+	border-radius: 4px;
+	background: var(--bg-tertiary);
+	overflow: hidden;
+
+	i { display: block; height: 100%; border-radius: 4px; background: var(--gradient-primary); }
+}
+
+.lj-btn {
+	flex-shrink: 0;
+	min-width: 72px;
+	padding: 9px 12px;
+	border: none;
+	border-radius: 10px;
+	font-family: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform var(--transition-fast), filter var(--transition-fast);
+
+	&:active:not(:disabled) { transform: scale(0.97); }
+
+	&--go { background: var(--gradient-primary); color: var(--text-on-primary); }
+	&--ask { background: var(--active-overlay); color: var(--primary-dark); }
+	&--sent { background: rgba(251, 140, 0, 0.14); color: var(--warning-color); cursor: default; }
+}
+
+@media (max-width: 360px) {
+	.lj-row { gap: 8px; padding: 10px 12px; }
+	.lj-btn { min-width: 62px; padding: 8px 10px; }
+}
