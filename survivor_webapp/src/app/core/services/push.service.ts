@@ -13,6 +13,7 @@ import {
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
+import { NotificationRoutingService } from './notification-routing.service';
 
 @Injectable({ providedIn: 'root' })
 export class PushService {
@@ -194,25 +195,26 @@ export class PushService {
       // Already shown by the OS; keep listener to avoid silent failures.
     });
 
+    // Il tocco sulla notifica NON si gestisce qui (questo metodo parte solo quando si apre la home):
+    // vedi initAzioniNotifiche(), chiamato all'avvio dell'app.
+  }
+
+  private azioniRegistrate = false;
+
+  /**
+   * Tocco sulla notifica push: registrato una sola volta all'avvio dell'app (AppComponent), cosi'
+   * funziona anche ad app chiusa (il plugin conserva il tocco finche' non c'e' un listener).
+   * La destinazione la decide NotificationRoutingService, la stessa usata dalla campanella.
+   */
+  initAzioniNotifiche(): void {
+    if (this.azioniRegistrate || !this.isNativeMobile()) return;
+    this.azioniRegistrate = true;
     PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
       const data = action.notification.data ?? {};
       const tipoNotifica: string = data['tipoNotifica'] ?? data['type'] ?? '';
       const legaId: string | undefined = data['legaId'] ?? data['legaid'];
-
-      if (!legaId) return;
-
-      const router = this.injector.get(Router);
-
-      if (tipoNotifica === 'RECAP_GIORNATA') {
-        const giornata: string | undefined = data['giornata'];
-        if (giornata) {
-          router.navigate(['/recap', legaId, giornata]);
-        } else {
-          router.navigate(['/lega', legaId]);
-        }
-      } else {
-        router.navigate(['/lega', legaId]);
-      }
+      const giornata: string | undefined = data['giornata'];
+      this.injector.get(NotificationRoutingService).apri(tipoNotifica, legaId, giornata);
     });
   }
 
