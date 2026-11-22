@@ -40,6 +40,18 @@ public class MagicLinkToken {
     @Column(nullable = false)
     private boolean used = false;
 
+    /**
+     * Codice di 6 cifre spedito nella stessa mail del link (solo token di login): l'utente lo scrive
+     * nell'app invece di cliccare il link. Salvato cifrato (BCrypt), mai in chiaro. Null per i token
+     * creati prima di questa funzione o per gli altri tipi (inviti).
+     */
+    @Column(name = "codice_hash", length = 100)
+    private String codiceHash;
+
+    /** Tentativi sbagliati sul codice: oltre il massimo il codice non vale piu' (il link resta valido). */
+    @Column(name = "tentativi_codice", nullable = false)
+    private int tentativiCodice = 0;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

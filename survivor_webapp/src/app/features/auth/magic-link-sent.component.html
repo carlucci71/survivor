@@ -1,0 +1,95 @@
+<div class="login-container">
+  <div class="login-card otp-card">
+    <div class="logo-container">
+      <h1 class="app-title">SURVIVOR</h1>
+      <p class="app-subtitle">WIN OR GO HOME</p>
+    </div>
+
+    @if (pending) {
+      @if (stato !== 'ok') {
+        <div class="otp-head">
+          <div class="otp-icon" aria-hidden="true">
+            <mat-icon>mark_email_unread</mat-icon>
+          </div>
+          <h2 class="otp-title">{{ 'AUTH.CODE.TITLE' | translate }}</h2>
+          <p class="otp-sub">{{ 'AUTH.CODE.SENT_TO' | translate }}</p>
+          <p class="otp-email">{{ pending.email }}</p>
+        </div>
+
+        <!-- 6 caselle: la prima ha autocomplete one-time-code (suggerimento del codice sopra la tastiera su iPhone) -->
+        <div class="otp-row"
+             [class.otp-row--error]="stato === 'errore'"
+             [class.otp-row--busy]="stato === 'verifica' && !riuscito"
+             [class.otp-row--ok]="riuscito"
+             role="group" [attr.aria-label]="'AUTH.CODE.TITLE' | translate">
+          @for (i of indici; track i) {
+            <input #cifra
+                   class="otp-box"
+                   [class.otp-box--filled]="cifre[i] !== ''"
+                   [style.--i]="i"
+                   type="text"
+                   inputmode="numeric"
+                   pattern="[0-9]*"
+                   [attr.autocomplete]="i === 0 ? 'one-time-code' : 'off'"
+                   [attr.name]="i === 0 ? 'one-time-code' : null"
+                   [value]="cifre[i]"
+                   [disabled]="stato === 'verifica'"
+                   [attr.aria-label]="'AUTH.CODE.DIGIT_LABEL' | translate: { n: i + 1 }"
+                   (input)="onInput(i, $event)"
+                   (keydown)="onKeydown(i, $event)"
+                   (paste)="onPaste(i, $event)"
+                   (focus)="onFocus($event)" />
+          }
+        </div>
+
+        <div class="otp-status" aria-live="polite">
+          @if (stato === 'verifica' && !riuscito) {
+            <span class="otp-status-busy"><span class="otp-spinner"></span>{{ 'AUTH.CODE.VERIFYING' | translate }}</span>
+          } @else if (messaggioKey) {
+            <span [class.otp-status--ok]="messaggioOk" [class.otp-status--error]="!messaggioOk">
+              {{ messaggioKey | translate: messaggioParams }}
+            </span>
+          }
+        </div>
+
+        <div class="otp-actions">
+          <p class="otp-resend">
+            {{ 'AUTH.CODE.NOT_RECEIVED' | translate }}
+            <button type="button" class="otp-link" (click)="rinvia()" [disabled]="secondiRinvio > 0 || invioInCorso">
+              @if (secondiRinvio > 0) {
+                {{ 'AUTH.CODE.RESEND_IN' | translate: { s: secondiRinvio } }}
+              } @else {
+                {{ 'AUTH.CODE.RESEND' | translate }}
+              }
+            </button>
+          </p>
+          <button type="button" class="otp-link otp-link--muted" (click)="cambiaEmail()">
+            <mat-icon>edit</mat-icon>{{ 'AUTH.CODE.CHANGE_EMAIL' | translate }}
+          </button>
+        </div>
+
+        <p class="otp-hint">
+          <mat-icon aria-hidden="true">info_outline</mat-icon>
+          <span>{{ 'AUTH.CODE.HINT' | translate }}</span>
+        </p>
+      } @else {
+        <!-- Codice giusto -->
+        <div class="otp-success" role="status">
+          <div class="otp-success-circle"><mat-icon>check</mat-icon></div>
+          <h2 class="otp-title">{{ 'AUTH.CODE.SUCCESS_TITLE' | translate }}</h2>
+          <p class="otp-sub">{{ 'AUTH.CODE.SUCCESS_TEXT' | translate }}</p>
+        </div>
+      }
+    } @else {
+      <!-- Nessuna richiesta in corso (pagina aperta a mano): vecchio messaggio "controlla la mail" -->
+      <div class="otp-head">
+        <div class="otp-icon" aria-hidden="true"><mat-icon>mark_email_unread</mat-icon></div>
+        <h2 class="otp-title">{{ 'AUTH.CODE.FALLBACK_TITLE' | translate }}</h2>
+        <p class="otp-sub">{{ 'AUTH.CODE.FALLBACK_TEXT' | translate }}</p>
+      </div>
+      <div class="otp-actions">
+        <button type="button" class="otp-link" (click)="cambiaEmail()">{{ 'AUTH.CODE.BACK_TO_LOGIN' | translate }}</button>
+      </div>
+    }
+  </div>
+</div>

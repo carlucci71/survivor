@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import { LOGIN_PENDING_KEY } from './magic-link-sent.component';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
@@ -87,6 +88,21 @@ export class LoginComponent implements AfterViewInit {
     return this.returnUrl.replace(/^\//, '');
   }
 
+  /**
+   * Dopo l'invio della mail si passa alla schermata del codice di 6 cifre, restando nell'app.
+   * Email, tipo di richiesta e addInfo restano in sessionStorage: servono per verificare il codice,
+   * per "Rinvia codice" e per tornare all'invito della lega dopo l'accesso.
+   */
+  private vaiAlCodice(addInfo?: string): void {
+    try {
+      sessionStorage.setItem(LOGIN_PENDING_KEY, JSON.stringify({
+        email: this.email.trim(),
+        register: this.activeTab === 'register',
+        addInfo: addInfo ?? null,
+      }));
+    } catch { /* storage non disponibile: la schermata mostrera' il solo messaggio "controlla la mail" */ }
+    this.router.navigate(['/auth/magic-link-sent']);
+  }
   onSubmit(): void {
     if (!this.email) {
       this.message = this.translate.instant('AUTH.EMAIL_INVALID');
@@ -111,7 +127,7 @@ export class LoginComponent implements AfterViewInit {
             this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
             return;
           }
-          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
+          this.vaiAlCodice(addInfo);
         },
         error: (error) => {
           this.message = this.translate.instant('AUTH.MAGIC_LINK_SEND_ERROR');
@@ -127,7 +143,7 @@ export class LoginComponent implements AfterViewInit {
             this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
             return;
           }
-          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
+          this.vaiAlCodice(addInfo);
         },
         error: (error) => {
           if (error.status === 404) {

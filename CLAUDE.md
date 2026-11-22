@@ -27,6 +27,6 @@ Il dettaglio completo (decisioni, strade scartate, trappole già incontrate) sta
 - `docs/sfida-1v1.md` — duello 1v1: riconoscimento (`maxPartecipanti = 2`), guard in `calcola()`, colori/bronzo, inviti e condivisione, scheda `duel-versus`, popup vittoria.
 - `docs/ui-componenti.md` — home (moneta, liste, selettore leghe a pillola), popup forzatura, `lega-join`/`lega-card`, chip LIVE sull'hero, X di chiusura SVG, vite iniziali alla creazione lega (max 5).
 - `docs/regole-gioco-e-dati.md` — vincolo sigla+nazione su `squadra`, test con mock, esito settimanale NBA, passaggio d'anno dei campionati.
-- `docs/account-richieste-rilascio.md` — Google login (in sospeso), endpoint richieste di ingresso, popup di aggiornamento obbligatorio e ordine di rilascio.
+- `docs/account-richieste-rilascio.md` — Google login (in sospeso), endpoint richieste di ingresso, popup di aggiornamento obbligatorio e ordine di rilascio, login con codice a 6 cifre (codice + link nella stessa mail, migrazione DB prima del backend).
 
 Altri file utili già presenti: `deploy-prod-guide.md`, `NOTIFICHE_IN_APP_README.md`.
