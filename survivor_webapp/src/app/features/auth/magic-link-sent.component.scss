@@ -1,0 +1,285 @@
+/* Schermata codice a 6 cifre: riusa login-container/login-card/logo di login.component.scss.
+   Colori dalle variabili del tema: l'accento segue l'ambiente (dev verde, test rosso, prod blu). */
+
+.otp-card {
+  text-align: center;
+
+  .logo-container { margin-bottom: 24px; }
+}
+
+.otp-head {
+  margin-bottom: 26px;
+}
+
+.otp-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  animation: otp-float 3s ease-in-out infinite;
+
+  mat-icon {
+    color: var(--text-on-primary);
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.otp-title {
+  font-family: var(--font-family);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.otp-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.otp-email {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin: 4px 0 0;
+  word-break: break-all;
+}
+
+/* ── Caselle ───────────────────────────────────────────────────────────────────── */
+
+.otp-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 52px));
+  justify-content: center;
+  gap: 10px;
+
+  &--error { animation: otp-shake 0.45s ease; }
+  &--busy .otp-box { opacity: 0.75; }
+}
+
+.otp-box {
+  position: relative;
+  width: 100%;
+  height: 62px;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  caret-color: var(--primary-dark);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color var(--transition-fast), background var(--transition-fast),
+              transform var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:focus {
+    border-color: var(--primary-dark);
+    background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 4px var(--active-overlay), var(--shadow-sm);
+  }
+
+  &--filled {
+    border-color: var(--primary-dark);
+    background: var(--bg-card);
+    animation: otp-pop 0.2s ease-out;
+  }
+
+  &:disabled { cursor: default; }
+}
+
+/* Codice giusto: le caselle diventano verdi una dopo l'altra (--i = indice della casella) */
+.otp-row--ok .otp-box {
+  border-color: var(--success-color);
+  background: rgba(67, 160, 71, 0.08);
+  color: var(--success-color);
+  opacity: 1;
+  animation: otp-pop 0.3s ease-out both;
+  animation-delay: calc(var(--i) * 70ms);
+}
+
+.otp-row--error .otp-box {
+  border-color: var(--error-color);
+  background: rgba(229, 57, 53, 0.06);
+  color: var(--error-color);
+}
+
+/* ── Stato sotto le caselle ────────────────────────────────────────────────────── */
+
+.otp-status {
+  min-height: 22px;
+  margin: 14px 0 6px;
+  font-size: 13.5px;
+  line-height: 1.4;
+
+  .otp-status--error { color: var(--error-color); font-weight: 500; }
+  .otp-status--ok { color: var(--success-color); font-weight: 500; }
+}
+
+.otp-status-busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.otp-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary-dark);
+  border-radius: 50%;
+  animation: otp-spin 0.7s linear infinite;
+}
+
+/* ── Azioni ────────────────────────────────────────────────────────────────────── */
+
+.otp-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.otp-resend {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.otp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 2px;
+  border: none;
+  background: none;
+  color: var(--primary-dark);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+  &:hover:not(:disabled) { text-decoration: underline; }
+
+  &:disabled {
+    color: var(--text-disabled);
+    cursor: default;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &--muted { color: var(--text-secondary); font-weight: 500; }
+}
+
+.otp-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 22px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-tertiary);
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: left;
+
+  mat-icon { flex-shrink: 0; font-size: 18px; width: 18px; height: 18px; color: var(--text-tertiary); }
+}
+
+/* ── Codice giusto ─────────────────────────────────────────────────────────────── */
+
+.otp-success {
+  padding: 12px 0 8px;
+  animation: otp-fade 0.3s ease-out;
+}
+
+.otp-success-circle {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--success-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 10px rgba(67, 160, 71, 0.15);
+  animation: otp-check 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  mat-icon {
+    color: #fff;
+    font-size: 46px;
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* ── Animazioni ────────────────────────────────────────────────────────────────── */
+
+@keyframes otp-pop {
+  0% { transform: scale(0.86); }
+  60% { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+@keyframes otp-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+@keyframes otp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes otp-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes otp-check {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes otp-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .otp-icon, .otp-box--filled, .otp-row--error, .otp-success-circle { animation: none; }
+}
+
+/* ── Telefoni stretti (320-360px) ──────────────────────────────────────────────── */
+
+@media (max-width: 400px) {
+  .otp-row { gap: 6px; }
+  .otp-box { height: 52px; font-size: 22px; border-radius: 12px; }
+  .otp-title { font-size: 20px; }
+}
+
+@media (max-width: 360px) {
+  .login-container { padding: 12px; }
+  .login-card.otp-card { padding: 28px 16px; }
+  .otp-row { gap: 5px; }
+  .otp-box { height: 48px; font-size: 20px; }
+}

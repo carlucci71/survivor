@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
 import it.ddlsolution.survivor.dto.request.MagicLinkRequestDTO;
 import it.ddlsolution.survivor.dto.request.RefreshTokenRequestDTO;
+import it.ddlsolution.survivor.dto.request.VerificaCodiceRequestDTO;
 import it.ddlsolution.survivor.dto.response.AuthResponseDTO;
 import it.ddlsolution.survivor.dto.response.MagicLinkResponseDTO;
 import it.ddlsolution.survivor.entity.User;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -128,6 +130,33 @@ public class AuthController {
 
     }
 
+
+    /**
+     * Login con il codice di 6 cifre arrivato nella mail (in alternativa al link).
+     * Successo: stessi campi di /verify, piu' magicToken (serve al frontend per l'accesso libero
+     * alla lega quando addInfo e' "JOIN:id", come fa oggi il flusso col link).
+     * Errore (400): errore = CODICE_ERRATO | CODICE_SCADUTO | TROPPI_TENTATIVI, con tentativiRimasti.
+     */
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyCode(@RequestBody VerificaCodiceRequestDTO request) {
+        MagicLinkService.EsitoCodice esito = magicLinkService.verificaCodice(request.getEmail(), request.getCodice());
+        if (esito.user() == null) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "errore", esito.errore().name(),
+                    "tentativiRimasti", esito.tentativiRimasti()));
+        }
+        User user = esito.user();
+        String jwtToken = jwtService.generateToken(user.getId().toString(), user.getRole().name());
+        Map<String, Object> body = new HashMap<>();
+        body.put("token", jwtToken);
+        body.put("id", user.getId());
+        body.put("name", user.getName());
+        body.put("role", user.getRole().name());
+        body.put("addInfo", esito.addInfo());
+        body.put("magicToken", esito.token());
+        return ResponseEntity.ok(body);
+    }
 
     @PostMapping("/myData")
     public ResponseEntity<?> myData(@RequestHeader(value = "Authorization", required = false) String authHeader) {

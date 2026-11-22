@@ -27,6 +27,18 @@ export interface AuthResponse {
   addInfo: string;
 }
 
+/** Risposta di POST /auth/verify-code: come AuthResponse, piu' il token del magic link per il join libero. */
+export interface VerificaCodiceResponse extends AuthResponse {
+  magicToken?: string;
+}
+
+/** Errore di POST /auth/verify-code (HTTP 400). */
+export interface VerificaCodiceErrore {
+  success: false;
+  errore: 'CODICE_ERRATO' | 'CODICE_SCADUTO' | 'TROPPI_TENTATIVI';
+  tentativiRimasti: number;
+}
+
 export interface User {
   id: number;
   email: string;

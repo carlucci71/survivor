@@ -6,7 +6,8 @@ import {
   MagicLinkRequest,
   MagicLinkResponse,
   AuthResponse,
-  User
+  User,
+  VerificaCodiceResponse
 } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 import { PushService } from './push.service';
@@ -53,6 +54,13 @@ export class AuthService {
     return this.http.get<AuthResponse>(`${this.apiUrl}/verify`, {
       params: { token,codiceTipoMagicLink }
     }).pipe(
+      tap(response => this.handleAuthResponse(response))
+    );
+  }
+
+  /** Login con il codice di 6 cifre ricevuto via mail (alternativa al link). */
+  verifyCode(email: string, codice: string): Observable<VerificaCodiceResponse> {
+    return this.http.post<VerificaCodiceResponse>(`${this.apiUrl}/verify-code`, { email, codice }).pipe(
       tap(response => this.handleAuthResponse(response))
     );
   }

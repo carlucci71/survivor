@@ -36,6 +36,9 @@ export class AppComponent implements OnInit {
     // Cambia il favicon in base all'ambiente
     this.setFavicon(envTheme);
 
+    // Tocco sulle notifiche push: registrato subito all'avvio (non dalla home), per l'app chiusa
+    this.pushService.initAzioniNotifiche();
+
     // Force update: controlla se la versione nativa è obsoleta
     this.checkForceUpdate();
 

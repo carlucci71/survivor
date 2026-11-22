@@ -44,6 +44,7 @@ import { ReactionService } from '../../core/services/reaction.service';
 import { isVittoriaVista, segnaVittorieViste } from '../../core/utils/vittorie-viste';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { PickConfermataComponent, PickConfermataDati } from '../../shared/components/pick-confermata/pick-confermata.component';
 import { CampionatoService } from '../../core/services/campionato.service';
 import { UtilService } from '../../core/services/util.service';
 import { SospensioniService } from '../../core/services/sospensioni.service';
@@ -97,6 +98,7 @@ import { DuelVersusComponent } from '../../shared/components/duel-versus/duel-ve
     ScrollToEndDirective,
     PlayerBadgesComponent,
     DuelVersusComponent,
+    PickConfermataComponent,
   ],
   templateUrl: './lega-dettaglio.component.html',
   styleUrls: ['./lega-dettaglio.component.scss'],
@@ -2541,11 +2543,34 @@ export class LegaDettaglioComponent implements OnDestroy {
             // Ricarica i dettagli della lega per aggiornare tutto
             this.loadLegaDetails();
           }
+          this.mostraPickConfermata(squadraSelezionata);
         },
         error: (err: any) => {
           console.error('Errore nel salvataggio della giocata', err);
+          // prima l'errore restava solo in console e l'utente credeva di aver votato
+          this.snackBar.open(this.translate.instant('PICK_CONFIRM.ERROR'), '✕', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: ['app-snackbar--error'],
+          });
         },
       });
+  }
+
+  /** Dati della conferma visiva in corso (null = non mostrata) */
+  pickConfermata: PickConfermataDati | null = null;
+
+  private mostraPickConfermata(sigla: string): void {
+    const frasi = this.translate.instant('SELEZIONA_GIOCATA.ENCOURAGEMENT');
+    const frase = Array.isArray(frasi) && frasi.length > 0 ? frasi[Math.floor(Math.random() * frasi.length)] : '';
+    this.pickConfermata = {
+      logo: this.getTeamLogo(sigla),
+      nome: this.getSquadraNomeSenzaCitta(sigla) || sigla,
+      giornata: this.lega?.giornataCorrente ? this.getDesGiornataTitle(this.lega.giornataCorrente) : '',
+      frase,
+      emoji: this.getGiocaEmoji(),
+    };
   }
 
   eliminaGiocata(giocatore: Giocatore, giornata: number): void {

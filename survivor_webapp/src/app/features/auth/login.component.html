@@ -6,21 +6,10 @@
       <p class="app-subtitle">WIN OR GO HOME</p>
     </div>
 
-    <!-- Tab ACCEDI / REGISTRATI -->
-    <div class="auth-tabs">
-      <button class="auth-tab" [class.active]="activeTab === 'login'" (click)="setTab('login')">
-        {{ 'AUTH.LOGIN_TITLE' | translate }}
-      </button>
-      <button class="auth-tab" [class.active]="activeTab === 'register'" (click)="setTab('register')">
-        {{ 'AUTH.REGISTER_TITLE' | translate }}
-      </button>
-    </div>
-
-    <!-- Sottotitolo contestuale -->
+    <!-- Schermata unica: accesso e registrazione sono la stessa cosa (l'account si crea al primo codice) -->
     <div class="card-header">
-      <p class="subtitle">
-        {{ (activeTab === 'login' ? 'AUTH.LOGIN_SUBTITLE' : 'AUTH.REGISTER_SUBTITLE') | translate }}
-      </p>
+      <h2>{{ 'AUTH.ENTRY_TITLE' | translate }}</h2>
+      <p class="subtitle">{{ 'AUTH.ENTRY_SUBTITLE' | translate }}</p>
     </div>
 
     <!-- Form -->
@@ -51,7 +40,7 @@
       </p>
 
       <button type="submit" class="btn-primary" [disabled]="!termsAccepted">
-        {{ (activeTab === 'login' ? 'AUTH.LOGIN_TITLE' : 'AUTH.SEND_MAGIC_LINK') | translate }}
+        {{ 'AUTH.CONTINUE' | translate }}
       </button>
     </form>
 

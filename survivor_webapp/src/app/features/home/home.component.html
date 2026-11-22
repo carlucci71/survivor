@@ -59,11 +59,16 @@
         <app-lega-card-skeleton></app-lega-card-skeleton>
       </div>
 
-      <mat-card *ngIf="!isLoadingLeghe && groupedLeghe.length === 0" class="no-data">
-        <mat-card-content>
-          <p>{{ 'HOME.NO_LEAGUES' | translate }}</p>
-        </mat-card-content>
-      </mat-card>
+      <!-- Nessuna lega in corso: invito chiaro (l'archivio resta comunque sotto) -->
+      <div *ngIf="!isLoadingLeghe && !searchText?.trim() && legheInGioco.length === 0" class="hl-empty">
+        <mat-icon class="hl-empty-icon">emoji_events</mat-icon>
+        <p class="hl-empty-title">{{ 'HOME.EMPTY_TITLE' | translate }}</p>
+        <p class="hl-empty-text">{{ 'HOME.EMPTY_TEXT' | translate }}</p>
+        <div class="hl-empty-actions">
+          <button type="button" class="hl-btn hl-btn--primary" (click)="goToCreaLega()">{{ 'HOME.CREATE_LEAGUE' | translate }}</button>
+          <button type="button" class="hl-btn" (click)="goToUniscitiLega()">{{ 'HOME.OPEN_LEAGUES' | translate }}</button>
+        </div>
+      </div>
 
       <!-- Nessun risultato dalla ricerca -->
       <mat-card *ngIf="!isLoadingLeghe && groupedLeghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
@@ -74,200 +79,80 @@
       </mat-card>
 
       <div *ngIf="!isLoadingLeghe && filteredGroupedLeghe.length > 0">
-
-        <!-- TAB BAR -->
-        <div class="leghe-tabs">
-          <button
-            class="leghe-tab"
-            [class.leghe-tab--active]="isTabOpen('private')"
-            (click)="toggleTab('private')"
-          >
-            <mat-icon class="leghe-tab-icon">lock</mat-icon>
-            <span>{{ 'HOME.TAB_PRIVATE' | translate }}</span>
-            <span class="leghe-tab-count">{{ filteredPrivateLeghe.length }}</span>
-            <mat-icon class="leghe-tab-chevron" [class.leghe-tab-chevron--open]="isTabOpen('private')">expand_more</mat-icon>
-          </button>
-          <button
-            class="leghe-tab leghe-tab--public"
-            [class.leghe-tab--active]="isTabOpen('public')"
-            (click)="toggleTab('public')"
-          >
-            <mat-icon class="leghe-tab-icon">public</mat-icon>
-            <span>{{ 'HOME.TAB_PUBLIC' | translate }}</span>
-            <span class="leghe-tab-count">{{ filteredPublicLeghe.length }}</span>
-            <mat-icon class="leghe-tab-chevron" [class.leghe-tab-chevron--open]="isTabOpen('public')">expand_more</mat-icon>
-          </button>
-        </div>
-
-        <!-- PANNELLO LEGHE PRIVATE -->
-        <div class="leghe-groups" *ngIf="isTabOpen('private')">
-          <ng-container *ngIf="filteredPrivateLeghe.length > 0; else noPrivate">
-            <ng-container *ngFor="let group of filteredPrivateLeghe; trackBy: trackByGroupName">
-              <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
-                <mat-card-header>
-                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
-                       mat-card-avatar
-                       class="torneo-logo-avatar"
-                       [src]="getTorneoLogo(group.des.campionatoId)"
-                       [alt]="group.des.campionatoId">
-                  <mat-card-title>
-                    {{ group.name }}
-                    <button
-                      *ngIf="isLeaderGroup(group)"
-                      type="button"
-                      class="rename-lega-btn"
-                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
-                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
-                      (click)="openRinominaDialog(group, $event)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <span class="lega-visibility-badge lega-visibility-badge--private">
-                      <mat-icon>lock</mat-icon> {{ 'HOME.BADGE_PRIVATE' | translate }}
-                    </span>
-                    <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
-                      <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
-                      {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
-                    </span>
-                    <span *ngIf="group.des.modalita === 'CAMPIONATO'" class="modalita-badge modalita-badge--campionato">
-                      <mat-icon>emoji_events</mat-icon> CAMPIONATO
-                    </span>
-                  </mat-card-title>
-                  <mat-card-subtitle class="group-subtitle">
-                    {{ group.des.campionatoId | translateLeagueData: 'championship' }}
-                    <span class="max-partecipanti-chip">
-                      <mat-icon class="mp-icon">group</mat-icon>
-                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : ('CREATE_LEAGUE.MAX_PARTICIPANTS_UNLIMITED' | translate) }}
-                    </span>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="edizioni-list">
-                    <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
-                      <ng-container *ngIf="getBadgeStato(edizione) as badge">
-                        <span class="survivor-status-badge survivor-status-badge--{{ badge }}">
-                          <mat-icon class="ssb-icon">{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
-                          {{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}
-                        </span>
-                      </ng-container>
-                      <mat-card-header>
-                        <mat-card-title>
-                          Edizione {{ edizione.edizione }} {{edizione.anno}}
-                        </mat-card-title>
-                        <mat-card-subtitle>
-                          {{ edizione.stato.value | translateLeagueData: 'status' }}
-                          <span class="partecipanti-chip" *ngIf="edizione.numPartecipanti != null">
-                            <mat-icon class="part-icon">group</mat-icon>
-                            {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
-                          </span>
-                        </mat-card-subtitle>
-                      </mat-card-header>
-                      <mat-card-actions>
-                        <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">
-                          {{ 'HOME.VIEW_DETAILS' | translate }}
-                        </button>
-                        <button *ngIf="visualizzaInvito(edizione)" mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">
-                          {{ 'HOME.INVITE_USERS' | translate }}
-                        </button>
-                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione) && isLeaderInLega(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
-                          {{ 'HOME.NEW_EDITION' | translate }}
-                        </button>
-                      </mat-card-actions>
-                    </mat-card>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </ng-container>
+        <!-- In gioco: in cima e sempre aperte, dalla piu' recente (private e pubbliche insieme) -->
+        <div class="hl-list" *ngIf="legheInGioco.length > 0">
+          <ng-container *ngFor="let riga of legheInGioco; trackBy: trackByRiga">
+            <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
           </ng-container>
-          <ng-template #noPrivate>
-            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PRIVATE_LEAGUES' | translate }}</p></mat-card-content></mat-card>
-          </ng-template>
         </div>
 
-        <!-- PANNELLO LEGHE PUBBLICHE -->
-        <div class="leghe-groups" *ngIf="isTabOpen('public')">
-          <ng-container *ngIf="filteredPublicLeghe.length > 0; else noPublic">
-            <ng-container *ngFor="let group of filteredPublicLeghe; trackBy: trackByGroupName">
-              <mat-card [class.lega-card--campionato]="group.des.modalita === 'CAMPIONATO'">
-                <mat-card-header>
-                  <img *ngIf="getTorneoLogo(group.des.campionatoId)"
-                       mat-card-avatar
-                       class="torneo-logo-avatar"
-                       [src]="getTorneoLogo(group.des.campionatoId)"
-                       [alt]="group.des.campionatoId">
-                  <mat-card-title>
-                    {{ group.name }}
-                    <button
-                      *ngIf="isLeaderGroup(group)"
-                      type="button"
-                      class="rename-lega-btn"
-                      [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate"
-                      [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
-                      (click)="openRinominaDialog(group, $event)">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                    <span class="lega-visibility-badge lega-visibility-badge--public">
-                      <mat-icon>public</mat-icon> {{ 'HOME.BADGE_PUBLIC' | translate }}
-                    </span>
-                    <span class="popolarita-badge popolarita-badge--{{getPopolarityBadge(group.numPartecipanti).tier}}">
-                      <mat-icon>{{getPopolarityBadge(group.numPartecipanti).icon}}</mat-icon>
-                      {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
-                    </span>
-                    <span *ngIf="group.des.modalita === 'CAMPIONATO'" class="modalita-badge modalita-badge--campionato">
-                      <mat-icon>emoji_events</mat-icon> CAMPIONATO
-                    </span>
-                  </mat-card-title>
-                  <mat-card-subtitle class="group-subtitle">
-                    {{ group.des.campionatoId | translateLeagueData: 'championship' }}
-                    <span class="max-partecipanti-chip">
-                      <mat-icon class="mp-icon">group</mat-icon>
-                      {{ group.maxPartecipanti ? ('Max ' + group.maxPartecipanti) : ('CREATE_LEAGUE.MAX_PARTICIPANTS_UNLIMITED' | translate) }}
-                    </span>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div class="edizioni-list">
-                    <mat-card *ngFor="let edizione of group.edizioni; trackBy: trackByLegaId" class="lega-card small">
-                      <ng-container *ngIf="getBadgeStato(edizione) as badge">
-                        <span class="survivor-status-badge survivor-status-badge--{{ badge }}">
-                          <mat-icon class="ssb-icon">{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
-                          {{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}
-                        </span>
-                      </ng-container>
-                      <mat-card-header>
-                        <mat-card-title>
-                          Edizione {{ edizione.edizione }} {{edizione.anno}}
-                        </mat-card-title>
-                        <mat-card-subtitle>
-                          {{ edizione.stato.value | translateLeagueData: 'status' }}
-                          <span class="partecipanti-chip" *ngIf="edizione.numPartecipanti != null">
-                            <mat-icon class="part-icon">group</mat-icon>
-                            {{ edizione.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
-                          </span>
-                        </mat-card-subtitle>
-                      </mat-card-header>
-                      <mat-card-actions>
-                        <button mat-raised-button color="primary" (click)="goToLega(edizione.id)">
-                          {{ 'HOME.VIEW_DETAILS' | translate }}
-                        </button>
-                        <button *ngIf="visualizzaInvito(edizione)" mat-raised-button color="accent" (click)="openInvitaDialog(edizione)">
-                          {{ 'HOME.INVITE_USERS' | translate }}
-                        </button>
-                        <button *ngIf="isTerminata(edizione) && notExistsNuovaEdizione(edizione) && isLeaderInLega(edizione)" mat-raised-button color="warn" (click)="nuovaEdizione(edizione)">
-                          {{ 'HOME.NEW_EDITION' | translate }}
-                        </button>
-                      </mat-card-actions>
-                    </mat-card>
-                  </div>
-                </mat-card-content>
-              </mat-card>
+        <!-- Archivio: terminate e leghe dove sei uscito, chiuso in fondo (si apre da solo durante una ricerca) -->
+        <div class="hl-acc" *ngIf="legheArchivio.length > 0" [class.hl-acc--open]="archivioVisibile">
+          <button type="button" class="hl-acc-head" (click)="archivioAperto = !archivioAperto" [attr.aria-expanded]="archivioVisibile">
+            <mat-icon>inventory_2</mat-icon>
+            <span class="hl-acc-title">{{ 'HOME.ARCHIVE' | translate }}</span>
+            <span class="hl-count">{{ legheArchivio.length }}</span>
+            <mat-icon class="hl-chev">expand_more</mat-icon>
+          </button>
+          <div class="hl-acc-body" *ngIf="archivioVisibile">
+            <ng-container *ngFor="let riga of legheArchivio; trackBy: trackByRiga">
+              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
             </ng-container>
-          </ng-container>
-          <ng-template #noPublic>
-            <mat-card class="no-data"><mat-card-content><p>{{ 'HOME.NO_PUBLIC_LEAGUES' | translate }}</p></mat-card-content></mat-card>
-          </ng-template>
+          </div>
         </div>
-
       </div>
+
+      <!-- Riga di una lega (una edizione): tutta la riga apre la lega -->
+      <ng-template #rigaLega let-group>
+        <div class="hl-item">
+          <div class="hl-row" role="button" tabindex="0"
+               (click)="goToLega(group.edizioni[0].id)" (keydown.enter)="goToLega(group.edizioni[0].id)">
+            <div class="hl-logo">
+              <img *ngIf="getTorneoLogo(group.des.campionatoId) as logo" [src]="logo" [alt]="group.des.campionatoId">
+              <mat-icon *ngIf="!getTorneoLogo(group.des.campionatoId)">emoji_events</mat-icon>
+            </div>
+            <div class="hl-info">
+              <div class="hl-name-row">
+                <span class="hl-name">{{ group.name }}</span>
+                <mat-icon *ngIf="group.pubblica" class="hl-public" [attr.aria-label]="'HOME.BADGE_PUBLIC' | translate" [matTooltip]="'HOME.BADGE_PUBLIC' | translate">public</mat-icon>
+                <button *ngIf="isLeaderGroup(group)" type="button" class="hl-rename"
+                        [attr.aria-label]="'HOME.RENAME_LEAGUE' | translate" [matTooltip]="'HOME.RENAME_LEAGUE' | translate"
+                        (click)="openRinominaDialog(group, $event)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <span class="hl-pop popolarita-badge popolarita-badge--{{ getPopolarityBadge(group.numPartecipanti).tier }}">
+                  <mat-icon>{{ getPopolarityBadge(group.numPartecipanti).icon }}</mat-icon>
+                  <span class="hl-pop-text">{{ getPopolarityBadge(group.numPartecipanti).key | translate }}</span>
+                </span>
+              </div>
+              <div class="hl-meta">
+                {{ group.des.campionatoId | translateLeagueData: 'championship' }}
+                <ng-container *ngIf="group.mostraEdizione"> · {{ 'HOME.EDITION' | translate }} {{ group.edizioni[0].edizione }}</ng-container>
+                · {{ group.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
+                <ng-container *ngIf="group.des.modalita === 'CAMPIONATO'"> · {{ 'CREATE_LEAGUE.MODE_CAMPIONATO_LABEL' | translate }}</ng-container>
+                · {{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}
+              </div>
+            </div>
+            <ng-container *ngIf="getBadgeStato(group.edizioni[0]) as badge">
+              <span class="hl-status hl-status--{{ badge }}">
+                <mat-icon>{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
+                <span class="hl-status-text">{{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}</span>
+              </span>
+            </ng-container>
+            <button *ngIf="visualizzaInvito(group.edizioni[0])" type="button" class="hl-icon-btn"
+                    [attr.aria-label]="'HOME.INVITE_USERS' | translate" [matTooltip]="'HOME.INVITE_USERS' | translate"
+                    (click)="$event.stopPropagation(); openInvitaDialog(group.edizioni[0])">
+              <mat-icon>person_add</mat-icon>
+            </button>
+            <button *ngIf="isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0])"
+                    type="button" class="hl-icon-btn"
+                    [attr.aria-label]="'HOME.NEW_EDITION' | translate" [matTooltip]="'HOME.NEW_EDITION' | translate"
+                    (click)="$event.stopPropagation(); nuovaEdizione(group.edizioni[0])">
+              <mat-icon>autorenew</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
     </section>
 
     <!-- Divisorio tra sezioni -->
@@ -275,13 +160,9 @@
 
     <section class="leghe-section">
       <h2>{{ 'HOME.NEW_LEAGUES' | translate }}</h2>
-      <div class="leghe-groups">
-        <!-- SFIDA LAMPO 1V1: card bronzo sopra "Crea una nuova lega", tutta cliccabile -->
-        <button type="button" class="duel-card" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()">
-          <span class="dc-text">
-            <span class="dc-title">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
-            <span class="dc-sub">{{ 'DUEL.CARD_TITLE' | translate }}</span>
-          </span>
+      <!-- Tre riquadri uguali: sfida 1v1 (con la moneta animata), crea lega, unisciti -->
+      <div class="nl-tiles">
+        <button type="button" class="nl-tile nl-tile--duel" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()">
           <span class="duel-seal-coin">
             <span class="duel-seal-halo"></span>
             <span class="duel-seal-disc" aria-hidden="true">
@@ -296,54 +177,19 @@
               <span class="duel-seal-face duel-seal-face--back">⚔️</span>
             </span>
           </span>
+          <span class="nl-title">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
+          <span class="nl-sub">{{ 'DUEL.CARD_TITLE' | translate }}</span>
         </button>
-        <mat-card class="lega-group-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'HOME.CREATE_NEW_LEAGUE' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="edizioni-list">
-              <mat-card class="lega-card small">
-                <mat-card-header>
-                  <mat-card-title>{{ 'HOME.CREATE_LEAGUE' | translate }}</mat-card-title>
-                </mat-card-header>
-                <mat-card-actions>
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="goToCreaLega()"
-                  >
-                    {{ 'HOME.CREATE_LEAGUE' | translate }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="lega-group-card">
-          <mat-card-header>
-            <mat-card-title>{{ 'HOME.JOIN_EXISTING_LEAGUE' | translate }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="edizioni-list">
-              <mat-card class="lega-card small">
-                <mat-card-header>
-                  <mat-card-title>{{ 'HOME.JOIN_LEAGUE' | translate }}</mat-card-title>
-                </mat-card-header>
-                <mat-card-actions>
-                  <button
-                    mat-raised-button
-                    color="warn"
-                    (click)="goToUniscitiLega()"
-                  >
-                    {{ 'HOME.JOIN_LEAGUE' | translate }}
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </mat-card-content>
-        </mat-card>
+        <button type="button" class="nl-tile" (click)="goToCreaLega()">
+          <mat-icon class="nl-icon">add_circle</mat-icon>
+          <span class="nl-title">{{ 'HOME.CREATE_LEAGUE' | translate }}</span>
+          <span class="nl-sub">{{ 'HOME.TILE_CREATE_SUB' | translate }}</span>
+        </button>
+        <button type="button" class="nl-tile" (click)="goToUniscitiLega()">
+          <mat-icon class="nl-icon">groups</mat-icon>
+          <span class="nl-title">{{ 'HOME.JOIN_LEAGUE' | translate }}</span>
+          <span class="nl-sub">{{ 'HOME.TILE_JOIN_SUB' | translate }}</span>
+        </button>
       </div>
     </section>
 

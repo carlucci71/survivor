@@ -14,6 +14,8 @@ public interface MagicLinkTokenRepository extends JpaRepository<MagicLinkToken, 
     void deleteByExpiresAtBefore(LocalDateTime now);
     void deleteByUserAndTipo(User user, String tipo);
     void deleteByUser(User user);
+    /** Ultimo token non usato di un utente per tipo: per il login c'e' sempre al massimo un token attivo. */
+    Optional<MagicLinkToken> findFirstByUserAndTipoAndUsedFalseOrderByCreatedAtDesc(User user, String tipo);
 
 }
 

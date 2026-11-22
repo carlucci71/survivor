@@ -117,6 +117,8 @@ public class ScheduledPushNotifications {
         // 2. Aggrega per utente: una voce per lega con orario specifico del campionato
         Map<GiocatoreDTO, List<String>> giocatoreVoci = new HashMap<>();
         Map<GiocatoreDTO, Set<String>> giocatoreSport = new HashMap<>();
+        // Leghe coinvolte per utente: se e' una sola, la notifica porta direttamente a quella lega
+        Map<GiocatoreDTO, Set<Long>> giocatoreLegheIds = new HashMap<>();
 
         for (CampionatoDTO campionatoDTO : campionatiDaNotificare) {
             String orario = Utility.toLocalDateTimeItalyReadable(iniziPerCampionato.get(campionatoDTO.getId()));
@@ -159,6 +161,7 @@ public class ScheduledPushNotifications {
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add(notificationI18nService.testo("notif.legaOrario", lingua, lega.getName(), orario));
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
+                        giocatoreLegheIds.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(lega.getId());
                     }
                 }
             }
@@ -170,6 +173,8 @@ public class ScheduledPushNotifications {
             List<String> voci = entry.getValue();
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
             String lingua = giocatore.getUser().getLingua();
+            Set<Long> legheIds = giocatoreLegheIds.getOrDefault(giocatore, Collections.emptySet());
+            Long legaUnica = legheIds.size() == 1 ? legheIds.iterator().next() : null;
 
             String body = voci.size() == 1
                     ? notificationI18nService.testo("notif.pronostico.body.single", lingua, voci.get(0))
@@ -183,6 +188,7 @@ public class ScheduledPushNotifications {
                     .tipoNotifica(Enumeratori.TipoNotifica.INIZIO_PARTITA)
                     .expiringAt(LocalDateTime.now(roma).plusMinutes(60))
                     .imageUrl(sportImageUrl(sport))
+                    .legaId(legaUnica)
                     .build();
             pushNotificationService.sendNotificationToUsers(List.of(giocatore.getUser().getId()), notification);
         }
@@ -234,6 +240,8 @@ public class ScheduledPushNotifications {
 
         Map<GiocatoreDTO, List<String>> giocatoreVoci = new HashMap<>();
         Map<GiocatoreDTO, Set<String>> giocatoreSport = new HashMap<>();
+        // Leghe coinvolte per utente: se e' una sola, la notifica porta direttamente a quella lega
+        Map<GiocatoreDTO, Set<Long>> giocatoreLegheIds = new HashMap<>();
 
         for (CampionatoDTO campionatoDTO : campionatiDaNotificare) {
             String orario = Utility.toLocalDateTimeItalyReadable(iniziPerCampionato.get(campionatoDTO.getId()));
@@ -274,6 +282,7 @@ public class ScheduledPushNotifications {
                         giocatoreVoci.computeIfAbsent(giocatore, k -> new ArrayList<>())
                                 .add(notificationI18nService.testo("notif.legaOrario", lingua, lega.getName(), orario));
                         giocatoreSport.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(sportNome);
+                        giocatoreLegheIds.computeIfAbsent(giocatore, k -> new LinkedHashSet<>()).add(lega.getId());
                     }
                 }
             }
@@ -284,6 +293,8 @@ public class ScheduledPushNotifications {
             List<String> voci = entry.getValue();
             Set<String> sport = giocatoreSport.getOrDefault(giocatore, Collections.emptySet());
             String lingua = giocatore.getUser().getLingua();
+            Set<Long> legheIds = giocatoreLegheIds.getOrDefault(giocatore, Collections.emptySet());
+            Long legaUnica = legheIds.size() == 1 ? legheIds.iterator().next() : null;
 
             String body = voci.size() == 1
                     ? notificationI18nService.testo("notif.reminder.body.single", lingua, voci.get(0))
@@ -297,6 +308,7 @@ public class ScheduledPushNotifications {
                     .tipoNotifica(Enumeratori.TipoNotifica.REMINDER_GIORNATA)
                     .expiringAt(LocalDateTime.now(roma).plusHours(16))
                     .imageUrl(sportImageUrl(sport))
+                    .legaId(legaUnica)
                     .build();
             pushNotificationService.sendNotificationToUsers(List.of(giocatore.getUser().getId()), notification);
         }

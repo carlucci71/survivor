@@ -13,6 +13,15 @@
 			<span class="jl-hero-count" *ngIf="leghe.length">{{ 'JOIN_LEAGUE.HERO_COUNT' | translate: { count: legheFiltrate.length } }}</span>
 		</section>
 
+		<!-- Chi ha un invito non deve cercare la lega qui: basta aprire il link -->
+		<div class="lj-invite-hint" *ngIf="!invitedLega && !invitedLegaLoading">
+			<mat-icon>link</mat-icon>
+			<div>
+				<strong>{{ 'JOIN_LEAGUE.INVITE_HINT_TITLE' | translate }}</strong>
+				<span>{{ 'JOIN_LEAGUE.INVITE_HINT_TEXT' | translate }}</span>
+			</div>
+		</div>
+
 		<!-- ── Lega da invito (link condiviso) ── -->
 		<section class="invite-section" *ngIf="invitedLega">
 
@@ -144,9 +153,46 @@
 
 		<!-- ── Lista leghe ── -->
 		<section class="leghe-section" *ngIf="legheFiltrate.length > 0; else emptyState">
-			<div class="leghe-groups">
-				<div class="edizioni-list">
-					<app-lega-card *ngFor="let l of legheFiltrate" [lega]="l" [isPending]="pendingLegaIds.has(l.id)" (action)="seleziona($event)"></app-lega-card>
+			<!-- Leghe raggruppate per torneo, dalla piu' nuova; il primo torneo e' aperto, gli altri chiusi -->
+			<div class="lj-groups">
+				<div class="lj-group" *ngFor="let g of gruppiLeghe; let i = index" [class.lj-group--open]="isGruppoAperto(g.id, i)">
+					<button type="button" class="lj-group-head" (click)="toggleGruppo(g.id)" [attr.aria-expanded]="isGruppoAperto(g.id, i)">
+						<span class="lj-group-logo">
+							<img *ngIf="torneoLogo(g.id) as logo" [src]="logo" [alt]="g.id" />
+							<mat-icon *ngIf="!torneoLogo(g.id)">{{ giocaIcon(g.leghe[0].campionato?.sport?.id) }}</mat-icon>
+						</span>
+						<span class="lj-group-name">{{ g.id | translateLeagueData: 'championship' }}</span>
+						<span class="lj-group-count">{{ g.leghe.length }}</span>
+						<mat-icon class="lj-chevron">expand_more</mat-icon>
+					</button>
+					<div class="lj-rows" *ngIf="isGruppoAperto(g.id, i)">
+						<div class="lj-row" *ngFor="let l of g.leghe; trackBy: trackById">
+							<div class="lj-row-info">
+								<div class="lj-row-name">
+									<span class="lj-row-title">{{ l.name }}</span>
+									<span *ngIf="l.maxPartecipanti === 2" class="lj-tag lj-tag--duel">1v1</span>
+									<mat-icon *ngIf="l.withPwd" class="lj-lock" [attr.aria-label]="'LEAGUE.WITH_PASSWORD' | translate">lock</mat-icon>
+								</div>
+								<div class="lj-row-meta">
+									<span>{{ (l.modalita === 'CAMPIONATO' ? 'CREATE_LEAGUE.MODE_CAMPIONATO_LABEL' : 'CREATE_LEAGUE.MODE_SURVIVOR_LABEL') | translate }}</span>
+									<span class="lj-dot">·</span>
+									<span>{{ 'JOIN_LEAGUE.FROM_ROUND' | translate: { n: l.giornataIniziale } }}</span>
+									<span class="lj-dot">·</span>
+									<span>{{ 'JOIN_LEAGUE.MEMBERS' | translate: { n: (l.numPartecipanti ?? 0) } }}{{ l.maxPartecipanti ? ' / ' + l.maxPartecipanti : '' }}</span>
+								</div>
+								<div class="lj-bar"><i [style.width.%]="riempimento(l)"></i></div>
+							</div>
+							<ng-container *ngIf="l.accessoLibero; else conRichiesta">
+								<button type="button" class="lj-btn lj-btn--go" (click)="seleziona(l)">{{ 'JOIN_LEAGUE.ENTER_SHORT' | translate }}</button>
+							</ng-container>
+							<ng-template #conRichiesta>
+								<button *ngIf="pendingLegaIds.has(l.id); else chiedi" type="button" class="lj-btn lj-btn--sent" disabled>{{ 'JOIN_LEAGUE.SENT_SHORT' | translate }}</button>
+								<ng-template #chiedi>
+									<button type="button" class="lj-btn lj-btn--ask" (click)="seleziona(l)">{{ 'JOIN_LEAGUE.ASK_SHORT' | translate }}</button>
+								</ng-template>
+							</ng-template>
+						</div>
+					</div>
 				</div>
 			</div>
 		</section>
