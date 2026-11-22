@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
+import { LOGIN_PENDING_KEY } from './magic-link-sent.component';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
@@ -44,12 +45,6 @@ export class LoginComponent implements AfterViewInit {
   message = '';
   isSuccess = false;
   termsAccepted = false;
-  activeTab: 'login' | 'register' = 'login';
-
-  setTab(tab: 'login' | 'register'): void {
-    this.activeTab = tab;
-    this.message = '';
-  }
 
   /** Percorso da cui l'utente è stato rimandato al login (es. "/join/93"), se presente. */
   private returnUrl: string | null = null;
@@ -87,6 +82,22 @@ export class LoginComponent implements AfterViewInit {
     return this.returnUrl.replace(/^\//, '');
   }
 
+  /**
+   * Dopo l'invio della mail si passa alla schermata del codice di 6 cifre, restando nell'app.
+   * Email, tipo di richiesta e addInfo restano in sessionStorage: servono per verificare il codice,
+   * per "Rinvia codice" e per tornare all'invito della lega dopo l'accesso.
+   */
+  private vaiAlCodice(addInfo?: string): void {
+    try {
+      sessionStorage.setItem(LOGIN_PENDING_KEY, JSON.stringify({
+        email: this.email.trim(),
+        // l'invio passa sempre da request-magic-link (crea l'account se manca): anche il rinvio
+        register: true,
+        addInfo: addInfo ?? null,
+      }));
+    } catch { /* storage non disponibile: la schermata mostrera' il solo messaggio "controlla la mail" */ }
+    this.router.navigate(['/auth/magic-link-sent']);
+  }
   onSubmit(): void {
     if (!this.email) {
       this.message = this.translate.instant('AUTH.EMAIL_INVALID');
@@ -102,42 +113,22 @@ export class LoginComponent implements AfterViewInit {
 
     const addInfo = this.buildAddInfo();
 
-    if (this.activeTab === 'register') {
-      this.authService.requestMagicLink(this.email, environment.mobile, addInfo).subscribe({
-        next: (response) => {
-          this.message = response.message;
-          this.isSuccess = response.success;
-          if (response.reviewToken) {
-            this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
-            return;
-          }
-          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
-        },
-        error: (error) => {
-          this.message = this.translate.instant('AUTH.MAGIC_LINK_SEND_ERROR');
-          this.isSuccess = false;
+    // Schermata unica: chi e' gia' registrato entra, chi non lo e' viene registrato (request-magic-link
+    // crea l'utente solo se non esiste). L'endpoint /auth/login resta per le versioni vecchie dell'app.
+    this.authService.requestMagicLink(this.email, environment.mobile, addInfo).subscribe({
+      next: (response) => {
+        this.message = response.message;
+        this.isSuccess = response.success;
+        if (response.reviewToken) {
+          this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
+          return;
         }
-      });
-    } else {
-      this.authService.login(this.email, environment.mobile, addInfo).subscribe({
-        next: (response) => {
-          this.message = response.message;
-          this.isSuccess = response.success;
-          if (response.reviewToken) {
-            this.handleAppStoreReviewLogin(response.reviewToken, response.reviewCodiceTipoMagicLink);
-            return;
-          }
-          window.location.href = `${environment.baseUrl}/auth/magic-link-sent`;
-        },
-        error: (error) => {
-          if (error.status === 404) {
-            this.message = this.translate.instant('AUTH.EMAIL_NOT_FOUND');
-          } else {
-            this.message = error.error?.message || this.translate.instant('AUTH.LOGIN_ERROR_GENERIC');
-          }
-          this.isSuccess = false;
-        }
-      });
-    }
+        this.vaiAlCodice(addInfo);
+      },
+      error: () => {
+        this.message = this.translate.instant('AUTH.MAGIC_LINK_SEND_ERROR');
+        this.isSuccess = false;
+      }
+    });
   }
 }

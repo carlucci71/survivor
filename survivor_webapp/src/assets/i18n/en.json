@@ -1,4 +1,8 @@
 {
+  "PICK_CONFIRM": {
+    "SAVED": "Pick saved",
+    "ERROR": "Your pick wasn't saved. Try again."
+  },
   "REACTIONS": {
     "SHEET_TITLE": "Who reacted",
     "MORE": "More reactions"
@@ -46,6 +50,13 @@
     "NO_EVENTS": "No events yet"
   },
   "HOME": {
+    "ARCHIVE": "Finished or eliminated",
+    "EMPTY_TITLE": "You're not in any ongoing league",
+    "EMPTY_TEXT": "If a friend invited you, open the link they sent you. Otherwise create one yourself or browse the open leagues.",
+    "OPEN_LEAGUES": "Open leagues",
+    "EDITION": "Edition",
+    "TILE_CREATE_SUB": "Become the leader",
+    "TILE_JOIN_SUB": "Find a league",
     "TITLE": "YOUR LEAGUES",
     "NO_LEAGUES": "You don't have any leagues yet. Create one or join an existing one!",
     "CREATE_LEAGUE": "Create League",
@@ -158,6 +169,7 @@
     "SHARE_TITLE": "Download Survivor"
   },
   "DUEL": {
+    "NOT_AVAILABLE": "Not available",
     "TITLE": "1v1 duel",
     "CARD_TITLE": "Challenge a friend",
     "CARD_SUBTITLE": "Quick duel, one on one",
@@ -791,6 +803,30 @@
     "GOOGLE_PLAY": "Google Play"
   },
   "AUTH": {
+    "ENTRY_TITLE": "Welcome to Survivor",
+    "ENTRY_SUBTITLE": "Enter your email and we'll send you a code to sign in. If it's your first time, we'll create your account.",
+    "CONTINUE": "Continue",
+    "CODE": {
+      "TITLE": "Enter the code",
+      "SENT_TO": "We sent a 6-digit code to",
+      "DIGIT_LABEL": "Digit {{n}} of 6",
+      "VERIFYING": "Checking…",
+      "LAST_ATTEMPT": "Last attempt",
+      "EXPIRED": "The code has expired. Request a new one.",
+      "TOO_MANY": "Too many attempts. Request a new code.",
+      "ERROR_GENERIC": "Something went wrong. Try again.",
+      "NOT_RECEIVED": "Didn't get it?",
+      "RESEND": "Resend code",
+      "RESEND_IN": "Resend in {{s}}s",
+      "RESENT": "New code sent. Check your email.",
+      "CHANGE_EMAIL": "Change email",
+      "HINT": "The code is also in the email subject. Can't find it? Check your spam folder. You can also tap the link in the email.",
+      "SUCCESS_TITLE": "You're in!",
+      "SUCCESS_TEXT": "Taking you to the app…",
+      "FALLBACK_TITLE": "Check your email",
+      "FALLBACK_TEXT": "We sent you a code and a link to sign in.",
+      "BACK_TO_LOGIN": "Back to login"
+    },
     "LOGIN_TITLE": "Login",
     "LOGIN_SUBTITLE": "Enter your email to receive the magic link",
     "REGISTER_TITLE": "Register",
@@ -814,7 +850,7 @@
     "VERIFY_ERROR_TITLE": "Invalid link",
     "BACK_TO_LOGIN": "Back to login",
     "TERMS_REQUIRED": "You must accept the Terms and Conditions to continue",
-    "MAGIC_LINK_SEND_ERROR": "Error sending the magic link",
+    "MAGIC_LINK_SEND_ERROR": "We couldn't send you the code. Try again.",
     "EMAIL_NOT_FOUND": "Email not found. You need to register first.",
     "LOGIN_ERROR_GENERIC": "Error during sign-in",
     "TOKEN_NOT_FOUND": "Token not found",
@@ -940,6 +976,13 @@
     }
   },
   "JOIN_LEAGUE": {
+    "INVITE_HINT_TITLE": "Got an invite link?",
+    "INVITE_HINT_TEXT": "Open it from the message you received: it takes you straight into the league.",
+    "FROM_ROUND": "from round {{n}}",
+    "MEMBERS": "{{n}} members",
+    "ENTER_SHORT": "Join",
+    "ASK_SHORT": "Request",
+    "SENT_SHORT": "Sent",
     "TITLE": "Join a League",
     "FULL_TITLE": "Sold out!",
     "FULL_DESC": "The challenge \"{{lega}}\" already has all its players.",
@@ -1745,16 +1788,16 @@
     "S0_MODE_CHAMP_LI4": "Most points at end wins",
     "S0_TIP": "You can join multiple leagues at the same time, even across different sports.",
     "S1_TITLE": "Registration & Login",
-    "S1_P1": "Survivor uses a <strong>Magic Link</strong>: no password to remember. You get a link via email, click it, and you're in. On first access your account is created automatically.",
-    "S1_LI1_TITLE": "Enter your email",
-    "S1_LI1_TEXT": "Open the app and type your email address on the login screen.",
-    "S1_LI2_TITLE": "Check your inbox",
-    "S1_LI2_TEXT": "You'll receive an email with a login link. Also check your spam folder if it doesn't arrive within a minute.",
-    "S1_LI3_TITLE": "Click the link",
-    "S1_LI3_TEXT": "The link authenticates you automatically. No password required.",
+    "S1_P1": "Survivor has no passwords: we email you a <strong>6-digit code</strong>, you type it in the app and you're in. Your account is created automatically the first time.",
+    "S1_LI1_TITLE": "Sign in or sign up with your email",
+    "S1_LI1_TEXT": "Open the app and type your email address: it's the same screen whether you're signing in or signing up.",
+    "S1_LI2_TITLE": "Read the code",
+    "S1_LI2_TEXT": "You'll get an email with a 6-digit code, also shown in the subject. On iPhone with the Mail app the code appears above the keyboard. If it doesn't arrive within a minute, check your spam folder.",
+    "S1_LI3_TITLE": "Type the code in the app",
+    "S1_LI3_TEXT": "Enter it in the 6 boxes (you can also paste it) and sign-in starts on its own. You can also tap the link in the same email.",
     "S1_LI4_TITLE": "Complete your profile",
     "S1_LI4_TEXT": "Set a nickname and, if you want, choose your favourite team for each sport.",
-    "S1_INFO": "The Magic Link expires. If it expires before you click it, go back to the login screen and request a new one.",
+    "S1_INFO": "The code is valid for 10 minutes and you have 5 attempts. If it expires or you get it wrong too many times, tap \"Resend code\": a new one arrives and the old one stops working.",
     "S2_TITLE": "The Home",
     "S2_P1": "After logging in you land on the <strong>Home</strong>, your main control panel. Everything is managed from here.",
     "S2_CARD1_TITLE": "My leagues",

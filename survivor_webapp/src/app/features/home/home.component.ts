@@ -42,6 +42,18 @@ import { leggiVittorieViste, segnaVittorieViste } from '../../core/utils/vittori
 import { LiveScoreButtonComponent } from '../../shared/components/live-score-button/live-score-button.component';
 
 
+/** Una riga della home: un gruppo (lega per nome) ridotto a una sola edizione. */
+type GruppoLeghe = {
+  name: string;
+  des: { sportId: string; campionatoId: string; modalita: string };
+  edizioni: Lega[];
+  pubblica: boolean;
+  numPartecipanti: number;
+  maxPartecipanti?: number;
+  /** La lega ha piu' edizioni: nella riga si mostra quale */
+  mostraEdizione?: boolean;
+};
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -135,6 +147,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       giocatore => {
         if (giocatore) {
           this.me = giocatore;
+          // lo stato (in gioco / eliminato) decide in quale sezione va ogni lega
+          this.aggiornaSezioni();
         }
       }
     );
@@ -172,6 +186,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.giocatoreService.me().subscribe({
       next: (giocatore) => {
         this.me = giocatore;
+        this.aggiornaSezioni();
         this.controllaVittorie();
       },
     });
@@ -446,6 +461,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       return maxIdA - maxIdB;
     });
     this.filteredGroupedLeghe = [...this.groupedLeghe];
+    this.aggiornaSezioni();
     // Se non ci sono leghe private ma ci sono pubbliche, apri il tab pubblico
     const hasPrivate = this.groupedLeghe.some(g => !g.pubblica);
     if (!hasPrivate) this.activeTab = 'public';
@@ -464,6 +480,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       if (!search) {
         this.filteredGroupedLeghe = [...this.groupedLeghe];
+        this.aggiornaSezioni();
         return;
       }
 
@@ -480,6 +497,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           )
         }))
         .filter(group => group.edizioni.length > 0);
+      this.aggiornaSezioni();
     }, 300);
   }
 
@@ -595,6 +613,43 @@ ${link}`;
         this.loadLeghe(this.activeTab);
       }
     });
+  }
+
+  // ── Home: "In gioco" in cima, archivio chiuso in fondo ─────────────────────────────
+  // Una riga = un gruppo con UNA sola edizione. "In gioco": ultima edizione non terminata in cui
+  // non sei eliminato (anche da avviare), private e pubbliche insieme. Archivio: tutte le altre
+  // edizioni (terminate o dove sei uscito), ognuna sulla sua riga. Ordine: dalla piu' recente.
+  legheInGioco: GruppoLeghe[] = [];
+  legheArchivio: GruppoLeghe[] = [];
+  /** Riquadro dell'archivio: chiuso di default */
+  archivioAperto = false;
+
+  /** Durante una ricerca l'archivio si mostra comunque, se no un risultato resterebbe nascosto */
+  get archivioVisibile(): boolean {
+    return this.archivioAperto || !!this.searchText?.trim();
+  }
+
+  private edizioneInGioco(e: Lega): boolean {
+    return !this.isTerminata(e) && this.getMioStatoInLega(e) !== 'ELIMINATO';
+  }
+
+  private aggiornaSezioni(): void {
+    const inGioco: GruppoLeghe[] = [];
+    const archivio: GruppoLeghe[] = [];
+    for (const g of this.filteredGroupedLeghe) {
+      g.edizioni.forEach((e, i) => {
+        const riga = { ...g, edizioni: [e], mostraEdizione: g.edizioni.length > 1 };
+        if (i === 0 && this.edizioneInGioco(e)) inGioco.push(riga);
+        else archivio.push(riga);
+      });
+    }
+    const piuRecente = (a: GruppoLeghe, b: GruppoLeghe) => (b.edizioni[0].id ?? 0) - (a.edizioni[0].id ?? 0);
+    this.legheInGioco = inGioco.sort(piuRecente);
+    this.legheArchivio = archivio.sort(piuRecente);
+  }
+
+  trackByRiga(_: number, riga: GruppoLeghe): number {
+    return riga.edizioni[0].id;
   }
 
   get filteredPrivateLeghe() {

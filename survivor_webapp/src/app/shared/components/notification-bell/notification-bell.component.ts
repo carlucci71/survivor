@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { NotificationRoutingService } from '../../../core/services/notification-routing.service';
 import { Notification } from '../../../core/models/interfaces.model';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -38,7 +39,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private authService: AuthService,
     private translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private notificationRouting: NotificationRoutingService
   ) {}
 
   ngOnInit(): void {
@@ -74,18 +76,9 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
       this.notificationService.markAsRead(notification.id).subscribe();
     }
 
-    if (notification.type === 'JOIN_REQUEST_RICEVUTA' && notification.legaId) {
-      this.router.navigate(['/richieste']);
-      return;
-    }
-    if (notification.type === 'SFIDA_LAMPO_ACCETTATA' && notification.legaId) {
-      this.router.navigate(['/lega', notification.legaId]);
-      return;
-    }
-    if ((notification.type === 'JOIN_REQUEST_APPROVATA' || notification.type === 'JOIN_REQUEST_RIFIUTATA') && notification.legaId) {
-      this.router.navigate(['/lega', notification.legaId]);
-      return;
-    }
+    // Stessa regola del tocco sulla notifica push (NotificationRoutingService)
+    const dest = this.notificationRouting.destinazione(notification.type, notification.legaId);
+    if (dest) this.router.navigate(dest);
   }
 
   getNotificationIcon(type: string): string {

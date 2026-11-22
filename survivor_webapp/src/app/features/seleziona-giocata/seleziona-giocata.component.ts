@@ -973,7 +973,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
         .afterClosed()
         .subscribe((result) => {
           if (result) {
-            this.showEncouragementMessage();
             this.dialogRef.close({
               squadraSelezionata: this.squadraSelezionata,
               pubblica: this.giocataPubblica
@@ -982,7 +981,6 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
           // Se annulla, non fa nulla e la modale rimane aperta
         });
     } else {
-      this.showEncouragementMessage();
       this.dialogRef.close({
         squadraSelezionata: this.squadraSelezionata,
         pubblica: this.giocataPubblica
@@ -990,18 +988,8 @@ export class SelezionaGiocataComponent implements OnInit, AfterViewInit, OnDestr
     }
   }
 
-  private showEncouragementMessage(): void {
-    const messages = this.translate.instant('SELEZIONA_GIOCATA.ENCOURAGEMENT');
-    if (!Array.isArray(messages) || messages.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * messages.length);
-    const message = messages[randomIndex];
-    this.snackBar.open(message, '✕', {
-      duration: 4000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: ['encouragement-snackbar']
-    });
-  }
+  // La conferma (logo animato + frase d'incoraggiamento) ora la mostra lega-dettaglio SOLO dopo il
+  // salvataggio riuscito: prima il banner compariva qui, anche se poi il salvataggio falliva.
 
   getNextOpponentSigla(sigla: boolean): string | null {
     if (

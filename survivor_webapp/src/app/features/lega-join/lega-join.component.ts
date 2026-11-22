@@ -16,6 +16,7 @@ import { UtilService } from '../../core/services/util.service';
 import { ConfermaJoinDialogComponent } from '../../shared/components/conferma-join-dialog.component';
 import { ErrorDialogComponent } from '../../shared/components/error-dialog/error-dialog.component';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-data.pipe';
 import { forkJoin } from 'rxjs';
 
 type InvitedState = 'none' | 'pending' | 'approved' | 'rejected';
@@ -23,7 +24,7 @@ type InvitedState = 'none' | 'pending' | 'approved' | 'rejected';
 @Component({
   selector: 'app-lega-join',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule, LegaCardComponent, TranslateModule],
+  imports: [CommonModule, HeaderComponent, MatIconModule, MatCardModule, MatButtonModule, MatDialogModule, MatSnackBarModule, MatProgressSpinnerModule, LegaCardComponent, TranslateModule, TranslateLeagueDataPipe],
   templateUrl: './lega-join.component.html',
   styleUrls: ['./lega-join.component.scss'],
 })
@@ -72,6 +73,51 @@ export class LegaJoinComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     return campionati;
+  }
+
+  /** Gruppi (tornei) aperti o chiusi a mano: il primo gruppo e' aperto di default, gli altri chiusi */
+  private gruppiInvertiti = new Set<string>();
+
+  /**
+   * Leghe aperte raggruppate per torneo, dalla piu' nuova alla piu' vecchia (id decrescente) sia
+   * dentro il gruppo sia tra i gruppi: prima l'ordine era per numero di iscritti e le nuove finivano in fondo.
+   */
+  get gruppiLeghe(): { id: string; leghe: Lega[] }[] {
+    const ordinate = [...this.legheFiltrate].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
+    const mappa = new Map<string, Lega[]>();
+    for (const l of ordinate) {
+      const id = l.campionato?.id ?? '';
+      if (!mappa.has(id)) mappa.set(id, []);
+      mappa.get(id)!.push(l);
+    }
+    return [...mappa.entries()].map(([id, leghe]) => ({ id, leghe }));
+  }
+
+  trackById(_: number, l: Lega): number {
+    return l.id;
+  }
+
+  isGruppoAperto(id: string, indice: number): boolean {
+    return (indice === 0) !== this.gruppiInvertiti.has(id);
+  }
+
+  toggleGruppo(id: string): void {
+    if (this.gruppiInvertiti.has(id)) this.gruppiInvertiti.delete(id);
+    else this.gruppiInvertiti.add(id);
+  }
+
+  torneoLogo(campionatoId: string | undefined): string | null {
+    return this.utilService.getTorneoLogo(campionatoId);
+  }
+
+  giocaIcon(sportId: string | undefined): string {
+    return this.utilService.getGiocaIcon(sportId ?? '');
+  }
+
+  /** Riempimento della barretta iscritti: sul massimo se c'e', altrimenti una scala indicativa */
+  riempimento(l: Lega): number {
+    const n = l.numPartecipanti ?? 0;
+    return l.maxPartecipanti ? Math.min(100, Math.round((n / l.maxPartecipanti) * 100)) : Math.min(100, n * 3);
   }
 
   get legheFiltrate(): Lega[] {

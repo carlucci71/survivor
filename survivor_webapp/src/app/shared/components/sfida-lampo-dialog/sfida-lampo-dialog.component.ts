@@ -13,6 +13,7 @@ import { LegaService } from '../../../core/services/lega.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Campionato, Sport } from '../../../core/models/interfaces.model';
 import { environment } from '../../../../environments/environment';
+import { UtilService } from '../../../core/services/util.service';
 
 /** Posizione/dimensione della pillola che scivola dietro il chip attivo. `anim` resta false al primo
  *  posizionamento (altrimenti partirebbe in volo da 0,0) e diventa true dagli spostamenti successivi. */
@@ -76,8 +77,9 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
 
         <ng-container *ngIf="sportSel">
           <label class="sl-field-label">{{ 'DUEL.CAMPIONATO_LABEL' | translate }}</label>
+          <!-- Campionati come gli sport: griglia di tessere uguali con il logo del torneo -->
           <div class="sl-camp-row" #campRow [style.min-height.px]="campMinH || null">
-            <span class="sl-thumb" aria-hidden="true" *ngIf="campionatiDisponibili.length"
+            <span class="sl-thumb sl-thumb--seg" aria-hidden="true" *ngIf="campionatiDisponibili.length"
                   [class.sl-thumb--on]="campThumb.visible" [class.sl-thumb--anim]="campThumb.anim"
                   [style.width.px]="campThumb.w" [style.height.px]="campThumb.h"
                   [style.transform]="'translate(' + campThumb.x + 'px,' + campThumb.y + 'px)'"></span>
@@ -86,8 +88,14 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
                       [class.sl-camp-chip--active]="campionatoSel?.id === c.id"
                       [class.sl-camp-chip--disabled]="!isDisponibile(c)"
                       [disabled]="!isDisponibile(c)"
+                      [attr.aria-label]="c.nome"
                       (click)="selectCampionato(c)">
-                {{ c.nome }}
+                <span class="sl-camp-logo" aria-hidden="true">
+                  <img *ngIf="torneoLogo(c.id) as logo" [src]="logo" alt="" />
+                  <span *ngIf="!torneoLogo(c.id)" class="sl-camp-emoji">{{ getSportEmoji(sportSel!) }}</span>
+                </span>
+                <span class="sl-camp-name">{{ c.nome }}</span>
+                <span *ngIf="!isDisponibile(c)" class="sl-camp-off">{{ 'DUEL.NOT_AVAILABLE' | translate }}</span>
               </button>
             </ng-container>
             <ng-template #loadingCamp>
@@ -391,23 +399,61 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     .sl-sport-chip:hover .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.1); }
     .sl-sport-chip--active .sl-sport-emoji { filter: none; opacity: 1; transform: scale(1.18); }
 
-    .sl-camp-row { position: relative; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; gap: 7px; }
+    /* Campionati: stessa pista e stessa pillola bianca degli sport, tessere uguali in griglia */
+    .sl-camp-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px;
+      background: var(--bg-tertiary, #F1F5F9);
+      border: 1px solid var(--border-color, #E2E8F0);
+      border-radius: 20px;
+      box-shadow: inset 0 1px 3px rgba(10, 61, 145, 0.08);
+    }
     .sl-camp-chip {
       position: relative; z-index: 1;
-      padding: 9px 16px;
-      border-radius: 20px;
-      border: 1.5px solid var(--border-color, #E2E8F0);
+      min-height: 78px;
+      padding: 8px 4px;
+      border-radius: 16px;
+      border: none;
       background: transparent;
-      color: var(--text-primary, #1A202C);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
       font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 600;
       cursor: pointer;
-      transition: color 0.2s ease, border-color 0.2s ease;
     }
-    .sl-camp-chip:hover:not(:disabled):not(.sl-camp-chip--active) { border-color: rgba(79, 195, 247, 0.7); color: #0A3D91; }
-    .sl-camp-chip--active { border-color: transparent; color: var(--primary-dark, #0A3D91); }
-    .sl-camp-chip--disabled { opacity: 0.45; cursor: not-allowed; }
+    .sl-camp-logo {
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      filter: grayscale(0.45);
+      opacity: 0.8;
+      transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease, opacity 0.25s ease;
+    }
+    .sl-camp-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .sl-camp-emoji { font-size: 1.4rem; line-height: 1; }
+    .sl-camp-name {
+      font-size: 0.66rem;
+      font-weight: 600;
+      line-height: 1.2;
+      text-align: center;
+      color: var(--text-secondary, #6B7280);
+      transition: color 0.2s ease;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .sl-camp-off { font-size: 0.56rem; font-weight: 600; color: var(--text-tertiary, #9CA3AF); text-transform: uppercase; letter-spacing: 0.3px; }
+    .sl-camp-chip:hover:not(:disabled) .sl-camp-logo { filter: none; opacity: 1; transform: scale(1.08); }
+    .sl-camp-chip:hover:not(:disabled) .sl-camp-name { color: var(--primary-dark, #0A3D91); }
+    .sl-camp-chip--active .sl-camp-logo { filter: none; opacity: 1; transform: scale(1.15); }
+    .sl-camp-chip--active .sl-camp-name { color: var(--primary-dark, #0A3D91); font-weight: 700; }
+    .sl-camp-chip--disabled { opacity: 0.5; cursor: not-allowed; }
+    @media (max-width: 340px) {
+      .sl-camp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
     .sl-camp-loading { color: var(--text-tertiary, #9CA3AF); font-size: 0.85rem; padding: 6px 0; }
 
     .sl-error { color: var(--error-color, #E53935); font-size: 0.8rem; }
@@ -572,7 +618,7 @@ const THUMB_VUOTO: Thumb = { x: 0, y: 0, w: 0, h: 0, visible: false, anim: false
     @media (prefers-reduced-motion: reduce) {
       .sl-bubble, .sl-icon-wrap, .sl-emoji, .sl-hero::before, .sl-submit::before,
       .sl-done-check, .sl-done-ring, .sl-share-btn::before { animation: none; }
-      .sl-thumb--anim, .sl-sport-emoji { transition: none; }
+      .sl-thumb--anim, .sl-sport-emoji, .sl-camp-logo { transition: none; }
     }
   `]
 })
@@ -596,6 +642,12 @@ export class SfidaLampoDialogComponent implements OnInit, AfterViewInit, OnDestr
 
   sportThumb: Thumb = { ...THUMB_VUOTO };
   campThumb: Thumb = { ...THUMB_VUOTO };
+  private utilService = inject(UtilService);
+
+  torneoLogo(campionatoId: string): string | null {
+    return this.utilService.getTorneoLogo(campionatoId);
+  }
+
   @ViewChild('sportRow') sportRow?: ElementRef<HTMLElement>;
   @ViewChild('campRow') campRow?: ElementRef<HTMLElement>;
   private destroyed = false;

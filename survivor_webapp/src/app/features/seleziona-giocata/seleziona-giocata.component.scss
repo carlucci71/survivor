@@ -2306,37 +2306,39 @@
   to { transform: rotate(360deg); }
 }
 
-// Avviso regola NBA (apre la spiegazione animata)
-.seleziona-giocata-dialog .nba-notice {
+// Regola NBA: icona a sinistra nell'header (speculare alla X), apre la spiegazione animata.
+// Sostituisce il vecchio banner nel body che su mobile schiacciava le card delle squadre.
+.seleziona-giocata-dialog .dialog-header--nba {
+  // spazio per le due icone ai lati, cosi' il titolo centrato non ci finisce sotto
+  padding-left: 52px;
+  padding-right: 52px;
+}
+
+.seleziona-giocata-dialog .nba-rule-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 10px 12px;
-  border: 1px solid var(--warning-color);
-  border-radius: 14px;
-  background: rgba(251, 140, 0, 0.1);
-  color: var(--text-primary);
-  text-align: left;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease;
 
-  .nba-notice-icon {
-    flex-shrink: 0;
-    color: var(--warning-color);
+  mat-icon {
+    color: #fff;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
   }
 
-  .nba-notice-text {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    font-size: 0.8rem;
-    line-height: 1.3;
-
-    strong {
-      font-size: 0.86rem;
-    }
+  &:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 }
