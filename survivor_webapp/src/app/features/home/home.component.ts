@@ -341,8 +341,46 @@ export class HomeComponent implements OnInit, OnDestroy {
     const raw = lines.join('<br/>');
     return this.sanitizer.bypassSecurityTrustHtml(raw);
   }
+  /** Invita: solo a lega da avviare e non ancora piena (una sfida 1v1 con l'avversario dentro e' piena). */
   visualizzaInvito(lega: Lega): boolean {
-    return lega.stato.value === StatoLega.DA_AVVIARE.value;
+    if (lega.stato.value !== StatoLega.DA_AVVIARE.value) return false;
+    const max = lega.maxPartecipanti;
+    return !(max && (lega.numPartecipanti ?? 0) >= max);
+  }
+
+  /** Colori del torneo per l'anello del logo e la barra della riga (riserva: i colori del tema). */
+  private readonly coloriTornei: Record<string, [string, string]> = {
+    SERIE_A: ['#1B2A6B', '#00A3E0'],
+    SERIE_B: ['#1E8E3E', '#B5C900'],
+    LIGA: ['#E4002B', '#FF7A00'],
+    PREMIER_LEAGUE: ['#3D195B', '#E90052'],
+    CHAMPIONS_LEAGUE: ['#0B1E5B', '#2E6BE6'],
+    MONDIALI_2026: ['#B8860B', '#F4D35E'],
+    NBA_RS: ['#C8102E', '#1D428A'],
+    AUS_OPEN: ['#0091D2', '#5FD4F4'],
+    ROLAND_GARROS: ['#C1440E', '#E8814B'],
+    US_OPEN: ['#002868', '#F2A900'],
+    WIMBLEDON: ['#3C1361', '#006633'],
+  };
+
+  coloriTorneo(campionatoId: string): [string, string] {
+    return this.coloriTornei[campionatoId] ?? ['var(--primary-dark)', 'var(--primary-color)'];
+  }
+
+  /**
+   * Pallino di stato sul logo: in gara (verde), da avviare (arancione), uscito (rosso), vincitore (oro).
+   * In Campionato a lega finita getBadgeStato non decide (vince chi ha piu' punti): nessun pallino.
+   */
+  pallino(edizione: Lega): { tipo: string; icona: string; label: string } | null {
+    if (edizione.stato.value === StatoLega.DA_AVVIARE.value) {
+      return { tipo: 'da-avviare', icona: 'hourglass_top', label: 'HOME.STATUS_DA_AVVIARE' };
+    }
+    switch (this.getBadgeStato(edizione)) {
+      case 'attivo': return { tipo: 'in-gara', icona: 'shield', label: 'HOME.STATUS_ATTIVO' };
+      case 'vincitore': return { tipo: 'vincitore', icona: 'emoji_events', label: 'HOME.STATUS_VINCITORE' };
+      case 'eliminato': return { tipo: 'uscito', icona: 'close', label: 'HOME.STATUS_ELIMINATO' };
+      default: return null;
+    }
   }
 
   isTerminata(lega: Lega): boolean {

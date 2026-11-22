@@ -50,6 +50,7 @@
     "NO_EVENTS": "No events yet"
   },
   "HOME": {
+    "STATUS_DA_AVVIARE": "Not started",
     "ARCHIVE": "Finished or eliminated",
     "EMPTY_TITLE": "You're not in any ongoing league",
     "EMPTY_TEXT": "If a friend invited you, open the link they sent you. Otherwise create one yourself or browse the open leagues.",

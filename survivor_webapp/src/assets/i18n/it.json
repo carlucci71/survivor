@@ -50,6 +50,7 @@
     "NO_EVENTS": "Nessun evento ancora"
   },
   "HOME": {
+    "STATUS_DA_AVVIARE": "Da avviare",
     "ARCHIVE": "Concluse e dove sei uscito",
     "EMPTY_TITLE": "Non sei in nessuna lega in corso",
     "EMPTY_TEXT": "Se un amico ti ha invitato, apri il link che ti ha mandato. Altrimenti creane una tu o cerca tra le leghe aperte.",

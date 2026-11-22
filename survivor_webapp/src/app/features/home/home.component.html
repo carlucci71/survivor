@@ -86,6 +86,11 @@
           </ng-container>
         </div>
 
+        <div class="hl-legend" *ngIf="legheInGioco.length > 0" aria-hidden="true">
+          <span><i class="hl-legend-dot hl-dot--in-gara"></i>{{ 'HOME.STATUS_ATTIVO' | translate }}</span>
+          <span><i class="hl-legend-dot hl-dot--da-avviare"></i>{{ 'HOME.STATUS_DA_AVVIARE' | translate }}</span>
+        </div>
+
         <!-- Archivio: terminate e leghe dove sei uscito, chiuso in fondo (si apre da solo durante una ricerca) -->
         <div class="hl-acc" *ngIf="legheArchivio.length > 0" [class.hl-acc--open]="archivioVisibile">
           <button type="button" class="hl-acc-head" (click)="archivioAperto = !archivioAperto" [attr.aria-expanded]="archivioVisibile">
@@ -98,18 +103,32 @@
             <ng-container *ngFor="let riga of legheArchivio; trackBy: trackByRiga">
               <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
             </ng-container>
+            <div class="hl-legend hl-legend--archivio" aria-hidden="true">
+              <span><i class="hl-legend-dot hl-dot--uscito"></i>{{ 'HOME.STATUS_ELIMINATO' | translate }}</span>
+              <span><i class="hl-legend-dot hl-dot--vincitore"></i>{{ 'HOME.STATUS_VINCITORE' | translate }}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Riga di una lega (una edizione): tutta la riga apre la lega -->
       <ng-template #rigaLega let-group>
-        <div class="hl-item">
+        <!-- Riga di una lega (una edizione): logo del torneo nello "stemma" con anello nei colori del torneo,
+             stato del giocatore come pallino sul logo; tutta la riga apre la lega -->
+        <div class="hl-item" [style.--c1]="coloriTorneo(group.des.campionatoId)[0]" [style.--c2]="coloriTorneo(group.des.campionatoId)[1]">
           <div class="hl-row" role="button" tabindex="0"
                (click)="goToLega(group.edizioni[0].id)" (keydown.enter)="goToLega(group.edizioni[0].id)">
-            <div class="hl-logo">
-              <img *ngIf="getTorneoLogo(group.des.campionatoId) as logo" [src]="logo" [alt]="group.des.campionatoId">
-              <mat-icon *ngIf="!getTorneoLogo(group.des.campionatoId)">emoji_events</mat-icon>
+            <span class="hl-accent" aria-hidden="true"></span>
+            <div class="hl-crest">
+              <div class="hl-crest-inner">
+                <img *ngIf="getTorneoLogo(group.des.campionatoId) as logo" [src]="logo" [alt]="group.des.campionatoId">
+                <mat-icon *ngIf="!getTorneoLogo(group.des.campionatoId)">emoji_events</mat-icon>
+              </div>
+              <ng-container *ngIf="pallino(group.edizioni[0]) as dot">
+                <span class="hl-dot hl-dot--{{ dot.tipo }}" [attr.aria-label]="dot.label | translate" role="img">
+                  <mat-icon>{{ dot.icona }}</mat-icon>
+                </span>
+              </ng-container>
             </div>
             <div class="hl-info">
               <div class="hl-name-row">
@@ -120,25 +139,23 @@
                         (click)="openRinominaDialog(group, $event)">
                   <mat-icon>edit</mat-icon>
                 </button>
+              </div>
+              <!-- Sfida 1v1: badge "1v1" (la popolarita' sarebbe sempre "nuova", al massimo sono in due) -->
+              <span *ngIf="group.maxPartecipanti === 2; else badgePop" class="hl-duel">1v1</span>
+              <ng-template #badgePop>
                 <span class="hl-pop popolarita-badge popolarita-badge--{{ getPopolarityBadge(group.numPartecipanti).tier }}">
                   <mat-icon>{{ getPopolarityBadge(group.numPartecipanti).icon }}</mat-icon>
-                  <span class="hl-pop-text">{{ getPopolarityBadge(group.numPartecipanti).key | translate }}</span>
+                  {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
                 </span>
-              </div>
+              </ng-template>
               <div class="hl-meta">
-                {{ group.des.campionatoId | translateLeagueData: 'championship' }}
-                <ng-container *ngIf="group.mostraEdizione"> · {{ 'HOME.EDITION' | translate }} {{ group.edizioni[0].edizione }}</ng-container>
-                · {{ group.numPartecipanti }} {{ 'HOME.PARTICIPANTS' | translate }}
-                <ng-container *ngIf="group.des.modalita === 'CAMPIONATO'"> · {{ 'CREATE_LEAGUE.MODE_CAMPIONATO_LABEL' | translate }}</ng-container>
-                · {{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}
+                <span class="hl-meta-text">{{ group.des.campionatoId | translateLeagueData: 'championship' }}<ng-container *ngIf="group.mostraEdizione"> · {{ 'HOME.EDITION' | translate }} {{ group.edizioni[0].edizione }}</ng-container></span>
+                <span class="hl-meta-sep">·</span>
+                <mat-icon class="hl-meta-icon">group</mat-icon><span>{{ group.edizioni[0].numPartecipanti ?? group.numPartecipanti }}</span>
+                <span class="hl-meta-sep">·</span>
+                <span class="hl-meta-text">{{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}</span>
               </div>
             </div>
-            <ng-container *ngIf="getBadgeStato(group.edizioni[0]) as badge">
-              <span class="hl-status hl-status--{{ badge }}">
-                <mat-icon>{{ badge === 'attivo' ? 'shield' : (badge === 'vincitore' ? 'emoji_events' : 'highlight_off') }}</mat-icon>
-                <span class="hl-status-text">{{ badge === 'attivo' ? ('HOME.STATUS_ATTIVO' | translate) : (badge === 'vincitore' ? ('HOME.STATUS_VINCITORE' | translate) : ('HOME.STATUS_ELIMINATO' | translate)) }}</span>
-              </span>
-            </ng-container>
             <button *ngIf="visualizzaInvito(group.edizioni[0])" type="button" class="hl-icon-btn"
                     [attr.aria-label]="'HOME.INVITE_USERS' | translate" [matTooltip]="'HOME.INVITE_USERS' | translate"
                     (click)="$event.stopPropagation(); openInvitaDialog(group.edizioni[0])">
@@ -150,6 +167,8 @@
                     (click)="$event.stopPropagation(); nuovaEdizione(group.edizioni[0])">
               <mat-icon>autorenew</mat-icon>
             </button>
+            <mat-icon *ngIf="!visualizzaInvito(group.edizioni[0]) && !(isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0]))"
+                      class="hl-go" aria-hidden="true">chevron_right</mat-icon>
           </div>
         </div>
       </ng-template>

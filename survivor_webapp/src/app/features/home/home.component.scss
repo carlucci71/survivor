@@ -1094,20 +1094,6 @@ button[mat-raised-button][color="primary"] {
 	&:active { background: var(--active-overlay); }
 }
 
-.hl-logo {
-	width: 40px;
-	height: 40px;
-	border-radius: 12px;
-	background: var(--bg-tertiary);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	overflow: hidden;
-
-	img { width: 28px; height: 28px; object-fit: contain; }
-	mat-icon { color: var(--primary-dark); }
-}
 
 .hl-info { flex: 1; min-width: 0; }
 
@@ -1150,24 +1136,6 @@ button[mat-raised-button][color="primary"] {
 	text-overflow: ellipsis;
 }
 
-.hl-status {
-	flex-shrink: 0;
-	display: inline-flex;
-	align-items: center;
-	gap: 3px;
-	padding: 3px 8px;
-	border-radius: 999px;
-	font-size: 0.7rem;
-	font-weight: 600;
-	white-space: nowrap;
-
-	mat-icon { font-size: 13px; width: 13px; height: 13px; }
-
-	&--attivo { background: rgba(67, 160, 71, 0.14); color: var(--success-color); }
-	&--eliminato { background: rgba(229, 57, 53, 0.12); color: var(--error-color); }
-	&--vincitore { background: rgba(255, 193, 7, 0.2); color: #8A5A00; }
-	&--small { padding: 2px 7px; font-size: 0.65rem; }
-}
 
 .hl-icon-btn {
 	flex-shrink: 0;
@@ -1288,10 +1256,6 @@ button[mat-raised-button][color="primary"] {
 
 @media (max-width: 380px) {
 	.hl-row { gap: 8px; padding: 10px 12px; }
-	.hl-logo { width: 34px; height: 34px; }
-	.hl-status { padding: 4px; }
-	.hl-status-text { display: none; }
-	.hl-pop-text { display: none; }
 	.nl-tiles { gap: 6px; }
 	.nl-tile { padding: 12px 4px 10px; }
 	.nl-title { font-size: 0.78rem; }
@@ -1299,4 +1263,125 @@ button[mat-raised-button][color="primary"] {
 
 /* Icona "lega pubblica" e badge di popolarita' accanto al nome */
 .hl-public { flex-shrink: 0; font-size: 15px; width: 15px; height: 15px; color: var(--text-tertiary); }
-.hl-name-row .hl-pop { flex-shrink: 0; margin-left: 2px; }
+
+/* -- Righe della home: stemma del torneo, pallino di stato, badge 1v1 -- */
+
+.hl-item {
+	--c1: var(--primary-dark);
+	--c2: var(--primary-color);
+}
+
+.hl-row { position: relative; gap: 12px; }
+
+/* Barra sottile nei colori del torneo */
+.hl-accent {
+	position: absolute;
+	left: 0;
+	top: 12px;
+	bottom: 12px;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
+	background: linear-gradient(180deg, var(--c1), var(--c2));
+}
+
+/* Logo nel cerchio bianco con anello colorato */
+.hl-crest {
+	position: relative;
+	flex-shrink: 0;
+	width: 54px;
+	height: 54px;
+	padding: 3px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--c1), var(--c2));
+	box-shadow: 0 6px 16px rgba(10, 61, 145, 0.18);
+}
+
+.hl-crest-inner {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+
+	img { width: 66%; height: 66%; object-fit: contain; }
+	mat-icon { color: var(--primary-dark); }
+}
+
+/* Pallino di stato sul logo */
+.hl-dot {
+	position: absolute;
+	right: -2px;
+	bottom: -2px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 2.5px solid var(--bg-card);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	mat-icon { font-size: 11px; width: 11px; height: 11px; color: #fff; }
+}
+
+.hl-dot--in-gara { background: var(--success-color); }
+.hl-dot--da-avviare { background: var(--warning-color); }
+.hl-dot--uscito { background: var(--error-color); }
+.hl-dot--vincitore { background: #D4A017; }
+
+.hl-name { font-size: 1rem; }
+
+/* Popolarita' (o 1v1) sotto il nome */
+.hl-info > .hl-pop {
+	display: inline-flex;
+	margin: 3px 0 0;
+}
+
+.hl-duel {
+	display: inline-flex;
+	margin-top: 3px;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: linear-gradient(135deg, #CD7F32, #E8A867);
+	color: #fff;
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.5px;
+}
+
+.hl-meta {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	margin-top: 4px;
+	font-size: 0.78rem;
+}
+
+.hl-meta-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.hl-meta-sep { opacity: 0.6; }
+.hl-meta-icon { font-size: 14px; width: 14px; height: 14px; }
+
+.hl-go { flex-shrink: 0; color: var(--border-hover); }
+
+/* Legenda dei pallini */
+.hl-legend {
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+	margin: 10px 0 0;
+	font-size: 0.72rem;
+	color: var(--text-tertiary);
+
+	span { display: inline-flex; align-items: center; gap: 5px; }
+	&--archivio { margin: 0; padding: 10px 0 12px; border-top: 1px solid var(--divider-color); }
+}
+
+.hl-legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+
+@media (max-width: 380px) {
+	.hl-crest { width: 46px; height: 46px; }
+	.hl-dot { width: 18px; height: 18px; }
+	.hl-name { font-size: 0.92rem; }
+}
