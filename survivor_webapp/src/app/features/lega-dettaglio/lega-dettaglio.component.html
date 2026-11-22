@@ -1455,5 +1455,10 @@
     }
   </div>
 }
+
+<!-- Conferma visiva della scelta: solo dopo il salvataggio riuscito (salvaSquadra) -->
+@if (pickConfermata) {
+  <app-pick-confermata [dati]="pickConfermata" (chiusa)="pickConfermata = null"></app-pick-confermata>
+}
 </div>
 

@@ -1,4 +1,8 @@
 {
+  "PICK_CONFIRM": {
+    "SAVED": "Scelta salvata",
+    "ERROR": "La scelta non è stata salvata. Riprova."
+  },
   "REACTIONS": {
     "SHEET_TITLE": "Chi ha reagito",
     "MORE": "Altre reaction"

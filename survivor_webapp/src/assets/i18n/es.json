@@ -1,4 +1,8 @@
 {
+  "PICK_CONFIRM": {
+    "SAVED": "Elección guardada",
+    "ERROR": "Tu elección no se ha guardado. Inténtalo de nuevo."
+  },
   "REACTIONS": {
     "SHEET_TITLE": "Quién ha reaccionado",
     "MORE": "Más reacciones"

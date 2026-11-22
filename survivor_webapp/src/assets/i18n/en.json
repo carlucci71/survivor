@@ -1,4 +1,8 @@
 {
+  "PICK_CONFIRM": {
+    "SAVED": "Pick saved",
+    "ERROR": "Your pick wasn't saved. Try again."
+  },
   "REACTIONS": {
     "SHEET_TITLE": "Who reacted",
     "MORE": "More reactions"
