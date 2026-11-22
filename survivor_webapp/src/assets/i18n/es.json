@@ -50,6 +50,7 @@
     "NO_EVENTS": "Todavía no hay eventos"
   },
   "HOME": {
+    "STATUS_DA_AVVIARE": "Por empezar",
     "ARCHIVE": "Terminadas y donde quedaste fuera",
     "EMPTY_TITLE": "No estás en ninguna liga en curso",
     "EMPTY_TEXT": "Si un amigo te ha invitado, abre el enlace que te ha enviado. Si no, crea una tú o busca entre las ligas abiertas.",
