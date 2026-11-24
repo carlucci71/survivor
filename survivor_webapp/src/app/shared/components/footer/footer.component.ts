@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,7 +10,8 @@ import { FaqDialogComponent } from '../faq-dialog/faq-dialog.component';
 import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { environment } from '../../../../environments/environment';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 import { Capacitor } from '@capacitor/core';
 
 // DIALOG CONTATTI
@@ -1210,7 +1211,7 @@ export class ChiSiamoDialogComponent implements OnInit{
   standalone: true,
   imports: [CommonModule, MatIconModule, MatDialogModule, MatButtonModule, MatMenuModule, TranslateModule],
   template: `
-    <footer class="survivor-footer">
+    <footer class="survivor-footer" [class.survivor-footer--scuro]="scuro">
       <div class="footer-container">
         <div class="footer-content">
           <!-- LOGO SURVIVOR -->
@@ -1288,6 +1289,15 @@ export class ChiSiamoDialogComponent implements OnInit{
       box-shadow: 0 -2px 8px rgba(10, 61, 145, 0.1);
       position: relative;
       overflow: hidden;
+    }
+
+    /* Variante "blu notte" (solo sulla home): stesso colore di header e hero "Le tue scelte",
+       cioe' il gradiente del tema scurito (segue dev/test/prod); sottotitolo in oro */
+    .survivor-footer--scuro {
+      background: linear-gradient(rgba(4, 14, 38, 0.55), rgba(4, 14, 38, 0.55)), var(--gradient-primary);
+      box-shadow: 0 -2px 12px rgba(4, 14, 38, 0.25);
+
+      .footer-brand .footer-logo .subtitle { color: #F7DC8C; }
     }
 
     .footer-container {
@@ -1562,8 +1572,11 @@ export class ChiSiamoDialogComponent implements OnInit{
     }
   `]
 })
-export class FooterComponent  {
+export class FooterComponent implements OnDestroy {
   currentLang: string;
+  /** Footer blu notte solo sulla home (come header e hero); nelle altre pagine resta com'e' */
+  scuro = false;
+  private navSub: Subscription;
   currentYear: number = new Date().getFullYear();
   isMobile: boolean = Capacitor.getPlatform() !== 'web';
   readonly supportedLanguages = SUPPORTED_LANGUAGES;
@@ -1579,6 +1592,18 @@ export class FooterComponent  {
     this.languageService.currentLang$.subscribe(lang => {
       this.currentLang = lang;
     });
+    this.scuro = this.isHome(this.router.url);
+    this.navSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(e => (this.scuro = this.isHome(e.urlAfterRedirects)));
+  }
+
+  ngOnDestroy(): void {
+    this.navSub.unsubscribe();
+  }
+
+  private isHome(url: string): boolean {
+    return /^\/home(\?|#|$)/.test(url || '');
   }
 
 

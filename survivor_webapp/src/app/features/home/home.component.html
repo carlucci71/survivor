@@ -2,7 +2,7 @@
   @if(showOnboarding) {
     <app-onboarding (dismissed)="showOnboarding = false"></app-onboarding>
   }
-  <app-header title="" visHome="N" visLogout="S" (logout)="logout()">
+  <app-header title="" visHome="N" visLogout="S" [scuro]="true" (logout)="logout()">
     <div class="config-user">
       <button class="user-avatar-btn" (click)="openProfilo()" [title]="me?.nickname || ''">
         <div class="user-avatar" [style.background]="getAvatarGradient()">
