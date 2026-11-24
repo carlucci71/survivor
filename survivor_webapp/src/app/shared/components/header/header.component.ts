@@ -22,7 +22,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
     NotificationBellComponent,
   ],
   template: `
-    <mat-toolbar color="primary" class="header">
+    <mat-toolbar color="primary" class="header" [class.header--scuro]="scuro">
       <div class="header-content">
         <div class="left-section">
           <div class="title-logo-container">
@@ -85,6 +85,11 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
            che su verde/rosso di dev/test, invece di un'ombra colorata che sul
            verde si mimetizza quasi del tutto. */
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32), 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      /* Variante "blu notte" (solo home): stesso colore della hero "Le tue scelte", cioe' il
+         gradiente del tema scurito (segue dev/test/prod) */
+      .header.header--scuro {
+        background: linear-gradient(rgba(4, 14, 38, 0.55), rgba(4, 14, 38, 0.55)), var(--header-bg) !important;
       }
       /* Filo di luce sul bordo inferiore, per staccare l'header dal bianco sotto */
       .header::after {
@@ -390,6 +395,8 @@ export class HeaderComponent {
   @Input() visLogout = 'N';
   @Input() hideActions = false;
   @Input() showSlogan = false;
+  /** Header blu notte, come la hero della home (usato solo dalla home) */
+  @Input() scuro = false;
   @Output() back = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
