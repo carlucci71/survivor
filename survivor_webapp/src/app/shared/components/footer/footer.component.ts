@@ -1294,7 +1294,7 @@ export class ChiSiamoDialogComponent implements OnInit{
     /* Variante "blu notte" (solo sulla home): stesso colore di header e hero "Le tue scelte",
        cioe' il gradiente del tema scurito (segue dev/test/prod); sottotitolo in oro */
     .survivor-footer--scuro {
-      background: linear-gradient(rgba(4, 14, 38, 0.55), rgba(4, 14, 38, 0.55)), var(--gradient-primary);
+      background: linear-gradient(90deg, rgba(4, 14, 38, 0.66), rgba(4, 14, 38, 0.24)), var(--gradient-primary);
       box-shadow: 0 -2px 12px rgba(4, 14, 38, 0.25);
 
       .footer-brand .footer-logo .subtitle { color: #F7DC8C; }

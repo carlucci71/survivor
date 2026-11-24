@@ -1112,4 +1112,14 @@ mat-dialog-actions {
   }
 }
 
-
+/* Pannello "Nuove leghe" (home, pulsante "+"): dal basso su telefono, finestra su desktop */
+.mat-bottom-sheet-container.nl-sheet-panel {
+  padding: 0 !important;
+  border-radius: 24px 24px 0 0 !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 -10px 30px rgba(4, 14, 38, 0.25) !important;
+}
+.nl-dialog-panel .mat-mdc-dialog-surface {
+  border-radius: 24px !important;
+  padding: 8px 4px;
+}
