@@ -138,6 +138,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
               <h2>{{ 'GUIDE.S2_TITLE' | translate }}</h2>
             </div>
             <p [innerHTML]="'GUIDE.S2_P1' | translate"></p>
+            <p [innerHTML]="'GUIDE.S2_PRONOSTICI' | translate"></p>
             <div class="card-grid">
               <div class="card"><div class="card-icon">🔒</div><strong>{{ 'GUIDE.S2_CARD1_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD1_TEXT' | translate }}</span></div>
               <div class="card"><div class="card-icon">🌐</div><strong>{{ 'GUIDE.S2_CARD2_TITLE' | translate }}</strong><span>{{ 'GUIDE.S2_CARD2_TEXT' | translate }}</span></div>

@@ -15,18 +15,15 @@
   <!-- BANNER INFO -->
   <app-info-banner></app-info-banner>
 
-  <!-- HERO SECTION (il chip "LIVE" vive in sovrimpressione in basso a sinistra sull'hero) -->
-  <app-hero-three>
+  <!-- HERO "I tuoi pronostici": ho votato dappertutto? (sostituisce hero-three e la card "Il tuo pronostico") -->
+  <app-pronostici-hero [leghe]="legheHero" [tutteLeghe]="leghe" [caricamento]="isLoadingLeghe" (refreshRequired)="loadLeghe()">
     <app-live-score-button heroOverlay></app-live-score-button>
-  </app-hero-three>
-
-  <!-- GIOCATA RECAP CARD -->
-  <app-giocata-recap-card [leghe]="leghe" [initialLegaId]="selectedLegaId" (refreshRequired)="loadLeghe()"></app-giocata-recap-card>
+  </app-pronostici-hero>
 
   <main class="main-content">
 
 
-    <section class="leghe-section">
+    <section class="leghe-section" id="le-tue-leghe">
       <h2>{{ 'HOME.TITLE' | translate }}</h2>
 
       <!-- Barra di ricerca -->
@@ -59,17 +56,6 @@
         <app-lega-card-skeleton></app-lega-card-skeleton>
       </div>
 
-      <!-- Nessuna lega in corso: invito chiaro (l'archivio resta comunque sotto) -->
-      <div *ngIf="!isLoadingLeghe && !searchText?.trim() && legheInGioco.length === 0" class="hl-empty">
-        <mat-icon class="hl-empty-icon">emoji_events</mat-icon>
-        <p class="hl-empty-title">{{ 'HOME.EMPTY_TITLE' | translate }}</p>
-        <p class="hl-empty-text">{{ 'HOME.EMPTY_TEXT' | translate }}</p>
-        <div class="hl-empty-actions">
-          <button type="button" class="hl-btn hl-btn--primary" (click)="goToCreaLega()">{{ 'HOME.CREATE_LEAGUE' | translate }}</button>
-          <button type="button" class="hl-btn" (click)="goToUniscitiLega()">{{ 'HOME.OPEN_LEAGUES' | translate }}</button>
-        </div>
-      </div>
-
       <!-- Nessun risultato dalla ricerca -->
       <mat-card *ngIf="!isLoadingLeghe && groupedLeghe.length > 0 && filteredGroupedLeghe.length === 0" class="no-data">
         <mat-card-content>
@@ -79,12 +65,31 @@
       </mat-card>
 
       <div *ngIf="!isLoadingLeghe && filteredGroupedLeghe.length > 0">
-        <!-- In gioco: in cima e sempre aperte, dalla piu' recente (private e pubbliche insieme) -->
-        <div class="hl-list" *ngIf="legheInGioco.length > 0">
-          <ng-container *ngFor="let riga of legheInGioco; trackBy: trackByRiga">
-            <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
-          </ng-container>
-        </div>
+        <!-- In gioco, diviso per urgenza: da votare (chi inizia prima, prima), pronostico fatto, in attesa -->
+        <ng-container *ngIf="righeDaVotare.length > 0">
+          <div class="hl-sec hl-sec--todo"><mat-icon>error_outline</mat-icon>{{ 'PRONOSTICI.SECTION_TO_VOTE' | translate }}</div>
+          <div class="hl-list">
+            <ng-container *ngFor="let riga of righeDaVotare; trackBy: trackByRiga">
+              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="righeFatte.length > 0">
+          <div class="hl-sec"><mat-icon>task_alt</mat-icon>{{ 'PRONOSTICI.SECTION_DONE' | translate }}</div>
+          <div class="hl-list">
+            <ng-container *ngFor="let riga of righeFatte; trackBy: trackByRiga">
+              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="righeInAttesa.length > 0">
+          <div class="hl-sec"><mat-icon>schedule</mat-icon>{{ 'PRONOSTICI.SECTION_WAITING' | translate }}</div>
+          <div class="hl-list">
+            <ng-container *ngFor="let riga of righeInAttesa; trackBy: trackByRiga">
+              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
 
         <div class="hl-legend" *ngIf="legheInGioco.length > 0" aria-hidden="true">
           <span><i class="hl-legend-dot hl-dot--in-gara"></i>{{ 'HOME.STATUS_ATTIVO' | translate }}</span>
@@ -139,6 +144,11 @@
                         (click)="openRinominaDialog(group, $event)">
                   <mat-icon>edit</mat-icon>
                 </button>
+                <button *ngIf="visualizzaInvito(group.edizioni[0])" type="button" class="hl-rename hl-invite"
+                        [attr.aria-label]="'HOME.INVITE_USERS' | translate" [matTooltip]="'HOME.INVITE_USERS' | translate"
+                        (click)="$event.stopPropagation(); openInvitaDialog(group.edizioni[0])">
+                  <mat-icon>person_add</mat-icon>
+                </button>
               </div>
               <!-- Sfida 1v1: badge "1v1" (la popolarita' sarebbe sempre "nuova", al massimo sono in due) -->
               <span *ngIf="group.maxPartecipanti === 2; else badgePop" class="hl-duel">1v1</span>
@@ -155,20 +165,38 @@
                 <span class="hl-meta-sep">·</span>
                 <span class="hl-meta-text">{{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}</span>
               </div>
+              <!-- Da votare: quando inizia la giornata -->
+              <div class="hl-when" *ngIf="group.inGioco && statoRiga(group.edizioni[0]) === 'da-votare'">
+                <mat-icon>schedule</mat-icon>
+                <ng-container *ngIf="durataRiga(group.edizioni[0]) as d; else iniziata">{{ 'PRONOSTICI.STARTS_IN' | translate: { t: (d.key | translate: d.params) } }}</ng-container>
+                <ng-template #iniziata>{{ 'PRONOSTICI.STARTED' | translate }}</ng-template>
+              </div>
             </div>
-            <button *ngIf="visualizzaInvito(group.edizioni[0])" type="button" class="hl-icon-btn"
-                    [attr.aria-label]="'HOME.INVITE_USERS' | translate" [matTooltip]="'HOME.INVITE_USERS' | translate"
-                    (click)="$event.stopPropagation(); openInvitaDialog(group.edizioni[0])">
-              <mat-icon>person_add</mat-icon>
-            </button>
-            <button *ngIf="isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0])"
-                    type="button" class="hl-icon-btn"
-                    [attr.aria-label]="'HOME.NEW_EDITION' | translate" [matTooltip]="'HOME.NEW_EDITION' | translate"
-                    (click)="$event.stopPropagation(); nuovaEdizione(group.edizioni[0])">
-              <mat-icon>autorenew</mat-icon>
-            </button>
-            <mat-icon *ngIf="!visualizzaInvito(group.edizioni[0]) && !(isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0]))"
-                      class="hl-go" aria-hidden="true">chevron_right</mat-icon>
+            <!-- Stato del pronostico (solo leghe in gioco) -->
+            <ng-container *ngIf="group.inGioco; else azioniArchivio">
+              <ng-container [ngSwitch]="statoRiga(group.edizioni[0])">
+                <button *ngSwitchCase="'da-votare'" type="button" class="hl-vote" (click)="votaRiga(group.edizioni[0], $event)">
+                  {{ 'PRONOSTICI.VOTE' | translate }}
+                </button>
+                <span *ngSwitchCase="'fatto'" class="hl-pick" [attr.aria-label]="nomeScelta(group.edizioni[0])">
+                  <span class="hl-pick-logo">
+                    <img *ngIf="logoScelta(group.edizioni[0]) as logo" [src]="logo" alt="" />
+                  </span>
+                  <span class="hl-pick-name">{{ nomeScelta(group.edizioni[0]) }}</span>
+                  <mat-icon>check</mat-icon>
+                </span>
+                <mat-icon *ngSwitchDefault class="hl-go" aria-hidden="true">chevron_right</mat-icon>
+              </ng-container>
+            </ng-container>
+            <ng-template #azioniArchivio>
+              <button *ngIf="isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0]); else freccia"
+                      type="button" class="hl-icon-btn"
+                      [attr.aria-label]="'HOME.NEW_EDITION' | translate" [matTooltip]="'HOME.NEW_EDITION' | translate"
+                      (click)="$event.stopPropagation(); nuovaEdizione(group.edizioni[0])">
+                <mat-icon>autorenew</mat-icon>
+              </button>
+              <ng-template #freccia><mat-icon class="hl-go" aria-hidden="true">chevron_right</mat-icon></ng-template>
+            </ng-template>
           </div>
         </div>
       </ng-template>

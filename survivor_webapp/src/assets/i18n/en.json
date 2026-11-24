@@ -1,4 +1,31 @@
 {
+  "PRONOSTICI": {
+    "TO_CHOOSE": "To pick",
+    "IN": "in {{t}}",
+    "STARTED_SHORT": "started",
+    "IN_PROGRESS": "live",
+    "MORE_LEAGUES": "+{{n}} more leagues",
+    "LABEL": "Your picks",
+    "DONE_LABEL": "Done",
+    "NOTHING_TO_VOTE": "No picks to make right now",
+    "STARTS_IN": "Starts in {{t}}",
+    "STARTED": "Round already started",
+    "DURATION_DH": "{{d}}d {{h}}h",
+    "DURATION_HM": "{{h}}h {{m}}m",
+    "DURATION_M": "{{m}}m",
+    "VOTE_IN": "Pick in {{lega}}",
+    "VOTE": "Pick",
+    "NEXT_ROUND": "Next round: {{data}}",
+    "WAITING": "Waiting for this round's results",
+    "WELCOME_TITLE": "Welcome to Survivor",
+    "WELCOME_TEXT": "Win or go home: pick one team each round and stay in until the end. If a friend invited you, open the link they sent you.",
+    "RESULT_WIN": "{{squadra}} got through!",
+    "RESULT_LOSS": "{{squadra}}: round lost",
+    "RESULT_DRAW": "{{squadra}}: draw",
+    "SECTION_TO_VOTE": "To pick",
+    "SECTION_DONE": "Pick made",
+    "SECTION_WAITING": "Waiting for the round"
+  },
   "PICK_CONFIRM": {
     "SAVED": "Pick saved",
     "ERROR": "Your pick wasn't saved. Try again."
@@ -1752,6 +1779,7 @@
     ]
   },
   "GUIDE": {
+    "S2_PRONOSTICI": "At the top of Home you'll find <strong>Your picks</strong>: how many you've made out of how many, the logos of the teams you chose and the league that starts first, with the <strong>Pick</strong> button that opens the team choice right away. Below, your leagues are split into <strong>To pick</strong> (at the top, with the time left before kick-off), <strong>Pick made</strong> (with your team) and <strong>Waiting for the round</strong>. You see everything without opening each league.",
     "TAGLINE": "Complete user guide",
     "DOWNLOAD_CTA": "Download the Survivor app",
     "SECTION_INTRO": "Introduction",
