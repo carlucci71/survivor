@@ -21,6 +21,8 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
 import { RinominaLegaDialogComponent } from '../../shared/components/rinomina-lega-dialog/rinomina-lega-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar } from '@capacitor/status-bar';
 import { PronosticiHeroComponent } from '../../shared/components/pronostici-hero/pronostici-hero.component';
 import { TeamLogoService } from '../../core/services/team-logo.service';
 import { durataAllInizio, perUrgenza, statoPronostico } from '../../core/utils/stato-pronostico';
@@ -44,6 +46,10 @@ import { LiveScoreButtonComponent } from '../../shared/components/live-score-but
 
 
 /** Una riga della home: un gruppo (lega per nome) ridotto a una sola edizione. */
+/** Barra di stato: blu notte della home (gradiente del tema scurito come hero/header) e blu standard dell'app */
+const BARRA_HOME = '#072356';
+const BARRA_APP = '#0A3D91';
+
 type GruppoLeghe = {
   name: string;
   des: { sportId: string; campionatoId: string; modalita: string };
@@ -171,6 +177,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Avvia la registrazione push qui: Home è protetta da `authGuard`, quindi
     // l'utente è autenticato e possiamo procedere in sicurezza.
     void this.pushService.initPush();
+    this.barraDiStato(BARRA_HOME);
   }
 
   ngOnDestroy(): void {
@@ -185,6 +192,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.giocatoreSubscription.unsubscribe();
     }
     clearInterval(this.orologio);
+    // uscendo dalla home la barra di stato torna al blu normale dell'app
+    this.barraDiStato(BARRA_APP);
+  }
+
+  /**
+   * Colore della barra di stato del telefono (ora, batteria): blu notte sulla home, come header e hero,
+   * blu normale altrove (stesso valore di capacitor.config.ts). L'API funziona su Android; su iOS la
+   * barra resta quella impostata nell'app nativa.
+   */
+  private barraDiStato(colore: string): void {
+    if (!Capacitor.isNativePlatform()) return;
+    StatusBar.setBackgroundColor({ color: colore }).catch(() => { /* non supportato (iOS) */ });
   }
 
   private loadMe(): void {
