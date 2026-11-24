@@ -1,4 +1,31 @@
 {
+  "PRONOSTICI": {
+    "TO_CHOOSE": "Da scegliere",
+    "IN": "tra {{t}}",
+    "STARTED_SHORT": "iniziata",
+    "IN_PROGRESS": "in corso",
+    "MORE_LEAGUES": "+{{n}} altre leghe",
+    "LABEL": "Le tue scelte",
+    "DONE_LABEL": "Fatti",
+    "NOTHING_TO_VOTE": "Nessun pronostico da fare ora",
+    "STARTS_IN": "Inizia tra {{t}}",
+    "STARTED": "Giornata già iniziata",
+    "DURATION_DH": "{{d}}g {{h}}h",
+    "DURATION_HM": "{{h}}h {{m}}m",
+    "DURATION_M": "{{m}}m",
+    "VOTE_IN": "Vota in {{lega}}",
+    "VOTE": "Vota",
+    "NEXT_ROUND": "Prossima giornata: {{data}}",
+    "WAITING": "Aspettiamo i risultati del turno",
+    "WELCOME_TITLE": "Benvenuto in Survivor",
+    "WELCOME_TEXT": "Vinci o vai a casa: scegli una squadra a turno e resta in gara fino alla fine. Se un amico ti ha invitato, apri il link che ti ha mandato.",
+    "RESULT_WIN": "{{squadra}} ha passato il turno!",
+    "RESULT_LOSS": "{{squadra}}: turno perso",
+    "RESULT_DRAW": "{{squadra}}: pareggio",
+    "SECTION_TO_VOTE": "Da votare",
+    "SECTION_DONE": "Pronostico fatto",
+    "SECTION_WAITING": "In attesa del turno"
+  },
   "PICK_CONFIRM": {
     "SAVED": "Scelta salvata",
     "ERROR": "La scelta non è stata salvata. Riprova."
@@ -1757,6 +1784,7 @@
     ]
   },
   "GUIDE": {
+    "S2_PRONOSTICI": "In cima alla Home trovi <strong>I tuoi pronostici</strong>: quanti ne hai fatti su quanti, i loghi delle squadre scelte e la lega che inizia per prima, con il pulsante <strong>Vota</strong> che apre subito la scelta della squadra. Sotto, le tue leghe sono divise in <strong>Da votare</strong> (in alto, con il tempo che manca all'inizio), <strong>Pronostico fatto</strong> (con la squadra scelta) e <strong>In attesa del turno</strong>. Così vedi tutto senza aprire ogni lega.",
     "TAGLINE": "Guida utente completa",
     "DOWNLOAD_CTA": "Scarica l'app Survivor",
     "SECTION_INTRO": "Introduzione",
