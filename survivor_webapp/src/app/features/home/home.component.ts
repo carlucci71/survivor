@@ -21,7 +21,9 @@ import { InvitaUtentiDialogComponent } from '../../shared/components/invita-uten
 import { RinominaLegaDialogComponent } from '../../shared/components/rinomina-lega-dialog/rinomina-lega-dialog.component';
 import { InfoBannerComponent } from '../../shared/components/info-banner/info-banner.component';
 import { HeaderComponent } from '../../shared/components/header/header.component';
-import { HeroThreeComponent } from '../../shared/components/hero-three/hero-three.component';
+import { PronosticiHeroComponent } from '../../shared/components/pronostici-hero/pronostici-hero.component';
+import { TeamLogoService } from '../../core/services/team-logo.service';
+import { durataAllInizio, perUrgenza, statoPronostico } from '../../core/utils/stato-pronostico';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -34,7 +36,6 @@ import { TranslateLeagueDataPipe } from '../../shared/pipes/translate-league-dat
 
 
 import { OnboardingComponent } from '../../shared/components/onboarding/onboarding.component';
-import { GiocataRecapCardComponent } from '../../shared/components/giocata-recap-card/giocata-recap-card.component';
 import { ProfiloDialogComponent } from '../../shared/components/info-banner/info-banner.component';
 import { SfidaLampoDialogComponent } from '../../shared/components/sfida-lampo-dialog/sfida-lampo-dialog.component';
 import { VincitoriDialogComponent } from '../../shared/components/vincitori-dialog/vincitori-dialog.component';
@@ -52,6 +53,8 @@ type GruppoLeghe = {
   maxPartecipanti?: number;
   /** La lega ha piu' edizioni: nella riga si mostra quale */
   mostraEdizione?: boolean;
+  /** Lega in cui sei ancora in gioco: mostra lo stato del pronostico del turno */
+  inGioco?: boolean;
 };
 
 @Component({
@@ -63,7 +66,7 @@ type GruppoLeghe = {
     MatButtonModule,
     HeaderComponent,
     InfoBannerComponent,
-    HeroThreeComponent,
+    PronosticiHeroComponent,
     MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
@@ -78,7 +81,6 @@ type GruppoLeghe = {
     MatInputModule,
     TranslateLeagueDataPipe,
     OnboardingComponent,
-    GiocataRecapCardComponent,
     LiveScoreButtonComponent
   ],
   templateUrl: './home.component.html',
@@ -133,6 +135,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private translate: TranslateService
     ,
     private snackBar: MatSnackBar
+    ,
+    private teamLogoService: TeamLogoService
   ) {}
 
   ngOnInit(): void {
@@ -180,6 +184,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
     }
+    clearInterval(this.orologio);
   }
 
   private loadMe(): void {
@@ -676,14 +681,57 @@ ${link}`;
     const archivio: GruppoLeghe[] = [];
     for (const g of this.filteredGroupedLeghe) {
       g.edizioni.forEach((e, i) => {
-        const riga = { ...g, edizioni: [e], mostraEdizione: g.edizioni.length > 1 };
-        if (i === 0 && this.edizioneInGioco(e)) inGioco.push(riga);
+        const attiva = i === 0 && this.edizioneInGioco(e);
+        const riga = { ...g, edizioni: [e], mostraEdizione: g.edizioni.length > 1, inGioco: attiva };
+        if (attiva) inGioco.push(riga);
         else archivio.push(riga);
       });
     }
     const piuRecente = (a: GruppoLeghe, b: GruppoLeghe) => (b.edizioni[0].id ?? 0) - (a.edizioni[0].id ?? 0);
     this.legheInGioco = inGioco.sort(piuRecente);
     this.legheArchivio = archivio.sort(piuRecente);
+
+    // "In gioco" diviso per urgenza: da votare (chi inizia prima, prima), pronostico fatto, in attesa
+    this.righeDaVotare = this.legheInGioco
+      .filter(r => statoPronostico(r.edizioni[0]) === 'da-votare')
+      .sort((a, b) => perUrgenza(a.edizioni[0], b.edizioni[0]));
+    this.righeFatte = this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'fatto');
+    this.righeInAttesa = this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'attesa');
+
+    // La hero conta sempre tutte le leghe in gioco, anche durante una ricerca
+    this.legheHero = this.groupedLeghe
+      .map(g => g.edizioni[0])
+      .filter(e => !!e && this.edizioneInGioco(e));
+  }
+
+  // ── Pronostici del turno (hero + sezioni della lista) ──────────────────────────────
+  righeDaVotare: GruppoLeghe[] = [];
+  righeFatte: GruppoLeghe[] = [];
+  righeInAttesa: GruppoLeghe[] = [];
+  legheHero: Lega[] = [];
+  /** Orologio per i countdown delle righe "Da votare" (aggiornato ogni 30 secondi) */
+  adesso = Date.now();
+  private orologio = setInterval(() => (this.adesso = Date.now()), 30000);
+
+  durataRiga(l: Lega) { return durataAllInizio(l, this.adesso); }
+
+  statoRiga(l: Lega) { return statoPronostico(l); }
+
+  /** Logo della squadra scelta per il turno corrente */
+  logoScelta(l: Lega): string | null {
+    const sigla = l.miaGiocataCorrente?.squadraSigla;
+    return sigla ? this.teamLogoService.getLogoUrl(l.campionato?.sport?.id, l.campionato?.id, sigla) : null;
+  }
+
+  nomeScelta(l: Lega): string {
+    const g = l.miaGiocataCorrente;
+    return g ? (g.squadraNome || g.squadraSigla) : '';
+  }
+
+  /** "Vota" nella riga: apre la lega con la finestra di scelta gia' aperta */
+  votaRiga(l: Lega, event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/lega', l.id], { queryParams: { vota: 1 } });
   }
 
   trackByRiga(_: number, riga: GruppoLeghe): number {

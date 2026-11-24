@@ -308,6 +308,7 @@ export class LegaDettaglioComponent implements OnDestroy {
         if (lega) {
           this.lega = lega;
           this.id=lega.id;
+          this.leggiVotoDaHome();
           this.caricaMioPronostico();
 
           // 🧪 MOCK PER TESTARE TABELLA CON PIÙ GIORNATE
@@ -1069,12 +1070,30 @@ export class LegaDettaglioComponent implements OnDestroy {
         .subscribe({
           next: (squadre: any[]) => {
             this.squadre = squadre;
+            // "Vota" dalla home: la finestra di scelta si apre solo con le squadre gia' caricate
+            if (this.votoDaHomeInAttesa) {
+              this.votoDaHomeInAttesa = false;
+              const me = this.getCurrentGiocatore();
+              if (me && this.hasGiocataDisponibile(me)) {
+                setTimeout(() => this.giocaGiornataDisponibile(me), 300);
+              }
+            }
           },
           error: () => {
             this.squadre = [];
           },
         });
     }
+  }
+
+  /** Arrivati dal pulsante "Vota" della home (?vota=1): apre la finestra di scelta appena possibile. */
+  private votoDaHomeInAttesa = false;
+
+  private leggiVotoDaHome(): void {
+    if (this.route.snapshot.queryParamMap.get('vota') !== '1') return;
+    this.votoDaHomeInAttesa = true;
+    // Toglie il parametro dall'indirizzo: tornando indietro o ricaricando non si riapre
+    this.router.navigate([], { relativeTo: this.route, queryParams: { vota: null }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   /**
