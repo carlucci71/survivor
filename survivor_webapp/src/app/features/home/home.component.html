@@ -24,29 +24,32 @@
 
 
     <section class="leghe-section" id="le-tue-leghe">
-      <h2>{{ 'HOME.TITLE' | translate }}</h2>
-
-      <!-- Barra di ricerca -->
-      <div class="search-container" *ngIf="!isLoadingLeghe && groupedLeghe.length > 0">
-        <mat-form-field appearance="outline" class="search-field">
-          <mat-icon matPrefix>search</mat-icon>
-          <input
-            matInput
-            [(ngModel)]="searchText"
-            (ngModelChange)="filterLeghe()"
-            [placeholder]="'HOME.SEARCH_LEAGUES' | translate"
-            autocomplete="off"
-          />
-          <button
-            *ngIf="searchText"
-            matSuffix
-            mat-icon-button
-            (click)="searchText = ''; filterLeghe()"
-            [attr.aria-label]="'COMMON.CLEAR_SEARCH' | translate"
-          >
-            <mat-icon>close</mat-icon>
+      <!-- Titolo con a destra la ricerca (icona che si apre al tocco) e il "+" per nuove leghe -->
+      <div class="hl-title-row" [class.hl-title-row--search]="ricercaAperta">
+        @if (!ricercaAperta) {
+          <h2>{{ 'HOME.TITLE' | translate }}</h2>
+        } @else {
+          <div class="hl-search">
+            <mat-icon class="hl-search-icon">search</mat-icon>
+            <input #campoRicerca type="search" class="hl-search-input"
+                   [(ngModel)]="searchText" (ngModelChange)="filterLeghe()"
+                   [placeholder]="'HOME.SEARCH_LEAGUES' | translate" autocomplete="off"
+                   (keydown.escape)="chiudiRicerca()" />
+            <button type="button" class="hl-tool hl-tool--ghost" (click)="chiudiRicerca()" [attr.aria-label]="'COMMON.CLEAR_SEARCH' | translate">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        }
+        <div class="hl-tools">
+          @if (!ricercaAperta && groupedLeghe.length > 0) {
+            <button type="button" class="hl-tool" (click)="apriRicerca()" [attr.aria-label]="'HOME.SEARCH_LEAGUES' | translate">
+              <mat-icon>search</mat-icon>
+            </button>
+          }
+          <button type="button" class="hl-tool hl-tool--add" (click)="apriNuovaLega()" [attr.aria-label]="'HOME.NEW_LEAGUES' | translate">
+            <mat-icon>add</mat-icon>
           </button>
-        </mat-form-field>
+        </div>
       </div>
 
       <!-- Skeleton Loading -->
@@ -200,44 +203,6 @@
           </div>
         </div>
       </ng-template>
-    </section>
-
-    <!-- Divisorio tra sezioni -->
-    <div class="section-divider"></div>
-
-    <section class="leghe-section">
-      <h2>{{ 'HOME.NEW_LEAGUES' | translate }}</h2>
-      <!-- Tre riquadri uguali: sfida 1v1 (con la moneta animata), crea lega, unisciti -->
-      <div class="nl-tiles">
-        <button type="button" class="nl-tile nl-tile--duel" [class.duel-seal--clicked]="sfidaAnimating" (click)="onDuelSealClick()">
-          <span class="duel-seal-coin">
-            <span class="duel-seal-halo"></span>
-            <span class="duel-seal-disc" aria-hidden="true">
-              <span class="duel-seal-layer" style="--z:-3px"></span>
-              <span class="duel-seal-layer" style="--z:-2px"></span>
-              <span class="duel-seal-layer" style="--z:-1px"></span>
-              <span class="duel-seal-layer" style="--z:0px"></span>
-              <span class="duel-seal-layer" style="--z:1px"></span>
-              <span class="duel-seal-layer" style="--z:2px"></span>
-              <span class="duel-seal-layer" style="--z:3px"></span>
-              <span class="duel-seal-face duel-seal-face--front"><span class="duel-seal-text">1v1</span></span>
-              <span class="duel-seal-face duel-seal-face--back">⚔️</span>
-            </span>
-          </span>
-          <span class="nl-title">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
-          <span class="nl-sub">{{ 'DUEL.CARD_TITLE' | translate }}</span>
-        </button>
-        <button type="button" class="nl-tile" (click)="goToCreaLega()">
-          <mat-icon class="nl-icon">add_circle</mat-icon>
-          <span class="nl-title">{{ 'HOME.CREATE_LEAGUE' | translate }}</span>
-          <span class="nl-sub">{{ 'HOME.TILE_CREATE_SUB' | translate }}</span>
-        </button>
-        <button type="button" class="nl-tile" (click)="goToUniscitiLega()">
-          <mat-icon class="nl-icon">groups</mat-icon>
-          <span class="nl-title">{{ 'HOME.JOIN_LEAGUE' | translate }}</span>
-          <span class="nl-sub">{{ 'HOME.TILE_JOIN_SUB' | translate }}</span>
-        </button>
-      </div>
     </section>
 
     <!-- CONDIVIDI L'APP: link agli store, per portare nuovi utenti -->

@@ -89,7 +89,7 @@ import { NotificationBellComponent } from '../notification-bell/notification-bel
       /* Variante "blu notte" (solo home): stesso colore della hero "Le tue scelte", cioe' il
          gradiente del tema scurito (segue dev/test/prod) */
       .header.header--scuro {
-        background: linear-gradient(rgba(4, 14, 38, 0.55), rgba(4, 14, 38, 0.55)), var(--header-bg) !important;
+        background: linear-gradient(90deg, rgba(4, 14, 38, 0.66), rgba(4, 14, 38, 0.24)), var(--header-bg) !important;
       }
       /* Filo di luce sul bordo inferiore, per staccare l'header dal bianco sotto */
       .header::after {

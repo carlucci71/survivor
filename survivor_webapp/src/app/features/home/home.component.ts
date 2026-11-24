@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { NuovaLegaSheetComponent, SceltaNuovaLega } from '../../shared/components/nuova-lega-sheet/nuova-lega-sheet.component';
 import { condividi } from '../../core/utils/condividi';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -47,7 +49,7 @@ import { LiveScoreButtonComponent } from '../../shared/components/live-score-but
 
 /** Una riga della home: un gruppo (lega per nome) ridotto a una sola edizione. */
 /** Barra di stato: blu notte della home (gradiente del tema scurito come hero/header) e blu standard dell'app */
-const BARRA_HOME = '#072356';
+const BARRA_HOME = '#061E4A';
 const BARRA_APP = '#0A3D91';
 
 type GruppoLeghe = {
@@ -67,6 +69,7 @@ type GruppoLeghe = {
   selector: 'app-home',
   standalone: true,
   imports: [
+    MatBottomSheetModule,
     CommonModule,
     MatCardModule,
     MatButtonModule,
@@ -143,6 +146,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar
     ,
     private teamLogoService: TeamLogoService
+    ,
+    private bottomSheet: MatBottomSheet
   ) {}
 
   ngOnInit(): void {
@@ -721,6 +726,41 @@ ${link}`;
     this.legheHero = this.groupedLeghe
       .map(g => g.edizioni[0])
       .filter(e => !!e && this.edizioneInGioco(e));
+  }
+
+  /**
+   * "+" accanto al titolo: pannello "Nuove leghe" con le tre card (sfida lampo, crea, unisciti).
+   * Su telefono sale dal basso, su desktop e' una finestra centrata.
+   */
+  apriNuovaLega(): void {
+    const esegui = (scelta?: SceltaNuovaLega) => {
+      if (scelta === 'sfida') this.apriSfidaLampo();
+      else if (scelta === 'crea') this.goToCreaLega();
+      else if (scelta === 'unisciti') this.goToUniscitiLega();
+    };
+    if (window.innerWidth < 768) {
+      this.bottomSheet.open<NuovaLegaSheetComponent, unknown, SceltaNuovaLega>(NuovaLegaSheetComponent, { panelClass: 'nl-sheet-panel', autoFocus: false })
+        .afterDismissed().subscribe(esegui);
+    } else {
+      this.dialog.open<NuovaLegaSheetComponent, unknown, SceltaNuovaLega>(NuovaLegaSheetComponent, { width: '480px', maxWidth: '92vw', panelClass: 'nl-dialog-panel', autoFocus: false })
+        .afterClosed().subscribe(esegui);
+    }
+  }
+
+  // ── Ricerca a icona: il campo si apre al tocco sulla lente ─────────────────────────────
+  ricercaAperta = false;
+  @ViewChild('campoRicerca') campoRicerca?: ElementRef<HTMLInputElement>;
+
+  apriRicerca(): void {
+    this.ricercaAperta = true;
+    setTimeout(() => this.campoRicerca?.nativeElement.focus(), 50);
+  }
+
+  /** Chiude il campo e svuota la ricerca (la lista torna completa) */
+  chiudiRicerca(): void {
+    this.ricercaAperta = false;
+    this.searchText = '';
+    this.filterLeghe();
   }
 
   // ── Pronostici del turno (hero + sezioni della lista) ──────────────────────────────
