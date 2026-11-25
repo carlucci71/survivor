@@ -68,65 +68,29 @@
   gap: 18px;
 }
 
-.ph-ring {
-  position: relative;
-  flex-shrink: 0;
-  width: 84px;
-  height: 84px;
-
-  svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+/* Tutto fatto: bordo dorato sulla card e riflesso che la attraversa una volta */
+.ph-hero--done {
+  box-shadow: 0 18px 40px -12px rgba(4, 14, 38, 0.45), 0 0 0 1px rgba(247, 220, 140, 0.35), 0 0 28px rgba(233, 185, 73, 0.22);
+  &::after { border-color: rgba(247, 220, 140, 0.55); }
 }
 
-.ph-ring-track { fill: none; stroke: rgba(255, 255, 255, 0.14); stroke-width: 8; }
-.ph-ring-fill {
-  fill: none;
-  stroke-width: 8;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Riflesso che gira sull'anello d'oro (stile anello chiuso di Apple Fitness) */
-.ph-ring-shine {
+.ph-done-shine {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, transparent 0 78%, rgba(255, 255, 255, 0.6) 88%, transparent 97%);
-  -webkit-mask: radial-gradient(circle, transparent 31px, #000 32px, #000 39px, transparent 40px);
-  mask: radial-gradient(circle, transparent 31px, #000 32px, #000 39px, transparent 40px);
-  animation: ph-spin 2.8s linear infinite;
+  top: 0;
+  bottom: 0;
+  left: -50%;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(247, 220, 140, 0.28), transparent);
+  transform: skewX(-18deg);
+  animation: ph-done-sweep 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.ph-ring-badge {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #E9B949;
-  border: 3px solid #0B2350;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ph-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-
-  mat-icon { font-size: 16px; width: 16px; height: 16px; color: #0B2350; }
+@keyframes ph-done-sweep {
+  from { left: -50%; opacity: 1; }
+  to { left: 130%; opacity: 0.6; }
 }
-
-.ph-ring-num {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-
-  mat-icon { font-size: 34px; width: 34px; height: 34px; color: rgba(255, 255, 255, 0.85); }
-}
-
-.ph-num { font-size: 24px; font-weight: 700; small { font-size: 15px; font-weight: 600; color: rgba(255, 255, 255, 0.6); } }
-.ph-num-lbl { margin-top: 4px; font-size: 10px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
 
 .ph-info { flex: 1; min-width: 0; }
 
@@ -156,7 +120,7 @@
 
 .ph-text { margin: 0 0 16px; font-size: 0.9rem; line-height: 1.5; color: rgba(255, 255, 255, 0.85); }
 
-/* Riepilogo per lega accanto all'anello */
+/* Riepilogo per lega, a tutta larghezza */
 .ph-recap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
 .ph-row {
@@ -180,6 +144,7 @@
 /* Logo della squadra senza cerchio bianco, direttamente sul blu: un alone chiaro leggerissimo
    tiene leggibili i loghi scuri (Juventus, Spezia, Udinese...) */
 .ph-row-logo {
+  position: relative;
   flex-shrink: 0;
   width: 34px;
   height: 34px;
@@ -194,21 +159,63 @@
     filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.45)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
   }
 
+  /* Da scegliere: "?" ambra, bordo tratteggiato che ruota piano e alone che pulsa */
   &--todo {
     width: 30px;
     height: 30px;
     margin: 0 2px;
     border-radius: 50%;
-    border: 1.5px dashed rgba(255, 255, 255, 0.6);
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 12px;
-    font-weight: 700;
+    background: rgba(255, 179, 71, 0.12);
+    animation: ph-todo-pulse 2.4s ease-in-out infinite;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px dashed #FFB347;
+      animation: ph-spin 9s linear infinite;
+    }
   }
+}
+
+.ph-todo-q { position: relative; color: #FFC266; font-size: 13px; font-weight: 800; }
+
+/* Scelta fatta: bollino oro con spunta in basso a destra sul logo */
+.ph-row-check {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F7DC8C, #E9B949 55%, #B8862B);
+  border: 2px solid #0B2350;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ph-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  mat-icon { font-size: 11px; width: 11px; height: 11px; color: #0B2350; font-weight: 700; }
+
+  /* Tutto fatto: dopo il pop, un lampo di luce dorata (a cascata, una volta sola) */
+  &--shine { animation: ph-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both, ph-check-glint 1.1s ease-out 0.5s both; }
+}
+
+@keyframes ph-todo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 179, 71, 0); }
+  50% { box-shadow: 0 0 0 5px rgba(255, 179, 71, 0.16); }
+}
+
+@keyframes ph-check-glint {
+  0% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 0 0 rgba(247, 220, 140, 0.7); }
+  100% { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 0 0 9px rgba(247, 220, 140, 0); }
 }
 
 .ph-row-sigla { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.3px; color: #fff; }
 .ph-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
-.ph-row-team { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-row-team { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; &--todo { color: #FFC266; } }
 .ph-row-lega { font-size: 0.7rem; color: rgba(255, 255, 255, 0.62); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .ph-row-when {
@@ -277,8 +284,65 @@
   &:hover { box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25); }
   &:active { transform: scale(0.98); }
 
-  &--vote { width: 100%; margin-top: 12px; }
+  &--vote {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 10px 12px 18px;
+    gap: 10px;
+    overflow: hidden;
+    /* Stessa ambra dell'anello quando manca una scelta (colore fisso voluto, come l'anello) */
+    background: linear-gradient(135deg, #FFC266, #FF8A3D);
+    color: #0B2350;
+    box-shadow: 0 6px 20px rgba(255, 138, 61, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+    &:hover { box-shadow: 0 10px 28px rgba(255, 138, 61, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.45); }
+    &:hover .ph-vote-arrow, &:active .ph-vote-arrow { transform: translateX(3px); }
+  }
   &--ghost { background: rgba(255, 255, 255, 0.12); color: #fff; border: 1px solid rgba(255, 255, 255, 0.4); }
+}
+
+/* Testo del pulsante vota: una riga sola, nomi lega lunghi tagliati coi puntini */
+.ph-vote-text {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.ph-vote-arrow {
+  position: relative;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #0B2350;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast);
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #FFC266; }
+}
+
+/* Striscia di luce che attraversa il pulsante ogni ~4,5 s (come il riflesso dell'anello) */
+.ph-vote-shine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-18deg);
+  animation: ph-vote-shine 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ph-vote-shine {
+  0%, 70% { left: -60%; }
+  100% { left: 130%; }
 }
 
 /* Benvenuto / nessuna lega in corso */
@@ -299,7 +363,6 @@
 
 /* Scheletro durante il caricamento */
 .ph-skeleton { position: relative; display: flex; align-items: center; gap: 18px; padding: 4px 0; }
-.ph-sk-ring { width: 100px; height: 100px; border-radius: 50%; border: 8px solid rgba(255, 255, 255, 0.12); }
 .ph-sk-lines { flex: 1; i { display: block; height: 14px; border-radius: 7px; background: rgba(255, 255, 255, 0.12); margin: 10px 0; &:last-child { width: 60%; } } }
 
 /* ── Nuovo esito ─────────────────────────────────────────────────────────────── */
@@ -367,19 +430,15 @@
 @media (max-width: 360px) {
   .ph-hero { margin: 12px 10px 8px; padding: 18px 14px 16px; border-radius: 20px; }
   .ph-main { gap: 14px; }
-  .ph-ring { width: 72px; height: 72px; }
-  .ph-ring-shine {
-    -webkit-mask: radial-gradient(circle, transparent 26px, #000 27px, #000 33px, transparent 34px);
-    mask: radial-gradient(circle, transparent 26px, #000 27px, #000 33px, transparent 34px);
-  }
-  .ph-num { font-size: 20px; }
   .ph-row-logo { width: 28px; height: 28px; }
+  .ph-cta--vote { padding-left: 14px; font-size: 0.9rem; }
+  .ph-vote-arrow { width: 26px; height: 26px; }
   .ph-hero .ph-title { font-size: 1.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ph-ring-shine, .ph-ring-badge, .ph-esito, .ph-sparkles i { animation: none; }
-  .ph-ring-fill { transition: none; }
+  .ph-row-check, .ph-row-logo--todo, .ph-row-logo--todo::before, .ph-esito, .ph-sparkles i { animation: none; }
+  .ph-vote-shine, .ph-done-shine { display: none; }
 }
 
 /* ── Bollicine che salgono (stesso stile delle bolle della sfida 1v1, ma lente e sobrie) ── */

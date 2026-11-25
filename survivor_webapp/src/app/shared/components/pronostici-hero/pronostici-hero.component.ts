@@ -18,8 +18,8 @@ const MAX_RIGHE = 3;
 
 /**
  * Hero della home: "I tuoi pronostici". Risponde a una domanda sola, ho votato dappertutto?
- * Anello fatti/totale (ambra se manca qualcosa, oro con riflesso se e' tutto fatto), loghi delle
- * squadre scelte, inizio della giornata piu' vicina con il NOME della lega e il pulsante "Vota in…"
+ * Niente anello: ogni riga dice il suo stato (spunta oro sul logo se scelta, "?" ambra se da fare;
+ * quando e' tutto fatto la card prende un bordo dorato), loghi delle squadre scelte, inizio della giornata piu' vicina con il NOME della lega e il pulsante "Vota in…"
  * che apre direttamente la finestra di scelta (lega-dettaglio ?vota=1). Conta solo la scelta del
  * turno corrente: la vecchia card mostrava la scelta del turno prima e faceva credere di aver votato.
  * Senza leghe in corso diventa un benvenuto con "Crea" / "Leghe aperte".
@@ -95,12 +95,6 @@ export class PronosticiHeroComponent implements OnInit, OnChanges, OnDestroy {
   get urgente(): Lega | null { return this.daVotare[0] ?? null; }
   get senzaLeghe(): boolean { return !this.caricamento && this.leghe.length === 0; }
   get nuovoUtente(): boolean { return this.senzaLeghe && this.tutteLeghe.length === 0; }
-
-  /** Anello: circonferenza e parte piena (raggio 41 nel viewBox 96) */
-  readonly circonferenza = 2 * Math.PI * 41;
-  get riempimento(): number {
-    return this.totale ? (this.fatte.length / this.totale) * this.circonferenza : 0;
-  }
 
   durata(l: Lega) { return durataAllInizio(l, this.adesso); }
   iniziata(l: Lega): boolean { return giornataIniziata(l, this.adesso); }
