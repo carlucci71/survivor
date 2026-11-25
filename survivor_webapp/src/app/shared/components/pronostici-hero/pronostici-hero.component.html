@@ -11,8 +11,7 @@
 
   @if (caricamento) {
     <div class="ph-skeleton" aria-hidden="true">
-      <span class="ph-sk-ring"></span>
-      <span class="ph-sk-lines"><i></i><i></i></span>
+      <span class="ph-sk-lines"><i></i><i></i><i></i></span>
     </div>
   } @else if (senzaLeghe) {
     <!-- Nessuna lega in corso (o utente nuovo): benvenuto con le due strade -->
@@ -26,62 +25,41 @@
       </div>
     </div>
   } @else {
-    <!-- Etichetta corta e fissa (dorata quando e' tutto fatto): lo stato lo dice l'anello,
-         e l'angolo in alto a destra resta libero per il chip LIVE -->
+    <!-- Etichetta corta e fissa (dorata quando e' tutto fatto); l'angolo in alto a destra resta
+         libero per il chip LIVE. Niente anello: lo stato lo dicono le righe (spunta oro / "?" ambra) -->
     <span class="ph-label" [class.ph-label--gold]="tuttoFatto">{{ 'PRONOSTICI.LABEL' | translate }}</span>
 
-    <div class="ph-main">
-      <!-- Anello: fatti / totale (oro con riflesso quando e' tutto fatto, ambra se manca qualcosa) -->
-      <div class="ph-ring" [class.ph-ring--empty]="totale === 0">
-        <svg viewBox="0 0 96 96" aria-hidden="true">
-          <defs>
-            <linearGradient id="phAmbra" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#FFC266" />
-              <stop offset="1" stop-color="#FF8A3D" />
-            </linearGradient>
-            <linearGradient id="phOro" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#F7DC8C" />
-              <stop offset="0.5" stop-color="#E9B949" />
-              <stop offset="1" stop-color="#B8862B" />
-            </linearGradient>
-          </defs>
-          <circle cx="48" cy="48" r="41" class="ph-ring-track" />
-          <circle cx="48" cy="48" r="41" class="ph-ring-fill"
-                  [attr.stroke]="tuttoFatto ? 'url(#phOro)' : 'url(#phAmbra)'"
-                  [attr.stroke-dasharray]="riempimento + ' ' + circonferenza" />
-        </svg>
-        @if (tuttoFatto) {
-          <span class="ph-ring-shine" aria-hidden="true"></span>
-          <span class="ph-ring-badge" aria-hidden="true"><mat-icon>check</mat-icon></span>
-        }
-        <span class="ph-ring-num">
-          @if (totale > 0) {
-            <span class="ph-num">{{ fatte.length }}<small>/{{ totale }}</small></span>
-            <span class="ph-num-lbl">{{ 'PRONOSTICI.DONE_LABEL' | translate }}</span>
-          } @else {
-            <mat-icon>schedule</mat-icon>
-          }
-        </span>
-      </div>
+    @if (tuttoFatto) {
+      <!-- Tutto fatto: un riflesso dorato attraversa la card una volta -->
+      <span class="ph-done-shine" aria-hidden="true"></span>
+    }
 
+    <div class="ph-main">
       <!-- Riepilogo per lega: squadra scelta (o da scegliere), lega e quando inizia -->
       <div class="ph-recap">
         @if (totale === 0) {
           <h2 class="ph-title">{{ 'PRONOSTICI.NOTHING_TO_VOTE' | translate }}</h2>
         }
-        @for (r of righe; track r.lega.id) {
+        @for (r of righe; track r.lega.id; let i = $index) {
           <button type="button" class="ph-row" (click)="apriRiga(r)">
             <span class="ph-row-logo" [class.ph-row-logo--todo]="r.todo">
               @if (r.todo) {
-                ?
-              } @else if (r.logo && !logoRotti.has(r.lega.id)) {
-                <img [src]="r.logo" [alt]="r.squadra" (error)="logoRotti.add(r.lega.id)" />
+                <span class="ph-todo-q">?</span>
               } @else {
-                <span class="ph-row-sigla">{{ r.lega.miaGiocataCorrente?.squadraSigla }}</span>
+                @if (r.logo && !logoRotti.has(r.lega.id)) {
+                  <img [src]="r.logo" [alt]="r.squadra" (error)="logoRotti.add(r.lega.id)" />
+                } @else {
+                  <span class="ph-row-sigla">{{ r.lega.miaGiocataCorrente?.squadraSigla }}</span>
+                }
+                <!-- Scelta fatta: bollino oro con spunta, a cascata (e lampo di luce quando e' tutto fatto) -->
+                <span class="ph-row-check" [class.ph-row-check--shine]="tuttoFatto"
+                      [style.animation-delay]="i * 140 + 'ms'" aria-hidden="true">
+                  <mat-icon>check</mat-icon>
+                </span>
               }
             </span>
             <span class="ph-row-text">
-              <span class="ph-row-team">{{ r.todo ? ('PRONOSTICI.TO_CHOOSE' | translate) : r.squadra }}</span>
+              <span class="ph-row-team" [class.ph-row-team--todo]="r.todo">{{ r.todo ? ('PRONOSTICI.TO_CHOOSE' | translate) : r.squadra }}</span>
               <span class="ph-row-lega">{{ r.lega.name }}</span>
             </span>
             <span class="ph-row-when" [class.ph-row-when--todo]="r.todo">
@@ -106,9 +84,11 @@
     </div>
 
     @if (urgente; as u) {
+      <!-- Ambra come l'anello "da fare": l'occhio lega il pulsante allo stato; riflesso che passa ogni tanto -->
       <button type="button" class="ph-cta ph-cta--vote" (click)="vota(u)">
-        {{ 'PRONOSTICI.VOTE_IN' | translate: { lega: u.name } }}
-        <mat-icon>arrow_forward</mat-icon>
+        <span class="ph-vote-shine" aria-hidden="true"></span>
+        <span class="ph-vote-text">{{ 'PRONOSTICI.VOTE_IN' | translate: { lega: u.name } }}</span>
+        <span class="ph-vote-arrow" aria-hidden="true"><mat-icon>arrow_forward</mat-icon></span>
       </button>
     } @else if (totale === 0) {
       <div class="ph-strip">
