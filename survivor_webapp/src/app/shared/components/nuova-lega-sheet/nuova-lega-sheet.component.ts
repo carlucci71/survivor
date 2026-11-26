@@ -44,12 +44,12 @@ export type SceltaNuovaLega = 'sfida' | 'crea' | 'unisciti';
           <span class="nl-tile-title">{{ 'DUEL.QUICK_LABEL' | translate }}</span>
           <span class="nl-tile-sub">{{ 'DUEL.CARD_TITLE' | translate }}</span>
         </button>
-        <button type="button" class="nl-tile" (click)="chiudi('crea')">
+        <button type="button" class="nl-tile nl-tile--crea" (click)="chiudi('crea')">
           <mat-icon class="nl-icon">add_circle</mat-icon>
           <span class="nl-tile-title">{{ 'HOME.CREATE_LEAGUE' | translate }}</span>
           <span class="nl-tile-sub">{{ 'HOME.TILE_CREATE_SUB' | translate }}</span>
         </button>
-        <button type="button" class="nl-tile" (click)="chiudi('unisciti')">
+        <button type="button" class="nl-tile nl-tile--unisciti" (click)="chiudi('unisciti')">
           <mat-icon class="nl-icon">groups</mat-icon>
           <span class="nl-tile-title">{{ 'HOME.JOIN_LEAGUE' | translate }}</span>
           <span class="nl-tile-sub">{{ 'HOME.TILE_JOIN_SUB' | translate }}</span>
@@ -111,9 +111,23 @@ export type SceltaNuovaLega = 'sfida' | 'crea' | 'unisciti';
       &:active { transform: translateY(0) scale(0.98); }
     }
 
+    /* Un colore tenue per card: sfida = ambra/bronzo (come la moneta 1v1), crea = blu dell'app
+       (--primary-dark), unisciti = grigio perla neutro */
     .nl-tile--duel {
-      border-color: rgba(79, 195, 247, 0.45);
-      background: linear-gradient(135deg, rgba(10, 61, 145, 0.08), rgba(79, 195, 247, 0.16));
+      border-color: rgba(205, 127, 50, 0.4);
+      background: linear-gradient(180deg, #FFF6EA, #FBE7CF);
+    }
+
+    .nl-tile--crea {
+      border-color: rgba(10, 61, 145, 0.25);
+      background: linear-gradient(180deg, rgba(10, 61, 145, 0.06), rgba(10, 61, 145, 0.14));
+      .nl-icon { color: var(--primary-dark); }
+    }
+
+    .nl-tile--unisciti {
+      border-color: var(--border-color);
+      background: linear-gradient(180deg, #FAFAFB, #ECEEF2);
+      .nl-icon { color: var(--text-secondary); }
     }
 
     .nl-icon { font-size: 36px; width: 36px; height: 36px; margin-bottom: 4px; color: var(--primary-dark); }
