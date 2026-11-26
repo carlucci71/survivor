@@ -120,7 +120,8 @@ export type SceltaNuovaLega = 'sfida' | 'crea' | 'unisciti';
 
     .nl-tile--crea {
       border-color: rgba(10, 61, 145, 0.25);
-      background: linear-gradient(180deg, rgba(10, 61, 145, 0.06), rgba(10, 61, 145, 0.14));
+      /* colori pieni (non trasparenti): azzurro chiaro ricavato dal blu dell'app #0A3D91 */
+      background: linear-gradient(180deg, #F2F6FC, #E1EAF7);
       .nl-icon { color: var(--primary-dark); }
     }
 
