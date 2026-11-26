@@ -156,9 +156,10 @@
               <!-- Sfida 1v1: badge "1v1" (la popolarita' sarebbe sempre "nuova", al massimo sono in due) -->
               <span *ngIf="group.maxPartecipanti === 2; else badgePop" class="hl-duel">1v1</span>
               <ng-template #badgePop>
-                <span class="hl-pop popolarita-badge popolarita-badge--{{ getPopolarityBadge(group.numPartecipanti).tier }}">
-                  <mat-icon>{{ getPopolarityBadge(group.numPartecipanti).icon }}</mat-icon>
-                  {{ getPopolarityBadge(group.numPartecipanti).key | translate }}
+                <span *ngIf="badgePopolarita(group.edizioni[0], group.numPartecipanti) as b"
+                      class="hl-pop popolarita-badge popolarita-badge--{{ b.tier }}">
+                  <mat-icon>{{ b.icon }}</mat-icon>
+                  {{ b.key | translate }}
                 </span>
               </ng-template>
               <div class="hl-meta">

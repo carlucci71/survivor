@@ -807,6 +807,18 @@ ${link}`;
       .sort((a, b) => b.numPartecipanti - a.numPartecipanti);
   }
 
+  /**
+   * Badge di popolarita' della riga. A iscrizioni chiuse (lega avviata o terminata) il badge e'
+   * definitivo: "Nuova" e "In crescita" parlano di una lega che cresce, quindi spariscono; da
+   * "Hot" in su descrivono la dimensione e restano.
+   */
+  badgePopolarita(edizione: Lega, n: number): { icon: string; key: string; tier: string } | null {
+    const b = this.getPopolarityBadge(n);
+    const iscrizioniAperte = edizione.stato.value === StatoLega.DA_AVVIARE.value;
+    if (!iscrizioniAperte && (b.tier === 'new' || b.tier === 'growing')) return null;
+    return b;
+  }
+
   getPopolarityBadge(n: number): { icon: string; key: string; tier: string } {
     if (n >= 100) return { icon: 'diamond',               key: 'HOME.BADGE_HALL_OF_FAME', tier: 'hall-of-fame' };
     if (n >= 90)  return { icon: 'bolt',                  key: 'HOME.BADGE_FENOMENO',     tier: 'fenomeno' };

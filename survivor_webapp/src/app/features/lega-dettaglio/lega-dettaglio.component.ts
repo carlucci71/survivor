@@ -1230,7 +1230,8 @@ export class LegaDettaglioComponent implements OnDestroy {
         giornataIndices: [], // ✅ Array vuoto, il dialog calcolerà le giornate internamente
         getGiocataByGiornataAssoluta: this.getGiocataByGiornataAssoluta.bind(this),
         getTeamLogo: this.getTeamLogo.bind(this),
-        getSquadraNome: this.getSquadraNome.bind(this)
+        getSquadraNome: this.getSquadraNome.bind(this),
+        squadre: this.squadre // Campionato: storico diviso per giri
       },
       panelClass: 'player-history-dialog-wrapper',
       autoFocus: false,

@@ -14,7 +14,19 @@ export interface PlayerHistoryDialogData {
   getGiocataByGiornataAssoluta: (giocatore: Giocatore, giornata: number) => any;
   getTeamLogo: (sigla: string | null | undefined) => string | null;
   getSquadraNome: (sigla: string | null | undefined) => string | null;
+  /** Squadre del campionato (Campionato: servono per dividere lo storico in giri) */
+  squadre?: { sigla: string; nome?: string }[];
 }
+
+/** Campionato: un giro = finche' non hai usato tutte le squadre una volta (poi si riparte) */
+interface Giro {
+  numero: number;
+  giornate: number[];
+  usate: string[];
+  inCorso: boolean;
+}
+
+interface CasellaAlbum { sigla: string; nome: string; giornata: number | null; giocata: any; }
 
 @Component({
   selector: 'app-player-history-dialog',
@@ -60,6 +72,7 @@ export class PlayerHistoryDialogComponent {
       // ✅ SOLUZIONE: Calcola le giornate assolute dalle giocate del giocatore
       this.calculateGiornateIndices();
     }
+    this.calcolaGiri();
   }
 
   /**
@@ -144,42 +157,88 @@ export class PlayerHistoryDialogComponent {
     this.data.giocatore.giocate = mockGiocate;
   }
 
+  // ── Campionato: "album" del giro (tutte le squadre, segnate quelle gia' giocate) ─────
+  giri: Giro[] = [];
+  /** Giro in corso mostrato come album (sempre presente in Campionato, anche vuoto a inizio giro) */
+  giroCorrente: Giro | null = null;
+  /** Giri finiti: riquadri chiusi sotto l'album, si aprono al tocco */
+  giriConclusi: Giro[] = [];
+  giriAperti = new Set<number>();
+  /** Caselle dell'album per giro (squadre in ordine alfabetico, sempre nello stesso posto) */
+  album = new Map<number, CasellaAlbum[]>();
+
+  get totaleSquadre(): number { return this.data.squadre?.length ?? 0; }
+  get isAlbum(): boolean { return !!this.giroCorrente; }
+
   /**
-   * Restituisce tutte le giornate raggruppate in righe di 5
-   * Es: [1,2,3,4,5,6,7,8,9,10] → [[1,2,3,4,5], [6,7,8,9,10]]
+   * Stessa regola della scelta della squadra (lega-dettaglio.giocaGiornata): le scelte in ordine di
+   * giornata, un giro ogni N squadre. Finito un giro, l'album riparte con tutte le squadre libere.
    */
-  getAllRowsRounds(): number[][] {
-    if (!this.data.giornataIndices || this.data.giornataIndices.length === 0) {
-      return [];
+  private calcolaGiri(): void {
+    const n = this.totaleSquadre;
+    if (this.data.lega?.modalita !== 'CAMPIONATO' || !n) return;
+    const giri: Giro[] = [];
+    let scelte = 0;
+    for (const g of this.data.giornataIndices ?? []) {
+      const indice = Math.floor(scelte / n);
+      if (!giri[indice]) giri[indice] = { numero: indice + 1, giornate: [], usate: [], inCorso: false };
+      giri[indice].giornate.push(g);
+      const sigla = this.getGiocataForRound(g)?.squadraSigla;
+      if (sigla) { giri[indice].usate.push(sigla); scelte++; }
     }
-
-    const rows: number[][] = [];
-    const itemsPerRow = 5;
-
-    for (let i = 0; i < this.data.giornataIndices.length; i += itemsPerRow) {
-      const row = this.data.giornataIndices.slice(i, i + itemsPerRow);
-      rows.push(row);
+    const ultimo = giri[giri.length - 1];
+    if (ultimo && ultimo.usate.length < n) {
+      ultimo.inCorso = true;
+      this.giroCorrente = ultimo;
+    } else {
+      // nessuna scelta ancora, oppure ultimo giro appena completato: album nuovo, tutto libero
+      this.giroCorrente = { numero: (ultimo?.numero ?? 0) + 1, giornate: [], usate: [], inCorso: true };
     }
-
-    return rows;
+    this.giri = giri.reverse();
+    this.giriConclusi = this.giri.filter(g => !g.inCorso);
+    const ordinate = [...(this.data.squadre ?? [])].sort((x, y) => (x.nome || x.sigla).localeCompare(y.nome || y.sigla));
+    for (const giro of [this.giroCorrente, ...this.giriConclusi]) {
+      this.album.set(giro.numero, ordinate.map(s => {
+        const giornata = giro.giornate.find(g => this.getGiocataForRound(g)?.squadraSigla === s.sigla) ?? null;
+        return { sigla: s.sigla, nome: s.nome || s.sigla, giornata, giocata: giornata != null ? this.getGiocataForRound(giornata) : null };
+      }));
+    }
   }
 
-  /**
-   * Restituisce le prime 5 giornate (prima riga) - DEPRECATO, usa getAllRowsRounds()
-   */
-  getFirstRowRounds(): number[] {
-    if (!this.data.giornataIndices) return [];
-    return this.data.giornataIndices.slice(0, 5);
+  toggleGiro(numero: number): void {
+    if (this.giriAperti.has(numero)) this.giriAperti.delete(numero);
+    else this.giriAperti.add(numero);
   }
 
-  /**
-   * Restituisce le giornate dalla 6 alla 10 (seconda riga) - DEPRECATO, usa getAllRowsRounds()
-   */
-  getSecondRowRounds(): number[] {
-    if (!this.data.giornataIndices || this.data.giornataIndices.length <= 5) return [];
-    return this.data.giornataIndices.slice(5, 10);
+  // ── Esito come etichetta/pallino (elenco e album) ─────────────────────────────────
+  esitoDi(giocata: any): 'ok' | 'ko' | 'dr' | 'pd' | 'none' {
+    if (!giocata?.squadraSigla) return 'none';
+    if (!giocata.esito) return 'pd';
+    if (this.isLossCard(giocata)) return 'ko';
+    if (this.isDrawCard(giocata)) return 'dr';
+    return giocata.esito === 'OK' ? 'ok' : 'pd';
   }
 
+  etichettaEsito(giocata: any): string {
+    switch (this.esitoDi(giocata)) {
+      case 'ok': return 'LEAGUE.LEGEND_WON';
+      case 'ko': return 'LEAGUE.LEGEND_LOST';
+      case 'dr': return 'LEAGUE.LEGEND_DRAW';
+      case 'pd': return 'LEAGUE.HISTORY_IN_PROGRESS';
+      default: return 'LEAGUE.HISTORY_NO_PICK';
+    }
+  }
+
+  /** Dettaglio al tocco su un logo dell'album: "Giornata 21 · Vinta" */
+  dettaglioCasella(c: CasellaAlbum): string {
+    if (c.giornata == null) return c.nome;
+    return `${c.nome} · ${this.translate.instant('LEAGUE.ROUND')} ${c.giornata} · ${this.translate.instant(this.etichettaEsito(c.giocata))}`;
+  }
+
+  /** Survivor (e Campionato senza squadre caricate): elenco cronologico, dalla giornata piu' recente */
+  get elenco(): number[] {
+    return [...(this.data.giornataIndices ?? [])].reverse();
+  }
   close(): void {
     this.dialogRef.close();
   }
@@ -222,13 +281,6 @@ export class PlayerHistoryDialogComponent {
     return giocata?.esito === 'KO' || this.isPareggioEliminante(giocata);
   }
 
-  getPending(): number {
-    return (this.data.giornataIndices || []).filter(g => {
-      const giocata = this.getGiocataForRound(g);
-      return giocata?.squadraSigla && !giocata?.esito;
-    }).length;
-  }
-
   getTotalWithResult(): number {
     return this.getWins() + this.getLosses() + this.getDraws();
   }
@@ -251,23 +303,5 @@ export class PlayerHistoryDialogComponent {
     return this.data.getGiocataByGiornataAssoluta(this.data.giocatore, giornata);
   }
 
-  /**
-   * Restituisce la label della giornata in base alla dimensione dello schermo.
-   *
-   * Desktop/Tablet (≥768px): "Giornata X" se ci sta, altrimenti solo numero
-   * Mobile (<768px): sempre solo il numero
-   *
-   * Nota: La distinzione desktop/mobile è gestita nell'HTML con classi CSS
-   */
-  getGiornataLabel(giornata: number): string {
-    return `${giornata}`;
-  }
-
-  /**
-   * Versione estesa per desktop: "Giornata X"
-   */
-  getGiornataLabelFull(giornata: number): string {
-    return this.translate.instant('LEAGUE.ROUND') + ' ' + giornata;
-  }
 }
 

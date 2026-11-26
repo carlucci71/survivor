@@ -556,6 +556,14 @@
     "SECTION_12_P2": "Le modifiche saranno efficaci dalla loro pubblicazione sulla piattaforma."
   },
   "LEAGUE": {
+    "HISTORY_TEAMS_COUNT": "{{n}}/{{tot}} squadre",
+    "HISTORY_CYCLE_DONE": "Giro {{n}} concluso · {{g}} giornate",
+    "HISTORY_IN_PROGRESS": "In corso",
+    "HISTORY_NO_PICK": "Nessuna scelta",
+    "HISTORY_FORCED": "forzata",
+    "HISTORY_ROUND_SHORT": "G{{n}}",
+    "HISTORY_CYCLE": "Giro {{n}}",
+    "HISTORY_CYCLE_CURRENT": "in corso",
     "LEAGUE_DETAILS": "Dettaglio lega",
     "EDITION": "Edizione",
     "EDITION_LABEL": "Edizione",
@@ -1843,7 +1851,7 @@
     "S2_CARD4_TEXT": "Risultati, richieste di accesso, scadenze giocate e molto altro.",
     "S2_CARD5_TITLE": "Condividi l'app",
     "S2_CARD5_TEXT": "In fondo alla Home trovi il pulsante per invitare i tuoi amici a scaricare Survivor.",
-    "S2_P2": "Le leghe mostrano un <strong>badge di popolarità</strong> che va da <em>New</em> fino a <em>Hall of Fame</em> in base al numero di partecipanti e all'attività.",
+    "S2_P2": "Le leghe mostrano un <strong>badge di popolarità</strong> che va da <em>Nuova</em> fino a <em>Hall of Fame</em> in base al numero di partecipanti. Quando la lega inizia il badge diventa definitivo: le leghe piccole non mostrano più <em>Nuova</em> o <em>In crescita</em>.",
     "S2_TIP": "Usa i filtri in cima alla lista per trovare leghe per sport, campionato o stato (in corso, da avviare, terminate).",
     "S3_TITLE": "Entrare in una lega",
     "S3_P1": "Ci sono tre modi per entrare in una lega:",
