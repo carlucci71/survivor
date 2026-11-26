@@ -1,10 +1,16 @@
 {
   "PRONOSTICI": {
-    "TO_CHOOSE": "Por elegir",
-    "IN": "en {{t}}",
+    "CLOSES_IN": "Cierra en {{t}}",
+    "EDIT_WITHIN": "cambia en",
+    "TITLE_MISSING": "Te faltan {{n}} elecciones",
+    "TITLE_MISSING_ONE": "Te falta 1 elección",
+    "TITLE_DONE": "Todo hecho en esta jornada",
+    "CHOOSE": "Elegir",
+    "EXPIRES_IN": "cierra en {{t}}",
+    "SHOW_ALL": "Ver todas las ligas ({{n}})",
+    "SHOW_LESS": "Ver menos",
     "STARTED_SHORT": "empezada",
     "IN_PROGRESS": "en juego",
-    "MORE_LEAGUES": "+{{n}} ligas más",
     "LABEL": "Tus elecciones",
     "NOTHING_TO_VOTE": "Ningún pronóstico pendiente ahora",
     "STARTS_IN": "Empieza en {{t}}",
@@ -12,7 +18,6 @@
     "DURATION_DH": "{{d}}d {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE_IN": "Vota en {{lega}}",
     "VOTE": "Votar",
     "NEXT_ROUND": "Próxima jornada: {{data}}",
     "WAITING": "Esperando los resultados de la jornada",
@@ -1791,7 +1796,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "Arriba en la Home encuentras <strong>Tus pronósticos</strong>: cuántos has hecho de cuántos, los escudos de los equipos elegidos y la liga que empieza antes, con el botón <strong>Votar</strong> que abre al instante la elección del equipo. Debajo, tus ligas se dividen en <strong>Por votar</strong> (arriba, con el tiempo que falta para el inicio), <strong>Pronóstico hecho</strong> (con el equipo elegido) y <strong>Esperando la jornada</strong>. Así lo ves todo sin abrir cada liga.",
+    "S2_PRONOSTICI": "Arriba en la Home encuentras <strong>Tus elecciones</strong>: cuántas has hecho de cuántas y una tarjeta por cada liga. Las ligas donde todavía tienes que votar están en naranja, arriba, con el tiempo que falta y el botón <strong>Elegir</strong> que abre al instante la elección del equipo de esa liga; las ya hechas muestran el equipo elegido y cuándo juega. Si tienes más de 3 ligas toca <strong>Ver todas las ligas</strong>. Debajo, tus ligas se dividen en <strong>Por votar</strong>, <strong>Pronóstico hecho</strong> y <strong>Esperando la jornada</strong>. Así lo ves todo sin abrir cada liga.",
     "TAGLINE": "Guía de usuario completa",
     "DOWNLOAD_CTA": "Descarga la app Survivor",
     "SECTION_INTRO": "Introducción",

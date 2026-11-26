@@ -169,10 +169,10 @@
                 <span class="hl-meta-sep">·</span>
                 <span class="hl-meta-text">{{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}</span>
               </div>
-              <!-- Da votare: quando inizia la giornata -->
+              <!-- Da votare: quanto manca alla chiusura delle scelte (5 minuti prima dell'inizio) -->
               <div class="hl-when" *ngIf="group.inGioco && statoRiga(group.edizioni[0]) === 'da-votare'">
                 <mat-icon>schedule</mat-icon>
-                <ng-container *ngIf="durataRiga(group.edizioni[0]) as d; else iniziata">{{ 'PRONOSTICI.STARTS_IN' | translate: { t: (d.key | translate: d.params) } }}</ng-container>
+                <ng-container *ngIf="durataRiga(group.edizioni[0]) as d; else iniziata">{{ 'PRONOSTICI.CLOSES_IN' | translate: { t: (d.key | translate: d.params) } }}</ng-container>
                 <ng-template #iniziata>{{ 'PRONOSTICI.STARTED' | translate }}</ng-template>
               </div>
             </div>
