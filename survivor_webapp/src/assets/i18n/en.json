@@ -469,6 +469,14 @@
     "TERMS_11_TEXT": "For information or requests, you can contact the manager at the email address:"
   },
   "LEAGUE": {
+    "HISTORY_TEAMS_COUNT": "{{n}}/{{tot}} teams",
+    "HISTORY_CYCLE_DONE": "Round {{n}} completed · {{g}} matchdays",
+    "HISTORY_IN_PROGRESS": "In progress",
+    "HISTORY_NO_PICK": "No pick",
+    "HISTORY_FORCED": "forced",
+    "HISTORY_ROUND_SHORT": "MD{{n}}",
+    "HISTORY_CYCLE": "Round {{n}}",
+    "HISTORY_CYCLE_CURRENT": "in progress",
     "LEAGUE_DETAILS": "League details",
     "EDITION": "Edition",
     "STATUS": {
@@ -1838,7 +1846,7 @@
     "S2_CARD4_TEXT": "Results, join requests, pick deadlines and much more.",
     "S2_CARD5_TITLE": "Share the app",
     "S2_CARD5_TEXT": "At the bottom of the Home you'll find a button to invite your friends to download Survivor.",
-    "S2_P2": "Leagues show a <strong>popularity badge</strong> ranging from <em>New</em> to <em>Hall of Fame</em> based on the number of participants and activity.",
+    "S2_P2": "Leagues show a <strong>popularity badge</strong> ranging from <em>New</em> to <em>Hall of Fame</em> based on the number of participants. Once the league starts the badge becomes final: small leagues no longer show <em>New</em> or <em>Growing</em>.",
     "S2_TIP": "Use the filters at the top of the list to find leagues by sport, competition or status (ongoing, upcoming, finished).",
     "S3_TITLE": "Joining a league",
     "S3_P1": "There are three ways to join a league:",

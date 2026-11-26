@@ -556,6 +556,14 @@
     "SECTION_12_P2": "Las modificaciones serán efectivas desde su publicación en la plataforma."
   },
   "LEAGUE": {
+    "HISTORY_TEAMS_COUNT": "{{n}}/{{tot}} equipos",
+    "HISTORY_CYCLE_DONE": "Vuelta {{n}} completada · {{g}} jornadas",
+    "HISTORY_IN_PROGRESS": "En juego",
+    "HISTORY_NO_PICK": "Sin elección",
+    "HISTORY_FORCED": "forzada",
+    "HISTORY_ROUND_SHORT": "J{{n}}",
+    "HISTORY_CYCLE": "Vuelta {{n}}",
+    "HISTORY_CYCLE_CURRENT": "en curso",
     "LEAGUE_DETAILS": "Detalle de la liga",
     "EDITION": "Edición",
     "EDITION_LABEL": "Edición",
@@ -1843,7 +1851,7 @@
     "S2_CARD4_TEXT": "Resultados, solicitudes de acceso, plazos de jugadas y mucho más.",
     "S2_CARD5_TITLE": "Comparte la app",
     "S2_CARD5_TEXT": "Al final de la Home encontrarás el botón para invitar a tus amigos a descargar Survivor.",
-    "S2_P2": "Las ligas muestran una <strong>insignia de popularidad</strong> que va desde <em>Nueva</em> hasta <em>Hall of Fame</em> según el número de participantes y la actividad.",
+    "S2_P2": "Las ligas muestran una <strong>insignia de popularidad</strong> que va desde <em>Nueva</em> hasta <em>Hall of Fame</em> según el número de participantes. Cuando la liga empieza la insignia es definitiva: las ligas pequeñas ya no muestran <em>Nueva</em> o <em>En crecimiento</em>.",
     "S2_TIP": "Usa los filtros en la parte superior de la lista para encontrar ligas por deporte, campeonato o estado (en curso, por iniciar, terminadas).",
     "S3_TITLE": "Entrar en una liga",
     "S3_P1": "Hay tres formas de entrar en una liga:",

@@ -31,13 +31,6 @@
         <span class="phd-stat-value">{{ getLosses() }}</span>
         <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_LOSSES' | translate }}</span>
       </div>
-      @if(getPending() > 0) {
-        <div class="phd-stat-sep"></div>
-        <div class="phd-stat phd-stat--pending">
-          <span class="phd-stat-value">{{ getPending() }}</span>
-          <span class="phd-stat-label">{{ 'LEAGUE.HISTORY_PENDING' | translate }}</span>
-        </div>
-      }
       <div class="phd-stat-sep"></div>
       <div class="phd-stat phd-stat--rate">
         <span class="phd-stat-value">{{ getWinRate() }}%</span>
@@ -46,85 +39,90 @@
     </div>
   }
 
-  <!-- ===== CARDS ===== -->
+  <!-- ===== CONTENUTO ===== -->
   <div class="phd-content">
-    @if(data.giornataIndices.length === 0) {
-      <div class="phd-empty">
-        <mat-icon>leaderboard</mat-icon>
-        <p>{{ 'LEAGUE.NO_SELECTION' | translate }}</p>
+    @if (isAlbum && giroCorrente; as giro) {
+      <!-- Campionato: album del giro in corso (solo loghi, sempre nello stesso ordine) -->
+      <div class="phd-album-head">
+        <span class="phd-album-title">
+          {{ 'LEAGUE.HISTORY_CYCLE' | translate: { n: giro.numero } }}
+          <span class="phd-album-now">· {{ 'LEAGUE.HISTORY_CYCLE_CURRENT' | translate }}</span>
+        </span>
+        <span class="phd-album-count">{{ 'LEAGUE.HISTORY_TEAMS_COUNT' | translate: { n: giro.usate.length, tot: totaleSquadre } }}</span>
       </div>
-    }
+      <div class="phd-album-bar"><i [style.width.%]="(giro.usate.length / totaleSquadre) * 100"></i></div>
+      <ng-container *ngTemplateOutlet="albumTpl; context: { $implicit: album.get(giro.numero) }"></ng-container>
 
-    @for (row of getAllRowsRounds(); track $index) {
-      <div class="phd-row">
-        @for (giornata of row; track giornata) {
+      <!-- Giri conclusi: chiusi, si aprono al tocco -->
+      @for (g of giriConclusi; track g.numero) {
+        <div class="phd-giro" [class.phd-giro--open]="giriAperti.has(g.numero)">
+          <button type="button" class="phd-giro-head" (click)="toggleGiro(g.numero)" [attr.aria-expanded]="giriAperti.has(g.numero)">
+            <mat-icon class="phd-giro-ok">task_alt</mat-icon>
+            <span class="phd-giro-title">{{ 'LEAGUE.HISTORY_CYCLE_DONE' | translate: { n: g.numero, g: g.giornate.length } }}</span>
+            <mat-icon class="phd-giro-chev">expand_more</mat-icon>
+          </button>
+          @if (giriAperti.has(g.numero)) {
+            <div class="phd-giro-body">
+              <ng-container *ngTemplateOutlet="albumTpl; context: { $implicit: album.get(g.numero) }"></ng-container>
+            </div>
+          }
+        </div>
+      }
+    } @else {
+      @if (data.giornataIndices.length === 0) {
+        <div class="phd-empty">
+          <mat-icon>leaderboard</mat-icon>
+          <p>{{ 'LEAGUE.NO_SELECTION' | translate }}</p>
+        </div>
+      }
+      <!-- Survivor: elenco cronologico, una riga per giornata dalla piu' recente -->
+      <div class="phd-list">
+        @for (giornata of elenco; track giornata) {
           @let giocata = getGiocataForRound(giornata);
-          <div class="phd-card"
-               [class.phd-card--ok]="giocata?.esito === 'OK'"
-               [class.phd-card--ko]="isLossCard(giocata)"
-               [class.phd-card--draw]="isDrawCard(giocata)"
-               [class.phd-card--empty]="!giocata?.squadraSigla">
-
-            <!-- Numero giornata -->
-            <div class="phd-round-label">
-              <span class="phd-round-full">{{ getGiornataLabelFull(giornata) }}</span>
-              <span class="phd-round-short">{{ getGiornataLabel(giornata) }}</span>
-            </div>
-
-            <!-- Logo / sigla squadra -->
-            <div class="phd-logo-area">
-              @if(giocata?.squadraSigla) {
-                @if(getTeamLogo(giocata.squadraSigla)) {
-                  <img [src]="getTeamLogo(giocata.squadraSigla)!"
-                       [alt]="getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla"
-                       class="phd-logo"
-                       (error)="$any($event.target).style.display='none'">
-                } @else {
-                  <span class="phd-sigla">{{ giocata.squadraSigla }}</span>
-                }
-                @if(giocata?.forzatura) {
-                  <span class="phd-forced" [matTooltip]="'LEAGUE.FORCED_BY_ADMIN' | translate">
-                    <mat-icon>edit</mat-icon>
-                  </span>
-                }
-              } @else {
-                <span class="phd-no-pick">—</span>
+          <div class="phd-line">
+            <span class="phd-line-g">{{ 'LEAGUE.HISTORY_ROUND_SHORT' | translate: { n: giornata } }}</span>
+            <span class="phd-line-logo" [class.phd-line-logo--none]="!giocata?.squadraSigla">
+              @if (giocata?.squadraSigla && getTeamLogo(giocata.squadraSigla)) {
+                <img [src]="getTeamLogo(giocata.squadraSigla)!" [alt]="giocata.squadraSigla" (error)="$any($event.target).style.display='none'">
+              } @else if (giocata?.squadraSigla) {
+                <span class="phd-line-sigla">{{ giocata.squadraSigla }}</span>
               }
-            </div>
-
-            <!-- Indicatore risultato -->
-            @if(giocata?.esito) {
-              <div class="phd-result"
-                   [class.phd-result--ok]="giocata.esito === 'OK'"
-                   [class.phd-result--ko]="isLossCard(giocata)"
-                   [class.phd-result--draw]="isDrawCard(giocata)">
-                <mat-icon>{{ giocata.esito === 'OK' ? 'check_circle' : (isDrawCard(giocata) ? 'remove_circle' : 'cancel') }}</mat-icon>
-              </div>
-            }
+            </span>
+            <span class="phd-line-name">
+              {{ giocata?.squadraSigla ? (getSquadraNome(giocata.squadraSigla) || giocata.squadraSigla) : '' }}
+              @if (giocata?.forzatura) { <small class="phd-line-forced">{{ 'LEAGUE.HISTORY_FORCED' | translate }}</small> }
+            </span>
+            <span class="phd-chip phd-chip--{{ esitoDi(giocata) }}">{{ etichettaEsito(giocata) | translate }}</span>
           </div>
         }
       </div>
     }
   </div>
 
-  <!-- ===== FOOTER ===== -->
-  <div class="phd-footer">
-    <div class="phd-legend">
-      <span class="phd-legend-item">
-        <mat-icon class="phd-legend-ok">check_circle</mat-icon>{{ 'LEAGUE.LEGEND_WON' | translate }}
-      </span>
-      <span class="phd-legend-item">
-        <mat-icon class="phd-legend-ko">cancel</mat-icon>{{ 'LEAGUE.LEGEND_LOST' | translate }}
-      </span>
-      @if(getDraws() > 0) {
-        <span class="phd-legend-item">
-          <mat-icon class="phd-legend-draw">remove_circle</mat-icon>{{ 'LEAGUE.LEGEND_DRAW' | translate }}
+  <!-- Album di un giro: solo il logo; se giocata, pallino con l'esito (giornata ed esito nel dettaglio al tocco) -->
+  <ng-template #albumTpl let-caselle>
+    <div class="phd-album">
+      @for (c of caselle; track c.sigla) {
+        <span class="phd-cell" [class.phd-cell--used]="c.giornata != null" [matTooltip]="dettaglioCasella(c)" matTooltipTouchGestures="on">
+          <span class="phd-cell-logo">
+            @if (getTeamLogo(c.sigla)) {
+              <img [src]="getTeamLogo(c.sigla)!" [alt]="c.nome" (error)="$any($event.target).style.display='none'">
+            } @else {
+              <span class="phd-cell-sigla">{{ c.sigla }}</span>
+            }
+            @if (c.giornata != null) {
+              <span class="phd-dot phd-dot--{{ esitoDi(c.giocata) }}">
+                <mat-icon>{{ esitoDi(c.giocata) === 'ok' ? 'check' : (esitoDi(c.giocata) === 'ko' ? 'close' : (esitoDi(c.giocata) === 'dr' ? 'remove' : 'more_horiz')) }}</mat-icon>
+              </span>
+            }
+          </span>
         </span>
       }
-      <span class="phd-legend-item">
-        <mat-icon class="phd-legend-forced">edit</mat-icon>{{ 'LEAGUE.LEGEND_FORCED' | translate }}
-      </span>
     </div>
+  </ng-template>
+
+  <!-- ===== FOOTER ===== -->
+  <div class="phd-footer">
     <button mat-raised-button color="primary" class="phd-close-action" (click)="close()">
       {{ 'COMMON.CLOSE' | translate }}
     </button>
