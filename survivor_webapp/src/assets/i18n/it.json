@@ -1,10 +1,16 @@
 {
   "PRONOSTICI": {
-    "TO_CHOOSE": "Da scegliere",
-    "IN": "tra {{t}}",
+    "CLOSES_IN": "Scade tra {{t}}",
+    "EDIT_WITHIN": "modifica entro",
+    "TITLE_MISSING": "Ti mancano {{n}} scelte",
+    "TITLE_MISSING_ONE": "Ti manca 1 scelta",
+    "TITLE_DONE": "Tutto fatto per questo turno",
+    "CHOOSE": "Scegli",
+    "EXPIRES_IN": "scade tra {{t}}",
+    "SHOW_ALL": "Vedi tutte le leghe ({{n}})",
+    "SHOW_LESS": "Mostra meno",
     "STARTED_SHORT": "iniziata",
     "IN_PROGRESS": "in corso",
-    "MORE_LEAGUES": "+{{n}} altre leghe",
     "LABEL": "Le tue scelte",
     "NOTHING_TO_VOTE": "Nessun pronostico da fare ora",
     "STARTS_IN": "Inizia tra {{t}}",
@@ -12,7 +18,6 @@
     "DURATION_DH": "{{d}}g {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE_IN": "Vota in {{lega}}",
     "VOTE": "Vota",
     "NEXT_ROUND": "Prossima giornata: {{data}}",
     "WAITING": "Aspettiamo i risultati del turno",
@@ -1791,7 +1796,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "In cima alla Home trovi <strong>I tuoi pronostici</strong>: quanti ne hai fatti su quanti, i loghi delle squadre scelte e la lega che inizia per prima, con il pulsante <strong>Vota</strong> che apre subito la scelta della squadra. Sotto, le tue leghe sono divise in <strong>Da votare</strong> (in alto, con il tempo che manca all'inizio), <strong>Pronostico fatto</strong> (con la squadra scelta) e <strong>In attesa del turno</strong>. Così vedi tutto senza aprire ogni lega.",
+    "S2_PRONOSTICI": "In cima alla Home trovi <strong>Le tue scelte</strong>: quante ne hai fatte su quante e una card per ogni lega. Le leghe dove devi ancora votare sono in arancione, in cima, con il tempo che manca e il pulsante <strong>Scegli</strong> che apre subito la scelta della squadra di quella lega; quelle già fatte mostrano la squadra scelta e quando gioca. Se hai più di 3 leghe tocca <strong>Vedi tutte le leghe</strong>. Sotto, le tue leghe sono divise in <strong>Da votare</strong>, <strong>Pronostico fatto</strong> e <strong>In attesa del turno</strong>. Così vedi tutto senza aprire ogni lega.",
     "TAGLINE": "Guida utente completa",
     "DOWNLOAD_CTA": "Scarica l'app Survivor",
     "SECTION_INTRO": "Introduzione",

@@ -25,72 +25,99 @@
       </div>
     </div>
   } @else {
-    <!-- Etichetta corta e fissa (dorata quando e' tutto fatto); l'angolo in alto a destra resta
-         libero per il chip LIVE. Niente anello: lo stato lo dicono le righe (spunta oro / "?" ambra) -->
-    <span class="ph-label" [class.ph-label--gold]="tuttoFatto">{{ 'PRONOSTICI.LABEL' | translate }}</span>
+    <!-- Intestazione: la frase che dice cosa manca. L'angolo in alto a destra resta libero per il chip LIVE -->
+    <div class="ph-head">
+      <span class="ph-head-text">
+        <h2 class="ph-title ph-title--head" [class.ph-title--gold]="tuttoFatto">
+          @if (totale === 0) {
+            {{ 'PRONOSTICI.NOTHING_TO_VOTE' | translate }}
+          } @else if (tuttoFatto) {
+            {{ 'PRONOSTICI.TITLE_DONE' | translate }}
+          } @else if (daVotare.length === 1) {
+            {{ 'PRONOSTICI.TITLE_MISSING_ONE' | translate }}
+          } @else {
+            {{ 'PRONOSTICI.TITLE_MISSING' | translate: { n: daVotare.length } }}
+          }
+        </h2>
+      </span>
+    </div>
 
     @if (tuttoFatto) {
       <!-- Tutto fatto: un riflesso dorato attraversa la card una volta -->
       <span class="ph-done-shine" aria-hidden="true"></span>
     }
 
-    <div class="ph-main">
-      <!-- Riepilogo per lega: squadra scelta (o da scegliere), lega e quando inizia -->
-      <div class="ph-recap">
-        @if (totale === 0) {
-          <h2 class="ph-title">{{ 'PRONOSTICI.NOTHING_TO_VOTE' | translate }}</h2>
+    <!-- Una card per lega: da votare (ambra, con la sua pillola "Scegli") prima, poi le scelte fatte -->
+    <div class="ph-recap">
+      @for (r of righeVisibili; track r.lega.id; let i = $index) {
+        <!-- "Le tue scelte" fa da titolo alle scelte gia' fatte, sotto le leghe ancora da votare -->
+        @if (!r.todo && (i === 0 || righeVisibili[i - 1].todo)) {
+          <span class="ph-label ph-label--section" [class.ph-label--gold]="tuttoFatto">{{ 'PRONOSTICI.LABEL' | translate }}</span>
         }
-        @for (r of righe; track r.lega.id; let i = $index) {
-          <button type="button" class="ph-row" (click)="apriRiga(r)">
-            <span class="ph-row-logo" [class.ph-row-logo--todo]="r.todo">
-              @if (r.todo) {
-                <span class="ph-todo-q">?</span>
+        <!-- Da votare: l'unica azione e' il pulsante "Scegli". Scelta fatta: finche' la giornata non
+             inizia tutta la card e' cliccabile e riapre la scelta per modificarla -->
+        @let modificabile = !r.todo && !!durata(r.lega);
+        <div class="ph-row" [class.ph-row--todo]="r.todo" [class.ph-row--edit]="modificabile"
+             [attr.role]="modificabile ? 'button' : null" [attr.tabindex]="modificabile ? 0 : null"
+             (click)="modificabile && scegli(r.lega)" (keydown.enter)="modificabile && scegli(r.lega)">
+          <span class="ph-row-logo" [class.ph-row-logo--todo]="r.todo">
+            @if (r.todo) {
+              <span class="ph-todo-q">?</span>
+            } @else {
+              @if (r.logo && !logoRotti.has(r.lega.id)) {
+                <img [src]="r.logo" [alt]="r.squadra" (error)="logoRotti.add(r.lega.id)" />
               } @else {
-                @if (r.logo && !logoRotti.has(r.lega.id)) {
-                  <img [src]="r.logo" [alt]="r.squadra" (error)="logoRotti.add(r.lega.id)" />
-                } @else {
-                  <span class="ph-row-sigla">{{ r.lega.miaGiocataCorrente?.squadraSigla }}</span>
-                }
-                <!-- Scelta fatta: bollino oro con spunta, a cascata (e lampo di luce quando e' tutto fatto) -->
-                <span class="ph-row-check" [class.ph-row-check--shine]="tuttoFatto"
-                      [style.animation-delay]="i * 140 + 'ms'" aria-hidden="true">
-                  <mat-icon>check</mat-icon>
-                </span>
+                <span class="ph-row-sigla">{{ r.lega.miaGiocataCorrente?.squadraSigla }}</span>
               }
-            </span>
-            <span class="ph-row-text">
-              <span class="ph-row-team" [class.ph-row-team--todo]="r.todo">{{ r.todo ? ('PRONOSTICI.TO_CHOOSE' | translate) : r.squadra }}</span>
-              <span class="ph-row-lega">{{ r.lega.name }}</span>
-            </span>
-            <span class="ph-row-when" [class.ph-row-when--todo]="r.todo">
-              @if (r.todo) {
+              <!-- Scelta fatta: bollino oro con spunta, a cascata (e lampo di luce quando e' tutto fatto) -->
+              <span class="ph-row-check" [class.ph-row-check--shine]="tuttoFatto"
+                    [style.animation-delay]="i * 140 + 'ms'" aria-hidden="true">
+                <mat-icon>check</mat-icon>
+              </span>
+            }
+          </span>
+          <span class="ph-row-text">
+            @if (r.todo) {
+              <span class="ph-row-team">{{ r.lega.name }}</span>
+              <span class="ph-row-lega ph-row-lega--todo">
+                <mat-icon aria-hidden="true">schedule</mat-icon>
                 @if (durata(r.lega); as d) {
-                  {{ 'PRONOSTICI.IN' | translate: { t: (d.key | translate: d.params) } }}
+                  {{ 'PRONOSTICI.EXPIRES_IN' | translate: { t: (d.key | translate: d.params) } }}
                 } @else {
                   {{ 'PRONOSTICI.STARTED_SHORT' | translate }}
                 }
+              </span>
+            } @else {
+              <span class="ph-row-team">{{ r.squadra }}</span>
+              <span class="ph-row-lega">{{ r.lega.name }}</span>
+            }
+          </span>
+          @if (r.todo) {
+            <button type="button" class="ph-pick" (click)="scegli(r.lega)">
+              <span class="ph-pick-text">{{ 'PRONOSTICI.CHOOSE' | translate }}</span>
+            </button>
+          } @else {
+            <span class="ph-row-when">
+              <!-- Tempo che resta per cambiare la scelta (fino a 5 minuti prima dell'inizio giornata) -->
+              @if (durata(r.lega); as d) {
+                <span class="ph-row-until">{{ 'PRONOSTICI.EDIT_WITHIN' | translate }}</span>
+                <span class="ph-row-time">{{ d.key | translate: d.params }}</span>
               } @else {
-                {{ orario(r.lega) ?? ('PRONOSTICI.IN_PROGRESS' | translate) }}
+                <span class="ph-row-time">{{ 'PRONOSTICI.IN_PROGRESS' | translate }}</span>
               }
             </span>
-          </button>
-        }
-        @if (righeExtra > 0) {
-          <button type="button" class="ph-more" (click)="vediTutte()">
-            {{ 'PRONOSTICI.MORE_LEAGUES' | translate: { n: righeExtra } }}
-          </button>
-        }
-      </div>
+          }
+        </div>
+      }
+      @if (righe.length > maxRighe) {
+        <button type="button" class="ph-more" (click)="espanso = !espanso" [attr.aria-expanded]="espanso">
+          <span class="ph-more-text">{{ espanso ? ('PRONOSTICI.SHOW_LESS' | translate) : ('PRONOSTICI.SHOW_ALL' | translate: { n: righe.length }) }}</span>
+          <mat-icon aria-hidden="true">{{ espanso ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      }
     </div>
 
-    @if (urgente; as u) {
-      <!-- Ambra come l'anello "da fare": l'occhio lega il pulsante allo stato; riflesso che passa ogni tanto -->
-      <button type="button" class="ph-cta ph-cta--vote" (click)="vota(u)">
-        <span class="ph-vote-shine" aria-hidden="true"></span>
-        <span class="ph-vote-text">{{ 'PRONOSTICI.VOTE_IN' | translate: { lega: u.name } }}</span>
-        <span class="ph-vote-arrow" aria-hidden="true"><mat-icon>arrow_forward</mat-icon></span>
-      </button>
-    } @else if (totale === 0) {
+    @if (totale === 0) {
       <div class="ph-strip">
         <mat-icon class="ph-strip-icon ph-strip-icon--gold">event</mat-icon>
         <span>

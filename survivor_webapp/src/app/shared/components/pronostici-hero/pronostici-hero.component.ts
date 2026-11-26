@@ -17,10 +17,13 @@ const ESITI_VISTI_KEY = 'survivor_esiti_visti';
 const MAX_RIGHE = 3;
 
 /**
- * Hero della home: "I tuoi pronostici". Risponde a una domanda sola, ho votato dappertutto?
- * Niente anello: ogni riga dice il suo stato (spunta oro sul logo se scelta, "?" ambra se da fare;
- * quando e' tutto fatto la card prende un bordo dorato), loghi delle squadre scelte, inizio della giornata piu' vicina con il NOME della lega e il pulsante "Vota in…"
- * che apre direttamente la finestra di scelta (lega-dettaglio ?vota=1). Conta solo la scelta del
+ * Hero della home: "Le tue scelte". Risponde a una domanda sola, ho votato dappertutto?
+ * In alto una frase ("Ti mancano 2 scelte" / "Tutto fatto"); sotto una card
+ * per lega: quelle da votare (ambra) per prime, ognuna con il suo pulsante "Scegli" (l'unica parte
+ * cliccabile della card) che apre la
+ * scelta di QUELLA lega (lega-dettaglio ?vota=1); niente pulsante unico, che non diceva dove
+ * portava. Le scelte fatte mostrano logo, squadra e quanto resta per cambiarla. Oltre 3 leghe l'elenco si apre sul
+ * posto ("Vedi tutte le leghe"). Conta solo la scelta del
  * turno corrente: la vecchia card mostrava la scelta del turno prima e faceva credere di aver votato.
  * Senza leghe in corso diventa un benvenuto con "Crea" / "Leghe aperte".
  */
@@ -43,10 +46,12 @@ export class PronosticiHeroComponent implements OnInit, OnChanges, OnDestroy {
   adesso = Date.now();
   daVotare: Lega[] = [];
   fatte: Lega[] = [];
+  /** Tutte le righe (da votare prima); in vista le prime MAX_RIGHE, tutte se espanso */
   righe: RigaRecap[] = [];
+  readonly maxRighe = MAX_RIGHE;
+  espanso = false;
   /** Leghe il cui logo non si e' caricato: al suo posto la sigla della squadra */
   logoRotti = new Set<number>();
-  righeExtra = 0;
   esito: Esito | null = null;
 
   private tick: ReturnType<typeof setInterval> | null = null;
@@ -77,8 +82,7 @@ export class PronosticiHeroComponent implements OnInit, OnChanges, OnDestroy {
       ...this.daVotare.map(l => ({ lega: l, todo: true, logo: null, squadra: '' })),
       ...[...this.fatte].sort(perUrgenza).map(l => this.rigaFatta(l)),
     ];
-    this.righe = tutte.slice(0, MAX_RIGHE);
-    this.righeExtra = Math.max(0, tutte.length - MAX_RIGHE);
+    this.righe = tutte;
     this.cercaNuoviEsiti();
   }
 
@@ -92,7 +96,7 @@ export class PronosticiHeroComponent implements OnInit, OnChanges, OnDestroy {
 
   get totale(): number { return this.daVotare.length + this.fatte.length; }
   get tuttoFatto(): boolean { return this.totale > 0 && this.daVotare.length === 0; }
-  get urgente(): Lega | null { return this.daVotare[0] ?? null; }
+  get righeVisibili(): RigaRecap[] { return this.espanso ? this.righe : this.righe.slice(0, MAX_RIGHE); }
   get senzaLeghe(): boolean { return !this.caricamento && this.leghe.length === 0; }
   get nuovoUtente(): boolean { return this.senzaLeghe && this.tutteLeghe.length === 0; }
 
@@ -119,30 +123,12 @@ export class PronosticiHeroComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  /** Quando inizia la giornata di una scelta fatta: "sab 15:00", oppure null se e' gia' iniziata o manca l'orario */
-  orario(l: Lega): string | null {
-    const t = inizioGiornata(l);
-    if (t == null || t <= this.adesso) return null;
-    const lang = this.translate.currentLang || 'it';
-    return new Intl.DateTimeFormat(lang, { weekday: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(t));
-  }
-
-  /** Tocco su una riga: da votare apre subito la scelta, altrimenti la lega */
-  apriRiga(r: RigaRecap): void {
-    this.router.navigate(['/lega', r.lega.id], r.todo ? { queryParams: { vota: 1 } } : {});
-  }
-
-  /** "+N altre leghe": scende alla lista della home */
-  vediTutte(): void {
-    document.getElementById('le-tue-leghe')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  /** Pulsante "Scegli": apre subito la finestra di scelta di quella lega */
+  scegli(l: Lega): void {
+    this.router.navigate(['/lega', l.id], { queryParams: { vota: 1 } });
   }
 
   // ── Azioni ─────────────────────────────────────────────────────────────────
-
-  vota(l: Lega | null): void {
-    if (!l) return;
-    this.router.navigate(['/lega', l.id], { queryParams: { vota: 1 } });
-  }
 
   creaLega(): void { this.router.navigate(['/creaLega']); }
   legheAperte(): void { this.router.navigate(['/joinLega']); }

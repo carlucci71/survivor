@@ -1,10 +1,16 @@
 {
   "PRONOSTICI": {
-    "TO_CHOOSE": "To pick",
-    "IN": "in {{t}}",
+    "CLOSES_IN": "Closes in {{t}}",
+    "EDIT_WITHIN": "change within",
+    "TITLE_MISSING": "{{n}} picks left",
+    "TITLE_MISSING_ONE": "1 pick left",
+    "TITLE_DONE": "All done for this round",
+    "CHOOSE": "Pick",
+    "EXPIRES_IN": "closes in {{t}}",
+    "SHOW_ALL": "See all leagues ({{n}})",
+    "SHOW_LESS": "Show less",
     "STARTED_SHORT": "started",
     "IN_PROGRESS": "live",
-    "MORE_LEAGUES": "+{{n}} more leagues",
     "LABEL": "Your picks",
     "NOTHING_TO_VOTE": "No picks to make right now",
     "STARTS_IN": "Starts in {{t}}",
@@ -12,7 +18,6 @@
     "DURATION_DH": "{{d}}d {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE_IN": "Pick in {{lega}}",
     "VOTE": "Pick",
     "NEXT_ROUND": "Next round: {{data}}",
     "WAITING": "Waiting for this round's results",
@@ -1786,7 +1791,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "At the top of Home you'll find <strong>Your picks</strong>: how many you've made out of how many, the logos of the teams you chose and the league that starts first, with the <strong>Pick</strong> button that opens the team choice right away. Below, your leagues are split into <strong>To pick</strong> (at the top, with the time left before kick-off), <strong>Pick made</strong> (with your team) and <strong>Waiting for the round</strong>. You see everything without opening each league.",
+    "S2_PRONOSTICI": "At the top of Home you'll find <strong>Your picks</strong>: how many you've made out of how many, and a card for each league. Leagues where you still have to pick are orange and at the top, with the time left and a <strong>Pick</strong> button that opens the team choice for that league; the ones already done show your team and when it plays. If you have more than 3 leagues, tap <strong>See all leagues</strong>. Below, your leagues are split into <strong>To pick</strong>, <strong>Pick made</strong> and <strong>Waiting for the round</strong>. You see everything without opening each league.",
     "TAGLINE": "Complete user guide",
     "DOWNLOAD_CTA": "Download the Survivor app",
     "SECTION_INTRO": "Introduction",
