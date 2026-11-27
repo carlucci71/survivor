@@ -13,22 +13,16 @@
     "IN_PROGRESS": "en juego",
     "LABEL": "Tus elecciones",
     "NOTHING_TO_VOTE": "Ningún pronóstico pendiente ahora",
-    "STARTS_IN": "Empieza en {{t}}",
-    "STARTED": "La jornada ya empezó",
     "DURATION_DH": "{{d}}d {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE": "Votar",
     "NEXT_ROUND": "Próxima jornada: {{data}}",
     "WAITING": "Esperando los resultados de la jornada",
     "WELCOME_TITLE": "Bienvenido a Survivor",
     "WELCOME_TEXT": "Gana o vete a casa: elige un equipo en cada jornada y sigue en juego hasta el final. Si un amigo te ha invitado, abre el enlace que te ha enviado.",
     "RESULT_WIN": "¡{{squadra}} ha pasado la jornada!",
     "RESULT_LOSS": "{{squadra}}: jornada perdida",
-    "RESULT_DRAW": "{{squadra}}: empate",
-    "SECTION_TO_VOTE": "Por votar",
-    "SECTION_DONE": "Pronóstico hecho",
-    "SECTION_WAITING": "Esperando la jornada"
+    "RESULT_DRAW": "{{squadra}}: empate"
   },
   "PICK_CONFIRM": {
     "SAVED": "Elección guardada",
@@ -1796,7 +1790,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "Arriba en la Home encuentras <strong>Tus elecciones</strong>: cuántas has hecho de cuántas y una tarjeta por cada liga. Las ligas donde todavía tienes que votar están en naranja, arriba, con el tiempo que falta y el botón <strong>Elegir</strong> que abre al instante la elección del equipo de esa liga; las ya hechas muestran el equipo elegido y cuándo juega. Si tienes más de 3 ligas toca <strong>Ver todas las ligas</strong>. Debajo, tus ligas se dividen en <strong>Por votar</strong>, <strong>Pronóstico hecho</strong> y <strong>Esperando la jornada</strong>. Así lo ves todo sin abrir cada liga.",
+    "S2_PRONOSTICI": "Arriba en la Home encuentras <strong>Tus elecciones</strong>: una frase te dice cuántas elecciones te faltan y debajo hay una tarjeta por cada liga. Las ligas donde todavía tienes que elegir están en naranja, arriba, con el tiempo que queda y el botón <strong>Elegir</strong> que abre al instante la elección del equipo. Las elecciones ya hechas muestran el equipo y cuánto tiempo tienes para cambiarlo: toca la tarjeta para modificarla. Las elecciones se cierran 5 minutos antes del inicio de la jornada. Si tienes más de 3 ligas toca <strong>Ver todas las ligas</strong>. Más abajo, en <strong>Tus ligas</strong>, encuentras la lista para entrar en cada liga.",
     "TAGLINE": "Guía de usuario completa",
     "DOWNLOAD_CTA": "Descarga la app Survivor",
     "SECTION_INTRO": "Introducción",

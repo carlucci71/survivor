@@ -68,31 +68,13 @@
       </mat-card>
 
       <div *ngIf="!isLoadingLeghe && filteredGroupedLeghe.length > 0">
-        <!-- In gioco, diviso per urgenza: da votare (chi inizia prima, prima), pronostico fatto, in attesa -->
-        <ng-container *ngIf="righeDaVotare.length > 0">
-          <div class="hl-sec hl-sec--todo"><mat-icon>error_outline</mat-icon>{{ 'PRONOSTICI.SECTION_TO_VOTE' | translate }}</div>
-          <div class="hl-list">
-            <ng-container *ngFor="let riga of righeDaVotare; trackBy: trackByRiga">
-              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
-            </ng-container>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="righeFatte.length > 0">
-          <div class="hl-sec"><mat-icon>task_alt</mat-icon>{{ 'PRONOSTICI.SECTION_DONE' | translate }}</div>
-          <div class="hl-list">
-            <ng-container *ngFor="let riga of righeFatte; trackBy: trackByRiga">
-              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
-            </ng-container>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="righeInAttesa.length > 0">
-          <div class="hl-sec"><mat-icon>schedule</mat-icon>{{ 'PRONOSTICI.SECTION_WAITING' | translate }}</div>
-          <div class="hl-list">
-            <ng-container *ngFor="let riga of righeInAttesa; trackBy: trackByRiga">
-              <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
-            </ng-container>
-          </div>
-        </ng-container>
+        <!-- In gioco: un elenco solo, nello stesso ordine del riquadro (da scegliere, scelta fatta, in attesa).
+             Qui si entra nelle leghe; le scelte si fanno dal riquadro "Le tue scelte" in alto -->
+        <div class="hl-list" *ngIf="righeInGioco.length > 0">
+          <ng-container *ngFor="let riga of righeInGioco; trackBy: trackByRiga">
+            <ng-container *ngTemplateOutlet="rigaLega; context: { $implicit: riga }"></ng-container>
+          </ng-container>
+        </div>
 
         <div class="hl-legend" *ngIf="legheInGioco.length > 0" aria-hidden="true">
           <span><i class="hl-legend-dot hl-dot--in-gara"></i>{{ 'HOME.STATUS_ATTIVO' | translate }}</span>
@@ -169,29 +151,9 @@
                 <span class="hl-meta-sep">·</span>
                 <span class="hl-meta-text">{{ group.edizioni[0].stato.value | translateLeagueData: 'status' }}</span>
               </div>
-              <!-- Da votare: quanto manca alla chiusura delle scelte (5 minuti prima dell'inizio) -->
-              <div class="hl-when" *ngIf="group.inGioco && statoRiga(group.edizioni[0]) === 'da-votare'">
-                <mat-icon>schedule</mat-icon>
-                <ng-container *ngIf="durataRiga(group.edizioni[0]) as d; else iniziata">{{ 'PRONOSTICI.CLOSES_IN' | translate: { t: (d.key | translate: d.params) } }}</ng-container>
-                <ng-template #iniziata>{{ 'PRONOSTICI.STARTED' | translate }}</ng-template>
-              </div>
             </div>
-            <!-- Stato del pronostico (solo leghe in gioco) -->
-            <ng-container *ngIf="group.inGioco; else azioniArchivio">
-              <ng-container [ngSwitch]="statoRiga(group.edizioni[0])">
-                <button *ngSwitchCase="'da-votare'" type="button" class="hl-vote" (click)="votaRiga(group.edizioni[0], $event)">
-                  {{ 'PRONOSTICI.VOTE' | translate }}
-                </button>
-                <span *ngSwitchCase="'fatto'" class="hl-pick" [attr.aria-label]="nomeScelta(group.edizioni[0])">
-                  <span class="hl-pick-logo">
-                    <img *ngIf="logoScelta(group.edizioni[0]) as logo" [src]="logo" alt="" />
-                  </span>
-                  <span class="hl-pick-name">{{ nomeScelta(group.edizioni[0]) }}</span>
-                  <mat-icon>check</mat-icon>
-                </span>
-                <mat-icon *ngSwitchDefault class="hl-go" aria-hidden="true">chevron_right</mat-icon>
-              </ng-container>
-            </ng-container>
+            <!-- In gioco: solo la freccia (tutta la riga apre la lega) -->
+            <mat-icon *ngIf="group.inGioco; else azioniArchivio" class="hl-go" aria-hidden="true">chevron_right</mat-icon>
             <ng-template #azioniArchivio>
               <button *ngIf="isTerminata(group.edizioni[0]) && notExistsNuovaEdizione(group.edizioni[0]) && isLeaderInLega(group.edizioni[0]); else freccia"
                       type="button" class="hl-icon-btn"
