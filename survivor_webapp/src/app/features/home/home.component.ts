@@ -26,8 +26,7 @@ import { HeaderComponent } from '../../shared/components/header/header.component
 import { Capacitor } from '@capacitor/core';
 import { StatusBar } from '@capacitor/status-bar';
 import { PronosticiHeroComponent } from '../../shared/components/pronostici-hero/pronostici-hero.component';
-import { TeamLogoService } from '../../core/services/team-logo.service';
-import { durataAllInizio, perUrgenza, statoPronostico } from '../../core/utils/stato-pronostico';
+import { perUrgenza, statoPronostico } from '../../core/utils/stato-pronostico';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -145,8 +144,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     ,
     private snackBar: MatSnackBar
     ,
-    private teamLogoService: TeamLogoService
-    ,
     private bottomSheet: MatBottomSheet
   ) {}
 
@@ -196,7 +193,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.giocatoreSubscription) {
       this.giocatoreSubscription.unsubscribe();
     }
-    clearInterval(this.orologio);
     // uscendo dalla home la barra di stato torna al blu normale dell'app
     this.barraDiStato(BARRA_APP);
   }
@@ -715,12 +711,16 @@ ${link}`;
     this.legheInGioco = inGioco.sort(piuRecente);
     this.legheArchivio = archivio.sort(piuRecente);
 
-    // "In gioco" diviso per urgenza: da votare (chi inizia prima, prima), pronostico fatto, in attesa
-    this.righeDaVotare = this.legheInGioco
+    // "In gioco" nello stesso ordine del riquadro in alto: da scegliere (chi chiude prima, prima),
+    // scelta fatta, in attesa. Un elenco solo, senza sezioni: le scelte si fanno dal riquadro
+    const daScegliere = this.legheInGioco
       .filter(r => statoPronostico(r.edizioni[0]) === 'da-votare')
       .sort((a, b) => perUrgenza(a.edizioni[0], b.edizioni[0]));
-    this.righeFatte = this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'fatto');
-    this.righeInAttesa = this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'attesa');
+    this.righeInGioco = [
+      ...daScegliere,
+      ...this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'fatto'),
+      ...this.legheInGioco.filter(r => statoPronostico(r.edizioni[0]) === 'attesa'),
+    ];
 
     // La hero conta sempre tutte le leghe in gioco, anche durante una ricerca
     this.legheHero = this.groupedLeghe
@@ -763,35 +763,9 @@ ${link}`;
     this.filterLeghe();
   }
 
-  // ── Pronostici del turno (hero + sezioni della lista) ──────────────────────────────
-  righeDaVotare: GruppoLeghe[] = [];
-  righeFatte: GruppoLeghe[] = [];
-  righeInAttesa: GruppoLeghe[] = [];
+  // ── Pronostici del turno (riquadro in alto + ordine della lista) ─────────────────
+  righeInGioco: GruppoLeghe[] = [];
   legheHero: Lega[] = [];
-  /** Orologio per i countdown delle righe "Da votare" (aggiornato ogni 30 secondi) */
-  adesso = Date.now();
-  private orologio = setInterval(() => (this.adesso = Date.now()), 30000);
-
-  durataRiga(l: Lega) { return durataAllInizio(l, this.adesso); }
-
-  statoRiga(l: Lega) { return statoPronostico(l); }
-
-  /** Logo della squadra scelta per il turno corrente */
-  logoScelta(l: Lega): string | null {
-    const sigla = l.miaGiocataCorrente?.squadraSigla;
-    return sigla ? this.teamLogoService.getLogoUrl(l.campionato?.sport?.id, l.campionato?.id, sigla) : null;
-  }
-
-  nomeScelta(l: Lega): string {
-    const g = l.miaGiocataCorrente;
-    return g ? (g.squadraNome || g.squadraSigla) : '';
-  }
-
-  /** "Vota" nella riga: apre la lega con la finestra di scelta gia' aperta */
-  votaRiga(l: Lega, event: Event): void {
-    event.stopPropagation();
-    this.router.navigate(['/lega', l.id], { queryParams: { vota: 1 } });
-  }
 
   trackByRiga(_: number, riga: GruppoLeghe): number {
     return riga.edizioni[0].id;
