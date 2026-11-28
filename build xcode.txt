@@ -1,3 +1,5 @@
+git pull
+
 cd /Users/bebocar/github/survivor/survivor_webapp/scripts
 pwsh -File build-and-install.ps1 -CopyFtp
 
@@ -23,6 +25,6 @@ Scegli App Store Connect > Upload, conferma e invia: attende "Processing" (pochi
 Vai su App Store Connect > La tua app > TestFlight: la build appare. 
 Assegna a Internal Testing (per colleghi nel team) o External.	
 
-
+git push
 ----------------
 pwsh -File rilascio-test.ps1 
