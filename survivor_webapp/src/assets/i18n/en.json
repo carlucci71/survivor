@@ -13,22 +13,16 @@
     "IN_PROGRESS": "live",
     "LABEL": "Your picks",
     "NOTHING_TO_VOTE": "No picks to make right now",
-    "STARTS_IN": "Starts in {{t}}",
-    "STARTED": "Round already started",
     "DURATION_DH": "{{d}}d {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE": "Pick",
     "NEXT_ROUND": "Next round: {{data}}",
     "WAITING": "Waiting for this round's results",
     "WELCOME_TITLE": "Welcome to Survivor",
     "WELCOME_TEXT": "Win or go home: pick one team each round and stay in until the end. If a friend invited you, open the link they sent you.",
     "RESULT_WIN": "{{squadra}} got through!",
     "RESULT_LOSS": "{{squadra}}: round lost",
-    "RESULT_DRAW": "{{squadra}}: draw",
-    "SECTION_TO_VOTE": "To pick",
-    "SECTION_DONE": "Pick made",
-    "SECTION_WAITING": "Waiting for the round"
+    "RESULT_DRAW": "{{squadra}}: draw"
   },
   "PICK_CONFIRM": {
     "SAVED": "Pick saved",
@@ -1791,7 +1785,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "At the top of Home you'll find <strong>Your picks</strong>: how many you've made out of how many, and a card for each league. Leagues where you still have to pick are orange and at the top, with the time left and a <strong>Pick</strong> button that opens the team choice for that league; the ones already done show your team and when it plays. If you have more than 3 leagues, tap <strong>See all leagues</strong>. Below, your leagues are split into <strong>To pick</strong>, <strong>Pick made</strong> and <strong>Waiting for the round</strong>. You see everything without opening each league.",
+    "S2_PRONOSTICI": "At the top of Home you'll find <strong>Your picks</strong>: a line tells you how many picks are left and below there's a card for each league. Leagues where you still have to pick are orange and at the top, with the time left and a <strong>Pick</strong> button that opens the team choice right away. Picks already made show your team and how long you have to change it: tap the card to edit it. Picks close 5 minutes before the round starts. If you have more than 3 leagues, tap <strong>See all leagues</strong>. Further down, in <strong>Your leagues</strong>, you'll find the list to open each league.",
     "TAGLINE": "Complete user guide",
     "DOWNLOAD_CTA": "Download the Survivor app",
     "SECTION_INTRO": "Introduction",

@@ -13,22 +13,16 @@
     "IN_PROGRESS": "in corso",
     "LABEL": "Le tue scelte",
     "NOTHING_TO_VOTE": "Nessun pronostico da fare ora",
-    "STARTS_IN": "Inizia tra {{t}}",
-    "STARTED": "Giornata già iniziata",
     "DURATION_DH": "{{d}}g {{h}}h",
     "DURATION_HM": "{{h}}h {{m}}m",
     "DURATION_M": "{{m}}m",
-    "VOTE": "Vota",
     "NEXT_ROUND": "Prossima giornata: {{data}}",
     "WAITING": "Aspettiamo i risultati del turno",
     "WELCOME_TITLE": "Benvenuto in Survivor",
     "WELCOME_TEXT": "Vinci o vai a casa: scegli una squadra a turno e resta in gara fino alla fine. Se un amico ti ha invitato, apri il link che ti ha mandato.",
     "RESULT_WIN": "{{squadra}} ha passato il turno!",
     "RESULT_LOSS": "{{squadra}}: turno perso",
-    "RESULT_DRAW": "{{squadra}}: pareggio",
-    "SECTION_TO_VOTE": "Da votare",
-    "SECTION_DONE": "Pronostico fatto",
-    "SECTION_WAITING": "In attesa del turno"
+    "RESULT_DRAW": "{{squadra}}: pareggio"
   },
   "PICK_CONFIRM": {
     "SAVED": "Scelta salvata",
@@ -1796,7 +1790,7 @@
     ]
   },
   "GUIDE": {
-    "S2_PRONOSTICI": "In cima alla Home trovi <strong>Le tue scelte</strong>: quante ne hai fatte su quante e una card per ogni lega. Le leghe dove devi ancora votare sono in arancione, in cima, con il tempo che manca e il pulsante <strong>Scegli</strong> che apre subito la scelta della squadra di quella lega; quelle già fatte mostrano la squadra scelta e quando gioca. Se hai più di 3 leghe tocca <strong>Vedi tutte le leghe</strong>. Sotto, le tue leghe sono divise in <strong>Da votare</strong>, <strong>Pronostico fatto</strong> e <strong>In attesa del turno</strong>. Così vedi tutto senza aprire ogni lega.",
+    "S2_PRONOSTICI": "In cima alla Home trovi <strong>Le tue scelte</strong>: una frase ti dice quante scelte ti mancano e sotto c'è una card per ogni lega. Le leghe dove devi ancora scegliere sono in arancione, in cima, con il tempo che resta e il pulsante <strong>Scegli</strong> che apre subito la scelta della squadra. Le scelte già fatte mostrano la squadra e quanto tempo hai per cambiarla: tocca la card per modificarla. Le scelte si chiudono 5 minuti prima dell'inizio della giornata. Se hai più di 3 leghe tocca <strong>Vedi tutte le leghe</strong>. Più in basso, in <strong>Le tue leghe</strong>, trovi l'elenco per entrare in ogni lega.",
     "TAGLINE": "Guida utente completa",
     "DOWNLOAD_CTA": "Scarica l'app Survivor",
     "SECTION_INTRO": "Introduzione",
